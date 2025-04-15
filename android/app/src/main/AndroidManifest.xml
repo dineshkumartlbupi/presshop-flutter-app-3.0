@@ -1,0 +1,124 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <!-- Contact Permission -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <!-- Provide required visibility configuration for API level 30 and above -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="googlechromes" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="comgooglemaps" />
+        </intent>
+    </queries>
+
+
+    <application
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:label="PressHop"
+        android:requestLegacyExternalStorage="true">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:exported="true"
+            android:hardwareAccelerated="true"
+            android:icon="@mipmap/ic_launcher"
+            android:launchMode="singleTop"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:theme="@style/LaunchTheme"
+            android:windowSoftInputMode="adjustResize">
+
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep Linking Start-->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="true" />
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="betazone.promaticstechnologies.com"
+                    android:scheme="https" />
+
+            </intent-filter>
+            <!-- Deep Linking Code End -->
+
+            <!-- App Links Start-->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with https://YOUR_HOST -->
+                <data
+                    android:host="betazone.promaticstechnologies.com"
+                    android:scheme="https" />
+            </intent-filter>
+
+        </activity>
+
+
+        <service
+            android:name="me.pirajohn.foreground_service.ForegroundService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="presshop" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI" />
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_noti_logo" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/freshchat_white" />
+
+    </application>
+
+
+</manifest>
