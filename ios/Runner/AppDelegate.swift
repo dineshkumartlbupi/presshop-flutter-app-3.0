@@ -11,7 +11,7 @@ import FirebaseCore
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       FirebaseApp.configure()
-    GMSServices.provideAPIKey("AIzaSyA1KtWkaT4h8q_ph8m71mqVFLdcicwEVpA")
+    GMSServices.provideAPIKey("AIzaSyBY2NyNIgOE6eh-H3EdqXZ-grlcgkOLaqY")
       GeneratedPluginRegistrant.register(with: self)
       if #available(iOS 10.0, *) {
           UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate

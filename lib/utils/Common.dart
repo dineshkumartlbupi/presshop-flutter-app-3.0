@@ -7,7 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 //const googleMapAPiKey = "AIzaSyAzccAqyrfD-V43gI9eBXqLf0qpqlm0Gu0";
 const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
-const appleMapAPiKey = "AIzaSyA1KtWkaT4h8q_ph8m71mqVFLdcicwEVpA";
+const appleMapAPiKey = "AIzaSyBY2NyNIgOE6eh-H3EdqXZ-grlcgkOLaqY";
 
 ///------WebUrls------
 const oldbaseUrl = "https://developers.promaticstechnologies.com:5019/";

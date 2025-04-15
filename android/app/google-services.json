@@ -31,30 +31,6 @@
           }
         },
         {
-          "client_id": "750460561502-8ug05eqs48u6te36fr31gddq7u7n9bu6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "023ff6358ddde381cb2abf0a91be255df66e5b2a"
-          }
-        },
-        {
-          "client_id": "750460561502-ed7q6tfs5dv0qjbcjv0eqb0ieub5h251.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "e8dcb2c7cba19971ab24bdc48e95257e4ddffcc0"
-          }
-        },
-        {
-          "client_id": "750460561502-hakgtg5bvmr63emqdh1d9s2i4l9od9hr.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "ecadffa51ca02d0da5d9a60d19d63a03ce442549"
-          }
-        },
-        {
           "client_id": "750460561502-pjcdggbb9tpom9pkbj1nlpmtke4g92c8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -63,13 +39,42 @@
           }
         },
         {
-          "client_id": "750460561502-r854jcj1c6i9mhiss7nltpi3bv3lsdug.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "7dfaa12aec5f0451ef2f8d9e0904f3c4eddd3bd1"
-          }
-        },
+          "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "750460561502-2gme7cprutkh18gkqlsmhk03eg36mfpu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.presshopdev",
+                "app_store_id": "6446359713"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750460561502:android:769fcde34607dd0f40accf",
+        "android_client_info": {
+          "package_name": "com.presshop.app"
+        }
+      },
+      "oauth_client": [
         {
           "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
           "client_type": 3
@@ -108,27 +113,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "750460561502-423u5q1pfiav3ud486ojlvl3rrt76fvh.apps.googleusercontent.com",
+          "client_id": "750460561502-kvckjptm7rc1c90m7qicur8cjnfvpa6s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pro.presshop",
-            "certificate_hash": "d2351e3c968958b67bd89b87f5704374b2293d82"
+            "certificate_hash": "f9a818f368e31806e9f9ef59de98f28587f6a08c"
           }
         },
         {
-          "client_id": "750460561502-mrfar7bf0vt0p07gnhaibbnfc3s56pm5.apps.googleusercontent.com",
+          "client_id": "750460561502-ol91vhvkils412o0kio5cnqqjhchtupk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pro.presshop",
-            "certificate_hash": "80a6de37f3f766063be59be31a4e0babd0936785"
-          }
-        },
-        {
-          "client_id": "750460561502-tg79b54h4sribs7h1p3unsi5iqa5ecjf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pro.presshop",
-            "certificate_hash": "656ff277462544044ba6def9eba344c7b4630ab3"
+            "certificate_hash": "852b3e6b1694c25f0c1e80205f0fc8384a482102"
           }
         },
         {

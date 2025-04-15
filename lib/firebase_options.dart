@@ -58,13 +58,13 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA1KtWkaT4h8q_ph8m71mqVFLdcicwEVpA',
-    appId: '1:750460561502:ios:cf988277953427a640accf',
+    apiKey: 'AIzaSyBY2NyNIgOE6eh-H3EdqXZ-grlcgkOLaqY',
+    appId: '1:750460561502:ios:97c4a5d898f9349140accf',
     messagingSenderId: '750460561502',
     projectId: 'presshopdev-db299',
     storageBucket: 'presshopdev-db299.appspot.com',
     iosClientId:
-        '750460561502-2gme7cprutkh18gkqlsmhk03eg36mfpu.apps.googleusercontent.com',
+        '750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com',
     iosBundleId: 'com.presshop.app',
   );
 }
