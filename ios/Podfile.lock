@@ -1407,10 +1407,6 @@ PODS:
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
-  - freshchat_sdk (0.10.25):
-    - Flutter
-    - FreshchatSDK (= 6.3.7)
-  - FreshchatSDK (6.3.7)
   - gallery_saver (0.0.1):
     - Flutter
   - geocoding_ios (1.0.5):
@@ -1685,7 +1681,6 @@ DEPENDENCIES:
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
-  - freshchat_sdk (from `.symlinks/plugins/freshchat_sdk/ios`)
   - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
@@ -1734,7 +1729,6 @@ SPEC REPOS:
     - FirebaseSessions
     - FirebaseSharedSwift
     - FirebaseStorage
-    - FreshchatSDK
     - Google-Maps-iOS-Utils
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -1797,8 +1791,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
-  freshchat_sdk:
-    :path: ".symlinks/plugins/freshchat_sdk/ios"
   gallery_saver:
     :path: ".symlinks/plugins/gallery_saver/ios"
   geocoding_ios:
@@ -1889,8 +1881,6 @@ SPEC CHECKSUMS:
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
   fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
-  freshchat_sdk: 4078d62c19b5f0163c2398b6e27600d6654ba7b9
-  FreshchatSDK: 52a5fbda55f5892cc96bc0f2cd80ffe188fa106c
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
   geocoding_ios: d7460f56e80e118d57678efe5c2cdc888739ff18
   Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321

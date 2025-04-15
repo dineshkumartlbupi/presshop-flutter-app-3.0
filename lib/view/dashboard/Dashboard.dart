@@ -443,8 +443,9 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
 
   getCurrentLocationFxn() async {
     try {
-      locationData =
-          LocationData.fromMap({"latitude": latitude, "longitude": longitude});
+      // locationData =
+      //     LocationData.fromMap({"latitude": latitude, "longitude": longitude});
+      locationData = await location.getLocation();
       debugPrint("GettingLocation ==> $locationData");
       if (locationData != null) {
         debugPrint("NotNull");

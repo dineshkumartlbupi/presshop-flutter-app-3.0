@@ -99,7 +99,6 @@ dependencies:
   sign_in_with_apple: ^6.1.4
   flutter_foreground_service: ^0.4.1
   flutter_witai: ^0.0.2
-  freshchat_sdk:
   clipboard: ^0.1.3
   fluttertoast: ^8.2.12
   firebase_crashlytics: ^4.3.4
