@@ -2916,6 +2916,34 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
+                              color: widget.myContentData
+                                          ?.purchasedMediahouseCount ==
+                                      0
+                                  ? Colors.grey
+                                  : colorThemePink,
+                              size: size.width * numD042),
+                          SizedBox(width: size.width * numD018),
+                          Text(
+                            '${widget.myContentData?.purchasedMediahouseCount} ${widget.myContentData!.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD029,
+                                color: widget.myContentData?.offerCount == 0
+                                    ? Colors.grey
+                                    : colorThemePink,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                          width: widget.myContentData!.offerCount >= 0
+                              ? size.width * numD04
+                              : size.width * numD02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                           ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
                               color: widget.myContentData!.contentView == 0
                                   ? Colors.grey

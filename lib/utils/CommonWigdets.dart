@@ -47,10 +47,10 @@ TextStyle commonButtonTextStyle(Size size) {
 
 TextStyle commonTextStyle(
     {required Size size,
-      required fontSize,
-      required Color color,
-      double? lineHeight,
-      required FontWeight fontWeight}) {
+    required fontSize,
+    required Color color,
+    double? lineHeight,
+    required FontWeight fontWeight}) {
   return TextStyle(
     fontWeight: fontWeight,
     fontSize: fontSize,
@@ -61,8 +61,10 @@ TextStyle commonTextStyle(
 
 TextStyle commonBigTitleTextStyle(Size size, Color color) {
   return TextStyle(
-      fontFamily:"AirbnbCereal",
-      color: color, fontSize: size.width * numD08, fontWeight: FontWeight.bold);
+      fontFamily: "AirbnbCereal",
+      color: color,
+      fontSize: size.width * numD08,
+      fontWeight: FontWeight.bold);
 }
 
 Widget commonLeading(Size size) {
@@ -125,7 +127,7 @@ String? checkConfirmPasswordValidator(String? value, String password) {
 
 void commonDialog(BuildContext context, String message, pressed) {
   var screenWidth =
-  (window.physicalSize.shortestSide / window.devicePixelRatio);
+      (window.physicalSize.shortestSide / window.devicePixelRatio);
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -133,14 +135,14 @@ void commonDialog(BuildContext context, String message, pressed) {
             backgroundColor: Colors.transparent,
             elevation: 0,
             contentPadding:
-            EdgeInsets.symmetric(horizontal: screenWidth * numD04),
+                EdgeInsets.symmetric(horizontal: screenWidth * numD04),
             content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.circular(screenWidth * numD015)),
+                          BorderRadius.circular(screenWidth * numD015)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -209,7 +211,7 @@ void broadcastDialog({
               elevation: 0,
               contentPadding: EdgeInsets.zero,
               insetPadding:
-              EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return Container(
@@ -217,7 +219,7 @@ void broadcastDialog({
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius:
-                        BorderRadius.circular(size.width * numD045)),
+                            BorderRadius.circular(size.width * numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -363,11 +365,11 @@ void broadcastDialog({
                                           size.width * numD03)),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         children: [
                                           Icon(
                                             Icons.access_time,
@@ -402,9 +404,9 @@ void broadcastDialog({
                                             countDownFormatter:
                                                 (day, hour, min, sec) {
                                               if (taskDetail.deadLine
-                                                  .difference(
-                                                  DateTime.now())
-                                                  .inDays >
+                                                      .difference(
+                                                          DateTime.now())
+                                                      .inDays >
                                                   0) {
                                                 return "${day}d:${hour}h:${min}m:${sec}s";
                                               } else {
@@ -426,7 +428,7 @@ void broadcastDialog({
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           ),*/
-                                      ),
+                                          ),
                                     ],
                                   ),
                                 ),
@@ -446,11 +448,11 @@ void broadcastDialog({
                                           size.width * numD03)),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_location.png",
@@ -534,7 +536,7 @@ void broadcastDialog({
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width * numD035,
-                                          color:Colors.white,
+                                          color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
@@ -590,9 +592,8 @@ void broadcastDialog({
                                 children: [
                                   Text(
                                     taskDetail.isNeedVideo
-                                 ? "$euroUniqueCode${formatDouble(double.parse(taskDetail.videoPrice))}"
-
-                      : "-",
+                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail.videoPrice))}"
+                                        : "-",
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize: size.width * numD058,
@@ -685,7 +686,7 @@ void commonErrorDialogDialog(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.circular(size.width * numD045)),
+                          BorderRadius.circular(size.width * numD045)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -736,7 +737,7 @@ void commonErrorDialogDialog(
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius:
-                                BorderRadius.circular(size.width * numD04),
+                                    BorderRadius.circular(size.width * numD04),
                               ),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
@@ -803,7 +804,7 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.circular(size.width * numD045)),
+                          BorderRadius.circular(size.width * numD045)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -845,47 +846,43 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                         height: size.width * numD02,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: size.width * numD04,
-                            right: size.width * numD04),
-                        child: RichText(
-
-                          textAlign: TextAlign.start,
-                          text: TextSpan(
-                            text:"Please complete your pending onboarding process to register on ",
-                            style: TextStyle(
-                                fontSize: size.width * numD038,
-                                color: Colors.black,
-                                fontFamily: "AirbnbCereal",
-                                fontWeight: FontWeight.w400,
-                                height: 1.5),
-                            children: [
-                              TextSpan(
-                                text:"PRESS",
-                                style: TextStyle(
-                                    fontSize: size.width * numD038,
-                                    color: Colors.black,
-                                    fontFamily: "AirbnbCereal",
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.5),
-                              ),
-                              TextSpan(
-                                text:"HOP",
-                                style: TextStyle(
-                                    fontSize: size.width * numD038,
-                                    color: Colors.black,
-                                    fontFamily: "AirbnbCereal",
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.5),
-                              )
-                            ],
-                          ),
-                        )
-
-
-
-                      ),
+                          padding: EdgeInsets.only(
+                              left: size.width * numD04,
+                              right: size.width * numD04),
+                          child: RichText(
+                            textAlign: TextAlign.start,
+                            text: TextSpan(
+                              text:
+                                  "Please complete your pending onboarding process to register on ",
+                              style: TextStyle(
+                                  fontSize: size.width * numD038,
+                                  color: Colors.black,
+                                  fontFamily: "AirbnbCereal",
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.5),
+                              children: [
+                                TextSpan(
+                                  text: "PRESS",
+                                  style: TextStyle(
+                                      fontSize: size.width * numD038,
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.5),
+                                ),
+                                TextSpan(
+                                  text: "HOP",
+                                  style: TextStyle(
+                                      fontSize: size.width * numD038,
+                                      color: Colors.black,
+                                      fontFamily: "AirbnbCereal",
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.5),
+                                )
+                              ],
+                            ),
+                          )),
                       SizedBox(
                         height: size.width * numD06,
                       ),
@@ -920,7 +917,6 @@ void showSnackBar(String title, String message, Color color) {
     flushbarPosition: FlushbarPosition.TOP,
     titleColor: Colors.white,
     messageColor: Colors.white,
-
   ).show(navigatorKey.currentContext!);
 
 /*
@@ -1003,7 +999,7 @@ showLoaderDialog(BuildContext context) {
 amountFormat(String price) {
   var priceAmount = price.isNotEmpty || price != null ? price : "0";
   var formattedNumber =
-  NumberFormat("#,##0", "en_US").format(double.parse(price));
+      NumberFormat("#,##0", "en_US").format(double.parse(price));
   return formattedNumber;
 }
 
@@ -1065,29 +1061,23 @@ Widget commonRefresherFooter(context, mode) {
 
 /// Show Loader
 Widget showLoader() {
-  var size= MediaQuery.of(navigatorKey.currentContext!).size;
-  return  Center(
-    child: Lottie.asset(
-        "assets/lottieFiles/loader_new.json",
-        height: size.width*numD28,
-        width: size.width*numD28
-    )
+  var size = MediaQuery.of(navigatorKey.currentContext!).size;
+  return Center(
+      child: Lottie.asset("assets/lottieFiles/loader_new.json",
+          height: size.width * numD28, width: size.width * numD28)
 
-    /*
+      /*
     CircularProgressIndicator(
       color: colorThemePink,
       strokeWidth: 3.5,
     ),*/
-  );
+      );
 }
+
 Widget showAnimatedLoader(var size) {
-  return  Center(
-    child: Lottie.asset(
-        "assets/lottieFiles/loader_new.json",
-        height: size.width*numD25,
-        width: size.width*numD25
-    )
-  );
+  return Center(
+      child: Lottie.asset("assets/lottieFiles/loader_new.json",
+          height: size.width * numD25, width: size.width * numD25));
 }
 
 /// Calender
@@ -1101,7 +1091,7 @@ Future<String?> commonDatePicker({String? date}) async {
       return Theme(
         data: ThemeData.light().copyWith(
             colorScheme:
-            const ColorScheme.light().copyWith(primary: colorThemePink)),
+                const ColorScheme.light().copyWith(primary: colorThemePink)),
         child: child!,
       );
     },
@@ -1134,7 +1124,8 @@ String formatMessageTimestamp(DateTime timestamp) {
   final difference = currentTime.difference(timestamp.toLocal());
 
   if (difference < const Duration(days: 1)) {
-    return DateFormat("hh:mm a, dd MMM yyyy").format(timestamp.toLocal()); // Display time
+    return DateFormat("hh:mm a, dd MMM yyyy")
+        .format(timestamp.toLocal()); // Display time
   } else {
     return DateFormat("hh:mm a, dd MMM yyyy").format(timestamp); // Display date
   }
@@ -1152,7 +1143,6 @@ String greeting() {
   return 'Good evening';
 }
 
-
 /// aditya
 
 String formatDouble(double value) {
@@ -1164,11 +1154,13 @@ String formatDouble(double value) {
   }
 }
 
-Widget getMediaCountCard(String mediaType, int count,Size size) {
+Widget getMediaCountCard(String mediaType, int count, Size size) {
   return Container(
     width: size.width * numD11,
     padding: EdgeInsets.symmetric(vertical: size.width * numD01),
-    decoration: BoxDecoration(color: colorLightGreen.withOpacity(0.8), borderRadius: BorderRadius.circular(size.width * numD021)),
+    decoration: BoxDecoration(
+        color: colorLightGreen.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(size.width * numD021)),
     child: Padding(
       padding: EdgeInsets.symmetric(
         horizontal: size.width * 0.005,
@@ -1180,7 +1172,11 @@ Widget getMediaCountCard(String mediaType, int count,Size size) {
         children: [
           Text(
             "$count ",
-            style: commonTextStyle(size: size, fontSize: size.width * numD038, color: Colors.white, fontWeight: FontWeight.w600),
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD038,
+                color: Colors.white,
+                fontWeight: FontWeight.w600),
           ),
           const Padding(padding: EdgeInsets.only(left: 1.5)),
           Container(
@@ -1189,18 +1185,18 @@ Widget getMediaCountCard(String mediaType, int count,Size size) {
               mediaType == "image"
                   ? "${iconsPath}ic_camera_publish.png"
                   : mediaType == "video"
-                  ? "${iconsPath}ic_v_cam.png"
-                  : mediaType == "audio"
-                  ? "${iconsPath}new_audio.png"
-                  : "${iconsPath}doc_icon.png",
+                      ? "${iconsPath}ic_v_cam.png"
+                      : mediaType == "audio"
+                          ? "${iconsPath}new_audio.png"
+                          : "${iconsPath}doc_icon.png",
               color: Colors.white,
               height: mediaType == "image"
                   ? size.width * 0.029
                   : mediaType == "video"
-                  ? size.width * 0.041
-                  : mediaType == "audio"
-                  ? size.width * 0.04
-                  : size.width * 0.04,
+                      ? size.width * 0.041
+                      : mediaType == "audio"
+                          ? size.width * 0.04
+                          : size.width * 0.04,
             ),
           ),
         ],
@@ -1209,46 +1205,51 @@ Widget getMediaCountCard(String mediaType, int count,Size size) {
   );
 }
 
-List<Widget> getMediaCount(List<ContentMediaData> contentMediaList,Size size) {
-  final imageCount = contentMediaList.where((item) => item.mediaType == "image").length;
-  final videoCount = contentMediaList.where((item) => item.mediaType == "video").length;
-  final audioCount = contentMediaList.where((item) => item.mediaType == "audio").length;
+List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
+  final imageCount =
+      contentMediaList.where((item) => item.mediaType == "image").length;
+  final videoCount =
+      contentMediaList.where((item) => item.mediaType == "video").length;
+  final audioCount =
+      contentMediaList.where((item) => item.mediaType == "audio").length;
   debugPrint("MediaCount $imageCount, $videoCount, $audioCount");
   final widgetList = <Widget>[];
   if (imageCount > 0) {
-    widgetList.add(getMediaCountCard("image", imageCount,size));
+    widgetList.add(getMediaCountCard("image", imageCount, size));
     widgetList.add(SizedBox(height: 6));
   }
   if (videoCount > 0) {
-    widgetList.add(getMediaCountCard("video", videoCount,size));
+    widgetList.add(getMediaCountCard("video", videoCount, size));
     widgetList.add(SizedBox(height: 6));
   }
   if (audioCount > 0) {
-    widgetList.add(getMediaCountCard("audio", audioCount,size));
+    widgetList.add(getMediaCountCard("audio", audioCount, size));
     widgetList.add(SizedBox(height: 6));
   }
   return widgetList;
 }
 
-List<Widget> getMediaCount2(List<ContentDataModel> contentMediaList,Size size) {
-  final imageCount = contentMediaList.where((item) => item.mediaType == "image").length;
-  final videoCount = contentMediaList.where((item) => item.mediaType == "video").length;
-  final audioCount = contentMediaList.where((item) => item.mediaType == "audio").length;
+List<Widget> getMediaCount2(
+    List<ContentDataModel> contentMediaList, Size size) {
+  final imageCount =
+      contentMediaList.where((item) => item.mediaType == "image").length;
+  final videoCount =
+      contentMediaList.where((item) => item.mediaType == "video").length;
+  final audioCount =
+      contentMediaList.where((item) => item.mediaType == "audio").length;
   debugPrint("MediaCount $imageCount, $videoCount, $audioCount");
   final widgetList = <Widget>[];
   if (imageCount > 0) {
-    widgetList.add(getMediaCountCard("image", imageCount,size));
+    widgetList.add(getMediaCountCard("image", imageCount, size));
     widgetList.add(SizedBox(height: 6));
   }
   if (videoCount > 0) {
-    widgetList.add(getMediaCountCard("video", videoCount,size));
+    widgetList.add(getMediaCountCard("video", videoCount, size));
     widgetList.add(SizedBox(height: 6));
   }
   if (audioCount > 0) {
-    widgetList.add(getMediaCountCard("audio", audioCount,size));
+    widgetList.add(getMediaCountCard("audio", audioCount, size));
     widgetList.add(SizedBox(height: 6));
   }
   return widgetList;
 }
-
-

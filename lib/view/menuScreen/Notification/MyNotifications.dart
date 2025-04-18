@@ -26,10 +26,12 @@ class MyNotificationScreen extends StatefulWidget {
   State<MyNotificationScreen> createState() => _MyNotificationScreenState();
 }
 
-class _MyNotificationScreenState extends State<MyNotificationScreen> implements NetworkResponse {
+class _MyNotificationScreenState extends State<MyNotificationScreen>
+    implements NetworkResponse {
   late Size size;
 
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   List<NotificationData> notificationList = [];
   int limit = 10, offset = 0;
   bool showData = false, isLoading = false;
@@ -39,7 +41,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
   @override
   void initState() {
     debugPrint('class:::::::: $runtimeType');
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => callNotificationList());
+    WidgetsBinding.instance
+        .addPostFrameCallback((timeStamp) => callNotificationList());
 
     Future.delayed(const Duration(seconds: 5), () {
       callUpdateNotification();
@@ -56,7 +59,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
             elevation: 0,
             contentPadding: EdgeInsets.zero,
             insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD02),
-            content: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
               return Container(
                 width: size.width * num1,
                 height: size.width * numD52,
@@ -97,13 +101,20 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                             margin: EdgeInsets.only(top: size.width * 0.05),
                             decoration: BoxDecoration(
                               color: Colors.black,
-                              borderRadius: BorderRadius.circular(size.width * 0.02),
+                              borderRadius:
+                                  BorderRadius.circular(size.width * 0.02),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: size.width * 0.03),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: size.width * 0.03),
                               child: Text(
                                 "Cancel",
-                                style: TextStyle(fontSize: MediaQuery.of(context).size.width * numD037, color: Colors.white, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            numD037,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -120,12 +131,21 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                           child: Container(
                             width: size.width * numD45,
                             margin: EdgeInsets.only(top: size.width * 0.05),
-                            decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * 0.02)),
+                            decoration: BoxDecoration(
+                                color: colorThemePink,
+                                borderRadius:
+                                    BorderRadius.circular(size.width * 0.02)),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: size.width * 0.031),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: size.width * 0.031),
                               child: Text(
                                 "Delete",
-                                style: TextStyle(fontSize: MediaQuery.of(context).size.width * numD037, color: Colors.white, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            numD037,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -150,7 +170,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
         elevation: 0,
         title: Text(
           notificationText,
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -169,7 +192,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                     margin: const EdgeInsets.only(top: 5),
                     height: size.width * numD06,
                     width: size.width * numD06,
-                    decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade800, width: 2), borderRadius: BorderRadius.circular(size.width * numD02)),
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.grey.shade800, width: 2),
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD02)),
                   ),
                   Positioned(
                     right: 0,
@@ -179,7 +206,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                       children: [
                         Container(
                           padding: EdgeInsets.all(size.width * 0.002),
-                          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
                           child: Icon(
                             Icons.circle,
                             color: colorThemePink,
@@ -187,8 +215,14 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                           ),
                         ),
                         Text(
-                          widget.count != 0 ? widget.count.toString() : counting.toString(),
-                          style: commonTextStyle(size: size, fontSize: size.width * numD025, color: Colors.white, fontWeight: FontWeight.w500),
+                          widget.count != 0
+                              ? widget.count.toString()
+                              : counting.toString(),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD025,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500),
                           textAlign: TextAlign.center,
                         )
                       ],
@@ -203,7 +237,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)),
+                  (route) => false);
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -228,7 +265,9 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD05, vertical: size.width * numD02),
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * numD05,
+                  vertical: size.width * numD02),
               child: InkWell(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
@@ -256,34 +295,89 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                       enablePullUp: true,
                       onRefresh: _onRefresh,
                       onLoading: _onLoading,
-                      footer: const CustomFooter(builder: commonRefresherFooter),
+                      footer:
+                          const CustomFooter(builder: commonRefresherFooter),
                       child: ListView.separated(
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
-                          padding: EdgeInsets.symmetric(horizontal: size.width * numD045),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD045),
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
-                                debugPrint("Notification Type: ${notificationList[index].messageType}");
+                                debugPrint(
+                                    "Notification Type: ${notificationList[index].messageType}");
 
                                 /// -- When content is Published or Offer Received --
-                                if (notificationList[index].messageType == "publish_content" || notificationList[index].messageType == "offer_received") {
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyContentDetailScreen(paymentStatus: notificationList[index].paymentStatus, exclusive: notificationList[index].exclusive, contentId: notificationList[index].contentId, offerCount: 0)));
-                                } else if (notificationList[index].messageType == "offer_received") {
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ManageTaskScreen(roomId: notificationList[index].contentId, contentId: notificationList[index].contentId, type: 'content', mediaHouseDetail: null, contentMedia: null, contentHeader: null, myContentData: null)));
-                                } else if (notificationList[index].messageType == "content_sold") {
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => TransactionDetailScreen(type: "received", transactionData: notificationList[index].transactionDetailData!)));
-                                } else if (notificationList[index].messageType == "new_task_posted") {
-                                  if (notificationList[index].broadcastId.isNotEmpty) {
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyTaskScreen(hideLeading: false, broadCastId: notificationList[index].broadcastId)));
+                                if (notificationList[index].messageType ==
+                                        "publish_content" ||
+                                    notificationList[index].messageType ==
+                                        "offer_received") {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyContentDetailScreen(
+                                            paymentStatus:
+                                                notificationList[index]
+                                                    .paymentStatus,
+                                            exclusive: notificationList[index]
+                                                .exclusive,
+                                            contentId: notificationList[index]
+                                                .contentId,
+                                            offerCount: 0,
+                                            purchasedMediahouseCount: 0,
+                                          )));
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "offer_received") {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ManageTaskScreen(
+                                          roomId:
+                                              notificationList[index].contentId,
+                                          contentId:
+                                              notificationList[index].contentId,
+                                          type: 'content',
+                                          mediaHouseDetail: null,
+                                          contentMedia: null,
+                                          contentHeader: null,
+                                          myContentData: null)));
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "content_sold") {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          TransactionDetailScreen(
+                                              type: "received",
+                                              transactionData: notificationList[
+                                                      index]
+                                                  .transactionDetailData!)));
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "new_task_posted") {
+                                  if (notificationList[index]
+                                      .broadcastId
+                                      .isNotEmpty) {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) => MyTaskScreen(
+                                                hideLeading: false,
+                                                broadCastId:
+                                                    notificationList[index]
+                                                        .broadcastId)));
                                   }
-                                } else if (notificationList[index].messageType == "task_accepted") {
-                                  if (notificationList[index].broadcastId.isNotEmpty) {
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "task_accepted") {
+                                  if (notificationList[index]
+                                      .broadcastId
+                                      .isNotEmpty) {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => TaskDetailNewScreen(
-                                                  taskId: notificationList[index].broadcastId,
+                                            builder: (context) =>
+                                                TaskDetailNewScreen(
+                                                  taskId:
+                                                      notificationList[index]
+                                                          .broadcastId,
                                                   taskStatus: "accepted",
                                                   totalEarning: "0",
                                                 )));
@@ -291,22 +385,38 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                                 }
                               },
                               child: Container(
-                                padding: EdgeInsets.only(top: size.width * numD02),
+                                padding:
+                                    EdgeInsets.only(top: size.width * numD02),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(size.width * numD03),
-                                    topRight: Radius.circular(size.width * numD03),
+                                    topLeft:
+                                        Radius.circular(size.width * numD03),
+                                    topRight:
+                                        Radius.circular(size.width * numD03),
                                   ),
-                                  color: notificationList[index].unread ? Colors.white : colorLightGrey,
+                                  color: notificationList[index].unread
+                                      ? Colors.white
+                                      : colorLightGrey,
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(bottom: size.width * numD02),
-                                      padding: EdgeInsets.all(size.width * numD02),
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(size.width * numD04), boxShadow: [BoxShadow(color: Colors.grey.shade200, spreadRadius: 2, blurRadius: 2)]),
+                                      margin: EdgeInsets.only(
+                                          bottom: size.width * numD02),
+                                      padding:
+                                          EdgeInsets.all(size.width * numD02),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD04),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.grey.shade200,
+                                                spreadRadius: 2,
+                                                blurRadius: 2)
+                                          ]),
                                       child: Image.asset(
                                         "${commonImagePath}rabbitLogo.png",
                                         height: size.width * numD07,
@@ -318,25 +428,47 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                                     ),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                             children: [
                                               Expanded(
                                                 child: Text(
                                                   notificationList[index].title,
-                                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w600),
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize:
+                                                          size.width * numD035,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
                                                 ),
                                               ),
                                               SizedBox(
                                                 width: size.width * numD02,
                                               ),
                                               Text(
-                                                dateTimeFormatter(dateTime: notificationList[index].time, format: "hh:mm a, dd MMM yyyy", utc: false),
-                                                style: commonTextStyle(size: size, fontSize: size.width * numD025, color: colorGrey2, fontWeight: FontWeight.w300),
+                                                dateTimeFormatter(
+                                                    dateTime:
+                                                        notificationList[index]
+                                                            .time,
+                                                    format:
+                                                        "hh:mm a, dd MMM yyyy",
+                                                    utc: false),
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD025,
+                                                    color: colorGrey2,
+                                                    fontWeight:
+                                                        FontWeight.w300),
                                               ),
                                             ],
                                           ),
@@ -345,7 +477,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
                                           ),
                                           Text(
                                             notificationList[index].description,
-                                            style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
                                             maxLines: 5,
                                           ),
                                           SizedBox(
@@ -406,15 +542,19 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> implements 
 
   /// Api Section
   callNotificationList() {
-    NetworkClass("$notificationListAPI?limit=10&offset=$offset", this, reqNotificationListAPI).callRequestServiceHeader(isLoading ? false : true, 'get', null);
+    NetworkClass("$notificationListAPI?limit=10&offset=$offset", this,
+            reqNotificationListAPI)
+        .callRequestServiceHeader(isLoading ? false : true, 'get', null);
   }
 
   callUpdateNotification() {
-    NetworkClass(notificationReadAPI, this, reqNotificationReadAPI).callRequestServiceHeader(false, 'patch', null);
+    NetworkClass(notificationReadAPI, this, reqNotificationReadAPI)
+        .callRequestServiceHeader(false, 'patch', null);
   }
 
   callClearNotification() {
-    NetworkClass(clearNotification, this, reqClearNotification).callRequestServiceHeader(true, 'patch', null);
+    NetworkClass(clearNotification, this, reqClearNotification)
+        .callRequestServiceHeader(true, 'patch', null);
   }
 
   @override

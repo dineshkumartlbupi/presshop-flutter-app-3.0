@@ -27,11 +27,12 @@ class MyContentScreen extends StatefulWidget {
   }
 }
 
-class MyContentScreenState extends State<MyContentScreen> implements NetworkResponse {
+class MyContentScreenState extends State<MyContentScreen>
+    implements NetworkResponse {
   late Size size;
 
   final RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   List<MyContentData> myContentList = [];
   List<FilterModel> sortList = [];
@@ -93,9 +94,9 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                         builder: (context) => Dashboard(
-                          initialPosition: 2,
-                        )),
-                        (route) => false);
+                              initialPosition: 2,
+                            )),
+                    (route) => false);
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
@@ -112,45 +113,49 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
       body: SafeArea(
           child: myContentList.isNotEmpty
               ? SmartRefresher(
-            controller: _refreshController,
-            enablePullDown: true,
-            enablePullUp: true,
-            onRefresh: _onRefresh,
-            onLoading: _onLoading,
-            footer: const CustomFooter(builder: commonRefresherFooter),
-            child: GridView.builder(
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD04,
-                    vertical: size.width * numD04),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.82,
-                  mainAxisSpacing: size.width * numD04,
-                  crossAxisSpacing: size.width * numD04,
-                ),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                            builder: (context) =>
-                                MyContentDetailScreen(
-                                  paymentStatus:
-                                  myContentList[index].status,
-                                  exclusive:
-                                  myContentList[index].exclusive,
-                                  contentId: myContentList[index].id,
-                                  offerCount: myContentList[index].offerCount,
-                                )))
-                            .then((value) => myContentApi(false));
+                  controller: _refreshController,
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  onRefresh: _onRefresh,
+                  onLoading: _onLoading,
+                  footer: const CustomFooter(builder: commonRefresherFooter),
+                  child: GridView.builder(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * numD04,
+                          vertical: size.width * numD04),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.75,
+                        mainAxisSpacing: size.width * numD04,
+                        crossAxisSpacing: size.width * numD04,
+                      ),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyContentDetailScreen(
+                                            paymentStatus:
+                                                myContentList[index].status,
+                                            exclusive:
+                                                myContentList[index].exclusive,
+                                            contentId: myContentList[index].id,
+                                            purchasedMediahouseCount:
+                                                myContentList[index]
+                                                    .purchasedMediahouseCount,
+                                            offerCount:
+                                                myContentList[index].offerCount,
+                                          )))
+                                  .then((value) => myContentApi(false));
+                            },
+                            child: contentWidget(myContentList[index]));
                       },
-                      child: contentWidget(myContentList[index]));
-                },
-                itemCount: myContentList.length),
-          )
+                      itemCount: myContentList.length),
+                )
               : showData
-              ? errorMessageWidget("No Content Published")
-              : Container()),
+                  ? errorMessageWidget("No Content Published")
+                  : Container()),
     );
   }
 
@@ -197,7 +202,7 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                     ? "${iconsPath}ic_exclusive.png"
                     : "${iconsPath}ic_share.png",
                 height:
-                item.exclusive ? size.width * numD03 : size.width * numD04,
+                    item.exclusive ? size.width * numD03 : size.width * numD04,
                 color: colorTextFieldIcon,
               )
             ],
@@ -211,14 +216,39 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        "${iconsPath}dollar1.png",
+                        height: size.width * numD024,
+                        color: item.purchasedMediahouseCount == 0
+                            ? Colors.grey
+                            : colorThemePink,
+                      ),
+                      SizedBox(width: size.width * numD005),
+                      Text(
+                        '${item.purchasedMediahouseCount.toString()} ${item.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD026,
+                            color: item.contentView == 0
+                                ? Colors.grey
+                                : colorThemePink,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.width * numD01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Image.asset(
                         "${iconsPath}dollar1.png",
                         height: size.width * numD032,
-                        color:item.offerCount == 0
-                            ? Colors.grey
-                            : colorThemePink,
+                        color:
+                            item.offerCount == 0 ? Colors.grey : colorThemePink,
                       ),
                       SizedBox(width: size.width * numD013),
                       Text(
@@ -226,8 +256,7 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD026,
-                            color:
-                                item.offerCount == 0
+                            color: item.offerCount == 0
                                 ? Colors.grey
                                 : colorThemePink,
                             fontWeight: FontWeight.normal),
@@ -240,24 +269,20 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
                       Image.asset(
                         "${iconsPath}ic_view.png",
                         height: size.width * numD024,
-                        color:item.contentView == 0
+                        color: item.contentView == 0
                             ? Colors.grey
                             : colorThemePink,
                       ),
-
                       SizedBox(width: size.width * numD005),
-
                       Text(
-                        '${item.contentView.toString()} ${item.contentView > 1 ? '${viewsText}s' :viewsText}',
+                        '${item.contentView.toString()} ${item.contentView > 1 ? '${viewsText}s' : viewsText}',
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD026,
-                            color:
-                                item.contentView == 0
+                            color: item.contentView == 0
                                 ? Colors.grey
                                 : colorThemePink,
                             fontWeight: FontWeight.normal),
@@ -277,23 +302,23 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                         : /*item.paidStatus == paidText &&
                                 item.isPaidStatusToHopper
                             ?*/
-                    colorLightGrey /* : colorThemePink*/,
+                        colorLightGrey /* : colorThemePink*/,
                     borderRadius: BorderRadius.circular(size.width * numD015)),
                 child: Column(
                   children: [
                     Padding(
                       padding: item.paidStatus == paidText &&
-                          !item.isPaidStatusToHopper
+                              !item.isPaidStatusToHopper
                           ? EdgeInsets.symmetric(
-                          horizontal: size.width * numD028)
+                              horizontal: size.width * numD028)
                           : EdgeInsets.zero,
                       child: Text(
                         item.paidStatus == unPaidText
                             ? item.status.toCapitalized()
                             : item.paidStatus == paidText &&
-                            item.isPaidStatusToHopper
-                            ? "Received"
-                            : "Sold",
+                                    item.isPaidStatusToHopper
+                                ? "Received"
+                                : "Sold",
                         textAlign: TextAlign.center,
                         style: commonTextStyle(
                             size: size,
@@ -303,7 +328,7 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                                 : /*item.paidStatus == paidText &&
                                         item.isPaidStatusToHopper
                                     ?*/
-                            Colors.black /*: Colors.white*/,
+                                Colors.black /*: Colors.white*/,
                             fontWeight: FontWeight.w400),
                       ),
                     ),
@@ -318,7 +343,7 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                               : /*item.paidStatus == paidText &&
                                       item.isPaidStatusToHopper
                                   ?*/
-                          Colors.black /*: Colors.white*/,
+                              Colors.black /*: Colors.white*/,
                           fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -341,50 +366,51 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
         children: [
           item.contentMediaList.isNotEmpty
               ? showImage(
-            item.contentMediaList.first.mediaType,
-            item.contentMediaList.first.mediaType == "video"
-                ? item.contentMediaList.first.thumbNail
-                : item.contentMediaList.first.media,
-          )
+                  item.contentMediaList.first.mediaType,
+                  item.contentMediaList.first.mediaType == "video"
+                      ? item.contentMediaList.first.thumbNail
+                      : item.contentMediaList.first.media,
+                )
               : Container(
-            decoration: const BoxDecoration(color: colorLightGrey),
-            padding: EdgeInsets.all(size.width * numD06),
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
-            ),
-          ),
+                  decoration: const BoxDecoration(color: colorLightGrey),
+                  padding: EdgeInsets.all(size.width * numD06),
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * numD07,
+                    width: size.width * numD07,
+                  ),
+                ),
           item.contentMediaList.isNotEmpty
               ? Image.asset(
-            "${commonImagePath}watermark1.png",
-            height: size.width * numD29,
-            width: size.width,
-            fit: BoxFit.cover,
-          )
+                  "${commonImagePath}watermark1.png",
+                  height: size.width * numD29,
+                  width: size.width,
+                  fit: BoxFit.cover,
+                )
               : Container(),
           Positioned(
             right: size.width * numD02,
             top: size.width * numD02,
             child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD015,
-                  vertical: size.width * 0.005,
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * numD015,
+                vertical: size.width * 0.005,
+              ),
+              decoration: BoxDecoration(
+                  color: colorLightGreen.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(size.width * numD015)),
+              child: Center(
+                child: Text(
+                  "${item.contentMediaList.length} ",
+                  textAlign: TextAlign.center,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD038,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
                 ),
-                decoration: BoxDecoration(
-                    color: colorLightGreen.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(size.width * numD015)),
-                child: Center(
-                  child: Text(
-                    "${item.contentMediaList.length} ",
-                    textAlign: TextAlign.center,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD038,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
-                  ),
-                ),),
+              ),
+            ),
           ),
           // Positioned(
           //   right: size.width * numD02,
@@ -409,103 +435,102 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
   Widget showImage(String type, String url) {
     return type == "audio"
         ? Container(
-      height: size.width * numD30,
-      width: size.width,
-      padding: EdgeInsets.all(size.width * numD04),
-      decoration: BoxDecoration(
-        color: colorThemePink,
-        border: Border.all(color: colorHint),
-        borderRadius: BorderRadius.circular(size.width * numD04),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(size.width * numD04),
-        child: Padding(
-          padding: EdgeInsets.all(size.width * numD03),
-          child:  Icon(
-            Icons.play_arrow_rounded,
-            size: size.width * numD18,
-            color: Colors.white,
+            height: size.width * numD30,
+            width: size.width,
+            padding: EdgeInsets.all(size.width * numD04),
+            decoration: BoxDecoration(
+              color: colorThemePink,
+              border: Border.all(color: colorHint),
+              borderRadius: BorderRadius.circular(size.width * numD04),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(size.width * numD04),
+              child: Padding(
+                  padding: EdgeInsets.all(size.width * numD03),
+                  child: Icon(
+                    Icons.play_arrow_rounded,
+                    size: size.width * numD18,
+                    color: Colors.white,
+                  )),
+            ),
           )
-        ),
-      ),
-    )
         : type == "pdf"
-        ? Container(
-      height: size.width * numD30,
-      width: size.width,
-      padding: EdgeInsets.all(size.width * numD04),
-      decoration: BoxDecoration(
-        border: Border.all(color: colorHint),
-        borderRadius: BorderRadius.circular(size.width * numD04),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(size.width * numD04),
-        child: Padding(
-          padding: EdgeInsets.all(size.width * numD03),
-          child: Image.asset(
-            "${dummyImagePath}pngImage.png",
-            width: size.width * numD03,
-            height: size.height * numD03,
-          ),
-        ),
-      ),
-    )
-        : type == "doc"
-        ? Container(
-      height: size.width * numD30,
-      width: size.width,
-      padding: EdgeInsets.all(size.width * numD04),
-      decoration: BoxDecoration(
-        border: Border.all(color: colorHint),
-        borderRadius: BorderRadius.circular(size.width * numD04),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(size.width * numD04),
-        child: Padding(
-          padding: EdgeInsets.all(size.width * numD03),
-          child: Image.asset(
-            "${dummyImagePath}doc_black_icon.png",
-            width: size.width * numD03,
-            height: size.height * numD03,
-          ),
-        ),
-      ),
-    )
-        : Image.network(
-      "$contentImageUrl$url",
-      height: size.width * numD30,
-      width: size.width,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Container(
-          alignment: Alignment.topCenter,
-          height: size.width * numD30,
-          width: size.width,
-          child: Center(
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD15,
-              width: size.width * numD15,
-            ),
-          ),
-        );
-      },
-      errorBuilder: (context, exception, stackTrace) {
-        return Container(
-          alignment: Alignment.topCenter,
-          height: size.width * numD30,
-          width: size.width,
-          child: Center(
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD15,
-              width: size.width * numD15,
-            ),
-          ),
-        );
-      },
-    );
+            ? Container(
+                height: size.width * numD30,
+                width: size.width,
+                padding: EdgeInsets.all(size.width * numD04),
+                decoration: BoxDecoration(
+                  border: Border.all(color: colorHint),
+                  borderRadius: BorderRadius.circular(size.width * numD04),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(size.width * numD04),
+                  child: Padding(
+                    padding: EdgeInsets.all(size.width * numD03),
+                    child: Image.asset(
+                      "${dummyImagePath}pngImage.png",
+                      width: size.width * numD03,
+                      height: size.height * numD03,
+                    ),
+                  ),
+                ),
+              )
+            : type == "doc"
+                ? Container(
+                    height: size.width * numD30,
+                    width: size.width,
+                    padding: EdgeInsets.all(size.width * numD04),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: colorHint),
+                      borderRadius: BorderRadius.circular(size.width * numD04),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(size.width * numD04),
+                      child: Padding(
+                        padding: EdgeInsets.all(size.width * numD03),
+                        child: Image.asset(
+                          "${dummyImagePath}doc_black_icon.png",
+                          width: size.width * numD03,
+                          height: size.height * numD03,
+                        ),
+                      ),
+                    ),
+                  )
+                : Image.network(
+                    "$contentImageUrl$url",
+                    height: size.width * numD30,
+                    width: size.width,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        alignment: Alignment.topCenter,
+                        height: size.width * numD30,
+                        width: size.width,
+                        child: Center(
+                          child: Image.asset(
+                            "${commonImagePath}rabbitLogo.png",
+                            height: size.width * numD15,
+                            width: size.width * numD15,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, exception, stackTrace) {
+                      return Container(
+                        alignment: Alignment.topCenter,
+                        height: size.width * numD30,
+                        width: size.width,
+                        child: Center(
+                          child: Image.asset(
+                            "${commonImagePath}rabbitLogo.png",
+                            height: size.width * numD15,
+                            width: size.width * numD15,
+                          ),
+                        ),
+                      );
+                    },
+                  );
   }
 
   Future<void> showBottomSheet(Size size) async {
@@ -515,9 +540,9 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
         useSafeArea: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(size.width * numD085),
-              topRight: Radius.circular(size.width * numD085),
-            )),
+          topLeft: Radius.circular(size.width * numD085),
+          topRight: Radius.circular(size.width * numD085),
+        )),
         builder: (context) {
           return StatefulBuilder(builder: (context, StateSetter stateSetter) {
             return Padding(
@@ -614,7 +639,7 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                       width: size.width,
                       height: size.width * numD13,
                       margin:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                          EdgeInsets.symmetric(horizontal: size.width * numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * numD04,
                       ),
@@ -701,136 +726,136 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                 ),
                 item.name == filterDateText
                     ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        item.fromDate = await commonDatePicker();
-                        item.toDate = null;
-                        int pos = list
-                            .indexWhere((element) => element.isSelected);
-                        if (pos != -1) {
-                          list[pos].isSelected = false;
-                        }
-                        item.isSelected = !item.isSelected;
-                        stateSetter(() {});
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: size.width * numD01,
-                          horizontal: size.width * numD02,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                          BorderRadius.circular(size.width * numD04),
-                          border: Border.all(
-                              width: 1, color: const Color(0xFFDEE7E6)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              item.fromDate != null
-                                  ? dateTimeFormatter(
-                                  dateTime: item.fromDate.toString())
-                                  : 'From Date',
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              item.fromDate = await commonDatePicker();
+                              item.toDate = null;
+                              int pos = list
+                                  .indexWhere((element) => element.isSelected);
+                              if (pos != -1) {
+                                list[pos].isSelected = false;
+                              }
+                              item.isSelected = !item.isSelected;
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: size.width * numD01,
+                                horizontal: size.width * numD02,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.fromDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.fromDate.toString())
+                                        : 'From Date',
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD015,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: size.width * numD015,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_sharp,
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * numD03,
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        if (item.fromDate != null) {
-                          String? pickedDate = await commonDatePicker();
-                          debugPrint("formData=====> ${item.fromDate}");
-                          debugPrint("pickedDate=====> $pickedDate}");
-                          if (pickedDate != null) {
-                            DateTime parseFromDate =
-                            DateTime.parse(item.fromDate!);
-                            DateTime parseToDate =
-                            DateTime.parse(pickedDate);
+                          ),
+                          SizedBox(
+                            width: size.width * numD03,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (item.fromDate != null) {
+                                String? pickedDate = await commonDatePicker();
+                                debugPrint("formData=====> ${item.fromDate}");
+                                debugPrint("pickedDate=====> $pickedDate}");
+                                if (pickedDate != null) {
+                                  DateTime parseFromDate =
+                                      DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate =
+                                      DateTime.parse(pickedDate);
 
-                            debugPrint("parseFromDate : $parseFromDate");
-                            debugPrint("parseToDate : $parseToDate");
+                                  debugPrint("parseFromDate : $parseFromDate");
+                                  debugPrint("parseToDate : $parseToDate");
 
-                            if (parseToDate.isAfter(parseFromDate) ||
-                                parseToDate
-                                    .isAtSameMomentAs(parseFromDate)) {
-                              item.toDate = pickedDate;
-                            } else {
-                              showSnackBar(
-                                  "Date Error",
-                                  "Please select to date above from date",
-                                  Colors.red);
-                            }
-                          }
-                        }
-                        stateSetter(() {});
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: size.width * numD01,
-                          horizontal: size.width * numD02,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                          BorderRadius.circular(size.width * numD04),
-                          border: Border.all(
-                              width: 1, color: const Color(0xFFDEE7E6)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              item.toDate != null
-                                  ? dateTimeFormatter(
-                                  dateTime: item.toDate.toString())
-                                  : 'To Date',
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                                  if (parseToDate.isAfter(parseFromDate) ||
+                                      parseToDate
+                                          .isAtSameMomentAs(parseFromDate)) {
+                                    item.toDate = pickedDate;
+                                  } else {
+                                    showSnackBar(
+                                        "Date Error",
+                                        "Please select to date above from date",
+                                        Colors.red);
+                                  }
+                                }
+                              }
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: size.width * numD01,
+                                horizontal: size.width * numD02,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.toDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.toDate.toString())
+                                        : 'To Date',
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD02,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: size.width * numD02,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_sharp,
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                          ),
+                        ],
+                      )
                     : Text(list[index].name,
-                    style: TextStyle(
-                        fontSize: size.width * numD035,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: "AirbnbCereal_W_Bk"))
+                        style: TextStyle(
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
@@ -1033,6 +1058,7 @@ class MyContentData {
   String mediaHouseName = '';
   String categoryId = '';
   int contentView = 0;
+  int purchasedMediahouseCount = 0;
 
   MyContentData({
     required this.id,
@@ -1063,25 +1089,29 @@ class MyContentData {
     required this.mediaHouseName,
     required this.categoryId,
     required this.contentView,
+    required this.purchasedMediahouseCount,
   });
 
   MyContentData.fromJson(json) {
-    debugPrint("offerCount:::::::${json['offer_content_size'].toString()}");
     id = json["_id"];
     exclusive = json["type"] == "shared" ? false : true;
     dateTime = json["timestamp"].toString();
-
+    purchasedMediahouseCount = (json["purchased_mediahouse"] as List).length;
     time = json["timestamp"].toString();
     title = json["heading"] ?? "";
     textValue = json["description"] ?? "";
     location = json["location"] ?? "";
     latitude = json["latitude"].toString();
     longitude = json["longitude"].toString();
-    amount = json["original_ask_price"] != null ? json["original_ask_price"].toString() : "0";
-    originalAmount = json["original_ask_price"] != null ? json["original_ask_price"].toString() : "0";
+    amount = json["original_ask_price"] != null
+        ? json["original_ask_price"].toString()
+        : "0";
+    originalAmount = json["original_ask_price"] != null
+        ? json["original_ask_price"].toString()
+        : "0";
     contentView = json["content_view_count_by_marketplace_for_app"];
     status = json["status"].toString();
-    discountPercent = json["discount_percent"]??"";
+    discountPercent = json["discount_percent"] ?? "";
     soldStatus = json["sale_status"] ?? '';
 
     paidStatus = json["paid_status"].toString();
@@ -1202,7 +1232,8 @@ class MyContentData {
       mediaHouseName: mediaHouseName ?? this.mediaHouseName,
       categoryId: categoryId ?? this.categoryId,
       contentView: contentView ?? this.contentView,
+      purchasedMediahouseCount:
+          purchasedMediahouseCount ?? this.purchasedMediahouseCount,
     );
   }
-
 }

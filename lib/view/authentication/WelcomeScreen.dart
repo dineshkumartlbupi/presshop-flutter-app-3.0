@@ -12,7 +12,8 @@ class WelcomeScreen extends StatefulWidget {
   bool hideLeading = false;
   String screenType = "";
 
-  WelcomeScreen({super.key, required this.hideLeading,required this.screenType});
+  WelcomeScreen(
+      {super.key, required this.hideLeading, required this.screenType});
 
   @override
   State<StatefulWidget> createState() => WelcomeScreenState();
@@ -25,7 +26,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -37,35 +37,14 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             padding: EdgeInsets.symmetric(
                 horizontal: size.width * numD06, vertical: size.width * numD05),
             children: [
-              Text('${greeting()} $userName,',
+              Text(
+                '${greeting()} $userName,',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
                     fontFamily: "AirbnbCereal",
                     fontSize: size.width * numD07),
               ),
-              Row(
-                children: [
-                  Text("welcome to PRESS",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "AirbnbCereal",
-                        fontSize: size.width * numD07),
-                  ),
-                  Text("HOP",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.italic,
-                        fontFamily: "AirbnbCereal",
-                        fontSize: size.width * numD07),
-                  ),
-                ],
-              ),
-
-
-
               SizedBox(
                 height: size.width * numD02,
               ),
@@ -154,7 +133,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                             width: size.width * numD02,
                           ),
                           Expanded(
-                            child: Text("Added your bank details to start receiving money",
+                            child: Text(
+                                "Added your bank details to start receiving money",
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * numD035,
@@ -165,20 +145,20 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                     SizedBox(
                       height: size.width * numD03,
                     ),
-                   Row(
+                    Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
-                                  Icons.check_circle,
-                                  color: colorThemePink,
-                                  size: size.width * numD06,
-                                ),
-
+                            Icons.check_circle,
+                            color: colorThemePink,
+                            size: size.width * numD06,
+                          ),
                           SizedBox(
                             width: size.width * numD02,
                           ),
                           Expanded(
-                            child: Text("Uploaded documents for your bank verification*",
+                            child: Text(
+                                "Uploaded documents for your bank verification*",
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * numD035,
@@ -189,7 +169,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                     SizedBox(height: size.width * numD04),
                     Text(
                       "* Your documents are in, and Stripe is now reviewing them. This process usually takes 2-3 days. Sit tight – we'll notify you once the verification is complete, and you'll be ready to receive your funds.",
-                   textAlign: TextAlign.start,
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "AirbnbCereal",
@@ -201,7 +181,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               SizedBox(
                 height: size.width * numD15,
               ),
-         /*     Row(
+              /*     Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
@@ -243,25 +223,26 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               SizedBox(
                 height: size.width * numD13,
                 child: commonElevatedButton(
-                   widget.screenType=="publish"?"Submit Your Content":"Finish",
+                    widget.screenType == "publish"
+                        ? "Submit Your Content"
+                        : "Finish",
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, colorThemePink), () {
-                     
-                     if(widget.screenType=="publish"){
-                       Navigator.push(
-                           context,
-                           MaterialPageRoute(
-                               builder: (context) =>
-                                   MyDraftScreen(publishedContent: false,screenType:"welcome")));
-                     }else{
-                       Navigator.push(
-                           context,
-                           MaterialPageRoute(
-                               builder: (context) =>
-                                   Dashboard(initialPosition: 2)));
-                     }
-                
+                  if (widget.screenType == "publish") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyDraftScreen(
+                                publishedContent: false,
+                                screenType: "welcome")));
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)));
+                  }
                 }),
               ),
             ],

@@ -1,4 +1,4 @@
-package com.pro.presshop
+package com.presshop.app
 
 import io.flutter.embedding.android.FlutterActivity
 

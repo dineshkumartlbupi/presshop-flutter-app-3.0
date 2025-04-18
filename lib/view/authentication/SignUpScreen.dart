@@ -386,8 +386,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: 0,
                           suffixIcon: null,
+                          // Capitalize first letter
                           hidePassword: false,
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.name,
                           validator: checkRequiredValidator,
                           enableValidations: true,
                           filled: false,
@@ -692,7 +693,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 debugPrint("pin code===> $value");
                                 if (value.isNotEmpty) {
                                   cityNameController.text =
-                                      value.first.locality ?? '';
+                                      value.first.locality ??
+                                          value.first.subAdministrativeArea ??
+                                          '';
                                   countryNameController.text =
                                       value.first.country ?? '';
                                   postalCodeController.text =

@@ -33,12 +33,14 @@ class MyContentDetailScreen extends StatefulWidget {
   final String paymentStatus;
   final bool exclusive;
   final int offerCount;
+  final int purchasedMediahouseCount;
 
   const MyContentDetailScreen(
       {super.key,
       required this.paymentStatus,
       required this.exclusive,
       required this.offerCount,
+      required this.purchasedMediahouseCount,
       required this.contentId});
 
   @override
@@ -486,6 +488,29 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                           SizedBox(width: size.width * numD018),
                           Text(
                             '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${offerText}s' : offerText}',
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD029,
+                                color: widget.offerCount == 0
+                                    ? Colors.grey
+                                    : colorThemePink,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: size.width * numD02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
+                              color: widget.purchasedMediahouseCount == 0
+                                  ? Colors.grey
+                                  : colorThemePink,
+                              size: size.width * numD042),
+                          SizedBox(width: size.width * numD018),
+                          Text(
+                            '${widget.purchasedMediahouseCount} ${widget.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD029,

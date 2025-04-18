@@ -20,11 +20,11 @@ class CommonTextField extends StatefulWidget {
       required this.validator,
       required this.maxLines,
       required this.borderColor,
-       this.prefix,
+      this.prefix,
       required this.textInputFormatters,
-        this.errorMaxLines,
-       this.onChanged,
-        this.maxLength,
+      this.errorMaxLines,
+      this.onChanged,
+      this.maxLength,
       this.callback,
       this.autofocus,
       this.readOnly});
@@ -68,7 +68,10 @@ class CommonTextFieldState extends State<CommonTextField> {
       obscureText: widget.hidePassword,
       keyboardType: widget.keyboardType,
       maxLines: widget.maxLines,
-      style: TextStyle(color: Colors.black, fontSize: widget.size.width * numD032,fontFamily: 'AirbnbCereal'),
+      style: TextStyle(
+          color: Colors.black,
+          fontSize: widget.size.width * numD032,
+          fontFamily: 'AirbnbCereal'),
       inputFormatters: widget.textInputFormatters,
       onTap: widget.callback,
       maxLength: widget.maxLength,
@@ -76,17 +79,17 @@ class CommonTextFieldState extends State<CommonTextField> {
       autofocus: widget.autofocus ?? true,
       readOnly: widget.readOnly ?? false,
       decoration: InputDecoration(
-        counterText: "",
+          counterText: "",
           filled: widget.filled,
           fillColor: widget.filledColor,
           hintText: widget.hintText,
           errorMaxLines: widget.errorMaxLines,
           errorStyle: const TextStyle(
-            color: colorThemePink,
-            fontFamily: "AirbnbCereal"
-          ),
-          hintStyle:
-              TextStyle(color: colorHint, fontSize: widget.size.width * numD035,fontFamily: 'AirbnbCereal'),
+              color: colorThemePink, fontFamily: "AirbnbCereal"),
+          hintStyle: TextStyle(
+              color: colorHint,
+              fontSize: widget.size.width * numD035,
+              fontFamily: 'AirbnbCereal'),
           disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.size.width * 0.03),
               borderSide: BorderSide(width: 1, color: widget.borderColor)),
@@ -120,10 +123,10 @@ class CommonTextFieldState extends State<CommonTextField> {
               BoxConstraints(maxHeight: widget.suffixIconIconHeight),
           suffixIconColor:
               widget.hidePassword ? colorTextFieldIcon : Colors.grey,
-      contentPadding: EdgeInsets.symmetric(vertical: widget.size.width*numD02)
-      ),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: widget.size.width * numD02)),
       textAlignVertical: TextAlignVertical.center,
-      textCapitalization: TextCapitalization.none,
+      textCapitalization: TextCapitalization.words,
       onChanged: widget.onChanged,
       validator: widget.validator,
       autovalidateMode: widget.enableValidations

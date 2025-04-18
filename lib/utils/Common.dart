@@ -5,9 +5,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
-//const googleMapAPiKey = "AIzaSyAzccAqyrfD-V43gI9eBXqLf0qpqlm0Gu0";
+//const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
 const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
-const appleMapAPiKey = "AIzaSyBY2NyNIgOE6eh-H3EdqXZ-grlcgkOLaqY";
+//const appleMapAPiKey = "AIzaSyAIaPQyvLdlGaTG-AgFe0rzAlAkGK-JIJI";
+const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 
 ///------WebUrls------
 const oldbaseUrl = "https://developers.promaticstechnologies.com:5019/";
@@ -706,6 +707,7 @@ const chatWithPublicationsText = "Chat with publications";
 const contentsText = "Contents";
 const multipleText = "Multiple";
 const offerText = "offer";
+const sold = "sold";
 const clearAllText = "Clear all";
 
 /// Client Provided String

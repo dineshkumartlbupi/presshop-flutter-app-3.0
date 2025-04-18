@@ -1111,52 +1111,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               Positioned(
                                 right: size.width * numD02,
                                 top: size.width * numD02,
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD01,
-                                        vertical: size.width * 0.002),
-                                    decoration: BoxDecoration(
-                                        color: colorLightGreen.withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * numD015)),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * 0.005,
-                                        vertical: size.width * 0.005,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "${widget.transactionData!.contentDataList.length}",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD04,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD01,
-                                          ),
-                                          Image.asset(
-                                            item.mediaType == "image"
-                                                ? "${iconsPath}ic_camera_publish.png"
-                                                : item.mediaType == "video"
-                                                    ? "${iconsPath}ic_v_cam.png"
-                                                    : item.mediaType == "audio"
-                                                        ? "${iconsPath}ic_mic.png"
-                                                        : "${iconsPath}doc_icon.png",
-                                            color: Colors.white,
-                                            height: item.mediaType == "video"
-                                                ? size.width * numD09
-                                                : item.mediaType == "image"
-                                                    ? size.width * numD04
-                                                    : item.mediaType == "audio"
-                                                        ? size.width * numD08
-                                                        : size.width * numD1,
-                                          ),
-                                        ],
-                                      ),
-                                    )),
+                                child: Column(
+                                  children: getMediaCount2(
+                                      widget.transactionData!.contentDataList,
+                                      size),
+                                ),
                               ),
                               /* Positioned(
                                 right: size.width * numD02,
@@ -1401,7 +1360,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£ ${formatDouble(double.parse(widget.transactionData!.percentage))}",
+                      "£ ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
