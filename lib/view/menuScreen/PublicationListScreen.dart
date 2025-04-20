@@ -404,7 +404,9 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                     item.typesOfContent
                                         ? "${iconsPath}ic_exclusive.png"
                                         : "${iconsPath}ic_share.png",
-                                    height: item.typesOfContent ? size.width * numD075 : size.width * numD07,
+                                    height: item.typesOfContent
+                                        ? size.width * numD075
+                                        : size.width * numD07,
                                     width: size.width * numD09,
                                     color: colorTextFieldIcon,
                                   ),
@@ -412,19 +414,22 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                     width: size.width * numD03,
                                   ),
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(size.width * numD03),
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03),
                                     child: CachedNetworkImage(
                                       imageUrl: item.contentImage,
                                       height: size.width * numD11,
                                       width: size.width * numD12,
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => Image.asset(
+                                      placeholder: (context, url) =>
+                                          Image.asset(
                                         "assets/dummyImages/placeholderImage.png",
                                         fit: BoxFit.cover,
                                         height: size.width * numD11,
                                         width: size.width * numD12,
                                       ),
-                                      errorWidget: (context, url, error) => Image.asset(
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
                                         "assets/commonImages/no_image.jpg",
                                         fit: BoxFit.cover,
                                         height: size.width * numD11,
@@ -626,8 +631,8 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                         ? "${iconsPath}ic_exclusive.png"
                                         : "${iconsPath}ic_share.png",
                                     height: item.typesOfContent
-                                        ? size.width * numD03
-                                        : size.width * numD04,
+                                        ? size.width * numD075
+                                        : size.width * numD07,
                                     color: colorTextFieldIcon,
                                   ),
                                   SizedBox(
@@ -697,7 +702,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 ),
                                 Text(
                                   item.payableCommission.isNotEmpty
-                                      ? "£${formatDouble(double.parse(item.percentage))}"
+                                      ? "£${formatDouble(double.parse(item.payableCommission))}"
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
@@ -1362,7 +1367,9 @@ class _PublicationListScreenState extends State<PublicationListScreen>
               .map((e) => EarningTransactionDetail.fromJson(e))
               .toList();
           if (earningData != null) {
-            for (var item in publicationTransactionList) {item.hopperAvatar = earningData?.avatar ?? "";}
+            for (var item in publicationTransactionList) {
+              item.hopperAvatar = earningData?.avatar ?? "";
+            }
           }
           setState(() {});
           break;

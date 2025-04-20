@@ -636,7 +636,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             inputDecoration: InputDecoration(
                               border: InputBorder.none,
                               filled: false,
-                              contentPadding: EdgeInsets.symmetric(vertical: 2),
                               hintText:
                                   "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
                               hintStyle: TextStyle(

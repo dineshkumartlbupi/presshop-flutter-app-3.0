@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.750460561502-2gme7cprutkh18gkqlsmhk03eg36mfpu</string>
+				<string>com.googleusercontent.apps.750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0</string>
 			</array>
 		</dict>
 	</array>
@@ -92,6 +92,8 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>GIDClientID</key>
+	<string>750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com</string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>

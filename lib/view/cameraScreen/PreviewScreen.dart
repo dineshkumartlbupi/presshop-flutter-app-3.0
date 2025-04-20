@@ -220,24 +220,6 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                           gaplessPlayback: true,
                                                         ),
                                             ),
-                          mediaList.isNotEmpty && mediaList.length > 1
-                              ? Padding(
-                                  padding: EdgeInsets.only(
-                                      bottom: mediaList[index]
-                                              .mimeType
-                                              .contains("video")
-                                          ? size.width * numD08
-                                          : 0),
-                                  child: DotsIndicator(
-                                    dotsCount: mediaList.length,
-                                    position: currentPage,
-                                    decorator: const DotsDecorator(
-                                      color: Colors.grey, // Inactive color
-                                      activeColor: Colors.redAccent,
-                                    ),
-                                  ),
-                                )
-                              : Container(),
                           Container(
                             margin: EdgeInsets.only(
                                 bottom: mediaList[index].mimeType == "video"
@@ -391,6 +373,29 @@ class PreviewScreenState extends State<PreviewScreen> {
                               ),
                             ),
                           ),
+                          Positioned(
+                            bottom: 0,
+                            child: mediaList.isNotEmpty && mediaList.length > 1
+                                ? Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: mediaList[index]
+                                                .mimeType
+                                                .contains("video")
+                                            ? size.width * numD08
+                                            : 0),
+                                    child: DotsIndicator(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      dotsCount: mediaList.length,
+                                      position: currentPage,
+                                      decorator: const DotsDecorator(
+                                        color: Colors.grey, // Inactive color
+                                        activeColor: Colors.redAccent,
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          )
                         ],
                       ),
                     );

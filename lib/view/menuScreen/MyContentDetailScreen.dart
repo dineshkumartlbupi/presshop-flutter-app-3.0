@@ -16,11 +16,13 @@ import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../utils/CommonModel.dart';
+import '../../utils/manage_content_widget.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
 import '../myEarning/earningDataModel.dart';
@@ -54,6 +56,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
   MyContentData? myContentData;
+  List<dynamic> chatList = [];
   FlickManager? flickManager;
   AudioPlayer audioPlayer = AudioPlayer();
   PlayerController controller = PlayerController();
@@ -160,10 +163,30 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                         lineHeight: 2,
                                         fontWeight: FontWeight.normal),
                                   ),
+                                  if (chatList.isNotEmpty) ...[
+                                    SizedBox(
+                                      height: size.width * numD02,
+                                    ),
+                                    const Divider(color: colorGrey1),
+                                    SizedBox(
+                                      height: size.width * numD02,
+                                    ),
+                                    ListView.builder(
+                                      itemBuilder: (context, index) {
+                                        return ManageContentWidget(
+                                            chatList[index]);
+                                      },
+                                      itemCount: chatList.length,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                    ),
+                                  ],
                                   SizedBox(
                                     height: size.width * numD02,
                                   ),
                                   const Divider(color: colorGrey1),
+
                                   Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -173,36 +196,58 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                         SizedBox(
                                           height: size.width * numD13,
                                           width: size.width,
-                                          child: commonElevatedButton(
-                                              manageContentText,
-                                              size,
-                                              commonButtonTextStyle(size),
-                                              commonButtonStyle(
-                                                  size, colorThemePink), () {
-                                            debugPrint(
-                                                "_currentMediaIndex =0;");
-                                            Navigator.of(context)
-                                                .push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ManageTaskScreen(
-                                                            roomId:
-                                                                myContentData!
+                                          child: Stack(
+                                            children: [
+                                              SizedBox(
+                                                height: size.width * numD13,
+                                                width: size.width,
+                                                child: Shimmer.fromColors(
+                                                  period: Duration(seconds: 2),
+                                                  baseColor: colorThemePink,
+                                                  highlightColor: Colors.white,
+                                                  child: commonElevatedButton(
+                                                      manageContentText,
+                                                      size,
+                                                      commonButtonTextStyle(
+                                                          size),
+                                                      commonButtonStyle(
+                                                          size, Colors.white),
+                                                      () {
+                                                    debugPrint(
+                                                        "_currentMediaIndex =0;");
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder: (context) => ManageTaskScreen(
+                                                                roomId: myContentData!
                                                                     .id,
-                                                            contentId:
-                                                                myContentData!
-                                                                    .id,
-                                                            type: 'content',
-                                                            mediaHouseDetail:
-                                                                null,
-                                                            contentMedia:
-                                                                showMediaWidget(),
-                                                            contentHeader:
-                                                                headerWidget(),
-                                                            myContentData:
-                                                                myContentData)))
-                                                .then((value) =>
-                                                    myContentDetailApi());
-                                          }),
+                                                                contentId:
+                                                                    myContentData!
+                                                                        .id,
+                                                                type: 'content',
+                                                                mediaHouseDetail:
+                                                                    null,
+                                                                contentMedia:
+                                                                    showMediaWidget(),
+                                                                contentHeader:
+                                                                    headerWidget(),
+                                                                myContentData:
+                                                                    myContentData)))
+                                                        .then((value) =>
+                                                            myContentDetailApi());
+                                                  }),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  manageContentText,
+                                                  style: commonButtonTextStyle(
+                                                      size),
+                                                  selectionColor: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         SizedBox(
                                           height: size.width * numD05,
@@ -480,6 +525,30 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ImageIcon(
+                                  const AssetImage("${iconsPath}dollar1.png"),
+                                  color: widget.purchasedMediahouseCount == 0
+                                      ? Colors.grey
+                                      : colorThemePink,
+                                  size: size.width * numD042),
+                              SizedBox(width: size.width * numD018),
+                              Text(
+                                '${widget.purchasedMediahouseCount} ${widget.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD029,
+                                    color: widget.purchasedMediahouseCount == 0
+                                        ? Colors.grey
+                                        : colorThemePink,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: size.width * numD02),
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
                               color: widget.offerCount == 0
                                   ? Colors.grey
@@ -488,29 +557,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                           SizedBox(width: size.width * numD018),
                           Text(
                             '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${offerText}s' : offerText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD029,
-                                color: widget.offerCount == 0
-                                    ? Colors.grey
-                                    : colorThemePink,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: size.width * numD02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.purchasedMediahouseCount == 0
-                                  ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD042),
-                          SizedBox(width: size.width * numD018),
-                          Text(
-                            '${widget.purchasedMediahouseCount} ${widget.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD029,
@@ -635,14 +681,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
             Container(
               width: size.width * numD30,
               padding: EdgeInsets.symmetric(vertical: size.width * numD012),
-              /*    padding: EdgeInsets.symmetric(
-                  horizontal: myContentData!.paidStatus == unPaidText
-                      ? size.width * numD06
-                      : myContentData!.paidStatus == paidText &&
-                              !myContentData!.isPaidStatusToHopper
-                          ? size.width * numD04
-                          : size.width * numD06,
-                  vertical: size.width * numD01),*/
               decoration: BoxDecoration(
                   color: myContentData!.paidStatus == unPaidText
                       ? colorThemePink
@@ -1239,6 +1277,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
               Future.delayed(const Duration(microseconds: 500), () {
                 callGetAllTransactionDetail();
               });
+            }
+
+            if (map['chat'] != null) {
+              chatList = map['chat'] as List;
             }
           }
           break;

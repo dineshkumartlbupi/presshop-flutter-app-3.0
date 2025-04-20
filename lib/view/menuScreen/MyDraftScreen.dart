@@ -23,7 +23,8 @@ class MyDraftScreen extends StatefulWidget {
   bool publishedContent = false;
   String screenType = "";
 
-  MyDraftScreen({super.key, required this.publishedContent, required this.screenType});
+  MyDraftScreen(
+      {super.key, required this.publishedContent, required this.screenType});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,7 +32,8 @@ class MyDraftScreen extends StatefulWidget {
   }
 }
 
-class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse {
+class MyDraftScreenState extends State<MyDraftScreen>
+    implements NetworkResponse {
   late Size size;
   List<MyContentData> myDraftList = [];
   String selectedSellType = sharedText;
@@ -60,7 +62,10 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
     return WillPopScope(
       onWillPop: () async {
         if (widget.publishedContent || widget.screenType == "welcome") {
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => Dashboard(initialPosition: 2)),
+              (route) => false);
         } else {
           Navigator.pop(context);
         }
@@ -72,7 +77,10 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
           elevation: 0,
           title: Text(
             myDraftText,
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: size.width * appBarHeadingFontSize),
           ),
           centerTitle: false,
           titleSpacing: 0,
@@ -94,7 +102,10 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
               margin: EdgeInsets.only(bottom: size.width * numD02),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => Dashboard(initialPosition: 2)),
+                      (route) => false);
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
@@ -118,7 +129,9 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                   onRefresh: _onRefresh,
                   controller: _refreshController,
                   child: ListView.separated(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD04),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * numD04,
+                          vertical: size.width * numD04),
                       itemBuilder: (context, index) {
                         var item = myDraftList[index];
                         return InkWell(
@@ -133,11 +146,16 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                     )));
                           },
                           child: Container(
-                            padding: EdgeInsets.only(left: size.width * numD03, right: size.width * numD03, top: size.width * numD03),
+                            padding: EdgeInsets.only(
+                                left: size.width * numD03,
+                                right: size.width * numD03,
+                                top: size.width * numD03),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                item.contentMediaList.isNotEmpty ? mediaWidget(item) : Text("No media found."),
+                                item.contentMediaList.isNotEmpty
+                                    ? mediaWidget(item)
+                                    : Text("No media found."),
                                 SizedBox(
                                   height: size.width * numD02,
                                 ),
@@ -145,11 +163,24 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Expanded(
-                                      child: Text(myDraftList[index].textValue.toCapitalized(), maxLines: 2, overflow: TextOverflow.ellipsis, style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, lineHeight: 1.5, fontWeight: FontWeight.w600)),
+                                      child: Text(
+                                          myDraftList[index]
+                                              .textValue
+                                              .toCapitalized(),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD035,
+                                              color: Colors.black,
+                                              lineHeight: 1.5,
+                                              fontWeight: FontWeight.w600)),
                                     ),
                                     SizedBox(height: size.width * numD02),
                                     Image.asset(
-                                      myDraftList[index].exclusive ? "${iconsPath}ic_exclusive.png" : "${iconsPath}ic_share.png",
+                                      myDraftList[index].exclusive
+                                          ? "${iconsPath}ic_exclusive.png"
+                                          : "${iconsPath}ic_share.png",
                                       height: size.width * numD035,
                                       color: colorTextFieldIcon,
                                     ),
@@ -157,8 +188,14 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                       width: size.width * numD02,
                                     ),
                                     Text(
-                                      myDraftList[index].exclusive ? exclusiveText : sharedText,
-                                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.normal),
+                                      myDraftList[index].exclusive
+                                          ? exclusiveText
+                                          : sharedText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
@@ -176,8 +213,15 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                       width: size.width * numD01,
                                     ),
                                     Text(
-                                      dateTimeFormatter(dateTime: item.time.toString(), format: "hh:mm a, dd MMM yyyy", utc: true),
-                                      style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                      dateTimeFormatter(
+                                          dateTime: item.time.toString(),
+                                          format: "hh:mm a, dd MMM yyyy",
+                                          utc: true),
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD028,
+                                          color: colorHint,
+                                          fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
@@ -198,7 +242,11 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                       child: Text(
                                         item.location,
                                         overflow: TextOverflow.ellipsis,
-                                        style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD028,
+                                            color: colorHint,
+                                            fontWeight: FontWeight.normal),
                                       ),
                                     )
                                   ],
@@ -208,7 +256,12 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                 ),
                                 Text(
                                   "${myDraftList[index].leftPercent}% left to complete",
-                                  style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, lineHeight: 1.5, fontWeight: FontWeight.normal),
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: Colors.black,
+                                      lineHeight: 1.5,
+                                      fontWeight: FontWeight.normal),
                                 ),
                                 SizedBox(
                                   height: size.width * numD02,
@@ -220,7 +273,10 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                     trackHeight: size.width * numD025,
                                   ),
                                   child: Slider(
-                                    value: 100.0 - double.parse(myDraftList[index].leftPercent.toString()),
+                                    value: 100.0 -
+                                        double.parse(myDraftList[index]
+                                            .leftPercent
+                                            .toString()),
                                     min: 0.0,
                                     max: 100.0,
                                     inactiveColor: colorLightGrey,
@@ -255,13 +311,24 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
   /// Load Filter And Sort
   void initializeFilter() {
     sortList.addAll([
-      FilterModel(name: viewMonthlyText, icon: "ic_monthly_calendar.png", isSelected: false),
-      FilterModel(name: viewYearlyText, icon: "ic_yearly_calendar.png", isSelected: false),
-      FilterModel(name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+      FilterModel(
+          name: viewMonthlyText,
+          icon: "ic_monthly_calendar.png",
+          isSelected: false),
+      FilterModel(
+          name: viewYearlyText,
+          icon: "ic_yearly_calendar.png",
+          isSelected: false),
+      FilterModel(
+          name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
     ]);
     filterList.addAll([
-      FilterModel(name: allExclusiveContentText, icon: "ic_exclusive.png", isSelected: false),
-      FilterModel(name: allSharedContentText, icon: "ic_share.png", isSelected: false),
+      FilterModel(
+          name: allExclusiveContentText,
+          icon: "ic_exclusive.png",
+          isSelected: false),
+      FilterModel(
+          name: allSharedContentText, icon: "ic_share.png", isSelected: false),
     ]);
   }
 
@@ -293,7 +360,9 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
         children: [
           showImage(
             item.contentMediaList.first.mediaType,
-            item.contentMediaList.first.mediaType == "video" ? item.contentMediaList.first.thumbNail : item.contentMediaList.first.media,
+            item.contentMediaList.first.mediaType == "video"
+                ? item.contentMediaList.first.thumbNail
+                : item.contentMediaList.first.media,
           ), // item.contentMediaList
           Positioned(
               right: size.width * numD02,
@@ -308,12 +377,16 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
               bottom: size.width * numD02,
               child: Text(
                 "+${item.contentMediaList.length - 1}",
-                style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.white, fontWeight: FontWeight.w600),
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * numD04,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600),
               ),
             ),
           ),
           Visibility(
-            visible:true,
+            visible: true,
             child: Image.asset(
               "${commonImagePath}watermark1.png",
               height: size.width * numD50,
@@ -356,7 +429,7 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                   )
                 : Image.network(
                     //  "$contentImageUrl$url",
-                    "$imageUrlBefore$url",
+                    "$contentImageUrl$url",
                     height: size.width * numD50,
                     width: size.width,
                     fit: BoxFit.cover,
@@ -410,7 +483,11 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                         ),
                         Text(
                           "Sort and Filter",
-                          style: commonTextStyle(size: size, fontSize: size.width * appBarHeadingFontSizeNew, color: Colors.black, fontWeight: FontWeight.bold),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * appBarHeadingFontSizeNew,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () {
@@ -421,7 +498,10 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                           },
                           child: Text(
                             "Clear all",
-                            style: TextStyle(color: colorThemePink, fontWeight: FontWeight.w400, fontSize: size.width * numD035),
+                            style: TextStyle(
+                                color: colorThemePink,
+                                fontWeight: FontWeight.w400,
+                                fontSize: size.width * numD035),
                           ),
                         ),
                       ],
@@ -435,7 +515,11 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                     /// Sort Heading
                     Text(
                       sortText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
                     ),
 
                     filterListWidget(sortList, stateSetter, size, true),
@@ -448,7 +532,11 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                     /// Filter Heading
                     Text(
                       filterText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
                     ),
 
                     filterListWidget(filterList, stateSetter, size, false),
@@ -460,11 +548,20 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                     Container(
                       width: size.width,
                       height: size.width * numD13,
-                      margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: size.width * numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * numD04,
                       ),
-                      child: commonElevatedButton(applyText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(
+                          applyText,
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
                         myDraftApi();
                       }),
@@ -480,7 +577,8 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
         });
   }
 
-  Widget filterListWidget(List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
+  Widget filterListWidget(
+      List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD03),
       physics: const NeverScrollableScrollPhysics(),
@@ -504,8 +602,12 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
-              bottom: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
+              top: list[index].name == filterDateText
+                  ? size.width * 0
+                  : size.width * numD025,
+              bottom: list[index].name == filterDateText
+                  ? size.width * 0
+                  : size.width * numD025,
               left: size.width * numD02,
               right: size.width * numD02,
             ),
@@ -515,8 +617,12 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                 Image.asset(
                   "$iconsPath${list[index].icon}",
                   color: Colors.black,
-                  height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
-                  width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                  height: list[index].name == soldContentText
+                      ? size.width * numD06
+                      : size.width * numD05,
+                  width: list[index].name == soldContentText
+                      ? size.width * numD06
+                      : size.width * numD05,
                 ),
                 SizedBox(
                   width: size.width * numD03,
@@ -529,7 +635,8 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                             onTap: () async {
                               item.fromDate = await commonDatePicker();
                               item.toDate = null;
-                              int pos = list.indexWhere((element) => element.isSelected);
+                              int pos = list
+                                  .indexWhere((element) => element.isSelected);
                               if (pos != -1) {
                                 list[pos].isSelected = false;
                               }
@@ -546,15 +653,25 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(size.width * numD04),
-                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.fromDate != null ? dateTimeFormatter(dateTime: item.fromDate.toString()) : fromText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
+                                    item.fromDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.fromDate.toString())
+                                        : fromText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD032,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD015,
@@ -576,16 +693,23 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate = DateTime.parse(pickedDate);
+                                  DateTime parseFromDate =
+                                      DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate =
+                                      DateTime.parse(pickedDate);
 
                                   debugPrint("parseFromDate : $parseFromDate");
                                   debugPrint("parseToDate : $parseToDate");
 
-                                  if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
+                                  if (parseToDate.isAfter(parseFromDate) ||
+                                      parseToDate
+                                          .isAtSameMomentAs(parseFromDate)) {
                                     item.toDate = pickedDate;
                                   } else {
-                                    showSnackBar("Date Error", "Please select to date above from date", Colors.red);
+                                    showSnackBar(
+                                        "Date Error",
+                                        "Please select to date above from date",
+                                        Colors.red);
                                   }
                                 }
                               }
@@ -601,15 +725,25 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(size.width * numD04),
-                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.toDate != null ? dateTimeFormatter(dateTime: item.toDate.toString()) : toText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
+                                    item.toDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.toDate.toString())
+                                        : toText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD032,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD02,
@@ -624,7 +758,12 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
                           ),
                         ],
                       )
-                    : Text(list[index].name, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal_W_Bk"))
+                    : Text(list[index].name,
+                        style: TextStyle(
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
@@ -674,7 +813,8 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
       }
     }
 
-    NetworkClass(myDraftUrl, this, myDraftUrlRequest).callRequestServiceHeader(true, "get", params);
+    NetworkClass(myDraftUrl, this, myDraftUrlRequest)
+        .callRequestServiceHeader(true, "get", params);
   }
 
   updateDraftListAPI(String contentId) {
@@ -682,7 +822,9 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
       'content_id': contentId,
     };
 
-    NetworkClass.fromNetworkClass(removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map).callRequestServiceHeader(true, "patch", null);
+    NetworkClass.fromNetworkClass(
+            removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map)
+        .callRequestServiceHeader(true, "patch", null);
   }
 
   @override
@@ -708,7 +850,8 @@ class MyDraftScreenState extends State<MyDraftScreen> implements NetworkResponse
             log("myDraftUrlRequest success: $data");
             if (data != null) {
               var listModel = data["contentList"] as List;
-              var list = listModel.map((e) => MyContentData.fromJson(e)).toList();
+              var list =
+                  listModel.map((e) => MyContentData.fromJson(e)).toList();
               if (list.isNotEmpty) {
                 _refreshController.loadComplete();
               } else if (list.isEmpty) {
@@ -757,7 +900,8 @@ class MyDraftData {
 
   MyDraftData.fromJson(json) {
     exclusive = json["type"] == "shared" ? false : true;
-    time = changeDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", json["timestamp"], "HH:mm, dd MMM, yyyy");
+    time = changeDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", json["timestamp"],
+        "HH:mm, dd MMM, yyyy");
     textValue = json["description"];
     location = json["location"];
     latitude = json["latitude"].toString();
@@ -766,7 +910,8 @@ class MyDraftData {
 
     if (json["content"] != null) {
       var contentList = json["content"] as List;
-      contentMediaList = contentList.map((e) => ContentMediaData.fromJson(e)).toList();
+      contentMediaList =
+          contentList.map((e) => ContentMediaData.fromJson(e)).toList();
     }
 
     if (json["tagData"] != null) {
@@ -818,7 +963,8 @@ class ContentMediaData {
   String thumbNail = "";
   String waterMark = "";
 
-  ContentMediaData(this.id, this.media, this.mediaType, this.thumbNail, this.waterMark);
+  ContentMediaData(
+      this.id, this.media, this.mediaType, this.thumbNail, this.waterMark);
 
   ContentMediaData.fromJson(json) {
     id = json["_id"].toString();

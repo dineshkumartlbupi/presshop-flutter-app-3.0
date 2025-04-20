@@ -224,13 +224,13 @@ class MyContentScreenState extends State<MyContentScreen>
                             ? Colors.grey
                             : colorThemePink,
                       ),
-                      SizedBox(width: size.width * numD005),
+                      SizedBox(width: size.width * numD013),
                       Text(
                         '${item.purchasedMediahouseCount.toString()} ${item.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD026,
-                            color: item.contentView == 0
+                            color: item.purchasedMediahouseCount == 0
                                 ? Colors.grey
                                 : colorThemePink,
                             fontWeight: FontWeight.normal),
@@ -246,7 +246,7 @@ class MyContentScreenState extends State<MyContentScreen>
                     children: [
                       Image.asset(
                         "${iconsPath}dollar1.png",
-                        height: size.width * numD032,
+                        height: size.width * numD024,
                         color:
                             item.offerCount == 0 ? Colors.grey : colorThemePink,
                       ),
@@ -271,12 +271,12 @@ class MyContentScreenState extends State<MyContentScreen>
                     children: [
                       Image.asset(
                         "${iconsPath}ic_view.png",
-                        height: size.width * numD024,
+                        height: size.width * numD019,
                         color: item.contentView == 0
                             ? Colors.grey
                             : colorThemePink,
                       ),
-                      SizedBox(width: size.width * numD005),
+                      SizedBox(width: size.width * numD013),
                       Text(
                         '${item.contentView.toString()} ${item.contentView > 1 ? '${viewsText}s' : viewsText}',
                         style: commonTextStyle(

@@ -41,7 +41,7 @@ class MenuScreen extends StatefulWidget {
 class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
   List<MenuData> menuList = [];
   int notificationCount = 0;
-  String? selectedCurrency="GBP";
+  String? selectedCurrency = "GBP";
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        if(menuList[index].name=="Choose currency"){
+                        if (menuList[index].name == "Choose currency") {
                           _showCurrencyBottomSheet(context);
                           return;
                         }
@@ -175,15 +175,19 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                                 : Stack(
                                     alignment: Alignment.topRight,
                                     children: [
-                                      menuList[index].name == "Alerts"  || menuList[index].name == "Choose currency" ?  ImageIcon(
-                                        AssetImage(menuList[index].icon),
-                                        size: size.width * numD072,
-                                        color: Colors.black,
-                                      ): ImageIcon(
-                                        AssetImage(menuList[index].icon),
-                                        size: size.width * numD06,
-                                        color: Colors.black,
-                                      ),
+                                      menuList[index].name == "Alerts" ||
+                                              menuList[index].name ==
+                                                  "Choose currency"
+                                          ? ImageIcon(
+                                              AssetImage(menuList[index].icon),
+                                              size: size.width * numD072,
+                                              color: Colors.black,
+                                            )
+                                          : ImageIcon(
+                                              AssetImage(menuList[index].icon),
+                                              size: size.width * numD06,
+                                              color: Colors.black,
+                                            ),
                                       menuList[index].name == "Alerts"
                                           ? Container(
                                               margin: EdgeInsets.only(
@@ -221,18 +225,20 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                                   ? size.width * numD015
                                   : size.width * numD03,
                             ),
-                            menuList[index].name == "$contactText PressHop"  // (client asked to lower case)
+                            menuList[index].name ==
+                                    "$contactText PressHop" // (client asked to lower case)
                                 ? Row(
                                     children: [
-                                      Text("Contact Press"
-                                        /*"Contact PRESS"*/, //client demand lowercase
+                                      Text(
+                                        "Contact Press" /*"Contact PRESS"*/, //client demand lowercase
                                         style: TextStyle(
                                             fontSize: size.width * numD035,
                                             color: Colors.black,
                                             fontFamily: "AirbnbCereal",
                                             fontWeight: FontWeight.normal),
                                       ),
-                                      Text("Hop",
+                                      Text(
+                                        "Hop",
                                         // "HOP",  // client asked to lowercase
                                         style: TextStyle(
                                             fontSize: size.width * numD035,
@@ -326,14 +332,14 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         name: paymentMethodText,
         icon: "${iconsPath}ic_payment_method.png",
         classWidget: const MyBanksScreen()));
-    menuList.add(MenuData(
-        name: chooseCurrencyText,
-        icon: "${iconsPath}choose_currency.png",
-        classWidget: const MyBanksScreen()));
-    menuList.add(MenuData(
-        name: "Alerts",
-        icon: "${iconsPath}ic_alert.png",
-        classWidget: const AlertScreen()));
+    // menuList.add(MenuData(
+    //     name: chooseCurrencyText,
+    //     icon: "${iconsPath}choose_currency.png",
+    //     classWidget: const MyBanksScreen()));
+    // menuList.add(MenuData(
+    //     name: "Alerts",
+    //     icon: "${iconsPath}ic_alert.png",
+    //     classWidget: const AlertScreen()));
     menuList.add(MenuData(
         name: notificationText,
         icon: "${iconsPath}ic_feed.png",
@@ -394,15 +400,13 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         icon: "${iconsPath}ic_change_password.png",
         classWidget: const ChangePasswordScreen()));
     menuList.add(MenuData(
-        name: "$contactText PressHop",   //client asked to lower case
+        name: "$contactText PressHop", //client asked to lower case
         icon: "${iconsPath}ic_contact_us.png",
         classWidget: const ContactUsScreen()));
     menuList.add(MenuData(
         name: logoutText,
         icon: "${iconsPath}ic_logout.png",
         classWidget: const LoginScreen()));
-
-
   }
 
   void logoutDialog(Size size) {
@@ -847,7 +851,6 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
       ),
     );
   }
-
 }
 
 class MenuData {

@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:file_picker/file_picker.dart';
@@ -2891,17 +2892,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.myContentData?.offerCount == 0
+                              color: widget.myContentData
+                                          ?.purchasedMediahouseCount ==
+                                      0
                                   ? Colors.grey
                                   : colorThemePink,
                               size: size.width * numD042),
                           SizedBox(width: size.width * numD018),
                           Text(
-                            '${widget.myContentData?.offerCount} ${widget.myContentData!.offerCount > 1 ? '${offerText}s' : offerText}',
+                            '${widget.myContentData?.purchasedMediahouseCount} ${widget.myContentData!.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD029,
-                                color: widget.myContentData?.offerCount == 0
+                                color: widget.myContentData
+                                            ?.purchasedMediahouseCount ==
+                                        0
                                     ? Colors.grey
                                     : colorThemePink,
                                 fontWeight: FontWeight.normal),
@@ -2917,15 +2922,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.myContentData
-                                          ?.purchasedMediahouseCount ==
-                                      0
+                              color: widget.myContentData?.offerCount == 0
                                   ? Colors.grey
                                   : colorThemePink,
                               size: size.width * numD042),
                           SizedBox(width: size.width * numD018),
                           Text(
-                            '${widget.myContentData?.purchasedMediahouseCount} ${widget.myContentData!.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                            '${widget.myContentData?.offerCount} ${widget.myContentData!.offerCount > 1 ? '${offerText}s' : offerText}',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD029,
@@ -3652,36 +3655,57 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           // ),
                         ])),
                   ),
-                  Container(
-                      margin: EdgeInsets.only(left: size.width * numD01),
-                      width: size.width * numD13,
-                      height: size.width * numD13,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD03),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.shade200, spreadRadius: 1)
-                          ]),
-                      child: ClipOval(
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.network(
-                          item.mediaHouseImage,
-                          fit: BoxFit.contain,
-                          height: size.width * numD20,
-                          width: size.width * numD20,
-                          errorBuilder: (BuildContext context, Object exception,
-                              StackTrace? stackTrace) {
-                            return Image.asset(
-                              "${dummyImagePath}news.png",
-                              fit: BoxFit.contain,
-                              width: size.width * numD20,
-                              height: size.width * numD20,
-                            );
-                          },
-                        ),
-                      )),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    child: CachedNetworkImage(
+                      imageUrl: item.mediaHouseImage,
+                      height: size.width * numD11,
+                      width: size.width * numD12,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Image.asset(
+                        "assets/dummyImages/placeholderImage.png",
+                        fit: BoxFit.cover,
+                        height: size.width * numD11,
+                        width: size.width * numD12,
+                      ),
+                      errorWidget: (context, url, error) => Image.asset(
+                        "assets/commonImages/no_image.jpg",
+                        fit: BoxFit.cover,
+                        height: size.width * numD11,
+                        width: size.width * numD12,
+                      ),
+                    ),
+                  ),
+                  // Container(
+                  //     margin: EdgeInsets.only(left: size.width * numD01),
+                  //     width: size.width * numD13,
+                  //     height: size.width * numD13,
+                  //     decoration: BoxDecoration(
+                  //         color: Colors.white,
+                  //         borderRadius:
+                  //             BorderRadius.circular(size.width * numD03),
+                  //         boxShadow: [
+                  //           BoxShadow(
+                  //               color: Colors.grey.shade200, spreadRadius: 1)
+                  //         ]),
+                  //     child: ClipOval(
+                  //       clipBehavior: Clip.hardEdge,
+                  //       child: Image.network(
+                  //         item.mediaHouseImage,
+                  //         fit: BoxFit.contain,
+                  //         height: size.width * numD20,
+                  //         width: size.width * numD20,
+                  //         errorBuilder: (BuildContext context, Object exception,
+                  //             StackTrace? stackTrace) {
+                  //           return Image.asset(
+                  //             "${dummyImagePath}news.png",
+                  //             fit: BoxFit.contain,
+                  //             width: size.width * numD20,
+                  //             height: size.width * numD20,
+                  //           );
+                  //         },
+                  //       ),
+                  //     )),
                 ],
               ),
               SizedBox(
