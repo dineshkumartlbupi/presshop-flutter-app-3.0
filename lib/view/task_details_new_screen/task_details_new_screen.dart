@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/Common.dart';
@@ -215,7 +216,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                               style: commonTextStyle(
                                                   size: size,
                                                   fontSize:
-                                                      size.width * numD035,
+                                                      size.width * numD032,
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -291,7 +292,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                                         .inDays >
                                                     0) {
                                                   //return "$day:$hour:$min:$sec";
-                                                  return "${day}d:${hour}h:${min}m";
+                                                  return "${int.parse(day)}d:${hour}h:${min}m";
                                                 } else if (taskDetail!.deadLine
                                                         .difference(
                                                             DateTime.now())
@@ -306,12 +307,12 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                                   .customFormats,
                                               timeTextStyle: commonTextStyle(
                                                   size: size,
-                                                  fontSize: size.width * numD1,
+                                                  fontSize: size.width * numD06,
                                                   color: widget.taskStatus ==
                                                           "accepted"
                                                       ? colorOnlineGreen
                                                       : colorThemePink,
-                                                  fontWeight: FontWeight.w600),
+                                                  fontWeight: FontWeight.w500),
                                             )),
                                       )
                                     ],
@@ -330,13 +331,15 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                         bottomRight: Radius.circular(
                                             size.width * numD04),
                                       )),
-                                  child: Text(
-                                    "Deadline ${dateTimeFormatter(dateTime: taskDetail!.deadLine.toString(), format: "hh:mm a").toLowerCase()}",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                  child: Center(
+                                    child: Text(
+                                      "Deadline ${dateTimeFormatter(dateTime: taskDetail!.deadLine.toString(), format: "hh:mm a").toLowerCase()}",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD032,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 )
                               ],
@@ -358,10 +361,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                 /// Time Date
                                 Row(
                                   children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_clock.png",
-                                      height: size.width * numD038,
-                                      color: Colors.black,
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
                                     ),
                                     SizedBox(
                                       width: size.width * numD018,
@@ -378,10 +380,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                     SizedBox(
                                       width: size.width * numD02,
                                     ),
-                                    Image.asset(
-                                      "${iconsPath}ic_yearly_calendar.png",
-                                      height: size.width * numD038,
-                                      color: Colors.black,
+                                    Icon(
+                                      Icons.calendar_month,
+                                      size: 18,
                                     ),
                                     SizedBox(
                                       width: size.width * numD018,
@@ -406,10 +407,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_location.png",
-                                      height: size.width * numD04,
-                                      color: colorHint,
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      size: 18,
                                     ),
                                     SizedBox(
                                       width: size.width * numD02,
@@ -431,10 +431,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                 ),
                                 Row(
                                   children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_location.png",
-                                      height: size.width * numD04,
-                                      color: colorHint,
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      size: 18,
                                     ),
                                     SizedBox(
                                       width: size.width * numD02,
@@ -459,9 +458,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                     SizedBox(
                                       width: size.width * numD02,
                                     ),
-                                    Image.asset(
-                                      "${iconsPath}ic_man_walking.png",
-                                      height: size.width * numD036,
+                                    Icon(
+                                      Icons.directions_walk_rounded,
+                                      size: 18,
                                     ),
                                     SizedBox(
                                       width: size.width * numD01,
@@ -486,9 +485,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                     SizedBox(
                                       width: size.width * numD02,
                                     ),
-                                    Image.asset(
-                                      "${iconsPath}ic_car.png",
-                                      width: size.width * numD038,
+                                    Icon(
+                                      Icons.directions_car,
+                                      size: 18,
                                     ),
                                     SizedBox(
                                       width: size.width * numD01,
@@ -921,22 +920,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                       ),
 
                       widget.taskStatus != "rejected"
-                          ? Container(
-                              width: size.width,
-                              height: size.width * numD13,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD07),
-                              child: commonElevatedButton(
-                                  manageTaskText,
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink), () {
-                                debugPrint(
-                                    "taskDetail:::::::${taskDetail!.title}");
+                          ? GestureDetector(
+                              onTap: () {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (context) =>
@@ -945,7 +930,47 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                               roomId: roomId,
                                             )))
                                     .then((value) => taskDetailApi());
-                              }),
+                              },
+                              child: SizedBox(
+                                height: size.width * numD13,
+                                width: size.width,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      height: size.width * numD13,
+                                      width: size.width,
+                                      child: Shimmer.fromColors(
+                                        period: Duration(seconds: 2),
+                                        baseColor: colorThemePink,
+                                        highlightColor: Colors.white,
+                                        child: commonElevatedButton(
+                                            manageTaskText,
+                                            size,
+                                            commonButtonTextStyle(size),
+                                            commonButtonStyle(
+                                                size, Colors.white), () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BroadCastChatTaskScreen(
+                                                        taskDetail: taskDetail!,
+                                                        roomId: roomId,
+                                                      )))
+                                              .then((value) => taskDetailApi());
+                                        }),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        manageTaskText,
+                                        style: commonButtonTextStyle(size),
+                                        selectionColor: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             )
                           : Container(
                               width: size.width,

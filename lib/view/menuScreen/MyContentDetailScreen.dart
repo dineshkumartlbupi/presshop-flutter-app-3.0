@@ -171,6 +171,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                     SizedBox(
                                       height: size.width * numD02,
                                     ),
+                                    Text(manageContentText.toUpperCase(),
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD035,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700)),
+                                    SizedBox(
+                                      height: size.width * numD02,
+                                    ),
                                     ListView.builder(
                                       itemBuilder: (context, index) {
                                         return ManageContentWidget(

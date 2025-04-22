@@ -2,8 +2,8 @@
 class Assets {
   Assets._();
 
-
-  static const String assetsChatIconsCameraIcon = 'assets/chatIcons/camera_icon.png';
+  static const String assetsChatIconsCameraIcon =
+      'assets/chatIcons/camera_icon.png';
   static const String assetsIconsDocIcon = 'assets/icons/doc_icon.png';
   static const String assetsIconsSad = 'assets/icons/sad.png';
   static const String audioCameraShutter = 'assets/audio/camera_shutter.wav';
@@ -14,29 +14,42 @@ class Assets {
   static const String chatIconsClockIcon = 'assets/chatIcons/clock_icon.png';
   static const String chatIconsCsvImage = 'assets/chatIcons/csv_image.png';
   static const String chatIconsDocIcon = 'assets/chatIcons/doc_icon.png';
-  static const String chatIconsDocumentIcon = 'assets/chatIcons/document_icon.png';
-  static const String chatIconsDoubleTickActive = 'assets/chatIcons/double_tick_active.png';
+  static const String chatIconsDocumentIcon =
+      'assets/chatIcons/document_icon.png';
+  static const String chatIconsDoubleTickActive =
+      'assets/chatIcons/double_tick_active.png';
   static const String chatIconsGalleryIcon = 'assets/chatIcons/galleryIcon.png';
-  static const String chatIconsLocationIcon = 'assets/chatIcons/location_icon.png';
+  static const String chatIconsLocationIcon =
+      'assets/chatIcons/location_icon.png';
   static const String chatIconsMicIcon = 'assets/chatIcons/mic_icon.png';
-  static const String chatIconsNoImagePlaceholder = 'assets/chatIcons/no_image_placeholder.png';
+  static const String chatIconsNoImagePlaceholder =
+      'assets/chatIcons/no_image_placeholder.png';
   static const String chatIconsPhotoIcon = 'assets/chatIcons/photo_icon.png';
   static const String chatIconsSmileIcon = 'assets/chatIcons/smile_icon.png';
   static const String chatIconsSongIcon = 'assets/chatIcons/song_icon.png';
   static const String chatIconsTypingIcon = 'assets/chatIcons/typing_icon.gif';
   static const String chatIconsUserIcon = 'assets/chatIcons/user_icon.png';
-  static const String chatIconsUserPlaceholder = 'assets/chatIcons/user_placeholder.jpeg';
+  static const String chatIconsUserPlaceholder =
+      'assets/chatIcons/user_placeholder.jpeg';
   static const String chatIconsVideoIcon = 'assets/chatIcons/videoIcon.png';
   static const String commonImagesDog = 'assets/commonImages/dog.png';
-  static const String commonImagesIcBlackRabbit = 'assets/commonImages/ic_black_rabbit.png';
-  static const String commonImagesIcCoverRadius = 'assets/commonImages/ic_cover_radius.png';
-  static const String commonImagesIcSplash = 'assets/commonImages/ic_splash.png';
-  static const String commonImagesRabbitLogo = 'assets/commonImages/rabbitLogo.png';
-  static const String commonImagesSplashLogo = 'assets/commonImages/splashLogo.png';
+  static const String commonImagesIcBlackRabbit =
+      'assets/commonImages/ic_black_rabbit.png';
+  static const String commonImagesIcCoverRadius =
+      'assets/commonImages/ic_cover_radius.png';
+  static const String commonImagesIcSplash =
+      'assets/commonImages/ic_splash.png';
+  static const String commonImagesRabbitLogo =
+      'assets/commonImages/rabbitLogo.png';
+  static const String commonImagesSplashLogo =
+      'assets/commonImages/splashLogo.png';
   static const String commonImagesTea = 'assets/commonImages/tea.png';
-  static const String commonImagesWalkTitleBackGround = 'assets/commonImages/walkTitleBackGround.png';
-  static const String commonImagesWatermark = 'assets/commonImages/watermark.png';
-  static const String commonImagesWatermark1 = 'assets/commonImages/watermark1.png';
+  static const String commonImagesWalkTitleBackGround =
+      'assets/commonImages/walkTitleBackGround.png';
+  static const String commonImagesWatermark =
+      'assets/commonImages/watermark.png';
+  static const String commonImagesWatermark1 =
+      'assets/commonImages/watermark1.png';
   static const String dummyImagesAvatar = 'assets/dummyImages/avatar.png';
   static const String dummyImagesAvatar1 = 'assets/dummyImages/avatar1.png';
   static const String dummyImagesAvatar2 = 'assets/dummyImages/avatar2.png';
@@ -44,22 +57,31 @@ class Assets {
   static const String dummyImagesBank2 = 'assets/dummyImages/bank2.png';
   static const String dummyImagesBank3 = 'assets/dummyImages/bank3.png';
   static const String dummyImagesBank4 = 'assets/dummyImages/bank4.png';
-  static const String dummyImagesDocBlackIcon = 'assets/dummyImages/doc_black_icon.png';
+  static const String dummyImagesDocBlackIcon =
+      'assets/dummyImages/doc_black_icon.png';
   static const String dummyImagesDocImage = 'assets/dummyImages/docImage.png';
-  static const String dummyImagesDummyCharityLife = 'assets/dummyImages/dummy_charity_life.png';
-  static const String dummyImagesDummyContent = 'assets/dummyImages/dummy_content.png';
-  static const String dummyImagesDummyDigitalIdProfilePic = 'assets/dummyImages/dummy_digitalId_profile_pic.png';
-  static const String dummyImagesDummyEarnings = 'assets/dummyImages/dummy_earnings.png';
-  static const String dummyImagesDummyTransaction = 'assets/dummyImages/dummy_transaction.png';
-  static const String dummyImagesDummyUser = 'assets/dummyImages/dummy_user.png';
+  static const String dummyImagesDummyCharityLife =
+      'assets/dummyImages/dummy_charity_life.png';
+  static const String dummyImagesDummyContent =
+      'assets/dummyImages/dummy_content.png';
+  static const String dummyImagesDummyDigitalIdProfilePic =
+      'assets/dummyImages/dummy_digitalId_profile_pic.png';
+  static const String dummyImagesDummyEarnings =
+      'assets/dummyImages/dummy_earnings.png';
+  static const String dummyImagesDummyTransaction =
+      'assets/dummyImages/dummy_transaction.png';
+  static const String dummyImagesDummyUser =
+      'assets/dummyImages/dummy_user.png';
   static const String dummyImagesImage1 = 'assets/dummyImages/image1.png';
   static const String dummyImagesImage2 = 'assets/dummyImages/image2.png';
   static const String dummyImagesImage3 = 'assets/dummyImages/image3.png';
   static const String dummyImagesMap = 'assets/dummyImages/map.png';
-  static const String dummyImagesMyTaskDummyImage = 'assets/dummyImages/myTaskDummyImage.png';
+  static const String dummyImagesMyTaskDummyImage =
+      'assets/dummyImages/myTaskDummyImage.png';
   static const String dummyImagesNews = 'assets/dummyImages/news.png';
   static const String dummyImagesNews1 = 'assets/dummyImages/news1.png';
-  static const String dummyImagesPlaceholderImage = 'assets/dummyImages/placeholderImage.png';
+  static const String dummyImagesPlaceholderImage =
+      'assets/dummyImages/placeholderImage.png';
   static const String dummyImagesPngImage = 'assets/dummyImages/pngImage.png';
   static const String dummyImagesWalk1 = 'assets/dummyImages/walk1.png';
   static const String dummyImagesWalk2 = 'assets/dummyImages/walk2.png';
@@ -67,14 +89,21 @@ class Assets {
   static const String dummyImagesWalk4 = 'assets/dummyImages/walk4.png';
   static const String dummyImagesWalk5 = 'assets/dummyImages/walk5.png';
   static const String dummyImagesWalk6 = 'assets/dummyImages/walk6.png';
-  static const String fontsAirbnbCerealWBd = 'assets/fonts/AirbnbCereal_W_Bd.otf';
-  static const String fontsAirbnbCerealWBk = 'assets/fonts/AirbnbCereal_W_Bk.otf';
-  static const String fontsAirbnbCerealWBlk = 'assets/fonts/AirbnbCereal_W_Blk.otf';
-  static const String fontsAirbnbCerealWLt = 'assets/fonts/AirbnbCereal_W_Lt.otf';
-  static const String fontsAirbnbCerealWMd = 'assets/fonts/AirbnbCereal_W_Md.otf';
-  static const String fontsAirbnbCerealWXBd = 'assets/fonts/AirbnbCereal_W_XBd.otf';
+  static const String fontsAirbnbCerealWBd =
+      'assets/fonts/AirbnbCereal_W_Bd.otf';
+  static const String fontsAirbnbCerealWBk =
+      'assets/fonts/AirbnbCereal_W_Bk.otf';
+  static const String fontsAirbnbCerealWBlk =
+      'assets/fonts/AirbnbCereal_W_Blk.otf';
+  static const String fontsAirbnbCerealWLt =
+      'assets/fonts/AirbnbCereal_W_Lt.otf';
+  static const String fontsAirbnbCerealWMd =
+      'assets/fonts/AirbnbCereal_W_Md.otf';
+  static const String fontsAirbnbCerealWXBd =
+      'assets/fonts/AirbnbCereal_W_XBd.otf';
   static const String iconsAppleLogo = 'assets/icons/appleLogo.png';
-  static const String iconsArrowSquareDown = 'assets/icons/arrow_square_down.png';
+  static const String iconsArrowSquareDown =
+      'assets/icons/arrow_square_down.png';
   static const String iconsCalendar = 'assets/icons/calendar.png';
   static const String iconsCalendar1 = 'assets/icons/calendar1.png';
   static const String iconsCheck = 'assets/icons/check.png';
@@ -108,19 +137,24 @@ class Assets {
   static const String iconsIcBank = 'assets/icons/ic_bank.png';
   static const String iconsIcBlockEye = 'assets/icons/ic_block_eye.png';
   static const String iconsIcCamera = 'assets/icons/ic_camera.png';
-  static const String iconsIcCameraPublish = 'assets/icons/ic_camera_publish.png';
+  static const String iconsIcCameraPublish =
+      'assets/icons/ic_camera_publish.png';
   static const String iconsIcCar = 'assets/icons/ic_car.png';
-  static const String iconsIcChangePassword = 'assets/icons/ic_change_password.png';
+  static const String iconsIcChangePassword =
+      'assets/icons/ic_change_password.png';
   static const String iconsIcCharity = 'assets/icons/ic_charity.png';
   static const String iconsIcChat = 'assets/icons/ic_chat.png';
-  static const String iconsIcCheckboxEmpty = 'assets/icons/ic_checkbox_empty.png';
-  static const String iconsIcCheckboxFilled = 'assets/icons/ic_checkbox_filled.png';
+  static const String iconsIcCheckboxEmpty =
+      'assets/icons/ic_checkbox_empty.png';
+  static const String iconsIcCheckboxFilled =
+      'assets/icons/ic_checkbox_filled.png';
   static const String iconsIcClap = 'assets/icons/ic_clap.png';
   static const String iconsIcClock = 'assets/icons/ic_clock.png';
   static const String iconsIcContactUs = 'assets/icons/ic_contact_us.png';
   static const String iconsIcContent = 'assets/icons/ic_content.png';
   static const String iconsIcDeleteIcon = 'assets/icons/ic_deleteIcon.png';
-  static const String iconsIcDigitalIdLogo = 'assets/icons/ic_digitalId_logo.png';
+  static const String iconsIcDigitalIdLogo =
+      'assets/icons/ic_digitalId_logo.png';
   static const String iconsIcDonation = 'assets/icons/ic_donation.png';
   static const String iconsIcDots = 'assets/icons/ic_dots.png';
   static const String iconsIcDown = 'assets/icons/ic_down.png';
@@ -142,7 +176,8 @@ class Assets {
   static const String iconsIcGoogle = 'assets/icons/ic_google.png';
   static const String iconsIcGraphDown = 'assets/icons/ic_graph_down.png';
   static const String iconsIcGraphUp = 'assets/icons/ic_graph_up.png';
-  static const String iconsIcGreySadEmoji = 'assets/icons/ic_grey_sad_emoji.png';
+  static const String iconsIcGreySadEmoji =
+      'assets/icons/ic_grey_sad_emoji.png';
   static const String iconsIcHalfStar = 'assets/icons/ic_half_star.png';
   static const String iconsIcHeart = 'assets/icons/ic_heart.png';
   static const String iconsIcHome = 'assets/icons/ic_home.png';
@@ -162,14 +197,17 @@ class Assets {
   static const String iconsIcMic = 'assets/icons/ic_mic.png';
   static const String iconsIcMic1 = 'assets/icons/ic_mic1.png';
   static const String iconsIcMicrophone = 'assets/icons/ic_microphone.png';
-  static const String iconsIcMonthlyCalendar = 'assets/icons/ic_monthly_calendar.png';
+  static const String iconsIcMonthlyCalendar =
+      'assets/icons/ic_monthly_calendar.png';
   static const String iconsIcMyContent = 'assets/icons/ic_my_content.png';
   static const String iconsIcMyDraft = 'assets/icons/ic_my_draft.png';
   static const String iconsIcMyProfile = 'assets/icons/ic_my_profile.png';
   static const String iconsIcNewspaper = 'assets/icons/ic_newspaper.png';
   static const String iconsIcNoFlash = 'assets/icons/ic_no_flash.png';
-  static const String iconsIcPaymentMethod = 'assets/icons/ic_payment_method.png';
-  static const String iconsIcPaymentReviced = 'assets/icons/ic_payment_reviced.png';
+  static const String iconsIcPaymentMethod =
+      'assets/icons/ic_payment_method.png';
+  static const String iconsIcPaymentReviced =
+      'assets/icons/ic_payment_reviced.png';
   static const String iconsIcPending = 'assets/icons/ic_pending.png';
   static const String iconsIcPhone = 'assets/icons/ic_phone.png';
   static const String iconsIcPiggy = 'assets/icons/ic_piggy.png';
@@ -198,15 +236,18 @@ class Assets {
   static const String iconsIcTwitter = 'assets/icons/ic_twitter.png';
   static const String iconsIcUp = 'assets/icons/ic_up.png';
   static const String iconsIcUpload = 'assets/icons/ic_upload.png';
-  static const String iconsIcUploadDocuments = 'assets/icons/ic_upload_documents.png';
+  static const String iconsIcUploadDocuments =
+      'assets/icons/ic_upload_documents.png';
   static const String iconsIcUser = 'assets/icons/ic_user.png';
   static const String iconsIcVCam = 'assets/icons/ic_v_cam.png';
   static const String iconsIcVerified = 'assets/icons/ic_verified.png';
   static const String iconsIcVideoCam = 'assets/icons/ic_video_cam.png';
   static const String iconsIcView = 'assets/icons/ic_view.png';
   static const String iconsIcWaves = 'assets/icons/ic_waves.png';
-  static const String iconsIcWeeklyCalendar = 'assets/icons/ic_weekly_calendar.png';
-  static const String iconsIcYearlyCalendar = 'assets/icons/ic_yearly_calendar.png';
+  static const String iconsIcWeeklyCalendar =
+      'assets/icons/ic_weekly_calendar.png';
+  static const String iconsIcYearlyCalendar =
+      'assets/icons/ic_yearly_calendar.png';
   static const String iconsLikeGrey = 'assets/icons/like_grey.png';
   static const String iconsLikeIcon = 'assets/icons/like_icon.png';
   static const String iconsLikeIconFill = 'assets/icons/like_icon_fill.png';
@@ -223,14 +264,15 @@ class Assets {
   static const String iconsStar = 'assets/icons/star.png';
   static const String iconsThumbIcon = 'assets/icons/thumb_icon.png';
   static const String iconsThumbsUp = 'assets/icons/ThumbsUp.png';
-  static const String iconsThumupColorIcon = 'assets/icons/thumup_color_icon.png';
+  static const String iconsThumupColorIcon =
+      'assets/icons/thumup_color_icon.png';
   static const String iconsThumupIcon = 'assets/icons/thumup_icon.png';
-  static const String iconsWhatsappIcon = 'assets/icons/whatsapp_icon.png';
-  static const String lottieFilesCelebrate = 'assets/lottieFiles/celebrate.json';
+  static const String lottieFilesCelebrate =
+      'assets/lottieFiles/celebrate.json';
   static const String lottieFilesLoader = 'assets/lottieFiles/loader.json';
-  static const String lottieFilesLoaderNew = 'assets/lottieFiles/loader_new.json';
+  static const String lottieFilesLoaderNew =
+      'assets/lottieFiles/loader_new.json';
   static const String lottieFilesRabbit = 'assets/lottieFiles/rabbit.json';
   static const String lottieFilesRipple = 'assets/lottieFiles/ripple.json';
   static const String lottieFilesTyping = 'assets/lottieFiles/typing.json';
-
 }

@@ -224,7 +224,7 @@ class MyContentScreenState extends State<MyContentScreen>
                             ? Colors.grey
                             : colorThemePink,
                       ),
-                      SizedBox(width: size.width * numD013),
+                      SizedBox(width: size.width * numD014),
                       Text(
                         '${item.purchasedMediahouseCount.toString()} ${item.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
                         style: commonTextStyle(
@@ -246,11 +246,11 @@ class MyContentScreenState extends State<MyContentScreen>
                     children: [
                       Image.asset(
                         "${iconsPath}dollar1.png",
-                        height: size.width * numD024,
+                        height: size.width * numD025,
                         color:
                             item.offerCount == 0 ? Colors.grey : colorThemePink,
                       ),
-                      SizedBox(width: size.width * numD013),
+                      SizedBox(width: size.width * numD014),
                       Text(
                         '${item.offerCount.toString()} ${item.offerCount > 1 ? '${offerText}s' : offerText}',
                         style: commonTextStyle(
@@ -269,9 +269,9 @@ class MyContentScreenState extends State<MyContentScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(
-                        "${iconsPath}ic_view.png",
-                        height: size.width * numD019,
+                      Icon(
+                        Icons.remove_red_eye_outlined,
+                        size: 12,
                         color: item.contentView == 0
                             ? Colors.grey
                             : colorThemePink,

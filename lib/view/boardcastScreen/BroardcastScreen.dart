@@ -442,7 +442,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                             DateTime.now())
                                                         .inDays >
                                                     0) {
-                                                  return "${day}d:${hour}h:${min}m:${sec}s";
+                                                  return "${int.parse(day)}d:${hour}h:${min}m:${sec}s";
                                                 } else {
                                                   return "${hour}h:${min}m:${sec}s";
                                                 }
@@ -613,28 +613,33 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         ),
                       ),
                     ),
-                    // InkWell(
-                    //   onTap: () async {
-                    //     debugPrint('share-now-tapped:::::::::::::::::');
-                    //     await _showLoaderDialog(context);
-                    //     await requestContactsPermission();
-                    //     await Future.delayed(const Duration(milliseconds: 500));
-                    //     await showShareBottomSheet();
-                    //   },
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(
-                    //         top: size.width * numD08,
-                    //         left: size.width * numD04),
-                    //     padding: EdgeInsets.all(size.width * numD02),
-                    //     decoration: const BoxDecoration(
-                    //         color: Colors.white, shape: BoxShape.circle),
-                    //     child: Image.asset(
-                    //       "${iconsPath}ic_share_now.png",
-                    //       height: size.width * numD06,
-                    //       width: size.width * numD06,
-                    //     ),
-                    //   ),
-                    // ),
+                    InkWell(
+                      onTap: () async {
+                        debugPrint('share-now-tapped:::::::::::::::::');
+                        // Todo: whatsapp share
+                        final whatsappUrl =
+                            "whatsapp://send?text= Download our app. \n${Platform.isAndroid ? "https://play.google.com/store/apps/details?id=" : "https://apps.apple.com/in/app/"}com.presshop.app";
+                        if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+                          await launchUrl(Uri.parse(whatsappUrl));
+                        } else {
+                          showSnackBar(
+                              'PressHop', errorOpenWhatsapp, Colors.red);
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: size.width * numD14,
+                            left: size.width * numD04),
+                        padding: EdgeInsets.all(size.width * numD02),
+                        decoration: const BoxDecoration(
+                            color: Colors.white, shape: BoxShape.circle),
+                        child: Image.asset(
+                          "${iconsPath}ic_share_now.png",
+                          height: size.width * numD06,
+                          width: size.width * numD06,
+                        ),
+                      ),
+                    ),
                   ],
                 )
               ],
@@ -1216,14 +1221,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     controller.animateCamera(CameraUpdate.newLatLngZoom(
         LatLng(latLng.latitude, latLng.longitude), 12));
     setState(() {});
-
-/*
-    setState(() {
-      controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: latLng,
-        zoom: 14.4746,
-      )));
-    });*/
   }
 
   /// Current Lat Lng
@@ -1447,9 +1444,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
           {
             var data = jsonDecode(response);
             debugPrint("taskAcceptRejectRequestReq Success : $data");
-            if (data != null && data['errors'] != null) {
-              showSnackBar(
-                  "Error", data['errors']['msg'].toString(), Colors.red);
+            if (data != null && data['data'] != null) {
+              showSnackBar("Error", data['data'].toString(), Colors.red);
             } else {
               showSnackBar("Error", data.toString(), Colors.red);
             }

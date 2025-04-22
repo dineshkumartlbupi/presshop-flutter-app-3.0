@@ -476,6 +476,8 @@ const publishContentFooter3Text =
     "to get it right. We uphold the highest standards of ethical journalism, so please review our";
 const publishContentFooter4Text = "before submitting. Need assistance? Please ";
 const publishContentFooter5Text = "our team 24/7. Thanks!";
+const shareContextText =
+    "Tied up right now? No problem! Why not share the PressHop app with family and friends so the next time you’re busy, they could accept the task & earn money. Spread the word, share the earnings🩷 with the Share The App CTA";
 
 const saveText = "save";
 const draftText = "draft";

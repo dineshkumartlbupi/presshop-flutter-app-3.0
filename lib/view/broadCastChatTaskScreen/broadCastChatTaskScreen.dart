@@ -192,7 +192,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
       bottomNavigationBar: !isLoading
           ? showLoader()
           : Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: EdgeInsets.only(bottom: size.height * numD03),
               child: Row(
                 children: [
                   Expanded(
@@ -206,8 +206,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           size,
                           commonButtonTextStyle(size),
                           commonButtonStyle(size, Colors.black), () {
-                        selectMultipleMediaList.clear();
-                        getMultipleImages();
+                        showGallaryChooser();
                       }),
                     ),
                   ),
@@ -584,7 +583,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                         child: Column(
                           children: [
                             paymentReceivedWidget(
-                                item.mediaHouseName,
+                                item.mediaHouseName.toCapitalized(),
                                 mediaInfo(item),
                                 item.hopperPrice,
                                 size,
@@ -1680,7 +1679,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                     ),
                     children: [
                       TextSpan(
-                        text: "Congratulations",
+                        text: "Congratulations,",
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD036,
@@ -1688,7 +1687,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
-                        text: " $mediaHouseName",
+                        text: ' $mediaHouseName',
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD036,
@@ -3985,29 +3984,37 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     socket.onError((data) => debugPrint("Error Socket ::: $data"));
   }
 
-  Future<void> getMultipleImages() async {
+  Future<void> getMultipleImages(String fileType) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.custom,
-        allowedExtensions: [
-          'mp4',
-          'avi',
-          'mov',
-          'mkv',
-          'flv',
-          'mp3',
-          'wav',
-          'aac',
-          'ogg',
-          'jpg',
-          'jpeg',
-          'png',
-          'gif',
-          'bmp',
-          'webp'
-        ],
-      );
+      late FilePickerResult? result;
+      if (fileType == "file") {
+        result = await FilePicker.platform.pickFiles(
+          allowMultiple: true,
+          type: FileType.custom,
+          allowedExtensions: [
+            'mp4',
+            'avi',
+            'mov',
+            'mkv',
+            'flv',
+            'mp3',
+            'wav',
+            'aac',
+            'ogg',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'bmp',
+            'webp'
+          ],
+        );
+      } else {
+        result = await FilePicker.platform.pickFiles(
+          allowMultiple: true,
+          type: FileType.image,
+        );
+      }
 
       if (result != null && result.files.isNotEmpty) {
         for (var file in result.files) {
@@ -4380,6 +4387,103 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
         );
         break;
     }
+  }
+
+  void showGallaryChooser() {
+    var size = MediaQuery.of(context).size;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            contentPadding: EdgeInsets.zero,
+            insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                width: size.width * num1,
+                height: size.height * numD16,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(size.width * numD025),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(padding: EdgeInsets.only(top: size.width * 0.02)),
+                    Row(
+                      children: [
+                        Spacer(),
+                        Text(
+                          "Please choose?",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize:
+                                MediaQuery.of(context).size.width * numD045,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Icon(
+                              Icons.highlight_remove,
+                              color: colorThemePink,
+                              size: size.width * numD07,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: size.width * numD45,
+                          height: size.height * numD055,
+                          child: commonElevatedButton(
+                              "Photo Gallery",
+                              size,
+                              commonButtonTextStyle(size),
+                              commonButtonStyle(size, colorThemePink), () {
+                            Navigator.pop(context);
+                            selectMultipleMediaList.clear();
+                            getMultipleImages("image");
+                            // getMultipleImages();
+                            // showGallaryChooser();
+                          }),
+                        ),
+                        SizedBox(
+                          width: size.width * 0.02,
+                        ),
+                        SizedBox(
+                          width: size.width * numD45,
+                          height: size.height * numD055,
+                          child: commonElevatedButton(
+                              "My File",
+                              size,
+                              commonButtonTextStyle(size),
+                              commonButtonStyle(size, colorThemePink), () {
+                            Navigator.pop(context);
+                            selectMultipleMediaList.clear();
+                            getMultipleImages("file");
+                          }),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              );
+            }),
+          );
+        });
   }
 }
 

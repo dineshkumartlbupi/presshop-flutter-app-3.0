@@ -7012,8 +7012,6 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     bool storageValue = await storagePermission();
 
     if (cameraValue && storageValue) {
-      final ImagePicker picker = ImagePicker();
-
       if (source == ImageSource.gallery) {
         FilePickerResult? result = await FilePicker.platform
             .pickFiles(type: FileType.media, allowMultiple: true);

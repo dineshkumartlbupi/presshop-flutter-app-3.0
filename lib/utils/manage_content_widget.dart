@@ -9,8 +9,6 @@ class ManageContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    print(data);
-
     return Card(
       elevation: 3,
       color: colorLightGrey,
@@ -32,7 +30,7 @@ class ManageContentWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(size.width * numD04),
                 child: Image.network(
                   data['userDetails'][0]['profile_image'],
-                  fit: BoxFit.contain,
+                  fit: BoxFit.cover,
                   height: size.width * numD20,
                   width: size.width * numD20,
                   errorBuilder: (BuildContext context, Object exception,
@@ -51,12 +49,16 @@ class ManageContentWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: size.height * numD006,
               children: [
-                Text(data['userDetails'][0]['company_name'],
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD03,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700)),
+                SizedBox(
+                  width: size.width * numD32,
+                  child: Text(data['userDetails'][0]['company_name'],
+                      maxLines: 2,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD03,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700)),
+                ),
                 Row(
                   spacing: size.width * numD01,
                   children: [
@@ -108,7 +110,9 @@ class ManageContentWidget extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Published Price',
+                    data['message_type'] == "Offered"
+                        ? 'Offered Price'
+                        : 'Sold Price',
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * numD035,
