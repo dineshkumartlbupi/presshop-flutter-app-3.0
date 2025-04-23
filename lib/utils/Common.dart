@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:presshop/main.dart';
 import 'package:share_plus/share_plus.dart';
 
 //const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
@@ -1089,3 +1090,5 @@ bool isKeyEmptyMap(Map<String, dynamic> data, String key) {
   if (data[key] == null) return true;
   return data[key] is Map && data[key].isEmpty;
 }
+
+bool get isIpad => sharedPreferences?.getBool("isIpad") ?? false;

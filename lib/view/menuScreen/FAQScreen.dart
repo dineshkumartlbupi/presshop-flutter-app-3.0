@@ -15,9 +15,14 @@ class FAQScreen extends StatefulWidget {
   bool priceTipsSelected = false;
   String type = "";
   String benefits = "";
-   int index=0;
+  int index = 0;
 
-  FAQScreen({super.key, required this.priceTipsSelected, required this.type, this.benefits = "",required this.index});
+  FAQScreen(
+      {super.key,
+      required this.priceTipsSelected,
+      required this.type,
+      this.benefits = "",
+      required this.index});
 
   @override
   State<StatefulWidget> createState() {
@@ -46,7 +51,6 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
   void initState() {
     super.initState();
     debugPrint("widget.index:::::${widget.index}");
-
 
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => callFAQCategoryAPI());
@@ -131,67 +135,71 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
+                            horizontal: size.width * numD04,
+                            vertical: size.width * numD03),
                         child: TextFormField(
                             decoration: InputDecoration(
-                                hintText: searchText,
-                                filled: true,
-                                fillColor: colorLightGrey,
-                                hintStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: size.width * numD035),
-                                disabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * 0.03),
-                                    borderSide: const BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.none,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * 0.03),
-                                    borderSide: const BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.none,
-                                    )),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * 0.03),
-                                    borderSide: const BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.none,
-                                    )),
-                                errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * 0.03),
-                                    borderSide: const BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.none,
-                                    )),
-                                focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * 0.03),
-                                    borderSide: const BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.none,
-                                    )),
-                                suffixIcon: Padding(
-                                  padding: EdgeInsets.only(
-                                      right: size.width * numD04),
-                                  child: const ImageIcon(
-                                    AssetImage("${iconsPath}ic_search.png"),
-                                    color: Colors.black,
-                                  ),
+                              hintText: searchText,
+                              filled: true,
+                              fillColor: colorLightGrey,
+                              hintStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: size.width * numD035),
+                              disabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.03),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  )),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.03),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  )),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.03),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  )),
+                              errorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.03),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  )),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.03),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  )),
+                              suffixIcon: Padding(
+                                padding:
+                                    EdgeInsets.only(right: size.width * numD04),
+                                child: const ImageIcon(
+                                  AssetImage("${iconsPath}ic_search.png"),
+                                  color: Colors.black,
                                 ),
-                                suffixIconColor: Colors.black,
-                                suffixIconConstraints: BoxConstraints(
-                                    maxHeight: size.width * numD07),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04)),
+                              ),
+                              suffixIconColor: Colors.black,
+                              suffixIconConstraints: BoxConstraints(
+                                  maxHeight: size.width * numD07),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD04,
+                                  vertical: size.width * numD015),
+                            ),
                             onChanged: (value) {
                               if (value.isNotEmpty) {
                                 searchResult = questionAnswerList
-                                    .where((element) => element.question.toLowerCase()
+                                    .where((element) => element.question
+                                        .toLowerCase()
                                         .contains(value.toLowerCase()))
                                     .toList();
                                 isSearch = true;
@@ -206,10 +214,10 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
                               child: errorMessageWidget("No Category found"))
                           : Container(
                               height: size.width * numD15,
-                              margin: EdgeInsets.only(left:size.width * numD035),
+                              margin:
+                                  EdgeInsets.only(left: size.width * numD035),
                               child: ListView.separated(
                                   controller: listController,
-
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (context, index) {
                                     return InkWell(
@@ -224,9 +232,13 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
                                         if (categoryList[index].selected) {
                                           selectedCategoryIndex = index;
                                           if (widget.priceTipsSelected) {
-                                            callPriceTipsAPI(categoryList[selectedCategoryIndex].name);
+                                            callPriceTipsAPI(categoryList[
+                                                    selectedCategoryIndex]
+                                                .name);
                                           } else {
-                                            callFAQAPI(categoryList[selectedCategoryIndex].name);
+                                            callFAQAPI(categoryList[
+                                                    selectedCategoryIndex]
+                                                .name);
                                           }
                                         }
 
@@ -287,15 +299,15 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
                                       border: Border.all(
                                           color: Colors.grey.shade300)),
                                   child: ExpansionTile(
-
-                                    
                                     title: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         Container(
-                                          margin: EdgeInsets.only(top:size.width*numD01),
-
+                                          margin: EdgeInsets.only(
+                                              top: size.width * numD01),
                                           padding: EdgeInsets.symmetric(
                                               horizontal: size.width * numD02,
                                               vertical: size.width * numD01),
@@ -350,10 +362,11 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Container(
-                                              margin: EdgeInsets.only(top:size.width*numD01),
+                                              margin: EdgeInsets.only(
+                                                  top: size.width * numD01),
                                               padding: EdgeInsets.symmetric(
                                                   horizontal:
-                                                  size.width * numD02,
+                                                      size.width * numD02,
                                                   vertical:
                                                       size.width * numD01),
                                               decoration: BoxDecoration(
@@ -474,13 +487,13 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
         case getAllCmsUrlRequest:
           var map = jsonDecode(response);
           debugPrint("FaqData:$response");
-            var list = map["status"] as List;
-            if(list.isNotEmpty){
-              questionAnswerList =
-                  list.map((e) => FAQPriceTipsData.fromJson(e)).toList();
-              isApiSuccess = true;
-              setState(() {});
-            }
+          var list = map["status"] as List;
+          if (list.isNotEmpty) {
+            questionAnswerList =
+                list.map((e) => FAQPriceTipsData.fromJson(e)).toList();
+            isApiSuccess = true;
+            setState(() {});
+          }
 
           break;
 
@@ -502,12 +515,12 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
           var data = jsonDecode(response);
           var dataList = data['categories'] as List;
 
-          if(dataList.isNotEmpty){
+          if (dataList.isNotEmpty) {
             categoryList =
                 dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
             String categoryName = "";
             if (categoryList.isNotEmpty) {
-              if(widget.benefits.isEmpty) {
+              if (widget.benefits.isEmpty) {
                 categoryName = categoryList.first.name;
                 categoryList.indexWhere((element) {
                   if (element.name == categoryName) {
@@ -515,8 +528,7 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
                   }
                   return true;
                 });
-              }
-              else {
+              } else {
                 categoryName = categoryList.last.name;
                 debugPrint("categoryName===> ${categoryList.last.name}");
                 categoryList.lastIndexWhere((element) {
@@ -539,14 +551,16 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
             if (widget.priceTipsSelected) {
               callPriceTipsAPI(categoryList.first.name);
             } else {
-              if(widget.benefits.isNotEmpty){
+              if (widget.benefits.isNotEmpty) {
                 for (var item in categoryList) {
                   item.selected = false;
                 }
                 categoryList[5].selected = true;
                 callFAQAPI("PRO benefits");
-              }else{
-                callFAQAPI(widget.index == 1 && categoryList.length > 1?"Emergency":categoryList.first.name);
+              } else {
+                callFAQAPI(widget.index == 1 && categoryList.length > 1
+                    ? "Emergency"
+                    : categoryList.first.name);
               }
             }
           }

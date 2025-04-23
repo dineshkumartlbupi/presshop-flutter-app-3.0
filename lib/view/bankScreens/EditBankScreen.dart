@@ -20,13 +20,20 @@ class EditBankScreen extends StatefulWidget {
   MyBankData? myBankData;
   List<MyBankListData> myBankList = [];
 
-  EditBankScreen({super.key, required this.showPageNumber, required this.hideLeading, required this.editBank, this.myBankData, required this.myBankList});
+  EditBankScreen(
+      {super.key,
+      required this.showPageNumber,
+      required this.hideLeading,
+      required this.editBank,
+      this.myBankData,
+      required this.myBankList});
 
   @override
   State<EditBankScreen> createState() => _EditBankScreenState();
 }
 
-class _EditBankScreenState extends State<EditBankScreen> implements NetworkResponse {
+class _EditBankScreenState extends State<EditBankScreen>
+    implements NetworkResponse {
   var formKey = GlobalKey<FormState>();
   TextEditingController accountHolderNameController = TextEditingController();
   TextEditingController bankController = TextEditingController();
@@ -56,10 +63,15 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
         elevation: 0,
         hideLeading: widget.hideLeading,
         title: Padding(
-          padding: EdgeInsets.only(left: !widget.hideLeading ? 0 : size.width * numD058, right: size.width * numD1),
+          padding: EdgeInsets.only(
+              left: !widget.hideLeading ? 0 : size.width * numD058,
+              right: size.width * numD1),
           child: Text(
             "Add & Verify Bank",
-            style: commonBigTitleTextStyle(size, Colors.black),
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: size.width * appBarHeadingFontSize),
           ),
         ),
         centerTitle: false,
@@ -72,7 +84,10 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)));
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -91,10 +106,14 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: size.width * numD058, right: size.width * numD1),
+                padding: EdgeInsets.only(
+                    left: size.width * numD058,
+                    right: size.width * numD1,
+                    top: size.width * numD02),
                 child: Text(
                   addBankDetailsSubHeadingText,
-                  style: TextStyle(color: Colors.black, fontSize: size.width * numD035),
+                  style: TextStyle(
+                      color: Colors.black, fontSize: size.width * numD035),
                 ),
               ),
               SizedBox(
@@ -103,11 +122,17 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
               Flexible(
                 child: ListView(
                   shrinkWrap: true,
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD06, vertical: size.width * numD04),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * numD06,
+                      vertical: size.width * numD04),
                   children: [
                     Text(
                       accountHolderNameText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -140,7 +165,11 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                     ),
                     Text(
                       bankText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -177,7 +206,11 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                     ),
                     Text(
                       sortCodeText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -198,11 +231,13 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                         }
                         return null;*/
                         if (value!.endsWith("-") && value.isNotEmpty) {
-                          sortCodeController.text = value.substring(0, value.length - 2);
+                          sortCodeController.text =
+                              value.substring(0, value.length - 2);
                         } else if ([2, 5].contains(value.length)) {
                           sortCodeController.text += "-";
                         }
-                        sortCodeController.selection = TextSelection.collapsed(offset: sortCodeController.text.length);
+                        sortCodeController.selection = TextSelection.collapsed(
+                            offset: sortCodeController.text.length);
                         setState(() {});
                       },
                       prefixIcon: const ImageIcon(
@@ -229,7 +264,11 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                       children: [
                         Text(
                           accountNumberText,
-                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
                         ),
                         const Spacer(),
                         InkWell(
@@ -242,14 +281,19 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                                   "${iconsPath}ic_checkbox_filled.png",
                                   height: size.width * numD05,
                                 )
-                              : Image.asset("${iconsPath}ic_checkbox_empty.png", height: size.width * numD05),
+                              : Image.asset("${iconsPath}ic_checkbox_empty.png",
+                                  height: size.width * numD05),
                         ),
                         SizedBox(
                           width: size.width * numD013,
                         ),
                         Text(
                           setAsDefaultText,
-                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -271,8 +315,11 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                       suffixIconIconHeight: 0,
                       suffixIcon: null,
                       hidePassword: false,
-                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: false),
-                      textInputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
+                      keyboardType: const TextInputType.numberWithOptions(
+                          signed: true, decimal: false),
+                      textInputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                      ],
                       validator: (value) {
                         //<-- add String? as a return type
                         if (value!.trim().isEmpty) {
@@ -339,7 +386,15 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                     SizedBox(
                       width: size.width,
                       height: size.width * numD13,
-                      child: commonElevatedButton(submitText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(
+                          submitText,
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () {
                         if (formKey.currentState!.validate()) {
                           addBankApi();
                         }
@@ -400,7 +455,11 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                             ...[
                               Text(
                                 "Select bank",
-                                style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD045,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ],
                             const Spacer(),
@@ -483,13 +542,21 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                                         item.isSelected = false;
                                       }
                                       bankUkList[index].isSelected = true;
-                                      bankController.text = bankUkList[index].bankName;
+                                      bankController.text =
+                                          bankUkList[index].bankName;
                                       bankLogoUrl = bankUkList[index].bankImage;
                                       setState(() {});
                                       stateSetter(() {});
                                     },
                                     child: Container(
-                                      decoration: BoxDecoration(color: bankUkList[index].isSelected ? colorGreyChat : Colors.white, borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(color: Colors.grey.shade300)),
+                                      decoration: BoxDecoration(
+                                          color: bankUkList[index].isSelected
+                                              ? colorGreyChat
+                                              : Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD03),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300)),
                                       child: Row(
                                         children: [
                                           SizedBox(
@@ -500,7 +567,9 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                                               vertical: size.width * numD02,
                                             ),
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(size.width * numD02),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * numD02),
                                               child: Image.network(
                                                 bankUkList[index].bankImage,
                                                 height: size.width * numD11,
@@ -512,7 +581,10 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                                                     width: size.width * numD11,
                                                     decoration: BoxDecoration(
                                                       color: colorLightGrey,
-                                                      borderRadius: BorderRadius.circular(size.width * numD02),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD02),
                                                     ),
                                                   );
                                                 },
@@ -529,7 +601,11 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                                             ),
                                             child: Text(
                                               bankUkList[index].bankName,
-                                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: size.width * numD034),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize:
+                                                      size.width * numD034),
                                             ),
                                           )),
                                         ],
@@ -537,7 +613,8 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                                     ),
                                   );
                                 },
-                                separatorBuilder: (BuildContext context, int index) {
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
                                   return SizedBox(
                                     height: size.width * numD02,
                                   );
@@ -554,7 +631,8 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorThemePink,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(size.width * numD03),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD03),
                               ),
                             ),
                             onPressed: () {
@@ -610,7 +688,8 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
               : true.toString(),
     };
     debugPrint("AddBankParams:$params");
-    NetworkClass.fromNetworkClass(addBankUrl, this, addBankUrlRequest, params).callRequestServiceHeader(true, "patch", null);
+    NetworkClass.fromNetworkClass(addBankUrl, this, addBankUrlRequest, params)
+        .callRequestServiceHeader(true, "patch", null);
   }
 
 /*
@@ -638,11 +717,16 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
 
   /// Add Stripe Account
   void crateStripAccount() {
-    NetworkClass.fromNetworkClass(createStripeAccount, this, reqCreateStipeAccount, {}).callRequestServiceHeader(false, "post", null);
+    NetworkClass.fromNetworkClass(
+            createStripeAccount, this, reqCreateStipeAccount, {})
+        .callRequestServiceHeader(false, "post", null);
   }
 
   void callGetUkBankList() {
-    NetworkClass.fromNetworkClass("$getUkBankListUrl?bankName=${searchController.text}", this, getUkBankListUrlReq, {}).callRequestServiceHeader(false, "get", null);
+    NetworkClass.fromNetworkClass(
+        "$getUkBankListUrl?bankName=${searchController.text}",
+        this,
+        getUkBankListUrlReq, {}).callRequestServiceHeader(false, "get", null);
   }
 
   @override
@@ -661,7 +745,8 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
 
           break;
         case reqCreateStipeAccount:
-          debugPrint("reqCreateStipeAccountErrorResponse===>${jsonDecode(response)} ");
+          debugPrint(
+              "reqCreateStipeAccountErrorResponse===>${jsonDecode(response)} ");
           break;
 
         case getUkBankListUrlReq:
@@ -702,7 +787,8 @@ class _EditBankScreenState extends State<EditBankScreen> implements NetworkRespo
           }
           break;
         case reqCreateStipeAccount:
-          debugPrint("reqCreateStipeAccountSuccessResponse===>${jsonDecode(response)} ");
+          debugPrint(
+              "reqCreateStipeAccountSuccessResponse===>${jsonDecode(response)} ");
           var data = jsonDecode(response);
           stripOnBoardURL = data['message']['url'];
           debugPrint("stripBoardURK ====> $stripOnBoardURL");

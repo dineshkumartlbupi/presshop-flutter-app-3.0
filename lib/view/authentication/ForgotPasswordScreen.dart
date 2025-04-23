@@ -31,7 +31,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         elevation: 0,
         title: Text(
           "",
-          style:commonBigTitleTextStyle(size, Colors.black),
+          style: commonBigTitleTextStyle(size, Colors.black),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -58,8 +58,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   forgotPasswordText.toTitleCase(),
                   style: TextStyle(
                       color: Colors.black,
-                      fontWeight:FontWeight.w600,
-                      fontFamily:'AirbnbCereal',
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'AirbnbCereal',
                       fontSize: size.width * numD07),
                 ),
               ),
@@ -70,7 +70,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
                 child: Text(forgotPasswordSubHeading,
                     style: TextStyle(
-                        fontFamily:'AirbnbCereal',
+                        fontFamily: 'AirbnbCereal',
                         color: Colors.black,
                         fontSize: size.width * numD035)),
               ),
@@ -88,10 +88,11 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   controller: emailAddressController,
                   hintText: emailAddressHintText,
                   textInputFormatters: null,
-                  prefixIcon: const ImageIcon(
+                  prefixIcon: ImageIcon(
                     AssetImage(
                       "${iconsPath}ic_email.png",
                     ),
+                    size: size.width * numD045,
                   ),
                   prefixIconHeight: size.width * numD045,
                   suffixIconIconHeight: 0,
@@ -110,7 +111,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               /// Submit Button
               Container(
                 width: size.width,
-                height: size.width * numD14,
+                height: size.width * (isIpad ? numD1 : numD14),
                 padding: EdgeInsets.symmetric(horizontal: size.width * numD08),
                 child: commonElevatedButton(
                     submitText,
@@ -126,7 +127,11 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   }
                 }),
               ),
-
+              isIpad
+                  ? SizedBox(
+                      height: size.height * numD02,
+                    )
+                  : SizedBox.shrink(),
               Align(
                   alignment: Alignment.center,
                   child: TextButton(
@@ -140,6 +145,11 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                             fontFamily: 'AirbnbCereal',
                             fontWeight: FontWeight.w700)),
                   )),
+              isIpad
+                  ? SizedBox(
+                      height: size.height * numD04,
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
         ),
@@ -167,7 +177,13 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           debugPrint("ForgotPasswordError: $response");
           var map = jsonDecode(response);
           debugPrint("LoginError:$map");
-          showSnackBar("Error", map["errors"]["msg"].toString().replaceAll("_", " ").toCapitalized(), Colors.red);
+          showSnackBar(
+              "Error",
+              map["errors"]["msg"]
+                  .toString()
+                  .replaceAll("_", " ")
+                  .toCapitalized(),
+              Colors.red);
           break;
       }
     } on Exception catch (e) {

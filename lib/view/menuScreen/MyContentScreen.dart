@@ -87,22 +87,17 @@ class MyContentScreenState extends State<MyContentScreen>
           SizedBox(
             width: size.width * numD02,
           ),
-          Container(
-            margin: EdgeInsets.only(bottom: size.width * numD02),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                            )),
-                    (route) => false);
-              },
-              child: Image.asset(
-                "${commonImagePath}rabbitLogo.png",
-                height: size.width * numD07,
-                width: size.width * numD07,
-              ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)),
+                  (route) => false);
+            },
+            child: Image.asset(
+              "${commonImagePath}rabbitLogo.png",
+              height: size.width * numD07,
+              width: size.width * numD07,
             ),
           ),
           SizedBox(
@@ -220,6 +215,7 @@ class MyContentScreenState extends State<MyContentScreen>
                       Image.asset(
                         "${iconsPath}dollar1.png",
                         height: size.width * numD024,
+                        width: size.width * numD025,
                         color: item.purchasedMediahouseCount == 0
                             ? Colors.grey
                             : colorThemePink,
@@ -246,6 +242,7 @@ class MyContentScreenState extends State<MyContentScreen>
                     children: [
                       Image.asset(
                         "${iconsPath}dollar1.png",
+                        width: size.width * numD025,
                         height: size.width * numD025,
                         color:
                             item.offerCount == 0 ? Colors.grey : colorThemePink,
@@ -269,9 +266,10 @@ class MyContentScreenState extends State<MyContentScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: 12,
+                      Image.asset(
+                        "${iconsPath}ic_view.png",
+                        height: size.width * numD026,
+                        width: size.width * numD025,
                         color: item.contentView == 0
                             ? Colors.grey
                             : colorThemePink,

@@ -4403,7 +4403,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                 builder: (BuildContext context, StateSetter setState) {
               return Container(
                 width: size.width * num1,
-                height: size.height * numD16,
+                height: size.height * numD18,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(size.width * numD025),

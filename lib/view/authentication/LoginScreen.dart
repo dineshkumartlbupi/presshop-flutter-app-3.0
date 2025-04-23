@@ -93,7 +93,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                               textAlign: TextAlign.start,
                               text: TextSpan(
                                 text:
-                                    "Ready to dive in? Sign up or Log in to start making headlines with PRESS",
+                                    "Ready to dive in? Sign up or Log in to start making headlines with Press",
                                 style: TextStyle(
                                     fontSize: size.width * numD035,
                                     color: Colors.black,
@@ -102,12 +102,11 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                                     height: 1.5),
                                 children: [
                                   TextSpan(
-                                    text: "HOP",
+                                    text: "Hop",
                                     style: TextStyle(
                                         fontSize: size.width * numD035,
                                         color: Colors.black,
                                         fontFamily: "AirbnbCereal",
-                                        fontStyle: FontStyle.italic,
                                         fontWeight: FontWeight.w400,
                                         height: 1.5),
                                   ),
@@ -140,10 +139,11 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                     controller: loginController,
                     hintText: loginUserHint,
                     textInputFormatters: null,
-                    prefixIcon: const ImageIcon(
+                    prefixIcon: ImageIcon(
                       AssetImage(
                         "${iconsPath}ic_user.png",
                       ),
+                      size: size.width * numD04,
                     ),
                     prefixIconHeight: size.width * numD05,
                     suffixIconIconHeight: 0,
@@ -176,10 +176,11 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                     controller: passwordController,
                     hintText: enterPasswordHint,
                     textInputFormatters: null,
-                    prefixIcon: const ImageIcon(
+                    prefixIcon: ImageIcon(
                       AssetImage(
                         "${iconsPath}ic_key.png",
                       ),
+                      size: size.width * numD04,
                     ),
                     prefixIconHeight: size.width * numD07,
                     suffixIconIconHeight: size.width * numD065,
@@ -231,13 +232,13 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                           ))),
 
                   SizedBox(
-                    height: size.width * numD08,
+                    height: size.width * numD07,
                   ),
 
                   /// SignIn Button
                   SizedBox(
                     width: size.width,
-                    height: size.width * numD13,
+                    height: size.width * (isIpad ? numD1 : numD14),
                     child: commonElevatedButton(
                         signInText,
                         size,
@@ -271,7 +272,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                   Platform.isIOS
                       ? Container(
                           width: size.width,
-                          height: size.width * numD13,
+                          height: size.width * (isIpad ? numD1 : numD14),
                           alignment: Alignment.centerLeft,
                           decoration: BoxDecoration(
                               color: Colors.black,
@@ -412,7 +413,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                     },
                     child: Container(
                       width: size.width,
-                      height: size.width * numD13,
+                      height: size.width * (isIpad ? numD1 : numD14),
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                           borderRadius:

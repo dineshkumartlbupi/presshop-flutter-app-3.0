@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_witai/network/network.dart';
 import 'package:lottie/lottie.dart';
+import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
@@ -15,8 +16,8 @@ import '../../utils/networkOperations/NetworkResponse.dart';
 import '../dashboard/Dashboard.dart';
 
 class ChatBotScreen extends StatefulWidget {
-  const ChatBotScreen({super.key});
-
+  bool hideLeading = true;
+  ChatBotScreen({this.hideLeading = true, super.key});
   @override
   State<ChatBotScreen> createState() => _ChatBotScreenState();
 }
@@ -44,66 +45,45 @@ class _ChatBotScreenState extends State<ChatBotScreen>
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
+        appBar: CommonAppBar(
           elevation: 0,
-          backgroundColor: Colors.white,
-          // leading: InkWell(
-          //   onTap: () {
-          //     Navigator.pop(context);
-          //   },
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-          //     child: Image.asset(
-          //       "${iconsPath}ic_arrow_left.png",
-          //       height: size.width * numD025,
-          //       width: size.width * numD025,
-          //     ),
-          //   ),
-          // ),
-          actions: [
-            IconButton(
-              splashRadius: size.width * 0.05,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(bottom: size.width * numD02),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Dashboard(initialPosition: 2)),
-                            (route) => false);
-                      },
-                      child: Image.asset(
-                        "${commonImagePath}rabbitLogo.png",
-                        height: size.width * numD09,
-                        width: size.width * numD09,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Emily",
-                style: TextStyle(
-                    fontSize: size.width * numD05,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600),
-              ),
-            ],
+          hideLeading: widget.hideLeading,
+          title: Padding(
+            padding: EdgeInsets.only(
+                left: widget.hideLeading ? size.width * numD04 : 0),
+            child: Text(
+              "Emily",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width * appBarHeadingFontSize),
+            ),
           ),
           centerTitle: false,
+          titleSpacing: 0,
+          size: size,
+          showActions: true,
+          leadingFxn: () {
+            Navigator.pop(context);
+          },
+          actionWidget: [
+            InkWell(
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(initialPosition: 2)),
+                    (route) => false);
+              },
+              child: Image.asset(
+                "${commonImagePath}rabbitLogo.png",
+                height: size.width * numD07,
+                width: size.width * numD07,
+              ),
+            ),
+            SizedBox(
+              width: size.width * numD04,
+            )
+          ],
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

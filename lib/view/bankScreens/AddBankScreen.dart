@@ -23,19 +23,26 @@ class AddBankScreen extends StatefulWidget {
   MyBankData? myBankData;
   List<MyBankData> myBankList = [];
 
-  AddBankScreen({super.key, required this.editBank, this.myBankData, required this.screenType, required this.myBankList});
+  AddBankScreen(
+      {super.key,
+      required this.editBank,
+      this.myBankData,
+      required this.screenType,
+      required this.myBankList});
 
   @override
   State<AddBankScreen> createState() => _AddBankScreenState();
 }
 
-class _AddBankScreenState extends State<AddBankScreen> implements NetworkResponse {
+class _AddBankScreenState extends State<AddBankScreen>
+    implements NetworkResponse {
   var formKey = GlobalKey<FormState>();
   TextEditingController accountHolderNameController = TextEditingController();
   TextEditingController bankController = TextEditingController();
   TextEditingController sortCodeController = TextEditingController();
   TextEditingController accountNumberController = TextEditingController();
-  TextEditingController confirmAccountNumberController = TextEditingController();
+  TextEditingController confirmAccountNumberController =
+      TextEditingController();
   TextEditingController searchController = TextEditingController();
   String stripOnBoardURL = '';
   bool defaultValue = false;
@@ -43,9 +50,15 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
   List<DocumentDataModel> docList = [];
   List<MyBankData> bankUkList = [];
   List<DocInstructionModel> docInstructionList = [
-    DocInstructionModel(title: "Government ID (Passport/Drivers license/Biometric\nresidence permit)", isSelected: false),
-    DocInstructionModel(title: "Utility Bill (Electricity/Water/Gas/Council)", isSelected: false),
-    DocInstructionModel(title: "Bank/Credit card/Mortgage statement", isSelected: false),
+    DocInstructionModel(
+        title:
+            "Government ID (Passport/Drivers license/Biometric\nresidence permit)",
+        isSelected: false),
+    DocInstructionModel(
+        title: "Utility Bill (Electricity/Water/Gas/Council)",
+        isSelected: false),
+    DocInstructionModel(
+        title: "Bank/Credit card/Mortgage statement", isSelected: false),
   ];
 
   File? file;
@@ -67,13 +80,21 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
-        hideLeading: widget.screenType == "publish" || widget.screenType == "myBank" ? false : true,
+        hideLeading:
+            widget.screenType == "publish" || widget.screenType == "myBank"
+                ? false
+                : true,
         title: Padding(
-          padding: EdgeInsets.only(left: widget.screenType == "publish" || widget.screenType == "myBank" ? 0 : size.width * numD058, right: size.width * numD1),
+          padding: EdgeInsets.only(
+              left: widget.screenType == "publish" ||
+                      widget.screenType == "myBank"
+                  ? 0
+                  : size.width * numD058,
+              right: size.width * numD1),
           child: FittedBox(
             child: Text(
               "Add & Verify Bank",
-              style: TextStyle(fontFamily: "AirbnbCereal", color: Colors.black, fontSize: size.width * numD06, fontWeight: FontWeight.bold),
+              style: commonBigTitleTextStyle(size, Colors.black),
             ),
           ),
         ),
@@ -92,10 +113,14 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: size.width * numD058, right: size.width * numD1),
+                padding: EdgeInsets.only(
+                    left: size.width * numD058, right: size.width * numD1),
                 child: Text(
                   addBankDetailsSubHeadingText,
-                  style: TextStyle(fontFamily: "AirbnbCereal", color: Colors.black, fontSize: size.width * numD035),
+                  style: TextStyle(
+                      fontFamily: "AirbnbCereal",
+                      color: Colors.black,
+                      fontSize: size.width * numD035),
                 ),
               ),
               SizedBox(
@@ -104,11 +129,17 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
               Flexible(
                 child: ListView(
                   shrinkWrap: true,
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD06, vertical: size.width * numD04),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * numD06,
+                      vertical: size.width * numD04),
                   children: [
                     Text(
                       accountHolderNameText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -141,7 +172,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     ),
                     Text(
                       bankText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -178,7 +213,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     ),
                     Text(
                       sortCodeText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -199,11 +238,13 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                         }
                         return null;*/
                         if (value!.endsWith("-") && value.isNotEmpty) {
-                          sortCodeController.text = value.substring(0, value.length - 2);
+                          sortCodeController.text =
+                              value.substring(0, value.length - 2);
                         } else if ([2, 5].contains(value.length)) {
                           sortCodeController.text += "-";
                         }
-                        sortCodeController.selection = TextSelection.collapsed(offset: sortCodeController.text.length);
+                        sortCodeController.selection = TextSelection.collapsed(
+                            offset: sortCodeController.text.length);
                         setState(() {});
                       },
                       prefixIcon: const ImageIcon(
@@ -229,7 +270,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                       children: [
                         Text(
                           accountNumberText,
-                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
                         ),
                         const Spacer(),
                         InkWell(
@@ -242,14 +287,19 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                   "${iconsPath}ic_checkbox_filled.png",
                                   height: size.width * numD05,
                                 )
-                              : Image.asset("${iconsPath}ic_checkbox_empty.png", height: size.width * numD05),
+                              : Image.asset("${iconsPath}ic_checkbox_empty.png",
+                                  height: size.width * numD05),
                         ),
                         SizedBox(
                           width: size.width * numD013,
                         ),
                         Text(
                           setAsDefaultText,
-                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -271,8 +321,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                       suffixIconIconHeight: 0,
                       suffixIcon: null,
                       hidePassword: false,
-                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: false),
-                      textInputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
+                      keyboardType: const TextInputType.numberWithOptions(
+                          signed: true, decimal: false),
+                      textInputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                      ],
                       validator: (value) {
                         if (value!.trim().isEmpty) {
                           return requiredText;
@@ -291,40 +344,53 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     ),
                     Text(
                       "Upload your documents for verification (any 2)",
-                      style: TextStyle(fontFamily: "AirbnbCereal", color: Colors.black, fontSize: size.width * numD036),
+                      style: TextStyle(
+                          fontFamily: "AirbnbCereal",
+                          color: Colors.black,
+                          fontSize: size.width * numD036),
                     ),
                     SizedBox(
                       height: size.width * numD025,
                     ),
                     Container(
                       padding: EdgeInsets.all(size.width * numD04),
-                      decoration: BoxDecoration(color: colorLightGrey, border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(size.width * numD03)),
+                      decoration: BoxDecoration(
+                          color: colorLightGrey,
+                          border: Border.all(color: Colors.black),
+                          borderRadius:
+                              BorderRadius.circular(size.width * numD03)),
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: docInstructionList.length,
                         itemBuilder: (context, index) {
-                          return Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: size.width * numD004,
-                              ),
-                              child: Icon(
-                                Icons.circle,
-                                color: colorThemePink,
-                                size: size.width * numD035,
-                              ),
-                            ),
-                            SizedBox(
-                              width: size.width * numD02,
-                            ),
-                            Expanded(
-                              child: Text(
-                                docInstructionList[index].title,
-                                style: TextStyle(fontFamily: "AirbnbCereal", color: Colors.black, fontSize: size.width * numD035),
-                              ),
-                            ),
-                          ]);
+                          return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: size.width * numD004,
+                                  ),
+                                  child: Icon(
+                                    Icons.circle,
+                                    color: colorThemePink,
+                                    size: size.width * numD035,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width * numD02,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    docInstructionList[index].title,
+                                    style: TextStyle(
+                                        fontFamily: "AirbnbCereal",
+                                        color: Colors.black,
+                                        fontSize: size.width * numD035),
+                                  ),
+                                ),
+                              ]);
                         },
                         separatorBuilder: (BuildContext context, int index) {
                           return SizedBox(
@@ -429,8 +495,20 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                         Expanded(
                           child: SizedBox(
                             height: size.width * numD13,
-                            child: commonElevatedButton("Later", size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, Colors.black), () {
-                              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+                            child: commonElevatedButton(
+                                "Later",
+                                size,
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                                commonButtonStyle(size, Colors.black), () {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Dashboard(initialPosition: 2)),
+                                  (route) => false);
                             }),
                           ),
                         ),
@@ -440,7 +518,15 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                         Expanded(
                           child: SizedBox(
                             height: size.width * numD13,
-                            child: commonElevatedButton("Upload", size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                            child: commonElevatedButton(
+                                "Upload",
+                                size,
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                                commonButtonStyle(size, colorThemePink), () {
                               showUploadBottomSheet();
                             }),
                           ),
@@ -450,7 +536,15 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     SizedBox(
                       height: size.width * numD04,
                     ),
-                    widget.screenType == "addBank" ? Container() : Align(alignment: Alignment.center, child: Text("3 of 3", style: TextStyle(color: Colors.black, fontSize: size.width * numD035, fontWeight: FontWeight.w500)))
+                    widget.screenType == "addBank"
+                        ? Container()
+                        : Align(
+                            alignment: Alignment.center,
+                            child: Text("3 of 3",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035,
+                                    fontWeight: FontWeight.w500)))
                   ],
                 ),
               )
@@ -472,14 +566,16 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
     setState(() {});
   }*/
 
-  void getFromGallery(bool isFile1, StateSetter mainStateSetter, int idx) async {
+  void getFromGallery(
+      bool isFile1, StateSetter mainStateSetter, int idx) async {
     XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
     if (pickedFile != null) {
       var pickFile = File(pickedFile.path);
       file = File(pickFile.path);
-      docList.add(DocumentDataModel(id: "", documentName: pickFile.path, isSelected: false));
+      docList.add(DocumentDataModel(
+          id: "", documentName: pickFile.path, isSelected: false));
       docInstructionList[idx].isSelected = true;
       setState(() {});
       mainStateSetter(() {});
@@ -488,11 +584,17 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
 
   void pickFile(String fileName, StateSetter mainStateSetter, int idx) async {
     debugPrint("inside in this if ::::::");
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf'], allowMultiple: false);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false);
     if (result != null) {
       debugPrint("docFile=====> $fileName");
       file = File(result.files.single.path.toString());
-      docList.add(DocumentDataModel(id: "", documentName: result.files.single.path.toString(), isSelected: false));
+      docList.add(DocumentDataModel(
+          id: "",
+          documentName: result.files.single.path.toString(),
+          isSelected: false));
 
       docInstructionList[idx].isSelected = true;
       setState(() {});
@@ -500,7 +602,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
     }
   }
 
-  void showUploadImageOptionBottomSheet(bool selectFirst, StateSetter mainStateSetter, int index) {
+  void showUploadImageOptionBottomSheet(
+      bool selectFirst, StateSetter mainStateSetter, int index) {
     var size = MediaQuery.of(context).size;
     showModalBottomSheet(
         context: context,
@@ -508,25 +611,37 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
         isScrollControlled: true,
         builder: (context) {
           return Container(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(size.width * numD04), topRight: Radius.circular(size.width * numD04))),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(size.width * numD04),
+                    topRight: Radius.circular(size.width * numD04))),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: size.width * numD06, right: size.width * numD03, top: size.width * numD018),
+                  margin: EdgeInsets.only(
+                      left: size.width * numD06,
+                      right: size.width * numD03,
+                      top: size.width * numD018),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Select Option",
-                        style: TextStyle(color: Colors.black, fontSize: size.width * numD048, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: size.width * numD048,
+                            fontFamily: "AirbnbCereal",
+                            fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                       IconButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(Icons.close_rounded, color: Colors.black, size: size.width * numD08)),
+                          icon: Icon(Icons.close_rounded,
+                              color: Colors.black, size: size.width * numD08)),
                     ],
                   ),
                 ),
@@ -534,7 +649,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                   height: size.width * numD04,
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: size.width * numD06, right: size.width * numD06),
+                  margin: EdgeInsets.only(
+                      left: size.width * numD06, right: size.width * numD06),
                   child: Row(
                     children: [
                       Expanded(
@@ -549,7 +665,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.circular(size.width * numD02),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD02),
                               ),
                               height: size.width * numD25,
                               padding: EdgeInsets.all(size.width * numD02),
@@ -563,7 +680,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                   ),
                                   Text(
                                     "My Gallery",
-                                    style: TextStyle(color: Colors.black, fontSize: size.width * numD035, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD035,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.bold),
                                   )
                                 ],
                               )),
@@ -582,7 +703,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(color: Colors.black),
-                                borderRadius: BorderRadius.circular(size.width * numD02),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD02),
                               ),
                               height: size.width * numD25,
                               padding: EdgeInsets.all(size.width * numD04),
@@ -599,7 +721,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                   ),
                                   Text(
                                     "My Files",
-                                    style: TextStyle(color: Colors.black, fontSize: size.width * numD035, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD035,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.bold),
                                   )
                                 ],
                               )),
@@ -657,7 +783,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                         ...[
                           Text(
                             "Upload docs for verification",
-                            style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD045,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
                           ),
                         ],
                         const Spacer(),
@@ -676,7 +806,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     SizedBox(height: size.width * numD04),
                     Text(
                       "Kindly upload clear copies of your original documents to complete bank verification.",
-                      style: TextStyle(color: Colors.black, fontSize: size.width * numD035),
+                      style: TextStyle(
+                          color: Colors.black, fontSize: size.width * numD035),
                     ),
                     SizedBox(height: size.width * numD05),
                     ListView.separated(
@@ -684,27 +815,61 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: docInstructionList.length,
                       itemBuilder: (context, index) {
-                        return Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                          docInstructionList[index].isSelected
-                              ? Container(
-                                  margin: EdgeInsets.only(top: size.width * numD005),
-                                  child: Image.asset("${iconsPath}ic_checkbox_filled.png", height: size.width * numD05),
-                                )
-                              : Container(
-                                  margin: EdgeInsets.only(top: size.width * numD005),
-                                  child: Icon(
-                                    Icons.circle,
-                                    color: colorThemePink,
-                                    size: size.width * numD035,
-                                  ),
-                                ),
-                          SizedBox(
-                            width: docInstructionList[index].isSelected ? size.width * numD028 : size.width * numD04,
-                          ),
-                          Expanded(
-                            child: index == 0 ? RichText(text: TextSpan(children: [TextSpan(text: docInstructionList[index].title, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w400)), TextSpan(text: "* Front and back side images are needed", style: TextStyle(fontSize: size.width * numD028, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w400))])) : Text(docInstructionList[index].title, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w400)),
-                          ),
-                        ]);
+                        return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              docInstructionList[index].isSelected
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                          top: size.width * numD005),
+                                      child: Image.asset(
+                                          "${iconsPath}ic_checkbox_filled.png",
+                                          height: size.width * numD05),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          top: size.width * numD005),
+                                      child: Icon(
+                                        Icons.circle,
+                                        color: colorThemePink,
+                                        size: size.width * numD035,
+                                      ),
+                                    ),
+                              SizedBox(
+                                width: docInstructionList[index].isSelected
+                                    ? size.width * numD028
+                                    : size.width * numD04,
+                              ),
+                              Expanded(
+                                child: index == 0
+                                    ? RichText(
+                                        text: TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                docInstructionList[index].title,
+                                            style: TextStyle(
+                                                fontSize: size.width * numD035,
+                                                color: Colors.black,
+                                                fontFamily: "AirbnbCereal",
+                                                fontWeight: FontWeight.w400)),
+                                        TextSpan(
+                                            text:
+                                                "* Front and back side images are needed",
+                                            style: TextStyle(
+                                                fontSize: size.width * numD028,
+                                                color: Colors.black,
+                                                fontFamily: "AirbnbCereal",
+                                                fontWeight: FontWeight.w400))
+                                      ]))
+                                    : Text(docInstructionList[index].title,
+                                        style: TextStyle(
+                                            fontSize: size.width * numD035,
+                                            color: Colors.black,
+                                            fontFamily: "AirbnbCereal",
+                                            fontWeight: FontWeight.w400)),
+                              ),
+                            ]);
                       },
                       separatorBuilder: (BuildContext context, int index) {
                         return SizedBox(
@@ -716,14 +881,20 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     InkWell(
                       onTap: () {
                         if (docList.length == docInstructionList.length) {
-                          showSnackBar("Error", "You can upload all the document. ", Colors.red);
+                          showSnackBar("Error",
+                              "You can upload all the document. ", Colors.red);
                         } else {
                           showDocListBottomSheet(stateSetter);
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: size.width * numD035, vertical: size.width * numD028),
-                        decoration: BoxDecoration(border: Border.all(color: colorTextFieldBorder), borderRadius: BorderRadius.circular(size.width * numD03)),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD035,
+                            vertical: size.width * numD028),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: colorTextFieldBorder),
+                            borderRadius:
+                                BorderRadius.circular(size.width * numD03)),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -739,7 +910,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 1,
                         crossAxisSpacing: 12,
@@ -752,7 +924,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                           padding: EdgeInsets.all(size.width * numD025),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(size.width * numD04),
+                            borderRadius:
+                                BorderRadius.circular(size.width * numD04),
                           ),
                           child: Column(
                             children: [
@@ -760,8 +933,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                 alignment: Alignment.topRight,
                                 children: [
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(size.width * numD03),
-                                    child: docList[index].documentName.endsWith(".pdf")
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03),
+                                    child: docList[index]
+                                            .documentName
+                                            .endsWith(".pdf")
                                         ? Image.asset(
                                             "${iconsPath}pdfIcon.png",
                                             height: size.width * numD28,
@@ -769,7 +945,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                           )
                                         : docList[index].id.isNotEmpty
                                             ? Image.network(
-                                                docImageUrl + docList[index].documentName,
+                                                docImageUrl +
+                                                    docList[index].documentName,
                                                 height: size.width * numD28,
                                                 width: size.width * numD38,
                                                 fit: BoxFit.cover,
@@ -787,11 +964,16 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                     onTap: () {
                                       debugPrint("index:::::$index");
                                       if (docInstructionList[0].isSelected) {
-                                        docInstructionList[0].isSelected = false;
-                                      } else if (docInstructionList[1].isSelected) {
-                                        docInstructionList[1].isSelected = false;
-                                      } else if (docInstructionList[2].isSelected) {
-                                        docInstructionList[2].isSelected = false;
+                                        docInstructionList[0].isSelected =
+                                            false;
+                                      } else if (docInstructionList[1]
+                                          .isSelected) {
+                                        docInstructionList[1].isSelected =
+                                            false;
+                                      } else if (docInstructionList[2]
+                                          .isSelected) {
+                                        docInstructionList[2].isSelected =
+                                            false;
                                       }
                                       docList.removeAt(index);
                                       setState(() {});
@@ -800,8 +982,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                     child: Align(
                                       alignment: Alignment.topRight,
                                       child: Padding(
-                                        padding: EdgeInsets.all(size.width * numD018),
-                                        child: Image.asset("${iconsPath}ic_deleteIcon.png", height: size.width * numD05),
+                                        padding: EdgeInsets.all(
+                                            size.width * numD018),
+                                        child: Image.asset(
+                                            "${iconsPath}ic_deleteIcon.png",
+                                            height: size.width * numD05),
                                       ),
                                     ),
                                   )
@@ -811,11 +996,20 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                 height: size.width * numD02,
                               ),
                               Text(
-                                docList[index].id.isEmpty ? docList[index].documentName.split("/").last : docList[index].documentName,
+                                docList[index].id.isEmpty
+                                    ? docList[index]
+                                        .documentName
+                                        .split("/")
+                                        .last
+                                    : docList[index].documentName,
                                 textAlign: TextAlign.center,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400),
                               ),
                             ],
                           ),
@@ -826,13 +1020,24 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                     SizedBox(
                       width: size.width,
                       height: size.width * numD13,
-                      child: commonElevatedButton(submitText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(
+                          submitText,
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () {
                         if (formKey.currentState!.validate()) {
                           if (widget.editBank) {
                             //  editBankApi();
                           } else {
                             if (docList.length < 2) {
-                              showSnackBar("Error", "Please upload your documents to proceed", Colors.red);
+                              showSnackBar(
+                                  "Error",
+                                  "Please upload your documents to proceed",
+                                  Colors.red);
                             } else {
                               Navigator.pop(context);
                               callAddBankToStripeApi();
@@ -891,7 +1096,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                       ...[
                         Text(
                           "Select Document",
-                          style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD045,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700),
                         ),
                       ],
                       const Spacer(),
@@ -917,14 +1126,22 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                         onTap: () {
                           Navigator.pop(context);
                           if (docInstructionList[index].isSelected) {
-                            showSnackBar("Error", "You have already uploaded ${docInstructionList[index].title}.", Colors.red);
+                            showSnackBar(
+                                "Error",
+                                "You have already uploaded ${docInstructionList[index].title}.",
+                                Colors.red);
                           } else {
-                            showUploadImageOptionBottomSheet(true, mainStateSetter, index);
+                            showUploadImageOptionBottomSheet(
+                                true, mainStateSetter, index);
                           }
                         },
                         child: Text(
                           docInstructionList[index].title,
-                          style: commonTextStyle(size: size, fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w400),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD036,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
                         ),
                       );
                     },
@@ -986,7 +1203,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                             ...[
                               Text(
                                 "Select bank",
-                                style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD045,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ],
                             const Spacer(),
@@ -1069,13 +1290,22 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                         item.isSelected = false;
                                       }
                                       bankUkList[index].isSelected = true;
-                                      bankController.text = bankUkList[index].bankName;
-                                      debugPrint("bankUkList-> ${bankUkList[index].bankImage}");
+                                      bankController.text =
+                                          bankUkList[index].bankName;
+                                      debugPrint(
+                                          "bankUkList-> ${bankUkList[index].bankImage}");
                                       setState(() {});
                                       stateSetter(() {});
                                     },
                                     child: Container(
-                                      decoration: BoxDecoration(color: bankUkList[index].isSelected ? colorGreyChat : Colors.white, borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(color: Colors.grey.shade300)),
+                                      decoration: BoxDecoration(
+                                          color: bankUkList[index].isSelected
+                                              ? colorGreyChat
+                                              : Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD03),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300)),
                                       child: Row(
                                         children: [
                                           SizedBox(
@@ -1086,7 +1316,9 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                               vertical: size.width * numD02,
                                             ),
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(size.width * numD02),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * numD02),
                                               child: Image.network(
                                                 bankUkList[index].bankImage,
                                                 height: size.width * numD11,
@@ -1098,7 +1330,10 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                                     width: size.width * numD11,
                                                     decoration: BoxDecoration(
                                                       color: colorLightGrey,
-                                                      borderRadius: BorderRadius.circular(size.width * numD02),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD02),
                                                     ),
                                                   );
                                                 },
@@ -1115,7 +1350,11 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                             ),
                                             child: Text(
                                               bankUkList[index].bankName,
-                                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: size.width * numD034),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize:
+                                                      size.width * numD034),
                                             ),
                                           )),
                                         ],
@@ -1123,7 +1362,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                                     ),
                                   );
                                 },
-                                separatorBuilder: (BuildContext context, int index) {
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
                                   return SizedBox(
                                     height: size.width * numD02,
                                   );
@@ -1140,7 +1380,8 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorThemePink,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(size.width * numD03),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD03),
                               ),
                             ),
                             onPressed: () {
@@ -1235,15 +1476,24 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
 
       filesPath.addAll(docList.map((path) => File(path.documentName)).toList());
     }
-    NetworkClass.multipartNetworkClassFiles(createStripeAccount, this, reqCreateStipeAccount, params, filesPath).callMultipartServiceNew(true, "post", fileParams);
+    NetworkClass.multipartNetworkClassFiles(
+            createStripeAccount, this, reqCreateStipeAccount, params, filesPath)
+        .callMultipartServiceNew(true, "post", fileParams);
   }
 
   callUpdateStripeAccountApi(String accountId) {
-    NetworkClass("${updateStripeBankUrl}id=$accountId&is_stripe_registered=true", this, updateStripeBankReq).callRequestServiceHeader(true, "get", null);
+    NetworkClass(
+            "${updateStripeBankUrl}id=$accountId&is_stripe_registered=true",
+            this,
+            updateStripeBankReq)
+        .callRequestServiceHeader(true, "get", null);
   }
 
   void callGetUkBankList() {
-    NetworkClass.fromNetworkClass("$getUkBankListUrl?bankName=${searchController.text}", this, getUkBankListUrlReq, {}).callRequestServiceHeader(false, "get", null);
+    NetworkClass.fromNetworkClass(
+        "$getUkBankListUrl?bankName=${searchController.text}",
+        this,
+        getUkBankListUrlReq, {}).callRequestServiceHeader(false, "get", null);
   }
 
   @override
@@ -1309,7 +1559,12 @@ class _AddBankScreenState extends State<AddBankScreen> implements NetworkRespons
           debugPrint("updateStripeBankReq success:::::$response");
           debugPrint("screenType :::::${widget.screenType}");
           if (widget.screenType == "publish") {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => WelcomeScreen(hideLeading: false, screenType: "publish")), (route) => false);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => WelcomeScreen(
+                        hideLeading: false, screenType: "publish")),
+                (route) => false);
           } else if (widget.screenType == "myBank") {
             Navigator.pop(context);
           } else {

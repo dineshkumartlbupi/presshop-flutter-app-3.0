@@ -65,7 +65,7 @@ class ManageContentWidget extends StatelessWidget {
                     Icon(
                       Icons.access_time,
                       color: Colors.grey,
-                      size: 22,
+                      size: size.width * numD05,
                     ),
                     Text(
                         dateTimeFormatter(
@@ -84,7 +84,7 @@ class ManageContentWidget extends StatelessWidget {
                     Icon(
                       Icons.calendar_month,
                       color: Colors.grey,
-                      size: 22,
+                      size: size.width * numD05,
                     ),
                     Text(
                         dateTimeFormatter(

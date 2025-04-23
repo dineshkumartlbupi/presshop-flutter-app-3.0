@@ -43,6 +43,8 @@
 	<false/>
 	<key>FlutterDeepLinkingEnabled</key>
 	<true/>
+	<key>GIDClientID</key>
+	<string>750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>
@@ -92,8 +94,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>GIDClientID</key>
-	<string>750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com</string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>

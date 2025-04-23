@@ -124,8 +124,9 @@ class TutorialsScreenState extends State<TutorialsScreen>
               Column(
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD04,
+                        vertical: size.height * numD03),
                     child: TextFormField(
                       decoration: InputDecoration(
                           hintText: searchText,
@@ -181,7 +182,8 @@ class TutorialsScreenState extends State<TutorialsScreen>
                           suffixIconConstraints:
                               BoxConstraints(maxHeight: size.width * numD07),
                           contentPadding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04)),
+                              horizontal: size.width * numD05,
+                              vertical: size.width * numD02)),
                       onChanged: (value) {
                         if (value.isNotEmpty) {
                           searchResult = tutorialsList
@@ -200,7 +202,7 @@ class TutorialsScreenState extends State<TutorialsScreen>
 
                   /// Category
                   SizedBox(
-                    height: size.width * numD15,
+                    height: size.width * numD10,
                     child: ListView.separated(
                         controller: listController,
                         scrollDirection: Axis.horizontal,
@@ -257,149 +259,155 @@ class TutorialsScreenState extends State<TutorialsScreen>
               ),
               isAPISuccess
                   ? Center(child: showLoader())
-                  :   tutorialsList.isNotEmpty
-                  ? GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD04),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.85,
-                        mainAxisSpacing: size.width * numD04,
-                        crossAxisSpacing: size.width * numD04,
-                      ),
-                      itemBuilder: (context, index) {
-                        var item = isSearch
-                            ? searchResult[index]
-                            : tutorialsList[index];
-                        return InkWell(
-                          onTap: () {
-                            selectedVideoIndex = index;
-                            setState(() {});
-                            callAddFeedContentCount(item.id);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD04),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: colorTextFieldIcon),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04)),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
-                                  child: Stack(
-                                    children: [
-                                      item.thumbnail.isNotEmpty
-                                          ? Image.network(
-                                       item.thumbnail,
-                                              height: size.width * numD30,
-                                              width: size.width,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (BuildContext context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
-                                                return Image.asset(
-                                                  "${dummyImagePath}placeholderImage.png",
+                  : tutorialsList.isNotEmpty
+                      ? GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.85,
+                            mainAxisSpacing: size.width * numD04,
+                            crossAxisSpacing: size.width * numD04,
+                          ),
+                          itemBuilder: (context, index) {
+                            var item = isSearch
+                                ? searchResult[index]
+                                : tutorialsList[index];
+                            return InkWell(
+                              onTap: () {
+                                selectedVideoIndex = index;
+                                setState(() {});
+                                callAddFeedContentCount(item.id);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD04,
+                                    vertical: size.width * numD04),
+                                decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: colorTextFieldIcon),
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04)),
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04),
+                                      child: Stack(
+                                        children: [
+                                          item.thumbnail.isNotEmpty
+                                              ? Image.network(
+                                                  item.thumbnail,
+                                                  height: size.width * numD30,
                                                   width: size.width,
                                                   fit: BoxFit.cover,
-                                                );
-                                              },
-                                            )
-                                          : Image.asset(
-                                              "${dummyImagePath}placeholderImage.png",
-                                              height: size.width * numD30,
-                                              width: size.width,
-                                              fit: BoxFit.cover,
-                                            ),
-                                      Positioned(
-                                        right: size.width * numD02,
-                                        top: size.width * numD02,
-                                        child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: size.width * numD01,
-                                                vertical: size.width * 0.002),
-                                            decoration: BoxDecoration(
-                                                color: colorLightGreen
-                                                    .withOpacity(0.8),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width * numD015)),
-                                            child: Icon(
-                                              Icons.videocam_outlined,
-                                              size: size.width * numD045,
-                                              color: Colors.white,
-                                            )),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.width * numD01,
-                                ),
-                                Text(item.description,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD03,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis),
-                                const Spacer(),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_clock.png",
-                                      height: size.width * numD03,
+                                                  errorBuilder: (BuildContext
+                                                          context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                                    return Image.asset(
+                                                      "${dummyImagePath}placeholderImage.png",
+                                                      width: size.width,
+                                                      fit: BoxFit.cover,
+                                                    );
+                                                  },
+                                                )
+                                              : Image.asset(
+                                                  "${dummyImagePath}placeholderImage.png",
+                                                  height: size.width * numD30,
+                                                  width: size.width,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                          Positioned(
+                                            right: size.width * numD02,
+                                            top: size.width * numD02,
+                                            child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        size.width * numD01,
+                                                    vertical:
+                                                        size.width * 0.002),
+                                                decoration: BoxDecoration(
+                                                    color: colorLightGreen
+                                                        .withOpacity(0.8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD015)),
+                                                child: Icon(
+                                                  Icons.videocam_outlined,
+                                                  size: size.width * numD045,
+                                                  color: Colors.white,
+                                                )),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      height: size.width * numD01,
                                     ),
-                                    Text(
-                                        item.duration,
-                                        /*Duration(seconds: int.parse(item.duration))
-                                            .toString(),*/
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD025,
-                                          color: colorHint,
-                                          fontWeight: FontWeight.w600),
-                                    ),
+                                    Text(item.description,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD03,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis),
                                     const Spacer(),
-                                    Image.asset(
-                                      "${iconsPath}ic_view.png",
-                                      height: size.width * numD03,
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_clock.png",
+                                          height: size.width * numD03,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD01,
+                                        ),
+                                        Text(
+                                          item.duration,
+                                          /*Duration(seconds: int.parse(item.duration))
+                                            .toString(),*/
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD025,
+                                              color: colorHint,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        const Spacer(),
+                                        Image.asset(
+                                          "${iconsPath}ic_view.png",
+                                          height: size.width * numD03,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD01,
+                                        ),
+                                        Text(
+                                          item.view.toString(),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD025,
+                                              color: colorThemePink,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
-                                    ),
-                                    Text(
-                                      item.view.toString(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD025,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w600),
+                                      height: size.width * numD01,
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: size.width * numD01,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      itemCount:
-                          isSearch ? searchResult.length : tutorialsList.length)
-                  :Container()
+                              ),
+                            );
+                          },
+                          itemCount: isSearch
+                              ? searchResult.length
+                              : tutorialsList.length)
+                      : Container()
             ],
           ),
         ),
@@ -409,9 +417,7 @@ class TutorialsScreenState extends State<TutorialsScreen>
 
   callVideoTutorialAPI(String categoryName) {
     isAPISuccess = true;
-    setState(() {
-
-    });
+    setState(() {});
     Map<String, String> map = {
       "type": 'videos',
       "offset": _offset.toString(),
@@ -478,7 +484,8 @@ class TutorialsScreenState extends State<TutorialsScreen>
           var data = jsonDecode(response);
 
           var dataModel = data["status"] as List;
-          tutorialsList = dataModel.map((e) => TutorialsModel.fromJson(e)).toList();
+          tutorialsList =
+              dataModel.map((e) => TutorialsModel.fromJson(e)).toList();
           //tutorialsList.clear();
           /* tutorialData.forEach((element) async {
             var fileName = await VideoThumbnail.thumbnailFile(
@@ -501,11 +508,9 @@ class TutorialsScreenState extends State<TutorialsScreen>
              });*/
           isAPISuccess = false;
           setState(() {});
-           Future.delayed(const Duration(milliseconds: 5000),(){
+          Future.delayed(const Duration(milliseconds: 5000), () {});
 
-           });
-
-           debugPrint("tutorialData::::${tutorialsList.length}");
+          debugPrint("tutorialData::::${tutorialsList.length}");
 
           break;
 
@@ -557,7 +562,7 @@ class TutorialsScreenState extends State<TutorialsScreen>
 }
 
 /// Tutorial
-class TutorialsModel{
+class TutorialsModel {
   String id = "";
   String video = "";
   String thumbnail = "";

@@ -363,7 +363,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                   children: [
                                     Icon(
                                       Icons.access_time,
-                                      size: 18,
+                                      size: size.width * numD045,
                                     ),
                                     SizedBox(
                                       width: size.width * numD018,
@@ -382,7 +382,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                     ),
                                     Icon(
                                       Icons.calendar_month,
-                                      size: 18,
+                                      size: size.width * numD045,
                                     ),
                                     SizedBox(
                                       width: size.width * numD018,
@@ -409,7 +409,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                   children: [
                                     Icon(
                                       Icons.location_on_outlined,
-                                      size: 18,
+                                      size: size.width * numD045,
                                     ),
                                     SizedBox(
                                       width: size.width * numD02,
@@ -433,7 +433,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                   children: [
                                     Icon(
                                       Icons.location_on_outlined,
-                                      size: 18,
+                                      size: size.width * numD045,
                                     ),
                                     SizedBox(
                                       width: size.width * numD02,
@@ -460,7 +460,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                     ),
                                     Icon(
                                       Icons.directions_walk_rounded,
-                                      size: 18,
+                                      size: size.width * numD045,
                                     ),
                                     SizedBox(
                                       width: size.width * numD01,
@@ -487,7 +487,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                     ),
                                     Icon(
                                       Icons.directions_car,
-                                      size: 18,
+                                      size: size.width * numD045,
                                     ),
                                     SizedBox(
                                       width: size.width * numD01,

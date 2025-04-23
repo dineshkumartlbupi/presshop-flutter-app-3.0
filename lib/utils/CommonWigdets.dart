@@ -862,7 +862,7 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                   height: 1.5),
                               children: [
                                 TextSpan(
-                                  text: "PRESS",
+                                  text: "Press",
                                   style: TextStyle(
                                       fontSize: size.width * numD038,
                                       color: Colors.black,
@@ -871,12 +871,11 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                       height: 1.5),
                                 ),
                                 TextSpan(
-                                  text: "HOP",
+                                  text: "Hop",
                                   style: TextStyle(
                                       fontSize: size.width * numD038,
                                       color: Colors.black,
                                       fontFamily: "AirbnbCereal",
-                                      fontStyle: FontStyle.italic,
                                       fontWeight: FontWeight.w400,
                                       height: 1.5),
                                 )
@@ -1110,10 +1109,10 @@ Future<String?> commonDatePicker({String? date}) async {
 /// FilterIcon
 commonFilterIcon(Size size) {
   return Container(
-      padding: EdgeInsets.all(size.width * numD043),
+      padding: EdgeInsets.all(size.width * (isIpad ? numD008 : numD043)),
       child: Image.asset(
         "${iconsPath}ic_filter.png",
-        height: size.width * numD04,
+        fit: BoxFit.fill,
       ));
 }
 

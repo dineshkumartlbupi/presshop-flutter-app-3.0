@@ -51,7 +51,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
       myBankList[index].isDefault = true;
       selectedIndex = index;
       setState(() {});
-      Future.delayed(Duration(seconds: 1),(){
+      Future.delayed(Duration(seconds: 1), () {
         var selectedBank = myBankList.removeAt(index);
         myBankList.insert(0, selectedBank);
         setAsDefaultAPi(true, myBankList[index].stripeBankId);
@@ -114,7 +114,9 @@ class MyBanksScreenState extends State<MyBanksScreen>
                     Align(
                       alignment: Alignment.topRight,
                       child: Container(
-                        padding: EdgeInsets.only(right: size.width * numD04),
+                        padding: EdgeInsets.only(
+                            right: size.width * numD04,
+                            top: size.width * numD02),
                         height: size.width * numD11,
                         child: ElevatedButton.icon(
                             onPressed: () {
@@ -162,7 +164,6 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                     fontWeight: FontWeight.normal))),
                       ),
                     ),
-
                     Expanded(
                         child: ListView.separated(
                             padding: EdgeInsets.symmetric(
@@ -172,36 +173,35 @@ class MyBanksScreenState extends State<MyBanksScreen>
                             itemBuilder: (context, index) {
                               return Container(
                                 decoration: BoxDecoration(
-                                  color: index == 0
-                                      ? colorGreyChat
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03),
-                                  border: Border.all(
-                                      color: Colors.grey.shade300)),
+                                    color: index == 0
+                                        ? colorGreyChat
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03),
+                                    border: Border.all(
+                                        color: Colors.grey.shade300)),
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * numD025,
                                     vertical: size.width * numD02),
                                 child: Row(
                                   children: [
                                     ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.circular(
+                                      borderRadius: BorderRadius.circular(
                                           size.width * numD02),
                                       child: Image.network(
                                         myBankList[index].bankImage,
                                         height: size.width * numD11,
                                         width: size.width * numD11,
                                         fit: BoxFit.contain,
-                                        errorBuilder: (c,s,o){
+                                        errorBuilder: (c, s, o) {
                                           return Container(
                                             height: size.width * numD11,
                                             width: size.width * numD11,
                                             decoration: BoxDecoration(
                                               color: colorLightGrey,
                                               borderRadius:
-                                              BorderRadius.circular(
-                                                  size.width * numD02),
+                                                  BorderRadius.circular(
+                                                      size.width * numD02),
                                             ),
                                           );
                                         },
@@ -221,13 +221,10 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                             maxLines: 1,
                                             style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize:
-                                                    size.width * numD035,
+                                                fontSize: size.width * numD035,
                                                 fontFamily: "AirbnbCereal",
-                                                overflow:
-                                                    TextOverflow.ellipsis,
-                                                fontWeight:
-                                                    FontWeight.normal),
+                                                overflow: TextOverflow.ellipsis,
+                                                fontWeight: FontWeight.normal),
                                           ),
                                         ),
                                         SizedBox(
@@ -288,8 +285,8 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                                   defaultText,
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize: size.width *
-                                                          numD028,
+                                                      fontSize:
+                                                          size.width * numD028,
                                                       color: Colors.white,
                                                       fontWeight:
                                                           FontWeight.w500),
@@ -313,8 +310,8 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                                   "Verified",
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize: size.width *
-                                                          numD028,
+                                                      fontSize:
+                                                          size.width * numD028,
                                                       color: Colors.white,
                                                       fontWeight:
                                                           FontWeight.w500),
@@ -349,15 +346,14 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                                             FontWeight.w400),
                                                   ),
                                                   SizedBox(
-                                                    width:
-                                                        size.width * numD01,
+                                                    width: size.width * numD01,
                                                   ),
                                                   Image.asset(
-                                                      selectedIndex==index
+                                                      selectedIndex == index
                                                           ? "${iconsPath}ic_checkbox_filled.png"
                                                           : "${iconsPath}ic_checkbox_empty.png",
-                                                      height: size.width *
-                                                          numD055),
+                                                      height:
+                                                          size.width * numD055),
                                                 ],
                                               ),
                                             ),
@@ -488,7 +484,8 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                       commonButtonStyle(size, colorThemePink),
                                       () {
                                     Navigator.pop(context);
-                                    deleteBankApi(myBankList[index].id, myBankList[index].stripeBankId);
+                                    deleteBankApi(myBankList[index].id,
+                                        myBankList[index].stripeBankId);
                                   }),
                                 ),
                               ),
@@ -651,15 +648,24 @@ class MyBankListData {
   String stripeBankId = "";
 
   MyBankListData.fromJson(json) {
-    id = json["bank_detail"]!=null?json['bank_detail']["_id"]:"";
-    bankName = json["bank_detail"]!=null?json['bank_detail']["bank_name"] :"";
-    isDefault = json["is_default"]??false;
-    bankImage = json["bank_info"]!=null?json["bank_info"]["logoUrl"]:"";
+    id = json["bank_detail"] != null ? json['bank_detail']["_id"] : "";
+    bankName =
+        json["bank_detail"] != null ? json['bank_detail']["bank_name"] : "";
+    isDefault = json["is_default"] ?? false;
+    bankImage = json["bank_info"] != null ? json["bank_info"]["logoUrl"] : "";
     bankLocation = "Mayfair, London";
-    accountHolderName = json["bank_detail"]!=null?json["bank_detail"]["acc_holder_name"].toString():"";
-    sortCode = json["bank_detail"]!=null?json["bank_detail"]["sort_code"].toString():"";
-    accountNumber = json["bank_detail"]!=null?json['bank_detail']["acc_number"].toString():"";
-    stripeBankId = json["bank_detail"]!=null?json["bank_detail"]["stripe_bank_id"].toString():"";
+    accountHolderName = json["bank_detail"] != null
+        ? json["bank_detail"]["acc_holder_name"].toString()
+        : "";
+    sortCode = json["bank_detail"] != null
+        ? json["bank_detail"]["sort_code"].toString()
+        : "";
+    accountNumber = json["bank_detail"] != null
+        ? json['bank_detail']["acc_number"].toString()
+        : "";
+    stripeBankId = json["bank_detail"] != null
+        ? json["bank_detail"]["stripe_bank_id"].toString()
+        : "";
     isSelected = false;
   }
 }
@@ -668,12 +674,12 @@ class MyBankData {
   String id = "";
   String bankName = "";
   String bankImage = "";
-  bool isSelected =false;
+  bool isSelected = false;
 
   MyBankData.fromJson(json) {
-    id = json["_id"]??"";
-    bankName = json["bank_name"]??"";
-    bankImage = json["logoUrl"]??"";
-    isSelected =false;
+    id = json["_id"] ?? "";
+    bankName = json["bank_name"] ?? "";
+    bankImage = json["logoUrl"] ?? "";
+    isSelected = false;
   }
 }

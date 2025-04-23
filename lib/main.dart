@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:camera/camera.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -49,6 +50,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  IosDeviceInfo info = await deviceInfo.iosInfo;
+
   await localNotificationService.setup();
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -60,6 +64,9 @@ void main() async {
 
   getSharedPreferences().then((value) {
     sharedPreferences = value;
+    sharedPreferences!
+        .setBool("isIpad", info.model.toLowerCase().contains("ipad"));
+
     if (sharedPreferences!.getBool(rememberKey) != null) {
       rememberMe = sharedPreferences!.getBool(rememberKey)!;
     }

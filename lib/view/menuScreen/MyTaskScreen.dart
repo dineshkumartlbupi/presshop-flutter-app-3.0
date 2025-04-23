@@ -98,20 +98,17 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
           SizedBox(
             width: size.width * numD02,
           ),
-          Container(
-            margin: EdgeInsets.only(bottom: size.width * numD02),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
-              },
-              child: Image.asset(
-                "${commonImagePath}rabbitLogo.png",
-                height: size.width * numD07,
-                width: size.width * numD07,
-              ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)),
+                  (route) => false);
+            },
+            child: Image.asset(
+              "${commonImagePath}rabbitLogo.png",
+              height: size.width * numD07,
+              width: size.width * numD07,
             ),
           ),
           SizedBox(
@@ -463,9 +460,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                               color: Colors.black,
                               fontWeight: FontWeight.w500),
                         ),
-                        SizedBox(
-                          height: size.width * numD01,
-                        ),
+
                         const Spacer(),
 
                         /// Dead Line
