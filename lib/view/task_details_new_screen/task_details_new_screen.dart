@@ -940,7 +940,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                       height: size.width * numD13,
                                       width: size.width,
                                       child: Shimmer.fromColors(
-                                        period: Duration(seconds: 2),
+                                        period: Duration(seconds: 4),
                                         baseColor: colorThemePink,
                                         highlightColor: Colors.white,
                                         child: commonElevatedButton(
