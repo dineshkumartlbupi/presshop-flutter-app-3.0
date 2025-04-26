@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -51,7 +52,10 @@ void main() async {
   );
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  IosDeviceInfo info = await deviceInfo.iosInfo;
+  late IosDeviceInfo? info;
+  if (Platform.isIOS) {
+    info = await deviceInfo.iosInfo;
+  }
 
   await localNotificationService.setup();
 
@@ -64,8 +68,11 @@ void main() async {
 
   getSharedPreferences().then((value) {
     sharedPreferences = value;
-    sharedPreferences!
-        .setBool("isIpad", info.model.toLowerCase().contains("ipad"));
+    sharedPreferences!.setBool(
+        "isIpad",
+        Platform.isAndroid
+            ? false
+            : info!.model.toLowerCase().contains("ipad"));
 
     if (sharedPreferences!.getBool(rememberKey) != null) {
       rememberMe = sharedPreferences!.getBool(rememberKey)!;
@@ -79,7 +86,6 @@ void main() async {
       return true;
     };
     setCrashlyticsIdentity();
-    debugPrint("IsItRemember:::: $rememberMe");
     runApp(MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,

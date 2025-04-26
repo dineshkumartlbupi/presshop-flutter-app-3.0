@@ -8,67 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:750460561502:android:8dfe95262e9c06ca40accf",
-        "android_client_info": {
-          "package_name": "com.example.presshop"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "750460561502-4k7ll8cj580kqqpdbjbgaa5pmr3v77qu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "d798e4841ac3ddb736dff74bf856f36e4658abf2"
-          }
-        },
-        {
-          "client_id": "750460561502-6o7p4k1kiu8ggta8ci2mh1tvkj35pq8v.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "c567a0a138d331569c968885b00cb41cbf5e882e"
-          }
-        },
-        {
-          "client_id": "750460561502-pjcdggbb9tpom9pkbj1nlpmtke4g92c8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.presshop",
-            "certificate_hash": "4779d4cc17a4375884938dae9bb118b71163c128"
-          }
-        },
-        {
-          "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "750460561502-2gme7cprutkh18gkqlsmhk03eg36mfpu.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.presshopdev",
-                "app_store_id": "6446359713"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:750460561502:android:769fcde34607dd0f40accf",
         "android_client_info": {
           "package_name": "com.presshop.app"
@@ -76,56 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "750460561502-fajfc82s14phu6iu767i7qm53qmu2r8f.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "750460561502-2gme7cprutkh18gkqlsmhk03eg36mfpu.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.presshopdev",
-                "app_store_id": "6446359713"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:750460561502:android:5875eec6c3fa44f040accf",
-        "android_client_info": {
-          "package_name": "com.pro.presshop"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "750460561502-kvckjptm7rc1c90m7qicur8cjnfvpa6s.apps.googleusercontent.com",
+          "client_id": "750460561502-9mdedg0c3n4r4kpeb3kke4q1nuip998r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.pro.presshop",
-            "certificate_hash": "f9a818f368e31806e9f9ef59de98f28587f6a08c"
+            "package_name": "com.presshop.app",
+            "certificate_hash": "3c8e5da69f6f38c9df60c9bcfd9f59ed1c0234c3"
           }
         },
         {
-          "client_id": "750460561502-ol91vhvkils412o0kio5cnqqjhchtupk.apps.googleusercontent.com",
+          "client_id": "750460561502-e745cqo70bb6djvko1id3u4e8a87hqgm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.pro.presshop",
-            "certificate_hash": "852b3e6b1694c25f0c1e80205f0fc8384a482102"
+            "package_name": "com.presshop.app",
+            "certificate_hash": "9794e4bb36c4f438c029c59f8f9d8dd20bc10f97"
           }
         },
         {
@@ -146,11 +48,10 @@
               "client_type": 3
             },
             {
-              "client_id": "750460561502-2gme7cprutkh18gkqlsmhk03eg36mfpu.apps.googleusercontent.com",
+              "client_id": "750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.presshopdev",
-                "app_store_id": "6446359713"
+                "bundle_id": "com.presshop.app"
               }
             }
           ]

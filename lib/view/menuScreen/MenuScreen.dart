@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:presshop/view/accountSetting/account_settings.dart';
 import 'package:presshop/view/authentication/LoginScreen.dart';
 import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
@@ -403,6 +404,10 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         name: "$contactText PressHop", //client asked to lower case
         icon: "${iconsPath}ic_contact_us.png",
         classWidget: const ContactUsScreen()));
+    menuList.add(MenuData(
+        name: accountSettingText,
+        icon: "${iconsPath}ic_my_profile.png",
+        classWidget: const AccountSetting()));
     menuList.add(MenuData(
         name: logoutText,
         icon: "${iconsPath}ic_logout.png",

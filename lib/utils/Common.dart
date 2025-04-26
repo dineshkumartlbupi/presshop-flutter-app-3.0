@@ -281,6 +281,9 @@ const getOfferPaymentChatReq = 76;
 const getTaskTransactionDetails = "hopper/getTaskTransactionDetails";
 const getTaskTransactionDetailsReq = 77;
 
+const deleteAccountUrl = "hopper/verifyAndDeleteAccount";
+const deleteAccountUrlReq = 78;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";
@@ -502,6 +505,7 @@ const feedText = "Feed";
 const paymentMethodText = "Payment methods";
 const legalText = "Legal";
 const logoutText = "Logout";
+const accountSettingText = "Account settings";
 const joinedText = "Joined";
 const userText = "user";
 const firstText = "first";
@@ -596,6 +600,9 @@ const contentSubmittedMessage2Text =
     "If you have any questions, please read our";
 const contentSubmittedMessage3Text =
     "our team members who will be glad to help.";
+const String deleteAccountText =
+    "Your account will permanently delete for our system and your Phone number and Email Address become permanently reserved. Same account cannot be re-use to register a new account. Still do you want to delete your account permanetly?";
+
 const boardCastShareSubText =
     "If you're unavailable or busy, you can share the task with someone you know, and let them earn extra money on the side. Go on, share the fun!";
 const shareText = "Share";
@@ -744,6 +751,17 @@ const unPaidText = "un_paid";
 const paidText = "paid";
 
 /*-------------*/
+
+const purposeForDeleteAccount = [
+  {"title": "I don't like the app"},
+  {"title": "Found a better alternative app"},
+  {"title": "I have another Presshop Account"},
+  {"title": "No longer using the app"},
+  {"title": "App is too complicated or hard to use"},
+  {"title": "Technical issues (e.g., bugs, crashes)"},
+  {"title": "Privacy or data concerns"},
+  {"title": "Other"}
+];
 
 /*---CommonColors------*/
 const colorThemePink = Color(0xFFEC4E54);

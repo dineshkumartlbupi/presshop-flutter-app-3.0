@@ -25,7 +25,8 @@ class MyProfile extends StatefulWidget {
   bool editProfileScreen;
   String screenType;
 
-  MyProfile({super.key, required this.editProfileScreen, required this.screenType});
+  MyProfile(
+      {super.key, required this.editProfileScreen, required this.screenType});
 
   @override
   State<StatefulWidget> createState() {
@@ -46,14 +47,25 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
   TextEditingController emailAddressController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController postCodeController = TextEditingController();
-  TextEditingController apartmentAndHouseNameController = TextEditingController();
+  TextEditingController apartmentAndHouseNameController =
+      TextEditingController();
   TextEditingController cityNameController = TextEditingController();
   TextEditingController countryNameController = TextEditingController();
 
   List<AvatarsData> avatarList = [];
   MyProfileData? myProfileData;
-  String selectedCountryCode = "", userImagePath = "", latitude = "", longitude = "";
-  bool userNameAutoFocus = false, userNameAlreadyExists = false, emailAlreadyExists = false, phoneAlreadyExists = false, showAddressError = false, showApartmentNumberError = false, showPostalCodeError = false, isLoading = false;
+  String selectedCountryCode = "",
+      userImagePath = "",
+      latitude = "",
+      longitude = "";
+  bool userNameAutoFocus = false,
+      userNameAlreadyExists = false,
+      emailAlreadyExists = false,
+      phoneAlreadyExists = false,
+      showAddressError = false,
+      showApartmentNumberError = false,
+      showPostalCodeError = false,
+      isLoading = false;
   lc.LocationData? locationData;
   lc.Location location = lc.Location();
   FocusNode apartmentFocusNode = FocusNode();
@@ -91,7 +103,10 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
         hideLeading: false,
         title: Text(
           widget.screenType,
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -106,7 +121,10 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)),
+                  (route) => false);
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -131,7 +149,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                   child: Form(
                     key: formKey,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * numD06),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -139,7 +158,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           SizedBox(
                             height: size.width * numD06,
                           ),
-                          Text("${userText.toTitleCase()} $nameText", style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                          Text("${userText.toTitleCase()} $nameText",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal)),
                           SizedBox(
                             height: size.width * numD02,
                           ),
@@ -149,9 +173,11 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             textInputFormatters: null,
                             borderColor: colorTextFieldBorder,
                             controller: userNameController,
-                            hintText: "${enterText.toTitleCase()} $userText $nameText",
+                            hintText:
+                                "${enterText.toTitleCase()} $userText $nameText",
                             prefixIcon: Container(
-                              margin: EdgeInsets.only(left: size.width * numD015),
+                              margin:
+                                  EdgeInsets.only(left: size.width * numD015),
                               child: Image.asset(
                                 "${iconsPath}ic_user.png",
                               ),
@@ -162,7 +188,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             validator: null /*userNameValidator*/,
                             enableValidations: false,
                             filled: true,
-                            filledColor: widget.editProfileScreen ? colorLightGrey : colorLightGrey,
+                            filledColor: widget.editProfileScreen
+                                ? colorLightGrey
+                                : colorLightGrey,
                             autofocus: userNameAutoFocus,
                             readOnly: true,
                             suffixIconIconHeight: size.width * numD04,
@@ -184,7 +212,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           SizedBox(
                             height: size.width * numD06,
                           ),
-                          Text("${firstText.toTitleCase()} $nameText", style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                          Text("${firstText.toTitleCase()} $nameText",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal)),
                           SizedBox(
                             height: size.width * numD02,
                           ),
@@ -194,9 +227,11 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             textInputFormatters: null,
                             borderColor: colorTextFieldBorder,
                             controller: firstNameController,
-                            hintText: "${enterText.toTitleCase()} $firstText $nameText",
+                            hintText:
+                                "${enterText.toTitleCase()} $firstText $nameText",
                             prefixIcon: Container(
-                              margin: EdgeInsets.only(left: size.width * numD015),
+                              margin:
+                                  EdgeInsets.only(left: size.width * numD015),
                               child: Image.asset(
                                 "${iconsPath}ic_user.png",
                               ),
@@ -209,14 +244,21 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             validator: checkRequiredValidator,
                             enableValidations: true,
                             filled: true,
-                            filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+                            filledColor: widget.editProfileScreen
+                                ? Colors.white
+                                : colorLightGrey,
                             autofocus: false,
                             readOnly: widget.editProfileScreen ? false : true,
                           ),
                           SizedBox(
                             height: size.width * numD06,
                           ),
-                          Text("${lastText.toTitleCase()} $nameText", style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                          Text("${lastText.toTitleCase()} $nameText",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal)),
                           SizedBox(
                             height: size.width * numD02,
                           ),
@@ -226,9 +268,11 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             textInputFormatters: null,
                             borderColor: colorTextFieldBorder,
                             controller: lastNameController,
-                            hintText: "${enterText.toTitleCase()} $lastText $nameText",
+                            hintText:
+                                "${enterText.toTitleCase()} $lastText $nameText",
                             prefixIcon: Container(
-                              margin: EdgeInsets.only(left: size.width * numD015),
+                              margin:
+                                  EdgeInsets.only(left: size.width * numD015),
                               child: Image.asset(
                                 "${iconsPath}ic_user.png",
                               ),
@@ -241,14 +285,21 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             validator: checkRequiredValidator,
                             enableValidations: true,
                             filled: true,
-                            filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+                            filledColor: widget.editProfileScreen
+                                ? Colors.white
+                                : colorLightGrey,
                             autofocus: false,
                             readOnly: widget.editProfileScreen ? false : true,
                           ),
                           SizedBox(
                             height: size.width * numD06,
                           ),
-                          Text("${phoneText.toTitleCase()} $numberText", style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                          Text("${phoneText.toTitleCase()} $numberText",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal)),
                           SizedBox(
                             height: size.width * numD02,
                           ),
@@ -258,7 +309,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             textInputFormatters: null,
                             borderColor: colorTextFieldBorder,
                             controller: phoneNumberController,
-                            hintText: "${enterText.toTitleCase()} $phoneText $numberText",
+                            hintText:
+                                "${enterText.toTitleCase()} $phoneText $numberText",
                             prefixIcon: Row(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -273,7 +325,11 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 ),
                                 Text(
                                   selectedCountryCode,
-                                  style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal),
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD032,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
                                 ),
                                 SizedBox(
                                   width: size.width * 0.01,
@@ -315,18 +371,26 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             suffixIconIconHeight: 0,
                             suffixIcon: null,
                             hidePassword: false,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: false, signed: true),
                             validator: null /*checkSignupPhoneValidator*/,
                             enableValidations: false,
                             filled: true,
-                            filledColor: widget.editProfileScreen ? colorLightGrey : colorLightGrey,
+                            filledColor: widget.editProfileScreen
+                                ? colorLightGrey
+                                : colorLightGrey,
                             autofocus: false,
                             readOnly: true,
                           ),
                           SizedBox(
                             height: size.width * numD06,
                           ),
-                          Text(emailAddressText, style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                          Text(emailAddressText,
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal)),
                           SizedBox(
                             height: size.width * numD02,
                           ),
@@ -336,9 +400,11 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             textInputFormatters: null,
                             borderColor: colorTextFieldBorder,
                             controller: emailAddressController,
-                            hintText: "${enterText.toTitleCase()} $emailAddressText",
+                            hintText:
+                                "${enterText.toTitleCase()} $emailAddressText",
                             prefixIcon: Container(
-                              margin: EdgeInsets.only(left: size.width * numD015),
+                              margin:
+                                  EdgeInsets.only(left: size.width * numD015),
                               child: Image.asset(
                                 "${iconsPath}ic_email.png",
                               ),
@@ -351,7 +417,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                             validator: null /*checkSignupEmailValidator*/,
                             enableValidations: false,
                             filled: true,
-                            filledColor: widget.editProfileScreen ? colorLightGrey : colorLightGrey,
+                            filledColor: widget.editProfileScreen
+                                ? colorLightGrey
+                                : colorLightGrey,
                             autofocus: false,
                             readOnly: true,
                           ),
@@ -363,7 +431,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(apartmentNoHintText, style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                              Text(apartmentNoHintText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD032,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal)),
                               SizedBox(
                                 height: size.width * numD02,
                               ),
@@ -396,20 +469,39 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 height: size.width * numD12,
                                 child: GooglePlaceAutoCompleteTextField(
                                   focusNode: apartmentFocusNode,
-                                  textEditingController: apartmentAndHouseNameController,
-                                  googleAPIKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                                  textEditingController:
+                                      apartmentAndHouseNameController,
+                                  googleAPIKey: Platform.isIOS
+                                      ? appleMapAPiKey
+                                      : googleMapAPiKey,
                                   isCrossBtnShown: false,
-                                  boxDecoration: BoxDecoration(color: widget.editProfileScreen ? Colors.white : colorLightGrey, borderRadius: BorderRadius.circular(size.width * 0.03), border: Border.all(color: colorTextFieldBorder, width: 1)),
-                                  textStyle: TextStyle(color: Colors.black, fontSize: size.width * numD032, fontFamily: 'AirbnbCereal_W_Md'),
+                                  boxDecoration: BoxDecoration(
+                                      color: widget.editProfileScreen
+                                          ? Colors.white
+                                          : colorLightGrey,
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * 0.03),
+                                      border: Border.all(
+                                          color: colorTextFieldBorder,
+                                          width: 1)),
+                                  textStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD032,
+                                      fontFamily: 'AirbnbCereal_W_Md'),
                                   inputDecoration: InputDecoration(
                                     border: InputBorder.none,
                                     filled: false,
                                     enabled: widget.editProfileScreen,
-                                    contentPadding: EdgeInsets.symmetric(vertical: 2),
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 2),
                                     hintText: apartmentNoHintText,
-                                    hintStyle: TextStyle(color: colorHint, fontSize: size.width * numD035, fontFamily: 'AirbnbCereal_W_Md'),
+                                    hintStyle: TextStyle(
+                                        color: colorHint,
+                                        fontSize: size.width * numD035,
+                                        fontFamily: 'AirbnbCereal_W_Md'),
                                     prefixIcon: Container(
-                                      margin: EdgeInsets.only(right: size.width * numD02, left: 12),
+                                      margin: EdgeInsets.only(
+                                          right: size.width * numD02, left: 12),
                                       child: Image.asset(
                                         "${iconsPath}ic_location.png",
                                       ),
@@ -419,10 +511,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                             splashColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () {
-                                              apartmentAndHouseNameController.clear();
+                                              apartmentAndHouseNameController
+                                                  .clear();
                                             },
                                             child: Padding(
-                                              padding: const EdgeInsets.only(right: 8),
+                                              padding: const EdgeInsets.only(
+                                                  right: 8),
                                               child: Icon(
                                                 Icons.close,
                                                 color: Colors.black,
@@ -431,7 +525,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                             ),
                                           )
                                         : SizedBox.shrink(),
-                                    prefixIconConstraints: BoxConstraints(maxHeight: size.width * numD045),
+                                    prefixIconConstraints: BoxConstraints(
+                                        maxHeight: size.width * numD045),
                                     suffixIconConstraints: BoxConstraints(
                                       maxHeight: size.width * numD07,
                                     ),
@@ -440,47 +535,77 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                   debounceTime: 200,
                                   countries: const ["uk", "in"],
                                   isLatLngRequired: true,
-                                  getPlaceDetailWithLatLng: (Prediction prediction) {
+                                  getPlaceDetailWithLatLng:
+                                      (Prediction prediction) {
                                     latitude = prediction.lat.toString();
                                     longitude = prediction.lng.toString();
-                                    debugPrint("placeDetails :: ${prediction.lng}");
-                                    debugPrint("placeDetails :: ${prediction.lat}");
-                                    getCurrentLocationFxn(prediction.lat ?? "", prediction.lng ?? "").then((value) {
+                                    debugPrint(
+                                        "placeDetails :: ${prediction.lng}");
+                                    debugPrint(
+                                        "placeDetails :: ${prediction.lat}");
+                                    getCurrentLocationFxn(prediction.lat ?? "",
+                                            prediction.lng ?? "")
+                                        .then((value) {
                                       if (value.isNotEmpty) {
-                                        cityNameController.text = value.first.locality ?? '';
-                                        countryNameController.text = value.first.country ?? '';
+                                        cityNameController.text =
+                                            value.first.locality ?? '';
+                                        countryNameController.text =
+                                            value.first.country ?? '';
                                       }
                                     });
                                     showAddressError = false;
                                     setState(() {});
                                   },
                                   itemClick: (Prediction prediction) {
-                                    addressController.text = prediction.description ?? "";
+                                    addressController.text =
+                                        prediction.description ?? "";
                                     latitude = prediction.lat ?? "";
                                     longitude = prediction.lng ?? "";
 
-                                    String postalCode = prediction.structuredFormatting?.mainText ?? '';
-                                    debugPrint("postalCode=======> $postalCode");
+                                    String postalCode = prediction
+                                            .structuredFormatting?.mainText ??
+                                        '';
+                                    debugPrint(
+                                        "postalCode=======> $postalCode");
                                     postCodeController.text = postalCode;
-                                    addressController.selection = TextSelection.fromPosition(TextPosition(offset: prediction.description != null ? prediction.description!.length : 0));
+                                    addressController.selection =
+                                        TextSelection.fromPosition(TextPosition(
+                                            offset: prediction.description !=
+                                                    null
+                                                ? prediction.description!.length
+                                                : 0));
                                   },
                                 ),
                               )
                             ],
                           ),
-                          showApartmentNumberError && apartmentAndHouseNameController.text.trim().isEmpty
+                          showApartmentNumberError &&
+                                  apartmentAndHouseNameController.text
+                                      .trim()
+                                      .isEmpty
                               ? Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD01),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD04,
+                                      vertical: size.width * numD01),
                                   child: Text(
                                     requiredText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.red.shade700, fontWeight: FontWeight.normal),
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD03,
+                                        color: Colors.red.shade700,
+                                        fontWeight: FontWeight.normal),
                                   ),
                                 )
                               : Container(),
                           SizedBox(
                             height: size.width * numD06,
                           ),
-                          Text(postalCodeText, style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                          Text(postalCodeText,
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal)),
                           SizedBox(
                             height: size.width * numD02,
                           ),
@@ -551,20 +676,39 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                   child: GooglePlaceAutoCompleteTextField(
                                     textEditingController: postCodeController,
                                     //   googleAPIKey: "AIzaSyAzccAqyrfD-V43gI9eBXqLf0qpqlm0Gu0",
-                                    googleAPIKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                                    googleAPIKey: Platform.isIOS
+                                        ? appleMapAPiKey
+                                        : googleMapAPiKey,
                                     isCrossBtnShown: false,
-                                    boxDecoration: BoxDecoration(color: widget.editProfileScreen ? Colors.white : colorLightGrey, borderRadius: BorderRadius.circular(size.width * 0.03), border: Border.all(color: colorTextFieldBorder, width: 1)),
-                                    textStyle: TextStyle(color: Colors.black, fontSize: size.width * numD032, fontFamily: 'AirbnbCereal_W_Md'),
+                                    boxDecoration: BoxDecoration(
+                                        color: widget.editProfileScreen
+                                            ? Colors.white
+                                            : colorLightGrey,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * 0.03),
+                                        border: Border.all(
+                                            color: colorTextFieldBorder,
+                                            width: 1)),
+                                    textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD032,
+                                        fontFamily: 'AirbnbCereal_W_Md'),
                                     inputDecoration: InputDecoration(
                                       border: InputBorder.none,
                                       filled: false,
                                       contentPadding: EdgeInsets.symmetric(
                                         vertical: size.width * numD038,
                                       ),
-                                      hintText: "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
-                                      hintStyle: TextStyle(color: colorHint, fontSize: size.width * numD035, fontFamily: 'AirbnbCereal_W_Md'),
+                                      hintText:
+                                          "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
+                                      hintStyle: TextStyle(
+                                          color: colorHint,
+                                          fontSize: size.width * numD035,
+                                          fontFamily: 'AirbnbCereal_W_Md'),
                                       prefixIcon: Container(
-                                        margin: EdgeInsets.only(right: size.width * numD02, left: 12),
+                                        margin: EdgeInsets.only(
+                                            right: size.width * numD02,
+                                            left: 12),
                                         child: Image.asset(
                                           "${iconsPath}ic_location.png",
                                         ),
@@ -576,7 +720,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                           postCodeController.clear();
                                         },
                                         child: Padding(
-                                          padding: const EdgeInsets.only(right: 8),
+                                          padding:
+                                              const EdgeInsets.only(right: 8),
                                           child: Icon(
                                             Icons.close,
                                             color: Colors.black,
@@ -584,7 +729,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                           ),
                                         ),
                                       ),
-                                      prefixIconConstraints: BoxConstraints(maxHeight: size.width * numD045),
+                                      prefixIconConstraints: BoxConstraints(
+                                          maxHeight: size.width * numD045),
                                       suffixIconConstraints: BoxConstraints(
                                         maxHeight: size.width * numD07,
                                       ),
@@ -594,15 +740,23 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                     countries: const ["uk", "in"],
                                     isLatLngRequired: true,
 
-                                    getPlaceDetailWithLatLng: (Prediction prediction) {
+                                    getPlaceDetailWithLatLng:
+                                        (Prediction prediction) {
                                       latitude = prediction.lat.toString();
                                       longitude = prediction.lng.toString();
-                                      debugPrint("placeDetails :: ${prediction.lng}");
-                                      debugPrint("placeDetails :: ${prediction.lat}");
-                                      getCurrentLocationFxn(prediction.lat ?? "", prediction.lng ?? "").then((value) {
+                                      debugPrint(
+                                          "placeDetails :: ${prediction.lng}");
+                                      debugPrint(
+                                          "placeDetails :: ${prediction.lat}");
+                                      getCurrentLocationFxn(
+                                              prediction.lat ?? "",
+                                              prediction.lng ?? "")
+                                          .then((value) {
                                         if (value.isNotEmpty) {
-                                          cityNameController.text = value.first.locality ?? '';
-                                          countryNameController.text = value.first.country ?? '';
+                                          cityNameController.text =
+                                              value.first.locality ?? '';
+                                          countryNameController.text =
+                                              value.first.country ?? '';
                                         }
                                       });
                                       showAddressError = false;
@@ -610,14 +764,27 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                     },
 
                                     itemClick: (Prediction prediction) {
-                                      addressController.text = prediction.description ?? "";
+                                      addressController.text =
+                                          prediction.description ?? "";
                                       latitude = prediction.lat ?? "";
                                       longitude = prediction.lng ?? "";
 
-                                      String postalCode = prediction.structuredFormatting?.mainText ?? '';
-                                      debugPrint("postalCode=======> $postalCode");
+                                      String postalCode = prediction
+                                              .structuredFormatting?.mainText ??
+                                          '';
+                                      debugPrint(
+                                          "postalCode=======> $postalCode");
                                       postCodeController.text = postalCode;
-                                      addressController.selection = TextSelection.fromPosition(TextPosition(offset: prediction.description != null ? prediction.description!.length : 0));
+                                      addressController.selection =
+                                          TextSelection.fromPosition(
+                                              TextPosition(
+                                                  offset:
+                                                      prediction.description !=
+                                                              null
+                                                          ? prediction
+                                                              .description!
+                                                              .length
+                                                          : 0));
                                     },
                                   ),
                                 )
@@ -627,7 +794,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                   textInputFormatters: null,
                                   borderColor: colorTextFieldBorder,
                                   controller: postCodeController,
-                                  hintText: "${enterText.toTitleCase()} $postalCodeText",
+                                  hintText:
+                                      "${enterText.toTitleCase()} $postalCodeText",
                                   prefixIcon: Image.asset(
                                     "${iconsPath}ic_location.png",
                                   ),
@@ -639,17 +807,26 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                   validator: checkRequiredValidator,
                                   enableValidations: true,
                                   filled: true,
-                                  filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+                                  filledColor: widget.editProfileScreen
+                                      ? Colors.white
+                                      : colorLightGrey,
                                   autofocus: false,
                                   readOnly: true,
                                 ),
 
-                          showAddressError && addressController.text.trim().isEmpty
+                          showAddressError &&
+                                  addressController.text.trim().isEmpty
                               ? Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD01),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD04,
+                                      vertical: size.width * numD01),
                                   child: Text(
                                     requiredText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.red.shade700, fontWeight: FontWeight.normal),
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD03,
+                                        color: Colors.red.shade700,
+                                        fontWeight: FontWeight.normal),
                                   ),
                                 )
                               : Container(),
@@ -660,7 +837,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(addressText, style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                              Text(addressText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD032,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal)),
                               SizedBox(
                                 height: size.width * numD02,
                               ),
@@ -670,21 +852,42 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                   ? SizedBox(
                                       height: size.width * numD12,
                                       child: GooglePlaceAutoCompleteTextField(
-                                        textEditingController: addressController,
+                                        textEditingController:
+                                            addressController,
                                         //googleAPIKey: "AIzaSyAzccAqyrfD-V43gI9eBXqLf0qpqlm0Gu0",
-                                        googleAPIKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                                        googleAPIKey: Platform.isIOS
+                                            ? appleMapAPiKey
+                                            : googleMapAPiKey,
                                         isCrossBtnShown: false,
-                                        boxDecoration: BoxDecoration(color: widget.editProfileScreen ? Colors.white : colorLightGrey, borderRadius: BorderRadius.circular(size.width * 0.03), border: Border.all(color: colorTextFieldBorder, width: 1)),
-                                        textStyle: TextStyle(color: Colors.black, fontSize: size.width * numD032, fontFamily: 'AirbnbCereal_W_Md'),
+                                        boxDecoration: BoxDecoration(
+                                            color: widget.editProfileScreen
+                                                ? Colors.white
+                                                : colorLightGrey,
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * 0.03),
+                                            border: Border.all(
+                                                color: colorTextFieldBorder,
+                                                width: 1)),
+                                        textStyle: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: size.width * numD032,
+                                            fontFamily: 'AirbnbCereal_W_Md'),
                                         inputDecoration: InputDecoration(
                                           helperMaxLines: 5,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.symmetric(vertical: size.width * numD038),
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: size.width * numD038),
                                           filled: false,
-                                          hintText: "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
-                                          hintStyle: TextStyle(color: colorHint, fontSize: size.width * numD035, fontFamily: 'AirbnbCereal_W_Md'),
+                                          hintText:
+                                              "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
+                                          hintStyle: TextStyle(
+                                              color: colorHint,
+                                              fontSize: size.width * numD035,
+                                              fontFamily: 'AirbnbCereal_W_Md'),
                                           prefixIcon: Container(
-                                            margin: EdgeInsets.only(right: size.width * numD02, left: 12),
+                                            margin: EdgeInsets.only(
+                                                right: size.width * numD02,
+                                                left: 12),
                                             child: Image.asset(
                                               "${iconsPath}ic_location.png",
                                             ),
@@ -696,7 +899,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                               addressController.clear();
                                             },
                                             child: Padding(
-                                              padding: const EdgeInsets.only(right: 8),
+                                              padding: const EdgeInsets.only(
+                                                  right: 8),
                                               child: Icon(
                                                 Icons.close,
                                                 color: Colors.black,
@@ -704,7 +908,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                               ),
                                             ),
                                           ),
-                                          prefixIconConstraints: BoxConstraints(maxHeight: size.width * numD045),
+                                          prefixIconConstraints: BoxConstraints(
+                                              maxHeight: size.width * numD045),
                                           suffixIconConstraints: BoxConstraints(
                                             maxHeight: size.width * numD07,
                                           ),
@@ -716,15 +921,23 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                         // optional by default null is set
                                         isLatLngRequired: true,
                                         // if you required coordinates from place detail
-                                        getPlaceDetailWithLatLng: (Prediction prediction) {
+                                        getPlaceDetailWithLatLng:
+                                            (Prediction prediction) {
                                           latitude = prediction.lat.toString();
                                           longitude = prediction.lng.toString();
-                                          debugPrint("placeDetails :: ${prediction.lng}");
-                                          debugPrint("placeDetails :: ${prediction.lat}");
-                                          getCurrentLocationFxn(prediction.lat ?? "", prediction.lng ?? "").then((value) {
+                                          debugPrint(
+                                              "placeDetails :: ${prediction.lng}");
+                                          debugPrint(
+                                              "placeDetails :: ${prediction.lat}");
+                                          getCurrentLocationFxn(
+                                                  prediction.lat ?? "",
+                                                  prediction.lng ?? "")
+                                              .then((value) {
                                             if (value.isNotEmpty) {
-                                              cityNameController.text = value.first.locality ?? '';
-                                              countryNameController.text = value.first.country ?? '';
+                                              cityNameController.text =
+                                                  value.first.locality ?? '';
+                                              countryNameController.text =
+                                                  value.first.country ?? '';
                                             }
                                           });
                                           showAddressError = false;
@@ -733,15 +946,29 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                         // this callback is called when isLatLngRequired is true
 
                                         itemClick: (Prediction prediction) {
-                                          addressController.text = prediction.description ?? "";
+                                          addressController.text =
+                                              prediction.description ?? "";
                                           latitude = prediction.lat ?? "";
                                           longitude = prediction.lng ?? "";
 
-                                          String postalCode = prediction?.structuredFormatting?.mainText ?? '';
-                                          debugPrint("postalCode=======> $postalCode");
+                                          String postalCode = prediction
+                                                  ?.structuredFormatting
+                                                  ?.mainText ??
+                                              '';
+                                          debugPrint(
+                                              "postalCode=======> $postalCode");
 
                                           //postCodeController.text = postalCode;
-                                          addressController.selection = TextSelection.fromPosition(TextPosition(offset: prediction.description != null ? prediction.description!.length : 0));
+                                          addressController.selection =
+                                              TextSelection.fromPosition(
+                                                  TextPosition(
+                                                      offset: prediction
+                                                                  .description !=
+                                                              null
+                                                          ? prediction
+                                                              .description!
+                                                              .length
+                                                          : 0));
                                         },
                                       ),
                                     )
@@ -751,7 +978,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                       textInputFormatters: null,
                                       borderColor: colorTextFieldBorder,
                                       controller: addressController,
-                                      hintText: "${enterText.toTitleCase()} $addressText",
+                                      hintText:
+                                          "${enterText.toTitleCase()} $addressText",
                                       prefixIcon: Image.asset(
                                         "${iconsPath}ic_location.png",
                                       ),
@@ -763,19 +991,31 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                       validator: checkRequiredValidator,
                                       enableValidations: true,
                                       filled: true,
-                                      filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+                                      filledColor: widget.editProfileScreen
+                                          ? Colors.white
+                                          : colorLightGrey,
                                       autofocus: false,
-                                      readOnly: widget.editProfileScreen ? false : true,
+                                      readOnly: widget.editProfileScreen
+                                          ? false
+                                          : true,
                                     ),
                             ],
                           ),
 
-                          showPostalCodeError && postCodeController.text.trim().isEmpty && addressController.text.isNotEmpty
+                          showPostalCodeError &&
+                                  postCodeController.text.trim().isEmpty &&
+                                  addressController.text.isNotEmpty
                               ? Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD01),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD04,
+                                      vertical: size.width * numD01),
                                   child: Text(
                                     requiredText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.red.shade700, fontWeight: FontWeight.normal),
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD03,
+                                        color: Colors.red.shade700,
+                                        fontWeight: FontWeight.normal),
                                   ),
                                 )
                               : Container(),
@@ -788,7 +1028,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(cityText, style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                              Text(cityText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD032,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal)),
                               SizedBox(
                                 height: size.width * numD02,
                               ),
@@ -800,7 +1045,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 controller: cityNameController,
                                 hintText: cityText,
                                 prefixIcon: Container(
-                                  margin: EdgeInsets.only(left: size.width * numD01),
+                                  margin: EdgeInsets.only(
+                                      left: size.width * numD01),
                                   child: Image.asset(
                                     "${iconsPath}ic_location.png",
                                   ),
@@ -813,9 +1059,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 validator: checkRequiredValidator,
                                 enableValidations: true,
                                 filled: true,
-                                filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+                                filledColor: widget.editProfileScreen
+                                    ? Colors.white
+                                    : colorLightGrey,
                                 autofocus: false,
-                                readOnly: widget.editProfileScreen ? false : true,
+                                readOnly:
+                                    widget.editProfileScreen ? false : true,
                               ),
                             ],
                           ),
@@ -826,7 +1075,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(countryText, style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.normal)),
+                              Text(countryText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD032,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal)),
                               SizedBox(
                                 height: size.width * numD02,
                               ),
@@ -838,7 +1092,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 controller: countryNameController,
                                 hintText: countryText,
                                 prefixIcon: Container(
-                                  margin: EdgeInsets.only(left: size.width * numD01),
+                                  margin: EdgeInsets.only(
+                                      left: size.width * numD01),
                                   child: Image.asset(
                                     "${iconsPath}ic_location.png",
                                   ),
@@ -851,9 +1106,12 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 validator: checkRequiredValidator,
                                 enableValidations: true,
                                 filled: true,
-                                filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+                                filledColor: widget.editProfileScreen
+                                    ? Colors.white
+                                    : colorLightGrey,
                                 autofocus: false,
-                                readOnly: widget.editProfileScreen ? false : true,
+                                readOnly:
+                                    widget.editProfileScreen ? false : true,
                               ),
                             ],
                           ),
@@ -866,13 +1124,35 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                   width: double.infinity,
                                   height: size.width * numD14,
                                   //  padding: EdgeInsets.symmetric(horizontal: size.width * numD08),
-                                  child: commonElevatedButton(widget.editProfileScreen ? saveText.toTitleCase() : editProfileText.toTitleCase(), size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                                  child: commonElevatedButton(
+                                      widget.editProfileScreen
+                                          ? saveText.toTitleCase()
+                                          : editProfileText.toTitleCase(),
+                                      size,
+                                      commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700),
+                                      commonButtonStyle(size, colorThemePink),
+                                      () {
                                     if (!widget.editProfileScreen) {
-                                      widget.editProfileScreen = !widget.editProfileScreen;
-                                      scrollController.animateTo(scrollController.position.minScrollExtent, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+                                      widget.editProfileScreen =
+                                          !widget.editProfileScreen;
+                                      scrollController.animateTo(
+                                          scrollController
+                                              .position.minScrollExtent,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut);
                                       userNameAutoFocus = true;
                                     } else {
-                                      scrollController.animateTo(scrollController.position.minScrollExtent, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+                                      scrollController.animateTo(
+                                          scrollController
+                                              .position.minScrollExtent,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut);
                                       if (formKey.currentState!.validate()) {
                                         editProfileApi();
                                       }
@@ -898,16 +1178,22 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
   Widget topProfileWidget() {
     return Container(
       height: size.width * numD35,
-      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(size.width * numD04)),
+      decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(size.width * numD04)),
       child: Row(
         children: [
           Stack(
             fit: StackFit.loose,
             children: [
               ClipRRect(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(size.width * numD04), bottomLeft: Radius.circular(size.width * numD04)),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(size.width * numD04),
+                      bottomLeft: Radius.circular(size.width * numD04)),
                   child: Image.network(
-                    myProfileData != null ? "$avatarImageUrl${myProfileData!.avatarImage}" : "",
+                    myProfileData != null
+                        ? "$avatarImageUrl${myProfileData!.avatarImage}"
+                        : "",
                     errorBuilder: (context, exception, stacktrace) {
                       return Padding(
                         padding: EdgeInsets.all(size.width * numD04),
@@ -933,10 +1219,13 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                         },
                         child: Container(
                           padding: EdgeInsets.all(size.width * 0.005),
-                          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
                           child: Container(
                               padding: EdgeInsets.all(size.width * 0.005),
-                              decoration: const BoxDecoration(color: colorThemePink, shape: BoxShape.circle),
+                              decoration: const BoxDecoration(
+                                  color: colorThemePink,
+                                  shape: BoxShape.circle),
                               child: Icon(
                                 Icons.edit_outlined,
                                 color: Colors.white,
@@ -956,19 +1245,45 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(myProfileData != null ? myProfileData!.userName.toCapitalized() : "", style: commonTextStyle(size: size, fontSize: size.width * numD04, color: colorThemePink, fontWeight: FontWeight.w500)),
+              Text(
+                  myProfileData != null
+                      ? myProfileData!.userName.toCapitalized()
+                      : "",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD04,
+                      color: colorThemePink,
+                      fontWeight: FontWeight.w500)),
               SizedBox(
                 height: size.width * numD01,
               ),
-              Text("$joinedText - ${myProfileData != null ? myProfileData!.joinedDate : ""}", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.normal)),
+              Text(
+                  "$joinedText - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal)),
               SizedBox(
                 height: size.width * numD005,
               ),
-              Text("$earningsText - ${euroUniqueCode}0", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.normal)),
+              Text("$earningsText - ${euroUniqueCode}0",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal)),
               SizedBox(
                 height: size.width * numD005,
               ),
-              Text(myProfileData != null ? myProfileData!.address : "", maxLines: 3, overflow: TextOverflow.ellipsis, style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.normal))
+              Text(myProfileData != null ? myProfileData!.address : "",
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal))
             ],
           ))
         ],
@@ -1001,7 +1316,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
     } else if (lastNameController.text.trim().isEmpty) {
       return "Last name must be filled.";
     }
-    if (value.toLowerCase().contains(firstNameController.text.toLowerCase()) || value.toLowerCase().contains(lastNameController.text.toLowerCase())) {
+    if (value.toLowerCase().contains(firstNameController.text.toLowerCase()) ||
+        value.toLowerCase().contains(lastNameController.text.toLowerCase())) {
       return "First name or Last name are not allowed in user name.";
     } else if (value.length < 4) {
       return "Your user name must be at least 4 characters in length";
@@ -1015,7 +1331,18 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
     userNameController.addListener(() {
       if (widget.editProfileScreen) {
         debugPrint("UserName:${userNameController.text}");
-        if (userNameController.text.trim().isNotEmpty && firstNameController.text.trim().isNotEmpty && lastNameController.text.trim().isNotEmpty && userNameController.text.trim().length >= 4 && !userNameController.text.trim().toLowerCase().contains(firstNameController.text.trim().toLowerCase()) && !userNameController.text.trim().toLowerCase().contains(lastNameController.text.trim().toLowerCase())) {
+        if (userNameController.text.trim().isNotEmpty &&
+            firstNameController.text.trim().isNotEmpty &&
+            lastNameController.text.trim().isNotEmpty &&
+            userNameController.text.trim().length >= 4 &&
+            !userNameController.text
+                .trim()
+                .toLowerCase()
+                .contains(firstNameController.text.trim().toLowerCase()) &&
+            !userNameController.text
+                .trim()
+                .toLowerCase()
+                .contains(lastNameController.text.trim().toLowerCase())) {
           debugPrint("notsuccess");
           checkUserNameApi();
         } else {
@@ -1046,7 +1373,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
     phoneNumberController.addListener(() {
       if (widget.editProfileScreen) {
         debugPrint("Phone:${phoneNumberController.text}");
-        if (phoneNumberController.text.trim().isNotEmpty && phoneNumberController.text.trim().length > 9) {
+        if (phoneNumberController.text.trim().isNotEmpty &&
+            phoneNumberController.text.trim().length > 9) {
           debugPrint("notsuccess");
           checkPhoneApi();
         } else {
@@ -1062,7 +1390,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
   void avatarBottomSheet(Size size) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Ensures the bottom sheet is full height if needed
+      isScrollControlled:
+          true, // Ensures the bottom sheet is full height if needed
       builder: (context) {
         return StatefulBuilder(builder: (context, avatarState) {
           return Container(
@@ -1112,7 +1441,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                         children: avatarList.map<Widget>((item) {
                           return InkWell(
                             onTap: () {
-                              int pos = avatarList.indexWhere((element) => element.selected);
+                              int pos = avatarList
+                                  .indexWhere((element) => element.selected);
                               if (pos >= 0) {
                                 avatarList[pos].selected = false;
                               }
@@ -1168,7 +1498,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
   }
 */
 
-  Future<List<Placemark>> getCurrentLocationFxn(String latitude, longitude) async {
+  Future<List<Placemark>> getCurrentLocationFxn(
+      String latitude, longitude) async {
     try {
       double lat = double.parse(latitude);
       double long = double.parse(longitude);
@@ -1232,7 +1563,11 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
   ///ApisSection------------
   void checkUserNameApi() {
     try {
-      NetworkClass("$checkUserNameUrl${userNameController.text.trim().toLowerCase()}", this, checkUserNameUrlRequest).callRequestServiceHeader(false, "get", null);
+      NetworkClass(
+              "$checkUserNameUrl${userNameController.text.trim().toLowerCase()}",
+              this,
+              checkUserNameUrlRequest)
+          .callRequestServiceHeader(false, "get", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -1240,7 +1575,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
 
   void checkEmailApi() {
     try {
-      NetworkClass("$checkEmailUrl${emailAddressController.text.trim()}", this, checkEmailUrlRequest).callRequestServiceHeader(false, "get", null);
+      NetworkClass("$checkEmailUrl${emailAddressController.text.trim()}", this,
+              checkEmailUrlRequest)
+          .callRequestServiceHeader(false, "get", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -1248,7 +1585,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
 
   void checkPhoneApi() {
     try {
-      NetworkClass("$checkPhoneUrl${phoneNumberController.text.trim()}", this, checkPhoneUrlRequest).callRequestServiceHeader(false, "get", null);
+      NetworkClass("$checkPhoneUrl${phoneNumberController.text.trim()}", this,
+              checkPhoneUrlRequest)
+          .callRequestServiceHeader(false, "get", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -1256,14 +1595,16 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
 
   void getAvatarsApi() {
     try {
-      NetworkClass(getAvatarsUrl, this, getAvatarsUrlRequest).callRequestServiceHeader(false, "get", null);
+      NetworkClass(getAvatarsUrl, this, getAvatarsUrlRequest)
+          .callRequestServiceHeader(false, "get", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
   }
 
   void myProfileApi() {
-    NetworkClass(myProfileUrl, this, myProfileUrlRequest).callRequestServiceHeader(false, "get", null);
+    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+        .callRequestServiceHeader(false, "get", null);
   }
 
   void editProfileApi() {
@@ -1277,7 +1618,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
         phoneKey: phoneNumberController.text.trim(),
         addressKey: addressController.text.trim(),
         latitudeKey: latitude.isNotEmpty ? latitude : myProfileData!.latitude,
-        longitudeKey: longitude.isNotEmpty ? longitude : myProfileData!.longitude,
+        longitudeKey:
+            longitude.isNotEmpty ? longitude : myProfileData!.longitude,
         avatarIdKey: myProfileData!.avatarId,
         postCodeKey: postCodeController.text,
         cityKey: cityNameController.text.trim(),
@@ -1285,7 +1627,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
         apartmentKey: apartmentAndHouseNameController.text.trim(),
         roleKey: "Hopper",
       };
-      NetworkClass.fromNetworkClass(editProfileUrl, this, editProfileUrlRequest, params).callRequestServiceHeader(true, "patch", null);
+      NetworkClass.fromNetworkClass(
+              editProfileUrl, this, editProfileUrlRequest, params)
+          .callRequestServiceHeader(true, "patch", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -1320,22 +1664,32 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
 
           if (map["code"] == 200) {
             myProfileData = MyProfileData.fromJson(map["userData"]);
-            sharedPreferences!.setString(firstNameKey, map["userData"][firstNameKey]);
-            sharedPreferences!.setString(lastNameKey, map["userData"][lastNameKey]);
+            sharedPreferences!
+                .setString(firstNameKey, map["userData"][firstNameKey]);
+            sharedPreferences!
+                .setString(lastNameKey, map["userData"][lastNameKey]);
             sharedPreferences!.setString(emailKey, map["userData"][emailKey]);
-            sharedPreferences!.setString(countryCodeKey, map["userData"][countryCodeKey]);
-            sharedPreferences!.setString(phoneKey, map["userData"][phoneKey].toString());
+            sharedPreferences!
+                .setString(countryCodeKey, map["userData"][countryCodeKey]);
+            sharedPreferences!
+                .setString(phoneKey, map["userData"][phoneKey].toString());
             debugPrint("phoneNumber======> ${map["userData"][phoneKey]}");
-            sharedPreferences!.setString(addressKey, map["userData"][addressKey]);
+            sharedPreferences!
+                .setString(addressKey, map["userData"][addressKey]);
             if (map["userData"][postCodeKey] != null) {
-              sharedPreferences!.setString(addressKey, map["userData"][postCodeKey]);
+              sharedPreferences!
+                  .setString(addressKey, map["userData"][postCodeKey]);
             }
 
-            sharedPreferences!.setString(latitudeKey, map["userData"][latitudeKey].toString());
-            sharedPreferences!.setString(longitudeKey, map["userData"][longitudeKey].toString());
-            sharedPreferences!.setString(avatarIdKey, map["userData"][avatarIdKey].toString());
+            sharedPreferences!.setString(
+                latitudeKey, map["userData"][latitudeKey].toString());
+            sharedPreferences!.setString(
+                longitudeKey, map["userData"][longitudeKey].toString());
+            sharedPreferences!.setString(
+                avatarIdKey, map["userData"][avatarIdKey].toString());
             if (map["userData"]['avatarData'] != null) {
-              sharedPreferences!.setString(avatarKey, map["userData"]['avatarData'][avatarKey]);
+              sharedPreferences!.setString(
+                  avatarKey, map["userData"]['avatarData'][avatarKey]);
             }
             isLoading = true;
             setProfileData();
@@ -1429,11 +1783,20 @@ class MyProfileData {
     postCode = json[postCodeKey] ?? "";
     latitude = json[latitudeKey].toString();
     longitude = json[longitudeKey].toString();
-    avatarImage = json["avatarData"] != null ? json["avatarData"]["avatar"] : "";
+    avatarImage =
+        json["avatarData"] != null ? json["avatarData"]["avatar"] : "";
     avatarId = json["avatarData"] != null ? json["avatarData"]["_id"] : "";
-    joinedDate = changeDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy");
-    validDegree = json["doc_to_become_pro"] != null ? json["doc_to_become_pro"]["govt_id_mediatype"].toString() : "";
-    validMemberShip = json["doc_to_become_pro"] != null ? json["doc_to_become_pro"]["photography_mediatype"].toString() : "";
-    validBritishPassport = json["doc_to_become_pro"] != null ? json["doc_to_become_pro"]["comp_incorporation_cert_mediatype"].toString() : "";
+    joinedDate = changeDateFormat(
+        "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy");
+    validDegree = json["doc_to_become_pro"] != null
+        ? json["doc_to_become_pro"]["govt_id_mediatype"].toString()
+        : "";
+    validMemberShip = json["doc_to_become_pro"] != null
+        ? json["doc_to_become_pro"]["photography_mediatype"].toString()
+        : "";
+    validBritishPassport = json["doc_to_become_pro"] != null
+        ? json["doc_to_become_pro"]["comp_incorporation_cert_mediatype"]
+            .toString()
+        : "";
   }
 }

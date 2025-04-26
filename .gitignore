@@ -8,7 +8,7 @@
 .buildlog/
 .history
 .svn/
-
+*.jks
 # IntelliJ related
 *.ipr
 *.iws
@@ -73,3 +73,4 @@
 ios/Pods/*
 ios/build/*
 
+android/keystore.properties

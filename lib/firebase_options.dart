@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI',
-    appId: '1:750460561502:android:8dfe95262e9c06ca40accf',
+    appId: '1:750460561502:android:769fcde34607dd0f40accf',
     messagingSenderId: '750460561502',
     projectId: 'presshopdev-db299',
     storageBucket: 'presshopdev-db299.appspot.com',
