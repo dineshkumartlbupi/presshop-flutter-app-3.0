@@ -346,6 +346,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
                                           TransactionDetailScreen(
+                                              pageType: PageType.CONTENT,
                                               type: "received",
                                               transactionData: notificationList[
                                                       index]

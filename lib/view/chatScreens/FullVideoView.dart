@@ -6,8 +6,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../utils/Common.dart';
@@ -31,7 +33,10 @@ class MediaViewScreen extends StatefulWidget {
   _MediaViewScreenState createState() => _MediaViewScreenState();
 }
 
-class _MediaViewScreenState extends State<MediaViewScreen> {
+class _MediaViewScreenState extends State<MediaViewScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+
   FlickManager? flickManager;
 
   late Size size;
@@ -47,11 +52,14 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
     debugPrint("mediaUrl =====> ${widget.mediaFile}");
     if (widget.type == MediaTypeEnum.video) {
       flickManager = FlickManager(
-        videoPlayerController: VideoPlayerController.network(taskMediaUrl+widget.mediaFile),
+        videoPlayerController:
+            VideoPlayerController.network(taskMediaUrl + widget.mediaFile),
       );
     } else if (widget.type == MediaTypeEnum.audio) {
       initWaveData();
     }
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(minutes: 1));
     super.initState();
     debugPrint("Media Path=========>${widget.mediaFile}");
     debugPrint("Media Type=========>${widget.type}");
@@ -60,6 +68,7 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
   @override
   void dispose() {
     flickManager?.dispose();
+    _animationController.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -69,37 +78,66 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor:widget.type == MediaTypeEnum.audio?Colors.white:Colors.black,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor:widget.type == MediaTypeEnum.audio?Colors.white:Colors.black,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leadingWidth: size.width * numD11,
-        title: Text(
-          widget.type == MediaTypeEnum.video ? 'Playing Video' : "",
-          style: TextStyle(
-              color: widget.type == MediaTypeEnum.video
-                  ? Colors.white
-                  : Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        leading: Container(
-          margin: EdgeInsets.only(left: size.width * numD04),
-          child: InkWell(
-            child: Image.asset(
-              "${iconsPath}ic_arrow_left.png",
-              height: size.width * numD03,
-              width: size.width * numD03,
-              color:widget.type == MediaTypeEnum.audio?Colors.black:Colors.white,
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
+      backgroundColor:
+          widget.type == MediaTypeEnum.audio ? Colors.white : Colors.black,
+      appBar: CommonAppBar(
+          appBarbackgroundColor:
+              widget.type == MediaTypeEnum.audio ? Colors.white : Colors.black,
+          leadingIconColor:
+              widget.type == MediaTypeEnum.audio ? Colors.black : Colors.white,
+          elevation: 0,
+          title: Text(
+            widget.type == MediaTypeEnum.video ? 'Playing Video' : "",
+            style: TextStyle(
+                color: widget.type == MediaTypeEnum.video
+                    ? Colors.white
+                    : Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: size.width * appBarHeadingFontSize),
           ),
-        ),
-      ),
+          centerTitle: true,
+          titleSpacing: size.width * numD11,
+          size: size,
+          showActions: false,
+          leadingFxn: () {
+            Navigator.pop(context);
+          },
+          actionWidget: [],
+          hideLeading: false),
+
+      // AppBar(
+      //   elevation: 0,
+      //   backgroundColor:
+      //       widget.type == MediaTypeEnum.audio ? Colors.white : Colors.black,
+      //   centerTitle: true,
+      //   automaticallyImplyLeading: false,
+      //   leadingWidth: size.width * numD11,
+      //   title: Text(
+      //     widget.type == MediaTypeEnum.video ? 'Playing Video' : "",
+      //     style: TextStyle(
+      //         color: widget.type == MediaTypeEnum.video
+      //             ? Colors.white
+      //             : Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * appBarHeadingFontSize),
+      //   ),
+      //   leading: Container(
+      //     margin: EdgeInsets.only(left: size.width * numD04),
+      //     child: InkWell(
+      //       child: Image.asset(
+      //         "${iconsPath}ic_arrow_left.png",
+      //         height: size.width * numD03,
+      //         width: size.width * numD03,
+      //         color: widget.type == MediaTypeEnum.audio
+      //             ? Colors.black
+      //             : Colors.white,
+      //       ),
+      //       onTap: () {
+      //         Navigator.pop(context);
+      //       },
+      //     ),
+      //   ),
+      // ),
       body: SafeArea(
         child: widget.type == MediaTypeEnum.video
             ? videoWidget()
@@ -107,7 +145,7 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
                 ? imageWidget()
                 : widget.type == MediaTypeEnum.pickFile
                     ? pickImageFileWidget()
-                    : audioWidget(),
+                    : audioWidgetNew(),
       ),
     );
   }
@@ -164,7 +202,11 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
 
     File(filepath).createSync();
 
-    await dio.download(widget.mediaFile, filepath);
+    try {
+      await dio.download(widget.mediaFile, filepath);
+    } catch (e) {
+      await dio.download(taskMediaUrl + widget.mediaFile, filepath);
+    }
 
     await controller.preparePlayer(
       path: filepath,
@@ -188,89 +230,92 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
 
   Future playSound() async {
     await controller.startPlayer();
+    _animationController.forward();
   }
+
   Future pauseSound() async {
     await controller.pausePlayer();
+    _animationController.stop();
   }
 
-  Widget audioWidget() {
+  Widget audioWidgetNew() {
     return isLoading
         ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                height: size.width * numD05,
+                height: size.height * numD025,
               ),
-              Container(
-                padding: EdgeInsets.all(size.width * numD02),
-                decoration: const BoxDecoration(
-                    color: colorThemePink, shape: BoxShape.circle),
-                child: Container(
-                    padding: EdgeInsets.all(size.width * numD07),
-                    decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: Colors.white, width: size.width * numD01)),
-                    child: Icon(
-                      Icons.mic_none_outlined,
-                      size: size.width * numD25,
-                      color: Colors.white,
-                    )),
+              Expanded(
+                flex: 4,
+                child: SizedBox(
+                    // padding: EdgeInsets.all(size.width * numD04),
+                    // decoration: const BoxDecoration(color: colorThemePink, shape: BoxShape.circle),
+                    child: Image.asset("assets/commonImages/audio_logo.png")),
               ),
-              const Spacer(),
-              AudioFileWaveforms(
-                size: Size(size.width, 100.0),
-                playerController: controller,
-                enableSeekGesture: true,
-                waveformType: WaveformType.long,
-                continuousWaveform: true,
-                playerWaveStyle: PlayerWaveStyle(
-                  fixedWaveColor: Colors.black,
-                  liveWaveColor: colorThemePink,
-                  spacing: 6,
-                  liveWaveGradient: ui.Gradient.linear(
-                    const Offset(70, 50),
-                    Offset(MediaQuery.of(context).size.width / 2, 0),
-                    [Colors.red, Colors.green],
+              Expanded(
+                flex: 6,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: size.width * numD04, right: size.width * numD04),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Lottie.asset("assets/lottieFiles/audio_waves.json",
+                          width: double.infinity,
+                          height: size.height * (isIpad ? numD70 : numD40),
+                          backgroundLoading: true,
+                          fit: BoxFit.fill,
+                          controller: _animationController),
+                      Align(
+                        alignment: Alignment.center,
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () {
+                            if (audioPlaying) {
+                              pauseSound();
+                            } else {
+                              playSound();
+                            }
+                            audioPlaying = !audioPlaying;
+                            setState(() {});
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(size.width * numD018),
+                            decoration: const BoxDecoration(
+                                color: colorThemePink, shape: BoxShape.circle),
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  size.width * (isIpad ? numD03 : numD04)),
+                              decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: Colors.white, width: 4)),
+                              child: Icon(
+                                audioPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow_rounded,
+                                size: size.width * numD16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  fixedWaveGradient: ui.Gradient.linear(
-                    const Offset(70, 50),
-                    Offset(MediaQuery.of(context).size.width / 2, 0),
-                    [Colors.red, Colors.green],
-                  ),
-                  seekLineColor: colorThemePink,
-                  seekLineThickness: 2,
-                  showSeekLine: true,
-                  showBottom: true,
                 ),
               ),
-              SizedBox(
-                height: size.width * numD15,
-              ),
-              InkWell(
-                onTap: () {
-                  if (audioPlaying) {
-                    pauseSound();
-                  } else {
-                    playSound();
-                  }
-
-                  audioPlaying = !audioPlaying;
-                  setState(() {});
-                },
-                child: Icon(
-                  audioPlaying ? Icons.pause_circle : Icons.play_circle,
-                  color: colorThemePink,
-                  size: size.width * numD20,
-                ),
-              ),
-              const Spacer(),
             ],
           )
         : const Center(
-          child: CircularProgressIndicator(
-      color: colorThemePink,
-    ),
-        );
+            child: CircularProgressIndicator(
+              color: colorThemePink,
+            ),
+          );
   }
 }

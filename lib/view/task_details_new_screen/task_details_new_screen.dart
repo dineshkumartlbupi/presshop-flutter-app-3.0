@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -749,7 +750,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                       ),
 
                       taskDetail!.mediaList.isNotEmpty
-                          ? Text("UPLOADED CONTENT",
+                          ? Text(uploadedContentText.toUpperCase(),
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * numD035,
@@ -783,8 +784,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 MediaViewScreen(
-                                                  mediaFile: taskMediaUrl +
-                                                      item.imageVideoUrl,
+                                                  mediaFile: item.imageVideoUrl,
                                                   type: MediaTypeEnum.video,
                                                 )));
                                   } else if (item.type == "audio") {
@@ -829,7 +829,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                           ))
                                       : item.type == "video"
                                           ? Image.network(
-                                              item.thumbnail,
+                                              mediaThumbnailUrl +
+                                                  item.imageVideoUrl,
                                               width: size.width / 2,
                                               height: double.infinity,
                                               fit: BoxFit.cover,

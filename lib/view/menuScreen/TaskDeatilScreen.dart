@@ -677,8 +677,9 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                                                         ))
                                                     : Image.network(
                                                         (item.type == "video"
-                                                            ? taskMediaUrl +
-                                                                item.thumbnail
+                                                            ? mediaThumbnailUrl +
+                                                                item
+                                                                    .imageVideoUrl
                                                             : taskMediaUrl +
                                                                 item.imageVideoUrl),
                                                         width: size.width / 2,

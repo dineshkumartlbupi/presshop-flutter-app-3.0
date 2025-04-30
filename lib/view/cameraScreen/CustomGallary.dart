@@ -80,8 +80,9 @@ class CustomGalleryState extends State<CustomGallery> {
             hideLeading: false,
             title: Text(
               galleryText,
-              style:
-              TextStyle(color: Colors.black, fontSize: size.width * numD06),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.width * (isIpad ? numD04 : numD06)),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -95,13 +96,14 @@ class CustomGalleryState extends State<CustomGallery> {
             },
             actionWidget: [
               Padding(
-                padding: EdgeInsets.symmetric(vertical: size.width * numD03),
+                padding: EdgeInsets.symmetric(
+                    vertical: size.width * (isIpad ? numD004 : numD03)),
                 child: commonElevatedButton(
                     "Done",
                     size,
                     commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD03,
+                        fontSize: size.width * (isIpad ? numD02 : numD03),
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
                     commonButtonStyle(size, colorThemePink), () {
@@ -113,11 +115,12 @@ class CustomGalleryState extends State<CustomGallery> {
                         navigatorKey.currentState!.context,
                         MaterialPageRoute(
                             builder: (context) => PreviewScreen(
-                              cameraData: null,
-                              pickAgain: widget.picAgain,
-                              type: "gallery",
-                              cameraListData: camListData, mediaList: [],
-                            )));
+                                  cameraData: null,
+                                  pickAgain: widget.picAgain,
+                                  type: "gallery",
+                                  cameraListData: camListData,
+                                  mediaList: [],
+                                )));
                   }
                 }),
               ),
@@ -188,7 +191,7 @@ class CustomGalleryState extends State<CustomGallery> {
                         debugPrint("Filepath:::::::> $imgPath");
                         if (_mediaList[index].type == AssetType.video) {
                           final thumbnail =
-                          await vt.VideoThumbnail.thumbnailFile(
+                              await vt.VideoThumbnail.thumbnailFile(
                             video: imgPath,
                             thumbnailPath: (await getTemporaryDirectory()).path,
                             imageFormat: vt.ImageFormat.PNG,
@@ -201,34 +204,34 @@ class CustomGalleryState extends State<CustomGallery> {
                               mimeType: "video",
                               videoImagePath: thumbnail ?? "",
                               latitude: sharedPreferences!
-                                  .getDouble(currentLat)
-                                  .toString() ??
+                                      .getDouble(currentLat)
+                                      .toString() ??
                                   "",
                               longitude: sharedPreferences!
-                                  .getDouble(currentLon)
-                                  .toString() ??
+                                      .getDouble(currentLon)
+                                      .toString() ??
                                   "",
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
                               location: sharedPreferences!
-                                  .getString(currentAddress) ??
+                                      .getString(currentAddress) ??
                                   "",
                               country: sharedPreferences!
-                                  .getString(currentCountry) ??
+                                      .getString(currentCountry) ??
                                   "",
                               city: sharedPreferences!.getString(currentCity) ??
                                   "",
                               state:
-                              sharedPreferences!.getString(currentState) ??
-                                  "",
+                                  sharedPreferences!.getString(currentState) ??
+                                      "",
                             ));
                           }
                         } else {
                           if (value.absolute.path.contains(".HEIC")) {
                             convertHEICToJPEG(
-                                value.absolute.path,
-                                _mediaList[index].width,
-                                _mediaList[index].height)
+                                    value.absolute.path,
+                                    _mediaList[index].width,
+                                    _mediaList[index].height)
                                 .then((imgValue) {
                               debugPrint("FinalPath: $imgValue");
 
@@ -238,26 +241,26 @@ class CustomGalleryState extends State<CustomGallery> {
                                 mimeType: "image",
                                 videoImagePath: "",
                                 latitude: sharedPreferences!
-                                    .getDouble(currentLat)
-                                    .toString() ??
+                                        .getDouble(currentLat)
+                                        .toString() ??
                                     "",
                                 longitude: sharedPreferences!
-                                    .getDouble(currentLon)
-                                    .toString() ??
+                                        .getDouble(currentLon)
+                                        .toString() ??
                                     "",
                                 dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                     .format(DateTime.now()),
                                 location: sharedPreferences!
-                                    .getString(currentAddress) ??
+                                        .getString(currentAddress) ??
                                     "",
                                 country: sharedPreferences!
-                                    .getString(currentCountry) ??
+                                        .getString(currentCountry) ??
                                     "",
                                 city:
-                                sharedPreferences!.getString(currentCity) ??
-                                    "",
+                                    sharedPreferences!.getString(currentCity) ??
+                                        "",
                                 state: sharedPreferences!
-                                    .getString(currentState) ??
+                                        .getString(currentState) ??
                                     "",
                               ));
                             });
@@ -267,26 +270,26 @@ class CustomGalleryState extends State<CustomGallery> {
                               mimeType: "image",
                               videoImagePath: "",
                               latitude: sharedPreferences!
-                                  .getDouble(currentLat)
-                                  .toString() ??
+                                      .getDouble(currentLat)
+                                      .toString() ??
                                   "",
                               longitude: sharedPreferences!
-                                  .getDouble(currentLon)
-                                  .toString() ??
+                                      .getDouble(currentLon)
+                                      .toString() ??
                                   "",
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
                               location: sharedPreferences!
-                                  .getString(currentAddress) ??
+                                      .getString(currentAddress) ??
                                   "",
                               country: sharedPreferences!
-                                  .getString(currentCountry) ??
+                                      .getString(currentCountry) ??
                                   "",
                               city: sharedPreferences!.getString(currentCity) ??
                                   "",
                               state:
-                              sharedPreferences!.getString(currentState) ??
-                                  "",
+                                  sharedPreferences!.getString(currentState) ??
+                                      "",
                             ));
                           }
                         }
@@ -295,7 +298,7 @@ class CustomGalleryState extends State<CustomGallery> {
                       _mediaList[index].originFile.then((value) async {
                         String imgPath = value!.absolute.path;
                         int indexing = camListData.indexWhere(
-                                (cameraData) => cameraData.path == imgPath);
+                            (cameraData) => cameraData.path == imgPath);
 
                         debugPrint("Filepath:::::::> $index  $indexing");
                         camListData.removeAt(indexing);
@@ -309,14 +312,14 @@ class CustomGalleryState extends State<CustomGallery> {
                     children: <Widget>[
                       Positioned.fill(
                           child: Image(
-                            image: AssetEntityImageProvider(
-                              _mediaList[index],
-                              isOriginal: false,
-                              thumbnailSize: const ThumbnailSize.square(200),
-                              thumbnailFormat: ThumbnailFormat.jpeg,
-                            ),
-                            fit: BoxFit.cover,
-                          )),
+                        image: AssetEntityImageProvider(
+                          _mediaList[index],
+                          isOriginal: false,
+                          thumbnailSize: const ThumbnailSize.square(200),
+                          thumbnailFormat: ThumbnailFormat.jpeg,
+                        ),
+                        fit: BoxFit.cover,
+                      )),
                       if (_mediaList[index].type == AssetType.video)
                         const Align(
                           alignment: Alignment.bottomRight,
@@ -330,20 +333,20 @@ class CustomGalleryState extends State<CustomGallery> {
                         ),
                       selectedList[index]
                           ? Positioned.fill(
-                        child: Container(
-                            alignment: Alignment.topRight,
-                            decoration: BoxDecoration(
-                                color: colorThemePink.withOpacity(0.5)),
-                            child: Padding(
-                              padding:
-                              EdgeInsets.all(size.width * numD01),
-                              child: Icon(
-                                Icons.radio_button_checked,
-                                color: Colors.black,
-                                size: size.width * numD05,
-                              ),
-                            )),
-                      )
+                              child: Container(
+                                  alignment: Alignment.topRight,
+                                  decoration: BoxDecoration(
+                                      color: colorThemePink.withOpacity(0.5)),
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.all(size.width * numD01),
+                                    child: Icon(
+                                      Icons.radio_button_checked,
+                                      color: Colors.black,
+                                      size: size.width * numD05,
+                                    ),
+                                  )),
+                            )
                           : Container()
                     ],
                   ),
@@ -356,7 +359,7 @@ class CustomGalleryState extends State<CustomGallery> {
     final result = await PhotoManager.requestPermissionExtend();
     if (result.isAuth) {
       List<AssetPathEntity> paths =
-      await PhotoManager.getAssetPathList(onlyAll: true);
+          await PhotoManager.getAssetPathList(onlyAll: true);
       debugPrint("all Path values====>  $paths");
 
       if (paths.isNotEmpty) {
@@ -366,7 +369,7 @@ class CustomGalleryState extends State<CustomGallery> {
 
         totalEntitiesCount = await _path!.assetCountAsync;
         List<AssetEntity> media =
-        await _path!.getAssetListPaged(page: page, size: _sizePerPage);
+            await _path!.getAssetListPaged(page: page, size: _sizePerPage);
         _mediaList = media;
 
         debugPrint("MyMedia: $media");
@@ -509,7 +512,6 @@ class CustomGalleryState extends State<CustomGallery> {
       showSnackBar("Exception", e.toString(), Colors.black);
     }
   }*/
-
 }
 
 class GalleryModel {

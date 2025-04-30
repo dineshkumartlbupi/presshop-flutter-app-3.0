@@ -559,6 +559,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           TransactionDetailScreen(
+                                            pageType: PageType.CONTENT,
                                             type: "received",
                                             transactionData:
                                                 publicationTransactionList[
@@ -815,6 +816,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           TransactionDetailScreen(
+                                            pageType: PageType.CONTENT,
                                             type: "pending",
                                             transactionData:
                                                 publicationTransactionList[

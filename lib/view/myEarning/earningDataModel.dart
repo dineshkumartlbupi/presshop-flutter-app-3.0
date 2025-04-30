@@ -162,12 +162,20 @@ class EarningTransactionDetail {
         bankData = data.map((e) => BankDataModel.fromJson(e)).toList();
       }
     }
-    if (json['content_id'] != null) {
-      if (json['content_id']['content'] != null) {
-        var data = json['content_id']['content'] as List;
+    if (json['type'] == 'task_content') {
+      if (json['purchased_task_content'] != null) {
+        var data = json['purchased_task_content'] as List;
         contentData = data.map((e) => ContentDataModel.fromJson(e)).toList();
       }
+    } else {
+      if (json['content_id'] != null) {
+        if (json['content_id']['content'] != null) {
+          var data = json['content_id']['content'] as List;
+          contentData = data.map((e) => ContentDataModel.fromJson(e)).toList();
+        }
+      }
     }
+
     if (json['Vat'] != null && json['amount'] != null) {
       vatFee = json['Vat'];
       totalAmount = json['amount'];
@@ -197,7 +205,9 @@ class EarningTransactionDetail {
     return EarningTransactionDetail(
         id: json['_id'] ?? '',
         mediaTypeImage: "",
-        totalEarningAmt: json['original_ask_price'].toString(),
+        totalEarningAmt: json['type'] == 'task_content'
+            ? json['hopper_price'].toString()
+            : json['original_ask_price'].toString(),
         paidStatus: json['paid_status_for_hopper'] ?? false,
         adminFullName: json['media_house_id'] != null
             ? json['media_house_id']['full_name'].toString()

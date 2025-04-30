@@ -7331,6 +7331,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
             MaterialPageRoute(
                 builder: (context) => TransactionDetailScreen(
                       type: "received",
+                      pageType: PageType.CONTENT,
                       transactionData: earningTransactionDataList[0],
                       shouldShowPublication: true,
                     )));

@@ -31,7 +31,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
         elevation: 0,
         hideLeading: false,
         title: Text(
-          "Delete Account",
+          "Delete account",
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -66,12 +66,12 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
               height: size.height * numD02,
             ),
             Text(
-              "Select delete reason:- ",
+              "Please let us know your reason for deleting the app :- ",
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * numD04,
                   color: Colors.black,
-                  fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.w500),
             ),
             SizedBox(
               height: size.height * numD01,
@@ -122,7 +122,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
               height: size.height * (isIpad ? numD1 : numD08),
               padding: EdgeInsets.symmetric(vertical: size.height * numD015),
               child: commonElevatedButton(
-                'Permanent Delete',
+                'Delete Account',
                 size,
                 commonTextStyle(
                     size: size,
@@ -147,77 +147,151 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
 
   void showDeleteDialog(Size size) {
     showDialog(
-        context: context,
+        context: navigatorKey.currentState!.context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            contentPadding: EdgeInsets.zero,
-            insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD02),
-            content: StatefulBuilder(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                width: size.width * num1,
-                height: size.height * numD18,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(size.width * numD025),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(
-                      "Do you want to proceed this?",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: MediaQuery.of(context).size.width * numD045,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: size.height * 0.04,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                          width: size.width * numD40,
-                          height: size.height * numD055,
-                          child: commonElevatedButton(
-                              "Proceed",
-                              size,
-                              commonButtonTextStyle(size),
-                              commonButtonStyle(size, Colors.grey), () {
-                            Navigator.pop(context);
-                            NetworkClass.fromNetworkClass(deleteAccountUrl,
-                                    this, deleteAccountUrlReq, selectReason)
-                                .callRequestServiceHeader(true, "post", null);
-                          }),
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                youWIllBeMissedText,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD05,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    //  https://developers.promaticstechnologies.com:5019/hopper/stripeStatus?status=0&id=64b0d3be5d37c40ad2370f18
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: const Divider(
+                            color: Colors.black,
+                            thickness: 0.5,
+                          ),
                         ),
                         SizedBox(
-                          width: size.width * 0.02,
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04),
+                                    border: Border.all(color: Colors.black)),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04),
+                                    child: Image.asset(
+                                      "${commonImagePath}dog.png",
+                                      height: size.width * numD30,
+                                      width: size.width * numD35,
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  deleteAccountPopupMessageText,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
-                          width: size.width * numD40,
-                          height: size.height * numD055,
-                          child: commonElevatedButton(
-                              "Cancel",
-                              size,
-                              commonButtonTextStyle(size),
-                              commonButtonStyle(size, colorThemePink), () {
-                            Navigator.pop(context);
-                          }),
-                        )
+                          height: size.width * numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Expanded(
+                                  child: SizedBox(
+                                height: size.width * numD12,
+                                child: commonElevatedButton(
+                                    "Procced",
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(size, Colors.black), () {
+                                  Navigator.pop(context);
+                                  NetworkClass.fromNetworkClass(
+                                          deleteAccountUrl,
+                                          this,
+                                          deleteAccountUrlReq,
+                                          selectReason)
+                                      .callRequestServiceHeader(
+                                          true, "post", null);
+                                }),
+                              )),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                  child: SizedBox(
+                                height: size.width * numD12,
+                                child: commonElevatedButton(
+                                    "Cancel",
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(size, colorThemePink),
+                                    () async {
+                                  Navigator.pop(context);
+                                }),
+                              )),
+                            ],
+                          ),
+                        ),
                       ],
-                    )
-                  ],
-                ),
-              );
-            }),
-          );
+                    ),
+                  );
+                },
+              ));
         });
   }
 

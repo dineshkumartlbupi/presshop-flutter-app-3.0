@@ -12,7 +12,6 @@ const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
 const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 
 ///------WebUrls------
-const oldbaseUrl = "https://developers.promaticstechnologies.com:5019/";
 const baseUrl1 = "https://betazone.promaticstechnologies.com:5019/";
 const baseUrl = "https://dev-api.presshop.news:5019/";
 // const baseUrl = "https://dev-api.presshop.news:5019/";
@@ -21,8 +20,6 @@ const oldMediaBaseUrl =
 const oldMediaBaseUrl1 =
     "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
-// const mediaBaseUrl = "https://dev-cdn.presshop.news/public/";
-// const oldmediaBaseUrl ="https://uat-presshope.s3.eu-west-2.amazonaws.com/";
 const googleMapURL =
     "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 
@@ -33,7 +30,10 @@ const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
 const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
 const imageUrlBefore =
     "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
-const taskMediaUrl = "${mediaBaseUrl}uploadContent/";
+
+// https://dev-cdn.presshop.news/public/uploadContent
+const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
+const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 const adminProfileUrl = "${mediaBaseUrl}adminImages/";
 const oldBaseShareUrl = "https://developers.promaticstechnologies.com/";
 const baseShareUrl = "https://betazone.promaticstechnologies.com";
@@ -573,6 +573,9 @@ const youWIllBeMissedText = "You'll be missed";
 const errorDialogText = "Oh-snap, the dreaded";
 const logoutMessageText =
     "Are you sure you want to log out? You will no longer be able to sell your pics or videos to the press, and earn money!";
+const deleteAccountPopupMessageText =
+    "Are you sure you want to delete account? You will no longer be able to sell your pics or videos to the press, and earn money!";
+
 const deadLineText = "deadline";
 const viewText = "View";
 const taskDetailText = "Task Details";
@@ -601,7 +604,7 @@ const contentSubmittedMessage2Text =
 const contentSubmittedMessage3Text =
     "our team members who will be glad to help.";
 const String deleteAccountText =
-    "Your account will permanently delete for our system and your Phone number and Email Address become permanently reserved. Same account cannot be re-use to register a new account. Still do you want to delete your account permanetly?";
+    "We’re sorry to see you go! If you choose to delete your account, it will be permanently removed from our system. Your phone number and email address will also be permanently erased. Are you absolutely certain you want to leave us forever?";
 
 const boardCastShareSubText =
     "If you're unavailable or busy, you can share the task with someone you know, and let them earn extra money on the side. Go on, share the fun!";

@@ -19,15 +19,20 @@ import '../dashboard/Dashboard.dart';
 import '../menuScreen/PublicationListScreen.dart';
 import 'earningDataModel.dart';
 
+enum PageType { CONTENT, TASK }
+
 class TransactionDetailScreen extends StatefulWidget {
   final String type;
   bool shouldShowPublication = false;
+  final PageType pageType;
+
   EarningTransactionDetail? transactionData;
 
   TransactionDetailScreen(
       {super.key,
       required this.type,
       required this.transactionData,
+      required this.pageType,
       this.shouldShowPublication = false});
 
   @override
@@ -48,6 +53,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   void initState() {
     debugPrint("type::::::::${widget.type}");
     super.initState();
+    initialController(_currentMediaIndex);
   }
 
   @override
@@ -244,8 +250,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     ? videoWidget()
                                     : Image.network(
                                         item.mediaType == "video"
-                                            ? "$contentImageUrl${item.thumbnail}"
-                                            : "$contentImageUrl${item.media}",
+                                            ? "$mediaThumbnailUrl${item.thumbnail}"
+                                            : "${widget.pageType == PageType.TASK ? taskMediaUrl : contentImageUrl}${item.thumbnail}",
                                         width: size.width,
                                         fit: BoxFit.cover,
                                       ),
@@ -827,17 +833,21 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   void initialController(currentMediaIndex) {
     if (widget.transactionData!.contentDataList[currentMediaIndex].mediaType ==
         "audio") {
-      initWaveData(contentImageUrl +
-          widget.transactionData!.contentDataList[currentMediaIndex].media);
+      initWaveData((widget.pageType == PageType.TASK
+              ? taskMediaUrl
+              : contentImageUrl) +
+          widget.transactionData!.contentDataList[currentMediaIndex].thumbnail);
     } else if (widget
             .transactionData!.contentDataList[currentMediaIndex].mediaType ==
         "video") {
-      debugPrint(
-          "videoLink=====> ${widget.transactionData!.contentDataList[currentMediaIndex].media}");
+      var videoURL = (widget.pageType == PageType.TASK
+              ? taskMediaUrl
+              : contentImageUrl) +
+          widget.transactionData!.contentDataList[currentMediaIndex].thumbnail;
+      debugPrint("videoURL=====> $videoURL");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse(contentImageUrl +
-              widget.transactionData!.contentDataList[currentMediaIndex].media),
+          Uri.parse(videoURL),
         ),
         autoPlay: false,
       );
@@ -1103,8 +1113,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                                 )
                                               : Image.network(
                                                   item.mediaType == "video"
-                                                      ? "$contentImageUrl${item.thumbnail}"
-                                                      : "$contentImageUrl${item.media}",
+                                                      ? "$mediaThumbnailUrl${item.thumbnail}"
+                                                      : "${widget.pageType == PageType.TASK ? taskMediaUrl : contentImageUrl}${item.thumbnail}",
                                                   width: size.width,
                                                   fit: BoxFit.cover,
                                                 ),

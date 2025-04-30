@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -1017,7 +1018,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          thumbnail,
+                          mediaThumbnailUrl + videoUrl,
                           height: size.height / 3,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -2597,903 +2598,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
               )),
             ],
           ),
-
-          // Row(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     profilePicWidget(),
-          //     SizedBox(
-          //       width: size.width * numD04,
-          //     ),
-          //     Expanded(
-          //         child: Container(
-          //       margin: EdgeInsets.only(top: size.width * numD06),
-          //       padding: EdgeInsets.symmetric(
-          //           horizontal: size.width * numD05,
-          //           vertical: size.width * numD02),
-          //       width: size.width,
-          //       decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           border: Border.all(color: colorGoogleButtonBorder),
-          //           borderRadius: BorderRadius.only(
-          //             topRight: Radius.circular(size.width * numD04),
-          //             bottomLeft: Radius.circular(size.width * numD04),
-          //             bottomRight: Radius.circular(size.width * numD04),
-          //           )),
-          //       child: Column(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           SizedBox(
-          //             height: size.width * numD04,
-          //           ),
-          //           RichText(
-          //               text: TextSpan(children: [
-          //             TextSpan(
-          //               text: "We're giving your content a little ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text: "makeover!",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: colorThemePink,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text:
-          //                   " To boost its appeal and help it to fly off the virtual shelves, we've adjusted the price to ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text: "${euroUniqueCode}30",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: colorThemePink,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //           ])),
-          //           SizedBox(
-          //             height: size.width * numD04,
-          //           ),
-          //           /*Row(
-          //                 children: [
-          //                   Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             if (item.requestStatus.isEmpty &&
-          //                                 !item.isMakeCounterOffer) {
-          //                               var map1 = {
-          //                                 "chat_id": item.id,
-          //                                 "status": false,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1);
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "reject_mediaHouse_offer",
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "rating_hopper",
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "rating_mediaHouse",
-          //                               );
-          //                               showRejectBtn = true;
-          //                             }
-          //                             setState(() {});
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               elevation: 0,
-          //                               backgroundColor: item.requestStatus.isEmpty &&
-          //                                   !item.isMakeCounterOffer
-          //                                   ? Colors.black
-          //                                   : item.requestStatus == "false"
-          //                                   ? Colors.grey
-          //                                   : Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                   borderRadius:
-          //                                   BorderRadius.circular(size.width * numD04),
-          //                                   side: (item.requestStatus == "false" ||
-          //                                       item.requestStatus.isEmpty) &&
-          //                                       !item.isMakeCounterOffer
-          //                                       ? BorderSide.none
-          //                                       : const BorderSide(
-          //                                       color: Colors.black, width: 1))),
-          //                           child: Text(
-          //                             rejectText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD037,
-          //                                 color: (item.requestStatus == "false" ||
-          //                                     item.requestStatus.isEmpty) &&
-          //                                     !item.isMakeCounterOffer
-          //                                     ? Colors.white
-          //                                     : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),
-          //                   SizedBox(
-          //                     width: size.width * numD04,
-          //                   ),
-          //                   Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             //aditya accept btn
-          //                             if (item.requestStatus.isEmpty &&
-          //                                 !item.isMakeCounterOffer) {
-          //                               debugPrint("tapppppp:::::$showAcceptBtn");
-          //                               showAcceptBtn = true;
-          //                               var map1 = {
-          //                                 "chat_id": item.id,
-          //                                 "status": true,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1);
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "chat message",
-          //                                   messageType: "accept_mediaHouse_offer",
-          //                                   dataMap: {
-          //                                     "amount": isMakeCounter
-          //                                         ? item.initialOfferAmount
-          //                                         : item.finalCounterAmount,
-          //                                     "image_id": widget.contentId!,
-          //                                   });
-          //                             }
-          //                             setState(() {});
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               elevation: 0,
-          //                               backgroundColor: item.requestStatus.isEmpty &&
-          //                                   !item.isMakeCounterOffer
-          //                                   ? colorThemePink
-          //                                   : item.requestStatus == "true"
-          //                                   ? Colors.grey
-          //                                   : Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                   borderRadius:
-          //                                   BorderRadius.circular(size.width * numD04),
-          //                                   side: (item.requestStatus == "true" ||
-          //                                       item.requestStatus.isEmpty) &&
-          //                                       !item.isMakeCounterOffer
-          //                                       ? BorderSide.none
-          //                                       : const BorderSide(
-          //                                       color: Colors.black, width: 1))),
-          //                           child: Text(
-          //                             acceptText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD037,
-          //                                 color: (item.requestStatus == "true" ||
-          //                                     item.requestStatus.isEmpty) &&
-          //                                     !item.isMakeCounterOffer
-          //                                     ? Colors.white
-          //                                     : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),
-          //
-          //                   */ /* Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             if(item.requestStatus.isEmpty){
-          //
-          //                               var map1 = {
-          //                                 "chat_id" : item.id,
-          //                                 "status" : true,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "chat message",
-          //                                   messageType: "contentupload",
-          //                               );
-          //                             }
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               backgroundColor:
-          //                               item.requestStatus.isEmpty
-          //                                   ? colorThemePink
-          //                                   :item.requestStatus == "true"
-          //                                   ?  Colors.grey
-          //                                   :  Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                 borderRadius: BorderRadius.circular(
-          //                                     size.width * numD04),
-          //                                   side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-          //                                       color: colorGrey1, width: 2)
-          //                               )),
-          //                           child: Text(
-          //                             yesText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD04,
-          //                                 color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),*/ /*
-          //                 ],
-          //               ),*/
-          //           SizedBox(
-          //             height: size.width * numD01,
-          //           ),
-          //         ],
-          //       ),
-          //     )),
-          //   ],
-          // ),
-          // Row(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     profilePicWidget(),
-          //     SizedBox(
-          //       width: size.width * numD04,
-          //     ),
-          //     Expanded(
-          //         child: Container(
-          //       margin: EdgeInsets.only(top: size.width * numD06),
-          //       padding: EdgeInsets.symmetric(
-          //           horizontal: size.width * numD05,
-          //           vertical: size.width * numD02),
-          //       width: size.width,
-          //       decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           border: Border.all(color: colorGoogleButtonBorder),
-          //           borderRadius: BorderRadius.only(
-          //             topRight: Radius.circular(size.width * numD04),
-          //             bottomLeft: Radius.circular(size.width * numD04),
-          //             bottomRight: Radius.circular(size.width * numD04),
-          //           )),
-          //       child: Column(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           SizedBox(
-          //             height: size.width * numD04,
-          //           ),
-          //           RichText(
-          //               text: TextSpan(children: [
-          //             TextSpan(
-          //               text: "Keep your fingers crossed —",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text: "exciting news might be just around the corner. ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: colorThemePink,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text: "Stay tuned for updates! ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //           ])),
-          //           SizedBox(
-          //             height: size.width * numD04,
-          //           ),
-          //           /*Row(
-          //                 children: [
-          //                   Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             if (item.requestStatus.isEmpty &&
-          //                                 !item.isMakeCounterOffer) {
-          //                               var map1 = {
-          //                                 "chat_id": item.id,
-          //                                 "status": false,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1);
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "reject_mediaHouse_offer",
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "rating_hopper",
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "rating_mediaHouse",
-          //                               );
-          //                               showRejectBtn = true;
-          //                             }
-          //                             setState(() {});
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               elevation: 0,
-          //                               backgroundColor: item.requestStatus.isEmpty &&
-          //                                   !item.isMakeCounterOffer
-          //                                   ? Colors.black
-          //                                   : item.requestStatus == "false"
-          //                                   ? Colors.grey
-          //                                   : Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                   borderRadius:
-          //                                   BorderRadius.circular(size.width * numD04),
-          //                                   side: (item.requestStatus == "false" ||
-          //                                       item.requestStatus.isEmpty) &&
-          //                                       !item.isMakeCounterOffer
-          //                                       ? BorderSide.none
-          //                                       : const BorderSide(
-          //                                       color: Colors.black, width: 1))),
-          //                           child: Text(
-          //                             rejectText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD037,
-          //                                 color: (item.requestStatus == "false" ||
-          //                                     item.requestStatus.isEmpty) &&
-          //                                     !item.isMakeCounterOffer
-          //                                     ? Colors.white
-          //                                     : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),
-          //                   SizedBox(
-          //                     width: size.width * numD04,
-          //                   ),
-          //                   Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             //aditya accept btn
-          //                             if (item.requestStatus.isEmpty &&
-          //                                 !item.isMakeCounterOffer) {
-          //                               debugPrint("tapppppp:::::$showAcceptBtn");
-          //                               showAcceptBtn = true;
-          //                               var map1 = {
-          //                                 "chat_id": item.id,
-          //                                 "status": true,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1);
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "chat message",
-          //                                   messageType: "accept_mediaHouse_offer",
-          //                                   dataMap: {
-          //                                     "amount": isMakeCounter
-          //                                         ? item.initialOfferAmount
-          //                                         : item.finalCounterAmount,
-          //                                     "image_id": widget.contentId!,
-          //                                   });
-          //                             }
-          //                             setState(() {});
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               elevation: 0,
-          //                               backgroundColor: item.requestStatus.isEmpty &&
-          //                                   !item.isMakeCounterOffer
-          //                                   ? colorThemePink
-          //                                   : item.requestStatus == "true"
-          //                                   ? Colors.grey
-          //                                   : Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                   borderRadius:
-          //                                   BorderRadius.circular(size.width * numD04),
-          //                                   side: (item.requestStatus == "true" ||
-          //                                       item.requestStatus.isEmpty) &&
-          //                                       !item.isMakeCounterOffer
-          //                                       ? BorderSide.none
-          //                                       : const BorderSide(
-          //                                       color: Colors.black, width: 1))),
-          //                           child: Text(
-          //                             acceptText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD037,
-          //                                 color: (item.requestStatus == "true" ||
-          //                                     item.requestStatus.isEmpty) &&
-          //                                     !item.isMakeCounterOffer
-          //                                     ? Colors.white
-          //                                     : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),
-          //
-          //                   */ /* Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             if(item.requestStatus.isEmpty){
-          //
-          //                               var map1 = {
-          //                                 "chat_id" : item.id,
-          //                                 "status" : true,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "chat message",
-          //                                   messageType: "contentupload",
-          //                               );
-          //                             }
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               backgroundColor:
-          //                               item.requestStatus.isEmpty
-          //                                   ? colorThemePink
-          //                                   :item.requestStatus == "true"
-          //                                   ?  Colors.grey
-          //                                   :  Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                 borderRadius: BorderRadius.circular(
-          //                                     size.width * numD04),
-          //                                   side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-          //                                       color: colorGrey1, width: 2)
-          //                               )),
-          //                           child: Text(
-          //                             yesText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD04,
-          //                                 color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),*/ /*
-          //                 ],
-          //               ),*/
-          //           SizedBox(
-          //             height: size.width * numD01,
-          //           ),
-          //         ],
-          //       ),
-          //     )),
-          //   ],
-          // ),
-          // Row(
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     profilePicWidget(),
-          //     SizedBox(
-          //       width: size.width * numD04,
-          //     ),
-          //     Expanded(
-          //         child: Container(
-          //       margin: EdgeInsets.only(top: size.width * numD06),
-          //       padding: EdgeInsets.symmetric(
-          //           horizontal: size.width * numD05,
-          //           vertical: size.width * numD02),
-          //       width: size.width,
-          //       decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           border: Border.all(color: colorGoogleButtonBorder),
-          //           borderRadius: BorderRadius.only(
-          //             topRight: Radius.circular(size.width * numD04),
-          //             bottomLeft: Radius.circular(size.width * numD04),
-          //             bottomRight: Radius.circular(size.width * numD04),
-          //           )),
-          //       child: Column(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           SizedBox(
-          //             height: size.width * numD04,
-          //           ),
-          //           RichText(
-          //               text: TextSpan(children: [
-          //             TextSpan(
-          //               text: "Rate your experience with PressHop",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //           ])),
-          //           SizedBox(
-          //             height: size.width * numD04,
-          //           ),
-          //           RatingBar(
-          //             ratingWidget: RatingWidget(
-          //               empty: Image.asset("${iconsPath}emptystar.png"),
-          //               full: Image.asset("${iconsPath}star.png"),
-          //               half: Image.asset("${iconsPath}ic_half_star.png"),
-          //             ),
-          //             onRatingUpdate: (value) {},
-          //             itemSize: size.width * numD09,
-          //             itemCount: 5,
-          //             initialRating: 0,
-          //             allowHalfRating: true,
-          //             itemPadding: EdgeInsets.only(left: size.width * numD03),
-          //           ),
-          //           SizedBox(
-          //             height: size.width * 0.04,
-          //           ),
-          //           Text(
-          //             "Tell us what you liked about the App",
-          //             style: TextStyle(
-          //                 fontSize: 14,
-          //                 color: Colors.black,
-          //                 fontWeight: FontWeight.w700),
-          //           ),
-          //           Wrap(
-          //               children: List<Widget>.generate(8, (int index) {
-          //             return Container(
-          //               margin: EdgeInsets.all(size.width * 0.02),
-          //               child: ChoiceChip(
-          //                 label: Text('Choice $index'),
-          //                 onSelected: (bool selected) {
-          //                   setState(() {});
-          //                 },
-          //                 selected: true,
-          //               ),
-          //             );
-          //           })),
-          //           Container(
-          //               padding: EdgeInsets.all(size.width * 0.02),
-          //               decoration: BoxDecoration(
-          //                   borderRadius:
-          //                       BorderRadius.circular(size.width * 0.02),
-          //                   border: Border.all(color: Colors.black)),
-          //               child: Row(
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 crossAxisAlignment: CrossAxisAlignment.start,
-          //                 children: [
-          //                   Image.asset("${iconsPath}docs.png",
-          //                       width: size.width * 0.07,
-          //                       height: size.width * 0.09),
-          //                   SizedBox(
-          //                     width: size.width * 0.02,
-          //                   ),
-          //                   Expanded(
-          //                     child: Text(
-          //                       textData,
-          //                       style: TextStyle(
-          //                         color: colorGrey2,
-          //                         fontSize: size.width * 0.04,
-          //                       ),
-          //                       textAlign: TextAlign.justify,
-          //                     ),
-          //                   )
-          //                 ],
-          //               )),
-          //           SizedBox(height: size.width * 0.06),
-          //           SizedBox(
-          //             height: size.width * numD13,
-          //             width: size.width,
-          //             child: commonElevatedButton(
-          //                 submitText,
-          //                 size,
-          //                 commonButtonTextStyle(size),
-          //                 commonButtonStyle(
-          //                     size,
-          //                     item.requestStatus.isEmpty &&
-          //                             !item.isMakeCounterOffer
-          //                         ? colorThemePink
-          //                         : Colors.grey), () {
-          //               Timer(
-          //                   const Duration(milliseconds: 50),
-          //                   () => scrollController.jumpTo(
-          //                       scrollController.position.maxScrollExtent));
-          //               if (item.requestStatus.isEmpty &&
-          //                   !item.isMakeCounterOffer) {
-          //                 socketEmitFunc(
-          //                     socketEvent: "updatehide",
-          //                     messageType: "",
-          //                     dataMap: {
-          //                       "chat_id": item.id,
-          //                     });
-          //
-          //                 socketEmitFunc(
-          //                   socketEvent: "chat message",
-          //                   messageType: "hopper_counter_offer",
-          //                 );
-          //               }
-          //             }),
-          //           ),
-          //           SizedBox(height: size.width * 0.04),
-          //           RichText(
-          //               text: TextSpan(children: [
-          //             TextSpan(
-          //               text: "Please refer to our ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w400),
-          //             ),
-          //             TextSpan(
-          //               text: "Terms & Conditions. ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: colorThemePink,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text: "If you have any questions, please ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w400),
-          //             ),
-          //             TextSpan(
-          //               text: "contact ",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: colorThemePink,
-          //                   fontWeight: FontWeight.w600),
-          //             ),
-          //             TextSpan(
-          //               text:
-          //                   "our helpful teams who are available 24x7 to assist you. Thank you",
-          //               style: commonTextStyle(
-          //                   size: size,
-          //                   fontSize: size.width * numD036,
-          //                   color: Colors.black,
-          //                   fontWeight: FontWeight.w400),
-          //             ),
-          //           ])),
-          //           SizedBox(
-          //             height: size.width * 0.01,
-          //           ),
-          //
-          //           /*Row(
-          //                 children: [
-          //                   Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             if (item.requestStatus.isEmpty &&
-          //                                 !item.isMakeCounterOffer) {
-          //                               var map1 = {
-          //                                 "chat_id": item.id,
-          //                                 "status": false,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1);
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "reject_mediaHouse_offer",
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "rating_hopper",
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                 socketEvent: "chat message",
-          //                                 messageType: "rating_mediaHouse",
-          //                               );
-          //                               showRejectBtn = true;
-          //                             }
-          //                             setState(() {});
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               elevation: 0,
-          //                               backgroundColor: item.requestStatus.isEmpty &&
-          //                                   !item.isMakeCounterOffer
-          //                                   ? Colors.black
-          //                                   : item.requestStatus == "false"
-          //                                   ? Colors.grey
-          //                                   : Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                   borderRadius:
-          //                                   BorderRadius.circular(size.width * numD04),
-          //                                   side: (item.requestStatus == "false" ||
-          //                                       item.requestStatus.isEmpty) &&
-          //                                       !item.isMakeCounterOffer
-          //                                       ? BorderSide.none
-          //                                       : const BorderSide(
-          //                                       color: Colors.black, width: 1))),
-          //                           child: Text(
-          //                             rejectText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD037,
-          //                                 color: (item.requestStatus == "false" ||
-          //                                     item.requestStatus.isEmpty) &&
-          //                                     !item.isMakeCounterOffer
-          //                                     ? Colors.white
-          //                                     : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),
-          //                   SizedBox(
-          //                     width: size.width * numD04,
-          //                   ),
-          //                   Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             //aditya accept btn
-          //                             if (item.requestStatus.isEmpty &&
-          //                                 !item.isMakeCounterOffer) {
-          //                               debugPrint("tapppppp:::::$showAcceptBtn");
-          //                               showAcceptBtn = true;
-          //                               var map1 = {
-          //                                 "chat_id": item.id,
-          //                                 "status": true,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1);
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "chat message",
-          //                                   messageType: "accept_mediaHouse_offer",
-          //                                   dataMap: {
-          //                                     "amount": isMakeCounter
-          //                                         ? item.initialOfferAmount
-          //                                         : item.finalCounterAmount,
-          //                                     "image_id": widget.contentId!,
-          //                                   });
-          //                             }
-          //                             setState(() {});
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               elevation: 0,
-          //                               backgroundColor: item.requestStatus.isEmpty &&
-          //                                   !item.isMakeCounterOffer
-          //                                   ? colorThemePink
-          //                                   : item.requestStatus == "true"
-          //                                   ? Colors.grey
-          //                                   : Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                   borderRadius:
-          //                                   BorderRadius.circular(size.width * numD04),
-          //                                   side: (item.requestStatus == "true" ||
-          //                                       item.requestStatus.isEmpty) &&
-          //                                       !item.isMakeCounterOffer
-          //                                       ? BorderSide.none
-          //                                       : const BorderSide(
-          //                                       color: Colors.black, width: 1))),
-          //                           child: Text(
-          //                             acceptText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD037,
-          //                                 color: (item.requestStatus == "true" ||
-          //                                     item.requestStatus.isEmpty) &&
-          //                                     !item.isMakeCounterOffer
-          //                                     ? Colors.white
-          //                                     : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),
-          //
-          //                   */ /* Expanded(
-          //                       child: SizedBox(
-          //                         height: size.width * numD13,
-          //                         width: size.width,
-          //                         child: ElevatedButton(
-          //                           onPressed: () {
-          //                             if(item.requestStatus.isEmpty){
-          //
-          //                               var map1 = {
-          //                                 "chat_id" : item.id,
-          //                                 "status" : true,
-          //                               };
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "reqstatus",
-          //                                   messageType: "",
-          //                                   dataMap: map1
-          //                               );
-          //
-          //                               socketEmitFunc(
-          //                                   socketEvent: "chat message",
-          //                                   messageType: "contentupload",
-          //                               );
-          //                             }
-          //                           },
-          //                           style: ElevatedButton.styleFrom(
-          //                               backgroundColor:
-          //                               item.requestStatus.isEmpty
-          //                                   ? colorThemePink
-          //                                   :item.requestStatus == "true"
-          //                                   ?  Colors.grey
-          //                                   :  Colors.transparent,
-          //                               shape: RoundedRectangleBorder(
-          //                                 borderRadius: BorderRadius.circular(
-          //                                     size.width * numD04),
-          //                                   side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-          //                                       color: colorGrey1, width: 2)
-          //                               )),
-          //                           child: Text(
-          //                             yesText,
-          //                             style: commonTextStyle(
-          //                                 size: size,
-          //                                 fontSize: size.width * numD04,
-          //                                 color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
-          //                                 fontWeight: FontWeight.w500),
-          //                           ),
-          //                         ),
-          //                       )),*/ /*
-          //                 ],
-          //               ),*/
-          //         ],
-          //       ),
-          //     )),
-          //   ],
-          // ),
         ],
       ),
     );
@@ -4061,29 +3165,49 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                 Column(
                   children: [
                     Expanded(
-                      child: PageView.builder(
-                        onPageChanged: (value) {
-                          currentPage = value;
-                          setState(() {});
-                        },
-                        itemBuilder: (context, index) {
-                          var item = selectMultipleMediaList[index];
-                          debugPrint("type:::${item.mimeType}");
-                          debugPrint("file:::${item.mediaPath}");
-                          if (item.mimeType.startsWith('image')) {
-                            return Image.file(
-                              File(item.mediaPath),
-                              fit: BoxFit.cover,
-                              gaplessPlayback: true,
-                            );
-                          } else if (item.mimeType.startsWith('video')) {
-                            return VideoWidget(mediaData: item);
-                          } else if (item.mimeType.startsWith('audio')) {
-                            return AudioWaveFormWidgetScreen(
-                                mediaPath: item.mediaPath);
-                          }
-                        },
-                        itemCount: selectMultipleMediaList.length,
+                      child: Stack(
+                        children: [
+                          PageView.builder(
+                            onPageChanged: (value) {
+                              currentPage = value;
+                              avatarState(() {});
+                            },
+                            itemBuilder: (context, index) {
+                              var item = selectMultipleMediaList[index];
+                              debugPrint("type:::${item.mimeType}");
+                              debugPrint("file:::${item.mediaPath}");
+                              if (item.mimeType.startsWith('image')) {
+                                return Image.file(
+                                  File(item.mediaPath),
+                                  fit: BoxFit.cover,
+                                  gaplessPlayback: true,
+                                );
+                              } else if (item.mimeType.startsWith('video')) {
+                                return VideoWidget(mediaData: item);
+                              } else if (item.mimeType.startsWith('audio')) {
+                                return AudioWaveFormWidgetScreen(
+                                    mediaPath: item.mediaPath);
+                              }
+                            },
+                            itemCount: selectMultipleMediaList.length,
+                          ),
+                          selectMultipleMediaList.isNotEmpty &&
+                                  selectMultipleMediaList.length > 1
+                              ? Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: DotsIndicator(
+                                    dotsCount: selectMultipleMediaList.length,
+                                    position: currentPage,
+                                    decorator: const DotsDecorator(
+                                      color: Colors.grey, // Inactive color
+                                      activeColor: Colors.redAccent,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                        ],
                       ),
                     ),
                     Row(
@@ -4149,34 +3273,27 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: size.height * numD015,
+                    ),
                   ],
                 ),
                 Positioned(
-                  top: size.width * numD06,
-                  right: size.width * numD02,
-                  child: GestureDetector(
-                    onTap: () {
-                      if (selectMultipleMediaList.isEmpty) {
-                        Navigator.pop(context);
-                      } else if (currentPage >=
-                          selectMultipleMediaList.length) {
-                        currentPage = selectMultipleMediaList.length - 1;
-                      }
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        // color: colorGreyChat,
-                      ),
-                      padding: EdgeInsets.all(size.width * numD01),
-                      child: Icon(
-                        Icons.highlight_remove,
-                        color: Colors.white,
-                        size: size.width * numD07,
-                      ),
-                    ),
-                  ),
-                ),
+                    top: size.width * numD06,
+                    right: size.width * numD02,
+                    child: IconButton(
+                        onPressed: () {
+                          selectMultipleMediaList.removeAt(currentPage);
+                          if (selectMultipleMediaList.isEmpty) {
+                            Navigator.pop(context);
+                          }
+                          avatarState(() {});
+                        },
+                        icon: Icon(
+                          Icons.highlight_remove,
+                          color: Colors.white,
+                          size: size.width * numD07,
+                        ))),
               ],
             );
           });
@@ -4364,6 +3481,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
             context,
             MaterialPageRoute(
                 builder: (context) => TransactionDetailScreen(
+                      pageType: PageType.CONTENT,
                       type: "received",
                       transactionData: earningTransactionDataList[0],
                     )));
@@ -4380,6 +3498,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
           context,
           MaterialPageRoute(
             builder: (context) => TransactionDetailScreen(
+              pageType: PageType.TASK,
               type: "received",
               transactionData: earningTransactionDataList[0],
             ),
@@ -4391,100 +3510,241 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
   void showGallaryChooser() {
     var size = MediaQuery.of(context).size;
-    showDialog(
+    showModalBottomSheet(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            contentPadding: EdgeInsets.zero,
-            insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD02),
-            content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                width: size.width * num1,
-                height: size.height * numD18,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(size.width * numD025),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(padding: EdgeInsets.only(top: size.width * 0.02)),
-                    Row(
-                      children: [
-                        Spacer(),
-                        Text(
-                          "Please choose?",
-                          style: TextStyle(
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) {
+          return Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(size.width * numD04),
+                    topRight: Radius.circular(size.width * numD04))),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                      left: size.width * numD06,
+                      right: size.width * numD03,
+                      top: size.width * numD018),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Select Option",
+                        style: TextStyle(
                             color: Colors.black,
-                            fontSize:
-                                MediaQuery.of(context).size.width * numD045,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Icon(
-                              Icons.highlight_remove,
-                              color: colorThemePink,
-                              size: size.width * numD07,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.02,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: size.width * numD45,
-                          height: size.height * numD055,
-                          child: commonElevatedButton(
-                              "Photo Gallery",
-                              size,
-                              commonButtonTextStyle(size),
-                              commonButtonStyle(size, colorThemePink), () {
+                            fontSize: size.width * numD048,
+                            fontFamily: "AirbnbCereal",
+                            fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.close_rounded,
+                              color: Colors.black, size: size.width * numD08)),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: size.width * numD04,
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      left: size.width * numD06, right: size.width * numD06),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
                             Navigator.pop(context);
                             selectMultipleMediaList.clear();
                             getMultipleImages("image");
-                            // getMultipleImages();
-                            // showGallaryChooser();
-                          }),
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD02),
+                              ),
+                              height: size.width * numD25,
+                              padding: EdgeInsets.all(size.width * numD02),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.upload, size: size.width * numD08),
+                                  SizedBox(
+                                    height: size.width * numD03,
+                                  ),
+                                  Text(
+                                    "My Gallery",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD035,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              )),
                         ),
-                        SizedBox(
-                          width: size.width * 0.02,
-                        ),
-                        SizedBox(
-                          width: size.width * numD45,
-                          height: size.height * numD055,
-                          child: commonElevatedButton(
-                              "My File",
-                              size,
-                              commonButtonTextStyle(size),
-                              commonButtonStyle(size, colorThemePink), () {
+                      ),
+                      SizedBox(
+                        width: size.width * 0.05,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
                             Navigator.pop(context);
                             selectMultipleMediaList.clear();
                             getMultipleImages("file");
-                          }),
-                        )
-                      ],
-                    )
-                  ],
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD02),
+                              ),
+                              height: size.width * numD25,
+                              padding: EdgeInsets.all(size.width * numD04),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.file_copy_outlined,
+                                    size: size.width * numD08,
+                                  ),
+                                  SizedBox(
+                                    height: size.width * numD03,
+                                  ),
+                                  Text(
+                                    "My Files",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD035,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            }),
+                SizedBox(
+                  height: size.width * numD06,
+                ),
+              ],
+            ),
           );
         });
   }
+
+  // void showGallaryChooser() {
+  //   var size = MediaQuery.of(context).size;
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           backgroundColor: Colors.transparent,
+  //           elevation: 0,
+  //           contentPadding: EdgeInsets.zero,
+  //           insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+  //           content: StatefulBuilder(
+  //               builder: (BuildContext context, StateSetter setState) {
+  //             return Container(
+  //               width: size.width * num1,
+  //               height: size.height * numD18,
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 borderRadius: BorderRadius.circular(size.width * numD025),
+  //               ),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   Padding(padding: EdgeInsets.only(top: size.width * 0.02)),
+  //                   Row(
+  //                     children: [
+  //                       Spacer(),
+  //                       Text(
+  //                         "Please choose?",
+  //                         style: TextStyle(
+  //                           color: Colors.black,
+  //                           fontSize:
+  //                               MediaQuery.of(context).size.width * numD045,
+  //                           fontWeight: FontWeight.w500,
+  //                         ),
+  //                         textAlign: TextAlign.center,
+  //                       ),
+  //                       Spacer(),
+  //                       Padding(
+  //                         padding: const EdgeInsets.all(10.0),
+  //                         child: GestureDetector(
+  //                           onTap: () => Navigator.pop(context),
+  //                           child: Icon(
+  //                             Icons.highlight_remove,
+  //                             color: colorThemePink,
+  //                             size: size.width * numD07,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(
+  //                     height: size.height * 0.02,
+  //                   ),
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: [
+  //                       SizedBox(
+  //                         width: size.width * numD45,
+  //                         height: size.height * numD055,
+  //                         child: commonElevatedButton(
+  //                             "Photo Gallery",
+  //                             size,
+  //                             commonButtonTextStyle(size),
+  //                             commonButtonStyle(size, colorThemePink), () {
+  //                           Navigator.pop(context);
+  //                           selectMultipleMediaList.clear();
+  //                           getMultipleImages("image");
+  //                           // getMultipleImages();
+  //                           // showGallaryChooser();
+  //                         }),
+  //                       ),
+  //                       SizedBox(
+  //                         width: size.width * 0.02,
+  //                       ),
+  //                       SizedBox(
+  //                         width: size.width * numD45,
+  //                         height: size.height * numD055,
+  //                         child: commonElevatedButton(
+  //                             "My File",
+  //                             size,
+  //                             commonButtonTextStyle(size),
+  //                             commonButtonStyle(size, colorThemePink), () {
+  //                           Navigator.pop(context);
+  //                           selectMultipleMediaList.clear();
+  //                           getMultipleImages("file");
+  //                         }),
+  //                       )
+  //                     ],
+  //                   )
+  //                 ],
+  //               ),
+  //             );
+  //           }),
+  //         );
+  //       });
+  // }
 }
 
 class MediaModel {

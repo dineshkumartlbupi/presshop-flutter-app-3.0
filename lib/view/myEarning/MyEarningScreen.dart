@@ -785,6 +785,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           TransactionDetailScreen(
+                                            pageType: PageType.CONTENT,
                                             type: "received",
                                             transactionData:
                                                 earningTransactionDataList[
@@ -946,10 +947,13 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              item.totalEarningAmt != "null"
-                                  ? formatDouble(
-                                      double.parse(item.totalEarningAmt))
-                                  : "£0",
+                              item.type == "content"
+                                  ? item.totalEarningAmt != "null"
+                                      ? '£${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      : "£0"
+                                  : item.totalEarningAmt != "null"
+                                      ? '£${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      : "£0",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * numD035,
@@ -1087,6 +1091,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => TransactionDetailScreen(
+                                        pageType: item.type == "content"
+                                            ? PageType.CONTENT
+                                            : PageType.TASK,
                                         type: "pending",
                                         transactionData:
                                             earningTransactionDataList[index],

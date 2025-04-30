@@ -47,6 +47,8 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
 
     return Scaffold(
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
@@ -57,24 +59,26 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
             child: SizedBox(
                 // padding: EdgeInsets.all(size.width * numD04),
                 // decoration: const BoxDecoration(color: colorThemePink, shape: BoxShape.circle),
-                child: Image.asset("assets/commonImages/audio_logo.png")),
+                child: Image.asset(
+              "assets/commonImages/audio_logo.png",
+              width: double.infinity,
+              height: double.infinity,
+            )),
           ),
           SizedBox(
             height: size.width * numD20,
           ),
           Expanded(
-              flex: 4,
+              flex: isIpad ? 5 : 4,
               child: Padding(
                 padding: EdgeInsets.all(size.width * numD04),
                 child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Lottie.asset("assets/lottieFiles/audio_waves.json",
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          controller: _controller),
-                    ),
+                    Lottie.asset("assets/lottieFiles/audio_waves.json",
+                        width: isIpad ? size.width * num2 : double.infinity,
+                        fit: BoxFit.fill,
+                        controller: _controller),
                     Align(
                       alignment: Alignment.center,
                       child: InkWell(
@@ -90,11 +94,13 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                           setState(() {});
                         },
                         child: Container(
-                          padding: EdgeInsets.all(size.width * numD018),
+                          padding: EdgeInsets.all(
+                              size.width * (isIpad ? numD01 : numD018)),
                           decoration: const BoxDecoration(
                               color: colorThemePink, shape: BoxShape.circle),
                           child: Container(
-                            padding: EdgeInsets.all(size.width * numD04),
+                            padding: EdgeInsets.all(
+                                size.width * (isIpad ? numD01 : numD04)),
                             decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 shape: BoxShape.circle,
@@ -104,7 +110,7 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                               audioPlaying
                                   ? Icons.pause
                                   : Icons.play_arrow_rounded,
-                              size: size.width * numD16,
+                              size: size.width * (isIpad ? numD1 : numD16),
                               color: Colors.white,
                             ),
                           ),
@@ -144,12 +150,12 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
     await waveFormPlayerController.startPlayer().then((value) {
       debugPrint("PlayerState: ${waveFormPlayerController.playerState}");
     });
-    _controller?.forward();
+    _controller.forward();
     // Start audio player
   }
 
   Future pauseSound() async {
     await waveFormPlayerController.pausePlayer(); // Start audio player
-    _controller?.stop();
+    _controller.stop();
   }
 }

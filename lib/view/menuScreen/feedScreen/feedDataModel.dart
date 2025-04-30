@@ -731,8 +731,6 @@ class Document {
    );
 }*/
 
-
-
 class FeedsDataModel {
   bool firstLevelCheckNudity = false;
   bool firstLevelCheckAdult = false;
@@ -832,50 +830,51 @@ class FeedsDataModel {
     }
 
     return FeedsDataModel(
-      saleStatus: json["sale_status"] ?? "",
-      paymentPending: json["payment_pending"] ?? "",
-      pressshop: json["pressshop"] ?? "",
-      checkAndApprove: json["checkAndApprove"] ?? "",
-      mode: json["mode"] ?? "",
-      tagIds: json["tag_ids"] ?? [],
-      type: json["type"] ?? "",
-      status: json["status"] ?? "",
-      favouriteStatus: json["favourite_status"] ?? "",
-      isDraft: json["is_draft"] ?? "",
-      paidStatus: json["paid_status"] ?? "",
-      paidStatusToHopper: json["paid_status_to_hopper"] ?? "",
-      id: json["_id"] ?? "",
-      description: json["description"] ?? "",
-      location: json["location"] ?? "",
-      latitude: json["latitude"]?.toDouble() ?? 0.0,
-      longitude: json["longitude"]?.toDouble() ?? 0.0,
-      categoryId: json['category_id']['_id'] ?? "",
-      categoryName: json['category_id']['name'] ?? "",
-      categoryPercentage: json['category_id']['percentage'] ?? "",
-      categoryType: json['category_id']['type'] ?? "",
-      askPrice: json["original_ask_price"].toString(),
-      timestamp: json["timestamp"] ?? "",
-      contentDataList: contentData,
-      createdAt: json['createdAt'].toString(),
-      updatedAt: json['updatedAt'] ?? "",
-      heading: json["heading"] ?? "",
-      remarks: json["remarks"] ?? "",
-      userId: json["user_id"] ?? "",
-      amountPaid: json["amount_paid"].toString() ?? '',
-      feedsDataModelId: json["id"] ?? "",
-      firstLevelCheckNudity: json['firstLevelCheck']['nudity'] ?? false,
-      firstLevelCheckAdult: json['firstLevelCheck']['isAdult'] ?? false,
-      firstLevelCheckGDPR: json['firstLevelCheck']['isGDPR'] ?? false,
-      showVideo: false,
-      mostViewed: false,
-      isFavourite: json['is_favourite'] ?? false,
-      isLiked: json['is_liked'] ?? false,
-      isEmoji: json['is_emoji'] ?? false,
-      isClap: json['is_clap'] ?? false,
-      // viewCount: json['count_for_hopper'] ?? 0,
-      viewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
-      offerCount: json["purchased_mediahouse"]!=null? (json["purchased_mediahouse"] as List).length: 0
-    );
+        saleStatus: json["sale_status"] ?? "",
+        paymentPending: json["payment_pending"] ?? "",
+        pressshop: json["pressshop"] ?? "",
+        checkAndApprove: json["checkAndApprove"] ?? "",
+        mode: json["mode"] ?? "",
+        tagIds: json["tag_ids"] ?? [],
+        type: json["type"] ?? "",
+        status: json["status"] ?? "",
+        favouriteStatus: json["favourite_status"] ?? "",
+        isDraft: json["is_draft"] ?? "",
+        paidStatus: json["paid_status"] ?? "",
+        paidStatusToHopper: json["paid_status_to_hopper"] ?? "",
+        id: json["_id"] ?? "",
+        description: json["description"] ?? "",
+        location: json["location"] ?? "",
+        latitude: json["latitude"]?.toDouble() ?? 0.0,
+        longitude: json["longitude"]?.toDouble() ?? 0.0,
+        categoryId: json['category_id']['_id'] ?? "",
+        categoryName: json['category_id']['name'] ?? "",
+        categoryPercentage: json['category_id']['percentage'] ?? "",
+        categoryType: json['category_id']['type'] ?? "",
+        askPrice: json["original_ask_price"].toString(),
+        timestamp: json["timestamp"] ?? "",
+        contentDataList: contentData,
+        createdAt: json['createdAt'].toString(),
+        updatedAt: json['updatedAt'] ?? "",
+        heading: json["heading"] ?? "",
+        remarks: json["remarks"] ?? "",
+        userId: json["user_id"] ?? "",
+        amountPaid: json["amount_paid"].toString() ?? '',
+        feedsDataModelId: json["id"] ?? "",
+        firstLevelCheckNudity: json['firstLevelCheck']['nudity'] ?? false,
+        firstLevelCheckAdult: json['firstLevelCheck']['isAdult'] ?? false,
+        firstLevelCheckGDPR: json['firstLevelCheck']['isGDPR'] ?? false,
+        showVideo: false,
+        mostViewed: false,
+        isFavourite: json['is_favourite'] ?? false,
+        isLiked: json['is_liked'] ?? false,
+        isEmoji: json['is_emoji'] ?? false,
+        isClap: json['is_clap'] ?? false,
+        // viewCount: json['count_for_hopper'] ?? 0,
+        viewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
+        offerCount: json["purchased_mediahouse"] != null
+            ? (json["purchased_mediahouse"] as List).length
+            : 0);
   }
 }
 
@@ -892,10 +891,11 @@ class ContentDataModel {
     required this.thumbnail,
   });
 
-  factory ContentDataModel.fromJson(Map<String, dynamic> json) => ContentDataModel(
-        mediaType: json["media_type"] ?? "",
+  factory ContentDataModel.fromJson(Map<String, dynamic> json) =>
+      ContentDataModel(
+        mediaType: json["media_type"] ?? json["type"] ?? "",
         id: json["_id"] ?? "",
         media: json["media"] ?? "",
-        thumbnail: json["thumbnail"] ?? "",
+        thumbnail: json["imageAndVideo"] ?? json["media"] ?? "",
       );
 }

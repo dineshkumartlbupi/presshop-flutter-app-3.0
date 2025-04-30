@@ -17,7 +17,7 @@ class AccountSetting extends StatelessWidget {
           elevation: 0,
           hideLeading: false,
           title: Text(
-            "Account Settings",
+            "Account settings",
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,

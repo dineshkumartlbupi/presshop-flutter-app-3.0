@@ -17,7 +17,9 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
       required this.leadingFxn,
       required this.actionWidget,
       required this.hideLeading,
-      this.leadingLeftSPace});
+      this.leadingLeftSPace,
+      this.appBarbackgroundColor = Colors.transparent,
+      this.leadingIconColor = Colors.black});
 
   final double elevation;
   final Widget title;
@@ -25,6 +27,8 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool hideLeading;
   final double titleSpacing;
   final Size size;
+  final Color leadingIconColor;
+  final Color appBarbackgroundColor;
   final bool showActions;
   final VoidCallback leadingFxn;
   final List<Widget>? actionWidget;
@@ -46,14 +50,16 @@ class CommonAppBarState extends State<CommonAppBar> {
   @override
   Widget build(BuildContext context) {
     debugPrint("LeadingLeftSpace: ${widget.leadingLeftSPace}");
-    return sharedPreferences?.getBool('isIpad') ?? false
+    return isIpad
         ? AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarIconBrightness: Brightness.dark,
               statusBarBrightness: Brightness.light,
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: widget.appBarbackgroundColor == Colors.transparent
+                ? Colors.white
+                : widget.appBarbackgroundColor,
             elevation: 8,
             title: widget.title,
             titleSpacing: widget.hideLeading ? 0 : widget.size.width * numD03,
@@ -71,7 +77,7 @@ class CommonAppBarState extends State<CommonAppBar> {
                     icon: Icon(
                       Icons.arrow_back_sharp,
                       size: widget.size.width * numD04,
-                      color: Colors.black,
+                      color: widget.leadingIconColor,
                     )),
           )
         : AppBar(
@@ -81,7 +87,7 @@ class CommonAppBarState extends State<CommonAppBar> {
               statusBarBrightness: Brightness.light,
             ),
             elevation: widget.elevation,
-            backgroundColor: Colors.transparent,
+            backgroundColor: widget.appBarbackgroundColor,
             leading: !widget.hideLeading
                 ? InkWell(
                     onTap: widget.leadingFxn,
@@ -97,6 +103,7 @@ class CommonAppBarState extends State<CommonAppBar> {
                         "${iconsPath}ic_arrow_left.png",
                         height: widget.size.width * numD025,
                         width: widget.size.width * numD025,
+                        color: widget.leadingIconColor,
                       ),
                     ),
                   )

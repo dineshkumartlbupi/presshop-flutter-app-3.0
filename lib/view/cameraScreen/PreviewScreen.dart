@@ -241,7 +241,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                       alignment: Alignment.center,
                                       height: size.width * numD11,
                                       decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.5),
+                                          color: Colors.grey[100],
                                           borderRadius: BorderRadius.circular(
                                               size.width * numD04)),
                                       child: Row(
@@ -336,7 +336,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                               : Container(),
                           Positioned(
                             top: size.width * numD09,
-                            right: size.width * numD02,
+                            right: size.width * (isIpad ? numD1 : numD02),
                             child: IconButton(
                               /// @aditya 17 sep
                               onPressed: () {
@@ -364,11 +364,10 @@ class PreviewScreenState extends State<PreviewScreen> {
                                 decoration: const BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle),
-                                padding: EdgeInsets.all(size.width * numD01),
                                 child: Icon(
                                   Icons.close,
                                   color: Colors.black,
-                                  size: size.width * numD05,
+                                  size: size.width * numD06,
                                 ),
                               ),
                             ),
