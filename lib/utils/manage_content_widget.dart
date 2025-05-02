@@ -105,7 +105,7 @@ class ManageContentWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   color: data['message_type'] == "Offered"
                       ? Colors.black
-                      : Colors.grey,
+                      : lightGrey,
                   borderRadius: BorderRadius.circular(size.width * numD03)),
               child: Column(
                 children: [
@@ -116,7 +116,9 @@ class ManageContentWidget extends StatelessWidget {
                     style: commonTextStyle(
                         size: size,
                         fontSize: size.width * numD035,
-                        color: Colors.white,
+                        color: data['message_type'] == "Offered"
+                            ? Colors.white
+                            : Colors.black,
                         fontWeight: FontWeight.w400),
                   ),
                   FittedBox(
@@ -130,7 +132,9 @@ class ManageContentWidget extends StatelessWidget {
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD05,
-                            color: Colors.white,
+                            color: data['message_type'] == "Offered"
+                                ? Colors.white
+                                : Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
                     ),

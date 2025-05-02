@@ -450,7 +450,6 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                               IconButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    //  https://developers.promaticstechnologies.com:5019/hopper/stripeStatus?status=0&id=64b0d3be5d37c40ad2370f18
                                   },
                                   icon: Icon(
                                     Icons.close,

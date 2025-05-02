@@ -3908,10 +3908,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(size.width * numD012),
                 decoration: BoxDecoration(
-                    color: colorLightGrey,
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(size.width * numD03),
-                    border:
-                        Border.all(color: const Color(0xFFd4dedd), width: 2)),
+                    border: Border.all(color: Colors.black, width: 2)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -3919,7 +3918,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       "Offered Price",
                       style: TextStyle(
                           fontSize: size.width * numD035,
-                          color: colorLightGreen,
+                          color: Colors.white,
                           fontFamily: 'AirbnbCereal_W_Lt Light'),
                     ),
                     Text(
@@ -3928,7 +3927,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           : "$euroUniqueCode${formatDouble(double.parse(item.amount))}",
                       style: TextStyle(
                           fontSize: size.width * numD045,
-                          color: colorLightGreen,
+                          color: Colors.white,
                           fontWeight: FontWeight.w900,
                           fontFamily: 'AirbnbCereal_W_Bd'),
                     ),

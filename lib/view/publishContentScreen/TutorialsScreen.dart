@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
-import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/chatScreens/FullVideoView.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../main.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -552,6 +549,7 @@ class TutorialsScreenState extends State<TutorialsScreen>
                               ? searchResult[selectedVideoIndex].video
                               : tutorialsList[selectedVideoIndex].video,
                           type: MediaTypeEnum.video,
+                          isFromTutorialScreen: true,
                         )));
           }
       }

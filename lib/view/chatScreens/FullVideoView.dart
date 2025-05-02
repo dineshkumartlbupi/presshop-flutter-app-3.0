@@ -25,9 +25,13 @@ enum MediaTypeEnum {
 class MediaViewScreen extends StatefulWidget {
   final String mediaFile;
   final MediaTypeEnum type;
+  final isFromTutorialScreen;
 
   const MediaViewScreen(
-      {super.key, required this.mediaFile, required this.type});
+      {super.key,
+      required this.mediaFile,
+      required this.type,
+      this.isFromTutorialScreen = false});
 
   @override
   _MediaViewScreenState createState() => _MediaViewScreenState();
@@ -52,8 +56,10 @@ class _MediaViewScreenState extends State<MediaViewScreen>
     debugPrint("mediaUrl =====> ${widget.mediaFile}");
     if (widget.type == MediaTypeEnum.video) {
       flickManager = FlickManager(
-        videoPlayerController:
-            VideoPlayerController.network(taskMediaUrl + widget.mediaFile),
+        videoPlayerController: VideoPlayerController.network(
+            widget.isFromTutorialScreen
+                ? widget.mediaFile
+                : (taskMediaUrl + widget.mediaFile)),
       );
     } else if (widget.type == MediaTypeEnum.audio) {
       initWaveData();
