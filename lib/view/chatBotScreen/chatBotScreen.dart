@@ -1,19 +1,19 @@
 import 'dart:convert';
 
+import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_witai/network/network.dart';
 import 'package:lottie/lottie.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
-
 import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonTextField.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../../utils/networkOperations/NetworkResponse.dart';
 import '../dashboard/Dashboard.dart';
+import 'package:flutter/src/services/text_input.dart' hide TextInput;
 
 class ChatBotScreen extends StatefulWidget {
   bool hideLeading = true;
@@ -24,6 +24,7 @@ class ChatBotScreen extends StatefulWidget {
 
 class _ChatBotScreenState extends State<ChatBotScreen>
     implements NetworkResponse {
+  late DialogFlowtter dialogFlowtter;
   final messageController = TextEditingController();
   final scrollController = ScrollController();
   dynamic response;
@@ -37,8 +38,18 @@ class _ChatBotScreenState extends State<ChatBotScreen>
 
   @override
   void initState() {
+    initDialogFlow();
     callGetMessageApi();
     super.initState();
+  }
+
+  initDialogFlow() async {
+    DialogFlowtter.fromFile().then((instance) => dialogFlowtter = instance);
+  }
+
+  dispose() {
+    dialogFlowtter.dispose();
+    super.dispose();
   }
 
   @override
@@ -365,6 +376,9 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                                                                         true,
                                                                         "Loved our chat! Now handing you over to a real person for extra support.");
                                                                     resetFailCount();
+                                                                    chatList
+                                                                        .removeAt(
+                                                                            index);
                                                                   },
                                                                 ),
                                                                 SizedBox(
@@ -386,7 +400,23 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                                                                   commonButtonStyle(
                                                                       size,
                                                                       colorThemePink),
-                                                                  () {},
+                                                                  () {
+                                                                    resetFailCount();
+                                                                    chatList
+                                                                        .removeAt(
+                                                                            index);
+                                                                    chatList.add(ChatModel(
+                                                                        message:
+                                                                            "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
+                                                                        isUser:
+                                                                            false,
+                                                                        isNavigate:
+                                                                            false,
+                                                                        time: DateTime.now()
+                                                                            .toString()));
+                                                                    setState(
+                                                                        () {});
+                                                                  },
                                                                 ),
                                                               ],
                                                             ),
@@ -545,7 +575,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                                             width: 1.5,
                                             color: colorSwitchBack)),
                                     child: Text(
-                                      "Hiya, I’m Emily, your digital assistant at PressHop. How can I help? ",
+                                      "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
                                       style: TextStyle(
                                           color: Colors.black,
                                           height: 1.3,
@@ -695,59 +725,87 @@ class _ChatBotScreenState extends State<ChatBotScreen>
   }
 
   void getResponse() async {
-    final wit = WitManager(
-      utterance: searchValue,
-      //headers: "KX5HL6HMSIWZ6PMCSVL75MZUUU7LLQ4V",
-      headers: "YTR5EKMHACGTNGDWUW4BEZLYVRJUDOTY",
-      params: 'message',
+    DetectIntentResponse response = await dialogFlowtter.detectIntent(
+      queryInput: QueryInput(
+          text: TextInput(
+        text: searchValue,
+        languageCode: "en",
+      )),
     );
-    response = await wit.fetchLink();
-    debugPrint("WIt.AIResponse->> ${jsonEncode(response)}");
+    debugPrint("dialogdlow.AIResponse->> ${jsonEncode(response)}");
 
-    if (response != null) {
-      var intentList =
-          isKeyEmptyMap(response['entities'], "response_text:response_text")
-              ? null
-              : response['entities']['response_text:response_text'] as List;
-
-      if (intentList == null ||
-          intentList.isEmpty ||
-          isKeyEmptyMap(response, "entities")) {
+    if (response.message != null) {
+      if (response.queryResult!.action == "input.unknown") {
         failCount++;
-        final isHumanAssistanceRequested = isHuman(response["text"]);
         chatList.add(
           ChatModel(
-              message: (isHumanAssistanceRequested || failCount > 1)
-                  ? "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?"
-                  : "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help.",
+              message: failCount < 3
+                  ? "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help."
+                  : "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?",
               isUser: false,
-              isNavigate: isHumanAssistanceRequested,
+              isNavigate: false,
               time: DateTime.now().toString(),
-              hasShownFirstFailMsg: failCount > 1),
+              hasShownFirstFailMsg: failCount > 2),
         );
-
-        if (!isHumanAssistanceRequested && failCount == 0) {
+        if (failCount < 3) {
           callAddMessageApi(
-              isHumanAssistanceRequested
-                  ? "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?"
-                  : "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help.",
+              "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help.",
               DateTime.now().toString(),
               "false");
         }
       } else {
-        response['traits'].forEach((key, valueList) {
-          for (var item in valueList) {
-            String botReply = item['value'];
-            chatList.add(ChatModel(
-                message: botReply,
-                isUser: false,
-                isNavigate: key == "request_human_assistance",
-                time: DateTime.now().toString()));
-            callAddMessageApi(botReply, DateTime.now().toString(), "false");
-          }
-        });
         resetFailCount();
+        chatList.add(ChatModel(
+            message: response.message!.text!.text![0],
+            isUser: false,
+            isNavigate: false,
+            time: DateTime.now().toString()));
+        callAddMessageApi(response.message!.text!.text![0],
+            DateTime.now().toString(), "false");
       }
+
+      // var intentList =
+      //     isKeyEmptyMap(response.queryResult.t, "response_text:response_text")
+      //         ? null
+      //         : response['entities']['response_text:response_text'] as List;
+
+      // if (intentList == null ||
+      //     intentList.isEmpty ||
+      //     isKeyEmptyMap(response, "entities")) {
+      //   failCount++;
+      //   final isHumanAssistanceRequested = isHuman(response["text"]);
+      //   chatList.add(
+      //     ChatModel(
+      //         message: (isHumanAssistanceRequested || failCount > 1)
+      //             ? "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?"
+      //             : "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help.",
+      //         isUser: false,
+      //         isNavigate: isHumanAssistanceRequested,
+      //         time: DateTime.now().toString(),
+      //         hasShownFirstFailMsg: failCount > 1),
+      //   );
+
+      //   if (!isHumanAssistanceRequested && failCount == 0) {
+      //     callAddMessageApi(
+      //         isHumanAssistanceRequested
+      //             ? "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?"
+      //             : "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help.",
+      //         DateTime.now().toString(),
+      //         "false");
+      //   }
+      // } else {
+      // response['traits'].forEach((key, valueList) {
+      //   for (var item in valueList) {
+      //     String botReply = item['value'];
+      //     chatList.add(ChatModel(
+      //         message: botReply,
+      //         isUser: false,
+      //         isNavigate: key == "request_human_assistance",
+      //         time: DateTime.now().toString()));
+      //     callAddMessageApi(botReply, DateTime.now().toString(), "false");
+      //   }
+      // });
+      //}
     } else {
       debugPrint(":::: Response is Null ::::");
     }
@@ -795,7 +853,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
           chatList = list.map((e) => ChatModel.fromJson(e)).toList();
           chatList.add(ChatModel(
               message:
-                  "Hiya, I’m Emily, your digital assistant at PressHop. How can I help? ",
+                  "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
               isUser: false,
               isNavigate: false,
               time: DateTime.now().toString()));
@@ -805,7 +863,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
 
           Future.delayed(const Duration(milliseconds: 500), () {
             scrollController.animateTo(
-                scrollController.position.maxScrollExtent + 80,
+                scrollController.position.maxScrollExtent + 100,
                 duration: const Duration(microseconds: 500),
                 curve: Curves.bounceIn);
             setState(() {});

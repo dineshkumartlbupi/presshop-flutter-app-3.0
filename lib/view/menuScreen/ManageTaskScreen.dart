@@ -2900,7 +2900,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               size: size.width * numD042),
                           SizedBox(width: size.width * numD018),
                           Text(
-                            '${widget.myContentData?.purchasedMediahouseCount} ${widget.myContentData!.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                            '${widget.myContentData?.purchasedMediahouseCount} $sold',
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD029,

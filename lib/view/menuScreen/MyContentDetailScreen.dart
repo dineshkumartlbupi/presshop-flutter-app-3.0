@@ -546,7 +546,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                   size: size.width * numD042),
                               SizedBox(width: size.width * numD018),
                               Text(
-                                '${widget.purchasedMediahouseCount} ${widget.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                                '${widget.purchasedMediahouseCount} $sold',
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * numD029,

@@ -222,7 +222,7 @@ class MyContentScreenState extends State<MyContentScreen>
                       ),
                       SizedBox(width: size.width * numD014),
                       Text(
-                        '${item.purchasedMediahouseCount.toString()} ${item.purchasedMediahouseCount > 1 ? '${sold}s' : sold}',
+                        '${item.purchasedMediahouseCount.toString()} $sold',
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD026,
