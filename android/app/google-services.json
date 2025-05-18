@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "750460561502-b0dq08dojkkjncv27egk8rts5btu6i0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.presshop.app",
+            "certificate_hash": "9b046e50831b31e8131e1cbc87284d3968651169"
+          }
+        },
+        {
           "client_id": "750460561502-e745cqo70bb6djvko1id3u4e8a87hqgm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

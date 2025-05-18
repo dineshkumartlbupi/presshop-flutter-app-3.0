@@ -1175,7 +1175,6 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen>
                         }
                       }),
                     ),
-                    SizedBox(height: size.width * numD05),
                   ],
                 ),
               ),

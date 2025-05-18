@@ -110,8 +110,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                     debugPrint("media:::::${mediaList[index].mimeType}");
                     debugPrint("mediaList length:::::${mediaList.length}");
                     return InteractiveViewer(
-                      minScale: 0.5,
-                      maxScale: 2,
+
                       scaleEnabled:
                           mediaList[index].mimeType == "image" ? true : false,
                       child: Stack(
@@ -209,7 +208,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                       ? Image.file(
                                                           File(mediaList[index]
                                                               .mediaPath),
-                                                          fit: BoxFit.cover,
+                                                          fit: BoxFit.contain,
                                                           gaplessPlayback: true,
                                                         )
                                                       : Image.network(

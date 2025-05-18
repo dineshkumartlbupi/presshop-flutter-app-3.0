@@ -166,7 +166,7 @@ class CameraScreenState extends State<CameraScreen>
   Future initCamera(CameraDescription cameraDescription) async {
     debugPrint("OInsideInitttt");
     cameraController = CameraController(cameraDescription, ResolutionPreset.max,
-        imageFormatGroup: ImageFormatGroup.yuv420);
+        imageFormatGroup: ImageFormatGroup.jpeg);
     debugPrint("OInsideInitttt2222");
     cameraValue = null;
     cameraValue = cameraController!.initialize().then((_) async {
@@ -203,6 +203,7 @@ class CameraScreenState extends State<CameraScreen>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final deviceRatio = size.width / size.height;
     debugPrint('camera-screen::::::::::::::::::::::::::::::::::::::::::::::::');
     //   final cameraHeight = (size.height - size.width * numD25);
     return Scaffold(
@@ -401,7 +402,8 @@ class CameraScreenState extends State<CameraScreen>
                               height: size.height,
                               width: size.width,
                               child: AspectRatio(
-                                aspectRatio: 9 / 16,
+                                aspectRatio:
+                                    cameraController!.value.aspectRatio,
                                 child: CameraPreview(cameraController!),
                               ),
                             ),
@@ -970,6 +972,7 @@ class CameraScreenState extends State<CameraScreen>
               : Colors.white
     );*/
 /*    final ButtonStyle styleReset = TextButton.styleFrom(
+
       foregroundColor:
           (cameraController!.value.exposureMode != ExposureMode.locked) &&
                   cameraController!.value.exposureMode != ExposureMode.auto

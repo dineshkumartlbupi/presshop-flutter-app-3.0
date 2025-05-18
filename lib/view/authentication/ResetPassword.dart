@@ -34,11 +34,11 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
       hideConfirmPassword = true,
       enableNotifications = false,
       showResend = false,
-      showLowercase=false,
-      showSpecialcase=false,
-      showUppercase=false,
-      showMincase=false,
-      showNumber=false;
+      showLowercase = false,
+      showSpecialcase = false,
+      showUppercase = false,
+      showMincase = false,
+      showNumber = false;
 
   @override
   void initState() {
@@ -205,9 +205,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                     passwordStrengthValue.isNotEmpty &&
                             passwordStrengthValue == strongText
                         ? const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    )
+                            Icons.check_circle,
+                            color: Colors.green,
+                          )
                         : Container(),
                   ],
                 ),
@@ -216,15 +216,15 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return requiredText;
-                  }else if(!showNumber){
+                  } else if (!showNumber) {
                     return '';
-                  }else if(!showSpecialcase){
+                  } else if (!showSpecialcase) {
                     return '';
-                  }else if(!showLowercase){
+                  } else if (!showLowercase) {
                     return '';
-                  }else if(!showUppercase){
+                  } else if (!showUppercase) {
                     return '';
-                  }else if(!showMincase){
+                  } else if (!showMincase) {
                     return '';
                   }
 
@@ -234,34 +234,31 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                   if (text.toString().length < 8) {
                     showMincase = false;
                     setState(() {});
-                  }else{
+                  } else {
                     showMincase = true;
                     setState(() {});
                   }
 
-                  if (!RegExp(r'[A-Z]')
-                      .hasMatch(text.toString())) {
+                  if (!RegExp(r'[A-Z]').hasMatch(text.toString())) {
                     showUppercase = false;
                     setState(() {});
-                  }else{
+                  } else {
                     showUppercase = true;
                     setState(() {});
                   }
 
-                  if (!RegExp(r'[a-z]')
-                      .hasMatch(text.toString())) {
+                  if (!RegExp(r'[a-z]').hasMatch(text.toString())) {
                     showLowercase = false;
                     setState(() {});
-                  }else{
+                  } else {
                     showLowercase = true;
                     setState(() {});
                   }
 
-                  if (!RegExp(r'[0-9]')
-                      .hasMatch(text.toString())) {
+                  if (!RegExp(r'[0-9]').hasMatch(text.toString())) {
                     showNumber = false;
                     setState(() {});
-                  }else{
+                  } else {
                     showNumber = true;
                     setState(() {});
                   }
@@ -270,7 +267,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                       .hasMatch(text.toString())) {
                     showSpecialcase = false;
                     setState(() {});
-                  }else{
+                  } else {
                     showSpecialcase = true;
                     setState(() {});
                   }
@@ -284,14 +281,19 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: size.width * 0.01,),
-                  Text("Minimum password requirement",
+                  SizedBox(
+                    height: size.width * 0.01,
+                  ),
+                  Text(
+                    "Minimum password requirement",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: size.width*0.035,
-
-                    ),),
-                  SizedBox(height: size.width * 0.02,),
+                      fontSize: size.width * 0.035,
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * 0.02,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -299,38 +301,51 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Image.asset(
-                            !showLowercase?"${iconsPath}cross.png":"${iconsPath}check.png",
+                            !showLowercase
+                                ? "${iconsPath}cross.png"
+                                : "${iconsPath}check.png",
                             width: 15,
                             height: 15,
                           ),
-                          Text("Contains at least 01 lowercase character",
+                          Text(
+                            "Contains at least 01 lowercase character",
                             style: TextStyle(
-                                color: !showLowercase?Colors.red:Colors.green,
-                                fontSize: size.width*0.03,
-                                fontWeight: FontWeight.w500
-                            ),)
+                                color:
+                                    !showLowercase ? Colors.red : Colors.green,
+                                fontSize: size.width * 0.03,
+                                fontWeight: FontWeight.w500),
+                          )
                         ],
                       ),
-                      SizedBox(height: size.width * 0.01,),
+                      SizedBox(
+                        height: size.width * 0.01,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Image.asset(
-                            !showSpecialcase?"${iconsPath}cross.png":"${iconsPath}check.png",
+                            !showSpecialcase
+                                ? "${iconsPath}cross.png"
+                                : "${iconsPath}check.png",
                             width: 15,
                             height: 15,
                           ),
-                          Text("Contains at least 01 special character",
+                          Text(
+                            "Contains at least 01 special character",
                             style: TextStyle(
-                                color: !showSpecialcase?Colors.red:Colors.green,
-                                fontSize: size.width*0.03,
-                                fontWeight: FontWeight.w500
-                            ),)
+                                color: !showSpecialcase
+                                    ? Colors.red
+                                    : Colors.green,
+                                fontSize: size.width * 0.03,
+                                fontWeight: FontWeight.w500),
+                          )
                         ],
                       )
                     ],
                   ),
-                  SizedBox(height: size.width * 0.01,),
+                  SizedBox(
+                    height: size.width * 0.01,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -338,57 +353,68 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Image.asset(
-                            !showUppercase?"${iconsPath}cross.png":"${iconsPath}check.png",
+                            !showUppercase
+                                ? "${iconsPath}cross.png"
+                                : "${iconsPath}check.png",
                             width: 15,
                             height: 15,
                           ),
-                          Text("Contains at least 01 uppercase character",
+                          Text(
+                            "Contains at least 01 uppercase character",
                             style: TextStyle(
-                                color: !showUppercase?Colors.red:Colors.green,
-                                fontSize: size.width*0.03,
-                                fontWeight: FontWeight.w500
-                            ),)
+                                color:
+                                    !showUppercase ? Colors.red : Colors.green,
+                                fontSize: size.width * 0.03,
+                                fontWeight: FontWeight.w500),
+                          )
                         ],
                       ),
-                      SizedBox(height: size.width * 0.01,),
+                      SizedBox(
+                        height: size.width * 0.01,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Image.asset(
-                            !showMincase?"${iconsPath}cross.png":"${iconsPath}check.png",
+                            !showMincase
+                                ? "${iconsPath}cross.png"
+                                : "${iconsPath}check.png",
                             width: 15,
                             height: 15,
                           ),
-                          Text("Must be at least 08 characters",
+                          Text(
+                            "Must be at least 08 characters",
                             style: TextStyle(
-                                color: !showMincase?Colors.red:Colors.green,
-                                fontSize: size.width*0.03,
-                                fontWeight: FontWeight.w500
-                            ),)
+                                color: !showMincase ? Colors.red : Colors.green,
+                                fontSize: size.width * 0.03,
+                                fontWeight: FontWeight.w500),
+                          )
                         ],
                       )
                     ],
                   ),
-                  SizedBox(height: size.width * 0.01,),
+                  SizedBox(
+                    height: size.width * 0.01,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
-                        !showNumber?"${iconsPath}cross.png":"${iconsPath}check.png",
+                        !showNumber
+                            ? "${iconsPath}cross.png"
+                            : "${iconsPath}check.png",
                         width: 15,
                         height: 15,
                       ),
-                      Text("Contains at least 01 number",
+                      Text(
+                        "Contains at least 01 number",
                         style: TextStyle(
-                            color:!showNumber?Colors.red:Colors.green,
-                            fontSize: size.width*0.03,
-                            fontWeight: FontWeight.w500
-                        ),)
+                            color: !showNumber ? Colors.red : Colors.green,
+                            fontSize: size.width * 0.03,
+                            fontWeight: FontWeight.w500),
+                      )
                     ],
                   ),
-
-
-
                 ],
               ),
               SizedBox(
@@ -453,9 +479,10 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                 validator: (value) {
                   if (value!.trim().isEmpty) {
                     return requiredText;
-                  }/* else if (value.length < 8) {
+                  } /* else if (value.length < 8) {
                     return passwordErrorText;
-                  }*/ else if (passwordController.text.trim() != value) {
+                  }*/
+                  else if (passwordController.text.trim() != value) {
                     return confirmPasswordErrorText;
                   }
                   return null;
@@ -540,7 +567,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                   if (formKey.currentState!.validate()) {
                     resetPasswordApi();
                   } else if (passwordController.text.isEmpty) {
-                    showSnackBar('Error', "Please enter new password", Colors.red);
+                    showSnackBar(
+                        'Error', "Please enter new password", Colors.red);
                   } else if (confirmPasswordController.text.isEmpty) {
                     showSnackBar(
                         'Error', "Please confirm new password", Colors.red);
@@ -653,10 +681,13 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
         case resetPasswordUrlRequest:
           debugPrint("resetPasswordUrlRequestError: $response");
           var map = jsonDecode(response);
-          showSnackBar("Error", map['errors']['msg']['msg'].toString(), Colors.red);
 
-          if(map['errors']['msg']['msg']=="IS_EMPTY"){
+          if (map['errors']['msg'] == "IS_EMPTY") {
             showSnackBar("Error", "Please enter your OTP", Colors.red);
+          } else if (map['errors']['msg'] == "WRONG_OTP") {
+            showSnackBar("Error", "Please enter valid OTP", Colors.red);
+          } else {
+            showSnackBar("Error", map['errors']['msg'].toString(), Colors.red);
           }
 
           break;

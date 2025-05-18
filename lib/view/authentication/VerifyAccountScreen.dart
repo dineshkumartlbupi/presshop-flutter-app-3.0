@@ -5,15 +5,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:presshop/utils/Common.dart';
-import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
-import 'package:presshop/utils/commonWebView.dart';
 import 'package:presshop/view/bankScreens/AddBankScreen.dart';
 import '../../main.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../../utils/networkOperations/NetworkResponse.dart';
+
 /// change by aditya
 class VerifyAccountScreen extends StatefulWidget {
   String mobileNumberValue = "";
@@ -86,8 +85,9 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
         },
         actionWidget: null,
       ),
-      bottomNavigationBar:Container(
-        margin: EdgeInsets.symmetric(horizontal: size.width*numD04,vertical:size.width*numD04),
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.symmetric(
+            horizontal: size.width * numD04, vertical: size.width * numD08),
         width: size.width,
         height: size.width * numD13,
         child: commonElevatedButton(
@@ -98,11 +98,9 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                 fontSize: size.width * numD035,
                 color: Colors.white,
                 fontWeight: FontWeight.w700),
-            commonButtonStyle(size, colorThemePink),
-                () async {
-            verifyOtpApi();
-
-            }),
+            commonButtonStyle(size, colorThemePink), () async {
+          verifyOtpApi();
+        }),
       ),
       body: SafeArea(
         child: Form(
@@ -110,7 +108,6 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             padding: EdgeInsets.symmetric(
                 horizontal: size.width * numD04, vertical: size.width * numD25),
             children: [
-
               Text(
                 "Verify Your Mobile Number",
                 style: TextStyle(
@@ -132,8 +129,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                     width: size.width * numD01,
                   )),
                   TextSpan(
-                      text:
-                          "${widget.countryCode}${widget.mobileNumberValue}",
+                      text: "${widget.countryCode}${widget.mobileNumberValue}",
                       style: TextStyle(
                           color: colorThemePink,
                           fontSize: size.width * numD035))
@@ -145,8 +141,6 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
               OtpPinField(
                 key: _otpPinFieldMobileController,
                 otpPinInputCustom: "0",
-
-
 
                 /// to clear the Otp pin Controller
                 onSubmit: (text) {
@@ -178,11 +172,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                 showCustomKeyboard: false,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 otpPinFieldDecoration: OtpPinFieldDecoration.custom,
-
               ),
-
-
-
               SizedBox(
                 height: size.width * numD065,
               ),
@@ -236,10 +226,10 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                   )
                   : Container(),*/
 
-               RichText(
+              RichText(
                 text: TextSpan(children: [
                   TextSpan(
-                      text:otpNotReceivedText ,
+                      text: otpNotReceivedText,
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: size.width * numD035,
@@ -260,10 +250,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                         }
                         setState(() {});
                         sendOtpApi();
-
-
                       },
-
                   ),
                   TextSpan(
                       text: anotherOneText,
@@ -274,11 +261,10 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                           fontWeight: FontWeight.normal)),
                 ]),
               ),
-
               SizedBox(
                 height: size.width * numD05,
               ),
-         /*     Align(
+              /*     Align(
                 alignment: Alignment.center,
                 child: Text("1 of 3",
                     style: TextStyle(
@@ -330,7 +316,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
   void sendOtpApi() {
     try {
       Map<String, String> params = {
-        "phone": widget.countryCode+widget.mobileNumberValue,
+        "phone": widget.countryCode + widget.mobileNumberValue,
         "email": widget.emailAddressValue
       };
 
@@ -345,10 +331,10 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
   void verifyOtpApi() {
     try {
       Map<String, String> params = {
-        "phone": widget.countryCode+widget.mobileNumberValue,
+        "phone": widget.countryCode + widget.mobileNumberValue,
         "email": widget.emailAddressValue,
-        "phone_otp":_otpPinFieldMobileController.currentState!.controller.text.toString(),
-
+        "phone_otp": _otpPinFieldMobileController.currentState!.controller.text
+            .toString(),
       };
       debugPrint("VerifyParams:::::$params");
       NetworkClass.fromNetworkClass(
@@ -362,10 +348,13 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
   void registerApi() {
     try {
       debugPrint("VerifyParams:${widget.params}");
-      NetworkClass.fromNetworkClass(registerUrl, this,
-              registerUrlRequest, widget.params,)
-          .callRequestServiceHeader(true, "post",null);
-     /* NetworkClass.multipartNetworkClassFiles(registerUrl, this,
+      NetworkClass.fromNetworkClass(
+        registerUrl,
+        this,
+        registerUrlRequest,
+        widget.params,
+      ).callRequestServiceHeader(true, "post", null);
+      /* NetworkClass.multipartNetworkClassFiles(registerUrl, this,
               registerUrlRequest, widget.params, [File(widget.imagePath)])
           .callMultipartService(true, "post", ["profile_image"],[]);*/
     } on Exception catch (e) {
@@ -376,21 +365,23 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
   void socialRegisterLoginApi() {
     try {
       debugPrint("SocialParams:${widget.params}");
-      NetworkClass.fromNetworkClass(socialLoginRegisterUrl, this,
-        socialLoginRegisterUrlRequest, widget.params,)
-          .callRequestServiceHeader(true, "post",null);
+      NetworkClass.fromNetworkClass(
+        socialLoginRegisterUrl,
+        this,
+        socialLoginRegisterUrlRequest,
+        widget.params,
+      ).callRequestServiceHeader(true, "post", null);
       NetworkClass.multipartNetworkClassFiles(
               socialLoginRegisterUrl,
               this,
               socialLoginRegisterUrlRequest,
               widget.params,
               [File(widget.imagePath)])
-          .callMultipartService(true, "post", ["profile_image"],[]);
+          .callMultipartService(true, "post", ["profile_image"], []);
     } on Exception catch (e) {
       debugPrint("$e");
     }
   }
-
 
   @override
   void onError({required int requestCode, required String response}) {
@@ -404,8 +395,10 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
         case verifyOtpUrlRequest:
           var data = jsonDecode(response);
           debugPrint("verifyOtpUrlRequest error::::$data");
-                showSnackBar("Error", data["errors"]["msg"].toString().replaceAll("_", " "), Colors.red);
-
+          showSnackBar(
+              "Error",
+              data["errors"]["msg"].toString().replaceAll("_", " "),
+              Colors.red);
 
           /*  commonErrorDialogDialog(
               MediaQuery.of(context).size, data["errors"]["msg"].toString().replaceAll("_", " ").toCapitalized(),"",
@@ -422,12 +415,11 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
           break;
         case reqCreateStipeAccount:
           debugPrint("stripe accountResponse ===> ${jsonDecode(response)}");
-        var data = jsonDecode(response);
-          commonErrorDialogDialog(
-              MediaQuery.of(context).size, data["errors"]["msg"].toString().replaceAll("_", " "),"",
-                  () {
-                Navigator.pop(context);
-              });
+          var data = jsonDecode(response);
+          commonErrorDialogDialog(MediaQuery.of(context).size,
+              data["errors"]["msg"].toString().replaceAll("_", " "), "", () {
+            Navigator.pop(context);
+          });
 
           break;
       }
@@ -445,7 +437,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
           expireTimeValue = "05:00";
 
           var data = jsonDecode(response);
-          showSnackBar("New OTP", data["data"].toString().replaceAll("_", " "), Colors.green);
+          showSnackBar("New OTP", data["data"].toString().replaceAll("_", " "),
+              Colors.green);
           startResendTime();
           break;
 
@@ -491,26 +484,27 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             sharedPreferences!.setString(
                 longitudeKey, map["response"]["user"][longitudeKey].toString());
 
-            if(map["response"]["user"][avatarIdKey]!=null){
-              sharedPreferences!
-                  .setString(avatarIdKey, map["response"]["user"][avatarIdKey]);
+            if (map["response"]["user"][avatarIdKey] != null) {
+              sharedPreferences!.setString(avatarIdKey,
+                  map["response"]["user"][avatarIdKey]["_id"].toString());
+              sharedPreferences!.setString(
+                  avatarKey, map["response"]["user"][avatarIdKey][avatarKey]);
             }
+
             sharedPreferences!.setBool(receiveTaskNotificationKey,
                 map["response"]["user"][receiveTaskNotificationKey]);
             sharedPreferences!.setBool(
                 isTermAcceptedKey, map["response"]["user"][isTermAcceptedKey]);
 
-           Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => AddBankScreen(
-                      editBank: false,
-                      myBankList: [],
-                      screenType:"",
-                      myBankData: null,
-                    )),
+                          editBank: false,
+                          myBankList: [],
+                          screenType: "",
+                          myBankData: null,
+                        )),
                 (route) => false);
-
-
           }
 
           break;
@@ -522,56 +516,44 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             rememberMe = true;
             sharedPreferences!.setBool(rememberKey, true);
             sharedPreferences!.setString(tokenKey, map[tokenKey]);
-            sharedPreferences!
-                .setString(hopperIdKey, map["user"][hopperIdKey]);
+            sharedPreferences!.setString(hopperIdKey, map["user"][hopperIdKey]);
             sharedPreferences!
                 .setString(firstNameKey, map["user"][firstNameKey]);
+            sharedPreferences!.setString(lastNameKey, map["user"][lastNameKey]);
+            sharedPreferences!.setString(userNameKey, map["user"][userNameKey]);
+            sharedPreferences!.setString(emailKey, map["user"][emailKey]);
             sharedPreferences!
-                .setString(lastNameKey, map["user"][lastNameKey]);
+                .setString(countryCodeKey, map["user"][countryCodeKey]);
+            sharedPreferences!.setString(addressKey, map["user"][addressKey]);
             sharedPreferences!
-                .setString(userNameKey, map["user"][userNameKey]);
+                .setString(latitudeKey, map["user"][latitudeKey].toString());
             sharedPreferences!
-                .setString(emailKey, map["user"][emailKey]);
-            sharedPreferences!.setString(
-                countryCodeKey, map["user"][countryCodeKey]);
-            sharedPreferences!
-                .setString(addressKey, map["user"][addressKey]);
-            sharedPreferences!.setString(
-                latitudeKey, map["user"][latitudeKey].toString());
-            sharedPreferences!.setString(
-                longitudeKey, map["user"][longitudeKey].toString());
-            sharedPreferences!
-                .setString(avatarIdKey, map["user"][avatarIdKey]);
+                .setString(longitudeKey, map["user"][longitudeKey].toString());
+            sharedPreferences!.setString(avatarIdKey, map["user"][avatarIdKey]);
             sharedPreferences!.setBool(receiveTaskNotificationKey,
                 map["user"][receiveTaskNotificationKey]);
-            sharedPreferences!.setBool(
-                isTermAcceptedKey, map["user"][isTermAcceptedKey]);
+            sharedPreferences!
+                .setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
 
-            if(map["user"][profileImageKey]!=null){
-              sharedPreferences!.setString(
-                  profileImageKey, map["user"][profileImageKey]);
+            if (map["user"][profileImageKey] != null) {
+              sharedPreferences!
+                  .setString(profileImageKey, map["user"][profileImageKey]);
             }
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => AddBankScreen(
-                      editBank: false,
-                      myBankList: const [],
-                      screenType:"",
-                      myBankData: null,
-                    )),
-                    (route) => false);
+                          editBank: false,
+                          myBankList: const [],
+                          screenType: "",
+                          myBankData: null,
+                        )),
+                (route) => false);
           }
 
           break;
-
       }
     } on Exception catch (e) {
       debugPrint("$e");
     }
   }
 }
-
-
-
-
-

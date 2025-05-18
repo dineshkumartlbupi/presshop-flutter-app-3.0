@@ -1043,10 +1043,15 @@ class _AddBankScreenState extends State<AddBankScreen>
                               callAddBankToStripeApi();
                             }
                           }
+                        } else {
+                          showSnackBar(
+                              "Error",
+                              "Please fill all the required fields first.",
+                              Colors.red);
                         }
                       }),
                     ),
-                    SizedBox(height: size.width * numD03),
+                    SizedBox(height: size.width * numD08),
                   ],
                 ),
               ),

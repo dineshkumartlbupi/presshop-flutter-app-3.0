@@ -350,11 +350,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                             FilteringTextInputFormatter.allow(
                                 RegExp("[a-z A-Z]"))
                           ],
-                          prefixIcon: const ImageIcon(
-                            AssetImage(
-                              "${iconsPath}ic_user.png",
-                            ),
-                          ),
+                          prefixIcon: const Icon(Icons.person_outline_sharp),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: 0,
                           suffixIcon: null,
@@ -378,11 +374,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                             FilteringTextInputFormatter.allow(
                                 RegExp("[a-z A-Z]"))
                           ],
-                          prefixIcon: const ImageIcon(
-                            AssetImage(
-                              "${iconsPath}ic_user.png",
-                            ),
-                          ),
+                          prefixIcon: const Icon(Icons.person_outline_sharp),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: 0,
                           suffixIcon: null,
@@ -409,11 +401,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                             FilteringTextInputFormatter.deny(RegExp(r'[ \\]')),
                           ],
                           suffixIcon: getUsernameSuffixIcon(),
-                          prefixIcon: const ImageIcon(
-                            AssetImage(
-                              "${iconsPath}ic_user.png",
-                            ),
-                          ),
+                          prefixIcon: const Icon(Icons.person_outline_sharp),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: size.width * numD085,
                           hidePassword: false,
@@ -457,12 +445,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                  padding: EdgeInsets.all(size.width * numD004),
-                                  child: Image.asset(
-                                    "${iconsPath}ic_phone.png",
-                                  ),
-                                ),
+                                const Icon(Icons.call_outlined),
                                 SizedBox(
                                   width: size.width * numD01,
                                 ),
@@ -517,12 +500,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                           controller: selectDobController,
                           hintText: "Select date of birth",
                           textInputFormatters: null,
-                          prefixIcon: Container(
-                            padding: EdgeInsets.all(size.width * numD01),
-                            child: Image.asset(
-                              "${iconsPath}calendar.png",
-                            ),
-                          ),
+                          prefixIcon: const Icon(Icons.calendar_month_rounded),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: 0,
                           suffixIcon: null,
@@ -549,12 +527,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                           controller: emailController,
                           hintText: emailHintText,
                           textInputFormatters: null,
-                          prefixIcon: Container(
-                            padding: EdgeInsets.all(size.width * numD01),
-                            child: Image.asset(
-                              "${iconsPath}ic_email.png",
-                            ),
-                          ),
+                          prefixIcon: const Icon(Icons.email_outlined),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: 0,
                           suffixIcon: null,
@@ -584,12 +557,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                           controller: apartmentAndHouseNameController,
                           hintText: apartmentNoHintText,
                           textInputFormatters: null,
-                          prefixIcon: Container(
-                            margin: EdgeInsets.only(left: size.width * numD01),
-                            child: Image.asset(
-                              "${iconsPath}ic_location.png",
-                            ),
-                          ),
+                          prefixIcon: const Icon(Icons.location_on_outlined),
                           prefixIconHeight: size.width * numD045,
                           suffixIconIconHeight: 0,
                           suffixIcon: null,
@@ -616,8 +584,9 @@ class _SignUpScreenState extends State<SignUpScreen>
 
                         /// Post Code
                         SizedBox(
-                          height: size.width * numD12,
+                          height: size.width * numD13,
                           child: GooglePlaceAutoCompleteTextField(
+                            containerHorizontalPadding: 0,
                             textEditingController: postalCodeController,
                             googleAPIKey: Platform.isIOS
                                 ? appleMapAPiKey
@@ -642,13 +611,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   color: colorHint,
                                   fontSize: size.width * numD035,
                                   fontFamily: 'AirbnbCereal'),
-                              prefixIcon: Container(
-                                margin: EdgeInsets.only(
-                                    right: size.width * numD02, left: 12),
-                                child: Image.asset(
-                                  "${iconsPath}ic_location.png",
-                                ),
-                              ),
+                              prefixIcon:
+                                  const Icon(Icons.location_on_outlined),
                               suffixIcon: postalCodeController.text.isNotEmpty
                                   ? InkWell(
                                       splashColor: Colors.transparent,
@@ -660,23 +624,16 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         cityNameController.clear();
                                         countryNameController.clear();
                                       },
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8),
-                                        child: Icon(
-                                          Icons.close,
-                                          color: Colors.black,
-                                          size: size.width * numD058,
-                                        ),
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.black,
+                                        size: size.width * numD058,
                                       ),
                                     )
                                   : const SizedBox.shrink(),
-                              prefixIconConstraints: BoxConstraints(
-                                  maxHeight: size.width * numD045),
-                              suffixIconConstraints: BoxConstraints(
-                                maxHeight: size.width * numD07,
-                              ),
                               prefixIconColor: colorTextFieldIcon,
+                              prefixIconConstraints:
+                                  BoxConstraints(minWidth: size.width * numD10),
                             ),
                             debounceTime: 200,
                             countries: const ["uk", "in"],
@@ -753,11 +710,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 hintText:
                                     "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
                                 textInputFormatters: null,
-                                prefixIcon: const ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_location.png",
-                                  ),
-                                ),
+                                prefixIcon:
+                                    const Icon(Icons.location_on_outlined),
                                 prefixIconHeight: size.width * numD06,
                                 suffixIconIconHeight: 0,
                                 suffixIcon: null,
@@ -803,11 +757,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 controller: cityNameController,
                                 hintText: cityText,
                                 textInputFormatters: null,
-                                prefixIcon: const ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_location.png",
-                                  ),
-                                ),
+                                prefixIcon:
+                                    const Icon(Icons.location_on_outlined),
                                 prefixIconHeight: size.width * numD06,
                                 suffixIconIconHeight: 0,
                                 suffixIcon: null,
@@ -835,11 +786,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 controller: countryNameController,
                                 hintText: countryText,
                                 textInputFormatters: null,
-                                prefixIcon: const ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_location.png",
-                                  ),
-                                ),
+                                prefixIcon:
+                                    const Icon(Icons.location_on_outlined),
                                 prefixIconHeight: size.width * numD06,
                                 suffixIconIconHeight: 0,
                                 suffixIcon: null,
@@ -865,11 +813,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 controller: passwordController,
                                 hintText: enterPasswordHint,
                                 textInputFormatters: null,
-                                prefixIcon: const ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_key.png",
-                                  ),
-                                ),
+                                prefixIcon: const Icon(Icons.lock_outline),
                                 onChanged: (text) {
                                   if (text.toString().length < 8) {
                                     showMincase = false;
@@ -1173,11 +1117,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 controller: confirmPasswordController,
                                 hintText: confirmPwdHintText,
                                 textInputFormatters: null,
-                                prefixIcon: const ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_key.png",
-                                  ),
-                                ),
+                                prefixIcon: const Icon(Icons.lock_outline),
                                 prefixIconHeight: size.width * numD08,
                                 suffixIconIconHeight: size.width * numD08,
                                 suffixIcon: InkWell(
