@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -8,7 +7,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder2/geocoder2.dart';
-import 'package:location/location.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonModel.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
@@ -20,16 +18,13 @@ import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
 import '../../main.dart';
 import '../../utils/CommonWigdets.dart';
-import '../../utils/PermissionHandler.dart';
 import '../../utils/commonEnums.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../cameraScreen/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
-import 'package:geocoding/geocoding.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../chatBotScreen/chatBotScreen.dart';
-import '../chatScreens/ChatScreen.dart';
 
 class Dashboard extends StatefulWidget {
   int initialPosition = 2;
@@ -60,7 +55,6 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
   int totalEntitiesCount = 0;
   double x = 0, y = 0, latitude = 22.5744, longitude = 88.3629;
 
-  final int _sizePerPage = 50;
   int page = 0;
 
   bool isGetLatLong = false;
@@ -443,8 +437,8 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
 
   getCurrentLocationFxn() async {
     try {
-      locationData =
-          LocationData.fromMap({"latitude": latitude, "longitude": longitude});
+      locationData = lc.LocationData.fromMap(
+          {"latitude": latitude, "longitude": longitude});
       //locationData = await location.getLocation();
       debugPrint("GettingLocation ==> $locationData");
       if (locationData != null) {

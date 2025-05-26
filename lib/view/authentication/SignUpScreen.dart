@@ -25,7 +25,6 @@ import '../../main.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonTextField.dart';
 import '../../utils/CommonWigdets.dart';
-import '../bankScreens/AddBankScreen.dart';
 import '../dashboard/Dashboard.dart';
 import 'UploadDocumnetsScreen.dart';
 
@@ -2215,57 +2214,40 @@ class _SignUpScreenState extends State<SignUpScreen>
               if (map["user"]["bank_detail"] != null) {
                 var bankList = map["user"]["bank_detail"] as List;
                 debugPrint("bankList:::::${bankList.length}");
-                if (bankList.isEmpty) {
-                  onBoardingCompleteDialog(
-                      size: MediaQuery.of(context).size,
-                      func: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => AddBankScreen(
-                                      editBank: false,
-                                      myBankList: [],
-                                      screenType: "",
-                                      myBankData: null,
-                                    )),
-                            (route) => false);
-                      });
-                } else {
-                  if (sharedPreferences!.getBool(skipDocumentsKey) != null) {
-                    bool skipDoc =
-                        sharedPreferences!.getBool(skipDocumentsKey)!;
-                    if (skipDoc) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Dashboard(initialPosition: 2)),
-                          (route) => false);
-                    } else {
-                      onBoardingCompleteDialog(
-                          size: MediaQuery.of(context).size,
-                          func: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => UploadDocumentsScreen(
-                                          menuScreen: false,
-                                          hideLeading: true,
-                                        )),
-                                (route) => false);
-                          });
-                    }
+                if (sharedPreferences!.getBool(skipDocumentsKey) != null) {
+                  bool skipDoc = sharedPreferences!.getBool(skipDocumentsKey)!;
+                  if (skipDoc) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)),
+                        (route) => false);
                   } else {
                     onBoardingCompleteDialog(
                         size: MediaQuery.of(context).size,
                         func: () {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const UploadDocumentsScreen(
+                                  builder: (context) => UploadDocumentsScreen(
                                         menuScreen: false,
                                         hideLeading: true,
                                       )),
                               (route) => false);
                         });
                   }
+                } else {
+                  onBoardingCompleteDialog(
+                      size: MediaQuery.of(context).size,
+                      func: () {
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const UploadDocumentsScreen(
+                                      menuScreen: false,
+                                      hideLeading: true,
+                                    )),
+                            (route) => false);
+                      });
                 }
               }
             } else {

@@ -203,61 +203,37 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                           height: size.width * numD03,
                                         ),
                                         SizedBox(
-                                          height: size.width * numD13,
-                                          width: size.width,
-                                          child: Stack(
-                                            children: [
-                                              SizedBox(
-                                                height: size.width * numD13,
-                                                width: size.width,
-                                                child: Shimmer.fromColors(
-                                                  period: Duration(seconds: 4),
-                                                  baseColor: colorThemePink,
-                                                  highlightColor: Colors.white,
-                                                  child: commonElevatedButton(
-                                                      manageContentText,
-                                                      size,
-                                                      commonButtonTextStyle(
-                                                          size),
-                                                      commonButtonStyle(
-                                                          size, Colors.white),
-                                                      () {
-                                                    debugPrint(
-                                                        "_currentMediaIndex =0;");
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                            builder: (context) => ManageTaskScreen(
-                                                                roomId: myContentData!
-                                                                    .id,
-                                                                contentId:
-                                                                    myContentData!
-                                                                        .id,
-                                                                type: 'content',
-                                                                mediaHouseDetail:
-                                                                    null,
-                                                                contentMedia:
-                                                                    showMediaWidget(),
-                                                                contentHeader:
-                                                                    headerWidget(),
-                                                                myContentData:
-                                                                    myContentData)))
-                                                        .then((value) =>
-                                                            myContentDetailApi());
-                                                  }),
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  manageContentText,
-                                                  style: commonButtonTextStyle(
-                                                      size),
-                                                  selectionColor: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                            height: size.width * numD13,
+                                            width: size.width,
+                                            child: commonElevatedButton(
+                                                manageContentText,
+                                                size,
+                                                commonButtonTextStyle(size),
+                                                commonButtonStyle(
+                                                    size, colorThemePink), () {
+                                              debugPrint(
+                                                  "_currentMediaIndex =0;");
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ManageTaskScreen(
+                                                              roomId: myContentData!
+                                                                  .id,
+                                                              contentId:
+                                                                  myContentData!
+                                                                      .id,
+                                                              type: 'content',
+                                                              mediaHouseDetail:
+                                                                  null,
+                                                              contentMedia:
+                                                                  showMediaWidget(),
+                                                              contentHeader:
+                                                                  headerWidget(),
+                                                              myContentData:
+                                                                  myContentData)))
+                                                  .then((value) =>
+                                                      myContentDetailApi());
+                                            })),
                                         SizedBox(
                                           height: size.width * numD05,
                                         ),

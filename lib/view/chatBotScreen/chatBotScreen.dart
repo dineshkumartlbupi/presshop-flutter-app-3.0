@@ -117,6 +117,8 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Column(
                                             crossAxisAlignment:
@@ -181,6 +183,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                                           Container(
                                               margin: EdgeInsets.only(
                                                 bottom: size.width * numD07,
+                                                top: size.width * numD01,
                                               ),
                                               decoration: BoxDecoration(
                                                 borderRadius:
@@ -210,10 +213,13 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                                   : Align(
                                       alignment: Alignment.topLeft,
                                       child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Container(
                                               margin: EdgeInsets.only(
                                                 bottom: size.width * numD04,
+                                                top: size.width * numD03,
                                               ),
                                               decoration: BoxDecoration(
                                                   color: Colors.black,
@@ -636,6 +642,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
                       filled: false,
                       filledColor: Colors.transparent,
                       maxLines: 3,
+                      textCapitalization: TextCapitalization.sentences,
                     ),
                   ),
                   IconButton(

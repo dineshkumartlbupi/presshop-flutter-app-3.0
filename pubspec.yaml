@@ -103,6 +103,7 @@ dependencies:
   firebase_crashlytics: ^4.3.4
   shimmer: ^3.0.0
   dialog_flowtter: ^0.3.3
+  image_cropper: any
 
 dev_dependencies:
   flutter_test:

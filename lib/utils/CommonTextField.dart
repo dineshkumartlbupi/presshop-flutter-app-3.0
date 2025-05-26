@@ -3,31 +3,33 @@ import 'package:flutter/services.dart';
 import 'Common.dart';
 
 class CommonTextField extends StatefulWidget {
-  CommonTextField(
-      {super.key,
-      required this.size,
-      required this.controller,
-      required this.hintText,
-      required this.prefixIcon,
-      required this.prefixIconHeight,
-      required this.suffixIconIconHeight,
-      required this.suffixIcon,
-      required this.hidePassword,
-      required this.enableValidations,
-      required this.filled,
-      required this.filledColor,
-      required this.keyboardType,
-      required this.validator,
-      required this.maxLines,
-      required this.borderColor,
-      this.prefix,
-      required this.textInputFormatters,
-      this.errorMaxLines,
-      this.onChanged,
-      this.maxLength,
-      this.callback,
-      this.autofocus,
-      this.readOnly});
+  CommonTextField({
+    super.key,
+    required this.size,
+    required this.controller,
+    required this.hintText,
+    required this.prefixIcon,
+    required this.prefixIconHeight,
+    required this.suffixIconIconHeight,
+    required this.suffixIcon,
+    required this.hidePassword,
+    required this.enableValidations,
+    required this.filled,
+    required this.filledColor,
+    required this.keyboardType,
+    required this.validator,
+    required this.maxLines,
+    required this.borderColor,
+    this.prefix,
+    required this.textInputFormatters,
+    this.errorMaxLines,
+    this.onChanged,
+    this.maxLength,
+    this.callback,
+    this.autofocus,
+    this.readOnly,
+    this.textCapitalization = TextCapitalization.words,
+  });
 
   final Size size;
   final TextEditingController controller;
@@ -52,6 +54,7 @@ class CommonTextField extends StatefulWidget {
   bool? autofocus;
   bool? readOnly;
   final Widget? prefix;
+  final textCapitalization;
 
   @override
   State<StatefulWidget> createState() {
@@ -126,7 +129,7 @@ class CommonTextFieldState extends State<CommonTextField> {
           contentPadding:
               EdgeInsets.symmetric(vertical: widget.size.width * numD02)),
       textAlignVertical: TextAlignVertical.center,
-      textCapitalization: TextCapitalization.words,
+      textCapitalization: widget.textCapitalization,
       onChanged: widget.onChanged,
       validator: widget.validator,
       autovalidateMode: widget.enableValidations

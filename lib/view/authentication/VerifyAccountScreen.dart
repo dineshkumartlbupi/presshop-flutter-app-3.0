@@ -7,7 +7,7 @@ import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
-import 'package:presshop/view/bankScreens/AddBankScreen.dart';
+import 'package:presshop/view/authentication/WelcomeScreen.dart';
 import '../../main.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -498,13 +498,21 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
 
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => AddBankScreen(
-                          editBank: false,
-                          myBankList: [],
-                          screenType: "",
-                          myBankData: null,
+                    builder: (context) => WelcomeScreen(
+                          hideLeading: false,
+                          screenType: '',
                         )),
                 (route) => false);
+
+            // Navigator.of(context).pushAndRemoveUntil(
+            //     MaterialPageRoute(
+            //         builder: (context) => AddBankScreen(
+            //               editBank: false,
+            //               myBankList: [],
+            //               screenType: "",
+            //               myBankData: null,
+            //             )),
+            //     (route) => false);
           }
 
           break;
@@ -541,11 +549,9 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             }
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => AddBankScreen(
-                          editBank: false,
-                          myBankList: const [],
-                          screenType: "",
-                          myBankData: null,
+                    builder: (context) => WelcomeScreen(
+                          hideLeading: false,
+                          screenType: '',
                         )),
                 (route) => false);
           }

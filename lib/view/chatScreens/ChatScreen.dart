@@ -37,7 +37,8 @@ class ConversationScreen extends StatefulWidget {
   bool hideLeading = false;
   final String message;
 
-  ConversationScreen({super.key, required this.hideLeading, required this.message});
+  ConversationScreen(
+      {super.key, required this.hideLeading, required this.message});
 
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
@@ -67,7 +68,8 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   /// Sender Information
   final String _senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
-  final String _senderProfilePic = avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
+  final String _senderProfilePic =
+      avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
   final String _senderName =
       ("${sharedPreferences!.getString(firstNameKey) ?? ""} "
           " ${sharedPreferences!.getString(lastNameKey) ?? ""}");
@@ -98,7 +100,8 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   List<AttachIconModel> attachIconList = [
     AttachIconModel(icon: "$chatIconsPath/cameraIcon.png", iconName: 'Photo'),
-    AttachIconModel(icon: "$chatIconsPath/galleryIcon.png", iconName: 'Gallery'),
+    AttachIconModel(
+        icon: "$chatIconsPath/galleryIcon.png", iconName: 'Gallery'),
     AttachIconModel(icon: "$chatIconsPath/videoIcon.png", iconName: 'Video'),
   ];
 
@@ -118,7 +121,8 @@ class _ConversationScreenState extends State<ConversationScreen>
   void initState() {
     debugPrint('Class Name: $runtimeType');
     debugPrint('hopperName====>: ${sharedPreferences!.getString(avatarKey)}');
-    debugPrint('hopperProfile====>: ${sharedPreferences!.getString(avatarKey)}');
+    debugPrint(
+        'hopperProfile====>: ${sharedPreferences!.getString(avatarKey)}');
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     addOnlineOffline(true, sharedPreferences!.getString(adminRoomIdKey) ?? '');
@@ -283,7 +287,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                           itemBuilder: (context, index) {
                             var document = snapShot.data!.docs[index];
 
-                            typingCheckSenderID =  document.get('senderId');
+                            typingCheckSenderID = document.get('senderId');
 
                             return Column(
                               children: [
@@ -325,9 +329,9 @@ class _ConversationScreenState extends State<ConversationScreen>
                   ),
                 ),
                 Visibility(
-                 visible:isTyping,
-                 replacement: Container(),
-                 child: Padding(
+                  visible: isTyping,
+                  replacement: Container(),
+                  child: Padding(
                     padding: EdgeInsets.only(left: size.width * numD05),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,14 +366,16 @@ class _ConversationScreenState extends State<ConversationScreen>
                         ),
                         Container(
                           margin: EdgeInsets.only(top: size.width * numD02),
-
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(size.width * numD04),
-                                bottomLeft: Radius.circular(size.width * numD04),
-                                bottomRight: Radius.circular(size.width * numD04),
+                                bottomLeft:
+                                    Radius.circular(size.width * numD04),
+                                bottomRight:
+                                    Radius.circular(size.width * numD04),
                               ),
-                              border: Border.all(width: 1.5, color: colorSwitchBack)),
+                              border: Border.all(
+                                  width: 1.5, color: colorSwitchBack)),
                           child: Lottie.asset("assets/lottieFiles/typing.json",
                               height: size.width * numD10,
                               width: size.width * numD16),
@@ -377,14 +383,13 @@ class _ConversationScreenState extends State<ConversationScreen>
                       ],
                     ),
                   ),
-               ),
+                ),
                 bottomButton("sender", size),
 
                 /// Emoji Key Board
                 // buildStickerKeyboard()
               ],
-            )
-    )
+            ))
         : Scaffold(
             body: showLoader(),
           );
@@ -768,7 +773,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       offstage: false,
       child: SizedBox(
         height: 250,
-        child:EmojiPicker(
+        child: EmojiPicker(
           onEmojiSelected: (Category? category, Emoji emoji) {
             _onEmojiSelected(emoji);
           },
@@ -993,7 +998,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * numD08,
                     ),
                   ],
                 ),
@@ -2338,7 +2343,8 @@ class _ConversationScreenState extends State<ConversationScreen>
   Future<void> _start() async {
     try {
       if (await _audioRecorder.hasPermission()) {
-        await _audioRecorder.start(const RecordConfig() ,path: 'aFullPath/myFile.m4a');
+        await _audioRecorder.start(const RecordConfig(),
+            path: 'aFullPath/myFile.m4a');
 
         bool isRecording = await _audioRecorder.isRecording();
         setState(() {
@@ -3114,7 +3120,7 @@ class _ConversationScreenState extends State<ConversationScreen>
           checkOnlineOffline(context, size, _receiverId);
 
           ///Typing Focus
-        //  messageController.addListener(_onTypingFocusChange);
+          //  messageController.addListener(_onTypingFocusChange);
           messageController.addListener(listenToTyping);
 
           messageController.addListener(() {
@@ -3389,7 +3395,6 @@ class _ConversationScreenState extends State<ConversationScreen>
     }
   }*/
 
-
   void addTyping(int typingValue) {
     DocumentReference docTypingReference = FirebaseFirestore.instance
         .collection('Chat')
@@ -3427,11 +3432,6 @@ class _ConversationScreenState extends State<ConversationScreen>
       });
     }
   }
-
-
-
-
-
 
   void checkTyping() {
     debugPrint("_receiverId::::::::$_receiverId");
@@ -3513,10 +3513,6 @@ class _ConversationScreenState extends State<ConversationScreen>
       }
     });
   }
-
-
-
-
 
   Future<void> seeMsg() async {
     final query = await FirebaseFirestore.instance

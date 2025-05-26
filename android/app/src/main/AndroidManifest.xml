@@ -91,9 +91,14 @@
                     android:scheme="https" />
             </intent-filter>
 
+           
+
         </activity>
 
-
+ <activity
+  android:name="com.yalantis.ucrop.UCropActivity"
+  android:screenOrientation="portrait"
+  android:theme="@style/Ucrop.CropTheme"/>
         <service
             android:name="me.pirajohn.foreground_service.ForegroundService"
             android:exported="true"

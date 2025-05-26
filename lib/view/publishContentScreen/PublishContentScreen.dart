@@ -3020,50 +3020,50 @@ class PublishContentScreenState extends State<PublishContentScreen>
           var data = jsonDecode(response);
           isLoading = false;
           setState(() {});
-          if (data['errors']['msg'] == "not verified") {
-            onBoardingCompleteDialog(
-                size: MediaQuery.of(navigatorKey.currentContext!).size,
-                func: () {
-                  draftSelected = true;
-                  isSelectLetsGo = true;
-                  callAddContentApi();
-                  Navigator.push(
-                      navigatorKey.currentContext!,
-                      MaterialPageRoute(
-                          builder: (context) => AddBankScreen(
-                                editBank: false,
-                                myBankList: const [],
-                                screenType: "publish",
-                                myBankData: null,
-                              )));
-                });
-          }
+          // if (data['errors']['msg'] == "not verified") {
+          //   onBoardingCompleteDialog(
+          //       size: MediaQuery.of(navigatorKey.currentContext!).size,
+          //       func: () {
+          //         draftSelected = true;
+          //         isSelectLetsGo = true;
+          //         callAddContentApi();
+          //         Navigator.push(
+          //             navigatorKey.currentContext!,
+          //             MaterialPageRoute(
+          //                 builder: (context) => AddBankScreen(
+          //                       editBank: false,
+          //                       myBankList: const [],
+          //                       screenType: "publish",
+          //                       myBankData: null,
+          //                     )));
+          //       });
+          // }
           break;
 
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq error: $response");
           var data = jsonDecode(response);
-          if (data['message'] == "not verified") {
-            onBoardingCompleteDialog(
-                size: MediaQuery.of(navigatorKey.currentContext!).size,
-                func: () {
-                  Navigator.pop(navigatorKey.currentContext!);
-                  draftSelected = true;
-                  isSelectLetsGo = true;
-                  callAddContentApi();
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    Navigator.push(
-                        navigatorKey.currentContext!,
-                        MaterialPageRoute(
-                            builder: (context) => AddBankScreen(
-                                  editBank: false,
-                                  myBankList: const [],
-                                  screenType: "publish",
-                                  myBankData: null,
-                                )));
-                  });
-                });
-          }
+          // if (data['message'] == "not verified") {
+          //   onBoardingCompleteDialog(
+          //       size: MediaQuery.of(navigatorKey.currentContext!).size,
+          //       func: () {
+          //         Navigator.pop(navigatorKey.currentContext!);
+          //         draftSelected = true;
+          //         isSelectLetsGo = true;
+          //         callAddContentApi();
+          //         Future.delayed(const Duration(milliseconds: 500), () {
+          //           Navigator.push(
+          //               navigatorKey.currentContext!,
+          //               MaterialPageRoute(
+          //                   builder: (context) => AddBankScreen(
+          //                         editBank: false,
+          //                         myBankList: const [],
+          //                         screenType: "publish",
+          //                         myBankData: null,
+          //                       )));
+          //         });
+          //       });
+          // }
           break;
 
         case getAllCmsUrlRequest:
@@ -3175,17 +3175,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
             Navigator.pop(navigatorKey.currentContext!);
           }*/
 
-            if (draftSelected && isSelectLetsGo) {
-              Navigator.push(
-                  navigatorKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => AddBankScreen(
-                            editBank: false,
-                            myBankList: const [],
-                            screenType: "publish",
-                            myBankData: null,
-                          )));
-            } else if (!isSaveDraftFromTask) {
+            if (!isSaveDraftFromTask) {
               Navigator.push(
                   navigatorKey.currentContext!,
                   MaterialPageRoute(
@@ -3213,25 +3203,26 @@ class PublishContentScreenState extends State<PublishContentScreen>
           debugPrint("checkOnboardingCompleteOrNotReq success: $response");
           var data = jsonDecode(response);
           callAddContentApi();
-          if (data['message'] == "verified") {
-            widget.publishData?.mediaList.forEach((media) {
-              widget.myContentData?.contentMediaList.add(ContentMediaData(
-                  "",
-                  media.mediaPath,
-                  media.mimeType,
-                  media.thumbnail,
-                  media.thumbnail));
-            });
-            Navigator.push(
-                navigatorKey.currentContext!,
-                MaterialPageRoute(
-                    builder: (context) => ContentSubmittedScreen(
-                          myContentDetail: widget.myContentData,
-                          publishData: widget.publishData,
-                          sellType: selectedSellType,
-                          price: priceController.text,
-                        )));
-          }
+          // currently publish not required for publish content
+          //if (data['message'] == "verified") {
+          widget.publishData?.mediaList.forEach((media) {
+            widget.myContentData?.contentMediaList.add(ContentMediaData(
+                "",
+                media.mediaPath,
+                media.mimeType,
+                media.thumbnail,
+                media.thumbnail));
+          });
+          Navigator.push(
+              navigatorKey.currentContext!,
+              MaterialPageRoute(
+                  builder: (context) => ContentSubmittedScreen(
+                        myContentDetail: widget.myContentData,
+                        publishData: widget.publishData,
+                        sellType: selectedSellType,
+                        price: priceController.text,
+                      )));
+
           break;
 
         case getAllCmsUrlRequest:

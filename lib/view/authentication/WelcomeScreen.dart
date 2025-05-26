@@ -121,60 +121,60 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                     SizedBox(
                       height: size.width * numD03,
                     ),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: colorThemePink,
-                            size: size.width * numD06,
-                          ),
-                          SizedBox(
-                            width: size.width * numD02,
-                          ),
-                          Expanded(
-                            child: Text(
-                                "Added your bank details to start receiving money",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                        ]),
-                    SizedBox(
-                      height: size.width * numD03,
-                    ),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: colorThemePink,
-                            size: size.width * numD06,
-                          ),
-                          SizedBox(
-                            width: size.width * numD02,
-                          ),
-                          Expanded(
-                            child: Text(
-                                "Uploaded documents for your bank verification*",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                        ]),
-                    SizedBox(height: size.width * numD04),
-                    Text(
-                      "* Your documents are in, and Stripe is now reviewing them. This process usually takes 2-3 days. Sit tight – we'll notify you once the verification is complete, and you'll be ready to receive your funds.",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "AirbnbCereal",
-                          fontSize: size.width * numD032),
-                    ),
+                    // Row(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Icon(
+                    //         Icons.check_circle,
+                    //         color: colorThemePink,
+                    //         size: size.width * numD06,
+                    //       ),
+                    //       SizedBox(
+                    //         width: size.width * numD02,
+                    //       ),
+                    //       Expanded(
+                    //         child: Text(
+                    //             "Added your bank details to start receiving money",
+                    //             style: commonTextStyle(
+                    //                 size: size,
+                    //                 fontSize: size.width * numD035,
+                    //                 color: Colors.black,
+                    //                 fontWeight: FontWeight.w400)),
+                    //       ),
+                    //     ]),
+                    // SizedBox(
+                    //   height: size.width * numD03,
+                    // ),
+                    // Row(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Icon(
+                    //         Icons.check_circle,
+                    //         color: colorThemePink,
+                    //         size: size.width * numD06,
+                    //       ),
+                    //       SizedBox(
+                    //         width: size.width * numD02,
+                    //       ),
+                    //       Expanded(
+                    //         child: Text(
+                    //             "Uploaded documents for your bank verification*",
+                    //             style: commonTextStyle(
+                    //                 size: size,
+                    //                 fontSize: size.width * numD035,
+                    //                 color: Colors.black,
+                    //                 fontWeight: FontWeight.w400)),
+                    //       ),
+                    //     ]),
+                    //SizedBox(height: size.width * numD04),
+                    // Text(
+                    //   "* Your documents are in, and Stripe is now reviewing them. This process usually takes 2-3 days. Sit tight – we'll notify you once the verification is complete, and you'll be ready to receive your funds.",
+                    //   textAlign: TextAlign.start,
+                    //   style: TextStyle(
+                    //       color: Colors.black,
+                    //       fontFamily: "AirbnbCereal",
+                    //       fontSize: size.width * numD032),
+                    // ),
                   ],
                 ),
               ),

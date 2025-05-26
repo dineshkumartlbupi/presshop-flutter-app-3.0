@@ -736,28 +736,14 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
               var bankList = map["user"]["bank_detail"] as List;
               debugPrint(
                   "InsideGov ====> $bankList::::${map["user"]["stripe_status"].toString()}");
-              if (map["user"]["stripe_status"].toString() == "0") {
-                onBoardingCompleteDialog(
-                    size: MediaQuery.of(context).size,
-                    func: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => AddBankScreen(
-                                    editBank: false,
-                                    myBankList: [],
-                                    screenType: "",
-                                    myBankData: null,
-                                  )),
-                          (route) => false);
-                    });
-              } else {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                            )),
-                    (route) => false);
-              }
+
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(
+                            initialPosition: 2,
+                          )),
+                  (route) => false);
+
               /*  if (bankList.isEmpty) {
                 onBoardingCompleteDialog(
                     size: MediaQuery.of(context).size,
@@ -889,28 +875,14 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
               if (map["user"]["bank_detail"] != null) {
                 var bankList = map["user"]["bank_detail"] as List;
                 debugPrint("bankList:::::${bankList.length}");
-                if (bankList.isEmpty) {
-                  onBoardingCompleteDialog(
-                      size: MediaQuery.of(context).size,
-                      func: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => AddBankScreen(
-                                      editBank: false,
-                                      myBankList: const [],
-                                      screenType: "",
-                                      myBankData: null,
-                                    )),
-                            (route) => false);
-                      });
-                } else {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(
-                                initialPosition: 2,
-                              )),
-                      (route) => false);
-                }
+
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              initialPosition: 2,
+                            )),
+                    (route) => false);
+
                 /*  else {
                   if (sharedPreferences!.getBool(skipDocumentsKey) != null) {
                     bool skipDoc =

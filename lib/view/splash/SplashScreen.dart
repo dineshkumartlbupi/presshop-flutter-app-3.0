@@ -4,13 +4,9 @@ import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
-import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:presshop/view/walkThrough/WalkThrough.dart';
-import '../../utils/CommonSharedPrefrence.dart';
-import '../../utils/CommonWigdets.dart';
 import '../authentication/LoginScreen.dart';
-import '../bankScreens/AddBankScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -72,8 +68,7 @@ class _SplashScreenState extends State<SplashScreen>
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
                 (route) => false);
-          }
-          else {
+          } else {
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => Walkthrough()),
                 (route) => false);
@@ -94,47 +89,49 @@ class _SplashScreenState extends State<SplashScreen>
           debugPrint("MyProfileSuccess:$map");
 
           if (map["code"] == 200) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => Dashboard(
+                          initialPosition: 2,
+                        )),
+                (route) => false);
+
             // if(map["userData"]["verified"]){
-            if (map["userData"]["bank_detail"] != null) {
-              var bankList = map["userData"]["bank_detail"] as List;
-             /* if (bankList.isEmpty) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen(
-                        )),
-                        (route) => false);
-               */
+            // if (map["userData"]["bank_detail"] != null) {
+            //   var bankList = map["userData"]["bank_detail"] as List;
+            //   /* if (bankList.isEmpty) {
+            //     Navigator.of(context).pushAndRemoveUntil(
+            //         MaterialPageRoute(
+            //             builder: (context) => const LoginScreen(
+            //             )),
+            //             (route) => false);
+            //    */
 
-              if (bankList.isEmpty) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) =>  const LoginScreen(
-                        )),
-                        (route) => false);
-                /* onBoardingCompleteDialog(size:MediaQuery.of(context).size,func: (){
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => AddBankScreen(
-                            showPageNumber: true,
-                            hideLeading: true,
-                            editBank: false,
-                            myBankList: [],
-                          )),
-                          (route) => false);
-                });*/
-              }else{
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) =>  Dashboard(initialPosition:2,
-                        )),
-                        (route) => false);
-              }
-
-            }
-
-
-
-
+            //   if (bankList.isEmpty) {
+            //     Navigator.of(context).pushAndRemoveUntil(
+            //         MaterialPageRoute(
+            //             builder: (context) => const LoginScreen()),
+            //         (route) => false);
+            //     /* onBoardingCompleteDialog(size:MediaQuery.of(context).size,func: (){
+            //       Navigator.of(context).pushAndRemoveUntil(
+            //           MaterialPageRoute(
+            //               builder: (context) => AddBankScreen(
+            //                 showPageNumber: true,
+            //                 hideLeading: true,
+            //                 editBank: false,
+            //                 myBankList: [],
+            //               )),
+            //               (route) => false);
+            //     });*/
+            //   } else {
+            //     Navigator.of(context).pushAndRemoveUntil(
+            //         MaterialPageRoute(
+            //             builder: (context) => Dashboard(
+            //                   initialPosition: 2,
+            //                 )),
+            //         (route) => false);
+            //   }
+            // }
           }
 
           break;

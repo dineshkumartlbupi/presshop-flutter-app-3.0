@@ -28,6 +28,7 @@ import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../main.dart';
 import 'dart:ui' as ui;
+import '../../utils/image_crop_util.dart';
 import '../dashboard/Dashboard.dart';
 
 String getRandomString(int length) {
@@ -880,16 +881,17 @@ class CameraScreenState extends State<CameraScreen>
     try {
       await cameraController!.setFlashMode(FlashMode.off);
       XFile picture = await cameraController!.takePicture();
-      exif = await Exif.fromPath(picture.path);
+      cameraController!.pausePreview();
+      var cropdata = await cropImage(picture.path);
+      exif = await Exif.fromPath(cropdata!.path);
       String sLat = latitude.toString();
       String sLong = longitude.toString();
       await exif!.writeAttributes({"GPSLatitude": sLat, "GPSLongitude": sLong});
 
-      GallerySaver.saveImage(picture.path);
-      cameraController!.pausePreview();
+      GallerySaver.saveImage(cropdata.path);
 
       camListData.add(CameraData(
-        path: picture.path,
+        path: cropdata.path,
         mimeType: "image",
         videoImagePath: "",
         latitude: sharedPreferences!.getDouble(currentLat).toString() ?? "",
