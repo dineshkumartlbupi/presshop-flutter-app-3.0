@@ -4,10 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:presshop/utils/CommonExtensions.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../utils/AnimatedButton.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonModel.dart';
@@ -19,7 +18,6 @@ import '../../utils/networkOperations/NetworkResponse.dart';
 import '../broadCastChatTaskScreen/broadCastChatTaskScreen.dart';
 import '../chatScreens/FullVideoView.dart';
 import '../dashboard/Dashboard.dart';
-import '../myEarning/MyEarningScreen.dart';
 
 class TaskDetailNewScreen extends StatefulWidget {
   String taskStatus = "";
@@ -43,7 +41,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
   bool isExtraTime = false;
   BitmapDescriptor? mapIcon;
   List<Marker> marker = [];
-
+  bool shouldRestartAnimation = false;
   LatLng? _latLng;
   bool isDirection = false;
   final Completer<GoogleMapController> _controller =
@@ -932,45 +930,23 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                             )))
                                     .then((value) => taskDetailApi());
                               },
-                              child: SizedBox(
-                                height: size.width * numD13,
-                                width: size.width,
-                                child: Stack(
-                                  children: [
-                                    SizedBox(
-                                      height: size.width * numD13,
-                                      width: size.width,
-                                      child: Shimmer.fromColors(
-                                        period: Duration(seconds: 4),
-                                        baseColor: colorThemePink,
-                                        highlightColor: Colors.white,
-                                        child: commonElevatedButton(
-                                            manageTaskText,
-                                            size,
-                                            commonButtonTextStyle(size),
-                                            commonButtonStyle(
-                                                size, Colors.white), () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BroadCastChatTaskScreen(
-                                                        taskDetail: taskDetail!,
-                                                        roomId: roomId,
-                                                      )))
-                                              .then((value) => taskDetailApi());
-                                        }),
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        manageTaskText,
-                                        style: commonButtonTextStyle(size),
-                                        selectionColor: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              child: AnimatedButtonWidget(
+                                shouldRestartAnimation: shouldRestartAnimation,
+                                size: size,
+                                buttonText: manageTaskText,
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              BroadCastChatTaskScreen(
+                                                taskDetail: taskDetail!,
+                                                roomId: roomId,
+                                              )))
+                                      .then((value) {
+                                    shouldRestartAnimation = true;
+                                    taskDetailApi();
+                                  });
+                                },
                               ),
                             )
                           : Container(

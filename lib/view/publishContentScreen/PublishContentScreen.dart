@@ -854,7 +854,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                   .thumbNail ==
                                               "video",
                                           child: Image.network(
-                                            imageUrlBefore +
+                                            contentImageUrl +
                                                 widget
                                                     .myContentData!
                                                     .contentMediaList
@@ -873,7 +873,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                   .mediaType ==
                                               "image",
                                           child: Image.network(
-                                            imageUrlBefore +
+                                            contentImageUrl +
                                                 widget
                                                     .myContentData!
                                                     .contentMediaList
@@ -3043,27 +3043,47 @@ class PublishContentScreenState extends State<PublishContentScreen>
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq error: $response");
           var data = jsonDecode(response);
-          // if (data['message'] == "not verified") {
-          //   onBoardingCompleteDialog(
-          //       size: MediaQuery.of(navigatorKey.currentContext!).size,
-          //       func: () {
-          //         Navigator.pop(navigatorKey.currentContext!);
-          //         draftSelected = true;
-          //         isSelectLetsGo = true;
-          //         callAddContentApi();
-          //         Future.delayed(const Duration(milliseconds: 500), () {
-          //           Navigator.push(
-          //               navigatorKey.currentContext!,
-          //               MaterialPageRoute(
-          //                   builder: (context) => AddBankScreen(
-          //                         editBank: false,
-          //                         myBankList: const [],
-          //                         screenType: "publish",
-          //                         myBankData: null,
-          //                       )));
-          //         });
-          //       });
-          // }
+          if (data['message'] == "not verified") {
+            callAddContentApi();
+            // currently publish not required for publish content
+            //if (data['message'] == "verified") {
+            widget.publishData?.mediaList.forEach((media) {
+              widget.myContentData?.contentMediaList.add(ContentMediaData(
+                  "",
+                  media.mediaPath,
+                  media.mimeType,
+                  media.thumbnail,
+                  media.thumbnail));
+            });
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => ContentSubmittedScreen(
+                          myContentDetail: widget.myContentData,
+                          publishData: widget.publishData,
+                          sellType: selectedSellType,
+                          price: priceController.text,
+                        )));
+            // onBoardingCompleteDialog(
+            //     size: MediaQuery.of(navigatorKey.currentContext!).size,
+            //     func: () {
+            //       Navigator.pop(navigatorKey.currentContext!);
+            //       draftSelected = true;
+            //       isSelectLetsGo = true;
+            //       callAddContentApi();
+            //       Future.delayed(const Duration(milliseconds: 500), () {
+            //         Navigator.push(
+            //             navigatorKey.currentContext!,
+            //             MaterialPageRoute(
+            //                 builder: (context) => AddBankScreen(
+            //                       editBank: false,
+            //                       myBankList: const [],
+            //                       screenType: "publish",
+            //                       myBankData: null,
+            //                     )));
+            //       });
+            //     });
+          }
           break;
 
         case getAllCmsUrlRequest:

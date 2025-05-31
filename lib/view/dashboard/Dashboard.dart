@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder2/geocoder2.dart';
@@ -437,8 +438,13 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
 
   getCurrentLocationFxn() async {
     try {
-      locationData = lc.LocationData.fromMap(
-          {"latitude": latitude, "longitude": longitude});
+      if (kDebugMode) {
+        locationData = lc.LocationData.fromMap(
+            {"latitude": latitude, "longitude": longitude});
+      } else {
+        locationData = await location.getLocation();
+      }
+
       //locationData = await location.getLocation();
       debugPrint("GettingLocation ==> $locationData");
       if (locationData != null) {

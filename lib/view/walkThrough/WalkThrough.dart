@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/view/authentication/LoginScreen.dart';
 
-
 class Walkthrough extends StatefulWidget {
   Walkthrough({super.key});
 
@@ -14,7 +13,7 @@ class _WalkthroughState extends State<Walkthrough> {
   List<WalkthroughData> walkthroughList = [];
   PageController controller = PageController();
   int walkIndex = 0;
-  String deviceId ="";
+  String deviceId = "";
 
   @override
   void initState() {
@@ -74,8 +73,6 @@ class _WalkthroughState extends State<Walkthrough> {
     setState(() {});
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -133,7 +130,7 @@ class _WalkthroughState extends State<Walkthrough> {
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: 'AirbnbCereal_W_Bk',
-                          fontSize: size.width * numD037)),
+                          fontSize: size.width * numD035)),
                   SizedBox(height: index % 2 == 0 ? 0 : size.width * numD04),
                   index % 2 == 0
                       ? Container()
@@ -181,7 +178,7 @@ class _WalkthroughState extends State<Walkthrough> {
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                             const LoginScreen()),
+                                            const LoginScreen()),
                                     (route) => false);
                               },
                               style: ElevatedButton.styleFrom(
@@ -208,7 +205,7 @@ class _WalkthroughState extends State<Walkthrough> {
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                       const LoginScreen()),
+                                          const LoginScreen()),
                                   (route) => false);
                             } else {
                               controller.animateToPage(index + 1,
@@ -243,7 +240,6 @@ class _WalkthroughState extends State<Walkthrough> {
       ),
     );
   }
-
 }
 
 class WalkthroughData {

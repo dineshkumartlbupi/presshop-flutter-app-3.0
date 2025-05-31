@@ -110,7 +110,6 @@ class PreviewScreenState extends State<PreviewScreen> {
                     debugPrint("media:::::${mediaList[index].mimeType}");
                     debugPrint("mediaList length:::::${mediaList.length}");
                     return InteractiveViewer(
-
                       scaleEnabled:
                           mediaList[index].mimeType == "image" ? true : false,
                       child: Stack(
@@ -123,6 +122,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                       VideoWidget(mediaData: mediaList[index]),
                                 )
                               : mediaList[index].mimeType.contains("audio")
+                                  // passing local path variable...
                                   ? AudioWaveFormWidgetScreen(
                                       mediaPath: mediaList[index].mediaPath,
                                     )
@@ -208,14 +208,17 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                       ? Image.file(
                                                           File(mediaList[index]
                                                               .mediaPath),
-                                                          fit: BoxFit.contain,
+                                                          fit: widget.type ==
+                                                                  "gallery"
+                                                              ? BoxFit.contain
+                                                              : BoxFit.fill,
                                                           gaplessPlayback: true,
                                                         )
                                                       : Image.network(
-                                                          imageUrlBefore +
+                                                          contentImageUrl +
                                                               mediaList[index]
                                                                   .mediaPath,
-                                                          fit: BoxFit.cover,
+                                                          fit: BoxFit.fill,
                                                           gaplessPlayback: true,
                                                         ),
                                             ),
@@ -409,7 +412,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                       padding: EdgeInsets.only(
                           left: size.width * numD03,
                           top: size.width * numD02,
-                          bottom: size.width * numD02,
+                          bottom: size.width * numD08,
                           right: size.width * numD03),
                       child: Row(
                         children: [

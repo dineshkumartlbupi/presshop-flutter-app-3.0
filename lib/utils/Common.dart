@@ -27,6 +27,7 @@ const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
 const profileImageUrl = "${mediaBaseUrl}userImages/";
 const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
 //const contentImageUrl ="${mediaBaseUrl}contentData/";
+
 const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
 const imageUrlBefore =
     "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";

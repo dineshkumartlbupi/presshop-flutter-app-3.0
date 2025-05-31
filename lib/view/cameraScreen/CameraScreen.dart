@@ -882,16 +882,16 @@ class CameraScreenState extends State<CameraScreen>
       await cameraController!.setFlashMode(FlashMode.off);
       XFile picture = await cameraController!.takePicture();
       cameraController!.pausePreview();
-      var cropdata = await cropImage(picture.path);
-      exif = await Exif.fromPath(cropdata!.path);
+      //var cropdata = await cropImage(picture.path);
+      exif = await Exif.fromPath(picture.path);
       String sLat = latitude.toString();
       String sLong = longitude.toString();
       await exif!.writeAttributes({"GPSLatitude": sLat, "GPSLongitude": sLong});
 
-      GallerySaver.saveImage(cropdata.path);
+      GallerySaver.saveImage(picture.path);
 
       camListData.add(CameraData(
-        path: cropdata.path,
+        path: picture.path,
         mimeType: "image",
         videoImagePath: "",
         latitude: sharedPreferences!.getDouble(currentLat).toString() ?? "",

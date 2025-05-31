@@ -21,6 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../utils/AnimatedButton.dart';
 import '../../utils/CommonModel.dart';
 import '../../utils/manage_content_widget.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -69,6 +70,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   int _currentMediaIndex = 0;
   bool isMediaOffer = false;
   bool isLoading = false;
+  bool shouldRestartAnimation = false;
 
   @override
   void initState() {
@@ -202,38 +204,37 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                         SizedBox(
                                           height: size.width * numD03,
                                         ),
-                                        SizedBox(
-                                            height: size.width * numD13,
-                                            width: size.width,
-                                            child: commonElevatedButton(
-                                                manageContentText,
-                                                size,
-                                                commonButtonTextStyle(size),
-                                                commonButtonStyle(
-                                                    size, colorThemePink), () {
-                                              debugPrint(
-                                                  "_currentMediaIndex =0;");
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ManageTaskScreen(
-                                                              roomId: myContentData!
-                                                                  .id,
-                                                              contentId:
-                                                                  myContentData!
-                                                                      .id,
-                                                              type: 'content',
-                                                              mediaHouseDetail:
-                                                                  null,
-                                                              contentMedia:
-                                                                  showMediaWidget(),
-                                                              contentHeader:
-                                                                  headerWidget(),
-                                                              myContentData:
-                                                                  myContentData)))
-                                                  .then((value) =>
-                                                      myContentDetailApi());
-                                            })),
+                                        AnimatedButtonWidget(
+                                          shouldRestartAnimation:
+                                              shouldRestartAnimation,
+                                          size: size,
+                                          buttonText: manageContentText,
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ManageTaskScreen(
+                                                            roomId:
+                                                                myContentData!
+                                                                    .id,
+                                                            contentId:
+                                                                myContentData!
+                                                                    .id,
+                                                            type: 'content',
+                                                            mediaHouseDetail:
+                                                                null,
+                                                            contentMedia:
+                                                                showMediaWidget(),
+                                                            contentHeader:
+                                                                headerWidget(),
+                                                            myContentData:
+                                                                myContentData)))
+                                                .then((value) {
+                                              shouldRestartAnimation = true;
+                                              myContentDetailApi();
+                                            });
+                                          },
+                                        ),
                                         SizedBox(
                                           height: size.width * numD05,
                                         ),

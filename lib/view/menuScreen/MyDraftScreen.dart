@@ -973,7 +973,7 @@ class ContentMediaData {
     thumbNail = (json["thumbnail"] ?? "").toString();
     waterMark = (json["watermark"] ?? "").toString();
     if (mediaType == "video") {
-      getVideoThumbNail("$media").then((value) {
+      getVideoThumbNail(media).then((value) {
         debugPrint("TValue: $value");
 
         thumbNail = value;

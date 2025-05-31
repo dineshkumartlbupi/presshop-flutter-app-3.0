@@ -5,8 +5,6 @@ import 'package:lottie/lottie.dart';
 import '../../utils/Common.dart';
 import 'dart:ui' as ui;
 
-import 'PreviewScreen.dart';
-
 class AudioWaveFormWidgetScreen extends StatefulWidget {
   String mediaPath = "";
 
