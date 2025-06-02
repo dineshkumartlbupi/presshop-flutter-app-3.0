@@ -855,6 +855,7 @@ class MediaData {
   String location = "";
   String latitude = "";
   String longitude = "";
+  bool isFromGallery = false;
   bool isLocalMedia = false;
 
   MediaData(
@@ -865,6 +866,7 @@ class MediaData {
       required this.longitude,
       required this.location,
       required this.dateTime,
+      this.isFromGallery = false,
       this.isLocalMedia = false});
 
   @override

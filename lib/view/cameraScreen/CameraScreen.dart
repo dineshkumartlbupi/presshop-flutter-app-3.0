@@ -1565,6 +1565,7 @@ class CameraScreenState extends State<CameraScreen>
       camListData.add(CameraData(
         path: file.path,
         mimeType: mimeType,
+        fromGallary: true,
         videoImagePath: '',
         latitude: sharedPreferences!.getDouble(currentLat).toString() ?? "",
         longitude: sharedPreferences!.getDouble(currentLon).toString() ?? "",
@@ -1610,6 +1611,7 @@ class CameraData {
   String city = "";
   String state = "";
   String dateTime = "";
+  bool fromGallary = false;
 
   CameraData(
       {required this.path,
@@ -1621,5 +1623,6 @@ class CameraData {
       required this.country,
       required this.city,
       required this.state,
+      this.fromGallary = false,
       required this.dateTime});
 }

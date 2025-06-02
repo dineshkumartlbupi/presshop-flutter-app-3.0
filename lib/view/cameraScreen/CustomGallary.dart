@@ -269,6 +269,7 @@ class CustomGalleryState extends State<CustomGallery> {
                               path: imgPath,
                               mimeType: "image",
                               videoImagePath: "",
+                              fromGallary: true,
                               latitude: sharedPreferences!
                                       .getDouble(currentLat)
                                       .toString() ??

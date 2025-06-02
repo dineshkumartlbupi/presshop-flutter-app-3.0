@@ -120,31 +120,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
                         height: size.width * numD11,
                         child: ElevatedButton.icon(
                             onPressed: () {
-                              if (myBankList.isEmpty) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddBankScreen(
-                                              editBank: false,
-                                              myBankList: [],
-                                              screenType: "myBank",
-                                              myBankData: null,
-                                            ))).then((value) {
-                                  bankListApi();
-                                });
-                              } else {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditBankScreen(
-                                              editBank: false,
-                                              myBankList: myBankList,
-                                              showPageNumber: false,
-                                              hideLeading: false,
-                                            ))).then((value) {
-                                  bankListApi();
-                                });
-                              }
+                              generateAddBankApi();
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: colorThemePink,
@@ -214,18 +190,53 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(
-                                          width: size.width * numD40,
-                                          child: Text(
-                                            myBankList[index].bankName,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: size.width * numD035,
-                                                fontFamily: "AirbnbCereal",
-                                                overflow: TextOverflow.ellipsis,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              myBankList[index].bankName,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                      size.width * numD035,
+                                                  fontFamily: "AirbnbCereal",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                            SizedBox(
+                                              width: size.width * numD01,
+                                            ),
+                                            Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical:
+                                                        2), // Adjust padding for tag size
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blueGrey[
+                                                      100], // Background color of the tag
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5), // Rounded corners
+                                                ),
+                                                child: Text(
+                                                  myBankList[index]
+                                                      .curreny
+                                                      .toUpperCase(),
+                                                  maxLines: 1,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize:
+                                                          size.width * numD03,
+                                                      fontFamily:
+                                                          "AirbnbCereal",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                ))
+                                          ],
                                         ),
                                         SizedBox(
                                           height: size.width * numD015,
@@ -249,15 +260,11 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                           visible: index > 0,
                                           child: InkWell(
                                             onTap: () {
-                                              deleteBankDialog(
-                                                  size, context, index);
+                                              generateAddBankApi();
                                             },
-                                            child: Image.asset(
-                                              "${iconsPath}cross.png",
-                                              width: size.width * numD065,
-                                              height: size.width * numD065,
-                                              color: Colors.black,
-                                            ),
+                                            child: Icon(Icons.edit,
+                                                color: Colors.black,
+                                                size: size.width * numD055),
                                           ),
                                         ),
                                         SizedBox(
@@ -333,29 +340,42 @@ class MyBanksScreenState extends State<MyBanksScreen>
                                               onTap: () {
                                                 selectDefault(index);
                                               },
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    "Set as default",
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width *
-                                                            numD035,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                  SizedBox(
-                                                    width: size.width * numD01,
-                                                  ),
-                                                  Image.asset(
-                                                      selectedIndex == index
-                                                          ? "${iconsPath}ic_checkbox_filled.png"
-                                                          : "${iconsPath}ic_checkbox_empty.png",
-                                                      height:
-                                                          size.width * numD055),
-                                                ],
+                                              child: Text(
+                                                myBankList[index]
+                                                    .available_payout_methods
+                                                    .first
+                                                    .toCapitalized(),
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD035,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
+                                              //  Row(
+                                              //   children: [
+                                              //     Text(
+                                              //       "Set as default",
+                                              //       style: commonTextStyle(
+                                              //           size: size,
+                                              //           fontSize: size.width *
+                                              //               numD035,
+                                              //           color: Colors.black,
+                                              //           fontWeight:
+                                              //               FontWeight.w400),
+                                              //     ),
+                                              //     SizedBox(
+                                              //       width: size.width * numD01,
+                                              //     ),
+                                              //     Image.asset(
+                                              //         selectedIndex == index
+                                              //             ? "${iconsPath}ic_checkbox_filled.png"
+                                              //             : "${iconsPath}ic_checkbox_empty.png",
+                                              //         height:
+                                              //             size.width * numD055),
+                                              //   ],
+                                              // ),
                                             ),
                                           ),
                                         ),
@@ -514,6 +534,15 @@ class MyBanksScreenState extends State<MyBanksScreen>
     }
   }
 
+  void generateAddBankApi() {
+    try {
+      NetworkClass(generateStripeBankApi, this, generateStripeBankUrlRequest)
+          .callRequestServiceHeader(true, "get", null);
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
   void deleteBankApi(String id, String stripeBankId) {
     debugPrint("id:::::::$id/$stripeBankId");
     NetworkClass("$deleteBankUrl$id/$stripeBankId", this, deleteBankUrlRequest)
@@ -557,27 +586,17 @@ class MyBanksScreenState extends State<MyBanksScreen>
           isLoading = false;
           break;
 
+        case generateStripeBankUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("generateStripeBankUrlRequest:$map");
+          showToast(map['errors']['msg'] ?? "Something went wrong");
+          break;
+
         case deleteBankUrlRequest:
           var map = jsonDecode(response);
           debugPrint("deleteBankUrlRequest:::::$map");
           break;
-        case verifyOtpUrlRequest:
-          var data = jsonDecode(response);
-          debugPrint("verifyOtpUrlRequest error::::$data");
-          if (data['already_verified'].toString() == "true") {
-            createStripeAccountApi();
-          } else {
-            commonErrorDialogDialog(
-                MediaQuery.of(context).size,
-                data["errors"]["msg"]
-                    .toString()
-                    .replaceAll("_", " ")
-                    .toCapitalized(),
-                "", () {
-              Navigator.pop(context);
-            });
-          }
-          break;
+
         case editBankUrlRequest:
           var map = jsonDecode(response);
           debugPrint("editBankUrlRequest::::::::$map");
@@ -605,22 +624,31 @@ class MyBanksScreenState extends State<MyBanksScreen>
           debugPrint("bankListUrlRequest length::::${myBankList.length}");
           setState(() {});
           break;
+
+        case generateStripeBankUrlRequest:
+          var data = jsonDecode(response);
+          debugPrint("generateStripeBankUrlRequest::::::::::::$data");
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (context) => CommonWebView(
+                        webUrl: data['accountLink'],
+                        title: "Add Bank",
+                        accountId: "",
+                        type: "",
+                      )))
+              .then((value) {
+            if (value == true) {
+              bankListApi();
+            }
+          });
+          break;
         case deleteBankUrlRequest:
           var map = jsonDecode(response);
           log("deleteBankUrlRequest::::::::::::::::$map");
           bankListApi();
 
           break;
-        case reqCreateStipeAccount:
-          debugPrint("reqCreateStipeAccount success::::::$response");
-          var data = jsonDecode(response);
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => CommonWebView(
-                  webUrl: data['message']['url'] ?? "",
-                  title: "PressHop",
-                  accountId: data['account_id']['id'] ?? "",
-                  type: "myBank")));
-          break;
+
         case editBankUrlRequest:
           var map = jsonDecode(response);
           debugPrint(" success::::::::$map");
@@ -640,32 +668,36 @@ class MyBankListData {
   String bankName = "";
   String bankImage = "";
   String bankLocation = "";
+  String curreny = "";
   bool isDefault = false;
   bool isSelected = false;
   String accountHolderName = "";
   String sortCode = "";
   String accountNumber = "";
   String stripeBankId = "";
+  List<String> available_payout_methods = [];
 
   MyBankListData.fromJson(json) {
     id = json["bank_detail"] != null ? json['bank_detail']["_id"] : "";
-    bankName =
-        json["bank_detail"] != null ? json['bank_detail']["bank_name"] : "";
+    bankName = json["bank_name"] ?? "";
     isDefault = json["is_default"] ?? false;
-    bankImage = json["bank_info"] != null ? json["bank_info"]["logoUrl"] : "";
+    bankImage = json["bank_info"] != null
+        ? json["bank_info"]["logoUrl"]
+        : "https://logo.clearbit.com/stripe.com";
     bankLocation = "Mayfair, London";
     accountHolderName = json["bank_detail"] != null
         ? json["bank_detail"]["acc_holder_name"].toString()
         : "";
-    sortCode = json["bank_detail"] != null
-        ? json["bank_detail"]["sort_code"].toString()
-        : "";
-    accountNumber = json["bank_detail"] != null
-        ? json['bank_detail']["acc_number"].toString()
-        : "";
+    sortCode = json["sort_code"] != null ? json["sort_code"].toString() : "";
+    accountNumber =
+        json["acc_number"] != null ? json['acc_number'].toString() : "";
     stripeBankId = json["bank_detail"] != null
         ? json["bank_detail"]["stripe_bank_id"].toString()
         : "";
+    available_payout_methods = json["available_payout_methods"] != null
+        ? List<String>.from(json["available_payout_methods"])
+        : [];
+    curreny = json["currency"] ?? "GBP";
     isSelected = false;
   }
 }

@@ -285,6 +285,9 @@ const getTaskTransactionDetailsReq = 77;
 const deleteAccountUrl = "hopper/verifyAndDeleteAccount";
 const deleteAccountUrlReq = 78;
 
+const generateStripeBankApi = "hopper/add-express-bank-account";
+const generateStripeBankUrlRequest = 79;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";

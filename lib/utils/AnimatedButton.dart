@@ -29,7 +29,7 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 14),
+      duration: const Duration(seconds: 10),
       vsync: this,
     );
     _revealAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -86,7 +86,7 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
                 widthFactor: _revealAnimation.value, // Left-to-right reveal
                 child: AnimatedOpacity(
                   opacity: _opacityAnimation.value,
-                  duration: const Duration(microseconds: 400),
+                  duration: const Duration(microseconds: 350),
                   child: SizedBox(
                     width: widget.size.width,
                     height: widget.size.width * numD13,

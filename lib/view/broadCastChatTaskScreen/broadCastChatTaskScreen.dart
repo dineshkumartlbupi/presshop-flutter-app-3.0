@@ -237,6 +237,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                             temData.forEach((element) {
                               selectMultipleMediaList.add(
                                 MediaData(
+                                  isFromGallery: element.fromGallary,
                                   dateTime: "",
                                   latitude: "",
                                   location: "",
@@ -3130,6 +3131,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
           selectMultipleMediaList.add(
             MediaData(
+              isFromGallery: true,
               dateTime: "",
               latitude: "",
               location: "",
@@ -3177,10 +3179,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               debugPrint("type:::${item.mimeType}");
                               debugPrint("file:::${item.mediaPath}");
                               if (item.mimeType.startsWith('image')) {
-                                return Image.file(
-                                  File(item.mediaPath),
-                                  fit: BoxFit.cover,
-                                  gaplessPlayback: true,
+                                return Container(
+                                  color: Colors.black,
+                                  child: Image.file(
+                                    File(item.mediaPath),
+                                    fit: item.isFromGallery
+                                        ? BoxFit.contain
+                                        : BoxFit.fill,
+                                    gaplessPlayback: true,
+                                  ),
                                 );
                               } else if (item.mimeType.startsWith('video')) {
                                 return VideoWidget(mediaData: item);
@@ -3239,6 +3246,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                   temData.forEach((element) {
                                     selectMultipleMediaList.add(
                                       MediaData(
+                                        isFromGallery: element.fromGallary,
                                         dateTime: "",
                                         latitude: "",
                                         location: "",
