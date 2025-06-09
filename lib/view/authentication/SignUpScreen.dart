@@ -747,34 +747,34 @@ class _SignUpScreenState extends State<SignUpScreen>
                               : 0,
                         ),
 
-                        /// City
-                        postalCodeController.text.isNotEmpty
-                            ? CommonTextField(
-                                size: size,
-                                maxLines: 1,
-                                borderColor: colorTextFieldBorder,
-                                controller: cityNameController,
-                                hintText: cityText,
-                                textInputFormatters: null,
-                                prefixIcon:
-                                    const Icon(Icons.location_on_outlined),
-                                prefixIconHeight: size.width * numD06,
-                                suffixIconIconHeight: 0,
-                                suffixIcon: null,
-                                hidePassword: false,
-                                keyboardType: TextInputType.text,
-                                enableValidations: true,
-                                filled: false,
-                                filledColor: Colors.transparent,
-                                autofocus: false,
-                                validator: null,
-                              )
-                            : Container(),
-                        SizedBox(
-                          height: postalCodeController.text.isNotEmpty
-                              ? size.width * numD06
-                              : 0,
-                        ),
+                        // /// City
+                        // postalCodeController.text.isNotEmpty
+                        //     ? CommonTextField(
+                        //         size: size,
+                        //         maxLines: 1,
+                        //         borderColor: colorTextFieldBorder,
+                        //         controller: cityNameController,
+                        //         hintText: cityText,
+                        //         textInputFormatters: null,
+                        //         prefixIcon:
+                        //             const Icon(Icons.location_on_outlined),
+                        //         prefixIconHeight: size.width * numD06,
+                        //         suffixIconIconHeight: 0,
+                        //         suffixIcon: null,
+                        //         hidePassword: false,
+                        //         keyboardType: TextInputType.text,
+                        //         enableValidations: true,
+                        //         filled: false,
+                        //         filledColor: Colors.transparent,
+                        //         autofocus: false,
+                        //         validator: null,
+                        //       )
+                        //     : Container(),
+                        // SizedBox(
+                        //   height: postalCodeController.text.isNotEmpty
+                        //       ? size.width * numD06
+                        //       : 0,
+                        // ),
 
                         /// country Text
                         postalCodeController.text.isNotEmpty
@@ -1289,8 +1289,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                     "Please accept our T\&Cs and Privacy Policy",
                                     Colors.red);
                               } else if (selectedAvatar.isEmpty) {
-                                showSnackBar("Avatar", "Please Select Avatar",
-                                    Colors.red);
+                                showSnackBar("Avatar",
+                                    "Please select an Avatar", Colors.red);
                               } else {
                                 sendOtpApi();
                               }
@@ -1812,7 +1812,31 @@ class _SignUpScreenState extends State<SignUpScreen>
                             },
                             child: Stack(
                               children: [
-                                Image.network("$avatarBaseUrl/${item.avatar}"),
+                                Image.network(
+                                  "$avatarBaseUrl/${item.avatar}",
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    return Image.asset(
+                                      "${dummyImagePath}news.png",
+                                      fit: BoxFit.contain,
+                                      width: size.width * numD20,
+                                      height: size.width * numD20,
+                                    );
+                                  },
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.black,
+                                        strokeWidth: 2,
+                                      ),
+                                    );
+                                  },
+                                ),
                                 if (item.selected)
                                   Align(
                                     alignment: Alignment.topRight,

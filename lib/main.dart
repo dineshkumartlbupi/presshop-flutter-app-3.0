@@ -177,7 +177,8 @@ Future<void> uploadMediaUsingDio(
           isUploadStarted = true; // Track that the upload has started
           _showProgressNotification(
               localNotificationService.flutterLocalNotificationsPlugin,
-              progress);
+              progress,
+              isDraft: jsonBody?['is_draft'] == 'true' ?? false);
         }
 
         if (progress > 2 && progress < 100 && progress % 2 == 0) {
@@ -188,7 +189,8 @@ Future<void> uploadMediaUsingDio(
           isUploadCompleted = true;
           _showProgressNotification(
               localNotificationService.flutterLocalNotificationsPlugin,
-              progress);
+              progress,
+              isDraft: jsonBody?['is_draft'] == 'true' ?? false);
         }
       },
     );
@@ -199,7 +201,8 @@ Future<void> uploadMediaUsingDio(
       MyContentData detail = MyContentData.fromJson(map["data"] ?? {});*/
       localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
       _showCompletionNotification(
-          localNotificationService.flutterLocalNotificationsPlugin);
+          localNotificationService.flutterLocalNotificationsPlugin,
+          isDraft: jsonBody?['is_draft'] == 'true' ?? false);
     } else {
       debugPrint("Upload failed with status code: ${response.statusCode}");
       debugPrint("add content error:::: ${jsonDecode(response.data)}");
@@ -213,10 +216,11 @@ Future<void> uploadMediaUsingDio(
 }
 
 void _showProgressNotification(
-    FlutterLocalNotificationsPlugin notificationPlugin, int progress) {
+    FlutterLocalNotificationsPlugin notificationPlugin, int progress,
+    {bool isDraft = false}) {
   notificationPlugin.show(
     0,
-    'Uploading Content',
+    isDraft ? "Saving draft" : 'Uploading Content',
     'Progress: $progress%',
     NotificationDetails(
       android: AndroidNotificationDetails(
@@ -233,11 +237,14 @@ void _showProgressNotification(
 }
 
 void _showCompletionNotification(
-    FlutterLocalNotificationsPlugin notificationPlugin) {
+    FlutterLocalNotificationsPlugin notificationPlugin,
+    {bool isDraft = false}) {
   notificationPlugin.show(
     0,
     'Upload Complete',
-    'Your Media has been uploaded successfully.',
+    isDraft
+        ? "Draft saved successfully"
+        : 'Your Media has been uploaded successfully.',
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'upload_channel',

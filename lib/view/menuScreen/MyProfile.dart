@@ -1020,54 +1020,54 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 )
                               : Container(),
 
-                          SizedBox(
-                            height: size.width * numD06,
-                          ),
+                          // SizedBox(
+                          //   height: size.width * numD06,
+                          // ),
 
-                          /// City
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(cityText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD032,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal)),
-                              SizedBox(
-                                height: size.width * numD02,
-                              ),
-                              CommonTextField(
-                                size: size,
-                                maxLines: 1,
-                                textInputFormatters: null,
-                                borderColor: colorTextFieldBorder,
-                                controller: cityNameController,
-                                hintText: cityText,
-                                prefixIcon: Container(
-                                  margin: EdgeInsets.only(
-                                      left: size.width * numD01),
-                                  child: Image.asset(
-                                    "${iconsPath}ic_location.png",
-                                  ),
-                                ),
-                                prefixIconHeight: size.width * numD045,
-                                suffixIconIconHeight: 0,
-                                suffixIcon: null,
-                                hidePassword: false,
-                                keyboardType: TextInputType.text,
-                                validator: checkRequiredValidator,
-                                enableValidations: true,
-                                filled: true,
-                                filledColor: widget.editProfileScreen
-                                    ? Colors.white
-                                    : colorLightGrey,
-                                autofocus: false,
-                                readOnly:
-                                    widget.editProfileScreen ? false : true,
-                              ),
-                            ],
-                          ),
+                          // /// City
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     Text(cityText,
+                          //         style: commonTextStyle(
+                          //             size: size,
+                          //             fontSize: size.width * numD032,
+                          //             color: Colors.black,
+                          //             fontWeight: FontWeight.normal)),
+                          //     SizedBox(
+                          //       height: size.width * numD02,
+                          //     ),
+                          //     CommonTextField(
+                          //       size: size,
+                          //       maxLines: 1,
+                          //       textInputFormatters: null,
+                          //       borderColor: colorTextFieldBorder,
+                          //       controller: cityNameController,
+                          //       hintText: cityText,
+                          //       prefixIcon: Container(
+                          //         margin: EdgeInsets.only(
+                          //             left: size.width * numD01),
+                          //         child: Image.asset(
+                          //           "${iconsPath}ic_location.png",
+                          //         ),
+                          //       ),
+                          //       prefixIconHeight: size.width * numD045,
+                          //       suffixIconIconHeight: 0,
+                          //       suffixIcon: null,
+                          //       hidePassword: false,
+                          //       keyboardType: TextInputType.text,
+                          //       validator: checkRequiredValidator,
+                          //       enableValidations: true,
+                          //       filled: true,
+                          //       filledColor: widget.editProfileScreen
+                          //           ? Colors.white
+                          //           : colorLightGrey,
+                          //       autofocus: false,
+                          //       readOnly:
+                          //           widget.editProfileScreen ? false : true,
+                          //     ),
+                          //   ],
+                          // ),
 
                           SizedBox(height: size.width * numD06),
 
@@ -1267,7 +1267,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
               SizedBox(
                 height: size.width * numD005,
               ),
-              Text("$earningsText - ${euroUniqueCode}0",
+              Text(
+                  "$earningsText - ${euroUniqueCode}${myProfileData != null ? myProfileData!.totalIncome : "0"}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD035,
@@ -1687,6 +1688,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                 longitudeKey, map["userData"][longitudeKey].toString());
             sharedPreferences!.setString(
                 avatarIdKey, map["userData"][avatarIdKey].toString());
+            sharedPreferences!.setString(
+                totalIncomeKey, map["userData"]["totalEarnings"].toString());
+
             if (map["userData"]['avatarData'] != null) {
               sharedPreferences!.setString(
                   avatarKey, map["userData"]['avatarData'][avatarKey]);
@@ -1766,6 +1770,7 @@ class MyProfileData {
   String cityName = "";
   String countryName = "";
   String validBritishPassport = "";
+  String totalIncome = "";
 
   MyProfileData.fromJson(json) {
     firstName = json[firstNameKey];
@@ -1783,6 +1788,8 @@ class MyProfileData {
     postCode = json[postCodeKey] ?? "";
     latitude = json[latitudeKey].toString();
     longitude = json[longitudeKey].toString();
+    totalIncome =
+        json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
     avatarImage =
         json["avatarData"] != null ? json["avatarData"]["avatar"] : "";
     avatarId = json["avatarData"] != null ? json["avatarData"]["_id"] : "";

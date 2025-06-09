@@ -55,31 +55,31 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Allow PressHop to use apple music.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter-permissions library, which references this permission in its code.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Allow PressHop to use your calendar</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow PressHop to use camera to take pictures and record video</string>
-	<key>NSContactsUsageDescription</key>
-	<string>contacts</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Allow PressHop to get your location</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow PressHop to get your location when app is in background</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow PressHop to access your location</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow PressHop to record audio</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Allow PressHop to use motion.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>PressHop would like to save photos from the app to your gallery</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow PressHop to access your photo library</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Allow PressHop to use speech recognition.</string>
+<string>Allow PressHop to access Apple Music for audio use in content.</string>
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>This is required due to libraries used by the app. We do not access Bluetooth.</string>
+<key>NSCalendarsUsageDescription</key>
+<string>Allow PressHop to access your calendar for reminders and scheduling.</string>
+<key>NSCameraUsageDescription</key>
+<string>Allow PressHop to use the camera for taking photos and videos for news content submissions.</string>
+<key>NSContactsUsageDescription</key>
+<string>May be used for inviting or sharing with contacts in future updates.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Allow PressHop to use your location for geotagging and task relevance.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Allow location access in the background for content tagging.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Allow location access while using the app for content relevance.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Allow PressHop to record audio during video capture or interviews.</string>
+<key>NSMotionUsageDescription</key>
+<string>Used for camera stability or future motion-based features.</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Allow saving captured content to your device's gallery.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Allow PressHop to access your gallery to upload content.</string>
+<key>NSSpeechRecognitionUsageDescription</key>
+<string>Allow speech-to-text for audio captions and future features.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

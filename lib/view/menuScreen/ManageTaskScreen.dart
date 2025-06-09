@@ -130,7 +130,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     debugPrint("ContentId ${widget.myContentData?.id}");
     super.initState();
 
-    // socketConnectionFunc();
+    socketConnectionFunc();
     callGetManageTaskListingApi();
   }
 
@@ -1103,7 +1103,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                   });
                                                                                   setState(() {});
                                                                                 } else {
-                                                                                  showSnackBar("Required *", "Please Enter some review for mediahouse", Colors.red);
+                                                                                  showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
                                                                                 }
                                                                               }
                                                                             : () {
@@ -2484,7 +2484,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               });
                                                                               setState(() {});
                                                                             } else {
-                                                                              showSnackBar("Required *", "Please Enter some review for mediahouse", Colors.red);
+                                                                              showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
                                                                             }
                                                                           }
                                                                         : () {

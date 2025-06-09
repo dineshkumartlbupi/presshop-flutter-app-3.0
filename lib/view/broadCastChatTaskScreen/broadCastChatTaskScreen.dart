@@ -2863,7 +2863,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                 } else {
                                   showSnackBar(
                                       "Required *",
-                                      "Please Enter some review for mediahouse",
+                                      "Please enter some review for mediahouse",
                                       Colors.red);
                                 }
                               }

@@ -50,7 +50,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
 
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   int _offset = 0;
 
   @override
@@ -58,7 +59,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     debugPrint("class ====> $runtimeType");
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => callFilterListAPI());
+    WidgetsBinding.instance
+        .addPostFrameCallback((timeStamp) => callFilterListAPI());
     initializeFilter();
   }
 
@@ -77,7 +79,10 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
         hideLeading: false,
         title: Text(
           feedText.toTitleCase(),
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -96,10 +101,14 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
             width: size.width * numD02,
           ),
           Container(
-            margin: EdgeInsets.only(bottom: size.width * numD02, right: size.width * numD016),
+            margin: EdgeInsets.only(
+                bottom: size.width * numD02, right: size.width * numD016),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(initialPosition: 2)),
+                    (route) => false);
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
@@ -123,7 +132,9 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                   onLoading: _onLoading,
                   footer: const CustomFooter(builder: commonRefresherFooter),
                   child: ListView.separated(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD04),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * numD04,
+                          vertical: size.width * numD04),
                       itemBuilder: (context, index) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,18 +150,25 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       flickManager?.dispose();
                                       flickManager = null;
                                     }
-                                    initialController(index, _currentMediaIndex);
+                                    initialController(
+                                        index, _currentMediaIndex);
                                     setState(() {});
                                   },
-                                  itemCount: feedDataList[index].contentDataList.length,
+                                  itemCount: feedDataList[index]
+                                      .contentDataList
+                                      .length,
                                   itemBuilder: (context, idx) {
-                                    var item = feedDataList[index].contentDataList[idx];
+                                    var item = feedDataList[index]
+                                        .contentDataList[idx];
                                     return ClipRRect(
-                                      borderRadius: BorderRadius.circular(size.width * numD04),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04),
                                       child: InkWell(
                                         onTap: () {
-                                          if (item.mediaType == "pdf" || item.mediaType == "doc") {
-                                            openUrl(contentImageUrl + item.media);
+                                          if (item.mediaType == "pdf" ||
+                                              item.mediaType == "doc") {
+                                            openUrl(
+                                                contentImageUrl + item.media);
                                           }
                                         },
                                         child: Stack(
@@ -161,35 +179,58 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                                     ? videoWidget()
                                                     : item.mediaType == "pdf"
                                                         ? Padding(
-                                                            padding: EdgeInsets.all(size.width * numD04),
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    size.width *
+                                                                        numD04),
                                                             child: Image.asset(
                                                               "${dummyImagePath}pngImage.png",
-                                                              fit: BoxFit.contain,
-                                                              height: size.width * numD35,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              height:
+                                                                  size.width *
+                                                                      numD35,
                                                               width: size.width,
                                                             ),
                                                           )
-                                                        : item.mediaType == "doc"
+                                                        : item.mediaType ==
+                                                                "doc"
                                                             ? Padding(
-                                                                padding: EdgeInsets.all(size.width * numD04),
-                                                                child: Image.asset(
+                                                                padding: EdgeInsets
+                                                                    .all(size
+                                                                            .width *
+                                                                        numD04),
+                                                                child:
+                                                                    Image.asset(
                                                                   "${dummyImagePath}doc_black_icon.png",
-                                                                  fit: BoxFit.contain,
-                                                                  height: size.width * numD35,
-                                                                  width: size.width,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  height: size
+                                                                          .width *
+                                                                      numD35,
+                                                                  width: size
+                                                                      .width,
                                                                 ),
                                                               )
                                                             : Image.network(
-                                                                item.mediaType == "video" ? "$contentImageUrl${item.thumbnail}" : "$contentImageUrl${item.media}",
-                                                                width: size.width,
-                                                                fit: BoxFit.cover,
+                                                                item.mediaType ==
+                                                                        "video"
+                                                                    ? "$contentImageUrl${item.thumbnail}"
+                                                                    : "$contentImageUrl${item.media}",
+                                                                width:
+                                                                    size.width,
+                                                                fit: BoxFit
+                                                                    .cover,
                                                               ),
                                             //  feedDataList[index].contentDataList
                                             Positioned(
                                               right: size.width * numD02,
                                               top: size.width * numD02,
                                               child: Column(
-                                                children: getMediaCount2(feedDataList[index].contentDataList, size),
+                                                children: getMediaCount2(
+                                                    feedDataList[index]
+                                                        .contentDataList,
+                                                    size),
                                               ),
                                             ),
                                             /*     Positioned(
@@ -212,25 +253,25 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                               ),
                                             ),
                                           ),*/
-                                            feedDataList[index].viewCount > 2
-                                                ? Positioned(
-                                                    bottom: size.width * numD02,
-                                                    left: size.width * numD02,
-                                                    child: Container(
-                                                      padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
-                                                      decoration: BoxDecoration(
-                                                          color: colorThemePink,
-                                                          borderRadius: BorderRadius.circular(size.width * numD04),
-                                                        border: Border.all(color: Colors.white)
-                                                      ),
-                                                      child: Text(
-                                                        mostViewedText,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(),
+                                            // feedDataList[index].viewCount > 2
+                                            //     ? Positioned(
+                                            //         bottom: size.width * numD02,
+                                            //         left: size.width * numD02,
+                                            //         child: Container(
+                                            //           padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
+                                            //           decoration: BoxDecoration(
+                                            //               color: colorThemePink,
+                                            //               borderRadius: BorderRadius.circular(size.width * numD04),
+                                            //             border: Border.all(color: Colors.white)
+                                            //           ),
+                                            //           child: Text(
+                                            //             mostViewedText,
+                                            //             overflow: TextOverflow.ellipsis,
+                                            //             style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     : Container(),
                                           ],
                                         ),
                                       ),
@@ -244,7 +285,9 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                 ? Align(
                                     alignment: Alignment.bottomCenter,
                                     child: DotsIndicator(
-                                      dotsCount: feedDataList[index].contentDataList.length,
+                                      dotsCount: feedDataList[index]
+                                          .contentDataList
+                                          .length,
                                       position: _currentMediaIndex,
                                       decorator: const DotsDecorator(
                                         color: Colors.grey, // Inactive color
@@ -259,10 +302,20 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                             Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: size.width * numD017, vertical: size.width * numD01),
-                                  decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.grey.shade200, spreadRadius: 3)]),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD017,
+                                      vertical: size.width * numD01),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey.shade200,
+                                            spreadRadius: 3)
+                                      ]),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(size.width * numD06),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD06),
                                       child: Image.asset(
                                         "${dummyImagePath}news.png",
                                         height: size.width * numD06,
@@ -273,10 +326,16 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                   width: size.width * numD02,
                                 ),
                                 Text(
-                                  feedDataList[index].categoryName.toUpperCase(),
+                                  feedDataList[index]
+                                      .categoryName
+                                      .toUpperCase(),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD033,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
                                 ),
                                 const Spacer(),
                                 Image.asset(
@@ -290,7 +349,11 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                   feedDataList[index].status.toUpperCase(),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD033,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
@@ -301,7 +364,12 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                               feedDataList[index].heading.toCapitalized(),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, lineHeight: 1.5, fontWeight: FontWeight.w600),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD04,
+                                  color: Colors.black,
+                                  lineHeight: 1.5,
+                                  fontWeight: FontWeight.w600),
                             ),
                             SizedBox(
                               height: size.width * numD02,
@@ -310,7 +378,12 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                               feedDataList[index].description,
                               maxLines: 4,
                               textAlign: TextAlign.justify,
-                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, lineHeight: 2, fontWeight: FontWeight.normal),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD03,
+                                  color: Colors.black,
+                                  lineHeight: 2,
+                                  fontWeight: FontWeight.normal),
                             ),
                             SizedBox(
                               height: size.width * numD02,
@@ -320,16 +393,22 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                             children: [
                                               Image.asset(
                                                 "${iconsPath}dollar1.png",
-                                                color: feedDataList[index].viewCount == 0 ? Colors.grey : colorThemePink,
+                                                color: feedDataList[index]
+                                                            .viewCount ==
+                                                        0
+                                                    ? Colors.grey
+                                                    : colorThemePink,
                                                 height: size.width * numD04,
                                                 width: size.width * numD04,
                                               ),
@@ -338,7 +417,13 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                               ),
                                               Text(
                                                 '${feedDataList[index].offerCount.toString()} ${soldText.toLowerCase()}',
-                                                style: commonTextStyle(size: size, fontSize: size.width * numD029, color: colorThemePink, fontWeight: FontWeight.normal),
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD029,
+                                                    color: colorThemePink,
+                                                    fontWeight:
+                                                        FontWeight.normal),
                                               ),
                                             ],
                                           ),
@@ -346,11 +431,16 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                             width: size.width * numD02,
                                           ),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                             children: [
                                               Image.asset(
                                                 "${iconsPath}ic_view.png",
-                                                color: feedDataList[index].viewCount == 0 ? Colors.grey : colorThemePink,
+                                                color: feedDataList[index]
+                                                            .viewCount ==
+                                                        0
+                                                    ? Colors.grey
+                                                    : colorThemePink,
                                                 height: size.width * numD05,
                                                 width: size.width * numD05,
                                               ),
@@ -359,7 +449,13 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                               ),
                                               Text(
                                                 '${feedDataList[index].viewCount.toString()} ${feedDataList[index].viewCount > 1 ? '${viewsText}s' : viewsText}',
-                                                style: commonTextStyle(size: size, fontSize: size.width * numD029, color: colorThemePink, fontWeight: FontWeight.normal),
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD029,
+                                                    color: colorThemePink,
+                                                    fontWeight:
+                                                        FontWeight.normal),
                                               ),
                                             ],
                                           ),
@@ -379,8 +475,15 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                             width: size.width * numD02,
                                           ),
                                           Text(
-                                            dateTimeFormatter(dateTime: feedDataList[index].createdAt, format: "hh:mm a"),
-                                            style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                            dateTimeFormatter(
+                                                dateTime: feedDataList[index]
+                                                    .createdAt,
+                                                format: "hh:mm a"),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD028,
+                                                color: colorHint,
+                                                fontWeight: FontWeight.normal),
                                           ),
                                           SizedBox(
                                             width: size.width * numD02,
@@ -394,8 +497,15 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                             width: size.width * numD018,
                                           ),
                                           Text(
-                                            dateTimeFormatter(dateTime: feedDataList[index].createdAt, format: "dd MMM yyyy"),
-                                            style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                            dateTimeFormatter(
+                                                dateTime: feedDataList[index]
+                                                    .createdAt,
+                                                format: "dd MMM yyyy"),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD028,
+                                                color: colorHint,
+                                                fontWeight: FontWeight.normal),
                                           ),
                                         ],
                                       ),
@@ -416,7 +526,13 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                             child: Text(
                                               feedDataList[index].location,
                                               overflow: TextOverflow.ellipsis,
-                                              style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD028,
+                                                  color: colorHint,
+                                                  fontWeight:
+                                                      FontWeight.normal),
                                             ),
                                           )
                                         ],
@@ -425,64 +541,114 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                         height: size.width * numD03,
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(left: size.width * numD002),
+                                        margin: EdgeInsets.only(
+                                            left: size.width * numD002),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsets.only(right: size.width * numD01, top: size.width * numD005),
+                                              padding: EdgeInsets.only(
+                                                  right: size.width * numD01,
+                                                  top: size.width * numD005),
                                               child: InkWell(
                                                 splashColor: Colors.transparent,
-                                                highlightColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
                                                 onTap: () {
-                                                  feedDataList[index].isFavourite = !feedDataList[index].isFavourite;
-                                                  if (feedDataList[index].isFavourite) {
-                                                    feedDataList[index].isLiked = false;
-                                                    feedDataList[index].isEmoji = false;
-                                                    feedDataList[index].isClap = false;
-                                                    contentId = feedDataList[index].id;
-                                                    callAddLikeFavAPI(feedDataList[index].id, feedDataList[index].isFavourite, feedDataList[index].isLiked, feedDataList[index].isEmoji, feedDataList[index].isClap);
+                                                  feedDataList[index]
+                                                          .isFavourite =
+                                                      !feedDataList[index]
+                                                          .isFavourite;
+                                                  if (feedDataList[index]
+                                                      .isFavourite) {
+                                                    feedDataList[index]
+                                                        .isLiked = false;
+                                                    feedDataList[index]
+                                                        .isEmoji = false;
+                                                    feedDataList[index].isClap =
+                                                        false;
+                                                    contentId =
+                                                        feedDataList[index].id;
+                                                    callAddLikeFavAPI(
+                                                        feedDataList[index].id,
+                                                        feedDataList[index]
+                                                            .isFavourite,
+                                                        feedDataList[index]
+                                                            .isLiked,
+                                                        feedDataList[index]
+                                                            .isEmoji,
+                                                        feedDataList[index]
+                                                            .isClap);
                                                   }
                                                   setState(() {});
                                                 },
-                                                child: feedDataList[index].isFavourite
+                                                child: feedDataList[index]
+                                                        .isFavourite
                                                     ? Image.asset(
                                                         "${iconsPath}heart_icon.png",
                                                         color: colorThemePink,
-                                                        height: size.width * numD0575,
+                                                        height: size.width *
+                                                            numD0575,
                                                       )
                                                     : Image.asset(
                                                         "${iconsPath}heart_icon.png",
-                                                        height: size.width * numD0575,
+                                                        height: size.width *
+                                                            numD0575,
                                                       ),
                                               ),
                                             ),
                                             SizedBox(
                                               width: size.width * numD1,
                                               child: Padding(
-                                                padding: EdgeInsets.only(bottom: size.width * numD002),
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        size.width * numD002),
                                                 child: InkWell(
-                                                  splashColor: Colors.transparent,
-                                                  highlightColor: Colors.transparent,
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
                                                   onTap: () {
-                                                    feedDataList[index].isLiked = !feedDataList[index].isLiked;
-                                                    if (feedDataList[index].isLiked) {
-                                                      feedDataList[index].isEmoji = false;
-                                                      feedDataList[index].isClap = false;
-                                                      feedDataList[index].isFavourite = false;
-                                                      contentId = feedDataList[index].id;
-                                                      callAddLikeFavAPI(feedDataList[index].id, feedDataList[index].isFavourite, feedDataList[index].isLiked, feedDataList[index].isEmoji, feedDataList[index].isClap);
+                                                    feedDataList[index]
+                                                            .isLiked =
+                                                        !feedDataList[index]
+                                                            .isLiked;
+                                                    if (feedDataList[index]
+                                                        .isLiked) {
+                                                      feedDataList[index]
+                                                          .isEmoji = false;
+                                                      feedDataList[index]
+                                                          .isClap = false;
+                                                      feedDataList[index]
+                                                          .isFavourite = false;
+                                                      contentId =
+                                                          feedDataList[index]
+                                                              .id;
+                                                      callAddLikeFavAPI(
+                                                          feedDataList[index]
+                                                              .id,
+                                                          feedDataList[index]
+                                                              .isFavourite,
+                                                          feedDataList[index]
+                                                              .isLiked,
+                                                          feedDataList[index]
+                                                              .isEmoji,
+                                                          feedDataList[index]
+                                                              .isClap);
                                                     }
                                                     setState(() {});
                                                   },
-                                                  child: feedDataList[index].isLiked
+                                                  child: feedDataList[index]
+                                                          .isLiked
                                                       ? Image.asset(
                                                           "${iconsPath}like_icon_fill.png",
-                                                          height: size.width * numD057,
+                                                          height: size.width *
+                                                              numD057,
                                                         )
                                                       : Image.asset(
                                                           "${iconsPath}like_grey.png",
-                                                          height: size.width * numD057,
+                                                          height: size.width *
+                                                              numD057,
                                                         ),
                                                 ),
                                               ),
@@ -490,30 +656,55 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                             SizedBox(
                                               width: size.width * numD1,
                                               child: Padding(
-                                                padding: EdgeInsets.only(top: size.width * numD003),
+                                                padding: EdgeInsets.only(
+                                                    top: size.width * numD003),
                                                 child: InkWell(
-                                                  splashColor: Colors.transparent,
-                                                  highlightColor: Colors.transparent,
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
                                                   onTap: () {
-                                                    feedDataList[index].isEmoji = !feedDataList[index].isEmoji;
-                                                    if (feedDataList[index].isEmoji) {
-                                                      feedDataList[index].isLiked = false;
-                                                      feedDataList[index].isClap = false;
-                                                      feedDataList[index].isFavourite = false;
-                                                      contentId = feedDataList[index].id;
-                                                      callAddLikeFavAPI(feedDataList[index].id, feedDataList[index].isFavourite, feedDataList[index].isLiked, feedDataList[index].isEmoji, feedDataList[index].isClap);
+                                                    feedDataList[index]
+                                                            .isEmoji =
+                                                        !feedDataList[index]
+                                                            .isEmoji;
+                                                    if (feedDataList[index]
+                                                        .isEmoji) {
+                                                      feedDataList[index]
+                                                          .isLiked = false;
+                                                      feedDataList[index]
+                                                          .isClap = false;
+                                                      feedDataList[index]
+                                                          .isFavourite = false;
+                                                      contentId =
+                                                          feedDataList[index]
+                                                              .id;
+                                                      callAddLikeFavAPI(
+                                                          feedDataList[index]
+                                                              .id,
+                                                          feedDataList[index]
+                                                              .isFavourite,
+                                                          feedDataList[index]
+                                                              .isLiked,
+                                                          feedDataList[index]
+                                                              .isEmoji,
+                                                          feedDataList[index]
+                                                              .isClap);
                                                     }
                                                     setState(() {});
                                                   },
                                                   //splashRadius: size.width * numD05,
-                                                  child: feedDataList[index].isEmoji
+                                                  child: feedDataList[index]
+                                                          .isEmoji
                                                       ? Image.asset(
                                                           "${iconsPath}sad.png",
-                                                          height: size.width * numD058,
+                                                          height: size.width *
+                                                              numD058,
                                                         )
                                                       : Image.asset(
                                                           "${iconsPath}ic_grey_sad_emoji.png",
-                                                          height: size.width * numD058,
+                                                          height: size.width *
+                                                              numD058,
                                                         ),
                                                 ),
                                               ),
@@ -580,22 +771,47 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                 ),
                                 Container(
                                   width: size.width * numD30,
-                                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
-                                  decoration: BoxDecoration(color: feedDataList[index].paidStatus == unPaidText ? colorThemePink : colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD03)),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: size.width * numD012),
+                                  decoration: BoxDecoration(
+                                      color: feedDataList[index].paidStatus ==
+                                              unPaidText
+                                          ? colorThemePink
+                                          : colorLightGrey,
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD03)),
                                   child: Column(
                                     children: [
                                       Text(
-                                        feedDataList[index].saleStatus == "sold" ? "Sold" : "Un Sold",
+                                        feedDataList[index].saleStatus == "sold"
+                                            ? "Sold"
+                                            : "Un Sold",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: commonTextStyle(size: size, fontSize: size.width * numD035, color: feedDataList[index].paidStatus == "paid" ? Colors.black : Colors.white, fontWeight: FontWeight.normal),
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD035,
+                                            color: feedDataList[index]
+                                                        .paidStatus ==
+                                                    "paid"
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.normal),
                                       ),
                                       FittedBox(
                                         child: Text(
                                           "$euroUniqueCode${amountFormat(feedDataList[index].amountPaid)}",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: commonTextStyle(size: size, fontSize: size.width * numD055, color: feedDataList[index].paidStatus == "paid" ? Colors.black : Colors.white, fontWeight: FontWeight.bold),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD055,
+                                              color: feedDataList[index]
+                                                          .paidStatus ==
+                                                      "paid"
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ],
@@ -833,7 +1049,11 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                         ),
                         Text(
                           "Sort and Filter",
-                          style: commonTextStyle(size: size, fontSize: size.width * appBarHeadingFontSizeNew, color: Colors.black, fontWeight: FontWeight.bold),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * appBarHeadingFontSizeNew,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () {
@@ -844,7 +1064,10 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                           },
                           child: Text(
                             "Clear all",
-                            style: TextStyle(color: colorThemePink, fontWeight: FontWeight.w400, fontSize: size.width * numD035),
+                            style: TextStyle(
+                                color: colorThemePink,
+                                fontWeight: FontWeight.w400,
+                                fontSize: size.width * numD035),
                           ),
                         ),
                       ],
@@ -858,12 +1081,17 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                     /// Sort Heading
                     Text(
                       sortText,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
                     ),
 
                     /// New Sort::
 
-                    filterListWidget(context, sortList, stateSetter, size, true),
+                    filterListWidget(
+                        context, sortList, stateSetter, size, true),
 
                     /// Filter
                     SizedBox(
@@ -890,11 +1118,20 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                     Container(
                       width: size.width,
                       height: size.width * numD13,
-                      margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: size.width * numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * numD04,
                       ),
-                      child: commonElevatedButton(applyText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(
+                          applyText,
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
                         _offset = 0;
                         callFilterListAPI();
@@ -949,22 +1186,54 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     ]);*/
 
     sortList.addAll([
-      FilterModel(name: "Latest content", value: "desc", icon: "ic_monthly_calendar.png", isSelected: true),
-      FilterModel(name: "Oldest content ", value: "asc", icon: "ic_weekly_calendar.png", isSelected: false),
-      FilterModel(name: "Highest earning content", value: "highest_earning", icon: "ic_yearly_calendar.png", isSelected: false),
-      FilterModel(name: "Lowest earning content", icon: "ic_eye_outlined.png", value: "lowest_earning", isSelected: false),
-      FilterModel(name: "Most views", value: "most_views", icon: "ic_eye_outlined.png", isSelected: false),
-      FilterModel(name: "Least views", value: "least_views", icon: "ic_eye_outlined.png", isSelected: false),
+      FilterModel(
+          name: "Latest content",
+          value: "desc",
+          icon: "ic_monthly_calendar.png",
+          isSelected: true),
+      FilterModel(
+          name: "Oldest content ",
+          value: "asc",
+          icon: "ic_weekly_calendar.png",
+          isSelected: false),
+      FilterModel(
+          name: "Highest earning content",
+          value: "highest_earning",
+          icon: "ic_yearly_calendar.png",
+          isSelected: false),
+      FilterModel(
+          name: "Lowest earning content",
+          icon: "ic_eye_outlined.png",
+          value: "lowest_earning",
+          isSelected: false),
+      FilterModel(
+          name: "Most views",
+          value: "most_views",
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
+      FilterModel(
+          name: "Least views",
+          value: "least_views",
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
     ]);
 
     filterList.addAll([
       /*   FilterModel(
           name: allContentsText, icon: "ic_square_play.png", isSelected: true),
       FilterModel(name: allTasksText, icon: "ic_task.png", isSelected: false),*/
-      FilterModel(name: allExclusiveContentText, icon: "ic_exclusive.png", isSelected: false),
-      FilterModel(name: allSharedContentText, icon: "ic_share.png", isSelected: false),
-      FilterModel(name: paymentsReceivedText, icon: "ic_payment_reviced.png", isSelected: false),
-      FilterModel(name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+      FilterModel(
+          name: allExclusiveContentText,
+          icon: "ic_exclusive.png",
+          isSelected: false),
+      FilterModel(
+          name: allSharedContentText, icon: "ic_share.png", isSelected: false),
+      FilterModel(
+          name: paymentsReceivedText,
+          icon: "ic_payment_reviced.png",
+          isSelected: false),
+      FilterModel(
+          name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
     ]);
   }
 
@@ -1004,7 +1273,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     setState(() {});
   }
 
-  Widget filterListWidget(BuildContext context, List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
+  Widget filterListWidget(BuildContext context, List<FilterModel> list,
+      StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD02),
       physics: const NeverScrollableScrollPhysics(),
@@ -1037,8 +1307,12 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
-              bottom: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
+              top: list[index].name == filterDateText
+                  ? size.width * 0
+                  : size.width * numD025,
+              bottom: list[index].name == filterDateText
+                  ? size.width * 0
+                  : size.width * numD025,
               left: size.width * numD02,
               right: size.width * numD02,
             ),
@@ -1066,7 +1340,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                             onTap: () async {
                               item.fromDate = await commonDatePicker();
                               item.toDate = null;
-                              int pos = list.indexWhere((element) => element.isSelected);
+                              int pos = list
+                                  .indexWhere((element) => element.isSelected);
                               if (pos != -1) {
                                 list[pos].isSelected = false;
                               }
@@ -1083,15 +1358,25 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(size.width * numD04),
-                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.fromDate != null ? dateTimeFormatter(dateTime: item.fromDate.toString()) : fromText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
+                                    item.fromDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.fromDate.toString())
+                                        : fromText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD032,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD015,
@@ -1113,16 +1398,23 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate = DateTime.parse(pickedDate);
+                                  DateTime parseFromDate =
+                                      DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate =
+                                      DateTime.parse(pickedDate);
 
                                   debugPrint("parseFromDate : $parseFromDate");
                                   debugPrint("parseToDate : $parseToDate");
 
-                                  if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
+                                  if (parseToDate.isAfter(parseFromDate) ||
+                                      parseToDate
+                                          .isAtSameMomentAs(parseFromDate)) {
                                     item.toDate = pickedDate;
                                   } else {
-                                    showSnackBar("Date Error", "Please select to date above from date", Colors.red);
+                                    showSnackBar(
+                                        "Date Error",
+                                        "Please select to date above from date",
+                                        Colors.red);
                                   }
                                 }
                               }
@@ -1138,15 +1430,25 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(size.width * numD04),
-                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.toDate != null ? dateTimeFormatter(dateTime: item.toDate.toString()) : toText,
-                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
+                                    item.toDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.toDate.toString())
+                                        : toText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD032,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD02,
@@ -1161,7 +1463,12 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                           ),
                         ],
                       )
-                    : Text(list[index].name, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal_W_Bk"))
+                    : Text(list[index].name,
+                        style: TextStyle(
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
@@ -1176,16 +1483,23 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   }
 
   void initialController(feedIndex, currentMediaIndex) {
-    if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType == "audio") {
-      initWaveData(contentImageUrl + feedDataList[feedIndex].contentDataList[currentMediaIndex].media);
-    } else if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType == "video") {
-      debugPrint("videoLink=====> ${feedDataList[feedIndex].contentDataList[currentMediaIndex].media}");
+    if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType ==
+        "audio") {
+      initWaveData(contentImageUrl +
+          feedDataList[feedIndex].contentDataList[currentMediaIndex].media);
+    } else if (feedDataList[feedIndex]
+            .contentDataList[currentMediaIndex]
+            .mediaType ==
+        "video") {
+      debugPrint(
+          "videoLink=====> ${feedDataList[feedIndex].contentDataList[currentMediaIndex].media}");
       flickManager = FlickManager(
         videoPlayerController: /*VideoPlayerController.network(contentImageUrl +
             feedDataList[feedIndex].contentDataList[currentMediaIndex].media),*/
 
             VideoPlayerController.networkUrl(
-          Uri.parse(feedDataList[feedIndex].contentDataList[currentMediaIndex].media),
+          Uri.parse(
+              feedDataList[feedIndex].contentDataList[currentMediaIndex].media),
         ),
         autoPlay: false,
       );
@@ -1239,7 +1553,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       }
     }
 
-    NetworkClass(getFeedListAPI, this, reqFeedList).callRequestServiceHeader(false, "get", map);
+    NetworkClass(getFeedListAPI, this, reqFeedList)
+        .callRequestServiceHeader(false, "get", map);
   }
 
   openUrl(String url) async {
@@ -1252,7 +1567,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   }
 
   /// Add Like
-  callAddLikeFavAPI(String contentId, bool isFav, bool isLike, bool isEmoji, bool isClap) {
+  callAddLikeFavAPI(
+      String contentId, bool isFav, bool isLike, bool isEmoji, bool isClap) {
     Map<String, String> map = {
       "is_favourite": isFav.toString(),
       "is_liked": isLike.toString(),
@@ -1261,15 +1577,23 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       "content_id": contentId,
     };
     debugPrint("map value====> $map");
-    NetworkClass.fromNetworkClassRow(likeFavFeedAPI, this, reqLikeFavFeedAPI, map).callPatchServiceHeaderRow(context, false);
+    NetworkClass.fromNetworkClassRow(
+            likeFavFeedAPI, this, reqLikeFavFeedAPI, map)
+        .callPatchServiceHeaderRow(context, false);
   }
 
   /// ADD Count
   callAddFeedContentCount() {
-    Map<String, String> map = {"type": "feed_content", "content_id": contentId, "user_id": sharedPreferences!.getString(hopperIdKey).toString() ?? ''};
+    Map<String, String> map = {
+      "type": "feed_content",
+      "content_id": contentId,
+      "user_id": sharedPreferences!.getString(hopperIdKey).toString() ?? ''
+    };
     debugPrint("map add value====> $map");
 
-    NetworkClass.fromNetworkClass(addViewCountAPI, this, reqAddViewCountAPI, map).callRequestServiceHeader(false, "post", null);
+    NetworkClass.fromNetworkClass(
+            addViewCountAPI, this, reqAddViewCountAPI, map)
+        .callRequestServiceHeader(false, "post", null);
   }
 
   @override
@@ -1315,7 +1639,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
 
           if (data["code"] == 200) {
             var listModel = data["response"] as List;
-            var list = listModel.map((e) => FeedsDataModel.fromJson(e)).toList();
+            var list =
+                listModel.map((e) => FeedsDataModel.fromJson(e)).toList();
 
             if (list.isNotEmpty) {
               _refreshController.loadComplete();

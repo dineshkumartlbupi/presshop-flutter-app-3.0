@@ -25,6 +25,7 @@ Widget commonElevatedButton(String buttonText, Size size, TextStyle textStyle,
     child: Text(
       buttonText,
       style: textStyle,
+      textAlign: TextAlign.center,
     ),
   );
 }

@@ -109,292 +109,593 @@ class MyBanksScreenState extends State<MyBanksScreen>
         /// body
         body: isLoading
             ? SafeArea(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            right: size.width * numD04,
-                            top: size.width * numD02),
-                        height: size.width * numD11,
-                        child: ElevatedButton.icon(
-                            onPressed: () {
-                              generateAddBankApi();
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: colorThemePink,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD03))),
-                            icon: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: size.width * numD06,
-                            ),
-                            label: Text("Add new bank",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD033,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.normal))),
-                      ),
+                child: myBankList.isNotEmpty
+                    ? upliftAccountsPaymentDesign(size)
+                    : upliftNoAccountsPaymentDesign(size))
+            : showLoader());
+  }
+
+  Widget upliftAccountsPaymentDesign(Size size) {
+    return Padding(
+      padding: EdgeInsets.all(size.width * numD05),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Hi ${sharedPreferences!.getString(firstNameKey)}",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.width * numD06,
+                  fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: size.height * numD04,
+          ),
+          Image.asset(
+            "${iconsPath}payment_page_icon_2.png",
+          ),
+          SizedBox(
+            height: size.width * numD02,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: colorLightWhite,
+              borderRadius: BorderRadius.circular(size.width * numD03),
+              border: Border.all(color: Colors.black),
+            ),
+            padding: EdgeInsets.all(size.width * numD04),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Manage your bank account on Stripe",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: size.width * numD033,
+                        fontWeight: FontWeight.bold)),
+                SizedBox(
+                  height: size.width * numD02,
+                ),
+                Container(
+                    decoration: BoxDecoration(
+                      color: colorLightWhite,
+                      borderRadius: BorderRadius.circular(size.width * numD03),
+                      border: Border.all(color: Colors.black),
                     ),
-                    Expanded(
-                        child: ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                              vertical: size.width * numD035,
-                              horizontal: size.width * numD03,
-                            ),
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    color: index == 0
-                                        ? colorGreyChat
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD03),
-                                    border: Border.all(
-                                        color: Colors.grey.shade300)),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD025,
-                                    vertical: size.width * numD02),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
+                    padding: EdgeInsets.all(size.width * numD02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius:
+                                  BorderRadius.circular(size.width * numD02),
+                              child: Image.network(
+                                myBankList[0].bankImage,
+                                height: size.width * numD11,
+                                width: size.width * numD11,
+                                fit: BoxFit.contain,
+                                errorBuilder: (c, s, o) {
+                                  return Container(
+                                    height: size.width * numD11,
+                                    width: size.width * numD11,
+                                    decoration: BoxDecoration(
+                                      color: colorLightGrey,
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD02),
-                                      child: Image.network(
-                                        myBankList[index].bankImage,
-                                        height: size.width * numD11,
-                                        width: size.width * numD11,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (c, s, o) {
-                                          return Container(
-                                            height: size.width * numD11,
-                                            width: size.width * numD11,
-                                            decoration: BoxDecoration(
-                                              color: colorLightGrey,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD02),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: size.width * numD02,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      myBankList[0].bankName,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: size.width * numD028,
+                                          fontFamily: "AirbnbCereal",
+                                          overflow: TextOverflow.ellipsis,
+                                          fontWeight: FontWeight.normal),
                                     ),
                                     SizedBox(
-                                      width: size.width * numD02,
+                                      width: size.width * numD01,
                                     ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              myBankList[index].bankName,
-                                              maxLines: 1,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize:
-                                                      size.width * numD035,
-                                                  fontFamily: "AirbnbCereal",
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                            SizedBox(
-                                              width: size.width * numD01,
-                                            ),
-                                            Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical:
-                                                        2), // Adjust padding for tag size
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blueGrey[
-                                                      100], // Background color of the tag
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5), // Rounded corners
-                                                ),
-                                                child: Text(
-                                                  myBankList[index]
-                                                      .curreny
-                                                      .toUpperCase(),
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          size.width * numD03,
-                                                      fontFamily:
-                                                          "AirbnbCereal",
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ))
-                                          ],
+                                    Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical:
+                                                2), // Adjust padding for tag size
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey[
+                                              100], // Background color of the tag
+                                          borderRadius: BorderRadius.circular(
+                                              5), // Rounded corners
                                         ),
-                                        SizedBox(
-                                          height: size.width * numD015,
-                                        ),
-                                        Text(
-                                          "********${myBankList[index].accountNumber}",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD03,
+                                        child: Text(
+                                          myBankList[0].curreny.toUpperCase(),
+                                          maxLines: 1,
+                                          style: TextStyle(
                                               color: Colors.black,
+                                              fontSize: size.width * numD028,
+                                              fontFamily: "AirbnbCereal",
+                                              overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.normal),
-                                        ),
-                                      ],
-                                    ),
-                                    const Spacer(),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Visibility(
-                                          visible: index > 0,
-                                          child: InkWell(
-                                            onTap: () {
-                                              generateAddBankApi();
-                                            },
-                                            child: Icon(Icons.edit,
-                                                color: Colors.black,
-                                                size: size.width * numD055),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: size.width * numD018,
-                                        ),
-                                        Visibility(
-                                          visible: index == 0,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * numD028,
-                                                    vertical:
-                                                        size.width * numD01),
-                                                decoration: BoxDecoration(
-                                                    color: colorThemePink,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD03)),
-                                                child: Text(
-                                                  defaultText,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD028,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: size.width * 0.014),
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * numD028,
-                                                    vertical:
-                                                        size.width * 0.008),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.green,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD03)),
-                                                child: Text(
-                                                  "Verified",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD028,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: index > 0,
-                                          child: Container(
-                                            color: Colors.transparent,
-                                            margin: EdgeInsets.only(
-                                                right: size.width * numD006),
-                                            child: InkWell(
-                                              splashColor: Colors.transparent,
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              onTap: () {
-                                                selectDefault(index);
-                                              },
-                                              child: Text(
-                                                myBankList[index]
-                                                    .available_payout_methods
-                                                    .first
-                                                    .toCapitalized(),
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize:
-                                                        size.width * numD035,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                              //  Row(
-                                              //   children: [
-                                              //     Text(
-                                              //       "Set as default",
-                                              //       style: commonTextStyle(
-                                              //           size: size,
-                                              //           fontSize: size.width *
-                                              //               numD035,
-                                              //           color: Colors.black,
-                                              //           fontWeight:
-                                              //               FontWeight.w400),
-                                              //     ),
-                                              //     SizedBox(
-                                              //       width: size.width * numD01,
-                                              //     ),
-                                              //     Image.asset(
-                                              //         selectedIndex == index
-                                              //             ? "${iconsPath}ic_checkbox_filled.png"
-                                              //             : "${iconsPath}ic_checkbox_empty.png",
-                                              //         height:
-                                              //             size.width * numD055),
-                                              //   ],
-                                              // ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                        ))
                                   ],
+                                ),
+                                SizedBox(
+                                  height: size.width * numD015,
+                                ),
+                                Text(
+                                  "********${myBankList[0].accountNumber}",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD025,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD028,
+                                  vertical: size.width * numD01),
+                              decoration: BoxDecoration(
+                                  color: colorThemePink,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD03)),
+                              child: Text(
+                                defaultText,
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD028,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: size.width * 0.014),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD028,
+                                  vertical: size.width * 0.008),
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD03)),
+                              child: Text(
+                                "Verified",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD028,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    )),
+                SizedBox(
+                  height: size.width * numD02,
+                ),
+                RichText(
+                    text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text:
+                            "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: size.width * numD032,
+                            fontWeight: FontWeight.normal)),
+                    TextSpan(
+                        text:
+                            "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: size.width * numD032,
+                            fontWeight: FontWeight.normal)),
+                  ],
+                )),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: size.height * numD06,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: size.width * numD06,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: size.width * numD13,
+                  child: commonElevatedButton(
+                      "Update Your Details",
+                      size,
+                      commonButtonTextStyle(size),
+                      commonButtonStyle(size, Colors.black), () {
+                    generateAddBankApi();
+                  }),
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: size.width * numD13,
+                  child: commonElevatedButton(
+                      "Change Bank Account",
+                      size,
+                      commonButtonTextStyle(size),
+                      commonButtonStyle(size, colorThemePink), () {
+                    generateAddBankApi();
+                  }),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget upliftNoAccountsPaymentDesign(Size size) {
+    return Padding(
+      padding: EdgeInsets.all(size.width * numD05),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Hi ${sharedPreferences!.getString(firstNameKey)}",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.width * numD06,
+                  fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: size.height * numD04,
+          ),
+          Image.asset(
+            "${iconsPath}payment_page_icon.png",
+          ),
+          SizedBox(
+            height: size.width * numD02,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: colorLightWhite,
+              borderRadius: BorderRadius.circular(size.width * numD03),
+              border: Border.all(color: Colors.black),
+            ),
+            padding: EdgeInsets.all(size.width * numD04),
+            child: RichText(
+                text: TextSpan(
+              text: "Ready to get paid?\n\n",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.width * numD03,
+                  fontWeight: FontWeight.bold),
+              children: [
+                TextSpan(
+                    text:
+                        "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: size.width * numD032,
+                        fontWeight: FontWeight.normal)),
+                TextSpan(
+                    text:
+                        "Just tap the CTA below to get started - it takes less than a minute.\n\n",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: size.width * numD032,
+                        fontWeight: FontWeight.normal)),
+              ],
+            )),
+          ),
+          SizedBox(
+            height: size.height * numD06,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: size.width * numD06,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: size.width * numD13,
+                  child: commonElevatedButton(
+                      "Camera",
+                      size,
+                      commonButtonTextStyle(size),
+                      commonButtonStyle(size, Colors.black), () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)));
+                  }),
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: size.width * numD13,
+                  child: commonElevatedButton(
+                      "Sign Up With Stripe",
+                      size,
+                      commonButtonTextStyle(size),
+                      commonButtonStyle(size, colorThemePink), () {
+                    generateAddBankApi();
+                  }),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget legecyDesign(Size size) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            padding: EdgeInsets.only(
+                right: size.width * numD04, top: size.width * numD02),
+            height: size.width * numD11,
+            child: ElevatedButton.icon(
+                onPressed: () {
+                  generateAddBankApi();
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: colorThemePink,
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD03))),
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: size.width * numD06,
+                ),
+                label: Text("Add new bank",
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * numD033,
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal))),
+          ),
+        ),
+        Expanded(
+            child: ListView.separated(
+                padding: EdgeInsets.symmetric(
+                  vertical: size.width * numD035,
+                  horizontal: size.width * numD03,
+                ),
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: index == 0 ? colorGreyChat : Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD03),
+                        border: Border.all(color: Colors.grey.shade300)),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD025,
+                        vertical: size.width * numD02),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(size.width * numD02),
+                          child: Image.network(
+                            myBankList[index].bankImage,
+                            height: size.width * numD11,
+                            width: size.width * numD11,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c, s, o) {
+                              return Container(
+                                height: size.width * numD11,
+                                width: size.width * numD11,
+                                decoration: BoxDecoration(
+                                  color: colorLightGrey,
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD02),
                                 ),
                               );
                             },
-                            separatorBuilder: (context, index) {
-                              return SizedBox(
-                                height: size.width * numD04,
-                              );
-                            },
-                            itemCount: myBankList.length)),
-                  ],
-                ),
-              )
-            : showLoader());
+                          ),
+                        ),
+                        SizedBox(
+                          width: size.width * numD02,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  myBankList[index].bankName,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035,
+                                      fontFamily: "AirbnbCereal",
+                                      overflow: TextOverflow.ellipsis,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                SizedBox(
+                                  width: size.width * numD01,
+                                ),
+                                Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical:
+                                            2), // Adjust padding for tag size
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey[
+                                          100], // Background color of the tag
+                                      borderRadius: BorderRadius.circular(
+                                          5), // Rounded corners
+                                    ),
+                                    child: Text(
+                                      myBankList[index].curreny.toUpperCase(),
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: size.width * numD03,
+                                          fontFamily: "AirbnbCereal",
+                                          overflow: TextOverflow.ellipsis,
+                                          fontWeight: FontWeight.normal),
+                                    ))
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.width * numD015,
+                            ),
+                            Text(
+                              "********${myBankList[index].accountNumber}",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD03,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Visibility(
+                              visible: index > 0,
+                              child: InkWell(
+                                onTap: () {
+                                  generateAddBankApi();
+                                },
+                                child: Icon(Icons.edit,
+                                    color: Colors.black,
+                                    size: size.width * numD055),
+                              ),
+                            ),
+                            SizedBox(
+                              height: size.width * numD018,
+                            ),
+                            Visibility(
+                              visible: index == 0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: size.width * numD028,
+                                        vertical: size.width * numD01),
+                                    decoration: BoxDecoration(
+                                        color: colorThemePink,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD03)),
+                                    child: Text(
+                                      defaultText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD028,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: size.width * 0.014),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: size.width * numD028,
+                                        vertical: size.width * 0.008),
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD03)),
+                                    child: Text(
+                                      "Verified",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD028,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Visibility(
+                              visible: index > 0,
+                              child: Container(
+                                color: Colors.transparent,
+                                margin: EdgeInsets.only(
+                                    right: size.width * numD006),
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () {
+                                    selectDefault(index);
+                                  },
+                                  child: Text(
+                                    myBankList[index]
+                                        .available_payout_methods
+                                        .first
+                                        .toCapitalized(),
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  //  Row(
+                                  //   children: [
+                                  //     Text(
+                                  //       "Set as default",
+                                  //       style: commonTextStyle(
+                                  //           size: size,
+                                  //           fontSize: size.width *
+                                  //               numD035,
+                                  //           color: Colors.black,
+                                  //           fontWeight:
+                                  //               FontWeight.w400),
+                                  //     ),
+                                  //     SizedBox(
+                                  //       width: size.width * numD01,
+                                  //     ),
+                                  //     Image.asset(
+                                  //         selectedIndex == index
+                                  //             ? "${iconsPath}ic_checkbox_filled.png"
+                                  //             : "${iconsPath}ic_checkbox_empty.png",
+                                  //         height:
+                                  //             size.width * numD055),
+                                  //   ],
+                                  // ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(
+                    height: size.width * numD04,
+                  );
+                },
+                itemCount: myBankList.length)),
+      ],
+    );
   }
 
   void deleteBankDialog(Size size, BuildContext context, int index) {
@@ -549,23 +850,6 @@ class MyBanksScreenState extends State<MyBanksScreen>
         .callRequestServiceHeader(false, "delete", null);
   }
 
-  void createStripeAccountApi() {
-    Map<String, String> map = {
-      "email": sharedPreferences!.getString(emailKey).toString(),
-      "first_name": sharedPreferences!.getString(firstNameKey).toString(),
-      "last_name": sharedPreferences!.getString(lastNameKey).toString(),
-      "country": sharedPreferences!.getString(countryKey).toString(),
-      "phone": sharedPreferences!.getString(phoneKey).toString(),
-      "post_code": sharedPreferences!.getString(postCodeKey).toString(),
-      "city": sharedPreferences!.getString(cityKey).toString(),
-      "dob": sharedPreferences!.getString(dobKey).toString(),
-    };
-    debugPrint("stripe map:::::$map");
-    NetworkClass.fromNetworkClass(
-            createStripeAccount, this, reqCreateStipeAccount, map)
-        .callRequestServiceHeader(true, "post", null);
-  }
-
   void setAsDefaultAPi(bool isDefault, String stripBankId) {
     Map<String, String> map = {
       "is_default": isDefault.toString(),
@@ -589,7 +873,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
         case generateStripeBankUrlRequest:
           var map = jsonDecode(response);
           debugPrint("generateStripeBankUrlRequest:$map");
-          showToast(map['errors']['msg'] ?? "Something went wrong");
+          showToast(map['error'] ?? "Something went wrong");
           break;
 
         case deleteBankUrlRequest:

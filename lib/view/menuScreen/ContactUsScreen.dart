@@ -37,7 +37,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
   final contactUsKey = GlobalKey<FormState>();
   StreamSubscription? _sub;
 
-  bool isRequiredVisible =false;
+  bool isRequiredVisible = false;
 
   @override
   void initState() {
@@ -47,6 +47,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
     initialData();
     super.initState();
   }
+
   void onTextChanged() {
     setState(() {
       isRequiredVisible = messageController.text.isEmpty;
@@ -562,15 +563,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                     filled: false,
                     filledColor: colorLightGrey,
                     maxLines: 5,
-
                   ),
-
-
-
-
-
-
-
                   SizedBox(
                     height: size.width * numD06,
                   ),
@@ -583,7 +576,6 @@ class ContactUsScreenState extends State<ContactUsScreen>
                   SizedBox(
                     height: size.width * numD02,
                   ),
-
                   TextFormField(
                     maxLines: 5,
                     controller: messageController,
@@ -593,7 +585,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                       fontSize: size.width * numD032,
                       fontFamily: 'AirbnbCereal_W_Md',
                     ),
-                    onChanged: (v){
+                    onChanged: (v) {
                       onTextChanged();
                     },
                     decoration: InputDecoration(
@@ -607,38 +599,42 @@ class ContactUsScreenState extends State<ContactUsScreen>
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(size.width * 0.03),
-                        borderSide: const BorderSide(width: 1, color: colorTextFieldBorder),
+                        borderSide: const BorderSide(
+                            width: 1, color: colorTextFieldBorder),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(size.width * 0.03),
-                        borderSide: const BorderSide(width: 1, color: colorTextFieldBorder),
+                        borderSide: const BorderSide(
+                            width: 1, color: colorTextFieldBorder),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(size.width * 0.03),
-                        borderSide: const BorderSide(width: 1, color: colorTextFieldBorder),
+                        borderSide: const BorderSide(
+                            width: 1, color: colorTextFieldBorder),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(size.width * 0.03),
-                        borderSide: const BorderSide(width: 1, color: colorTextFieldBorder),
+                        borderSide: const BorderSide(
+                            width: 1, color: colorTextFieldBorder),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(size.width * 0.03),
-                        borderSide: const BorderSide(width: 1, color: colorTextFieldBorder),
+                        borderSide: const BorderSide(
+                            width: 1, color: colorTextFieldBorder),
                       ),
                       prefixIconColor: colorTextFieldIcon,
-
                     ),
                   ),
-                  SizedBox(
-                      height:size.width*numD017
-                  ),
-                  messageController.text.isEmpty?const Text(
-                    "Required",
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w400),
-                  ):Container(),
+                  SizedBox(height: size.width * numD017),
+                  messageController.text.isEmpty
+                      ? const Text(
+                          "Required",
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                              fontWeight: FontWeight.w400),
+                        )
+                      : Container(),
                   SizedBox(
                     height: size.width * numD15,
                   ),
@@ -686,7 +682,13 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             fontWeight: FontWeight.w700),
                         commonButtonStyle(size, colorThemePink), () {
                       if (messageController.text.isNotEmpty) {
-                        callContactWithAdminAPI();
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Dashboard(initialPosition: 3)),
+                            (route) => false);
+                        //callContactWithAdminAPI();
                       }
 
                       /*else if (nameController.text.isEmpty) {
@@ -723,7 +725,8 @@ class ContactUsScreenState extends State<ContactUsScreen>
                       final Uri emailURL = Uri(
                         scheme: 'mailto',
                         path: adminEmail,
-                        query: 'subject=ContactUS &body=${messageController.text.trim()}',
+                        query:
+                            'subject=Please contact me &body=${messageController.text.trim()}',
                       );
 
                       if (await launchUrl(emailURL)) {
@@ -751,7 +754,6 @@ class ContactUsScreenState extends State<ContactUsScreen>
                   SizedBox(
                     height: size.width * numD04,
                   ),
-
                   Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -802,7 +804,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                       InkWell(
                         onTap: () async {
                           Uri linkedUrl = Uri.parse(
-                              'https://www.linkedin.com/company/98795870/admin/feed/posts/');
+                              'https://www.linkedin.com/company/presshop/');
                           if (await canLaunchUrl(linkedUrl)) {
                             await launchUrl(linkedUrl);
                           } else {
@@ -835,7 +837,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                               description: "description",
                               taskName: "Share");*/
                           Uri instagramUrl = Uri.parse(
-                              'https://instagram.com/presshopuk?igshid=NzZlODBkYWE4Ng=='); // Replace with the desired Twitter URL
+                              'https://www.instagram.com/presshopuk/'); // Replace with the desired Twitter URL
 
                           if (await canLaunchUrl(instagramUrl)) {
                             await launchUrl(instagramUrl);

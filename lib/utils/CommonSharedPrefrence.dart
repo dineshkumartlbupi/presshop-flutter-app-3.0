@@ -1,8 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 /*----SharedPreference Common Keys-----*/
-const headerKey ="Authorization";
+const headerKey = "Authorization";
 const tokenKey = "token";
 const hopperIdKey = "_id";
 const profileImageKey = "profile_image";
@@ -28,8 +27,6 @@ const countryKey = "country";
 const cityKey = "city";
 const apartmentKey = "appartment";
 
-
-
 const avatarKey = "avatar";
 const avatarIdKey = "avatar_id";
 const isTermAcceptedKey = "is_terms_accepted";
@@ -41,6 +38,7 @@ const file3Key = "file3";
 const file1NameKey = "file1NameKey";
 const file2NameKey = "file2NameKey";
 const file3NameKey = "file3NameKey";
+const totalIncomeKey = "totalEarnings";
 
 const adminIdKey = "adminIdKey";
 const adminRoomIdKey = "adminRoomIdKey";
@@ -60,4 +58,3 @@ Future<SharedPreferences> getSharedPreferences() async {
   var prefs = await SharedPreferences.getInstance();
   return prefs;
 }
-

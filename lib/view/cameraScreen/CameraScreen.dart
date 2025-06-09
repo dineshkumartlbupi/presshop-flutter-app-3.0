@@ -361,7 +361,7 @@ class CameraScreenState extends State<CameraScreen>
           ? Padding(
               padding: EdgeInsets.only(
                   left: size.width * numD04,
-                  top: size.width * numD025,
+                  top: size.height * numD032,
                   bottom: size.height * numD035,
                   right: size.width * numD02),
               child: SizedBox(
