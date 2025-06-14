@@ -800,7 +800,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       ),
                                       FittedBox(
                                         child: Text(
-                                          "$euroUniqueCode${amountFormat(feedDataList[index].amountPaid)}",
+                                          "$euroUniqueCode${amountFormat(feedDataList[index].total_earnings)}",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: commonTextStyle(

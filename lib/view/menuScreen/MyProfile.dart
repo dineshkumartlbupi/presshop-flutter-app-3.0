@@ -341,30 +341,6 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 SizedBox(
                                   width: size.width * 0.01,
                                 ),
-
-                                /*  InkWell(
-                            onTap: () {},
-                            child: Row(
-                              children: [
-                                Text(
-                                  selectedCountryCode,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                SizedBox(
-                                  height: size.width*numD06,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: Colors.black,
-                                    size: size.width * numD07,
-                                  ),
-                                )
-                              ],
-                            ),
-                          )*/
                               ],
                             ),
                             prefixIconHeight: size.width * numD045,
@@ -380,7 +356,9 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 ? colorLightGrey
                                 : colorLightGrey,
                             autofocus: false,
-                            readOnly: true,
+                            readOnly: phoneNumberController.text.length > 9
+                                ? true
+                                : false,
                           ),
                           SizedBox(
                             height: size.width * numD06,
@@ -1103,7 +1081,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                                 suffixIcon: null,
                                 hidePassword: false,
                                 keyboardType: TextInputType.text,
-                                validator: checkRequiredValidator,
+                                validator: null,
                                 enableValidations: true,
                                 filled: true,
                                 filledColor: widget.editProfileScreen

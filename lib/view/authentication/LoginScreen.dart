@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:presshop/utils/commonWebView.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/authentication/ForgotPasswordScreen.dart';
 import 'package:presshop/view/authentication/SignUpScreen.dart';
+import 'package:presshop/view/authentication/SocialSignup.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -22,6 +24,7 @@ import '../../main.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../bankScreens/AddBankScreen.dart';
+import 'dart:math';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -43,6 +46,8 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
   bool hidePassword = true;
 
   late GoogleSignInAccount _userObj;
+  late FirebaseAuth _firebaseAuth;
+
   bool _isLoggedIn = false;
   String socialEmail = "";
   String socialId = "";
@@ -51,9 +56,30 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
   String socialType = "";
   String deviceId = "";
   String isAppInstall = "";
+  late String rawNonce;
+  late String nonce;
+
+  /// Returns the sha256 hash of [input] in hex notation.
+  String generateNonce([int length = 32]) {
+    final charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  /// Returns the sha256 hash of [input] in hex notation.
+  String sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
 
   @override
   void initState() {
+    _firebaseAuth = FirebaseAuth.instance;
+    rawNonce = generateNonce();
+    nonce = sha256ofString(rawNonce);
     getDeviceInfo();
     super.initState();
   }
@@ -283,27 +309,65 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                           child: InkWell(
                             splashColor: Colors.grey.shade300,
                             onTap: () async {
-                              final credential =
+                              // Request credential for the currently signed in Apple account.
+                              final appleCredential =
                                   await SignInWithApple.getAppleIDCredential(
                                 scopes: [
                                   AppleIDAuthorizationScopes.email,
                                   AppleIDAuthorizationScopes.fullName,
                                 ],
+                                nonce: nonce,
                               );
 
+                              print(appleCredential.authorizationCode);
+
+                              // Create an `OAuthCredential` from the credential returned by Apple.
+                              final oauthCredential =
+                                  OAuthProvider("apple.com");
+
+                              oauthCredential.setScopes([
+                                'email',
+                                'name',
+                              ]);
+
+                              var appleAuthProvider =
+                                  oauthCredential.credential(
+                                idToken: appleCredential.identityToken,
+                                accessToken: appleCredential.authorizationCode,
+                                rawNonce: rawNonce,
+                              );
+
+                              // Sign in the user with Firebase. If the nonce we generated earlier does
+                              // not match the nonce in `appleCredential.identityToken`, sign in will fail.
+                              final credential = await _firebaseAuth
+                                  .signInWithCredential(appleAuthProvider);
                               debugPrint("AppleCredentials: $credential");
-                              if (credential != null) {
-                                socialId = credential.userIdentifier ?? "";
-                                socialEmail = credential.email ?? "";
-                                socialName = credential.givenName ??
-                                    credential.familyName ??
-                                    "";
+
+                              if (credential.user?.email == null ||
+                                  credential.user!.email!.isEmpty) {
+                                showSnackBar(
+                                    "Error",
+                                    "Email is not provided by Apple. Please try again.",
+                                    Colors.red);
+                                return;
+                              } else {
+                                socialId = credential.user?.uid ?? "";
+                                socialEmail = credential.user?.email ?? "";
+                                if (credential.user?.displayName != null &&
+                                    credential.user!.displayName!.isNotEmpty) {
+                                  socialName = credential.user!.displayName!;
+                                } else {
+                                  socialName =
+                                      credential.user?.email?.split('@')[0] ??
+                                          "";
+                                }
                                 //socialPhoneNumber = '';
 
                                 debugPrint("socialEmail: $socialEmail");
                                 debugPrint("socialName: $socialName");
                                 debugPrint("SocialId: $socialId");
-                                socialExistsApi();
+                                socialType = "apple";
+                                socialExistsApi(socialType: "apple");
                               }
                             },
                             child: Row(
@@ -531,7 +595,8 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
       }
       /*callSocialLoginGoogleApi(
           "google", socialId, socialName, socialEmail, socialProfileImage);*/
-      socialExistsApi();
+      socialType = "google";
+      socialExistsApi(socialType: "google");
       debugPrint("userObj ::${_userObj.toString()}");
       debugPrint("social email ::${_userObj.email.toString()}");
       debugPrint("social displayName ::${_userObj.displayName.toString()}");
@@ -558,11 +623,11 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
     }
   }
 
-  void socialExistsApi() {
+  void socialExistsApi({required String socialType}) {
     try {
       Map<String, String> params = {
         "social_id": socialId,
-        "social_type": Platform.isIOS ? "apple" : "google"
+        "social_type": socialType
       };
 
       NetworkClass.fromNetworkClass(
@@ -662,7 +727,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
       switch (requestCode) {
         case loginUrlRequest:
           var map = jsonDecode(response);
-          log("LoginResponse success:::::::$map");
+          //log("LoginResponse success:::::::$map");
 
           if (map["code"] == 200) {
             rememberMe = true;
@@ -882,54 +947,17 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                               initialPosition: 2,
                             )),
                     (route) => false);
-
-                /*  else {
-                  if (sharedPreferences!.getBool(skipDocumentsKey) != null) {
-                    bool skipDoc =
-                        sharedPreferences!.getBool(skipDocumentsKey)!;
-                    if (skipDoc) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Dashboard(initialPosition: 2)),
-                          (route) => false);
-                    } else {
-                      onBoardingCompleteDialog(
-                          size: MediaQuery.of(context).size,
-                          func: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => UploadDocumentsScreen(
-                                          menuScreen: false,
-                                          hideLeading: true,
-                                        )),
-                                (route) => false);
-                          });
-                    }
-                  } else {
-                    onBoardingCompleteDialog(
-                        size: MediaQuery.of(context).size,
-                        func: () {
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => UploadDocumentsScreen(
-                                        menuScreen: false,
-                                        hideLeading: true,
-                                      )),
-                              (route) => false);
-                        });
-                  }
-                }*/
               }
             } else {
               Navigator.of(navigatorKey.currentState!.context)
                   .push(MaterialPageRoute(
-                      builder: (context) => SignUpScreen(
+                      builder: (context) => SocialSignUp(
                             socialLogin: true,
                             socialId: socialId,
                             name: socialName,
                             email: socialEmail,
                             phoneNumber: "",
+                            socialType: socialType,
                           )));
             }
           }

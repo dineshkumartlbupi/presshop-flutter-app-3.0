@@ -488,33 +488,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             checkPhoneApi();
                           },
                         ),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-
-                        CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          borderColor: colorTextFieldBorder,
-                          controller: selectDobController,
-                          hintText: "Select date of birth",
-                          textInputFormatters: null,
-                          prefixIcon: const Icon(Icons.calendar_month_rounded),
-                          prefixIconHeight: size.width * numD06,
-                          suffixIconIconHeight: 0,
-                          suffixIcon: null,
-                          hidePassword: false,
-                          keyboardType: TextInputType.text,
-                          validator: checkRequiredValidator,
-                          enableValidations: true,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
-                          readOnly: true,
-                          callback: () {
-                            selectedDate();
-                          },
-                        ),
 
                         SizedBox(
                           height: size.width * numD06,
@@ -548,6 +521,33 @@ class _SignUpScreenState extends State<SignUpScreen>
                           height: size.width * numD06,
                         ),
 
+                        CommonTextField(
+                          size: size,
+                          maxLines: 1,
+                          borderColor: colorTextFieldBorder,
+                          controller: selectDobController,
+                          hintText: "Select date of birth",
+                          textInputFormatters: null,
+                          prefixIcon: const Icon(Icons.calendar_month_rounded),
+                          prefixIconHeight: size.width * numD06,
+                          suffixIconIconHeight: 0,
+                          suffixIcon: null,
+                          hidePassword: false,
+                          keyboardType: TextInputType.text,
+                          validator: null,
+                          enableValidations: false,
+                          filled: false,
+                          filledColor: Colors.transparent,
+                          autofocus: false,
+                          readOnly: true,
+                          callback: () {
+                            selectedDate();
+                          },
+                        ),
+                        SizedBox(
+                          height: size.width * numD06,
+                        ),
+
                         /// Apartment Number & House name
                         CommonTextField(
                           size: size,
@@ -574,7 +574,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                             }
                             setState(() {});
                           },
-                          validator: checkRequiredValidator,
+                          validator: null,
                         ),
 
                         SizedBox(
@@ -679,21 +679,21 @@ class _SignUpScreenState extends State<SignUpScreen>
                             },
                           ),
                         ),
-
-                        postalCodeController.text.trim().isEmpty
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD01),
-                                child: Text(
-                                  requiredText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.red.shade700,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              )
-                            : Container(),
+                        // pin code required
+                        // postalCodeController.text.trim().isEmpty
+                        //     ? Padding(
+                        //         padding: EdgeInsets.symmetric(
+                        //             vertical: size.width * numD01),
+                        //         child: Text(
+                        //           requiredText,
+                        //           style: commonTextStyle(
+                        //               size: size,
+                        //               fontSize: size.width * numD03,
+                        //               color: Colors.red.shade700,
+                        //               fontWeight: FontWeight.normal),
+                        //         ),
+                        //       )
+                        //     : Container(),
 
                         SizedBox(
                           height: postalCodeController.text.isNotEmpty
@@ -1300,113 +1300,113 @@ class _SignUpScreenState extends State<SignUpScreen>
                         ),
 
                         /// Or
-                        Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: size.width * numD04),
-                            child: Text(
-                              orText,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "AirbnbCereal",
-                                  fontSize: size.width * numD04),
-                            ),
-                          ),
-                        ),
+                        // Align(
+                        //   alignment: Alignment.center,
+                        //   child: Padding(
+                        //     padding: EdgeInsets.symmetric(
+                        //         vertical: size.width * numD04),
+                        //     child: Text(
+                        //       orText,
+                        //       style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontFamily: "AirbnbCereal",
+                        //           fontSize: size.width * numD04),
+                        //     ),
+                        //   ),
+                        // ),
 
-                        Platform.isIOS
-                            ? Container(
-                                width: size.width,
-                                height: size.width * numD13,
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04),
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    border: Border.all(
-                                        color: colorGoogleButtonBorder)),
-                                child: InkWell(
-                                  splashColor: Colors.grey.shade300,
-                                  onTap: () async {
-                                    final credential = await SignInWithApple
-                                        .getAppleIDCredential(
-                                      scopes: [
-                                        AppleIDAuthorizationScopes.email,
-                                        AppleIDAuthorizationScopes.fullName,
-                                      ],
-                                    );
+                        // Platform.isIOS
+                        //     ? Container(
+                        //         width: size.width,
+                        //         height: size.width * numD13,
+                        //         margin: EdgeInsets.symmetric(
+                        //             horizontal: size.width * numD04),
+                        //         alignment: Alignment.centerLeft,
+                        //         decoration: BoxDecoration(
+                        //             color: Colors.black,
+                        //             borderRadius: BorderRadius.circular(
+                        //                 size.width * numD04),
+                        //             border: Border.all(
+                        //                 color: colorGoogleButtonBorder)),
+                        //         child: InkWell(
+                        //           splashColor: Colors.grey.shade300,
+                        //           onTap: () async {
+                        //             final credential = await SignInWithApple
+                        //                 .getAppleIDCredential(
+                        //               scopes: [
+                        //                 AppleIDAuthorizationScopes.email,
+                        //                 AppleIDAuthorizationScopes.fullName,
+                        //               ],
+                        //             );
 
-                                    debugPrint("AppleCredentials: $credential");
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "${iconsPath}appleLogo.png",
-                                        height: size.width * numD045,
-                                        width: size.width * numD045,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(width: size.width * numD01),
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "Sign in with Apple",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: "AirbnbCereal",
-                                              fontSize: size.width * numD036,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Container(
-                                width: size.width,
-                                height: size.width * numD13,
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    border: Border.all(
-                                        color: colorGoogleButtonBorder)),
-                                child: InkWell(
-                                  splashColor: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
-                                  onTap: () async {
-                                    googleLogin();
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "${iconsPath}ic_google.png",
-                                        height: size.width * numD045,
-                                        width: size.width * numD045,
-                                      ),
-                                      SizedBox(width: size.width * numD01),
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          continueGoogleText,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "AirbnbCereal",
-                                              fontSize: size.width * numD036,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
+                        //             debugPrint("AppleCredentials: $credential");
+                        //           },
+                        //           child: Row(
+                        //             mainAxisAlignment: MainAxisAlignment.center,
+                        //             children: [
+                        //               Image.asset(
+                        //                 "${iconsPath}appleLogo.png",
+                        //                 height: size.width * numD045,
+                        //                 width: size.width * numD045,
+                        //                 color: Colors.white,
+                        //               ),
+                        //               SizedBox(width: size.width * numD01),
+                        //               Align(
+                        //                 alignment: Alignment.center,
+                        //                 child: Text(
+                        //                   "Sign in with Apple",
+                        //                   style: TextStyle(
+                        //                       color: Colors.white,
+                        //                       fontFamily: "AirbnbCereal",
+                        //                       fontSize: size.width * numD036,
+                        //                       fontWeight: FontWeight.w500),
+                        //                 ),
+                        //               )
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       )
+                        //     : Container(
+                        //         width: size.width,
+                        //         height: size.width * numD13,
+                        //         margin: EdgeInsets.symmetric(
+                        //             horizontal: size.width * numD04),
+                        //         decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(
+                        //                 size.width * numD04),
+                        //             border: Border.all(
+                        //                 color: colorGoogleButtonBorder)),
+                        //         child: InkWell(
+                        //           splashColor: Colors.grey.shade300,
+                        //           borderRadius: BorderRadius.circular(
+                        //               size.width * numD04),
+                        //           onTap: () async {
+                        //             googleLogin();
+                        //           },
+                        //           child: Row(
+                        //             mainAxisAlignment: MainAxisAlignment.center,
+                        //             children: [
+                        //               Image.asset(
+                        //                 "${iconsPath}ic_google.png",
+                        //                 height: size.width * numD045,
+                        //                 width: size.width * numD045,
+                        //               ),
+                        //               SizedBox(width: size.width * numD01),
+                        //               Align(
+                        //                 alignment: Alignment.center,
+                        //                 child: Text(
+                        //                   continueGoogleText,
+                        //                   style: TextStyle(
+                        //                       color: Colors.black,
+                        //                       fontFamily: "AirbnbCereal",
+                        //                       fontSize: size.width * numD036,
+                        //                       fontWeight: FontWeight.w500),
+                        //                 ),
+                        //               )
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ),
 
                         !widget.socialLogin
                             ? Align(

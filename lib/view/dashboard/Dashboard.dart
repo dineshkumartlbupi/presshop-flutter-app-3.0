@@ -405,10 +405,7 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
           });
           break;
         case lc.PermissionStatus.deniedForever:
-          serviceEnabled = await location.requestService().then((value) {
-            getCurrentLocationFxn();
-            return true;
-          });
+          getPermissionFromSteLocation();
           break;
       }
     }
@@ -438,11 +435,15 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
 
   getCurrentLocationFxn() async {
     try {
-      if (kDebugMode) {
+      if (!kDebugMode) {
         locationData = lc.LocationData.fromMap(
             {"latitude": latitude, "longitude": longitude});
       } else {
-        locationData = await location.getLocation();
+        locationData = await Future.any([
+          location.getLocation(),
+          Future.delayed(Duration(seconds: 4), () => null),
+        ]);
+        locationData ??= await location.getLocation();
       }
 
       //locationData = await location.getLocation();

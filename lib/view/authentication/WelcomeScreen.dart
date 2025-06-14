@@ -38,7 +38,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 horizontal: size.width * numD06, vertical: size.width * numD05),
             children: [
               Text(
-                '${greeting()} $userName,',
+                '${greeting()} ${userName.toCapitalized()},',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
@@ -119,7 +119,16 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                         ]),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * numD06,
+                    ),
+                    Text(
+                      "* Set up your Stripe account now to receive payments within 2-7 days when your content is purchased. Just tap the CTA below to get started - it takes less than a minute.",
+                      textAlign: TextAlign.start,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
                     ),
                     // Row(
                     //     crossAxisAlignment: CrossAxisAlignment.start,

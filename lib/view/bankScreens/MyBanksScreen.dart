@@ -121,7 +121,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Hi ${sharedPreferences!.getString(firstNameKey)}",
+          Text("Hi ${sharedPreferences!.getString(userNameKey)}",
               style: TextStyle(
                   color: Colors.black,
                   fontSize: size.width * numD06,
@@ -356,7 +356,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Hi ${sharedPreferences!.getString(firstNameKey)}",
+          Text("Hi ${sharedPreferences!.getString(userNameKey)}",
               style: TextStyle(
                   color: Colors.black,
                   fontSize: size.width * numD06,

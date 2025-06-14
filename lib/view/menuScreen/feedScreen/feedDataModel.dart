@@ -757,6 +757,7 @@ class FeedsDataModel {
   String categoryId = "";
   String categoryType = "";
   String askPrice = "";
+  String total_earnings = "";
   String timestamp;
   int viewCount = 0;
   int offerCount = 0;
@@ -820,6 +821,7 @@ class FeedsDataModel {
     required this.isClap,
     required this.viewCount,
     required this.offerCount,
+    required this.total_earnings,
   });
 
   factory FeedsDataModel.fromJson(Map<String, dynamic> json) {
@@ -853,6 +855,7 @@ class FeedsDataModel {
         categoryType: json['category_id']['type'] ?? "",
         askPrice: json["original_ask_price"].toString(),
         timestamp: json["timestamp"] ?? "",
+        total_earnings: json["total_earnings"]?.toString() ?? "0",
         contentDataList: contentData,
         createdAt: json['createdAt'].toString(),
         updatedAt: json['updatedAt'] ?? "",
