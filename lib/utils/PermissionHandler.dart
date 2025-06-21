@@ -187,20 +187,11 @@ Future<bool> cameraPermission() async {
       return true;
 
     case permission.PermissionStatus.restricted:
-      /* showToast(
-          message: "Please Enable Camera Permission",
-          context: navigatorKey.currentContext!);*/
       return false;
     case permission.PermissionStatus.permanentlyDenied:
-      /*showToast(
-          message: "Please Enable Camera Permission",
-          context: navigatorKey.currentContext!);*/
       return false;
 
     case permission.PermissionStatus.limited:
-      /* showToast(
-          message: "Please Enable Camera Permission",
-          context: navigatorKey.currentContext!);*/
       return false;
 
     default:

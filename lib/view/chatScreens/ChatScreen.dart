@@ -16,9 +16,11 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/view/chatScreens/FullVideoView.dart';
+import 'package:presshop/view/permission_error_screen.dart';
 import 'package:record/record.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -3625,7 +3627,12 @@ class _ConversationScreenState extends State<ConversationScreen>
         }*/
       }
     } else {
-      showSnackBar("Permission Denied", "Permission Denied", Colors.red);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PermissionErrorScreen(permissionsStatus: {
+                    Permission.camera: false,
+                  })));
     }
   }
 

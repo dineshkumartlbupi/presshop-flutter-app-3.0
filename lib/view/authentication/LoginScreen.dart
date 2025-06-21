@@ -319,15 +319,13 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                                 nonce: nonce,
                               );
 
-                              print(appleCredential.authorizationCode);
-
                               // Create an `OAuthCredential` from the credential returned by Apple.
                               final oauthCredential =
                                   OAuthProvider("apple.com");
 
                               oauthCredential.setScopes([
                                 'email',
-                                'name',
+                                'fullName',
                               ]);
 
                               var appleAuthProvider =
@@ -571,6 +569,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
       deviceId = iosInfo.identifierForVendor!;
       debugPrint('deviceId::::::: $deviceId');
     }
+    sharedPreferences?.setString(deviceIdKey, deviceId);
     callAppInstallFirstTimeOrNotApi();
   }
 
@@ -627,9 +626,10 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
     try {
       Map<String, String> params = {
         "social_id": socialId,
-        "social_type": socialType
+        "social_type": socialType,
+        "email": socialEmail,
       };
-
+      _firebaseAuth.signOut();
       NetworkClass.fromNetworkClass(
               socialExistUrl, this, socialExistUrlRequest, params)
           .callRequestServiceHeader(true, "post", null);
@@ -665,26 +665,27 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
   void onError({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case socialExistUrlRequest:
+          var map = jsonDecode(response);
+          commonErrorDialogDialog(MediaQuery.of(context).size,
+              map["message"].toString(), map["code"].toString(), () {
+            Navigator.pop(context);
+          });
+          break;
         case loginUrlRequest:
           var map = jsonDecode(response);
           debugPrint("LoginError:$map");
           if (map["code"] == 409) {
             commonErrorDialogDialog(
                 MediaQuery.of(context).size,
-                map["errors"]["msg"]
-                    .toString()
-                    .replaceAll("_", " ")
-                    .toTitleCase(),
+                map["errors"]["msg"].toString().replaceAll("_", " "),
                 map["code"].toString(), () {
               Navigator.pop(context);
             });
           } else if (map["code"] == 422) {
             commonErrorDialogDialog(
                 MediaQuery.of(context).size,
-                map["errors"]["msg"]
-                    .toString()
-                    .replaceAll("_", " ")
-                    .toTitleCase(),
+                map["errors"]["msg"].toString().replaceAll("_", " "),
                 map["code"].toString(), () {
               Navigator.pop(context);
             });
@@ -988,79 +989,5 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
     } on Exception catch (e) {
       debugPrint("$e");
     }
-  }
-}
-
-class Authentication {
-  static Future<User?> signInWithGoogle({required BuildContext context}) async {
-    showLoaderDialog(context);
-    FirebaseAuth auth = FirebaseAuth.instance;
-    debugPrint('inside authentication====>');
-    User? user;
-
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    debugPrint('inside authentication2====>');
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-    debugPrint('inside authentication3====>');
-    if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-      debugPrint('inside authentication4====>');
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-
-      try {
-        final UserCredential userCredential =
-            await auth.signInWithCredential(credential);
-
-        user = userCredential.user;
-        debugPrint("user===>$user");
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'account-exists-with-different-credential') {
-          showSnackBar(
-              "Error",
-              "This account already exists with different credentials",
-              Colors.red);
-        } else if (e.code == 'invalid-credential') {
-          showSnackBar(
-              "Invalid Credentials", "The credentials are invalid", Colors.red);
-        }
-      } catch (e) {
-        debugPrint("$e");
-      }
-    }
-    Navigator.pop(navigatorKey.currentContext!);
-    return user;
-  }
-
-  static Future<void> signOutWithGoogle({required BuildContext context}) async {
-    showLoaderDialog(context);
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-
-    googleSignIn.isSignedIn().then((value) {
-      if (value) {
-        auth.signOut();
-        googleSignIn.signOut();
-      }
-    });
-    Navigator.pop(navigatorKey.currentContext!);
-  }
-
-  static Future<bool> signInAlready() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-
-    return await googleSignIn.isSignedIn();
   }
 }

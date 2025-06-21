@@ -1037,6 +1037,7 @@ class MyContentData {
   String longitude = "";
   String amount = "";
   String originalAmount = "";
+  String totalEarning = "";
   String status = "";
   String soldStatus = "";
   String paidStatus = "";
@@ -1088,6 +1089,7 @@ class MyContentData {
     required this.categoryId,
     required this.contentView,
     required this.purchasedMediahouseCount,
+    required this.totalEarning,
   });
 
   MyContentData.fromJson(json) {
@@ -1106,6 +1108,10 @@ class MyContentData {
         : "0";
     originalAmount = json["original_ask_price"] != null
         ? json["original_ask_price"].toString()
+        : "0";
+
+    totalEarning = json["total_earnings"] != null
+        ? json["total_earnings"].toString()
         : "0";
     contentView = json["content_view_count_by_marketplace_for_app"];
     status = json["status"].toString();
@@ -1165,10 +1171,8 @@ class MyContentData {
       count += 1;
     }
 
-    debugPrint("Count: $count");
     completionPercent = ((count * 14.286) / 100).round().toString();
     leftPercent = ((7 - count) * 14.286).round();
-    debugPrint("Count: $completionPercent");
   }
 
   MyContentData copyWith({
@@ -1181,6 +1185,7 @@ class MyContentData {
     String? longitude,
     String? amount,
     String? originalAmount,
+    String? totalEarning,
     String? status,
     String? soldStatus,
     String? paidStatus,
@@ -1202,36 +1207,36 @@ class MyContentData {
     int? contentView,
   }) {
     return MyContentData(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      textValue: textValue ?? this.textValue,
-      time: time ?? this.time,
-      location: location ?? this.location,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      amount: amount ?? this.amount,
-      originalAmount: originalAmount ?? this.originalAmount,
-      status: status ?? this.status,
-      soldStatus: soldStatus ?? this.soldStatus,
-      paidStatus: paidStatus ?? this.paidStatus,
-      contentType: contentType ?? this.contentType,
-      dateTime: dateTime ?? this.dateTime,
-      isPaidStatusToHopper: isPaidStatusToHopper ?? this.isPaidStatusToHopper,
-      exclusive: exclusive ?? this.exclusive,
-      showVideo: showVideo ?? this.showVideo,
-      audioDescription: audioDescription ?? this.audioDescription,
-      contentMediaList: contentMediaList ?? List.from(this.contentMediaList),
-      hashTagList: hashTagList ?? List.from(this.hashTagList),
-      categoryData: categoryData ?? this.categoryData,
-      completionPercent: completionPercent ?? this.completionPercent,
-      discountPercent: discountPercent ?? this.discountPercent,
-      leftPercent: leftPercent ?? this.leftPercent,
-      offerCount: offerCount ?? this.offerCount,
-      mediaHouseName: mediaHouseName ?? this.mediaHouseName,
-      categoryId: categoryId ?? this.categoryId,
-      contentView: contentView ?? this.contentView,
-      purchasedMediahouseCount:
-          purchasedMediahouseCount ?? this.purchasedMediahouseCount,
-    );
+        id: id ?? this.id,
+        title: title ?? this.title,
+        textValue: textValue ?? this.textValue,
+        time: time ?? this.time,
+        location: location ?? this.location,
+        latitude: latitude ?? this.latitude,
+        longitude: longitude ?? this.longitude,
+        amount: amount ?? this.amount,
+        originalAmount: originalAmount ?? this.originalAmount,
+        status: status ?? this.status,
+        soldStatus: soldStatus ?? this.soldStatus,
+        paidStatus: paidStatus ?? this.paidStatus,
+        contentType: contentType ?? this.contentType,
+        dateTime: dateTime ?? this.dateTime,
+        isPaidStatusToHopper: isPaidStatusToHopper ?? this.isPaidStatusToHopper,
+        exclusive: exclusive ?? this.exclusive,
+        showVideo: showVideo ?? this.showVideo,
+        audioDescription: audioDescription ?? this.audioDescription,
+        contentMediaList: contentMediaList ?? List.from(this.contentMediaList),
+        hashTagList: hashTagList ?? List.from(this.hashTagList),
+        categoryData: categoryData ?? this.categoryData,
+        completionPercent: completionPercent ?? this.completionPercent,
+        discountPercent: discountPercent ?? this.discountPercent,
+        leftPercent: leftPercent ?? this.leftPercent,
+        offerCount: offerCount ?? this.offerCount,
+        mediaHouseName: mediaHouseName ?? this.mediaHouseName,
+        categoryId: categoryId ?? this.categoryId,
+        contentView: contentView ?? this.contentView,
+        purchasedMediahouseCount:
+            purchasedMediahouseCount ?? this.purchasedMediahouseCount,
+        totalEarning: totalEarning ?? this.totalEarning);
   }
 }

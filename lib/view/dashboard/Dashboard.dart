@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder2/geocoder2.dart';
@@ -14,12 +13,14 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/dashboardInterface.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
+import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
 import '../../main.dart';
 import '../../utils/CommonWigdets.dart';
 import '../../utils/commonEnums.dart';
+import '../../utils/location_service.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../cameraScreen/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
@@ -52,6 +53,9 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
   StreamSubscription? _sub;
   static DashBoardInterface? dashBoardInterface;
 
+  /// Prince
+  lc.LocationData? locationData;
+  late LocationService _locationService;
   String mediaAddress = "", mediaDate = "", country = "", state = "", city = "";
   int totalEntitiesCount = 0;
   double x = 0, y = 0, latitude = 22.5744, longitude = 88.3629;
@@ -59,10 +63,6 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
   int page = 0;
 
   bool isGetLatLong = false;
-
-  /// Prince
-  lc.LocationData? locationData;
-  lc.Location location = lc.Location();
 
   List<AdminDetailModel> adminList = [];
   List<String> adminIDList = [];
@@ -83,8 +83,8 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
   @override
   void initState() {
     /// Light statusBar mode-->
-    debugPrint('taskStatus value=====> ${widget.taskStatus}');
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    _locationService = LocationService();
     currentIndex = widget.initialPosition;
 
     if (widget.taskStatus == 'rejected') {
@@ -92,7 +92,6 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
       if (widget.broadCastId != null) {
         callTaskDetailApi(widget.broadCastId!);
       }
-      super.initState();
       getFcmToken();
       fireBaseMessaging();
     }
@@ -101,7 +100,7 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     }
     isGetLatLong = true;
     requestLocationPermissions();
-    // configureAudioSession();
+    super.initState();
   }
 
   /// An implementation using a link Amit
@@ -238,7 +237,7 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
           ),
           body: Visibility(
             visible: !isGetLatLong,
-            replacement: showLoader(),
+            replacement: showLoader(isForLocation: true),
             child: bottomNavigationScreens[currentIndex],
             //  )
           )),
@@ -375,116 +374,69 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
         deviceId, Platform.isAndroid ? "android" : "ios", fcmToken);
   }
 
-  /// Location permission request
   requestLocationPermissions() async {
-    lc.PermissionStatus permissionGranted;
-    bool serviceEnabled;
-
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-    }
-
-    if (serviceEnabled) {
-      permissionGranted = await location.hasPermission();
-
-      // debugPrint("PG: $permissionGranted");
-
-      switch (permissionGranted) {
-        case lc.PermissionStatus.granted:
-          getCurrentLocationFxn();
-          break;
-        case lc.PermissionStatus.grantedLimited:
-          showSnackBar("Error", "Permission is limited", Colors.red);
-
-          break;
-        case lc.PermissionStatus.denied:
-          serviceEnabled = await location.requestService().then((value) {
-            getCurrentLocationFxn();
-            return true;
-          });
-          break;
-        case lc.PermissionStatus.deniedForever:
-          getPermissionFromSteLocation();
-          break;
-      }
-    }
-  }
-
-  getPermissionFromSteLocation() {
-    return showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Location Permission Required'),
-        content: const Text(
-            'This app needs access to your location to provide its features. Please enable location permission in your app settings.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              openAppSettings().then((value) => {
-                    if (value) {Navigator.pop(context), getCurrentLocationFxn()}
-                  });
-            }, // Open app settings for permission toggle
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  getCurrentLocationFxn() async {
     try {
-      if (!kDebugMode) {
-        locationData = lc.LocationData.fromMap(
-            {"latitude": latitude, "longitude": longitude});
-      } else {
-        locationData = await Future.any([
-          location.getLocation(),
-          Future.delayed(Duration(seconds: 4), () => null),
-        ]);
-        locationData ??= await location.getLocation();
-      }
-
-      //locationData = await location.getLocation();
+      locationData = await _locationService.getCurrentLocation(context);
       debugPrint("GettingLocation ==> $locationData");
       if (locationData != null) {
-        debugPrint("NotNull");
-        if (locationData!.latitude != null) {
-          latitude = locationData!.latitude!;
-          longitude = locationData!.longitude!;
-          GeoData data = await Geocoder2.getDataFromCoordinates(
-              latitude: latitude,
-              longitude: longitude,
-              googleMapApiKey:
-                  Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
-
-          debugPrint("address=====> ${data.address}");
-          sharedPreferences!.setDouble(currentLat, latitude);
-          sharedPreferences!.setDouble(currentLon, longitude);
-          sharedPreferences!.setString(currentAddress, data.address);
-          sharedPreferences!.setString(currentCountry, data.country);
-          sharedPreferences!.setString(currentState, data.state);
-          sharedPreferences!.setString(currentCity, data.city);
-          debugPrint("MyLatLong: ${locationData!.latitude}");
-          debugPrint(
-              "currentAddress: ${sharedPreferences!.getString(currentAddress)}");
-
-          isGetLatLong = false;
-          callUpdateCurrentData();
-          setState(() {});
-          if (alertDialog != null) {
-            alertDialog = null;
-            Navigator.of(navigatorKey.currentContext!).pop();
-          }
-        }
+        proceedWithLocation(locationData);
       } else {
         debugPrint("Null-ll");
-        showSnackBar("Location Error", "nullLocationText", Colors.black);
+        goToLocationErrorScreen();
       }
     } on Exception catch (e) {
-      debugPrint("PEx: $e");
-      showSnackBar("Exception", "Please enable location", Colors.black);
+      goToLocationErrorScreen();
+    }
+  }
+
+  void goToLocationErrorScreen() {
+    Navigator.of(navigatorKey.currentContext!)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => LocationErrorScreen(),
+      ),
+    )
+        .then((value) {
+      if (value != null) {
+        proceedWithLocation(value);
+      } else {
+        debugPrint("Location Error");
+      }
+    });
+  }
+
+  void proceedWithLocation(lc.LocationData? locationData) async {
+    if (locationData != null) {
+      debugPrint("NotNull");
+      if (locationData.latitude != null) {
+        latitude = locationData.latitude!;
+        longitude = locationData.longitude!;
+        GeoData data = await Geocoder2.getDataFromCoordinates(
+            latitude: latitude,
+            longitude: longitude,
+            googleMapApiKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
+
+        debugPrint("address=====> ${data.address}");
+        sharedPreferences!.setDouble(currentLat, latitude);
+        sharedPreferences!.setDouble(currentLon, longitude);
+        sharedPreferences!.setString(currentAddress, data.address);
+        sharedPreferences!.setString(currentCountry, data.country);
+        sharedPreferences!.setString(currentState, data.state);
+        sharedPreferences!.setString(currentCity, data.city);
+        debugPrint(
+            "currentAddress: ${sharedPreferences!.getString(currentAddress)}");
+
+        isGetLatLong = false;
+        callUpdateCurrentData();
+        setState(() {});
+        if (alertDialog != null) {
+          alertDialog = null;
+          Navigator.of(navigatorKey.currentContext!).pop();
+        }
+      }
+    } else {
+      debugPrint("Null-ll");
+      showSnackBar("Location Error", "nullLocationText", Colors.black);
     }
   }
 

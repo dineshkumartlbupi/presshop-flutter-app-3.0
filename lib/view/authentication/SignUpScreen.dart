@@ -111,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       showUppercase = false,
       showMincase = false,
       showNumber = false,
-      isSelectCheck = false;
+      isSelectCheck = true;
   bool validUserName = false;
 
   List<AvatarsData> avatarList = [];
@@ -1157,53 +1157,53 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 autofocus: false,
                               )
                             : Container(),
-                        SizedBox(
-                          height: !widget.socialLogin ? size.width * numD04 : 0,
-                        ),
+                        // SizedBox(
+                        //   height: !widget.socialLogin ? size.width * numD04 : 0,
+                        // ),
 
-                        InkWell(
-                          onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            isSelectCheck = !isSelectCheck;
-                            setState(() {});
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              isSelectCheck
-                                  ? Container(
-                                      margin: EdgeInsets.only(
-                                          top: size.width * numD008),
-                                      child: Image.asset(
-                                        "${iconsPath}ic_checkbox_filled.png",
-                                        height: size.width * numD06,
-                                      ),
-                                    )
-                                  : Container(
-                                      margin: EdgeInsets.only(
-                                          top: size.width * numD008),
-                                      child: Image.asset(
-                                          "${iconsPath}ic_checkbox_empty.png",
-                                          height: size.width * numD06),
-                                    ),
-                              SizedBox(
-                                width: size.width * numD02,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  enableNotificationText,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "AirbnbCereal",
-                                      fontSize: size.width * numD035),
-                                ),
-                              ),
-                              SizedBox(
-                                width: size.width * numD02,
-                              ),
-                            ],
-                          ),
-                        ),
+                        // InkWell(
+                        //   onTap: () {
+                        //     FocusScope.of(context).requestFocus(FocusNode());
+                        //     isSelectCheck = !isSelectCheck;
+                        //     setState(() {});
+                        //   },
+                        //   child: Row(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       isSelectCheck
+                        //           ? Container(
+                        //               margin: EdgeInsets.only(
+                        //                   top: size.width * numD008),
+                        //               child: Image.asset(
+                        //                 "${iconsPath}ic_checkbox_filled.png",
+                        //                 height: size.width * numD06,
+                        //               ),
+                        //             )
+                        //           : Container(
+                        //               margin: EdgeInsets.only(
+                        //                   top: size.width * numD008),
+                        //               child: Image.asset(
+                        //                   "${iconsPath}ic_checkbox_empty.png",
+                        //                   height: size.width * numD06),
+                        //             ),
+                        //       SizedBox(
+                        //         width: size.width * numD02,
+                        //       ),
+                        //       Expanded(
+                        //         child: Text(
+                        //           enableNotificationText,
+                        //           style: TextStyle(
+                        //               color: Colors.black,
+                        //               fontFamily: "AirbnbCereal",
+                        //               fontSize: size.width * numD035),
+                        //         ),
+                        //       ),
+                        //       SizedBox(
+                        //         width: size.width * numD02,
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         SizedBox(
                           height: size.width * numD04,
                         ),
@@ -1660,20 +1660,6 @@ class _SignUpScreenState extends State<SignUpScreen>
         lastNameController.text = nameArray[1];
       }
     }
-  }
-
-  Future openCamera() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-
-    if (image == null) {
-      return;
-    }
-    userImagePath = image.path;
-    if (userImagePath.isNotEmpty) {
-      showImageError = false;
-    }
-
-    setState(() {});
   }
 
   Future openGallery() async {

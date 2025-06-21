@@ -8,7 +8,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonModel.dart';
-import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../view/menuScreen/MyDraftScreen.dart';
@@ -671,7 +670,8 @@ void broadcastDialog({
 ///:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 void commonErrorDialogDialog(
-    Size size, String message, String errorCode, VoidCallback callback) {
+    Size size, String message, String errorCode, VoidCallback callback,
+    {String actionButton = "ok", bool isFromNetworkError = true}) {
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
@@ -699,10 +699,12 @@ void commonErrorDialogDialog(
                         child: Row(
                           children: [
                             Text(
-                              "$errorDialogText $errorCode!",
+                              isFromNetworkError
+                                  ? "$errorDialogText $errorCode!"
+                                  : errorCode,
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: size.width * numD05,
+                                  fontSize: size.width * numD04,
                                   fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
@@ -772,7 +774,7 @@ void commonErrorDialogDialog(
                         height: size.width * numD12,
                         width: size.width * numD35,
                         child: commonElevatedButton(
-                            okText,
+                            actionButton,
                             size,
                             commonButtonTextStyle(size),
                             commonButtonStyle(size, colorThemePink),
@@ -908,11 +910,12 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
       });
 }
 
-void showSnackBar(String title, String message, Color color) {
+void showSnackBar(String title, String message, Color color,
+    {Duration duration = const Duration(seconds: 2)}) {
   Flushbar(
     title: title,
     message: message,
-    duration: const Duration(seconds: 2),
+    duration: duration,
     backgroundColor: color,
     flushbarPosition: FlushbarPosition.TOP,
     titleColor: Colors.white,
@@ -1060,18 +1063,34 @@ Widget commonRefresherFooter(context, mode) {
 }
 
 /// Show Loader
-Widget showLoader() {
+Widget showLoader({bool isForLocation = false}) {
   var size = MediaQuery.of(navigatorKey.currentContext!).size;
-  return Center(
-      child: Lottie.asset("assets/lottieFiles/loader_new.json",
-          height: size.width * numD28, width: size.width * numD28)
-
-      /*
-    CircularProgressIndicator(
-      color: colorThemePink,
-      strokeWidth: 3.5,
-    ),*/
-      );
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      Center(
+        child: Lottie.asset("assets/lottieFiles/loader_new.json",
+            height: size.width * numD28, width: size.width * numD28),
+      ),
+      if (isForLocation) ...[
+        SizedBox(height: size.width * numD005),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20),
+          child: Text(
+            "Please wait while we tring to fetch your location. Be with us.",
+            textAlign: TextAlign.center,
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD04,
+                color: Colors.black,
+                fontWeight: FontWeight.w500),
+          ),
+        ),
+      ]
+    ],
+  );
 }
 
 Widget showAnimatedLoader(var size) {

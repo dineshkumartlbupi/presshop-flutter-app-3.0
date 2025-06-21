@@ -782,7 +782,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             showSnackBar(
                                 'PressHope',
                                 "Twitter is not installed on this device",
-                                Colors.black);
+                                Colors.red);
                             // Handle the case when the URL can't be launched.
                             throw ('Error launching SMS');
                           }
@@ -811,7 +811,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             showSnackBar(
                                 'PressHope',
                                 "LinkedUrl is not installed on this device",
-                                Colors.black);
+                                Colors.red);
                             // Handle the case when the URL can't be launched.
                             throw ('Error launching SMS');
                           }
@@ -845,7 +845,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             showSnackBar(
                                 'PressHope',
                                 "Instagram is not installed on this device",
-                                Colors.black);
+                                Colors.red);
                             // Handle the case when the URL can't be launched.
                             throw ('Error launching SMS');
                           }

@@ -9,7 +9,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:native_exif/native_exif.dart';
@@ -30,6 +29,7 @@ import '../../main.dart';
 import 'dart:ui' as ui;
 import '../../utils/image_crop_util.dart';
 import '../dashboard/Dashboard.dart';
+import '../permission_error_screen.dart';
 
 String getRandomString(int length) {
   const characters = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz';
@@ -105,6 +105,7 @@ class CameraScreenState extends State<CameraScreen>
   double _minAvailableExposureOffset = 0.0;
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
+  bool pageReplaced = false;
 
   late AnimationController _exposureModeControlRowAnimationController;
   late Animation<double> _exposureModeControlRowAnimation;
@@ -113,9 +114,9 @@ class CameraScreenState extends State<CameraScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
+    pageReplaced = false;
     _initialiseControllers();
-    getMedia();
+    // getMedia();
     if (cameras.isNotEmpty) {
       initCamera(cameras[0]);
     }
@@ -127,6 +128,7 @@ class CameraScreenState extends State<CameraScreen>
   @override
   void dispose() {
     debugPrint("CameraDisposed");
+    pageReplaced = true;
     if (cameraController != null) {
       cameraController!.dispose();
       _exposureModeControlRowAnimationController.dispose();
@@ -141,8 +143,10 @@ class CameraScreenState extends State<CameraScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (pageReplaced) {
+      return;
+    }
     debugPrint("LifecycleState: $state");
-
     if (state == AppLifecycleState.inactive) {
       if (cameraController != null && cameraController!.value.isInitialized) {
         cameraController!.dispose();
@@ -161,14 +165,24 @@ class CameraScreenState extends State<CameraScreen>
   }
 
   void requestPermission() async {
-    await Permission.storage.request();
+    PermissionStatus status = await Permission.audio.request();
+    if (status.isGranted) {
+      startAudioRecording();
+    } else if (status.isDenied || status.isPermanentlyDenied) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PermissionErrorScreen(
+                    permissionsStatus: {
+                      Permission.microphone: false,
+                    },
+                  )));
+    }
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
-    debugPrint("OInsideInitttt");
     cameraController = CameraController(cameraDescription, ResolutionPreset.max,
         imageFormatGroup: ImageFormatGroup.jpeg);
-    debugPrint("OInsideInitttt2222");
     cameraValue = null;
     cameraValue = cameraController!.initialize().then((_) async {
       debugPrint("Initialiseddddddd");
@@ -191,7 +205,15 @@ class CameraScreenState extends State<CameraScreen>
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-            // Handle access errors here.
+            pageReplaced = true;
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        PermissionErrorScreen(permissionsStatus: {
+                          Permission.camera: false,
+                          Permission.microphone: false,
+                        })));
             break;
           default:
             // Handle other errors here.
@@ -862,7 +884,15 @@ class CameraScreenState extends State<CameraScreen>
       }
       setState(() {});
     } else {
-      PhotoManager.openSetting();
+      //PhotoManager.openSetting();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PermissionErrorScreen(permissionsStatus: {
+                    Permission.camera: false,
+                    Permission.photos: false,
+                    Permission.microphone: false,
+                  })));
     }
   }
 
@@ -1396,7 +1426,6 @@ class CameraScreenState extends State<CameraScreen>
         recordTime();
       });
     } else {
-      debugPrint('PPPPPP');
       requestPermission();
       debugPrint('Permissions not granted');
     }

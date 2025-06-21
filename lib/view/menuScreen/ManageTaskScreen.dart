@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/utils/commonEnums.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -43,6 +44,7 @@ import '../dashboard/Dashboard.dart';
 import '../myEarning/MyEarningScreen.dart';
 import '../myEarning/TransactionDetailScreen.dart';
 import '../myEarning/earningDataModel.dart';
+import '../permission_error_screen.dart';
 import 'ContactUsScreen.dart';
 import 'FAQScreen.dart';
 import 'MyContentScreen.dart';
@@ -3053,69 +3055,116 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
             ),
 
             /// price
-            Container(
-              width: size.width * numD30,
-              padding: EdgeInsets.symmetric(vertical: size.width * numD012),
-              /*    padding: EdgeInsets.symmetric(
-                  horizontal: myContentData!.paidStatus == unPaidText
-                      ? size.width * numD06
-                      : myContentData!.paidStatus == paidText &&
-                              !myContentData!.isPaidStatusToHopper
-                          ? size.width * numD04
-                          : size.width * numD06,
-                  vertical: size.width * numD01),*/
-              decoration: BoxDecoration(
-                  color: widget.myContentData!.paidStatus == unPaidText
-                      ? colorThemePink
-                      : /*myContentData!.paidStatus == paidText &&
-                              !myContentData!.isPaidStatusToHopper
+            Column(
+              children: [
+                Container(
+                  width: size.width * numD30,
+                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  /*    padding: EdgeInsets.symmetric(
+                      horizontal: myContentData!.paidStatus == unPaidText
+                          ? size.width * numD06
+                          : myContentData!.paidStatus == paidText &&
+                                  !myContentData!.isPaidStatusToHopper
+                              ? size.width * numD04
+                              : size.width * numD06,
+                      vertical: size.width * numD01),*/
+                  decoration: BoxDecoration(
+                      color: widget.myContentData!.paidStatus == unPaidText
                           ? colorThemePink
-                          :*/
-                      colorLightGrey,
-                  borderRadius: BorderRadius.circular(size.width * numD03)),
-              child: Column(
-                children: [
-                  Text(
-                    widget.myContentData!.paidStatus == unPaidText
-                        ? 'Published Price'
-                        : widget.myContentData!.paidStatus == paidText &&
-                                widget.myContentData!.isPaidStatusToHopper
-                            ? receivedText
-                            : soldText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: widget.myContentData!.paidStatus == unPaidText
-                            ? Colors.white
-                            : Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  FittedBox(
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        left: size.width * numD02,
-                        right: size.width * numD02,
-                      ),
-                      child: Text(
-                        "$euroUniqueCode${formatDouble(double.parse(widget.myContentData!.amount))}",
+                          : /*myContentData!.paidStatus == paidText &&
+                                  !myContentData!.isPaidStatusToHopper
+                              ? colorThemePink
+                              :*/
+                          colorLightGrey,
+                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.myContentData!.paidStatus == unPaidText
+                            ? 'Published Price'
+                            : widget.myContentData!.paidStatus == paidText &&
+                                    widget.myContentData!.isPaidStatusToHopper
+                                ? receivedText
+                                : soldText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD05,
+                            fontSize: size.width * numD035,
                             color:
                                 widget.myContentData!.paidStatus == unPaidText
                                     ? Colors.white
                                     : Colors.black,
-                            fontWeight: FontWeight.bold),
-                        /*myContentData!.paidStatus == paidText &&
-                                        myContentData!.isPaidStatusToHopper
-                                    ?
-                        : Colors.white*/
+                            fontWeight: FontWeight.w400),
                       ),
-                    ),
+                      FittedBox(
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: size.width * numD02,
+                            right: size.width * numD02,
+                          ),
+                          child: Text(
+                            "$euroUniqueCode${formatDouble(double.parse(widget.myContentData!.amount))}",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD05,
+                                color: widget.myContentData!.paidStatus ==
+                                        unPaidText
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold),
+                            /*myContentData!.paidStatus == paidText &&
+                                            myContentData!.isPaidStatusToHopper
+                                        ?
+                            : Colors.white*/
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
+                ),
+                SizedBox(
+                  height: size.height * numD015,
+                ),
+                Container(
+                  width: size.width * numD30,
+                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  decoration: BoxDecoration(
+                      color: colorGreyChat,
+                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Total Earning',
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      FittedBox(
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: size.width * numD02,
+                            right: size.width * numD02,
+                          ),
+                          child: Text(
+                            "$euroUniqueCode${formatDouble(double.parse(widget.myContentData!.totalEarning))}",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD05,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                            /*myContentData!.paidStatus == paidText &&
+                                            myContentData!.isPaidStatusToHopper
+                                        ?
+                            : Colors.white*/
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ],
@@ -7045,7 +7094,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         }
       }
     } else {
-      debugPrint("Permission Denied");
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PermissionErrorScreen(
+                    permissionsStatus: {
+                      Permission.camera: false,
+                      Permission.microphone: false,
+                    },
+                  )));
     }
   }
 

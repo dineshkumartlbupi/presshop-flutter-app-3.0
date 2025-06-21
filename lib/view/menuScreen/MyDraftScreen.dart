@@ -950,7 +950,6 @@ class MyDraftData {
     if (categoryData != null) {
       count += 1;
     }
-    debugPrint("Count: $count");
     completionPercent = ((count * 14.286) / 100).round().toString();
     leftPercent = ((7 - count) * 14.286).round();
   }

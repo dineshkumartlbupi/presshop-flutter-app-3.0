@@ -664,69 +664,111 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
             ),
 
             /// price
-            Container(
-              width: size.width * numD30,
-              padding: EdgeInsets.symmetric(vertical: size.width * numD012),
-              decoration: BoxDecoration(
-                  color: myContentData!.paidStatus == unPaidText
-                      ? colorThemePink
-                      : /*myContentData!.paidStatus == paidText &&
-                              !myContentData!.isPaidStatusToHopper
+            Column(
+              children: [
+                Container(
+                  width: size.width * numD30,
+                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  decoration: BoxDecoration(
+                      color: myContentData!.paidStatus == unPaidText
                           ? colorThemePink
-                          :*/
-                      colorLightGrey,
-                  borderRadius: BorderRadius.circular(size.width * numD03)),
-              child: Column(
-                children: [
-                  Text(
-                    myContentData!.paidStatus == unPaidText
-                        ? 'Published Price'
-                        : myContentData!.paidStatus == paidText &&
-                                myContentData!.isPaidStatusToHopper
-                            ? receivedText
-                            : soldText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: myContentData!.paidStatus == unPaidText
-                            ? Colors.white
-                            : Colors.black,
-                        fontWeight: FontWeight.w400),
-                    /*myContentData!.paidStatus == unPaidText
-                            ? size.width * numD035
+                          : /*myContentData!.paidStatus == paidText &&
+                                  !myContentData!.isPaidStatusToHopper
+                              ? colorThemePink
+                              :*/
+                          colorLightGrey,
+                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                  child: Column(
+                    children: [
+                      Text(
+                        myContentData!.paidStatus == unPaidText
+                            ? 'Published Price'
                             : myContentData!.paidStatus == paidText &&
                                     myContentData!.isPaidStatusToHopper
-                                ? size.width * numD035
-                                : size.width * numD03,*/
-                    /*myContentData!.paidStatus == paidText &&
-                                    myContentData!.isPaidStatusToHopper
-                                ?
-                                : Colors.white*/
-                  ),
-                  FittedBox(
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        left: size.width * numD02,
-                        right: size.width * numD02,
-                      ),
-                      child: Text(
-                        "$euroUniqueCode${formatDouble(double.parse(myContentData!.amount))}",
+                                ? receivedText
+                                : soldText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD05,
+                            fontSize: size.width * numD035,
                             color: myContentData!.paidStatus == unPaidText
                                 ? Colors.white
                                 : Colors.black,
-                            fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.w400),
+                        /*myContentData!.paidStatus == unPaidText
+                                ? size.width * numD035
+                                : myContentData!.paidStatus == paidText &&
+                                        myContentData!.isPaidStatusToHopper
+                                    ? size.width * numD035
+                                    : size.width * numD03,*/
                         /*myContentData!.paidStatus == paidText &&
                                         myContentData!.isPaidStatusToHopper
                                     ?
-                        : Colors.white*/
+                                    : Colors.white*/
                       ),
-                    ),
+                      FittedBox(
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: size.width * numD02,
+                            right: size.width * numD02,
+                          ),
+                          child: Text(
+                            "$euroUniqueCode${formatDouble(double.parse(myContentData!.amount))}",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD05,
+                                color: myContentData!.paidStatus == unPaidText
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold),
+                            /*myContentData!.paidStatus == paidText &&
+                                            myContentData!.isPaidStatusToHopper
+                                        ?
+                            : Colors.white*/
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: size.height * numD015,
+                ),
+                Container(
+                  width: size.width * numD30,
+                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  decoration: BoxDecoration(
+                      color: colorGreyChat,
+                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Total Earning',
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      FittedBox(
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: size.width * numD02,
+                            right: size.width * numD02,
+                          ),
+                          child: Text(
+                            "$euroUniqueCode${formatDouble(double.parse(myContentData!.totalEarning))}",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD05,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             )
           ],
         ),

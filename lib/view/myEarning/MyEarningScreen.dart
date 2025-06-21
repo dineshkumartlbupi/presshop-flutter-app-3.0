@@ -643,7 +643,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD03),
                                     child: CachedNetworkImage(
-                                      imageUrl: item.contentImage,
+                                      imageUrl:
+                                          '${contentImageUrl}${item.contentDataList.first.media}',
                                       height: size.width * numD11,
                                       width: size.width * numD12,
                                       fit: BoxFit.cover,
@@ -912,6 +913,33 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               //     width: size.width * numD03,
                               //   ),
                               // ],
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD03),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      '${contentImageUrl}${item.contentDataList.first.media}',
+                                  height: size.width * numD11,
+                                  width: size.width * numD12,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Image.asset(
+                                    "assets/dummyImages/placeholderImage.png",
+                                    fit: BoxFit.cover,
+                                    height: size.width * numD11,
+                                    width: size.width * numD12,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    "assets/commonImages/no_image.jpg",
+                                    fit: BoxFit.cover,
+                                    height: size.width * numD11,
+                                    width: size.width * numD12,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * numD03,
+                              ),
                               ClipRRect(
                                 borderRadius:
                                     BorderRadius.circular(size.width * numD03),

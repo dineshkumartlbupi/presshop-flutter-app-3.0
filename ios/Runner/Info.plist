@@ -65,11 +65,11 @@
 <key>NSContactsUsageDescription</key>
 <string>May be used for inviting or sharing with contacts in future updates.</string>
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Allow PressHop to use your location for geotagging and task relevance.</string>
+<string>PressHop needs your location to display tasks in your area and to validate content submissions, even when running in the background.</string>
 <key>NSLocationAlwaysUsageDescription</key>
-<string>Allow location access in the background for content tagging.</string>
+<string>PressHop requires your location at all times to help match you with nearby tasks and to verify your location even when the app is in the background</string>
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Allow location access while using the app for content relevance.</string>
+<string>PressHop uses your location while the app is open to show local tasks, enable the camera for submissions, and ensure accurate task matching.</string>
 <key>NSMicrophoneUsageDescription</key>
 <string>Allow PressHop to record audio during video capture or interviews.</string>
 <key>NSMotionUsageDescription</key>

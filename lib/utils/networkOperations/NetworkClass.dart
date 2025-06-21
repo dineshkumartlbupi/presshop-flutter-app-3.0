@@ -64,7 +64,14 @@ class NetworkClass {
       var request = http.MultipartRequest(requestType, url);
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
-        request.headers.addAll({headerKey: headerToken});
+        var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+        // Add headers
+        request.headers.addAll({
+          headerKey: headerToken,
+          headerDeviceTypeKey:
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+          headerDeviceIdKey: deviceID
+        });
       }
 
       debugPrint("token ===>${request.headers}");
@@ -160,7 +167,14 @@ class NetworkClass {
 
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
-        request.headers.addAll({headerKey: headerToken});
+        var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+        // Add headers
+        request.headers.addAll({
+          headerKey: headerToken,
+          headerDeviceTypeKey:
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+          headerDeviceIdKey: deviceID
+        });
       }
       debugPrint("token=====> $headerToken");
       debugPrint("Filesss: ${request.files}");
@@ -260,7 +274,14 @@ class NetworkClass {
 
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
-        request.headers.addAll({headerKey: headerToken});
+        var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+        // Add headers
+        request.headers.addAll({
+          headerKey: headerToken,
+          headerDeviceTypeKey:
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+          headerDeviceIdKey: deviceID
+        });
       }
 
       debugPrint("HeadersAre: ${request.headers}");
@@ -383,7 +404,14 @@ class NetworkClass {
 
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
-        request.headers.addAll({headerKey: headerToken});
+        var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+        // Add headers
+        request.headers.addAll({
+          headerKey: headerToken,
+          headerDeviceTypeKey:
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+          headerDeviceIdKey: deviceID
+        });
       }
 
       debugPrint("Files::: ${request.files}");
@@ -459,7 +487,13 @@ class NetworkClass {
 
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
-        request.headers.addAll({headerKey: headerToken});
+        var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+        request.headers.addAll({
+          headerKey: headerToken,
+          headerDeviceTypeKey:
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+          headerDeviceIdKey: deviceID
+        });
       }
 
       debugPrint("Files::: ${request.files}");
