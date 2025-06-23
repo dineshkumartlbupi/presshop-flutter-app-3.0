@@ -7,14 +7,20 @@ import 'package:location/location.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/location_service.dart';
 
+import '../main.dart';
 import '../utils/Common.dart';
+import '../utils/CommonSharedPrefrence.dart';
+import '../utils/networkOperations/NetworkClass.dart';
+import '../utils/networkOperations/NetworkResponse.dart';
+import 'dashboard/Dashboard.dart';
 
 class LocationErrorScreen extends StatefulWidget {
   @override
   _LocationErrorScreenState createState() => _LocationErrorScreenState();
 }
 
-class _LocationErrorScreenState extends State<LocationErrorScreen> {
+class _LocationErrorScreenState extends State<LocationErrorScreen>
+    implements NetworkResponse {
   double latitude = 22.5744, longitude = 88.3629;
   late LocationService _locationService;
   bool isFetchingLocation =
@@ -54,7 +60,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                 ),
                 SizedBox(height: size.height * numD01),
                 Text(
-                  'We are unable to get your location. Until we have access to your location, We cannot proceed further. Sorry for the inconvenience.',
+                  'We are unable to get your location. Until we have access to your location, We cannot proceed further.',
                   textAlign: TextAlign.center,
                   style: commonTextStyle(
                       size: size,
@@ -67,7 +73,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                   height: size.width * numD12,
                   width: size.width * numD80,
                   child: commonElevatedButton(
-                    isFetchingLocation ? "Fetching..." : "Try Again",
+                    isFetchingLocation ? "Fetching..." : "Fetch Location",
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(size,
@@ -81,27 +87,26 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                       });
 
                       late LocationData? locationData;
-
-                      locationData =
-                          await _locationService.getCurrentLocation(context);
-                      // if (!kDebugMode) {
-                      //   showSnackBar(
-                      //     "Fetching Location...",
-                      //     "Please wait while we are trying to fetch your location. Be with us.",
-                      //     Colors.black,
-                      //     duration: Duration(seconds: 3),
-                      //   );
-                      //   locationData =
-                      //       await _locationService.getCurrentLocation(context);
-                      // } else {
-                      //   locationData = LocationData.fromMap({
-                      //     'latitude': latitude,
-                      //     'longitude': longitude,
-                      //     'accuracy': 100.0,
-                      //   });
-                      // }
+                      // Fetch the current location
+                      if (kDebugMode) {
+                        // For debugging purposes, use a fixed location
+                        locationData = LocationData.fromMap({
+                          'latitude': latitude,
+                          'longitude': longitude,
+                        });
+                      } else if (Platform.isIOS) {
+                        // For iOS, use the location service to get the current location
+                        locationData =
+                            await _locationService.getCurrentLocation(context);
+                      } else {
+                        locationData =
+                            await _locationService.getCurrentLocation(context);
+                      }
 
                       if (locationData != null) {
+                        callUpdateCurrentData(
+                            locationData.latitude!, locationData.longitude!);
+                        // Successfully fetched location, you can now use it
                         // Navigate to the next screen or perform the desired action
                         Navigator.pop(context, locationData);
                       } else {
@@ -123,17 +128,22 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                   height: size.width * numD12,
                   width: size.width * numD80,
                   child: commonElevatedButton(
-                    "Exit",
+                    "My Content",
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, Colors.black),
                     () async {
-                      if (Platform.isIOS) {
-                        await SystemChannels.platform
-                            .invokeMethod<void>('SystemNavigator.pop');
-                      } else {
-                        SystemNavigator.pop();
-                      }
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Dashboard(initialPosition: 0)),
+                          (route) => false);
+                      // if (Platform.isIOS) {
+                      //   await SystemChannels.platform
+                      //       .invokeMethod<void>('SystemNavigator.pop');
+                      // } else {
+                      //   SystemNavigator.pop();
+                      // }
                     },
                   ),
                 ),
@@ -154,5 +164,29 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
         ),
       ),
     );
+  }
+
+  void callUpdateCurrentData(double latitude, double longitude) {
+    Map<String, String> params = {
+      "hopper_id": sharedPreferences!.getString(hopperIdKey).toString(),
+      "longitude": longitude.toString(),
+      "latitude": latitude.toString()
+    };
+
+    debugPrint('map: $params');
+
+    NetworkClass.fromNetworkClass(
+            updateLocation, this, updateLocationRequest, params)
+        .callRequestServiceHeader(false, "post", null);
+  }
+
+  @override
+  void onError({required int requestCode, required String response}) {
+    // TODO: implement onError
+  }
+
+  @override
+  void onResponse({required int requestCode, required String response}) {
+    // TODO: implement onResponse
   }
 }

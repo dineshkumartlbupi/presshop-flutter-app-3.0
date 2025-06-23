@@ -2872,6 +2872,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
   /// add-content-api
   void callAddContentApi() {
+    log("callAddContentApi called" + DateTime.now().toString());
     List<String> tagsIdList = [];
     List<File> filesPath = [];
     List<String> selectMediaList = [];

@@ -7,7 +7,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
-import 'package:location/location.dart' as lc;
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
@@ -66,8 +65,6 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
       showApartmentNumberError = false,
       showPostalCodeError = false,
       isLoading = false;
-  lc.LocationData? locationData;
-  lc.Location location = lc.Location();
   FocusNode apartmentFocusNode = FocusNode();
 
   @override

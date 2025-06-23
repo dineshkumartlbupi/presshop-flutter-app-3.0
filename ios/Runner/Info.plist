@@ -33,6 +33,12 @@
 			</array>
 		</dict>
 	</array>
+	<key>FacebookAppID</key>
+	<string>4098273470461354</string>
+	<key>FacebookDisplayName</key>
+	<string>PressHop</string>
+	<key>FacebookClientToken</key>
+	<string>511f243cec6c666dc39a378e0eb084ef</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>

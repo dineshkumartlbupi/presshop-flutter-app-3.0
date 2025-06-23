@@ -211,17 +211,16 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                   height: size.width * numD12,
                   width: size.width * numD80,
                   child: commonElevatedButton(
-                    "Exit app",
+                    "My Content",
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, Colors.black),
                     () async {
-                      if (Platform.isIOS) {
-                        await SystemChannels.platform
-                            .invokeMethod<void>('SystemNavigator.pop');
-                      } else {
-                        SystemNavigator.pop();
-                      }
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Dashboard(initialPosition: 0)),
+                          (route) => false);
                     },
                   ),
                 ),

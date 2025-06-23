@@ -802,6 +802,12 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
               var bankList = map["user"]["bank_detail"] as List;
               debugPrint(
                   "InsideGov ====> $bankList::::${map["user"]["stripe_status"].toString()}");
+              facebookAppEvents.setUserData(
+                email: map["user"][emailKey],
+                phone: map["user"][phoneKey].toString(),
+                firstName: map["user"][firstNameKey],
+                lastName: map["user"][lastNameKey],
+              );
 
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(

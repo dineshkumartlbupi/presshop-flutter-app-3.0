@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="facebook_app_id">4098273470461354</string>
+  <string name="fb_login_protocol_scheme">fb4098273470461354</string>
+  <string name="app_name">PressHop</string>
+  <string name="facebook_client_token">511f243cec6c666dc39a378e0eb084ef</string>
+</resources>

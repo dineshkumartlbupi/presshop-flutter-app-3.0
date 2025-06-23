@@ -24,7 +24,6 @@ import '../../utils/location_service.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../cameraScreen/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
-import 'package:permission_handler/permission_handler.dart';
 
 import '../chatBotScreen/chatBotScreen.dart';
 
@@ -85,6 +84,14 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     /// Light statusBar mode-->
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     _locationService = LocationService();
+    facebookAppEvents.logEvent(
+      name: "dashboard_open",
+      parameters: {
+        "app_name": "Presshop",
+        "platform": Platform.operatingSystem,
+        "version": Platform.version,
+      },
+    );
     currentIndex = widget.initialPosition;
 
     if (widget.taskStatus == 'rejected') {
@@ -98,8 +105,8 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     if (sharedPreferences!.getString(adminRoomIdKey) == null) {
       callGetActiveAdmin();
     }
-    isGetLatLong = true;
-    requestLocationPermissions();
+    isGetLatLong = false;
+    // requestLocationPermissions();
     super.initState();
   }
 
@@ -237,7 +244,7 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
           ),
           body: Visibility(
             visible: !isGetLatLong,
-            replacement: showLoader(isForLocation: true),
+            replacement: showLoader(isForLocation: false),
             child: bottomNavigationScreens[currentIndex],
             //  )
           )),
@@ -377,11 +384,9 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
   requestLocationPermissions() async {
     try {
       locationData = await _locationService.getCurrentLocation(context);
-      debugPrint("GettingLocation ==> $locationData");
       if (locationData != null) {
         proceedWithLocation(locationData);
       } else {
-        debugPrint("Null-ll");
         goToLocationErrorScreen();
       }
     } on Exception catch (e) {
@@ -423,8 +428,6 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
         sharedPreferences!.setString(currentCountry, data.country);
         sharedPreferences!.setString(currentState, data.state);
         sharedPreferences!.setString(currentCity, data.city);
-        debugPrint(
-            "currentAddress: ${sharedPreferences!.getString(currentAddress)}");
 
         isGetLatLong = false;
         callUpdateCurrentData();

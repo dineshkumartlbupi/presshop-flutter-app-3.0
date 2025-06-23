@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,6 +29,7 @@ import 'firebase_options.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 GoogleSignIn googleSignIn = GoogleSignIn();
 bool rememberMe = false;
+FacebookAppEvents facebookAppEvents = FacebookAppEvents();
 SharedPreferences? sharedPreferences;
 
 const iOSLocalizedLabels = false;
@@ -38,6 +41,14 @@ List<MediaData> contentMediaList = [];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  facebookAppEvents.logEvent(
+    name: "app_open",
+    parameters: {
+      "app_name": "Presshop",
+      "platform": Platform.operatingSystem,
+      "version": Platform.version,
+    },
+  );
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark));
@@ -164,6 +175,7 @@ Future<void> uploadMediaUsingDio(
   }
 
   try {
+    log("callAddContentApi finished" + DateTime.now().toString());
     Response response = await dio.post(
       baseUrl + endUrl,
       data: formData,

@@ -3401,19 +3401,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
           return {...item, 'address': address};
         }).toList();
 
-        for (var item in dataModel) {
-          debugPrint('Media Type: ${item['media_type']}');
-          debugPrint('Media: ${item['media']}');
-          debugPrint('Hopper ID: ${item['hopper_id']}');
-        }
-
-        debugPrint("uploadedMediaList length:::::$dataModel");
-
-        // List<String>uploadedMediaList = [];
-        //  uploadedMediaList = dataModeldataModel.toList();
-
-        // imageId = data["data"] != null ? data["data"]["_id"] : "";
-        //debugPrint("imageID=========> $imageId");
         var mediaMap = {
           /*  "attachment": data["image_name"] ?? "",
           "watermark": data["watermark"] ?? "",
@@ -3429,7 +3416,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
           socketEvent: "media message",
           messageType: "media",
           dataMap: mediaMap,
-
           // mediaType: data["type"] ?? "image"
         );
 /*

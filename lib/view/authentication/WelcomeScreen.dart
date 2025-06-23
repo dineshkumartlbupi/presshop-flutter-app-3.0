@@ -246,6 +246,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                                 publishedContent: false,
                                 screenType: "welcome")));
                   } else {
+                    facebookAppEvents.setUserData(
+                      email: sharedPreferences!.getString(emailKey) ?? "",
+                      phone: sharedPreferences!.getString(phoneKey),
+                      firstName: sharedPreferences!.getString(firstNameKey),
+                      lastName: sharedPreferences!.getString(lastNameKey),
+                    );
                     Navigator.push(
                         context,
                         MaterialPageRoute(

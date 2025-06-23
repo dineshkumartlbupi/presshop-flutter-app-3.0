@@ -80,6 +80,7 @@ dependencies:
   dots_indicator: ^3.0.0
   socket_io_client: ^3.0.2
   dio: ^5.8.0+1
+  facebook_app_events: ^0.20.1
 #  contacts_service: ^0.6.3
   permission_handler: ^11.3.1
   webview_flutter: ^4.2.2

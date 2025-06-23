@@ -21,7 +21,6 @@ import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/commonEnums.dart';
 import 'package:presshop/view/cameraScreen/CustomGallary.dart';
 import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
-import 'package:location/location.dart' as lc;
 import 'package:record/record.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -70,9 +69,6 @@ class CameraScreenState extends State<CameraScreen>
 
   // Initialise
   double x = 0, y = 0, latitude = 0, longitude = 0;
-
-  lc.LocationData? locationData;
-  lc.Location location = lc.Location();
 
   String selectedType = photoText, recordingTime = "", mediaPath = "";
   bool notesSelected = false,

@@ -15,7 +15,6 @@ import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../dashboard/Dashboard.dart';
 import 'CameraScreen.dart';
-import 'package:location/location.dart' as lc;
 import 'package:path/path.dart' as p;
 
 class CustomGallery extends StatefulWidget {
@@ -51,8 +50,6 @@ class CustomGalleryState extends State<CustomGallery> {
 
   /// Prince
   int selectedIndex = 0;
-  lc.LocationData? locationData;
-  lc.Location location = lc.Location();
 
   @override
   void initState() {

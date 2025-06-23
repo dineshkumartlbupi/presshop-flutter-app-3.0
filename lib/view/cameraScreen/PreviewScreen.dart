@@ -3,13 +3,18 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder2/geocoder2.dart';
 import 'package:path/path.dart' as path;
+import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/VideoWidget.dart';
 import 'package:presshop/utils/commonEnums.dart';
+import 'package:presshop/utils/location_service.dart';
+import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/publishContentScreen/PublishContentScreen.dart';
 import 'package:video_player/video_player.dart';
-
+import 'package:location/location.dart';
+import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonWigdets.dart';
 import '../dashboard/Dashboard.dart';
 import '../menuScreen/MyContentScreen.dart';
@@ -47,25 +52,29 @@ class PreviewScreenState extends State<PreviewScreen> {
       mediaDate = "",
       country = "",
       state = "",
-      city = "";
+      city = "",
+      latitude = "",
+      longitude = "";
   AudioPlayer audioPlayer = AudioPlayer();
-
+  late LocationService _locationService;
+  late LocationData? locationData;
   int currentPage = 0;
-
   bool isLoading = false;
   bool videoPlaying = false, isMoreDisable = false;
+  bool isLocationFetching = false;
 
   List<MediaData> mediaList = [];
 
   @override
   void initState() {
+    _locationService = LocationService();
     debugPrint("class:::::$runtimeType");
     debugPrint("type:::::${widget.type}");
-    super.initState();
     addMediaDataList(widget.cameraListData);
     if (widget.mediaList.isNotEmpty) {
       mediaList = widget.mediaList;
     }
+    super.initState();
   }
 
   @override
@@ -74,6 +83,85 @@ class PreviewScreenState extends State<PreviewScreen> {
       _controller!.dispose();
     }
     super.dispose();
+  }
+
+  void proceedWithLocation(LocationData? locationData) async {
+    if (locationData != null) {
+      debugPrint("NotNull");
+      if (locationData.latitude != null) {
+        var latitude = locationData.latitude!;
+        var longitude = locationData.longitude!;
+        GeoData data = await Geocoder2.getDataFromCoordinates(
+            latitude: latitude,
+            longitude: longitude,
+            googleMapApiKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
+
+        debugPrint("address=====> ${data.address}");
+        sharedPreferences!.setDouble(currentLat, latitude);
+        sharedPreferences!.setDouble(currentLon, longitude);
+        sharedPreferences!.setString(currentAddress, data.address);
+        sharedPreferences!.setString(currentCountry, data.country);
+        sharedPreferences!.setString(currentState, data.state);
+        sharedPreferences!.setString(currentCity, data.city);
+        //callUpdateCurrentData();
+        setState(() {
+          for (var media in mediaList) {
+            media.latitude = latitude.toString();
+            media.longitude = longitude.toString();
+            media.location = data.address;
+          }
+          mediaAddress = data.address;
+          country = data.country;
+          state = data.state;
+          city = data.city;
+          this.latitude = latitude.toString();
+          this.longitude = longitude.toString();
+          isLocationFetching = false;
+        });
+      }
+    } else {
+      debugPrint("Null-ll");
+      showSnackBar("Location Error", "nullLocationText", Colors.black);
+    }
+  }
+
+  requestLocationPermissions() async {
+    try {
+      setState(() {
+        isLocationFetching = true;
+      });
+      locationData = await _locationService.getCurrentLocation(context);
+      if (locationData != null) {
+        isLocationFetching = false;
+        proceedWithLocation(locationData);
+        setState(() {
+          isLocationFetching = false;
+        });
+      } else {
+        isLocationFetching = false;
+
+        goToLocationErrorScreen();
+      }
+    } on Exception catch (e) {
+      isLocationFetching = false;
+      goToLocationErrorScreen();
+    }
+  }
+
+  void goToLocationErrorScreen() {
+    Navigator.of(navigatorKey.currentContext!)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => LocationErrorScreen(),
+      ),
+    )
+        .then((value) {
+      if (value != null) {
+        proceedWithLocation(value);
+      } else {
+        debugPrint("Location Error");
+      }
+    });
   }
 
   @override
@@ -107,8 +195,6 @@ class PreviewScreenState extends State<PreviewScreen> {
                     setState(() {});
                   },
                   itemBuilder: (context, index) {
-                    debugPrint("media:::::${mediaList[index].mimeType}");
-                    debugPrint("mediaList length:::::${mediaList.length}");
                     return InteractiveViewer(
                       scaleEnabled:
                           mediaList[index].mimeType == "image" ? true : false,
@@ -222,101 +308,6 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                           gaplessPlayback: true,
                                                         ),
                                             ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                bottom: mediaList[index].mimeType == "video"
-                                    ? size.width * numD11
-                                    : mediaList[index].mimeType == "audio"
-                                        ? size.width * numD03
-                                        : mediaList[index].mimeType == "image"
-                                            ? size.width * numD03
-                                            : 0),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: mediaList[index].mimeType == "audio"
-                                    ? size.width * numD02
-                                    : size.width * numD04),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      height: size.width * numD11,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_clock.png",
-                                            width: size.width * numD04,
-                                            height: size.width * numD04,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD02,
-                                          ),
-                                          Text(
-                                            mediaList[index].dateTime,
-                                            // ,dateTimeFormatter(
-                                            //   dateTime:
-                                            //       mediaList[index].dateTime,
-                                            //   format: "dd MMM yyyy hh:mm a",
-                                            // ),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD025,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.normal),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD04,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                      height: size.width * numD11,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_location.png",
-                                            width: size.width * numD04,
-                                            height: size.width * numD04,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD02,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD25,
-                                            child: Text(
-                                              mediaList[index].location,
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD025,
-                                                  color: Colors.black,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ),
                           !mediaList[index].mimeType.contains("audio")
                               ? Positioned(
                                   top: 0,
@@ -396,7 +387,137 @@ class PreviewScreenState extends State<PreviewScreen> {
                                     ),
                                   )
                                 : Container(),
-                          )
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                bottom: mediaList[index].mimeType == "video"
+                                    ? size.width * numD11
+                                    : mediaList[index].mimeType == "audio"
+                                        ? size.width * numD03
+                                        : mediaList[index].mimeType == "image"
+                                            ? size.width * numD03
+                                            : 0),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * numD04,
+                                vertical: mediaList[index].mimeType == "audio"
+                                    ? size.width * numD02
+                                    : size.width * numD04),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      height: size.width * numD11,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD04)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "${iconsPath}ic_clock.png",
+                                            width: size.width * numD04,
+                                            height: size.width * numD04,
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD02,
+                                          ),
+                                          Text(
+                                            mediaList[index].dateTime,
+                                            // ,dateTimeFormatter(
+                                            //   dateTime:
+                                            //       mediaList[index].dateTime,
+                                            //   format: "dd MMM yyyy hh:mm a",
+                                            // ),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD025,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          )
+                                        ],
+                                      )),
+                                ),
+                                SizedBox(
+                                  width: size.width * numD04,
+                                ),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () {
+                                      if (mediaList[index].location.isEmpty &&
+                                          !isLocationFetching) {
+                                        showToast(
+                                            "Location fetching please wait...");
+                                        requestLocationPermissions();
+                                      }
+                                    },
+                                    child: Container(
+                                        height: size.width * numD11,
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[100],
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD04)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "${iconsPath}ic_location.png",
+                                              width: size.width * numD04,
+                                              height: size.width * numD04,
+                                              color: mediaList[index]
+                                                      .location
+                                                      .isEmpty
+                                                  ? isLocationFetching
+                                                      ? colorGrey6
+                                                      : Colors.red
+                                                  : Colors.black,
+                                            ),
+                                            SizedBox(
+                                              width: size.width * numD02,
+                                            ),
+                                            SizedBox(
+                                              width: size.width * numD25,
+                                              child: Text(
+                                                mediaList[index]
+                                                        .location
+                                                        .isEmpty
+                                                    ? isLocationFetching
+                                                        ? "Fetching..."
+                                                        : "Tap to add location"
+                                                    : mediaList[index].location,
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: mediaList[index]
+                                                            .location
+                                                            .isEmpty
+                                                        ? size.width * numD025
+                                                        : size.width * numD025,
+                                                    color: mediaList[index]
+                                                            .location
+                                                            .isEmpty
+                                                        ? isLocationFetching
+                                                            ? colorGrey6
+                                                            : Colors.red
+                                                        : Colors.black,
+                                                    fontWeight: mediaList[index]
+                                                            .location
+                                                            .isEmpty
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )
+                                          ],
+                                        )),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -513,10 +634,12 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                 ? country
                                                 : widget.cameraListData.first
                                                     .country,
-                                            latitude:
-                                                widget.cameraData!.latitude,
-                                            longitude:
-                                                widget.cameraData!.longitude,
+                                            latitude: latitude.isNotEmpty
+                                                ? latitude
+                                                : widget.cameraData!.latitude,
+                                            longitude: longitude.isNotEmpty
+                                                ? longitude
+                                                : widget.cameraData!.longitude,
                                             mimeType:
                                                 widget.cameraData!.mimeType,
                                             videoImagePath: widget
@@ -533,12 +656,12 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                   .cameraListData.first.path,
                                           address: mediaAddress.isNotEmpty
                                               ? mediaAddress
-                                              : widget.cameraListData.first
-                                                  .location,
+                                              : widget
+                                                  .cameraListData.first.location,
                                           date: mediaDate.isNotEmpty
                                               ? mediaDate
-                                              : widget.cameraListData.first
-                                                  .dateTime,
+                                              : widget
+                                                  .cameraListData.first.dateTime,
                                           city: city.isNotEmpty
                                               ? city
                                               : widget
@@ -551,16 +674,30 @@ class PreviewScreenState extends State<PreviewScreen> {
                                               ? country
                                               : widget
                                                   .cameraListData.first.country,
-                                          latitude: widget.cameraData != null
-                                              ? widget.cameraData!.latitude
+                                          latitude: latitude.isNotEmpty
+                                              ? latitude
+                                              : widget.cameraData != null
+                                                  ? widget.cameraData!.latitude
+                                                  : widget.cameraListData.first
+                                                      .latitude,
+                                          longitude: longitude.isNotEmpty
+                                              ? longitude
+                                              : widget.cameraData != null
+                                                  ? widget.cameraData!.longitude
+                                                  : widget.cameraListData.first
+                                                      .longitude,
+                                          mimeType: widget.cameraData != null
+                                              ? widget.cameraData!.mimeType
                                               : widget.cameraListData.first
-                                                  .latitude,
-                                          longitude: widget.cameraData != null
-                                              ? widget.cameraData!.longitude
-                                              : widget.cameraListData.first.longitude,
-                                          mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
-                                          videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
-                                          mediaList: mediaList.where((media) => media.isLocalMedia).toList());
+                                                  .mimeType,
+                                          videoImagePath: widget.cameraData != null
+                                              ? widget
+                                                  .cameraData!.videoImagePath
+                                              : widget.cameraListData.first
+                                                  .videoImagePath,
+                                          mediaList: mediaList
+                                              .where((media) => media.isLocalMedia)
+                                              .toList());
 
                                       debugPrint("pubData $pubData");
 
@@ -678,7 +815,10 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                 ? mediaAddress
                                                 : widget.cameraListData.first
                                                     .location,
-                                            date: mediaDate,
+                                            date: mediaDate.isNotEmpty
+                                                ? mediaDate
+                                                : widget.cameraListData.first
+                                                    .dateTime,
                                             city: city.isNotEmpty
                                                 ? city
                                                 : widget
