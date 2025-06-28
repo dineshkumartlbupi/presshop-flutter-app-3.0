@@ -647,6 +647,12 @@ class PreviewScreenState extends State<PreviewScreen> {
                                             mediaList: mediaList));
                                   }
                                 } else {
+                                  if (mediaList.first.location.isEmpty ||
+                                      mediaList.first.latitude.isEmpty) {
+                                    showToast(
+                                        "Please add location to the media");
+                                    return;
+                                  }
                                   if (mediaList.isNotEmpty) {
                                     if (widget.cameraListData.isNotEmpty) {
                                       var pubData = PublishData(
@@ -842,6 +848,12 @@ class PreviewScreenState extends State<PreviewScreen> {
                                             mediaList: mediaList));
                                   }
                                 } else {
+                                  if (mediaList.first.location.isEmpty ||
+                                      mediaList.first.latitude.isEmpty) {
+                                    showToast(
+                                        "Please add location to the media");
+                                    return;
+                                  }
                                   if (mediaList.isNotEmpty) {
                                     if (widget.cameraListData.isNotEmpty) {
                                       Navigator.of(context).push(MaterialPageRoute(
@@ -867,8 +879,8 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                       : widget.cameraListData.first.city,
                                                   state: state.isNotEmpty ? state : widget.cameraListData.first.state,
                                                   country: country.isNotEmpty ? country : widget.cameraListData.first.country,
-                                                  latitude: widget.cameraData != null ? widget.cameraData!.latitude : widget.cameraListData.first.latitude,
-                                                  longitude: widget.cameraData != null ? widget.cameraData!.longitude : widget.cameraListData.first.longitude,
+                                                  latitude: widget.cameraData != null ? mediaList.first.latitude : latitude,
+                                                  longitude: widget.cameraData != null ? mediaList.first.longitude : longitude,
                                                   mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
                                                   videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
                                                   mediaList: mediaList),

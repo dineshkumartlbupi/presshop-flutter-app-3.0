@@ -775,17 +775,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                         onTap: () async {
                           Uri twitterUrl = Uri.parse(
                               'https://twitter.com/Presshopuk'); // Replace with the desired Twitter URL
-
-                          if (await canLaunchUrl(twitterUrl)) {
-                            await launchUrl(twitterUrl);
-                          } else {
-                            showSnackBar(
-                                'PressHope',
-                                "Twitter is not installed on this device",
-                                Colors.red);
-                            // Handle the case when the URL can't be launched.
-                            throw ('Error launching SMS');
-                          }
+                          await launchUrl(twitterUrl);
                         },
                         child: Container(
                           height: size.width * numD1,
@@ -805,16 +795,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                         onTap: () async {
                           Uri linkedUrl = Uri.parse(
                               'https://www.linkedin.com/company/presshop/');
-                          if (await canLaunchUrl(linkedUrl)) {
-                            await launchUrl(linkedUrl);
-                          } else {
-                            showSnackBar(
-                                'PressHope',
-                                "LinkedUrl is not installed on this device",
-                                Colors.red);
-                            // Handle the case when the URL can't be launched.
-                            throw ('Error launching SMS');
-                          }
+                          await launchUrl(linkedUrl);
                         },
                         child: Container(
                           height: size.width * numD1,
@@ -838,17 +819,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                               taskName: "Share");*/
                           Uri instagramUrl = Uri.parse(
                               'https://www.instagram.com/presshopuk/'); // Replace with the desired Twitter URL
-
-                          if (await canLaunchUrl(instagramUrl)) {
-                            await launchUrl(instagramUrl);
-                          } else {
-                            showSnackBar(
-                                'PressHope',
-                                "Instagram is not installed on this device",
-                                Colors.red);
-                            // Handle the case when the URL can't be launched.
-                            throw ('Error launching SMS');
-                          }
+                          await launchUrl(instagramUrl);
                         },
                         child: Container(
                           height: size.width * numD1,
@@ -866,16 +837,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                         onTap: () async {
                           Uri facebookUrl = Uri.parse(
                               'https://www.facebook.com/presshopuk/'); // Replace with the desired Twitter URL
-
-                          if (await canLaunchUrl(facebookUrl)) {
-                            await launchUrl(facebookUrl);
-                          } else {
-                            showSnackBar(
-                                'PressHope',
-                                "Facebook is not installed on this device",
-                                Colors.red);
-                            throw ('Error launching SMS');
-                          }
+                          await launchUrl(facebookUrl);
                         },
                         child: Container(
                           height: size.width * numD1,

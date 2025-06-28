@@ -4,11 +4,9 @@ import 'dart:io';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
-import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
 import 'package:record/record.dart';
 
 import '../../main.dart';
@@ -241,7 +239,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
 
       File(filepath).createSync();
 
-      if(File(filepath).existsSync()){
+      if (File(filepath).existsSync()) {
         await recorderController.record(path: filepath).then((value) {
           recordTime();
         });
@@ -261,7 +259,8 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
       isAudioRecording = false;
 
       if (path!.isNotEmpty) {
-        Navigator.pop(navigatorKey.currentState!.context, [path,recordingTime]);
+        Navigator.pop(
+            navigatorKey.currentState!.context, [path, recordingTime]);
       }
     } else {
       if (recorderController.isRecording) {

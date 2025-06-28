@@ -60,16 +60,14 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
-	<key>NSAppleMusicUsageDescription</key>
-<string>Allow PressHop to access Apple Music for audio use in content.</string>
-<key>NSBluetoothAlwaysUsageDescription</key>
-<string>This is required due to libraries used by the app. We do not access Bluetooth.</string>
+<key>NSAppleMusicUsageDescription</key>
+<string>PressHop needs access to your Apple Music so that you can add background audio or music to your content before uploading.</string>
 <key>NSCalendarsUsageDescription</key>
 <string>Allow PressHop to access your calendar for reminders and scheduling.</string>
 <key>NSCameraUsageDescription</key>
 <string>Allow PressHop to use the camera for taking photos and videos for news content submissions.</string>
 <key>NSContactsUsageDescription</key>
-<string>May be used for inviting or sharing with contacts in future updates.</string>
+<string>We needs access to your contacts so you can invite friends or share content with people you trust in future updates.</string>
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 <string>PressHop needs your location to display tasks in your area and to validate content submissions, even when running in the background.</string>
 <key>NSLocationAlwaysUsageDescription</key>
@@ -83,16 +81,15 @@
 <key>NSPhotoLibraryAddUsageDescription</key>
 <string>Allow saving captured content to your device's gallery.</string>
 <key>NSPhotoLibraryUsageDescription</key>
-<string>Allow PressHop to access your gallery to upload content.</string>
+<string>We need permission to access your photo library so that you can upload and sell your photos and videos instantly.</string>
 <key>NSSpeechRecognitionUsageDescription</key>
-<string>Allow speech-to-text for audio captions and future features.</string>
+<string>We need speech recognition to let you convert your voice into text for audio captions and to support future features. Your voice data is handled securely and never stored without consent.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
-		<string>audio</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>

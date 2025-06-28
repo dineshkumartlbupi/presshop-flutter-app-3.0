@@ -44,16 +44,16 @@ Future<bool> locationPermission() async {
       return true;
 
     case permission.PermissionStatus.restricted:
-      Navigator.pop(navigatorKey.currentContext!);
+      //Navigator.pop(navigatorKey.currentContext!);
       const SnackBar(content: Text("Please Enable Location"));
       return false;
     case permission.PermissionStatus.permanentlyDenied:
-      Navigator.pop(navigatorKey.currentContext!);
+      // Navigator.pop(navigatorKey.currentContext!);
       const SnackBar(content: Text("Please Enable Location"));
       return false;
 
     case permission.PermissionStatus.limited:
-      Navigator.pop(navigatorKey.currentContext!);
+      // Navigator.pop(navigatorKey.currentContext!);
       const SnackBar(content: Text("Please Enable Location"));
       return false;
     default:

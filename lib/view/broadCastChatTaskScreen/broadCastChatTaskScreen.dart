@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
+import 'package:presshop/utils/location_service.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/cameraScreen/AudioWaveFormWidgetScreen.dart';
 
@@ -94,7 +95,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
   void getCurrentLocation() async {
     try {
-      locationData = await location.getLocation();
+      locationData = await LocationService()
+          .getCurrentLocation(context, shouldShowSettingPopup: false);
       debugPrint("GettingLocation ==> $locationData");
       if (locationData != null) {
         debugPrint("NotNull");
@@ -208,6 +210,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           commonButtonTextStyle(size),
                           commonButtonStyle(size, Colors.black), () {
                         showGallaryChooser();
+                        // LocationService()
+                        //     .getCurrentLocation(context)
+                        //     .then((locationData) {
+                        //   if (locationData != null) {
+                        //     showGallaryChooser();
+                        //   }
+                        // });
                       }),
                     ),
                   ),
@@ -239,9 +248,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                 MediaData(
                                   isFromGallery: element.fromGallary,
                                   dateTime: "",
-                                  latitude: "",
-                                  location: "",
-                                  longitude: "",
+                                  latitude: latitude.toString(),
+                                  location: address,
+                                  longitude: longitude.toString(),
                                   mediaPath: element.path,
                                   mimeType: element.mimeType,
                                   thumbnail: "",
@@ -3133,9 +3142,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
             MediaData(
               isFromGallery: true,
               dateTime: "",
-              latitude: "",
-              location: "",
-              longitude: "",
+              latitude: latitude.toString(),
+              location: address,
+              longitude: longitude.toString(),
               mediaPath: filePath,
               mimeType: mimeType!,
               thumbnail: "",
@@ -3248,9 +3257,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                       MediaData(
                                         isFromGallery: element.fromGallary,
                                         dateTime: "",
-                                        latitude: "",
-                                        location: "",
-                                        longitude: "",
+                                        latitude: latitude.toString(),
+                                        location: address,
+                                        longitude: longitude.toString(),
                                         mediaPath: element.path,
                                         mimeType: element.mimeType,
                                         thumbnail: "",

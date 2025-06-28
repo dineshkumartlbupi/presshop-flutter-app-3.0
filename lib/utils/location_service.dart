@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
@@ -7,14 +8,19 @@ class LocationService {
   final Location _location = Location();
 
   // Check and request location permission
-  Future<bool> _requestLocationPermission(BuildContext context) async {
-    var status = await Permission.locationWhenInUse.request();
+  Future<bool> _requestLocationPermission(
+      BuildContext context, bool shouldShowSettingPopup) async {
+    var status = await Permission.location.request();
     if (status.isGranted) {
       return true;
     } else if (status.isDenied) {
       return false;
     } else if (status.isPermanentlyDenied) {
-      await _showLocationMandatoryDialog(context);
+      if (shouldShowSettingPopup) {
+        await _showLocationMandatoryDialog(context);
+      } else {
+        return false;
+      }
     }
     return false;
   }
@@ -27,7 +33,8 @@ class LocationService {
         MediaQuery.of(context).size,
         "This app needs access to your location to provide its features. Please enable location permission in your app settings",
         "Location permission required", () {
-      openAppSettings().then((value) => {Navigator.pop(context)});
+      Navigator.pop(context);
+      openAppSettings();
     });
   }
 
@@ -44,9 +51,11 @@ class LocationService {
   }
 
   // Fetch current location
-  Future<LocationData?> getCurrentLocation(BuildContext context) async {
+  Future<LocationData?> getCurrentLocation(BuildContext context,
+      {bool shouldShowSettingPopup = true}) async {
     // Request permission
-    bool hasPermission = await _requestLocationPermission(context);
+    bool hasPermission =
+        await _requestLocationPermission(context, shouldShowSettingPopup);
     if (!hasPermission) {
       return null;
     }
@@ -59,11 +68,19 @@ class LocationService {
 
     // Fetch location
     try {
-      LocationData? locationData = await Future.any([
-        _location.getLocation(),
+      geolocator.Position? position = await Future.any([
+        geolocator.Geolocator.getCurrentPosition(
+            desiredAccuracy: geolocator.LocationAccuracy.medium),
         Future.delayed(Duration(seconds: 6), () => null),
       ]);
-      return locationData;
+      if (position == null) {
+        return null; // Timeout or no position available
+      } else {
+        return LocationData.fromMap({
+          'latitude': position.latitude,
+          'longitude': position.longitude,
+        });
+      }
     } catch (e) {
       return null;
     }

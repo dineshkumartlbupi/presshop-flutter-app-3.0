@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:presshop/utils/location_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/AnimatedButton.dart';
@@ -1060,10 +1061,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
 
   /// Current Lat Lng
   void getCurrentLocation() async {
-    bool serviceEnable = await checkGps();
-    bool locationEnable = await locationPermission();
-    if (serviceEnable && locationEnable) {
-      LocationData loc = await Location.instance.getLocation();
+    LocationData? loc = await LocationService()
+        .getCurrentLocation(context, shouldShowSettingPopup: false);
+    if (loc != null) {
       setState(() {
         _latLng = LatLng(loc.latitude!, loc.longitude!);
         debugPrint("_longitude: $_latLng");

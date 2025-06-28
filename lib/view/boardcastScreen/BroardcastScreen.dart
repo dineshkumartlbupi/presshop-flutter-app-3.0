@@ -12,6 +12,7 @@ import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
+import 'package:presshop/utils/location_service.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
@@ -75,7 +76,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     getAllIcons();
     debugPrint("Class Name : $runtimeType");
     getCurrentLocation();
-    requestContactsPermission();
+    //requestContactsPermission();
     super.initState();
   }
 
@@ -1225,10 +1226,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
   /// Current Lat Lng
   void getCurrentLocation() async {
-    bool serviceEnable = await checkGps();
-    bool locationEnable = await locationPermission();
-    if (serviceEnable && locationEnable) {
-      LocationData loc = await Location.instance.getLocation();
+    LocationData? loc = await LocationService().getCurrentLocation(context);
+    if (loc != null) {
       // LocationData loc =
       //     LocationData.fromMap({"latitude": latitude, "longitude": longitude});
       setState(() {

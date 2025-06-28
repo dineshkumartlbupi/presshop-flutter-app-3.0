@@ -87,21 +87,9 @@ class _LocationErrorScreenState extends State<LocationErrorScreen>
                       });
 
                       late LocationData? locationData;
-                      // Fetch the current location
-                      if (kDebugMode) {
-                        // For debugging purposes, use a fixed location
-                        locationData = LocationData.fromMap({
-                          'latitude': latitude,
-                          'longitude': longitude,
-                        });
-                      } else if (Platform.isIOS) {
-                        // For iOS, use the location service to get the current location
-                        locationData =
-                            await _locationService.getCurrentLocation(context);
-                      } else {
-                        locationData =
-                            await _locationService.getCurrentLocation(context);
-                      }
+
+                      locationData =
+                          await _locationService.getCurrentLocation(context);
 
                       if (locationData != null) {
                         callUpdateCurrentData(
@@ -112,12 +100,6 @@ class _LocationErrorScreenState extends State<LocationErrorScreen>
                       } else {
                         setState(() {
                           isFetchingLocation = false;
-                          showSnackBar(
-                            "Location Failed.",
-                            "Sorry, we are unable to fetch your location. Kindly check your permission and turn on your GPS. Then please try again later.",
-                            Colors.red,
-                            duration: Duration(seconds: 3),
-                          );
                         });
                       }
                     },

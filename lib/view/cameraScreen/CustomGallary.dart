@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../dashboard/Dashboard.dart';
+import '../permission_error_screen.dart';
 import 'CameraScreen.dart';
 import 'package:path/path.dart' as p;
 
@@ -384,9 +386,12 @@ class CustomGalleryState extends State<CustomGallery> {
         return;
       }
     } else {
-      /// if result is fail, you can call `PhotoManager.openSetting();`
-      /// to open android/ios application's setting to get permission
-      PhotoManager.openSetting();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PermissionErrorScreen(permissionsStatus: {
+                    Permission.photos: false,
+                  })));
     }
   }
 
