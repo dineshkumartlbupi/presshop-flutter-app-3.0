@@ -7,14 +7,12 @@ import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/commonWebView.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
-import 'package:presshop/view/bankScreens/EditBankScreen.dart';
 
 import '../../main.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
-import 'AddBankScreen.dart';
 
 class MyBanksScreen extends StatefulWidget {
   const MyBanksScreen({super.key});
@@ -116,330 +114,338 @@ class MyBanksScreenState extends State<MyBanksScreen>
   }
 
   Widget upliftAccountsPaymentDesign(Size size) {
-    return Padding(
-      padding: EdgeInsets.all(size.width * numD05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Hi ${sharedPreferences!.getString(userNameKey)}",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * numD06,
-                  fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: size.height * numD04,
-          ),
-          Image.asset(
-            "${iconsPath}payment_page_icon_2.png",
-          ),
-          SizedBox(
-            height: size.width * numD02,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: colorLightWhite,
-              borderRadius: BorderRadius.circular(size.width * numD03),
-              border: Border.all(color: Colors.black),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(size.width * numD05),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Hi ${sharedPreferences!.getString(userNameKey)}",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: size.width * numD05,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              height: size.height * numD03,
             ),
-            padding: EdgeInsets.all(size.width * numD04),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Manage your bank account on Stripe",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: size.width * numD033,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                Container(
-                    decoration: BoxDecoration(
-                      color: colorLightWhite,
-                      borderRadius: BorderRadius.circular(size.width * numD03),
-                      border: Border.all(color: Colors.black),
-                    ),
-                    padding: EdgeInsets.all(size.width * numD02),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD02),
-                              child: Image.network(
-                                myBankList[0].bankImage,
-                                height: size.width * numD11,
-                                width: size.width * numD11,
-                                fit: BoxFit.contain,
-                                errorBuilder: (c, s, o) {
-                                  return Container(
-                                    height: size.width * numD11,
-                                    width: size.width * numD11,
-                                    decoration: BoxDecoration(
-                                      color: colorLightGrey,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD02),
-                                    ),
-                                  );
-                                },
+            Center(
+              child: Image.asset(
+                "${iconsPath}payment_page_icon_2.png",
+              ),
+            ),
+            SizedBox(
+              height: size.width * numD02,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: colorLightWhite,
+                borderRadius: BorderRadius.circular(size.width * numD03),
+                border: Border.all(color: Colors.black),
+              ),
+              padding: EdgeInsets.all(size.width * numD04),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Manage your bank account on Stripe",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: size.width * numD033,
+                          fontWeight: FontWeight.bold)),
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+                  Container(
+                      decoration: BoxDecoration(
+                        color: colorLightWhite,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD03),
+                        border: Border.all(color: Colors.black),
+                      ),
+                      padding: EdgeInsets.all(size.width * numD02),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD02),
+                                child: Image.network(
+                                  myBankList[0].bankImage,
+                                  height: size.width * numD11,
+                                  width: size.width * numD11,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (c, s, o) {
+                                    return Container(
+                                      height: size.width * numD11,
+                                      width: size.width * numD11,
+                                      decoration: BoxDecoration(
+                                        color: colorLightGrey,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD02),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: size.width * numD02,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      myBankList[0].bankName,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: size.width * numD028,
-                                          fontFamily: "AirbnbCereal",
-                                          overflow: TextOverflow.ellipsis,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD01,
-                                    ),
-                                    Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical:
-                                                2), // Adjust padding for tag size
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey[
-                                              100], // Background color of the tag
-                                          borderRadius: BorderRadius.circular(
-                                              5), // Rounded corners
-                                        ),
-                                        child: Text(
-                                          myBankList[0].curreny.toUpperCase(),
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: size.width * numD028,
-                                              fontFamily: "AirbnbCereal",
-                                              overflow: TextOverflow.ellipsis,
-                                              fontWeight: FontWeight.normal),
-                                        ))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.width * numD015,
-                                ),
-                                Text(
-                                  "********${myBankList[0].accountNumber}",
+                              SizedBox(
+                                width: size.width * numD02,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        myBankList[0].bankName,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: size.width * numD028,
+                                            fontFamily: "AirbnbCereal",
+                                            overflow: TextOverflow.ellipsis,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      SizedBox(
+                                        width: size.width * numD01,
+                                      ),
+                                      Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical:
+                                                  2), // Adjust padding for tag size
+                                          decoration: BoxDecoration(
+                                            color: Colors.blueGrey[
+                                                100], // Background color of the tag
+                                            borderRadius: BorderRadius.circular(
+                                                5), // Rounded corners
+                                          ),
+                                          child: Text(
+                                            myBankList[0].curreny.toUpperCase(),
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: size.width * numD028,
+                                                fontFamily: "AirbnbCereal",
+                                                overflow: TextOverflow.ellipsis,
+                                                fontWeight: FontWeight.normal),
+                                          ))
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.width * numD015,
+                                  ),
+                                  Text(
+                                    "********${myBankList[0].accountNumber}",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD025,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD028,
+                                    vertical: size.width * numD01),
+                                decoration: BoxDecoration(
+                                    color: colorThemePink,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03)),
+                                child: Text(
+                                  defaultText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD025,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
+                                      fontSize: size.width * numD028,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD028,
-                                  vertical: size.width * numD01),
-                              decoration: BoxDecoration(
-                                  color: colorThemePink,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03)),
-                              child: Text(
-                                defaultText,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD028,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: size.width * 0.014),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD028,
-                                  vertical: size.width * 0.008),
-                              decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03)),
-                              child: Text(
-                                "Verified",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD028,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    )),
-                SizedBox(
-                  height: size.width * numD02,
+                              Container(
+                                margin:
+                                    EdgeInsets.only(top: size.width * 0.014),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD028,
+                                    vertical: size.width * 0.008),
+                                decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03)),
+                                child: Text(
+                                  "Verified",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD028,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      )),
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text:
+                              "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: size.width * numD032,
+                              fontWeight: FontWeight.normal)),
+                      TextSpan(
+                          text:
+                              "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: size.width * numD032,
+                              fontWeight: FontWeight.normal)),
+                    ],
+                  )),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * numD06,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: size.width * numD06,
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: size.width * numD13,
+                    child: commonElevatedButton(
+                        "Update Your Details",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size, Colors.black), () {
+                      generateAddBankApi();
+                    }),
+                  ),
                 ),
-                RichText(
-                    text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text:
-                            "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: size.width * numD032,
-                            fontWeight: FontWeight.normal)),
-                    TextSpan(
-                        text:
-                            "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: size.width * numD032,
-                            fontWeight: FontWeight.normal)),
-                  ],
-                )),
+                Expanded(
+                  child: SizedBox(
+                    height: size.width * numD13,
+                    child: commonElevatedButton(
+                        "Change Bank Account",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size, colorThemePink), () {
+                      generateAddBankApi();
+                    }),
+                  ),
+                ),
               ],
             ),
-          ),
-          SizedBox(
-            height: size.height * numD06,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: size.width * numD06,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: size.width * numD13,
-                  child: commonElevatedButton(
-                      "Update Your Details",
-                      size,
-                      commonButtonTextStyle(size),
-                      commonButtonStyle(size, Colors.black), () {
-                    generateAddBankApi();
-                  }),
-                ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height: size.width * numD13,
-                  child: commonElevatedButton(
-                      "Change Bank Account",
-                      size,
-                      commonButtonTextStyle(size),
-                      commonButtonStyle(size, colorThemePink), () {
-                    generateAddBankApi();
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget upliftNoAccountsPaymentDesign(Size size) {
-    return Padding(
-      padding: EdgeInsets.all(size.width * numD05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Hi ${sharedPreferences!.getString(userNameKey)}",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * numD06,
-                  fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: size.height * numD04,
-          ),
-          Image.asset(
-            "${iconsPath}payment_page_icon.png",
-          ),
-          SizedBox(
-            height: size.width * numD02,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: colorLightWhite,
-              borderRadius: BorderRadius.circular(size.width * numD03),
-              border: Border.all(color: Colors.black),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(size.width * numD05),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Hi ${sharedPreferences!.getString(userNameKey)}",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: size.width * numD06,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              height: size.height * numD04,
             ),
-            padding: EdgeInsets.all(size.width * numD04),
-            child: RichText(
-                text: TextSpan(
-              text: "Ready to get paid?\n\n",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * numD03,
-                  fontWeight: FontWeight.bold),
+            Image.asset(
+              "${iconsPath}payment_page_icon.png",
+            ),
+            SizedBox(
+              height: size.width * numD02,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: colorLightWhite,
+                borderRadius: BorderRadius.circular(size.width * numD03),
+                border: Border.all(color: Colors.black),
+              ),
+              padding: EdgeInsets.all(size.width * numD04),
+              child: RichText(
+                  text: TextSpan(
+                text: "Ready to get paid?\n\n",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: size.width * numD03,
+                    fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                      text:
+                          "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: size.width * numD032,
+                          fontWeight: FontWeight.normal)),
+                  TextSpan(
+                      text:
+                          "Just tap the CTA below to get started - it takes less than a minute.\n\n",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: size.width * numD032,
+                          fontWeight: FontWeight.normal)),
+                ],
+              )),
+            ),
+            SizedBox(
+              height: size.height * numD06,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: size.width * numD06,
               children: [
-                TextSpan(
-                    text:
-                        "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: size.width * numD032,
-                        fontWeight: FontWeight.normal)),
-                TextSpan(
-                    text:
-                        "Just tap the CTA below to get started - it takes less than a minute.\n\n",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: size.width * numD032,
-                        fontWeight: FontWeight.normal)),
+                Expanded(
+                  child: SizedBox(
+                    height: size.width * numD13,
+                    child: commonElevatedButton(
+                        "Camera",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size, Colors.black), () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Dashboard(initialPosition: 2)));
+                    }),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: size.width * numD13,
+                    child: commonElevatedButton(
+                        "Sign Up With Stripe",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size, colorThemePink), () {
+                      generateAddBankApi();
+                    }),
+                  ),
+                ),
               ],
-            )),
-          ),
-          SizedBox(
-            height: size.height * numD06,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: size.width * numD06,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: size.width * numD13,
-                  child: commonElevatedButton(
-                      "Camera",
-                      size,
-                      commonButtonTextStyle(size),
-                      commonButtonStyle(size, Colors.black), () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)));
-                  }),
-                ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height: size.width * numD13,
-                  child: commonElevatedButton(
-                      "Sign Up With Stripe",
-                      size,
-                      commonButtonTextStyle(size),
-                      commonButtonStyle(size, colorThemePink), () {
-                    generateAddBankApi();
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

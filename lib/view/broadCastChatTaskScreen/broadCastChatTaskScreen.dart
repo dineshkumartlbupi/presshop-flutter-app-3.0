@@ -3346,13 +3346,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
     debugPrint('map:::::::$map');
 
-    // await uploadMediaUsingDio(
-    //   uploadTaskMediaUrl,
-    //   map,
-    //   filesPath,
-    //   "images",
-    // );
-
     NetworkClass.multipartNetworkClassFiles(
             uploadTaskMediaUrl, this, uploadTaskMediaReq, map, filesPath)
         .callMultipartServiceSameParamMultiImage(true, "post", "files");
