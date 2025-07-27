@@ -62,6 +62,7 @@ class _SocialSignUpState extends State<SocialSignUp>
   ///TextEditingController
   TextEditingController userNameController = TextEditingController();
   TextEditingController avatarController = TextEditingController();
+  TextEditingController referralCodeController = TextEditingController();
 
   String userImagePath = "",
       avatarBaseUrl = "",
@@ -76,6 +77,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       emailAlreadyExists = false,
       phoneAlreadyExists = false,
       showAvatarError = false,
+      isRefferalCodeValid = false,
       showAddressError = false,
       showApartmentNumberError = false,
       showDateError = false,
@@ -340,52 +342,48 @@ class _SocialSignUpState extends State<SocialSignUp>
                           style: TextStyle(
                               color: colorHint, fontSize: size.width * numD025),
                         ),
-                        // SizedBox(
-                        //   height: size.width * numD04,
-                        // ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     FocusScope.of(context).requestFocus(FocusNode());
-                        //     isSelectCheck = !isSelectCheck;
-                        //     setState(() {});
-                        //   },
-                        //   child: Row(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       isSelectCheck
-                        //           ? Container(
-                        //               margin: EdgeInsets.only(
-                        //                   top: size.width * numD008),
-                        //               child: Image.asset(
-                        //                 "${iconsPath}ic_checkbox_filled.png",
-                        //                 height: size.width * numD06,
-                        //               ),
-                        //             )
-                        //           : Container(
-                        //               margin: EdgeInsets.only(
-                        //                   top: size.width * numD008),
-                        //               child: Image.asset(
-                        //                   "${iconsPath}ic_checkbox_empty.png",
-                        //                   height: size.width * numD06),
-                        //             ),
-                        //       SizedBox(
-                        //         width: size.width * numD02,
-                        //       ),
-                        //       Expanded(
-                        //         child: Text(
-                        //           enableNotificationText,
-                        //           style: TextStyle(
-                        //               color: Colors.black,
-                        //               fontFamily: "AirbnbCereal",
-                        //               fontSize: size.width * numD035),
-                        //         ),
-                        //       ),
-                        //       SizedBox(
-                        //         width: size.width * numD02,
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        SizedBox(
+                          height: size.height * numD02,
+                        ),
+                        CommonTextField(
+                          size: size,
+                          maxLines: 1,
+                          borderColor: colorTextFieldBorder,
+                          controller: referralCodeController,
+                          hintText: referralCodeHintText,
+                          errorMaxLines: 2,
+                          textInputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp(r'[ \\]')),
+                          ],
+                          suffixIcon: getReferralCodeSuffixIcon(),
+                          prefixIcon: const Icon(Icons.campaign_outlined),
+                          prefixIconHeight: size.width * numD06,
+                          suffixIconIconHeight: size.width * numD085,
+                          hidePassword: false,
+                          keyboardType: TextInputType.text,
+                          enableValidations: false,
+                          filled: false,
+                          filledColor: Colors.transparent,
+                          autofocus: false,
+                          onChanged: (v) {
+                            if (v!.trim().length >= 5) {
+                              verifyReferredCode();
+                            } else if (v.trim().isEmpty) {
+                              isRefferalCodeValid = false;
+                              setState(() {});
+                            }
+                            return null;
+                          },
+                          validator: null,
+                        ),
+                        SizedBox(
+                          height: size.width * numD01,
+                        ),
+                        Text(
+                          referralcodeNoteText,
+                          style: TextStyle(
+                              color: colorHint, fontSize: size.width * numD025),
+                        ),
                         SizedBox(
                           height: size.width * numD04,
                         ),
@@ -489,6 +487,23 @@ class _SocialSignUpState extends State<SocialSignUp>
     );
   }
 
+  Icon? getReferralCodeSuffixIcon() {
+    String referralCode = referralCodeController.text.trim().toLowerCase();
+    if (referralCode.isEmpty) {
+      return null;
+    }
+    if (referralCode.length < 4 || !isRefferalCodeValid) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+    return const Icon(
+      Icons.check_circle,
+      color: Colors.green,
+    );
+  }
+
   void socialRegisterLoginApi() {
     try {
       Map<String, String> params = {};
@@ -498,8 +513,10 @@ class _SocialSignUpState extends State<SocialSignUp>
       params[receiveTaskNotificationKey] = isSelectCheck.toString();
       params[roleKey] = "Hopper";
       params[avatarIdKey] = selectedAvatarId;
+      if (isRefferalCodeValid) {
+        params[referredCodeKey] = referralCodeController.text.trim();
+      }
       params[userNameKey] = userNameController.text.trim().toLowerCase();
-
       params["social_id"] = widget.socialId;
       params["social_type"] = widget.socialType.toLowerCase();
       NetworkClass.fromNetworkClass(
@@ -511,6 +528,19 @@ class _SocialSignUpState extends State<SocialSignUp>
       NetworkClass.multipartNetworkClassFiles(socialLoginRegisterUrl, this,
               socialLoginRegisterUrlRequest, params, [File(userImagePath)])
           .callMultipartService(true, "post", ["profile_image"], []);
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
+  void verifyReferredCode() {
+    try {
+      Map<String, String> params = {
+        "referredCode": referralCodeController.text.trim(),
+      };
+      NetworkClass.fromNetworkClass(
+              verifyReferredCodeUrl, this, verifyReferredCodeUrlRequest, params)
+          .callRequestServiceHeader(false, "post", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -534,6 +564,13 @@ class _SocialSignUpState extends State<SocialSignUp>
       );
     }
 
+    if (userNameValidator(userNameController.text) != null) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+
     if (_restrictPattern.hasMatch(username) ||
         _restrictPatter2.hasMatch(username) ||
         _restrictPatter3.hasMatch(username)) {
@@ -541,15 +578,6 @@ class _SocialSignUpState extends State<SocialSignUp>
         Icons.highlight_remove,
         color: Colors.red,
       );
-    }
-
-    bool containsAnySubstring(String username, List<String> substrings) {
-      for (var substring in substrings) {
-        if (username.contains(substring)) {
-          return true;
-        }
-      }
-      return false;
     }
 
     return const Icon(
@@ -571,18 +599,6 @@ class _SocialSignUpState extends State<SocialSignUp>
       }
       setState(() {});
     });
-  }
-
-  Future openGallery() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (image == null) {
-      return;
-    }
-
-    avatarController.text = File(image.path).uri.pathSegments.last;
-
-    setState(() {});
   }
 
   String? userNameValidator(String? value) {
@@ -630,6 +646,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       return "Domain names are not allowed for security reasons.";
     }
     if (userNameAlreadyExists) {
+      isRefferalCodeValid = false;
       return "This username is already taken. Please choose another one.";
     }
 
@@ -817,6 +834,12 @@ class _SocialSignUpState extends State<SocialSignUp>
           debugPrint("SocialLoginRegisterResponseError:$map");
           showSnackBar("Error", "Something went wrong", Colors.red);
           break;
+        case verifyReferredCodeUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("VerifyReferredCodeResponse:$map");
+          isRefferalCodeValid = false;
+          setState(() {});
+          break;
       }
     } on Exception catch (e) {
       debugPrint("$e");
@@ -839,6 +862,13 @@ class _SocialSignUpState extends State<SocialSignUp>
           phoneAlreadyExists = map["phoneExist"];
           setState(() {});
           break;
+
+        case verifyReferredCodeUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("VerifyReferredCodeResponse:$map");
+          isRefferalCodeValid = true;
+          setState(() {});
+          break;
         case socialLoginRegisterUrlRequest:
           debugPrint("SocialSuccess: $response");
           var map = jsonDecode(response);
@@ -852,7 +882,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                 .setString(firstNameKey, map["user"][firstNameKey]);
             sharedPreferences!.setString(lastNameKey, map["user"][lastNameKey]);
             sharedPreferences!.setString(userNameKey, map["user"][userNameKey]);
-            sharedPreferences!.setString(emailKey, map["user"][emailKey]);
+            sharedPreferences!
+                .setString(referralCode, map["user"][referralCode]);
             sharedPreferences!
                 .setString(countryCodeKey, map["user"][countryCodeKey]);
             sharedPreferences!.setString(addressKey, map["user"][addressKey]);
@@ -875,6 +906,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                     builder: (context) => WelcomeScreen(
                           hideLeading: false,
                           screenType: '',
+                          isSocialLogin: true,
                         )),
                 (route) => false);
           }
@@ -919,6 +951,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                   .setString(userNameKey, map["user"][userNameKey]);
               sharedPreferences!.setString(emailKey, map["user"][emailKey]);
               sharedPreferences!.setString(phoneKey, map["user"][phoneKey]);
+              sharedPreferences!.setString(
+                  totalHopperArmy, map['user'][totalHopperArmy].toString());
               sharedPreferences!
                   .setString(countryCodeKey, map["user"][countryCodeKey]);
               sharedPreferences!.setString(addressKey, map["user"][addressKey]);

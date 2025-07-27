@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:presshop/main.dart';
+import 'package:presshop/utils/Common.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
+import 'package:presshop/utils/networkOperations/NetworkClass.dart';
+import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 
-class LocationService {
+class LocationService implements NetworkResponse {
   final Location _location = Location();
 
   // Check and request location permission
@@ -17,7 +22,7 @@ class LocationService {
       return false;
     } else if (status.isPermanentlyDenied) {
       if (shouldShowSettingPopup) {
-        await _showLocationMandatoryDialog(context);
+        await openAppSettings();
       } else {
         return false;
       }
@@ -50,6 +55,20 @@ class LocationService {
     return true;
   }
 
+  void callUpdateCurrentData(double latitude, double longitude) {
+    Map<String, String> params = {
+      "hopper_id": sharedPreferences!.getString(hopperIdKey).toString(),
+      "longitude": longitude.toString(),
+      "latitude": latitude.toString()
+    };
+
+    debugPrint('map: $params');
+
+    NetworkClass.fromNetworkClass(
+            updateLocation, this, updateLocationRequest, params)
+        .callRequestServiceHeader(false, "post", null);
+  }
+
   // Fetch current location
   Future<LocationData?> getCurrentLocation(BuildContext context,
       {bool shouldShowSettingPopup = true}) async {
@@ -71,11 +90,12 @@ class LocationService {
       geolocator.Position? position = await Future.any([
         geolocator.Geolocator.getCurrentPosition(
             desiredAccuracy: geolocator.LocationAccuracy.medium),
-        Future.delayed(Duration(seconds: 6), () => null),
+        Future.delayed(Duration(seconds: 8), () => null),
       ]);
       if (position == null) {
         return null; // Timeout or no position available
       } else {
+        callUpdateCurrentData(position.latitude, position.longitude);
         return LocationData.fromMap({
           'latitude': position.latitude,
           'longitude': position.longitude,
@@ -84,5 +104,15 @@ class LocationService {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  void onError({required int requestCode, required String response}) {
+    // TODO: implement onError
+  }
+
+  @override
+  void onResponse({required int requestCode, required String response}) {
+    // TODO: implement onResponse
   }
 }

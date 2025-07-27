@@ -536,6 +536,10 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             sharedPreferences!
                 .setString(latitudeKey, map["user"][latitudeKey].toString());
             sharedPreferences!
+                .setString(referralCode, map["user"][referralCode]);
+            sharedPreferences!.setString(
+                totalHopperArmy, map['user'][totalHopperArmy].toString());
+            sharedPreferences!
                 .setString(longitudeKey, map["user"][longitudeKey].toString());
             sharedPreferences!.setString(avatarIdKey, map["user"][avatarIdKey]);
             sharedPreferences!.setBool(receiveTaskNotificationKey,

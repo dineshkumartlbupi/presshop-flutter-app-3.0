@@ -1243,7 +1243,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                 height: size.width * numD005,
               ),
               Text(
-                  "$earningsText - ${euroUniqueCode}${myProfileData != null ? myProfileData!.totalIncome : "0"}",
+                  "$earningsText - ${euroUniqueCode}${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD035,

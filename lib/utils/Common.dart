@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,14 +12,40 @@ const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
 //const appleMapAPiKey = "AIzaSyAIaPQyvLdlGaTG-AgFe0rzAlAkGK-JIJI";
 const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 
-///------WebUrls------
-const baseUrl1 = "https://betazone.promaticstechnologies.com:5019/";
+//--------production urls----------------
+
+// const baseUrl = "https://datastream22843-r.presshop.news:6003/";
+
+// const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
+
+// const googleMapURL =
+//     "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+
+// const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
+// const profileImageUrl = "${mediaBaseUrl}userImages/";
+// const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
+
+// const contentImageUrl =
+//     "https://livestreamdata-r.presshop.news/public/contentData/";
+
+// const imageUrlBefore =
+//     "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
+
+// const taskMediaUrl =
+//     "https://livestreamdata-r.presshop.news/public/uploadContent/";
+
+// const mediaThumbnailUrl =
+//     "https://livestreamdata-r.presshop.news/public/thumbnail/";
+
+// const adminProfileUrl = "${mediaBaseUrl}adminImages/";
+
+// const oldappUrl = "https://developers.promaticstechnologies.com/";
+
+// const socketUrl = "https://datastream22843-r.presshop.news:4005";
+
+//--------staging urls----------------
 const baseUrl = "https://dev-api.presshop.news:5019/";
-// const baseUrl = "https://dev-api.presshop.news:5019/";
-const oldMediaBaseUrl =
-    "https://developers.promaticstechnologies.com/presshop_rest_apis/public/";
-const oldMediaBaseUrl1 =
-    "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+
 const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 const googleMapURL =
     "https://maps.googleapis.com/maps/api/place/autocomplete/json";
@@ -26,21 +53,14 @@ const googleMapURL =
 const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
 const profileImageUrl = "${mediaBaseUrl}userImages/";
 const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
-//const contentImageUrl ="${mediaBaseUrl}contentData/";
 
 const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
 const imageUrlBefore =
     "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
 
-// https://dev-cdn.presshop.news/public/uploadContent
 const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
 const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 const adminProfileUrl = "${mediaBaseUrl}adminImages/";
-const oldBaseShareUrl = "https://developers.promaticstechnologies.com/";
-const baseShareUrl = "https://betazone.promaticstechnologies.com";
-const oldSocketUrl = "https://developers.promaticstechnologies.com:3005";
-const socketUrl1 = "https://betazone.promaticstechnologies.com:3005/";
-//const socketUrl ="https://dev-api.presshop.news:3005/socket.io";
 const socketUrl = "https://dev-api.presshop.news:3005";
 
 const checkUserNameUrl = "users/checkIfUserNameExist/";
@@ -48,6 +68,10 @@ const checkUserNameUrlRequest = 1;
 
 const getAvatarsUrl = "users/getAvatars";
 const getAvatarsUrlRequest = 2;
+
+String get appUrl => Platform.isAndroid
+    ? "https://play.google.com/store/apps/details?id=com.presshop.app"
+    : "https://apps.apple.com/in/app/presshop/id6744651614";
 
 /*const getAllCmsUrl = "users/getCMSForHopper";
 const getAllCmsUrlRequest = 3;*/
@@ -288,6 +312,12 @@ const deleteAccountUrlReq = 78;
 const generateStripeBankApi = "hopper/add-express-bank-account";
 const generateStripeBankUrlRequest = 79;
 
+const verifyReferredCodeUrl = "auth/hopper/verifyReferredCode";
+const verifyReferredCodeUrlRequest = 80;
+
+const commissionGetUrl = "hopper/commissionHopperArmy";
+const commissionGetRequest = 81;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";
@@ -506,7 +536,7 @@ const detailsText = "details";
 const stayLoggedInText = "Stay Logged In";
 const okText = "Ok";
 const feedText = "Feed";
-const paymentMethodText = "Payment methods";
+const paymentMethodText = "Manage payments with Stripe";
 const legalText = "Legal";
 const logoutText = "Logout";
 const accountSettingText = "Account settings";
@@ -561,6 +591,7 @@ const myEarningsText = "My Earnings";
 const docViewer = "Document Review";
 const fromDateText = "From date";
 const paymentReceivedText = "Payments received";
+const commissionEarnedText = "Commission earned";
 const toDateText = "To date";
 const sortText = "Sort";
 const filterText = "Filter";
@@ -590,7 +621,7 @@ const uploadedContentText = "Uploaded content";
 const manageTaskText = "Manage Task";
 const manageContentText = "Manage Content";
 const myBanksText = "My Banks";
-const paymentMethods = "Payment Methods";
+const paymentMethods = "Manage payments with Stripe";
 const messageText = "message";
 const liveChatText = "Live Chat";
 const emailUsText = "Email Us";
@@ -599,6 +630,12 @@ const average = "Average";
 const contentSubmittedText = "Content Submitted";
 const contentSubmittedHeadingText =
     "Hurrah! Your content has been successfully submitted.";
+
+const contentBetaSubmittedHeadingText =
+    "Smashing effort! Keep it coming, we’re almost live!";
+
+const contentBetaSubmittedMessageText =
+    "Thanks for your upload — you’re already a Star Hopper in the making! \nWe’re not quite live yet (official launch - end of July 2025), so submissions aren’t active just yet. But this is exactly the spirit we love — sharp eyes, quick taps, and early legends warming up for the main event. \nYou’ll be the first to know when we go fully live. We’ll drop you a push notification and an email the moment the doors open — and from then on, it’s game on. Snap. Submit. Sell.\nIn the meantime, have a look  around the app, practise taking your shots, and get ready to become a successful citizen journalist.\n";
 const contentSubmittedMessageText =
     "Your content is being checked by our team for authenticity, and";
 const contentSubmittedMessage1Text =
@@ -632,6 +669,7 @@ const signUpText = 'Sign Up';
 const firstNameHintText = 'Enter first name';
 const lastNameHintText = 'Enter last name';
 const userNameHintText = 'Enter user name';
+const referralCodeHintText = "Enter referral code";
 const phoneHintText = 'Enter phone number';
 const emailHintText = 'Enter email';
 const apartmentNoHintText = 'Apartment number / House name';
@@ -649,6 +687,9 @@ const signUpSubTitleText =
     'Join our growing tribe, and connect directly with the press.';
 const userNameNoteText =
     'User name once chosen, cannot be changed. Any part of your real name is not allowed for security reasons';
+
+const referralcodeNoteText =
+    'Got a referral code? Drop it here to join the Hopper Army and start earning side by side!';
 const enableNotificationText =
     'Enable notifications on your phone to receive tasks from the publications';
 const chooseAvatarNoteText =
@@ -745,6 +786,9 @@ const dummyNewsDes =
     "Vivamus sit amet commodo risus. Ut dictum rutrum lacinia. Ut at nunc a mi facilisis ornare. Nullam arcu odio, volutpat at sem volutpat, imperdiet maximus nisi. Curabitur elit nulla, dictum a congue a, maximus vel elit. Donec dapibus est dapibus odio consectetur, a auctor erat tristique. Cras sed mattis ipsum. ";
 
 const chooseCurrencyText = "Choose currency";
+
+get referInviteText =>
+    "wants you to join the PressHop revolution.🤳\n\n📱Welcome to the world’s most powerful citizen journalism app where everyday people like us, can earn real money by selling  stories, photos and videos anonymously to the press🛵.\n\n👀All you need is your phone and a sharp eye — no degrees, licences, or investment. Just point, shoot, and start earning cash💸.\n\n👇 Download the app now and get started: $appUrl\n\n 🪖Use this referral code when signing up:";
 
 /*------------*/
 
@@ -1058,8 +1102,8 @@ Future<void> shareLink(
     {required String title,
     required String description,
     required String taskName}) async {
-  await Share.share("Please check out $taskName \n $title \n\n $description"
-      "Post\n$baseShareUrl");
+  await Share.share("Please check out $taskName \n $title \n $description"
+      "Post\n$appUrl");
 }
 
 ///Time--format-->

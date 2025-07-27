@@ -11,9 +11,13 @@ import '../dashboard/Dashboard.dart';
 class WelcomeScreen extends StatefulWidget {
   bool hideLeading = false;
   String screenType = "";
+  bool isSocialLogin = false;
 
   WelcomeScreen(
-      {super.key, required this.hideLeading, required this.screenType});
+      {super.key,
+      required this.hideLeading,
+      required this.screenType,
+      this.isSocialLogin = false});
 
   @override
   State<StatefulWidget> createState() => WelcomeScreenState();
@@ -110,7 +114,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                             width: size.width * numD02,
                           ),
                           Expanded(
-                            child: Text("Verified your mobile number",
+                            child: Text(
+                                widget.isSocialLogin
+                                    ? "Verified your email id"
+                                    : "Verify your mobile number",
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * numD035,

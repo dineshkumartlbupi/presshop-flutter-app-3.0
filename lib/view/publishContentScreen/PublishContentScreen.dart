@@ -3044,6 +3044,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq error: $response");
           var data = jsonDecode(response);
+          var isBeta = data['is_beta'] ?? false;
           if (data['message'] == "not verified") {
             callAddContentApi();
             // currently publish not required for publish content
@@ -3064,6 +3065,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           publishData: widget.publishData,
                           sellType: selectedSellType,
                           price: priceController.text,
+                          isBeta: isBeta,
                         )));
             // onBoardingCompleteDialog(
             //     size: MediaQuery.of(navigatorKey.currentContext!).size,
@@ -3223,6 +3225,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq success: $response");
           var data = jsonDecode(response);
+          var isBeta = data['is_beta'] ?? false;
           callAddContentApi();
           // currently publish not required for publish content
           //if (data['message'] == "verified") {
@@ -3242,6 +3245,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         publishData: widget.publishData,
                         sellType: selectedSellType,
                         price: priceController.text,
+                        isBeta: isBeta,
                       )));
 
           break;

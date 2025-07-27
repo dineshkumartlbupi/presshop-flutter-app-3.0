@@ -34,7 +34,7 @@ ButtonStyle commonButtonStyle(Size size, Color color) {
       backgroundColor: color,
       elevation: 0.0,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(size.width * numD04)));
+          borderRadius: BorderRadius.circular(size.width * numD03)));
 }
 
 TextStyle commonButtonTextStyle(Size size) {
@@ -671,7 +671,7 @@ void broadcastDialog({
 
 void commonErrorDialogDialog(
     Size size, String message, String errorCode, VoidCallback callback,
-    {String actionButton = "ok", bool isFromNetworkError = true}) {
+    {String actionButton = "Ok", bool isFromNetworkError = true}) {
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,

@@ -1,25 +1,29 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/authentication/TermCheckScreen.dart';
+import 'package:presshop/view/chatBotScreen/chatBotScreen.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/FAQScreen.dart';
-import 'package:presshop/view/myEarning/MyEarningScreen.dart';
+import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../main.dart';
+import '../../utils/CommonSharedPrefrence.dart';
 import '../cameraScreen/PreviewScreen.dart';
 import '../menuScreen/MyContentScreen.dart';
-import '../menuScreen/MyDraftScreen.dart';
 
 class ContentSubmittedScreen extends StatefulWidget {
   MyContentData? myContentDetail;
   PublishData? publishData;
   String price = "";
   String sellType = "";
+  bool isBeta = false;
 
   ContentSubmittedScreen({
     super.key,
@@ -27,6 +31,7 @@ class ContentSubmittedScreen extends StatefulWidget {
     required this.publishData,
     required this.price,
     required this.sellType,
+    required this.isBeta,
   });
 
   @override
@@ -80,9 +85,16 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
+    bool isUserOutSideOfUnitedKingdom =
+        widget.publishData?.country != "United Kingdom" ||
+            sharedPreferences!.getString(contryCode) != "GB";
+
     return WillPopScope(
       onWillPop: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Dashboard(initialPosition: 2)));
         return Future.value(false);
       },
       child: Scaffold(
@@ -91,19 +103,29 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
             hideLeading: true,
             title: Text(
               contentSubmittedText,
-              style: commonTextStyle(size: size, color: Colors.black, fontSize: size.width * appBarHeadingFontSize, fontWeight: FontWeight.bold),
+              style: commonTextStyle(
+                  size: size,
+                  color: Colors.black,
+                  fontSize: size.width * appBarHeadingFontSize,
+                  fontWeight: FontWeight.bold),
             ),
             centerTitle: false,
             titleSpacing: size.width * numD04,
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)));
             },
             actionWidget: [
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Dashboard(initialPosition: 2)));
                 },
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
@@ -120,10 +142,16 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD04),
-                    decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD04)),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD04,
+                        vertical: size.width * numD04),
+                    decoration: BoxDecoration(
+                        color: colorLightGrey,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD04)),
                     child: Column(
                       children: [
                         Row(
@@ -135,21 +163,43 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                       height: size.width * numD35,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
-                                        borderRadius: BorderRadius.circular(size.width * numD06),
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD06),
                                       ),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(size.width * numD06),
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD06),
                                         child: Stack(
                                           fit: StackFit.expand,
                                           children: [
                                             showImage(
-                                              widget.myContentDetail!.contentMediaList[0].mediaType,
-                                              widget.myContentDetail!.contentMediaList[0].mediaType == "video" ? widget.myContentDetail!.contentMediaList[0].thumbNail : widget.myContentDetail!.contentMediaList[0].media,
+                                              widget
+                                                  .myContentDetail!
+                                                  .contentMediaList[0]
+                                                  .mediaType,
+                                              widget
+                                                          .myContentDetail!
+                                                          .contentMediaList[0]
+                                                          .mediaType ==
+                                                      "video"
+                                                  ? widget
+                                                      .myContentDetail!
+                                                      .contentMediaList[0]
+                                                      .thumbNail
+                                                  : widget
+                                                      .myContentDetail!
+                                                      .contentMediaList[0]
+                                                      .media,
                                             ),
                                             Visibility(
-                                              visible: widget.myContentDetail!.contentMediaList[0].mediaType != "audio",
+                                              visible: widget
+                                                      .myContentDetail!
+                                                      .contentMediaList[0]
+                                                      .mediaType !=
+                                                  "audio",
                                               child: Container(
-                                                  color: Colors.black.withOpacity(0.2),
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
                                                   child: Image.asset(
                                                     "${commonImagePath}watermark1.png",
                                                     fit: BoxFit.cover,
@@ -160,34 +210,84 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                               top: size.width * numD02,
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
-                                                    horizontal: size.width * numD015,
-                                                    vertical: size.width * 0.005,
+                                                    horizontal:
+                                                        size.width * numD015,
+                                                    vertical:
+                                                        size.width * 0.005,
                                                   ),
-                                                  decoration: BoxDecoration(color: colorLightGreen.withOpacity(0.8), borderRadius: BorderRadius.circular(size.width * numD015)),
+                                                  decoration: BoxDecoration(
+                                                      color: colorLightGreen
+                                                          .withOpacity(0.8),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD015)),
                                                   child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: [
                                                       Text(
                                                         "${widget.myContentDetail!.contentMediaList.length} ",
-                                                        style: commonTextStyle(size: size, fontSize: size.width * numD038, color: Colors.white, fontWeight: FontWeight.w600),
+                                                        style: commonTextStyle(
+                                                            size: size,
+                                                            fontSize:
+                                                                size.width *
+                                                                    numD038,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
                                                       ),
-                                                      const Padding(padding: EdgeInsets.only(left: 2, bottom: 2)),
+                                                      const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 2,
+                                                                  bottom: 2)),
                                                       Image.asset(
-                                                          widget.myContentDetail!.contentMediaList.first.mediaType == "image"
+                                                          widget
+                                                                      .myContentDetail!
+                                                                      .contentMediaList
+                                                                      .first
+                                                                      .mediaType ==
+                                                                  "image"
                                                               ? "${iconsPath}ic_camera_publish.png"
-                                                              : widget.myContentDetail!.contentMediaList.first.mediaType == "video"
+                                                              : widget
+                                                                          .myContentDetail!
+                                                                          .contentMediaList
+                                                                          .first
+                                                                          .mediaType ==
+                                                                      "video"
                                                                   ? "${iconsPath}ic_v_cam.png"
-                                                                  : widget.myContentDetail!.contentMediaList.first.mediaType == "audio"
+                                                                  : widget.myContentDetail!.contentMediaList.first
+                                                                              .mediaType ==
+                                                                          "audio"
                                                                       ? "${iconsPath}ic_mic.png"
                                                                       : "${iconsPath}doc_icon.png",
                                                           color: Colors.white,
-                                                          height: widget.myContentDetail!.contentMediaList.first.mediaType == "image"
-                                                              ? size.width * 0.029
-                                                              : widget.myContentDetail!.contentMediaList.first.mediaType == "video"
-                                                                  ? size.width * 0.041
-                                                                  : widget.myContentDetail!.contentMediaList.first.mediaType == "audio"
-                                                                      ? size.width * 0.028
-                                                                      : size.width * 0.04,
+                                                          height: widget
+                                                                      .myContentDetail!
+                                                                      .contentMediaList
+                                                                      .first
+                                                                      .mediaType ==
+                                                                  "image"
+                                                              ? size.width *
+                                                                  0.029
+                                                              : widget
+                                                                          .myContentDetail!
+                                                                          .contentMediaList
+                                                                          .first
+                                                                          .mediaType ==
+                                                                      "video"
+                                                                  ? size.width *
+                                                                      0.041
+                                                                  : widget.myContentDetail!.contentMediaList.first
+                                                                              .mediaType ==
+                                                                          "audio"
+                                                                      ? size.width *
+                                                                          0.028
+                                                                      : size.width *
+                                                                          0.04,
                                                           fit: BoxFit.contain),
                                                     ],
                                                   )),
@@ -198,17 +298,23 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                     ),
                                   )
                                 : ClipRRect(
-                                    borderRadius: BorderRadius.circular(size.width * numD03),
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03),
                                     child: Stack(
                                       alignment: Alignment.topRight,
                                       children: [
                                         Visibility(
-                                          visible: widget.publishData!.mimeType.contains("doc"),
+                                          visible: widget.publishData!.mimeType
+                                              .contains("doc"),
                                           child: Container(
-                                            padding: EdgeInsets.all(size.width * numD01),
+                                            padding: EdgeInsets.all(
+                                                size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(color: colorGreyNew),
-                                              borderRadius: BorderRadius.circular(size.width * numD06),
+                                              border: Border.all(
+                                                  color: colorGreyNew),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
@@ -218,12 +324,17 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mimeType.contains("pdf"),
+                                          visible: widget.publishData!.mimeType
+                                              .contains("pdf"),
                                           child: Container(
-                                            padding: EdgeInsets.all(size.width * numD01),
+                                            padding: EdgeInsets.all(
+                                                size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(color: colorGreyNew),
-                                              borderRadius: BorderRadius.circular(size.width * numD06),
+                                              border: Border.all(
+                                                  color: colorGreyNew),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}pngImage.png",
@@ -233,15 +344,21 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mediaList.first.mimeType == "audio",
+                                          visible: widget.publishData!.mediaList
+                                                  .first.mimeType ==
+                                              "audio",
                                           child: Container(
                                             width: size.width * numD30,
                                             height: size.width * numD35,
-                                            padding: EdgeInsets.all(size.width * numD01),
+                                            padding: EdgeInsets.all(
+                                                size.width * numD01),
                                             decoration: BoxDecoration(
                                               color: colorThemePink,
-                                              border: Border.all(color: colorGreyNew),
-                                              borderRadius: BorderRadius.circular(size.width * numD04),
+                                              border: Border.all(
+                                                  color: colorGreyNew),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * numD04),
                                             ),
                                             child: Icon(
                                               Icons.play_arrow_rounded,
@@ -251,18 +368,24 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mediaList.first.mimeType == "video",
+                                          visible: widget.publishData!.mediaList
+                                                  .first.mimeType ==
+                                              "video",
                                           child: Image.file(
-                                            File(widget.publishData!.mediaList.first.thumbnail),
+                                            File(widget.publishData!.mediaList
+                                                .first.thumbnail),
                                             width: size.width * numD30,
                                             height: size.width * numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mediaList.first.mimeType == "image",
+                                          visible: widget.publishData!.mediaList
+                                                  .first.mimeType ==
+                                              "image",
                                           child: Image.file(
-                                            File(widget.publishData!.mediaList.first.mediaPath),
+                                            File(widget.publishData!.mediaList
+                                                .first.mediaPath),
                                             width: size.width * numD30,
                                             height: size.width * numD35,
                                             fit: BoxFit.cover,
@@ -275,16 +398,38 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           fit: BoxFit.cover,
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(top: size.width * numD02, bottom: size.width * numD02, right: size.width * numD02),
+                                          margin: EdgeInsets.only(
+                                              top: size.width * numD02,
+                                              bottom: size.width * numD02,
+                                              right: size.width * numD02),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
-                                                padding: EdgeInsets.symmetric(vertical: 4,horizontal: 6),
-                                                decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 4, horizontal: 6),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.black
+                                                        .withOpacity(0.4),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD013)),
                                                 child: Row(
                                                   children: [
-                                                    Text((imageCount+videoCount+audioCount).toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                    Text(
+                                                        (imageCount +
+                                                                videoCount +
+                                                                audioCount)
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize:
+                                                                size.width *
+                                                                    numD03,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
                                                   ],
                                                 ),
                                               ),
@@ -565,68 +710,101 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             ),
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(top: size.width * numD04),
+                                padding:
+                                    EdgeInsets.only(top: size.width * numD04),
                                 child: Text(
-                                  contentSubmittedHeadingText,
-                                  style: commonTextStyle(size: size, fontSize: size.width * numD038, color: Colors.black, fontWeight: FontWeight.w600),
+                                  isUserOutSideOfUnitedKingdom
+                                      ? "PressHop’s en route to your city ✈"
+                                      : widget.isBeta
+                                          ? contentBetaSubmittedHeadingText
+                                          : contentSubmittedHeadingText,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD038,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
                                 ),
                               ),
                             )
                           ],
                         ),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: size.width * numD15,
-                                decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(size.width * numD04)),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ImageIcon(
-                                      AssetImage(widget.sellType == "Shared" ? "${iconsPath}ic_share.png" : "${iconsPath}ic_exclusive.png"),
-                                      size: size.width * numD06,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      widget.sellType == "Shared" ? "Shared" : "Exclusive",
-                                      style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.white, fontWeight: FontWeight.w700),
-                                    )
-                                  ],
+                        if (!isUserOutSideOfUnitedKingdom) ...[
+                          SizedBox(
+                            height: size.width * numD06,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: size.width * numD15,
+                                  decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ImageIcon(
+                                        AssetImage(widget.sellType == "Shared"
+                                            ? "${iconsPath}ic_share.png"
+                                            : "${iconsPath}ic_exclusive.png"),
+                                        size: size.width * numD06,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        widget.sellType == "Shared"
+                                            ? "Shared"
+                                            : "Exclusive",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD04,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: size.width * numD06,
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: size.width * numD15,
-                                decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * numD04)),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      amountQuoted,
-                                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.normal),
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD01,
-                                    ),
-                                    Text(
-                                      widget.price,
-                                      //   "$euroUniqueCode ${amountFormat(widget.myContentDetail!.originalAmount.toString())}",
-                                      style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.white, fontWeight: FontWeight.w700),
-                                    )
-                                  ],
+                              SizedBox(
+                                width: size.width * numD06,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: size.width * numD15,
+                                  decoration: BoxDecoration(
+                                      color: colorThemePink,
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        amountQuoted,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD035,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      SizedBox(
+                                        height: size.width * numD01,
+                                      ),
+                                      Text(
+                                        widget.price,
+                                        //   "$euroUniqueCode ${amountFormat(widget.myContentDetail!.originalAmount.toString())}",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD045,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ]
                       ],
                     ),
                   ),
@@ -634,106 +812,381 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 SizedBox(
                   height: size.width * numD04,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: RichText(
-                      textAlign: TextAlign.justify,
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: "$contentSubmittedMessageText ",
-                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
-                        ),
-                        WidgetSpan(
-                            child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TermCheckScreen(
-                                          type: 'legal',
-                                        )));
-                          },
-                          child: Text(
-                            "${privacyLawText.toLowerCase()} ",
-                            style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w600),
+                if (isUserOutSideOfUnitedKingdom) ...[
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    child: RichText(
+                        textAlign: TextAlign.justify,
+                        text: TextSpan(children: [
+                          TextSpan(
+                            text:
+                                "We’re still warming up in the UK, but big plans are brewing — and your city is on our radar. Have a look around the app, and join the waitlist to be the first to know when we land near you.\n\n",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
                           ),
-                        )),
-                        TextSpan(
-                          text: " $contentSubmittedMessage1Text\n\n",
-                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal, lineHeight: 1.5),
-                        ),
-                        TextSpan(
-                          text: "$contentSubmittedMessage2Text ",
-                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal, lineHeight: 1.5),
-                        ),
-                        WidgetSpan(
-                            child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FAQScreen(
-                                          priceTipsSelected: false,
-                                          type: 'faq',
-                                          index: 0,
-                                        )));
-                          },
-                          child: Text(
-                            faqText,
-                            style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w600),
+                          TextSpan(
+                            text:
+                                "Our mission to revolutionise citizen journalism is going global, and we’ll be hitting your shores before you know it. Until then, stay curious and keep your camera ready!\n\n",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
                           ),
-                        )),
-                        TextSpan(
-                          text: " $orText ",
-                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
-                        ),
-                        WidgetSpan(
-                            child: InkWell(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUsScreen()));
-                          },
-                          child: Text(
-                            "${contactText.toLowerCase()} ",
-                            style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w600),
+                          TextSpan(
+                            text: "While you wait, why not explore our ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
                           ),
-                        )),
-                        TextSpan(
-                          text: "$contentSubmittedMessage3Text ",
-                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
-                        ),
-                      ])),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                Uri instagramUrl = Uri.parse(
+                                    'https://www.presshop.co.uk/blog'); // Replace with the desired Twitter URL
+                                await launchUrl(instagramUrl);
+                              },
+                            text: "blog",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text: " check out our ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FAQScreen(
+                                              priceTipsSelected: false,
+                                              type: 'faq',
+                                              index: 0,
+                                            )));
+                              },
+                            text: "FAQs ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text: ", or watch some of our ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TutorialsScreen()));
+                              },
+                            text: "videos ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text:
+                                "You might just find the answers you need or discover something new that PressHop has to offer. ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ])),
+                  )
+                ] else if (widget.isBeta) ...[
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    child: RichText(
+                        textAlign: TextAlign.justify,
+                        text: TextSpan(children: [
+                          TextSpan(
+                            text: contentBetaSubmittedMessageText,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            text: "Got questions? Check out our ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FAQScreen(
+                                              priceTipsSelected: false,
+                                              type: 'faq',
+                                              index: 0,
+                                            )));
+                              },
+                            text: faqText,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text: " $orText ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatBotScreen()));
+                              },
+                            text: "Chat ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text:
+                                "with us on the app. We’re all ears and happy to help",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ])),
+                  )
+                ] else ...[
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    child: RichText(
+                        textAlign: TextAlign.justify,
+                        text: TextSpan(children: [
+                          TextSpan(
+                            text: "$contentSubmittedMessageText ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          WidgetSpan(
+                              child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TermCheckScreen(
+                                            type: 'legal',
+                                          )));
+                            },
+                            child: Text(
+                              "${privacyLawText.toLowerCase()} ",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD03,
+                                  color: Colors.black,
+                                  lineHeight: 2,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          )),
+                          TextSpan(
+                            text: " $contentSubmittedMessage1Text\n\n",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            text: "$contentSubmittedMessage2Text ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FAQScreen(
+                                              priceTipsSelected: false,
+                                              type: 'faq',
+                                              index: 0,
+                                            )));
+                              },
+                            text: faqText,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text: " $orText ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ContactUsScreen()));
+                              },
+                            text: "${contactText.toLowerCase()} ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: colorThemePink,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text: "$contentSubmittedMessage3Text ",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 2,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ])),
+                  ),
+                ],
+                SizedBox(
+                  height: size.width * numD06,
                 ),
                 const Spacer(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Expanded(
-                          child: SizedBox(
-                        height: size.width * numD15,
-                        child: commonElevatedButton(myContentText.toTitleCase(), size, commonButtonTextStyle(size), commonButtonStyle(size, Colors.black), () {
+                isUserOutSideOfUnitedKingdom
+                    ? SizedBox(
+                        height: size.width * numD14,
+                        width: size.width * numD80,
+                        child: commonElevatedButton(
+                            "Home",
+                            size,
+                            commonButtonTextStyle(size),
+                            commonButtonStyle(size, colorThemePink), () {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) => Dashboard(
-                                        initialPosition: 0,
-                                      )),
+                                  builder: (context) =>
+                                      Dashboard(initialPosition: 2)),
                               (route) => false);
                         }),
-                      )),
-                      SizedBox(
-                        width: size.width * numD04,
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD06),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                                child: SizedBox(
+                              height: size.width * numD15,
+                              child: commonElevatedButton(
+                                  myContentText.toTitleCase(),
+                                  size,
+                                  commonButtonTextStyle(size),
+                                  commonButtonStyle(size, Colors.black), () {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => Dashboard(
+                                              initialPosition: 0,
+                                            )),
+                                    (route) => false);
+                              }),
+                            )),
+                            SizedBox(
+                              width: size.width * numD04,
+                            ),
+                            Expanded(
+                                child: SizedBox(
+                              height: size.width * numD15,
+                              child: commonElevatedButton(
+                                  "Home",
+                                  size,
+                                  commonButtonTextStyle(size),
+                                  commonButtonStyle(size, colorThemePink), () {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Dashboard(initialPosition: 2)),
+                                    (route) => false);
+                              }),
+                            )),
+                          ],
+                        ),
                       ),
-                      Expanded(
-                          child: SizedBox(
-                        height: size.width * numD15,
-                        child: commonElevatedButton("Home", size, commonButtonTextStyle(size), commonButtonStyle(size, colorThemePink), () {
-                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
-                        }),
-                      )),
-                    ],
-                  ),
-                ),
                 SizedBox(
                   height: size.width * numD04,
                 ),

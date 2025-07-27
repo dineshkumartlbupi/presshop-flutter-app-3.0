@@ -734,6 +734,10 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
             rememberMe = true;
             sharedPreferences!.setBool(rememberKey, true);
             sharedPreferences!.setString(tokenKey, map[tokenKey]);
+            sharedPreferences!
+                .setString(referralCode, map["user"][referralCode]);
+            sharedPreferences!.setString(
+                totalHopperArmy, map['user'][totalHopperArmy].toString());
             sharedPreferences!.setString(hopperIdKey, map["user"][hopperIdKey]);
             sharedPreferences!
                 .setString(firstNameKey, map["user"][firstNameKey]);
@@ -772,7 +776,8 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                   .setString(profileImageKey, map["user"][profileImageKey]);
             }
 
-            if (map["user"]["doc_to_become_pro"] != null) {
+            if (map["user"]["doc_to_become_pro"] != null &&
+                map["user"]["doc_to_become_pro"] is Map) {
               debugPrint("InsideDocccc");
               if (map["user"]["doc_to_become_pro"]["govt_id"] != null) {
                 debugPrint("InsideGov");
@@ -878,11 +883,15 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
           if (map["code"] == 200) {
             if (map["token"] != null) {
               debugPrint("inside this::::::");
-              //rememberMe = true;
-              //sharedPreferences!.setBool(rememberKey, true);
+              rememberMe = true;
+              sharedPreferences!.setBool(rememberKey, true);
               sharedPreferences!.setString(tokenKey, map[tokenKey]);
               sharedPreferences!
                   .setString(hopperIdKey, map["user"][hopperIdKey]);
+              sharedPreferences!
+                  .setString(referralCode, map["user"][referralCode]);
+              sharedPreferences!.setString(
+                  totalHopperArmy, map['user'][totalHopperArmy].toString());
               sharedPreferences!
                   .setString(firstNameKey, map["user"][firstNameKey]);
               sharedPreferences!

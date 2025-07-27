@@ -17,7 +17,7 @@ import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
 import '../../utils/CommonModel.dart';
-import '../../utils/PermissionHandler.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../utils/countdownTimerScreen.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
@@ -616,15 +616,11 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     ),
                     InkWell(
                       onTap: () async {
-                        debugPrint('share-now-tapped:::::::::::::::::');
-                        // Todo: whatsapp share
-                        final whatsappUrl =
-                            "whatsapp://send?text= Download our app. \n${Platform.isAndroid ? "https://play.google.com/store/apps/details?id=" : "https://apps.apple.com/in/app/"}com.presshop.app";
-                        if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
-                          await launchUrl(Uri.parse(whatsappUrl));
-                        } else {
-                          showSnackBar(
-                              'PressHop', errorOpenWhatsapp, Colors.red);
+                        try {
+                          Share.share(
+                              "${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
+                        } catch (e) {
+                          debugPrint("Share Error: $e");
                         }
                       },
                       child: Container(
@@ -1097,7 +1093,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       path: phoneNumber,
                                                       queryParameters: {
                                                         'body':
-                                                            '${broadCastedData!.headline}\n${broadCastedData!.taskDescription}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(baseShareUrl)} to download PressHop and review the task.Cheers'
+                                                            '${broadCastedData!.headline}\n${broadCastedData!.taskDescription}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task.Cheers'
                                                       });
                                                   if (await canLaunchUrl(uri)) {
                                                     await launchUrl(uri);
@@ -1120,31 +1116,12 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                 splashRadius:
                                                     size.width * numD05,
                                                 onPressed: () async {
-                                                  String phoneNumber = item
-                                                      .phones!.first.number
-                                                      .toString()
-                                                      .trim();
                                                   /*Uri whatsappUrl = Uri.parse(
                                                       "whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent("${broadCastedData!.headline}\n\n ${broadCastedData!.taskDescription}"
-                                                          "\n\n ${Uri.parse(baseShareUrl)}")}"); */
-                                                  Uri whatsappUrl = Uri.parse(
-                                                      "whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent("${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}"
-                                                          "\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(baseShareUrl)} to download PressHop and review the task. Cheers")}");
+                                                          "\n\n ${Uri.parse(appUrl)}")}"); */
 
-                                                  debugPrint(
-                                                      "whatsapp==> $whatsappUrl");
-                                                  if (await canLaunchUrl(
-                                                      whatsappUrl)) {
-                                                    await launchUrl(
-                                                        whatsappUrl);
-                                                  } else {
-                                                    showSnackBar(
-                                                        'PressHop',
-                                                        errorOpenWhatsapp,
-                                                        Colors.black);
-                                                    // Handle the case when the URL can't be launched.
-                                                    throw ('Error launching Whatsapp');
-                                                  }
+                                                  Share.share(Uri.encodeComponent(
+                                                      "${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers"));
                                                 },
                                                 icon: Padding(
                                                   padding: EdgeInsets.only(

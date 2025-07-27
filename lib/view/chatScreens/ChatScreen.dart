@@ -62,7 +62,6 @@ class _ConversationScreenState extends State<ConversationScreen>
   Timer? _typingTimer;
 
   String lastSeen = "";
-  AudioPlayer audio = AudioPlayer();
 
   ///Predictive Message List
   bool showPredictiveMsg = false;
@@ -137,7 +136,6 @@ class _ConversationScreenState extends State<ConversationScreen>
     addOnlineOffline(false, sharedPreferences!.getString(adminRoomIdKey) ?? '');
     controller.dispose();
     timer?.cancel();
-    audio.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
 

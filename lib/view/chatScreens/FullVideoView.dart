@@ -45,7 +45,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
 
   late Size size;
 
-  AudioPlayer audioPlayer = AudioPlayer();
   PlayerController controller = PlayerController();
 
   bool audioPlaying = false;

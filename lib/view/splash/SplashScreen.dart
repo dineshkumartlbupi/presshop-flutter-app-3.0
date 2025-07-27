@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
@@ -89,51 +90,17 @@ class _SplashScreenState extends State<SplashScreen>
           debugPrint("MyProfileSuccess:$map");
 
           if (map["code"] == 200) {
+            sharedPreferences!
+                .setString(referralCode, map['userData'][referralCode]);
+            sharedPreferences!.setString(
+                totalHopperArmy, map['userData'][totalHopperArmy].toString());
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => Dashboard(
                           initialPosition: 2,
                         )),
                 (route) => false);
-
-            // if(map["userData"]["verified"]){
-            // if (map["userData"]["bank_detail"] != null) {
-            //   var bankList = map["userData"]["bank_detail"] as List;
-            //   /* if (bankList.isEmpty) {
-            //     Navigator.of(context).pushAndRemoveUntil(
-            //         MaterialPageRoute(
-            //             builder: (context) => const LoginScreen(
-            //             )),
-            //             (route) => false);
-            //    */
-
-            //   if (bankList.isEmpty) {
-            //     Navigator.of(context).pushAndRemoveUntil(
-            //         MaterialPageRoute(
-            //             builder: (context) => const LoginScreen()),
-            //         (route) => false);
-            //     /* onBoardingCompleteDialog(size:MediaQuery.of(context).size,func: (){
-            //       Navigator.of(context).pushAndRemoveUntil(
-            //           MaterialPageRoute(
-            //               builder: (context) => AddBankScreen(
-            //                 showPageNumber: true,
-            //                 hideLeading: true,
-            //                 editBank: false,
-            //                 myBankList: [],
-            //               )),
-            //               (route) => false);
-            //     });*/
-            //   } else {
-            //     Navigator.of(context).pushAndRemoveUntil(
-            //         MaterialPageRoute(
-            //             builder: (context) => Dashboard(
-            //                   initialPosition: 2,
-            //                 )),
-            //         (route) => false);
-            //   }
-            // }
           }
-
           break;
       }
     } on Exception catch (e) {

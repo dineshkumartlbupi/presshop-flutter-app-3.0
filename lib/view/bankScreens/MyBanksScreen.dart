@@ -29,6 +29,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
   String deleteBankId = '';
   bool isLoading = false;
   int selectedIndex = -1;
+  String stripeBankPageTitle = "Add bank";
 
   @override
   void initState() {
@@ -330,6 +331,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
                         size,
                         commonButtonTextStyle(size),
                         commonButtonStyle(size, Colors.black), () {
+                      stripeBankPageTitle = "Update Your Details";
                       generateAddBankApi();
                     }),
                   ),
@@ -342,6 +344,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
                         size,
                         commonButtonTextStyle(size),
                         commonButtonStyle(size, colorThemePink), () {
+                      stripeBankPageTitle = "Change bank account";
                       generateAddBankApi();
                     }),
                   ),
@@ -434,10 +437,11 @@ class MyBanksScreenState extends State<MyBanksScreen>
                   child: SizedBox(
                     height: size.width * numD13,
                     child: commonElevatedButton(
-                        "Sign Up With Stripe",
+                        "Add bank",
                         size,
                         commonButtonTextStyle(size),
                         commonButtonStyle(size, colorThemePink), () {
+                      stripeBankPageTitle = "Add bank";
                       generateAddBankApi();
                     }),
                   ),
@@ -922,7 +926,7 @@ class MyBanksScreenState extends State<MyBanksScreen>
               .push(MaterialPageRoute(
                   builder: (context) => CommonWebView(
                         webUrl: data['accountLink'],
-                        title: "Add Bank",
+                        title: stripeBankPageTitle,
                         accountId: "",
                         type: "",
                       )))

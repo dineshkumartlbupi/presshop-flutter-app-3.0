@@ -119,13 +119,16 @@ class CameraScreenState extends State<CameraScreen>
 
     selectedType = photoText;
     frontCamera = false;
+    debugPrint("Camera- initialised");
   }
 
   @override
   void dispose() {
-    debugPrint("CameraDisposed");
+    debugPrint("Camera- disposed");
     pageReplaced = true;
-    if (cameraController != null) {
+    if (cameraController != null &&
+        cameraController!.value.isInitialized &&
+        !mounted) {
       cameraController!.dispose();
       _exposureModeControlRowAnimationController.dispose();
     }
@@ -145,16 +148,16 @@ class CameraScreenState extends State<CameraScreen>
     debugPrint("LifecycleState: $state");
     if (state == AppLifecycleState.inactive) {
       if (cameraController != null && cameraController!.value.isInitialized) {
-        cameraController!.dispose();
-        cameraController = null;
+        // cameraController!.dispose();
+        // cameraController = null;
       }
     } else if (state == AppLifecycleState.resumed) {
       if (mounted) {
-        if (cameraController != null && cameraController!.value.isInitialized) {
-          cameraController!.dispose();
-        }
-        cameraController = null;
-        initCamera(frontCamera ? cameras[1] : cameras[0]);
+        // if (cameraController != null && cameraController!.value.isInitialized) {
+        //   cameraController!.dispose();
+        // }
+        // cameraController = null;
+        // initCamera(frontCamera ? cameras[1] : cameras[0]);
       }
     }
     super.didChangeAppLifecycleState(state);
@@ -177,8 +180,12 @@ class CameraScreenState extends State<CameraScreen>
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
-    cameraController = CameraController(cameraDescription, ResolutionPreset.max,
-        imageFormatGroup: ImageFormatGroup.jpeg);
+    if (cameraController == null || !cameraController!.value.isInitialized) {
+      cameraController = CameraController(
+          cameraDescription, ResolutionPreset.max,
+          imageFormatGroup: ImageFormatGroup.jpeg);
+    }
+
     cameraValue = null;
     cameraValue = cameraController!.initialize().then((_) async {
       debugPrint("Initialiseddddddd");
@@ -381,7 +388,7 @@ class CameraScreenState extends State<CameraScreen>
                   left: size.width * numD04,
                   top: size.height * numD032,
                   bottom: size.height * numD035,
-                  right: size.width * numD02),
+                  right: size.width * numD04),
               child: SizedBox(
                 height: size.width * numD13,
                 child: commonElevatedButton(
@@ -903,7 +910,7 @@ class CameraScreenState extends State<CameraScreen>
     if (cameraController != null && cameraController!.value.isTakingPicture) {
       return null;
     }
-    AudioPlayer().play(AssetSource("${audioPath}camera_shutter.wav"));
+    //AudioPlayer().play(AssetSource("${audioPath}camera_shutter.wav"));
     try {
       await cameraController!.setFlashMode(FlashMode.off);
       XFile picture = await cameraController!.takePicture();
@@ -1222,21 +1229,23 @@ class CameraScreenState extends State<CameraScreen>
     if (cameraController!.value.isRecordingVideo) {
       return;
     }
-    AudioPlayer()
-        .play(AssetSource("${audioPath}video_start.wav"))
-        .then((value) async {
-      try {
-        await cameraController!.startVideoRecording().then((value) {
-          recordTime();
-        });
-        setState(() {
-          _isRecordingInProgress = true;
-          debugPrint("Testt: $_isRecordingInProgress");
-        });
-      } on CameraException catch (e) {
-        debugPrint('Error starting to record video: $e');
-      }
-    });
+    // AudioPlayer()
+    //     .play(AssetSource("${audioPath}video_start.wav"))
+    //     .then((value) async {
+
+    // });
+
+    try {
+      await cameraController!.startVideoRecording().then((value) {
+        recordTime();
+      });
+      setState(() {
+        _isRecordingInProgress = true;
+        debugPrint("Testt: $_isRecordingInProgress");
+      });
+    } on CameraException catch (e) {
+      debugPrint('Error starting to record video: $e');
+    }
   }
 
   Future stopVideoRecording() async {
@@ -1247,7 +1256,7 @@ class CameraScreenState extends State<CameraScreen>
     if (myTimer != null) {
       myTimer!.cancel();
     }
-    AudioPlayer().play(AssetSource("${audioPath}video_stop.wav"));
+    //(AssetSource("${audioPath}video_stop.wav"));
 
     try {
       XFile file = await cameraController!.stopVideoRecording();

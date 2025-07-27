@@ -8,6 +8,7 @@ import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/FAQScreen.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
+import 'package:presshop/view/myEarning/commission_widget.dart';
 import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
 
 import '../../main.dart';
@@ -20,17 +21,22 @@ import 'earningDataModel.dart';
 
 class MyEarningScreen extends StatefulWidget {
   bool openDashboard = false;
+  int initialTapPosition;
 
-  MyEarningScreen({super.key, required this.openDashboard});
+  MyEarningScreen(
+      {super.key, required this.openDashboard, this.initialTapPosition = 0});
 
   @override
   State<MyEarningScreen> createState() => _MyEarningScreenState();
 }
 
 class _MyEarningScreenState extends State<MyEarningScreen>
+    with TickerProviderStateMixin
     implements NetworkResponse {
   late Size size;
-
+  late TabController _tabController;
+  var tabData = ['Payment received', 'Commission earned'];
+  int _selectedTabbar = 0;
   int limit = 10, offset = 0;
 
   String fromDate = "";
@@ -38,7 +44,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   bool showData = false;
   bool isSorting = false;
-  bool isLoading = false;
+  bool isLoading = true;
+  bool isCommissionLoading = true;
+  List<CommissionData> commissionDataList = [];
 
   final currencyFormat = NumberFormat("#,##0.00", "en_US");
 
@@ -49,12 +57,37 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   @override
   initState() {
+    _tabController = TabController(length: tabData.length, vsync: this);
+    _selectedTabbar = widget.initialTapPosition;
+    _tabController.animateTo(_selectedTabbar);
+    fromDate = DateTime.now().year.toString();
+    toDate = DateTime.now().month.toString().padLeft(2, '0');
+
     initializeFilter();
+    sortList[3].fromDate = fromDate;
+    sortList[3].toDate = toDate;
+    sortList[3].isSelected = true;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       callGEtEarningDataAPI();
-
+      _tabController.addListener(() {
+        if (_tabController.indexIsChanging) {
+          setState(() {
+            _selectedTabbar = _tabController.index;
+            if (_selectedTabbar == 0) {
+              if (earningTransactionDataList.isEmpty) {
+                callGetAllTransactionDetail();
+              }
+            } else if (_selectedTabbar == 1) {
+              if (commissionDataList.isEmpty) {
+                callGetCommissionAPI();
+              }
+            }
+          });
+        }
+      });
       //  transactionShortByDate();
     });
+
     super.initState();
   }
 
@@ -71,459 +104,638 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         return false;
       },
       child: Scaffold(
-        appBar: CommonAppBar(
-          elevation: 0,
-          hideLeading: false,
-          title: Text(
-            myEarningsText,
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
-          ),
-          centerTitle: false,
-          titleSpacing: 0,
-          size: size,
-          showActions: true,
-          leadingFxn: () {
-            widget.openDashboard
-                ? Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 0,
-                            )),
-                    (route) => false)
-                : Navigator.pop(context);
-          },
-          actionWidget: [
-            InkWell(
-              onTap: () {
-                showBottomSheet(size);
-              },
-              child: commonFilterIcon(size),
+          appBar: CommonAppBar(
+            elevation: 0,
+            hideLeading: false,
+            title: Text(
+              myEarningsText,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width * appBarHeadingFontSize),
             ),
-            SizedBox(
-              width: size.width * numD02,
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                  bottom: size.width * numD02, right: size.width * numD016),
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
+            centerTitle: false,
+            titleSpacing: 0,
+            size: size,
+            showActions: true,
+            leadingFxn: () {
+              widget.openDashboard
+                  ? Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)),
-                      (route) => false);
-                },
-                child: Image.asset(
-                  "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                          builder: (context) => Dashboard(
+                                initialPosition: 0,
+                              )),
+                      (route) => false)
+                  : Navigator.pop(context);
+            },
+            actionWidget: [
+              if (_selectedTabbar == 0)
+                InkWell(
+                  onTap: () {
+                    showBottomSheet(size);
+                  },
+                  child: commonFilterIcon(size),
+                ),
+              SizedBox(
+                width: size.width * numD02,
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                    bottom: size.width * numD02, right: size.width * numD016),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)),
+                        (route) => false);
+                  },
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * numD07,
+                    width: size.width * numD07,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              width: size.width * numD02,
-            ),
-          ],
-        ),
-        body: !isLoading
-            ? showLoader()
-            : earningData != null
-                ? ListView(
-                    padding: EdgeInsets.only(
-                      left: size.width * numD06,
-                      right: size.width * numD06,
-                    ),
-                    children: [
-                      /// My Earnings
-                      Container(
-                        padding: EdgeInsets.all(size.width * numD05),
-                        decoration: BoxDecoration(
-                            color: colorLightGrey,
-                            borderRadius:
-                                BorderRadius.circular(size.width * numD05)),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.2, color: Colors.black),
+              SizedBox(
+                width: size.width * numD02,
+              ),
+            ],
+          ),
+          body: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(size.width * numD02),
+                    child: Column(
+                      children: [
+                        /// My Earnings
+                        Container(
+                          padding: EdgeInsets.all(size.width * numD05),
+                          decoration: BoxDecoration(
+                              color: colorLightGrey,
+                              borderRadius:
+                                  BorderRadius.circular(size.width * numD05)),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 1.2, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD04)),
+                                    child: ClipRRect(
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD04)),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          avatarImageUrl + earningData!.avatar,
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                        height: size.width * numD32,
-                                        width: size.width * numD35,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover),
+                                          size.width * numD04),
+                                      child: CachedNetworkImage(
+                                        imageUrl: avatarImageUrl +
+                                            (earningData?.avatar ?? ""),
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          height: size.width * numD32,
+                                          width: size.width * numD35,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          "${dummyImagePath}dummy_earnings.png",
+                                          fit: BoxFit.cover,
+                                          height: size.width * numD32,
+                                          width: size.width * numD35,
                                         ),
                                       ),
-                                      placeholder: (context, url) =>
-                                          const CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        "${dummyImagePath}dummy_earnings.png",
-                                        fit: BoxFit.cover,
-                                        height: size.width * numD32,
-                                        width: size.width * numD35,
-                                      ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: size.width * numD06),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        youHaveEarnedText,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD045,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD02,
-                                      ),
-                                      Text(
-                                        earningData!.totalEarning.isNotEmpty
-                                            ? "£${formatDouble(double.parse(earningData!.totalEarning))}"
-                                            : '£0',
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD075,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w800),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: size.width * numD03,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      fromDate = await commonDatePicker() ?? "";
-                                      toDate = '';
-                                      sortList[3].fromDate = fromDate;
-                                      if (mounted) {
-                                        setState(() {});
-                                      }
-                                      debugPrint(
-                                          'picked data===> ${commonDatePicker()}');
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: size.width * numD02,
-                                        horizontal: size.width * numD02,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1.2, color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            fromDate.isNotEmpty
-                                                ? dateTimeFormatter(
-                                                    dateTime:
-                                                        fromDate.toString())
-                                                : "From date",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD035,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          const Icon(
-                                            Icons.arrow_drop_down_sharp,
-                                            color: Colors.black,
-                                          )
-                                        ],
-                                      ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * numD06),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          youHaveEarnedText,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD045,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD02,
+                                        ),
+                                        Text(
+                                          earningData!.totalEarning.isNotEmpty
+                                              ? '£${formatDouble(double.parse(earningData!.totalEarning))}'
+                                              : '£0',
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD075,
+                                              color: colorThemePink,
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD05,
-                                ),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      if (fromDate.isNotEmpty) {
-                                        toDate = await commonDatePicker() ?? '';
-                                        if (toDate.isNotEmpty) {
-                                          DateTime parseFromDate =
-                                              DateTime.parse(fromDate);
-                                          DateTime parseToDate =
-                                              DateTime.parse(toDate);
-                                          debugPrint(
-                                              "parseFromDate : $parseFromDate");
-                                          debugPrint(
-                                              "parseToDate : $parseToDate");
-
-                                          if (parseToDate
-                                                  .isAfter(parseFromDate) ||
-                                              parseToDate.isAtSameMomentAs(
-                                                  parseFromDate)) {
-                                            sortList.indexWhere((element) =>
-                                                element.isSelected = false);
-                                            sortList[3].toDate = toDate;
-                                            sortList[3].isSelected = true;
-                                            callGetAllTransactionDetail();
-                                          } else {
-                                            showSnackBar(
-                                                "Date Error",
-                                                "Please select to date above from date",
-                                                Colors.red);
-                                          }
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.width * numD03,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        // Year picker
+                                        final now = DateTime.now();
+                                        final picked = await showDialog<int>(
+                                          context: context,
+                                          builder: (context) {
+                                            int selectedYear =
+                                                fromDate.isNotEmpty
+                                                    ? int.parse(fromDate)
+                                                    : now.year;
+                                            return AlertDialog(
+                                              title: Text('Select Year'),
+                                              content: SizedBox(
+                                                width: size.width * numD035,
+                                                height: size.height * numD30,
+                                                child: YearPicker(
+                                                  firstDate: DateTime(2025),
+                                                  lastDate: DateTime(now.year),
+                                                  selectedDate:
+                                                      DateTime(selectedYear),
+                                                  onChanged: (dateTime) {
+                                                    Navigator.pop(
+                                                        context, dateTime.year);
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        if (picked != null) {
+                                          fromDate = picked.toString();
+                                          toDate =
+                                              ''; // Reset month when year changes
+                                          sortList[3].fromDate = fromDate;
+                                          sortList[3].toDate = '';
+                                          if (mounted) setState(() {});
                                         }
-                                        setState(() {});
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: size.width * numD02,
-                                        horizontal: size.width * numD02,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1.2, color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            toDate.isNotEmpty
-                                                ? dateTimeFormatter(
-                                                    dateTime: toDate.toString())
-                                                : "To date",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD035,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                          const Icon(
-                                            Icons.arrow_drop_down_sharp,
-                                            color: Colors.black,
-                                          )
-                                        ],
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: size.width * numD02,
+                                          horizontal: size.width * numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.2,
+                                                color: Colors.black),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD02)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              fromDate.isNotEmpty
+                                                  ? fromDate
+                                                  : "Year",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD035,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: size.width * numD04,
-                      ),
-
-                      Text(
-                        paymentReceivedText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD045,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
-                      ),
-
-                      SizedBox(
-                        height: size.width * numD02,
-                      ),
-
-                      const Divider(
-                        color: Color(0xFFD8D8D8),
-                        thickness: 1.5,
-                      ),
-
-                      SizedBox(
-                        height: size.width * numD04,
-                      ),
-
-                      /// Payment Receive
-                      paymentReceivedWidget(),
-
-                      SizedBox(
-                        height: size.width * numD04,
-                      ),
-
-                      Text(
-                        paymentPendingText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD045,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
-                      ),
-
-                      SizedBox(
-                        height: size.width * numD02,
-                      ),
-
-                      const Divider(
-                        color: Color(0xFFD8D8D8),
-                        thickness: 1.5,
-                      ),
-
-                      SizedBox(
-                        height: size.width * numD04,
-                      ),
-
-                      /// Payment Pending
-                      paymentPendingWidget(),
-
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: size.width * numD07,
-                            bottom: size.width * numD07),
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    "If you have any questions regarding your earnings or pending payments, please ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const ContactUsScreen()));
-                                    },
-                                    child: Text(
-                                      "${contactText.toLowerCase()} ",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500),
+                                  SizedBox(
+                                    width: size.width * numD05,
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: fromDate.isEmpty
+                                          ? null
+                                          : () async {
+                                              // Month picker
+                                              final now = DateTime.now();
+                                              final int selectedYear =
+                                                  int.parse(fromDate);
+                                              final int lastMonth =
+                                                  (selectedYear == now.year)
+                                                      ? now.month
+                                                      : 12;
+                                              final picked =
+                                                  await showDialog<int>(
+                                                context: context,
+                                                builder: (context) {
+                                                  int selectedMonth =
+                                                      toDate.isNotEmpty
+                                                          ? int.parse(toDate)
+                                                          : 1;
+                                                  return AlertDialog(
+                                                    title: Text('Select Month'),
+                                                    content: SizedBox(
+                                                      width: 400,
+                                                      height: 400,
+                                                      child: GridView.builder(
+                                                        gridDelegate:
+                                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 2,
+                                                          childAspectRatio: 2.5,
+                                                        ),
+                                                        itemCount: lastMonth,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          final month =
+                                                              index + 1;
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  month);
+                                                            },
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .all(8),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: selectedMonth ==
+                                                                        month
+                                                                    ? colorThemePink
+                                                                    : Colors.grey[
+                                                                        200],
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Text(
+                                                                DateFormat
+                                                                        .MMMM()
+                                                                    .format(DateTime(
+                                                                        0,
+                                                                        month)),
+                                                                style:
+                                                                    commonTextStyle(
+                                                                  size: size,
+                                                                  fontSize: size
+                                                                          .width *
+                                                                      numD035,
+                                                                  color: selectedMonth ==
+                                                                          month
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                              if (picked != null) {
+                                                toDate = picked
+                                                    .toString()
+                                                    .padLeft(2, '0');
+                                                sortList[3].toDate = toDate;
+                                                sortList[3].isSelected = true;
+                                                callGEtEarningDataAPI();
+                                                if (_selectedTabbar == 0) {
+                                                  callGetAllTransactionDetail();
+                                                } else if (_selectedTabbar ==
+                                                    1) {
+                                                  callGetCommissionAPI();
+                                                }
+                                              }
+                                            },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: size.width * numD02,
+                                          horizontal: size.width * numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.2,
+                                                color: Colors.black),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD02)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              toDate.isNotEmpty
+                                                  ? DateFormat.MMMM().format(
+                                                      DateTime(
+                                                          0, int.parse(toDate)))
+                                                  : "Month",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD035,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  )),
-                              TextSpan(
-                                text:
-                                    "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              TextSpan(
-                                text: "Also check our ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) => FAQScreen(
-                                                    priceTipsSelected: false,
-                                                    type: 'faq',
-                                                    index: 0,
-                                                  )));
-                                    },
-                                    child: Text(
-                                      "$faqText ",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  )),
-                              TextSpan(
-                                text: "and ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const TutorialsScreen()));
-                                    },
-                                    child: Text(
-                                      "${tutorialsText.toLowerCase()} ",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  )),
-                              TextSpan(
-                                text:
-                                    "for answers to common payment queries. Thank you ",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
+                                  )
+                                ],
                               ),
                             ],
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD03,
-                                fontWeight: FontWeight.w300,
-                                height: 1.5),
                           ),
                         ),
-                      )
-                    ],
-                  )
-                : showData
-                    ? errorMessageWidget("Not Data Found!")
-                    : Container(),
-      ),
+
+                        SizedBox(
+                          height: size.width * numD04,
+                        ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TabBar(
+                              physics: NeverScrollableScrollPhysics(),
+                              controller: _tabController,
+                              labelColor: Colors.white,
+                              dividerColor: colorThemePink,
+                              unselectedLabelColor: Colors.black,
+                              indicator: BoxDecoration(
+                                color: colorThemePink,
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD02),
+                              ),
+                              labelStyle: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD038,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              tabs: [
+                                Tab(
+                                  text: paymentReceivedText,
+                                ),
+                                Tab(text: commissionEarnedText),
+                              ],
+                            ),
+                            const Divider(
+                              color: Color(0xFFD8D8D8),
+                              thickness: 1.5,
+                            ),
+                            Column(children: [
+                              if (_selectedTabbar == 0) ...[
+                                earningTransactionDataList.isEmpty
+                                    ? Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: size.height * numD1),
+                                          child: Text(
+                                            "No payment received",
+                                            style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD035,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(
+                                            height: size.width * numD025,
+                                          ),
+                                          paymentReceivedWidget(),
+                                          if (earningTransactionDataList
+                                                  .isNotEmpty &&
+                                              earningTransactionDataList.any(
+                                                  (item) =>
+                                                      !item.paidStatus)) ...[
+                                            Text(
+                                              paymentPendingText,
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD045,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              height: size.width * numD02,
+                                            ),
+                                            const Divider(
+                                              color: Color(0xFFD8D8D8),
+                                              thickness: 1.5,
+                                            ),
+                                            SizedBox(
+                                              height: size.width * numD04,
+                                            ),
+                                            paymentPendingWidget(),
+                                          ],
+                                        ],
+                                      )
+                              ] else ...[
+                                if (commissionDataList.isEmpty)
+                                  Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          top: size.height * numD1),
+                                      child: Text(
+                                        "No commission earned",
+                                        style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: commissionDataList.length,
+                                    itemBuilder: (context, index) {
+                                      return CommissionWidget(
+                                        commissionData:
+                                            commissionDataList[index],
+                                      );
+                                    },
+                                  ),
+                                // Center(
+                                //   child: Text(
+                                //     "Commission details coming soon",
+                                //     style: commonTextStyle(
+                                //       size: size,
+                                //       fontSize: size.width * numD045,
+                                //       color: Colors.black,
+                                //       fontWeight: FontWeight.w600,
+                                //     ),
+                                //   ),
+                                // ),
+                              ]
+                            ]),
+                          ],
+                        ),
+
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: size.width * numD06,
+                              bottom: size.width * numD07),
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      "If you have any questions regarding your earnings or pending payments, please ",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ContactUsScreen()));
+                                      },
+                                      child: Text(
+                                        "${contactText.toLowerCase()} ",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD03,
+                                            color: colorThemePink,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    )),
+                                TextSpan(
+                                  text:
+                                      "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                TextSpan(
+                                  text: "Also check our ",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (context) => FAQScreen(
+                                                      priceTipsSelected: false,
+                                                      type: 'faq',
+                                                      index: 0,
+                                                    )));
+                                      },
+                                      child: Text(
+                                        "$faqText ",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD03,
+                                            color: colorThemePink,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    )),
+                                TextSpan(
+                                  text: "and ",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const TutorialsScreen()));
+                                      },
+                                      child: Text(
+                                        "${tutorialsText.toLowerCase()} ",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD03,
+                                            color: colorThemePink,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    )),
+                                TextSpan(
+                                  text:
+                                      "for answers to common payment queries. Thank you ",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: size.width * numD03,
+                                  fontWeight: FontWeight.w300,
+                                  height: 1.5),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )),
     );
   }
 
@@ -1451,7 +1663,14 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         fontWeight: FontWeight.w500),
                   ),
 
-                  filterListWidget(context, sortList, stateSetter, size, true),
+                  filterListWidget(
+                      context,
+                      sortList
+                          .where((data) => data.name != filterDateText)
+                          .toList(),
+                      stateSetter,
+                      size,
+                      true),
 
                   /// Filter
                   SizedBox(
@@ -1549,8 +1768,27 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   /// API Section
   callGEtEarningDataAPI() {
+    Map<String, String> map = {};
+    int pos = sortList.indexWhere((element) => element.isSelected);
+    if (sortList[pos].name == filterDateText) {
+      map["year"] = sortList[pos].fromDate!;
+      map["month"] = sortList[pos].toDate!;
+    }
     NetworkClass(getEarningDataAPI, this, reqGetEarningDataAPI)
-        .callRequestServiceHeader(false, 'get', {});
+        .callRequestServiceHeader(false, 'get', map);
+  }
+
+  callGetCommissionAPI() {
+    isCommissionLoading = true;
+    setState(() {});
+    Map<String, String> map = {};
+    int pos = sortList.indexWhere((element) => element.isSelected);
+    if (sortList[pos].name == filterDateText) {
+      map["year"] = sortList[pos].fromDate!;
+      map["month"] = sortList[pos].toDate!;
+    }
+    NetworkClass(commissionGetUrl, this, commissionGetRequest)
+        .callRequestServiceHeader(false, 'get', map);
   }
 
   callGetAllTransactionDetail() {
@@ -1559,8 +1797,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
     if (pos != -1) {
       if (sortList[pos].name == filterDateText) {
-        map["startdate"] = sortList[pos].fromDate!;
-        map["endDate"] = sortList[pos].toDate!;
+        map["year"] = sortList[pos].fromDate!;
+        map["month"] = sortList[pos].toDate!;
       } else if (sortList[pos].name == viewMonthlyText) {
         map["posted_date"] = "31";
       } else if (sortList[pos].name == viewYearlyText) {
@@ -1614,6 +1852,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           debugPrint(
               "reqGetEarningDataAPI_ErrorResponse==> ${jsonDecode(response)}");
           break;
+        case commissionGetRequest:
+          debugPrint(
+              "commissionGetRequest_ErrorResponse==> ${jsonDecode(response)}");
+          break;
         case reqGetAllEarningTransactionAPI:
           debugPrint(
               "reqGetAllEarningTransactionAPI_ErrorResponse==> ${jsonDecode(response)}");
@@ -1632,10 +1874,20 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           var data = jsonDecode(response);
           var dataList = data['resp'];
           earningData = EarningProfileDataModel.fromJson(dataList);
+          callGetCommissionAPI();
           callGetAllTransactionDetail();
           setState(() {});
           break;
-
+        case commissionGetRequest:
+          debugPrint("commissionGet=> ${jsonDecode(response)}");
+          var data = jsonDecode(response);
+          var dataList = data['data'] as List;
+          commissionDataList.clear();
+          commissionDataList =
+              dataList.map((e) => CommissionData.fromJson(e)).toList();
+          isCommissionLoading = false;
+          setState(() {});
+          break;
         case reqGetAllEarningTransactionAPI:
           debugPrint("reqGetAllEarning=> ${jsonDecode(response)}");
           var data = jsonDecode(response);
@@ -1643,7 +1895,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           earningTransactionDataList = dataList
               .map((e) => EarningTransactionDetail.fromJson(e))
               .toList();
-          isLoading = true;
+          isLoading = false;
           if (earningData != null) {
             for (var item in earningTransactionDataList) {
               item.hopperAvatar = earningData?.avatar ?? "";

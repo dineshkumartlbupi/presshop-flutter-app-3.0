@@ -464,6 +464,74 @@ class NetworkClass {
     String requestType,
     String imageParams,
   ) async {
+    if (showLoader && alertDialog == null && !isShowing) {
+      isShowing = true;
+      showLoaderDialog(navigatorKey.currentContext!);
+    }
+    var url = baseUrl + endUrl;
+    Dio dio = Dio();
+    FormData formData = FormData();
+    if (imageParams.isNotEmpty) {
+      for (var element in _files!) {
+        var mArray = lookupMimeType(element.path)!.split("/");
+        var file = await MultipartFile.fromFile(
+          element.path,
+          contentType: MediaType(mArray.first, mArray.last),
+        );
+        formData.files.add(MapEntry(imageParams, file));
+      }
+    }
+
+    if (sharedPreferences!.getString(tokenKey) != null) {
+      var headerToken = sharedPreferences!.getString(tokenKey)!;
+      var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+      dio.options.headers = {
+        "Authorization": "Bearer $headerToken",
+        //headerKey: headerToken,
+        headerDeviceTypeKey:
+            "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+        headerDeviceIdKey: deviceID
+      };
+    }
+    if (jsonBody != null && jsonBody!.isNotEmpty) {
+      jsonBody!.forEach((key, value) {
+        formData.fields.add(MapEntry(key, value.toString()));
+      });
+    }
+    try {
+      Response response = await dio.post(
+        url,
+        data: formData,
+      );
+      if (showLoader) {
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+      }
+
+      if (response.statusCode! <= 201) {
+        networkResponse!.onResponse(
+            requestCode: requestCode, response: jsonEncode(response.data));
+      } else {
+        networkResponse!.onError(
+            requestCode: requestCode, response: jsonEncode(response.data));
+      }
+    } on SocketException catch (e) {
+      if (alertDialog != null && isShowing) {
+        isShowing = false;
+        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+      }
+      commonSocketException(e.osError!.errorCode, e.message);
+      return;
+    }
+  }
+
+  Future<void> callMultipartServiceSameParamMultiImage1(
+    bool showLoader,
+    String requestType,
+    String imageParams,
+  ) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;

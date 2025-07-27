@@ -55,7 +55,6 @@ class PreviewScreenState extends State<PreviewScreen> {
       city = "",
       latitude = "",
       longitude = "";
-  AudioPlayer audioPlayer = AudioPlayer();
   late LocationService _locationService;
   late LocationData? locationData;
   int currentPage = 0;
@@ -74,6 +73,10 @@ class PreviewScreenState extends State<PreviewScreen> {
     if (widget.mediaList.isNotEmpty) {
       mediaList = widget.mediaList;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
+        requestLocationPermissions(
+            shouldShowSettingPopup: false, showErrorLocationPage: false));
     super.initState();
   }
 
@@ -103,6 +106,8 @@ class PreviewScreenState extends State<PreviewScreen> {
         sharedPreferences!.setString(currentCountry, data.country);
         sharedPreferences!.setString(currentState, data.state);
         sharedPreferences!.setString(currentCity, data.city);
+        sharedPreferences!.setString(contryCode, data.countryCode);
+
         //callUpdateCurrentData();
         setState(() {
           for (var media in mediaList) {
@@ -125,26 +130,30 @@ class PreviewScreenState extends State<PreviewScreen> {
     }
   }
 
-  requestLocationPermissions() async {
+  requestLocationPermissions(
+      {bool shouldShowSettingPopup = true,
+      bool showErrorLocationPage = true}) async {
     try {
       setState(() {
         isLocationFetching = true;
       });
-      locationData = await _locationService.getCurrentLocation(context);
+      locationData = await _locationService.getCurrentLocation(context,
+          shouldShowSettingPopup: shouldShowSettingPopup);
       if (locationData != null) {
         isLocationFetching = false;
+
         proceedWithLocation(locationData);
-        setState(() {
-          isLocationFetching = false;
-        });
       } else {
         isLocationFetching = false;
-
-        goToLocationErrorScreen();
+        if (showErrorLocationPage) {
+          goToLocationErrorScreen();
+        }
       }
     } on Exception catch (e) {
       isLocationFetching = false;
-      goToLocationErrorScreen();
+      if (showErrorLocationPage) {
+        goToLocationErrorScreen();
+      }
     }
   }
 
@@ -444,76 +453,64 @@ class PreviewScreenState extends State<PreviewScreen> {
                                   width: size.width * numD04,
                                 ),
                                 Expanded(
-                                  child: InkWell(
-                                    onTap: () {
-                                      if (mediaList[index].location.isEmpty &&
-                                          !isLocationFetching) {
-                                        showToast(
-                                            "Location fetching please wait...");
-                                        requestLocationPermissions();
-                                      }
-                                    },
-                                    child: Container(
-                                        height: size.width * numD11,
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey[100],
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04)),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              "${iconsPath}ic_location.png",
-                                              width: size.width * numD04,
-                                              height: size.width * numD04,
-                                              color: mediaList[index]
-                                                      .location
-                                                      .isEmpty
+                                  child: Container(
+                                      height: size.width * numD11,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD04)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "${iconsPath}ic_location.png",
+                                            width: size.width * numD04,
+                                            height: size.width * numD04,
+                                            color: mediaList[index]
+                                                    .location
+                                                    .isEmpty
+                                                ? isLocationFetching
+                                                    ? colorGrey6
+                                                    : Colors.red
+                                                : Colors.black,
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD02,
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD25,
+                                            child: Text(
+                                              mediaList[index].location.isEmpty
                                                   ? isLocationFetching
-                                                      ? colorGrey6
-                                                      : Colors.red
-                                                  : Colors.black,
+                                                      ? ""
+                                                      : ""
+                                                  : mediaList[index].location,
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: mediaList[index]
+                                                          .location
+                                                          .isEmpty
+                                                      ? size.width * numD025
+                                                      : size.width * numD025,
+                                                  color: mediaList[index]
+                                                          .location
+                                                          .isEmpty
+                                                      ? isLocationFetching
+                                                          ? colorGrey6
+                                                          : Colors.red
+                                                      : Colors.black,
+                                                  fontWeight: mediaList[index]
+                                                          .location
+                                                          .isEmpty
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                            SizedBox(
-                                              width: size.width * numD02,
-                                            ),
-                                            SizedBox(
-                                              width: size.width * numD25,
-                                              child: Text(
-                                                mediaList[index]
-                                                        .location
-                                                        .isEmpty
-                                                    ? isLocationFetching
-                                                        ? "Fetching..."
-                                                        : "Tap to add location"
-                                                    : mediaList[index].location,
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize: mediaList[index]
-                                                            .location
-                                                            .isEmpty
-                                                        ? size.width * numD025
-                                                        : size.width * numD025,
-                                                    color: mediaList[index]
-                                                            .location
-                                                            .isEmpty
-                                                        ? isLocationFetching
-                                                            ? colorGrey6
-                                                            : Colors.red
-                                                        : Colors.black,
-                                                    fontWeight: mediaList[index]
-                                                            .location
-                                                            .isEmpty
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )
-                                          ],
-                                        )),
-                                  ),
+                                          )
+                                        ],
+                                      )),
                                 ),
                               ],
                             ),
@@ -649,8 +646,11 @@ class PreviewScreenState extends State<PreviewScreen> {
                                 } else {
                                   if (mediaList.first.location.isEmpty ||
                                       mediaList.first.latitude.isEmpty) {
-                                    showToast(
-                                        "Please add location to the media");
+                                    requestLocationPermissions(
+                                        shouldShowSettingPopup: false,
+                                        showErrorLocationPage: true);
+                                    // showToast(
+                                    //     "Please add location to the media");
                                     return;
                                   }
                                   if (mediaList.isNotEmpty) {
@@ -850,8 +850,9 @@ class PreviewScreenState extends State<PreviewScreen> {
                                 } else {
                                   if (mediaList.first.location.isEmpty ||
                                       mediaList.first.latitude.isEmpty) {
-                                    showToast(
-                                        "Please add location to the media");
+                                    requestLocationPermissions(
+                                        shouldShowSettingPopup: false,
+                                        showErrorLocationPage: true);
                                     return;
                                   }
                                   if (mediaList.isNotEmpty) {

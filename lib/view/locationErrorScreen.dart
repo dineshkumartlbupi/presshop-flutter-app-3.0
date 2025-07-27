@@ -42,92 +42,127 @@ class _LocationErrorScreenState extends State<LocationErrorScreen>
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Spacer(),
-                Icon(
-                  Icons.location_off,
-                  size: 80,
-                  color: Colors.red,
-                ),
-                SizedBox(height: size.height * numD02),
-                Text(
-                  'Location Not Found',
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400),
-                ),
-                SizedBox(height: size.height * numD01),
-                Text(
-                  'We are unable to get your location. Until we have access to your location, We cannot proceed further.',
-                  textAlign: TextAlign.center,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400),
-                ),
-                SizedBox(height: size.height * numD08),
-                SizedBox(
-                  height: size.width * numD12,
-                  width: size.width * numD80,
-                  child: commonElevatedButton(
-                    isFetchingLocation ? "Fetching..." : "Fetch Location",
-                    size,
-                    commonButtonTextStyle(size),
-                    commonButtonStyle(size,
-                        isFetchingLocation ? Colors.grey : colorThemePink),
-                    () async {
-                      // if (isFetchingLocation) {
-                      //   return; // Prevent multiple taps while fetching location
-                      // }
-                      setState(() {
-                        isFetchingLocation = true;
-                      });
-
-                      late LocationData? locationData;
-
-                      locationData =
-                          await _locationService.getCurrentLocation(context);
-
-                      if (locationData != null) {
-                        callUpdateCurrentData(
-                            locationData.latitude!, locationData.longitude!);
-                        // Successfully fetched location, you can now use it
-                        // Navigate to the next screen or perform the desired action
-                        Navigator.pop(context, locationData);
-                      } else {
-                        setState(() {
-                          isFetchingLocation = false;
-                        });
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(height: size.height * numD02),
-                SizedBox(
-                  height: size.width * numD12,
-                  width: size.width * numD80,
-                  child: commonElevatedButton(
-                    "My Content",
-                    size,
-                    commonButtonTextStyle(size),
-                    commonButtonStyle(size, Colors.black),
-                    () async {
+                SizedBox(height: size.height * numD05),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) =>
                                   Dashboard(initialPosition: 0)),
                           (route) => false);
-                      // if (Platform.isIOS) {
-                      //   await SystemChannels.platform
-                      //       .invokeMethod<void>('SystemNavigator.pop');
-                      // } else {
-                      //   SystemNavigator.pop();
-                      // }
                     },
+                    icon: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.black, shape: BoxShape.circle),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: size.width * numD06,
+                      ),
+                    ),
                   ),
+                ),
+                Spacer(),
+                Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD04,
+                        vertical: size.width * numD04),
+                    decoration: BoxDecoration(
+                        color: colorLightGrey,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD04)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(size.width * numD06),
+                            child: Image.asset("${commonImagePath}dog.png",
+                                height: size.width * numD30,
+                                width: size.width * numD30,
+                                fit: BoxFit.cover)),
+                        SizedBox(width: size.width * numD05),
+                        Flexible(
+                          child: Text(
+                            'Oops! We’ll need access to your location before you can proceed.',
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD04,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    )),
+                SizedBox(height: size.height * numD04),
+                Text(
+                  'Note: The press needs to know where a photo or video was taken, and without your location, we can’t submit and help sell your content. Pop it on and you’re good to go!',
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400),
+                ),
+                SizedBox(height: size.height * numD04),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: size.width * numD12,
+                      width: size.width * numD44,
+                      child: commonElevatedButton(
+                        "Back",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size, Colors.black),
+                        () async {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Dashboard(initialPosition: 0)),
+                              (route) => false);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.width * numD12,
+                      width: size.width * numD44,
+                      child: commonElevatedButton(
+                        "Enable Location",
+                        size,
+                        commonButtonTextStyle(size),
+                        commonButtonStyle(size,
+                            isFetchingLocation ? Colors.grey : colorThemePink),
+                        () async {
+                          // if (isFetchingLocation) {
+                          //   return; // Prevent multiple taps while fetching location
+                          // }
+                          setState(() {
+                            isFetchingLocation = true;
+                          });
+
+                          late LocationData? locationData;
+
+                          locationData = await _locationService
+                              .getCurrentLocation(context);
+
+                          if (locationData != null) {
+                            // Successfully fetched location, you can now use it
+                            // Navigate to the next screen or perform the desired action
+                            Navigator.pop(context, locationData);
+                          } else {
+                            setState(() {
+                              isFetchingLocation = false;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 Spacer(),
                 if (isFetchingLocation)
@@ -146,20 +181,6 @@ class _LocationErrorScreenState extends State<LocationErrorScreen>
         ),
       ),
     );
-  }
-
-  void callUpdateCurrentData(double latitude, double longitude) {
-    Map<String, String> params = {
-      "hopper_id": sharedPreferences!.getString(hopperIdKey).toString(),
-      "longitude": longitude.toString(),
-      "latitude": latitude.toString()
-    };
-
-    debugPrint('map: $params');
-
-    NetworkClass.fromNetworkClass(
-            updateLocation, this, updateLocationRequest, params)
-        .callRequestServiceHeader(false, "post", null);
   }
 
   @override

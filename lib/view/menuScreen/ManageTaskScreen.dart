@@ -108,7 +108,6 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
   String contentView = "0";
   String contentPurchased = "0";
   FlickManager? flickManager;
-  AudioPlayer audioPlayer = AudioPlayer();
   PlayerController controller = PlayerController();
   int _currentMediaIndex = 0;
   bool audioPlaying = false;
@@ -3133,7 +3132,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   child: Column(
                     children: [
                       Text(
-                        'Total Earning',
+                        'Total Earnings',
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD035,

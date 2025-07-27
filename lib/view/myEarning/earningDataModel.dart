@@ -5,26 +5,12 @@ import '../menuScreen/feedScreen/feedDataModel.dart';
 
 class EarningProfileDataModel {
   String id = '';
-  String category = '';
-  bool isSocialRegister = false;
-  String role = '';
-  String status = '';
-  String hopperUserFirstName = '';
-  String hopperUserLastName = '';
-  String hopperUserEmail = '';
   String avatarId = '';
   String avatar = '';
   String totalEarning = "";
 
   EarningProfileDataModel({
     required this.id,
-    required this.category,
-    required this.isSocialRegister,
-    required this.role,
-    required this.status,
-    required this.hopperUserFirstName,
-    required this.hopperUserLastName,
-    required this.hopperUserEmail,
     required this.avatarId,
     required this.avatar,
     required this.totalEarning,
@@ -33,24 +19,52 @@ class EarningProfileDataModel {
   factory EarningProfileDataModel.fromJson(Map<String, dynamic> json) {
     return EarningProfileDataModel(
       id: json['_id'] ?? '',
-      category: json['hopper_id'] != null ? json['hopper_id']['category'] : '',
-      isSocialRegister: json['hopper_id'] != null
-          ? json['hopper_id']['isSocialRegister']
-          : false,
-      role: json['hopper_id'] != null ? json['hopper_id']['status'] : '',
-      status: json['hopper_id'] != null ? json['hopper_id']['_id'] : '',
-      hopperUserFirstName:
-          json['hopper_id'] != null ? json['hopper_id']['first_name'] : '',
-      hopperUserLastName:
-          json['hopper_id'] != null ? json['hopper_id']['last_name'] : '',
-      hopperUserEmail:
-          json['hopper_id'] != null ? json['hopper_id']['email'] : '',
       avatarId:
           json['avatar_details'] != null ? json['avatar_details']['_id'] : '',
       avatar: json['avatar_details'] != null
           ? json['avatar_details']['avatar']
           : '',
-      totalEarning: json['total_earining'].toString() ?? '',
+      totalEarning: json['total_earning'].toString(),
+    );
+  }
+}
+
+class CommissionData {
+  CommissionData({
+    required this.totalEarning,
+    required this.commission,
+    required this.commissionReceived,
+    required this.commissionPending,
+    required this.paidOn,
+    required this.firstName,
+    required this.lastName,
+    required this.dateOfJoining,
+    required this.avatar,
+  });
+
+  double totalEarning;
+  double commission;
+  double commissionReceived;
+  double commissionPending;
+  String? paidOn;
+  String firstName;
+  String lastName;
+  String dateOfJoining;
+  String avatar;
+
+  factory CommissionData.fromJson(Map<String, dynamic> json) {
+    return CommissionData(
+      totalEarning: json['totalEarning']?.toDouble() ?? 0.0,
+      commission: json['commission']?.toDouble() ?? 0.0,
+      avatar: '$avatarImageUrl${json['avatarInfo']['avatar']}'.trim(),
+      commissionReceived: json['commissionReceived']?.toDouble() ?? 0.0,
+      commissionPending: json['commissionPending']?.toDouble() ?? 0.0,
+      paidOn: json['paidOn'] != null
+          ? dateTimeFormatter(dateTime: json['paidOn'])
+          : null,
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      dateOfJoining: dateTimeFormatter(dateTime: json['dateOfJoining']),
     );
   }
 }

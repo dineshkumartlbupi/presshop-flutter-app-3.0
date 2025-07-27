@@ -127,6 +127,10 @@ class MyContentScreenState extends State<MyContentScreen>
                       itemBuilder: (context, index) {
                         return InkWell(
                             onTap: () {
+                              if (myContentList[index].status.toLowerCase() ==
+                                  "pending") {
+                                return;
+                              }
                               Navigator.of(context)
                                   .push(MaterialPageRoute(
                                       builder: (context) =>
@@ -179,7 +183,9 @@ class MyContentScreenState extends State<MyContentScreen>
             children: [
               Expanded(
                 child: Text(
-                  item.title,
+                  item.status.toLowerCase() == "pending"
+                      ? item.textValue
+                      : item.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: commonTextStyle(
@@ -289,64 +295,84 @@ class MyContentScreenState extends State<MyContentScreen>
                   ),
                 ],
               ),
-              Container(
-                height: size.width * numD08,
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD015,
-                    vertical: size.width * numD01),
-                decoration: BoxDecoration(
-                    color: item.paidStatus == unPaidText
-                        ? colorThemePink
-                        : /*item.paidStatus == paidText &&
+              item.status.toLowerCase() == "pending"
+                  ? Container(
+                      height: size.height * numD036,
+                      width: size.width * numD17,
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius:
+                              BorderRadius.circular(size.width * numD015)),
+                      child: Center(
+                        child: Text(
+                          "Under\nReview",
+                          textAlign: TextAlign.center,
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD024,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ))
+                  : Container(
+                      height: size.width * numD08,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * numD015,
+                          vertical: size.width * numD01),
+                      decoration: BoxDecoration(
+                          color: item.paidStatus == unPaidText
+                              ? colorThemePink
+                              : /*item.paidStatus == paidText &&
                                 item.isPaidStatusToHopper
                             ?*/
-                        colorLightGrey /* : colorThemePink*/,
-                    borderRadius: BorderRadius.circular(size.width * numD015)),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: item.paidStatus == paidText &&
-                              !item.isPaidStatusToHopper
-                          ? EdgeInsets.symmetric(
-                              horizontal: size.width * numD028)
-                          : EdgeInsets.zero,
-                      child: Text(
-                        item.paidStatus == unPaidText
-                            ? item.status.toCapitalized()
-                            : item.paidStatus == paidText &&
-                                    item.isPaidStatusToHopper
-                                ? "Received"
-                                : "Sold",
-                        textAlign: TextAlign.center,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD022,
-                            color: item.paidStatus == unPaidText
-                                ? Colors.white
-                                : /*item.paidStatus == paidText &&
+                              colorLightGrey /* : colorThemePink*/,
+                          borderRadius:
+                              BorderRadius.circular(size.width * numD015)),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: item.paidStatus == paidText &&
+                                    !item.isPaidStatusToHopper
+                                ? EdgeInsets.symmetric(
+                                    horizontal: size.width * numD028)
+                                : EdgeInsets.zero,
+                            child: Text(
+                              item.paidStatus == unPaidText
+                                  ? item.status.toCapitalized()
+                                  : item.paidStatus == paidText &&
+                                          item.isPaidStatusToHopper
+                                      ? "Received"
+                                      : "Sold",
+                              textAlign: TextAlign.center,
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD022,
+                                  color: item.paidStatus == unPaidText
+                                      ? Colors.white
+                                      : /*item.paidStatus == paidText &&
                                         item.isPaidStatusToHopper
                                     ?*/
-                                Colors.black /*: Colors.white*/,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                    Text(
-                      "$euroUniqueCode${formatDouble(double.parse(item.amount))}",
-                      textAlign: TextAlign.center,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD022,
-                          color: item.paidStatus == unPaidText
-                              ? Colors.white
-                              : /*item.paidStatus == paidText &&
+                                      Colors.black /*: Colors.white*/,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          Text(
+                            "$euroUniqueCode${formatDouble(double.parse(item.amount))}",
+                            textAlign: TextAlign.center,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD022,
+                                color: item.paidStatus == unPaidText
+                                    ? Colors.white
+                                    : /*item.paidStatus == paidText &&
                                       item.isPaidStatusToHopper
                                   ?*/
-                              Colors.black /*: Colors.white*/,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              )
+                                    Colors.black /*: Colors.white*/,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    )
             ],
           ),
           SizedBox(

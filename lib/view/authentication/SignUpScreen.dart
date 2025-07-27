@@ -7,19 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
-import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/VerifyAccountScreen.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../main.dart';
 import '../../utils/CommonSharedPrefrence.dart';
@@ -68,6 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  TextEditingController referralCodeController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController selectDobController = TextEditingController();
@@ -97,6 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       enableNotifications = false,
       showImageError = false,
       userNameAlreadyExists = false,
+      isRefferalCodeValid = false,
       emailAlreadyExists = false,
       phoneAlreadyExists = false,
       showAvatarError = false,
@@ -417,6 +415,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                             return null;
                           },
                         ),
+
                         SizedBox(
                           height: size.width * numD01,
                         ),
@@ -525,285 +524,46 @@ class _SignUpScreenState extends State<SignUpScreen>
                           size: size,
                           maxLines: 1,
                           borderColor: colorTextFieldBorder,
-                          controller: selectDobController,
-                          hintText: "Select date of birth",
-                          textInputFormatters: null,
-                          prefixIcon: const Icon(Icons.calendar_month_rounded),
+                          controller: referralCodeController,
+                          hintText: referralCodeHintText,
+                          errorMaxLines: 2,
+                          textInputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp(r'[ \\]')),
+                          ],
+                          suffixIcon: getReferralCodeSuffixIcon(),
+                          prefixIcon: const Icon(Icons.campaign_outlined),
                           prefixIconHeight: size.width * numD06,
-                          suffixIconIconHeight: 0,
-                          suffixIcon: null,
+                          suffixIconIconHeight: size.width * numD085,
                           hidePassword: false,
                           keyboardType: TextInputType.text,
-                          validator: null,
                           enableValidations: false,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
-                          readOnly: true,
-                          callback: () {
-                            selectedDate();
-                          },
-                        ),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-
-                        /// Apartment Number & House name
-                        CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          borderColor: colorTextFieldBorder,
-                          controller: apartmentAndHouseNameController,
-                          hintText: apartmentNoHintText,
-                          textInputFormatters: null,
-                          prefixIcon: const Icon(Icons.location_on_outlined),
-                          prefixIconHeight: size.width * numD045,
-                          suffixIconIconHeight: 0,
-                          suffixIcon: null,
-                          hidePassword: false,
-                          keyboardType: TextInputType.text,
-                          enableValidations: true,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
-                          onChanged: (value) {
-                            if (value!.isNotEmpty) {
-                              showApartmentNumberError = false;
-                            } else {
-                              showApartmentNumberError = true;
-                            }
-                            setState(() {});
-                          },
                           validator: null,
-                        ),
-
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-
-                        /// Post Code
-                        SizedBox(
-                          height: size.width * numD13,
-                          child: GooglePlaceAutoCompleteTextField(
-                            containerHorizontalPadding: 0,
-                            textEditingController: postalCodeController,
-                            googleAPIKey: Platform.isIOS
-                                ? appleMapAPiKey
-                                : googleMapAPiKey,
-                            isCrossBtnShown: false,
-                            boxDecoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.03),
-                                border: Border.all(
-                                    color: colorTextFieldBorder, width: 1)),
-                            textStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD03,
-                                fontFamily: 'AirbnbCereal'),
-                            inputDecoration: InputDecoration(
-                              border: InputBorder.none,
-                              filled: false,
-                              hintText:
-                                  "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
-                              hintStyle: TextStyle(
-                                  color: colorHint,
-                                  fontSize: size.width * numD035,
-                                  fontFamily: 'AirbnbCereal'),
-                              prefixIcon:
-                                  const Icon(Icons.location_on_outlined),
-                              suffixIcon: postalCodeController.text.isNotEmpty
-                                  ? InkWell(
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () {
-                                        postalCodeController.clear();
-                                        apartmentAndHouseNameController.clear();
-                                        addressController.clear();
-                                        cityNameController.clear();
-                                        countryNameController.clear();
-                                      },
-                                      child: Icon(
-                                        Icons.close,
-                                        color: Colors.black,
-                                        size: size.width * numD058,
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                              prefixIconColor: colorTextFieldIcon,
-                              prefixIconConstraints:
-                                  BoxConstraints(minWidth: size.width * numD10),
-                            ),
-                            debounceTime: 200,
-                            countries: const ["uk", "in"],
-                            isLatLngRequired: true,
-                            getPlaceDetailWithLatLng: (Prediction prediction) {
-                              latitude = prediction.lat.toString();
-                              longitude = prediction.lng.toString();
-                              debugPrint("placeDetails${prediction.lng}");
-                              debugPrint("placeDetails${prediction.lng}");
-                              getCurrentLocationFxn(prediction.lat ?? "",
-                                      prediction.lng ?? "")
-                                  .then((value) {
-                                debugPrint("pin code===> $value");
-                                if (value.isNotEmpty) {
-                                  cityNameController.text =
-                                      value.first.locality ??
-                                          value.first.subAdministrativeArea ??
-                                          '';
-                                  countryNameController.text =
-                                      value.first.country ?? '';
-                                  postalCodeController.text =
-                                      value.first.postalCode ?? '';
-                                }
-                              });
-                              showAddressError = false;
+                          filled: false,
+                          filledColor: Colors.transparent,
+                          autofocus: false,
+                          onChanged: (v) {
+                            if (v!.trim().length >= 5) {
+                              verifyReferredCode();
+                            } else if (v.trim().isEmpty) {
+                              isRefferalCodeValid = false;
                               setState(() {});
-                            },
-                            itemClick: (Prediction prediction) {
-                              addressController.text =
-                                  prediction.description ?? "";
-                              latitude = prediction.lat ?? "";
-                              longitude = prediction.lng ?? "";
-
-                              String postalCode =
-                                  prediction.structuredFormatting?.mainText ??
-                                      '';
-                              debugPrint("postalCode=======> $postalCode");
-                              //  postalCodeController.text = postalCode;
-                              addressController.selection =
-                                  TextSelection.fromPosition(TextPosition(
-                                      offset: prediction.description != null
-                                          ? prediction.description!.length
-                                          : 0));
-                            },
-                          ),
+                            }
+                            return null;
+                          },
                         ),
-                        // pin code required
-                        // postalCodeController.text.trim().isEmpty
-                        //     ? Padding(
-                        //         padding: EdgeInsets.symmetric(
-                        //             vertical: size.width * numD01),
-                        //         child: Text(
-                        //           requiredText,
-                        //           style: commonTextStyle(
-                        //               size: size,
-                        //               fontSize: size.width * numD03,
-                        //               color: Colors.red.shade700,
-                        //               fontWeight: FontWeight.normal),
-                        //         ),
-                        //       )
-                        //     : Container(),
 
                         SizedBox(
-                          height: postalCodeController.text.isNotEmpty
-                              ? size.width * numD06
-                              : 0,
+                          height: size.width * numD01,
                         ),
-                        postalCodeController.text.isNotEmpty
-                            ? CommonTextField(
-                                size: size,
-                                maxLines: 1,
-                                borderColor: colorTextFieldBorder,
-                                controller: addressController,
-                                hintText:
-                                    "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
-                                textInputFormatters: null,
-                                prefixIcon:
-                                    const Icon(Icons.location_on_outlined),
-                                prefixIconHeight: size.width * numD06,
-                                suffixIconIconHeight: 0,
-                                suffixIcon: null,
-                                hidePassword: false,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        decimal: false, signed: false),
-                                enableValidations: true,
-                                filled: false,
-                                filledColor: Colors.transparent,
-                                autofocus: false,
-                                validator: null,
-                              )
-                            : Container(),
-                        showPostalCodeError &&
-                                postalCodeController.text.trim().isEmpty &&
-                                addressController.text.isNotEmpty
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD01),
-                                child: Text(
-                                  requiredText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.red.shade700,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              )
-                            : Container(),
+                        Text(
+                          referralcodeNoteText,
+                          style: TextStyle(
+                              color: colorHint, fontSize: size.width * numD025),
+                        ),
                         SizedBox(
-                          height: postalCodeController.text.isNotEmpty
-                              ? size.width * numD06
-                              : 0,
+                          height: size.width * numD04,
                         ),
 
-                        // /// City
-                        // postalCodeController.text.isNotEmpty
-                        //     ? CommonTextField(
-                        //         size: size,
-                        //         maxLines: 1,
-                        //         borderColor: colorTextFieldBorder,
-                        //         controller: cityNameController,
-                        //         hintText: cityText,
-                        //         textInputFormatters: null,
-                        //         prefixIcon:
-                        //             const Icon(Icons.location_on_outlined),
-                        //         prefixIconHeight: size.width * numD06,
-                        //         suffixIconIconHeight: 0,
-                        //         suffixIcon: null,
-                        //         hidePassword: false,
-                        //         keyboardType: TextInputType.text,
-                        //         enableValidations: true,
-                        //         filled: false,
-                        //         filledColor: Colors.transparent,
-                        //         autofocus: false,
-                        //         validator: null,
-                        //       )
-                        //     : Container(),
-                        // SizedBox(
-                        //   height: postalCodeController.text.isNotEmpty
-                        //       ? size.width * numD06
-                        //       : 0,
-                        // ),
-
-                        /// country Text
-                        postalCodeController.text.isNotEmpty
-                            ? CommonTextField(
-                                size: size,
-                                maxLines: 1,
-                                borderColor: colorTextFieldBorder,
-                                controller: countryNameController,
-                                hintText: countryText,
-                                textInputFormatters: null,
-                                prefixIcon:
-                                    const Icon(Icons.location_on_outlined),
-                                prefixIconHeight: size.width * numD06,
-                                suffixIconIconHeight: 0,
-                                suffixIcon: null,
-                                hidePassword: false,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        decimal: false, signed: false),
-                                enableValidations: true,
-                                filled: false,
-                                filledColor: Colors.transparent,
-                                autofocus: false,
-                                validator: null,
-                              )
-                            : Container(),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
                         !widget.socialLogin
                             ? CommonTextField(
                                 size: size,
@@ -1157,6 +917,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 autofocus: false,
                               )
                             : Container(),
+
                         // SizedBox(
                         //   height: !widget.socialLogin ? size.width * numD04 : 0,
                         // ),
@@ -1559,6 +1320,23 @@ class _SignUpScreenState extends State<SignUpScreen>
       color: Colors.green,
     );
     return null;
+  }
+
+  Icon? getReferralCodeSuffixIcon() {
+    String referralCode = referralCodeController.text.trim().toLowerCase();
+    if (referralCode.isEmpty) {
+      return null;
+    }
+    if (referralCode.length < 4 || !isRefferalCodeValid) {
+      return const Icon(
+        Icons.highlight_remove,
+        color: Colors.red,
+      );
+    }
+    return const Icon(
+      Icons.check_circle,
+      color: Colors.green,
+    );
   }
 
   void setUserNameListener() {
@@ -2018,6 +1796,19 @@ class _SignUpScreenState extends State<SignUpScreen>
     }
   }
 
+  void verifyReferredCode() {
+    try {
+      Map<String, String> params = {
+        "referredCode": referralCodeController.text.trim(),
+      };
+      NetworkClass.fromNetworkClass(
+              verifyReferredCodeUrl, this, verifyReferredCodeUrlRequest, params)
+          .callRequestServiceHeader(false, "post", null);
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
   void sendOtpApi() {
     try {
       Map<String, String> params = {
@@ -2055,6 +1846,12 @@ class _SignUpScreenState extends State<SignUpScreen>
           debugPrint("CheckUserNameResponseError:$map");
 
           break;
+        case verifyReferredCodeUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("VerifyReferredCodeResponse:$map");
+          isRefferalCodeValid = false;
+          setState(() {});
+          break;
       }
     } on Exception catch (e) {
       debugPrint("$e");
@@ -2069,6 +1866,12 @@ class _SignUpScreenState extends State<SignUpScreen>
           var map = jsonDecode(response);
           debugPrint("CheckUserNameResponse success:::::$map");
           userNameAlreadyExists = map["userNameExist"];
+          setState(() {});
+          break;
+        case verifyReferredCodeUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("VerifyReferredCodeResponse:$map");
+          isRefferalCodeValid = true;
           setState(() {});
           break;
         case checkPhoneUrlRequest:
@@ -2099,6 +1902,9 @@ class _SignUpScreenState extends State<SignUpScreen>
           params[firstNameKey] = firstNameController.text.trim();
           params[lastNameKey] = lastNameController.text.trim();
           params[emailKey] = emailController.text.trim();
+          if (isRefferalCodeValid) {
+            params[referredCodeKey] = referralCodeController.text.trim();
+          }
           params[countryCodeKey] = selectedCountryCodePicker;
           params[phoneKey] = phoneController.text.trim();
           params[addressKey] = addressController.text.trim();

@@ -43,6 +43,8 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="PressHop"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"

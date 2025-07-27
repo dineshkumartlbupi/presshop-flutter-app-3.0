@@ -24,6 +24,7 @@ import 'package:presshop/view/menuScreen/feedScreen/FeedScreen.dart';
 import 'package:presshop/view/myEarning/MyEarningScreen.dart';
 import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
 import 'package:presshop/view/ratingReviewsScreen/RatingReviewScreen.dart';
+import 'package:presshop/view/refer_screen/refer_screen.dart';
 
 import '../../main.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -355,6 +356,10 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         name: "$ratingText & ${reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
         classWidget: const RatingReviewScreen()));
+    menuList.add(MenuData(
+        name: "Refer a Hopper",
+        icon: "${iconsPath}gift.png",
+        classWidget: const ReferScreen()));
     menuList.add(MenuData(
         name: uploadDocsHeadingText,
         icon: "${iconsPath}ic_upload_documents.png",

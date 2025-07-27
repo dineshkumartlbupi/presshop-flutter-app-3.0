@@ -15,9 +15,13 @@ const lockSetKey = "lock_set";
 
 const postCodeKey = "post_code";
 const firstNameKey = "first_name";
+const referralCode = "referral_code";
+const totalHopperArmy = "totalHopperArmy";
+
 const lastNameKey = "last_name";
 const userNameKey = "user_name";
 const emailKey = "email";
+const referredCodeKey = "referredCode";
 const phoneKey = "phone";
 const dobKey = "dob";
 const countryCodeKey = "country_code";
@@ -54,6 +58,8 @@ const currentAddress = "currentAddress";
 const currentState = "currentLState";
 const currentCountry = "currentCountry";
 const currentCity = "currentCity";
+const contryCode = "contryCode";
+
 /*------------------------------------*/
 
 Future<SharedPreferences> getSharedPreferences() async {

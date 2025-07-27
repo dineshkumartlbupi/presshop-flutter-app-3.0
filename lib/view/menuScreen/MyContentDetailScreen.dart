@@ -59,7 +59,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   MyContentData? myContentData;
   List<dynamic> chatList = [];
   FlickManager? flickManager;
-  AudioPlayer audioPlayer = AudioPlayer();
   PlayerController controller = PlayerController();
   String publicationCount = "";
   List<EarningTransactionDetail> publicationTransactionList = [];
@@ -742,7 +741,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                   child: Column(
                     children: [
                       Text(
-                        'Total Earning',
+                        'Total Earnings',
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD035,
