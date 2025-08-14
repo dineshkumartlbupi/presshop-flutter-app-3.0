@@ -16,7 +16,6 @@ class ManageContentScreen extends StatefulWidget {
 }
 
 class ManageContentScreenState extends State<ManageContentScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -672,9 +671,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 height: size.width * numD13,
                                 width: size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                       elevation: 0,
                                       backgroundColor: Colors.transparent,
@@ -701,9 +698,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 height: size.width * numD13,
                                 width: size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: colorThemePink,
                                       shape: RoundedRectangleBorder(
@@ -1046,9 +1041,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 height: size.width * numD13,
                                 width: size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: colorThemePink,
                                       shape: RoundedRectangleBorder(
@@ -1304,9 +1297,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 size,
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(size, colorThemePink),
-                                () {
-
-                                }),
+                                () {}),
                           ),
                           SizedBox(
                             height: size.width * numD04,
