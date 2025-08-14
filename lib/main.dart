@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
@@ -31,7 +32,7 @@ GoogleSignIn googleSignIn = GoogleSignIn();
 bool rememberMe = false;
 FacebookAppEvents facebookAppEvents = FacebookAppEvents();
 SharedPreferences? sharedPreferences;
-
+final player = AudioPlayer();
 const iOSLocalizedLabels = false;
 
 List<CameraDescription> cameras = <CameraDescription>[];
@@ -97,6 +98,15 @@ void main() async {
       return true;
     };
     setCrashlyticsIdentity();
+
+    player.onPlayerStateChanged.listen((state) {
+      if (state == PlayerState.completed) {
+        player.play(
+          AssetSource('audio/task_sound.mp3'),
+          volume: 1,
+        );
+      }
+    });
     runApp(MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
@@ -132,7 +142,14 @@ Future<void> uploadMediaUsingDio(
   String imageParams,
 ) async {
   ForegroundService().start();
-  Dio dio = Dio();
+  Dio dio = Dio(
+    BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 60),
+      receiveTimeout: const Duration(seconds: 60),
+      sendTimeout: const Duration(seconds: 120),
+    ),
+  );
   FormData formData = FormData();
   if (filePathList.isNotEmpty) {
     for (var element in filePathList) {
@@ -181,28 +198,18 @@ Future<void> uploadMediaUsingDio(
       data: formData,
       onSendProgress: (int sent, int total) {
         int progress = ((sent / total) * 100).toInt();
-        bool isUploadStarted = false;
-        bool isUploadCompleted = false;
         debugPrint("progress:::::$progress");
 
-        if (progress == 2 && !isUploadStarted) {
-          isUploadStarted = true; // Track that the upload has started
+        if (progress < 100 && progress % 2 == 0) {
           _showProgressNotification(
               localNotificationService.flutterLocalNotificationsPlugin,
               progress,
-              isDraft: jsonBody?['is_draft'] == 'true' ?? false);
-        }
-
-        if (progress > 2 && progress < 100 && progress % 2 == 0) {
-          //  _showCompletionNotification(localNotificationService.flutterLocalNotificationsPlugin);
-        }
-
-        if (progress == 100 && !isUploadCompleted) {
-          isUploadCompleted = true;
+              isDraft: jsonBody?['is_draft'] == 'true');
+        } else if (progress == 100) {
           _showProgressNotification(
               localNotificationService.flutterLocalNotificationsPlugin,
               progress,
-              isDraft: jsonBody?['is_draft'] == 'true' ?? false);
+              isDraft: jsonBody?['is_draft'] == 'true');
         }
       },
     );
@@ -214,15 +221,18 @@ Future<void> uploadMediaUsingDio(
       localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
       _showCompletionNotification(
           localNotificationService.flutterLocalNotificationsPlugin,
-          isDraft: jsonBody?['is_draft'] == 'true' ?? false);
+          isDraft: jsonBody?['is_draft'] == 'true');
     } else {
+      _failedNotification(
+          localNotificationService.flutterLocalNotificationsPlugin);
       debugPrint("Upload failed with status code: ${response.statusCode}");
       debugPrint("add content error:::: ${jsonDecode(response.data)}");
     }
-
     ForegroundService().stop();
   } catch (e) {
     debugPrint("Error: $e");
+    _failedNotification(
+        localNotificationService.flutterLocalNotificationsPlugin);
     ForegroundService().stop();
   }
 }
@@ -243,6 +253,22 @@ void _showProgressNotification(
         showProgress: true,
         maxProgress: 100,
         progress: progress,
+      ),
+    ),
+  );
+}
+
+void _failedNotification(FlutterLocalNotificationsPlugin notificationPlugin) {
+  notificationPlugin.show(
+    0,
+    'Upload Failed',
+    'There was an error uploading the video.',
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'upload_channel',
+        'Video Upload',
+        importance: Importance.max,
+        priority: Priority.high,
       ),
     ),
   );

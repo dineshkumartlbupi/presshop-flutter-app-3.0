@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -247,6 +248,9 @@ void broadcastDialog({
                                 child: IconButton(
                                     padding: EdgeInsets.zero,
                                     onPressed: () {
+                                      if (player.state == PlayerState.playing) {
+                                        player.stop();
+                                      }
                                       Navigator.pop(context);
                                     },
                                     icon: Icon(
@@ -671,7 +675,9 @@ void broadcastDialog({
 
 void commonErrorDialogDialog(
     Size size, String message, String errorCode, VoidCallback callback,
-    {String actionButton = "Ok", bool isFromNetworkError = true}) {
+    {String actionButton = "Ok",
+    bool isFromNetworkError = true,
+    bool shouldShowClosedButton = true}) {
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
@@ -708,15 +714,16 @@ void commonErrorDialogDialog(
                                   fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                  size: size.width * numD06,
-                                ))
+                            if (shouldShowClosedButton)
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
                           ],
                         ),
                       ),

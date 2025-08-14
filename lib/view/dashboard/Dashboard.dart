@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
+import 'package:app_version_update/app_version_update.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,7 @@ import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
 import '../../utils/CommonWigdets.dart';
 import '../../utils/commonEnums.dart';
@@ -84,6 +87,7 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     /// Light statusBar mode-->
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     _locationService = LocationService();
+    forceUpdateCheck();
     facebookAppEvents.logEvent(
       name: "dashboard_open",
       parameters: {
@@ -381,16 +385,11 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
         deviceId, Platform.isAndroid ? "android" : "ios", fcmToken);
   }
 
-  requestLocationPermissions() async {
-    try {
-      locationData = await _locationService.getCurrentLocation(context);
-      if (locationData != null) {
-        proceedWithLocation(locationData);
-      } else {
-        goToLocationErrorScreen();
-      }
-    } on Exception catch (e) {
-      goToLocationErrorScreen();
+  Future<void> updateLocationData() async {
+    locationData = await _locationService.getCurrentLocation(context,
+        shouldShowSettingPopup: false);
+    if (locationData != null) {
+      proceedWithLocation(locationData);
     }
   }
 
@@ -473,6 +472,9 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
       );
       return;
     }*/
+    if (index != 2) {
+      updateLocationData();
+    }
     currentIndex = index;
     setState(() {});
   }
@@ -504,6 +506,12 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
         .callRequestServiceHeader(false, "post", null);
   }
 
+  void forceUpdateCheck() {
+    NetworkClass.fromNetworkClass(
+            getLatestVersionUrl, this, getLatestVersionReq, null)
+        .callRequestServiceHeader(false, "get", null);
+  }
+
   /// Get BroadCast task Detail
   void callTaskDetailApi(String id) {
     NetworkClass("$taskDetailUrl$id", this, taskDetailUrlRequest)
@@ -533,12 +541,52 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     }
   }
 
+  void _verifyVersion() async {
+    await AppVersionUpdate.checkForUpdates(
+      appleId: '6744651614',
+      playStoreId: 'com.presshop.app',
+    ).then((result) async {
+      if (result.canUpdate!) {
+        commonErrorDialogDialog(
+            shouldShowClosedButton: false,
+            isFromNetworkError: false,
+            MediaQuery.of(context).size,
+            "To keep enjoying all the latest features and improvements, please update your PressHop app now. It only takes a moment!",
+            "Update required",
+            actionButton: "Update Now", () async {
+          await launchUrl(Uri.parse(appUrl),
+              mode: LaunchMode.externalApplication);
+        });
+      }
+    });
+  }
+
   @override
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
         case addDeviceUrlRequest:
           debugPrint("AddDeviceSuccess: $response");
+          break;
+        case getLatestVersionReq:
+          debugPrint("getLatestVersionReq: $response");
+          var map = jsonDecode(response);
+          if (map["code"] == 200) {
+            var versionData = map["data"];
+            sharedPreferences!
+                .setInt(videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
+            if (Platform.isAndroid) {
+              if (versionData['aOSshouldForceUpdate']) {
+                _verifyVersion();
+              }
+            } else {
+              if (versionData['iOSshouldForceUpdate']) {
+                _verifyVersion();
+              }
+            }
+          } else {
+            showSnackBar(map["message"], "error", Colors.red);
+          }
           break;
 
         /// Get BroadCast task Detail
@@ -548,6 +596,10 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
           if (map["code"] == 200 && map["task"] != null) {
             var broadCastedData = TaskDetailModel.fromJson(map["task"]);
             debugPrint("taskDetailUrlRequest: 2 $broadCastedData");
+            player.play(
+              AssetSource('audio/task_sound.mp3'),
+              volume: 1,
+            );
             broadcastDialog(
               size: MediaQuery.of(context).size,
               taskDetail: broadCastedData,

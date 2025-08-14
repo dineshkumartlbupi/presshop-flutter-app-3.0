@@ -17,6 +17,7 @@ const postCodeKey = "post_code";
 const firstNameKey = "first_name";
 const referralCode = "referral_code";
 const totalHopperArmy = "totalHopperArmy";
+const videoLimitKey = "videoLimit";
 
 const lastNameKey = "last_name";
 const userNameKey = "user_name";
@@ -53,7 +54,7 @@ const adminImageKey = "adminImageKey";
 const adminNameKey = "adminNameKey";
 
 const currentLat = "currentLat";
-const currentLon = "currentLat";
+const currentLon = "currentLong";
 const currentAddress = "currentAddress";
 const currentState = "currentLState";
 const currentCountry = "currentCountry";

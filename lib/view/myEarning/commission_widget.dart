@@ -87,8 +87,8 @@ class CommissionWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(size.width * numD03),
                 child: Image.network(commissionData.avatar,
-                    height: size.width * numD18,
-                    width: size.width * numD20,
+                    height: size.width * numD20,
+                    width: size.width * numD24,
                     fit: BoxFit.cover,
                     errorBuilder: (context, i, b) => Image.asset(
                           "${dummyImagePath}placeholderImage.png",
@@ -113,7 +113,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Container(
-                width: size.width * numD20,
+                width: size.width * numD25,
                 padding: EdgeInsets.symmetric(
                     vertical: size.width * numD01,
                     horizontal: size.width * numD02),
@@ -147,10 +147,10 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Container(
-                width: size.width * numD20,
+                width: size.width * numD25,
                 padding: EdgeInsets.symmetric(
                     vertical: size.width * numD01,
-                    horizontal: size.width * numD04),
+                    horizontal: size.width * numD02),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(size.width * numD015),

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flick_video_player/flick_video_player.dart';
@@ -16,7 +15,6 @@ import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -82,7 +80,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
 
   @override
   void dispose() {
-    flickManager?.dispose();
+    controller.dispose();
+    if (flickManager != null) {
+      flickManager?.dispose();
+      flickManager = null;
+    }
     super.dispose();
   }
 
@@ -424,7 +426,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 alignment: Alignment.bottomCenter,
                 child: DotsIndicator(
                   dotsCount: myContentData!.contentMediaList.length,
-                  position: _currentMediaIndex,
+                  position: _currentMediaIndex.toDouble(),
                   decorator: const DotsDecorator(
                     color: Colors.grey, // Inactive color
                     activeColor: Colors.redAccent,
@@ -1202,18 +1204,18 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   void initialController() {
     if (myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "audio") {
+      var url = contentImageUrl +
+          myContentData!.contentMediaList[_currentMediaIndex].media;
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
-      initWaveData(myContentData!.paidStatus == paidText
-          ? contentImageUrl +
-              myContentData!.contentMediaList[_currentMediaIndex].media
-          : myContentData!.contentMediaList[_currentMediaIndex].waterMark);
+      initWaveData(url);
     } else if (myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "video") {
+      var url = contentImageUrl +
+          myContentData!.contentMediaList[_currentMediaIndex].media;
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse(
-              myContentData!.contentMediaList[_currentMediaIndex].waterMark),
+          Uri.parse(url),
         ),
         autoPlay: false,
       );

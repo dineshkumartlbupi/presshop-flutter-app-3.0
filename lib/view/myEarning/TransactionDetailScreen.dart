@@ -315,7 +315,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                             child: DotsIndicator(
                               dotsCount: widget
                                   .transactionData!.contentDataList.length,
-                              position: _currentMediaIndex,
+                              position: _currentMediaIndex.toDouble(),
                               decorator: const DotsDecorator(
                                 color: Colors.grey, // Inactive color
                                 activeColor: Colors.redAccent,
@@ -1164,7 +1164,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       child: DotsIndicator(
                         dotsCount:
                             widget.transactionData!.contentDataList.length,
-                        position: _currentMediaIndex,
+                        position: _currentMediaIndex.toDouble(),
                         decorator: const DotsDecorator(
                           color: Colors.grey, // Inactive color
                           activeColor: Colors.redAccent,

@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileError:$map");
-          if (map == "Unauthorized") {
+          if (map['body'] == "Unauthorized") {
             rememberMe = false;
             sharedPreferences!.clear();
             Navigator.of(context).pushAndRemoveUntil(

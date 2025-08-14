@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder2/geocoder2.dart';
@@ -111,8 +110,12 @@ class PreviewScreenState extends State<PreviewScreen> {
         //callUpdateCurrentData();
         setState(() {
           for (var media in mediaList) {
-            media.latitude = latitude.toString();
-            media.longitude = longitude.toString();
+            media.latitude = media.latitude.isNotEmpty
+                ? media.latitude
+                : latitude.toString();
+            media.longitude = media.longitude.isNotEmpty
+                ? media.longitude
+                : longitude.toString();
             media.location = data.address;
           }
           mediaAddress = data.address;
@@ -388,7 +391,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       dotsCount: mediaList.length,
-                                      position: currentPage,
+                                      position: currentPage.toDouble(),
                                       decorator: const DotsDecorator(
                                         color: Colors.grey, // Inactive color
                                         activeColor: Colors.redAccent,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -63,10 +64,12 @@ class _SocialSignUpState extends State<SocialSignUp>
   TextEditingController userNameController = TextEditingController();
   TextEditingController avatarController = TextEditingController();
   TextEditingController referralCodeController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
 
   String userImagePath = "",
       avatarBaseUrl = "",
       selectedAvatar = "",
+      selectedCountryCodePicker = "+44",
       selectedAvatarId = "";
 
   bool hidePassword = true,
@@ -349,6 +352,69 @@ class _SocialSignUpState extends State<SocialSignUp>
                           size: size,
                           maxLines: 1,
                           borderColor: colorTextFieldBorder,
+                          controller: phoneController,
+                          hintText: phoneHintText,
+                          textInputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                          ],
+                          prefixIcon: InkWell(
+                            onTap: () {
+                              openCountryCodePicker();
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.call_outlined),
+                                SizedBox(
+                                  width: size.width * numD01,
+                                ),
+                                Text(
+                                  selectedCountryCodePicker,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD035,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  size: size.width * numD07,
+                                )
+                              ],
+                            ),
+                          ),
+                          prefixIconHeight: size.width * numD06,
+                          suffixIconIconHeight: size.width * numD085,
+                          suffixIcon: phoneController.text.trim().length >= 10
+                              ? phoneAlreadyExists
+                                  ? const Icon(
+                                      Icons.highlight_remove,
+                                      color: Colors.red,
+                                    )
+                                  : const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    )
+                              : null,
+                          hidePassword: false,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: false, signed: true),
+                          validator: checkSignupPhoneValidator,
+                          enableValidations: true,
+                          filled: false,
+                          filledColor: Colors.transparent,
+                          autofocus: false,
+                          onChanged: (val) {
+                            checkPhoneApi();
+                          },
+                        ),
+                        SizedBox(
+                          height: size.width * numD06,
+                        ),
+                        CommonTextField(
+                          size: size,
+                          maxLines: 1,
+                          borderColor: colorTextFieldBorder,
                           controller: referralCodeController,
                           hintText: referralCodeHintText,
                           errorMaxLines: 2,
@@ -504,6 +570,22 @@ class _SocialSignUpState extends State<SocialSignUp>
     );
   }
 
+  void openCountryCodePicker() {
+    showCountryPicker(
+      context: context,
+      showPhoneCode: true,
+      onSelect: (Country country) {
+        debugPrint('Select country: ${country.displayName}');
+        debugPrint('Select country: ${country.countryCode}');
+        debugPrint('Select country: ${country.hashCode}');
+        debugPrint('Select country: ${country.displayNameNoCountryCode}');
+        debugPrint('Select country: ${country.phoneCode}');
+        selectedCountryCodePicker = "+${country.phoneCode}";
+        setState(() {});
+      },
+    );
+  }
+
   void socialRegisterLoginApi() {
     try {
       Map<String, String> params = {};
@@ -511,6 +593,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       params[isTermAcceptedKey] = termConditionsChecked.toString();
       params[firstNameKey] = widget.name;
       params[receiveTaskNotificationKey] = isSelectCheck.toString();
+      params[phoneKey] = phoneController.text.trim();
       params[roleKey] = "Hopper";
       params[avatarIdKey] = selectedAvatarId;
       if (isRefferalCodeValid) {
@@ -541,6 +624,16 @@ class _SocialSignUpState extends State<SocialSignUp>
       NetworkClass.fromNetworkClass(
               verifyReferredCodeUrl, this, verifyReferredCodeUrlRequest, params)
           .callRequestServiceHeader(false, "post", null);
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
+  void checkPhoneApi() {
+    try {
+      NetworkClass("$checkPhoneUrl${phoneController.text.trim()}", this,
+              checkPhoneUrlRequest)
+          .callRequestServiceHeader(false, "get", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -882,6 +975,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                 .setString(firstNameKey, map["user"][firstNameKey]);
             sharedPreferences!.setString(lastNameKey, map["user"][lastNameKey]);
             sharedPreferences!.setString(userNameKey, map["user"][userNameKey]);
+            sharedPreferences!.setString(phoneKey, map["user"][phoneKey]);
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
             sharedPreferences!

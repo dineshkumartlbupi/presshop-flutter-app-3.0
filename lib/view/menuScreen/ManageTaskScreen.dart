@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -133,6 +132,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
     socketConnectionFunc();
     callGetManageTaskListingApi();
+    initialController();
   }
 
   void onTextChanged() {
@@ -144,6 +144,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
   @override
   void dispose() {
     scrollController.dispose();
+    flickManager?.dispose();
+    controller.dispose();
+    ratingReviewController1.dispose();
     socket.disconnect();
     socket.onDisconnect(
         (_) => socket.emit('room join', {"room_id": widget.roomId}));
@@ -2809,7 +2812,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 alignment: Alignment.bottomCenter,
                 child: DotsIndicator(
                   dotsCount: widget.myContentData!.contentMediaList.length,
-                  position: _currentMediaIndex,
+                  position: _currentMediaIndex.toDouble(),
                   decorator: const DotsDecorator(
                     color: Colors.grey, // Inactive color
                     activeColor: Colors.redAccent,
@@ -7024,20 +7027,19 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
   void initialController() {
     if (widget.myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "audio") {
+      var url = contentImageUrl +
+          widget.myContentData!.contentMediaList[_currentMediaIndex].media;
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
-      initWaveData(widget.myContentData!.paidStatus == paidText
-          ? contentImageUrl +
-              widget.myContentData!.contentMediaList[_currentMediaIndex].media
-          : widget
-              .myContentData!.contentMediaList[_currentMediaIndex].waterMark);
+      initWaveData(url);
     } else if (widget
             .myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "video") {
+      var url = contentImageUrl +
+          widget.myContentData!.contentMediaList[_currentMediaIndex].media;
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse(widget
-              .myContentData!.contentMediaList[_currentMediaIndex].waterMark),
+          Uri.parse(url),
         ),
         autoPlay: false,
       );

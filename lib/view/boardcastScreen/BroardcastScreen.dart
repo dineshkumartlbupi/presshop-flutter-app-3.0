@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 // import 'package:contacts_service/contacts_service.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -82,6 +83,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
   @override
   void dispose() {
+    if (player.state == PlayerState.playing) {
+      player.stop();
+    }
     _hopperCountTimer?.cancel();
     contactSearchController.dispose();
     super.dispose();
@@ -553,6 +557,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         fontWeight: FontWeight.w700),
                                     commonButtonStyle(size, Colors.black), () {
                                   _isAccepted = false;
+                                  if (player.state == PlayerState.playing) {
+                                    player.stop();
+                                  }
                                   callAcceptRejectApi();
                                   debugPrint("rejected:::::::");
                                   setState(() {});
@@ -565,7 +572,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                   child: SizedBox(
                                 height: size.width * numD15,
                                 child: commonElevatedButton(
-                                    "Accept & Go",
+                                    "Accept",
                                     size,
                                     commonTextStyle(
                                         size: size,
@@ -576,6 +583,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     () {
                                   _isAccepted = true;
                                   //isDirection = true;
+                                  if (player.state == PlayerState.playing) {
+                                    player.stop();
+                                  }
                                   callAcceptRejectApi();
 
                                   debugPrint("accepted====>");

@@ -969,7 +969,7 @@ class ContentMediaData {
     id = json["_id"].toString();
     media = json["media"];
     mediaType = json["media_type"] ?? "";
-    thumbNail = (json["thumbnail"] ?? "").toString();
+    thumbNail = (json["thumbnail"] ?? json["media"]).toString();
     waterMark = (json["watermark"] ?? "").toString();
     if (mediaType == "video") {
       getVideoThumbNail(media).then((value) {

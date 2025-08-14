@@ -5,6 +5,8 @@ import 'package:presshop/utils/CommonWigdets.dart';
 
 import 'Common.dart';
 
+const double kToolbarHeightIpad = 80.0; // Define the iPad toolbar height
+
 class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   CommonAppBar(
       {super.key,

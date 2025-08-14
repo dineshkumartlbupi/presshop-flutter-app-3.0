@@ -3138,22 +3138,38 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
           debugPrint("Picked File: $filePath");
           debugPrint("MIME Type: $mimeType");
 
-          selectMultipleMediaList.add(
-            MediaData(
-              isFromGallery: true,
-              dateTime: "",
-              latitude: latitude.toString(),
-              location: address,
-              longitude: longitude.toString(),
-              mediaPath: filePath,
-              mimeType: mimeType!,
-              thumbnail: "",
-            ),
-          );
-        }
+          var validationVideoLenght = true;
+          if (mimeType?.contains("video") ?? false) {
+            VideoPlayerController controller =
+                VideoPlayerController.file(File(filePath));
+            await controller.initialize();
+            if (controller.value.duration.inSeconds >
+                (sharedPreferences!.getInt(videoLimitKey) ?? 120)) {
+              showToast(
+                  "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+              validationVideoLenght = false;
+              return;
+            }
+          }
 
-        previewBottomSheet();
-        setState(() {});
+          if (validationVideoLenght) {
+            selectMultipleMediaList.add(
+              MediaData(
+                isFromGallery: true,
+                dateTime: "",
+                latitude: latitude.toString(),
+                location: address,
+                longitude: longitude.toString(),
+                mediaPath: filePath,
+                mimeType: mimeType!,
+                thumbnail: "",
+              ),
+            );
+          }
+
+          previewBottomSheet();
+          setState(() {});
+        }
       } else {
         debugPrint("No videos selected.");
       }
@@ -3215,7 +3231,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                   right: 0,
                                   child: DotsIndicator(
                                     dotsCount: selectMultipleMediaList.length,
-                                    position: currentPage,
+                                    position: currentPage.toDouble(),
                                     decorator: const DotsDecorator(
                                       color: Colors.grey, // Inactive color
                                       activeColor: Colors.redAccent,

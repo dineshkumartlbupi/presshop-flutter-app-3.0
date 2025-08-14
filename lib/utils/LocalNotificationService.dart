@@ -11,12 +11,13 @@ import '../view/dashboard/Dashboard.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
- // debugPrint('Handling a background message ${message.datalocalNotificationService}');
-  debugPrint('notification_type::::::: ${message.data["notification_type"].toString()}');
+  // debugPrint('Handling a background message ${message.datalocalNotificationService}');
+  debugPrint(
+      'notification_type::::::: ${message.data["notification_type"].toString()}');
   debugPrint('message.data::::::${message.data}');
 
-  if(message.data.isNotEmpty && message.data["notification_type"].toString() == "media_house_tasks"){
+  if (message.data.isNotEmpty &&
+      message.data["notification_type"].toString() == "media_house_tasks") {
     localNotificationService.flutterLocalNotificationsPlugin.cancelAll();
     debugPrint("Inside Background notification");
     localNotificationService.showFlutterNotificationWithSound(message);
@@ -71,37 +72,38 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
       ' payload: ${notificationResponse.payload}');
   if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
-    print('notification action tapped with input: ${notificationResponse.input}');
+    print(
+        'notification action tapped with input: ${notificationResponse.input}');
   }
 }
 
 @pragma('vm:entry-point')
 void onDidReceiveNotificationResponse(
     NotificationResponse? notificationResponse) async {
-  debugPrint("onDidReceiveNotificationResponse local: ${notificationResponse.toString()} ");
-
+  debugPrint(
+      "onDidReceiveNotificationResponse local: ${notificationResponse.toString()} ");
 }
-
 
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   Future<void> setup() async {
-
     /// Notification Permission For Android 12 or Android 13 Versions
     if (Platform.isAndroid) {
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
-    }else{
-       flutterLocalNotificationsPlugin
+      flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+    } else {
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+            alert: true,
+            badge: true,
+            sound: true,
+          );
     }
 
     AndroidInitializationSettings initializationSettingsAndroid =
@@ -131,7 +133,6 @@ class LocalNotificationService {
       iOS: initializationSettingsDarwin,
     );
 
-
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse:
@@ -139,13 +140,18 @@ class LocalNotificationService {
         debugPrint(":::: Inside Local Notification When App Background ::::");
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:
-
             if (notificationResponse.payload != null &&
                 notificationResponse.payload!.isNotEmpty) {
-              var taskDetail =
-              jsonDecode(notificationResponse.payload!);
-              if (taskDetail["notification_type"].toString() == "media_house_tasks") {
-                Navigator.pushAndRemoveUntil(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>Dashboard(initialPosition: 2,)), (route) => false);
+              var taskDetail = jsonDecode(notificationResponse.payload!);
+              if (taskDetail["notification_type"].toString() ==
+                  "media_house_tasks") {
+                Navigator.pushAndRemoveUntil(
+                    navigatorKey.currentContext!,
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              initialPosition: 2,
+                            )),
+                    (route) => false);
               }
             }
 
@@ -172,58 +178,53 @@ class LocalNotificationService {
         notification.title,
         notification.body,
         NotificationDetails(
-          android: AndroidNotificationDetails(
-            "presshop",
-            "presshop",
-            channelDescription: "Android_Channel",
-            importance: Importance.high,
-            priority: Priority.high,
-            color: Colors.black,
-            playSound: true,
-            category: AndroidNotificationCategory.message,
-            styleInformation: BigTextStyleInformation(notification.body ?? "")
-          ),
+            android: AndroidNotificationDetails("presshop", "presshop",
+                channelDescription: "Android_Channel",
+                importance: Importance.high,
+                priority: Priority.high,
+                color: Colors.black,
+                playSound: true,
+                category: AndroidNotificationCategory.message,
+                styleInformation:
+                    BigTextStyleInformation(notification.body ?? "")),
             iOS: const DarwinNotificationDetails(
               presentSound: true,
               presentBadge: true,
               presentAlert: true,
-            )
-        ),
+            )),
       );
     }
   }
-
 
   void showFlutterNotificationWithSound(RemoteMessage message) {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
     if (notification != null && android != null) {
       flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails("presshop_custom_sound", "presshop_custom_sound",
-              channelDescription: "Android_Channel_custom_sound",
-              importance: Importance.high,
-              priority: Priority.high,
-              color: Colors.black,
-              sound: const RawResourceAndroidNotificationSound('bell2'),
-              playSound: true,
-              enableVibration: true,
-              audioAttributesUsage: AudioAttributesUsage.alarm,
-              category: AndroidNotificationCategory.message,
-              styleInformation: BigTextStyleInformation(notification.body ?? "")),
-          iOS: const DarwinNotificationDetails(
-            presentSound: true,
-            presentBadge: true,
-            presentAlert: true,
-
-          )
-
-        ),
-        payload: jsonEncode(message.data)
-      );
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+              android: AndroidNotificationDetails(
+                  "presshop_custom_sound", "presshop_custom_sound",
+                  channelDescription: "Android_Channel_custom_sound",
+                  importance: Importance.high,
+                  priority: Priority.high,
+                  color: Colors.black,
+                  sound:
+                      const RawResourceAndroidNotificationSound('task_sound'),
+                  playSound: true,
+                  enableVibration: true,
+                  audioAttributesUsage: AudioAttributesUsage.alarm,
+                  category: AndroidNotificationCategory.message,
+                  styleInformation:
+                      BigTextStyleInformation(notification.body ?? "")),
+              iOS: const DarwinNotificationDetails(
+                presentSound: true,
+                presentBadge: true,
+                presentAlert: true,
+              )),
+          payload: jsonEncode(message.data));
     }
   }
 }

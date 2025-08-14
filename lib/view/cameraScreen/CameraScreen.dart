@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
@@ -19,6 +18,7 @@ import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/commonEnums.dart';
+import 'package:presshop/utils/location_service.dart';
 import 'package:presshop/view/cameraScreen/CustomGallary.dart';
 import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
 import 'package:record/record.dart';
@@ -56,6 +56,7 @@ class CameraScreen extends StatefulWidget {
 class CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   CameraController? cameraController;
+  late LocationService _locationService;
 
   Exif? exif;
 
@@ -109,6 +110,7 @@ class CameraScreenState extends State<CameraScreen>
   @override
   void initState() {
     super.initState();
+    //initLocation();
     WidgetsBinding.instance.addObserver(this);
     pageReplaced = false;
     _initialiseControllers();
@@ -120,6 +122,17 @@ class CameraScreenState extends State<CameraScreen>
     selectedType = photoText;
     frontCamera = false;
     debugPrint("Camera- initialised");
+  }
+
+  void initLocation() async {
+    _locationService = LocationService();
+    final location = await _locationService.getCurrentLocation(context,
+        shouldShowSettingPopup: false);
+    if (location != null) {
+      debugPrint("Location: ${location.latitude}, ${location.longitude}");
+      latitude = location.latitude ?? 0.0;
+      longitude = location.longitude ?? 0.0;
+    }
   }
 
   @override
@@ -528,7 +541,7 @@ class CameraScreenState extends State<CameraScreen>
                                     builder: (context) => CustomGallery(
                                           picAgain: widget.picAgain,
                                         )))
-                                .then((value) {
+                                .then((value) async {
                               camListData = value;
                               if (value != null) {
                                 Navigator.pop(
@@ -852,53 +865,6 @@ class CameraScreenState extends State<CameraScreen>
     );
   }
 
-  Future getMedia() async {
-    var result = await PhotoManager.requestPermissionExtend();
-
-    if (result.isAuth) {
-      List<AssetPathEntity> paths =
-          await PhotoManager.getAssetPathList(onlyAll: true);
-
-      if (paths.isNotEmpty) {
-        _path = paths.first;
-        debugPrint("Path:::: $_path");
-        //  setState(() {});
-
-        if (_path != null) {
-          totalEntitiesCount = await _path!.assetCountAsync;
-
-          List<AssetEntity> media =
-              await _path!.getAssetListPaged(page: page, size: _sizePerPage);
-
-          _mediaList = media;
-          debugPrint("MyMedia: $media");
-        }
-      }
-      debugPrint("MyMediaSize: ${_mediaList.length}");
-
-      /*   if (_mediaList.isNotEmpty) {
-        mediaPath = _mediaList.first.relativePath ?? "";
-       // debugPrint("path===> ${_mediaList.first.thumbnailData}");
-        debugPrint("MediaPath: $mediaPath");
-      }*/
-
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    } else {
-      //PhotoManager.openSetting();
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PermissionErrorScreen(permissionsStatus: {
-                    Permission.camera: false,
-                    Permission.photos: false,
-                    Permission.microphone: false,
-                  })));
-    }
-  }
-
   Future takePicture() async {
     if (cameraController == null) {
       return;
@@ -919,7 +885,12 @@ class CameraScreenState extends State<CameraScreen>
       exif = await Exif.fromPath(picture.path);
       String sLat = latitude.toString();
       String sLong = longitude.toString();
-      await exif!.writeAttributes({"GPSLatitude": sLat, "GPSLongitude": sLong});
+      try {
+        await exif!
+            .writeAttributes({"GPSLatitude": sLat, "GPSLongitude": sLong});
+      } catch (e) {
+        debugPrint("Error in exif: $e");
+      }
 
       GallerySaver.saveImage(picture.path);
 
@@ -1395,9 +1366,9 @@ class CameraScreenState extends State<CameraScreen>
     myTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       var diff = DateTime.now().difference(startTime!);
 
-      int hoursDiff = diff.inHours < 60 ? diff.inHours : 0;
-      int minutesDiff = diff.inMinutes < 60 ? diff.inMinutes : 0;
-      int secondsDiff = diff.inSeconds < 60 ? diff.inSeconds : 0;
+      int hoursDiff = diff.inHours;
+      int minutesDiff = diff.inMinutes % 60;
+      int secondsDiff = diff.inSeconds % 60;
 
       String hDiff = hoursDiff < 10 ? "0$hoursDiff" : hoursDiff.toString();
       String mDiff =
@@ -1408,8 +1379,13 @@ class CameraScreenState extends State<CameraScreen>
       recordingTime = "$hDiff:$mDiff:$sDiff";
       stopDurationDifference = diff;
       debugPrint(recordingTime);
-
-      setState(() {});
+      if (diff.inSeconds > (sharedPreferences!.getInt(videoLimitKey) ?? 120)) {
+        showToast(
+            "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+        stopVideoRecording();
+      } else {
+        setState(() {});
+      }
     });
   }
 

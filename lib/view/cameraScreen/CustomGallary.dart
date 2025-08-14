@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
 import 'package:intl/intl.dart';
+import 'package:native_exif/native_exif.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
@@ -17,7 +18,7 @@ import '../../utils/CommonSharedPrefrence.dart';
 import '../dashboard/Dashboard.dart';
 import '../permission_error_screen.dart';
 import 'CameraScreen.dart';
-import 'package:path/path.dart' as p;
+import 'package:video_player/video_player.dart';
 
 class CustomGallery extends StatefulWidget {
   bool picAgain = false;
@@ -32,12 +33,12 @@ class CustomGallery extends StatefulWidget {
 
 class CustomGalleryState extends State<CustomGallery> {
   List<AssetEntity> _mediaList = [];
-  List<GalleryModel> _newMediaList = [];
   List<CameraData> camListData = [];
   AssetPathEntity? _path;
   String address = "";
   bool isLongPress = false;
   bool isLoading = false;
+  bool isSelectedImageProcessing = true;
 
   String mediaAddress = "", mediaDate = "", country = "", state = "", city = "";
 
@@ -94,35 +95,76 @@ class CustomGalleryState extends State<CustomGallery> {
                       builder: (context) => Dashboard(initialPosition: 2)));
             },
             actionWidget: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: size.width * (isIpad ? numD004 : numD03)),
-                child: commonElevatedButton(
-                    "Done",
-                    size,
-                    commonTextStyle(
-                        size: size,
-                        fontSize: size.width * (isIpad ? numD02 : numD03),
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700),
-                    commonButtonStyle(size, colorThemePink), () {
-                  /// Prince
-                  if (widget.picAgain) {
-                    Navigator.pop(context, camListData);
-                  } else {
-                    Navigator.push(
-                        navigatorKey.currentState!.context,
-                        MaterialPageRoute(
-                            builder: (context) => PreviewScreen(
-                                  cameraData: null,
-                                  pickAgain: widget.picAgain,
-                                  type: "gallery",
-                                  cameraListData: camListData,
-                                  mediaList: [],
-                                )));
-                  }
-                }),
-              ),
+              !isSelectedImageProcessing
+                  ? Center(
+                      child: Text(
+                        "Processing...",
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * (isIpad ? numD02 : numD03),
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: size.width * (isIpad ? numD004 : numD03)),
+                      child: commonElevatedButton(
+                          "Done",
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * (isIpad ? numD02 : numD03),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () async {
+                        /// Prince
+                        if (widget.picAgain) {
+                          Navigator.pop(context, camListData);
+                        } else {
+                          var validationVideoLenght = true;
+                          for (var item in camListData) {
+                            if (item.mimeType == "video") {
+                              VideoPlayerController controller =
+                                  VideoPlayerController.file(File(item.path));
+                              await controller.initialize();
+                              if (controller.value.duration.inSeconds >
+                                  (sharedPreferences!.getInt(videoLimitKey) ??
+                                      120)) {
+                                showToast(
+                                    "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+                                validationVideoLenght = false;
+                                break;
+                              }
+                            }
+                          }
+                          if (validationVideoLenght) {
+                            for (var item in camListData) {
+                              var exif = await Exif.fromPath(item.path);
+                              try {
+                                var data = await exif.getLatLong();
+                                item.latitude =
+                                    data?.latitude.toString() ?? item.latitude;
+                                item.longitude = data?.longitude.toString() ??
+                                    item.longitude;
+                              } catch (e) {
+                                debugPrint("Exif Error: $e");
+                              }
+                            }
+                            Navigator.push(
+                                navigatorKey.currentState!.context,
+                                MaterialPageRoute(
+                                    builder: (context) => PreviewScreen(
+                                          cameraData: null,
+                                          pickAgain: widget.picAgain,
+                                          type: "gallery",
+                                          cameraListData: camListData,
+                                          mediaList: [],
+                                        )));
+                          }
+                        }
+                      }),
+                    ),
               SizedBox(
                 width: size.width * numD04,
               )
@@ -181,6 +223,9 @@ class CustomGalleryState extends State<CustomGallery> {
                             }
                           },*/
                   onTap: () {
+                    setState(() {
+                      isSelectedImageProcessing = false;
+                    });
                     debugPrint("camListData::::${camListData.length}");
                     selectedList[index] = !selectedList[index];
                     if (selectedList[index] == true) {
@@ -224,6 +269,9 @@ class CustomGalleryState extends State<CustomGallery> {
                                   sharedPreferences!.getString(currentState) ??
                                       "",
                             ));
+                            setState(() {
+                              isSelectedImageProcessing = true;
+                            });
                           }
                         } else {
                           if (value.absolute.path.contains(".HEIC")) {
@@ -240,13 +288,11 @@ class CustomGalleryState extends State<CustomGallery> {
                                 mimeType: "image",
                                 videoImagePath: "",
                                 latitude: sharedPreferences!
-                                        .getDouble(currentLat)
-                                        .toString() ??
-                                    "",
+                                    .getDouble(currentLat)
+                                    .toString(),
                                 longitude: sharedPreferences!
-                                        .getDouble(currentLon)
-                                        .toString() ??
-                                    "",
+                                    .getDouble(currentLon)
+                                    .toString(),
                                 dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                     .format(DateTime.now()),
                                 location: sharedPreferences!
@@ -262,6 +308,9 @@ class CustomGalleryState extends State<CustomGallery> {
                                         .getString(currentState) ??
                                     "",
                               ));
+                              setState(() {
+                                isSelectedImageProcessing = true;
+                              });
                             });
                           } else {
                             camListData.add(CameraData(
@@ -291,6 +340,9 @@ class CustomGalleryState extends State<CustomGallery> {
                                   sharedPreferences!.getString(currentState) ??
                                       "",
                             ));
+                            setState(() {
+                              isSelectedImageProcessing = true;
+                            });
                           }
                         }
                       });
@@ -302,11 +354,12 @@ class CustomGalleryState extends State<CustomGallery> {
 
                         debugPrint("Filepath:::::::> $index  $indexing");
                         camListData.removeAt(indexing);
+                        setState(() {
+                          isSelectedImageProcessing = true;
+                        });
                       });
                     }
                     //  }
-
-                    setState(() {});
                   },
                   child: Stack(
                     children: <Widget>[
@@ -356,8 +409,8 @@ class CustomGalleryState extends State<CustomGallery> {
   }
 
   Future<void> getMedia() async {
-    final result = await PhotoManager.requestPermissionExtend();
-    if (result.isAuth) {
+    final PermissionState result = await PhotoManager.requestPermissionExtend();
+    if (result.hasAccess) {
       List<AssetPathEntity> paths =
           await PhotoManager.getAssetPathList(onlyAll: true);
       debugPrint("all Path values====>  $paths");

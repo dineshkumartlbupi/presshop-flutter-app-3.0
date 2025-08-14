@@ -7,9 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:presshop/main.dart';
 import 'package:share_plus/share_plus.dart';
 
-//const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
 const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
-//const appleMapAPiKey = "AIzaSyAIaPQyvLdlGaTG-AgFe0rzAlAkGK-JIJI";
 const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 
 //--------production urls----------------
@@ -63,6 +61,7 @@ const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 const adminProfileUrl = "${mediaBaseUrl}adminImages/";
 const socketUrl = "https://dev-api.presshop.news:3005";
 
+//===========url-endpoint============
 const checkUserNameUrl = "users/checkIfUserNameExist/";
 const checkUserNameUrlRequest = 1;
 
@@ -318,6 +317,9 @@ const verifyReferredCodeUrlRequest = 80;
 const commissionGetUrl = "hopper/commissionHopperArmy";
 const commissionGetRequest = 81;
 
+const getLatestVersionUrl = "auth/getLatestVersion";
+const getLatestVersionReq = 82;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";
@@ -545,7 +547,7 @@ const userText = "user";
 const firstText = "first";
 const lastText = "last";
 const nameText = "name";
-const phoneText = "Phone";
+const phoneText = "mobile";
 const emailAddressText = "Email address";
 const houseText = "house";
 const numberText = "number";
@@ -669,8 +671,8 @@ const signUpText = 'Sign Up';
 const firstNameHintText = 'Enter first name';
 const lastNameHintText = 'Enter last name';
 const userNameHintText = 'Enter user name';
-const referralCodeHintText = "Enter referral code";
-const phoneHintText = 'Enter phone number';
+const referralCodeHintText = "Enter referral code (if any)";
+const phoneHintText = 'Enter mobile number';
 const emailHintText = 'Enter email';
 const apartmentNoHintText = 'Apartment number / House name';
 const emailAddressHintText = 'Enter email address';

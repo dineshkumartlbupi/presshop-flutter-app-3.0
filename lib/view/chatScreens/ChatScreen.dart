@@ -230,7 +230,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                           SizedBox(
                             height: size.width * numD01,
                           ),
-                          checkOnlineOffline(context, size, _receiverId),
+                          if (_receiverId.isNotEmpty)
+                            checkOnlineOffline(context, size, _receiverId),
                         ],
                       ),
                     ),
@@ -2343,10 +2344,12 @@ class _ConversationScreenState extends State<ConversationScreen>
   Future<void> _start() async {
     try {
       if (await _audioRecorder.hasPermission()) {
-        await _audioRecorder.start(const RecordConfig(),
-            path: 'aFullPath/myFile.m4a');
+        final dir = await getApplicationCacheDirectory();
+        final filePath =
+            '${dir.path}/record_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
-        bool isRecording = await _audioRecorder.isRecording();
+        await _audioRecorder.start(const RecordConfig(), path: filePath);
+
         setState(() {
           _recordDuration = 0;
         });
@@ -3117,7 +3120,8 @@ class _ConversationScreenState extends State<ConversationScreen>
         debugPrint(":::::::::Inside Room Id Exist:::::::::::");
         // checkRoomExists(roomId);
         timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
-          checkOnlineOffline(context, size, _receiverId);
+          if (_receiverId.isNotEmpty)
+            checkOnlineOffline(context, size, _receiverId);
 
           ///Typing Focus
           //  messageController.addListener(_onTypingFocusChange);
@@ -3686,6 +3690,8 @@ class _ConversationScreenState extends State<ConversationScreen>
         debugPrint("getRoomIdReq Success : $data");
         if (data["details"] != null) {
           roomId = data["details"]["room_id"] ?? "";
+
+          sharedPreferences!.setString(adminRoomIdKey, roomId);
           debugPrint("Room Id : $roomId");
           _initializeData();
         }

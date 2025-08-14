@@ -36,7 +36,6 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   PageController pageController = PageController();
   ScrollController listController = ScrollController();
   PlayerController controller = PlayerController();
-  FlickManager? flickManager;
 
   int _currentMediaIndex = 0;
   int feedIndex = 0;
@@ -66,7 +65,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
 
   @override
   void dispose() {
-    flickManager?.dispose();
+    //flickManager?.dispose();
     super.dispose();
   }
 
@@ -146,13 +145,6 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                   scrollDirection: Axis.horizontal,
                                   onPageChanged: (value) {
                                     _currentMediaIndex = value;
-                                    if (flickManager != null) {
-                                      flickManager?.dispose();
-                                      flickManager = null;
-                                    }
-                                    initialController(
-                                        index, _currentMediaIndex);
-                                    setState(() {});
                                   },
                                   itemCount: feedDataList[index]
                                       .contentDataList
@@ -160,119 +152,140 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                   itemBuilder: (context, idx) {
                                     var item = feedDataList[index]
                                         .contentDataList[idx];
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD04),
-                                      child: InkWell(
-                                        onTap: () {
-                                          if (item.mediaType == "pdf" ||
-                                              item.mediaType == "doc") {
-                                            openUrl(
-                                                contentImageUrl + item.media);
-                                          }
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            item.mediaType == "audio"
-                                                ? playAudioWidget(size)
-                                                : item.mediaType == "video"
-                                                    ? videoWidget()
-                                                    : item.mediaType == "pdf"
-                                                        ? Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    size.width *
-                                                                        numD04),
-                                                            child: Image.asset(
-                                                              "${dummyImagePath}pngImage.png",
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                              height:
-                                                                  size.width *
-                                                                      numD35,
-                                                              width: size.width,
-                                                            ),
-                                                          )
-                                                        : item.mediaType ==
-                                                                "doc"
-                                                            ? Padding(
-                                                                padding: EdgeInsets
-                                                                    .all(size
-                                                                            .width *
-                                                                        numD04),
-                                                                child:
-                                                                    Image.asset(
-                                                                  "${dummyImagePath}doc_black_icon.png",
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                  height: size
+                                    var flickManager =
+                                        initialController(index, idx);
+                                    return VisibilityDetector(
+                                      key:
+                                          Key("${feedDataList[index].id}_$idx"),
+                                      onVisibilityChanged: (visibility) {
+                                        if (visibility.visibleFraction < 0.6) {
+                                          flickManager?.flickControlManager
+                                              ?.autoPause();
+                                        } else if (visibility.visibleFraction ==
+                                            1) {
+                                          flickManager?.flickControlManager
+                                              ?.autoResume();
+                                        }
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD04),
+                                        child: InkWell(
+                                          onTap: () {
+                                            if (item.mediaType == "pdf" ||
+                                                item.mediaType == "doc") {
+                                              openUrl(
+                                                  contentImageUrl + item.media);
+                                            }
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              item.mediaType == "audio"
+                                                  ? playAudioWidget(size)
+                                                  : item.mediaType == "video"
+                                                      ? videoWidget(
+                                                          Key(
+                                                              "${feedDataList[index].id}_$idx"),
+                                                          flickManager)
+                                                      : item.mediaType == "pdf"
+                                                          ? Padding(
+                                                              padding: EdgeInsets
+                                                                  .all(size
                                                                           .width *
-                                                                      numD35,
-                                                                  width: size
-                                                                      .width,
-                                                                ),
-                                                              )
-                                                            : Image.network(
-                                                                item.mediaType ==
-                                                                        "video"
-                                                                    ? "$contentImageUrl${item.thumbnail}"
-                                                                    : "$contentImageUrl${item.media}",
+                                                                      numD04),
+                                                              child:
+                                                                  Image.asset(
+                                                                "${dummyImagePath}pngImage.png",
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                height:
+                                                                    size.width *
+                                                                        numD35,
                                                                 width:
                                                                     size.width,
-                                                                fit: BoxFit
-                                                                    .cover,
                                                               ),
-                                            //  feedDataList[index].contentDataList
-                                            Positioned(
+                                                            )
+                                                          : item.mediaType ==
+                                                                  "doc"
+                                                              ? Padding(
+                                                                  padding: EdgeInsets
+                                                                      .all(size
+                                                                              .width *
+                                                                          numD04),
+                                                                  child: Image
+                                                                      .asset(
+                                                                    "${dummyImagePath}doc_black_icon.png",
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                    height: size
+                                                                            .width *
+                                                                        numD35,
+                                                                    width: size
+                                                                        .width,
+                                                                  ),
+                                                                )
+                                                              : Image.network(
+                                                                  item.mediaType ==
+                                                                          "video"
+                                                                      ? "$contentImageUrl${item.thumbnail}"
+                                                                      : "$contentImageUrl${item.media}",
+                                                                  width: size
+                                                                      .width,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                              //  feedDataList[index].contentDataList
+                                              Positioned(
+                                                right: size.width * numD02,
+                                                top: size.width * numD02,
+                                                child: Column(
+                                                  children: getMediaCount2(
+                                                      feedDataList[index]
+                                                          .contentDataList,
+                                                      size),
+                                                ),
+                                              ),
+                                              /*     Positioned(
                                               right: size.width * numD02,
-                                              top: size.width * numD02,
-                                              child: Column(
-                                                children: getMediaCount2(
-                                                    feedDataList[index]
-                                                        .contentDataList,
-                                                    size),
+                                              bottom: size.width * numD02,
+                                              child: Visibility(
+                                                visible: feedDataList[index]
+                                                        .contentDataList
+                                                        .length >
+                                                    1,
+                                                child: Text(
+                                                  "+${feedDataList[index].contentDataList.length}",
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize:
+                                                          size.width * numD04,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
                                               ),
-                                            ),
-                                            /*     Positioned(
-                                            right: size.width * numD02,
-                                            bottom: size.width * numD02,
-                                            child: Visibility(
-                                              visible: feedDataList[index]
-                                                      .contentDataList
-                                                      .length >
-                                                  1,
-                                              child: Text(
-                                                "+${feedDataList[index].contentDataList.length}",
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize:
-                                                        size.width * numD04,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                          ),*/
-                                            // feedDataList[index].viewCount > 2
-                                            //     ? Positioned(
-                                            //         bottom: size.width * numD02,
-                                            //         left: size.width * numD02,
-                                            //         child: Container(
-                                            //           padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
-                                            //           decoration: BoxDecoration(
-                                            //               color: colorThemePink,
-                                            //               borderRadius: BorderRadius.circular(size.width * numD04),
-                                            //             border: Border.all(color: Colors.white)
-                                            //           ),
-                                            //           child: Text(
-                                            //             mostViewedText,
-                                            //             overflow: TextOverflow.ellipsis,
-                                            //             style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
-                                            //           ),
-                                            //         ),
-                                            //       )
-                                            //     : Container(),
-                                          ],
+                                            ),*/
+                                              // feedDataList[index].viewCount > 2
+                                              //     ? Positioned(
+                                              //         bottom: size.width * numD02,
+                                              //         left: size.width * numD02,
+                                              //         child: Container(
+                                              //           padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
+                                              //           decoration: BoxDecoration(
+                                              //               color: colorThemePink,
+                                              //               borderRadius: BorderRadius.circular(size.width * numD04),
+                                              //             border: Border.all(color: Colors.white)
+                                              //           ),
+                                              //           child: Text(
+                                              //             mostViewedText,
+                                              //             overflow: TextOverflow.ellipsis,
+                                              //             style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
+                                              //           ),
+                                              //         ),
+                                              //       )
+                                              //     : Container(),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );
@@ -288,7 +301,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       dotsCount: feedDataList[index]
                                           .contentDataList
                                           .length,
-                                      position: _currentMediaIndex,
+                                      position: _currentMediaIndex.toDouble(),
                                       decorator: const DotsDecorator(
                                         color: Colors.grey, // Inactive color
                                         activeColor: Colors.redAccent,
@@ -976,37 +989,28 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     await controller.pausePlayer(); // Start audio player
   }
 
-  Widget videoWidget() {
-    return VisibilityDetector(
-      key: ObjectKey(flickManager),
-      onVisibilityChanged: (visibility) {
-        if (visibility.visibleFraction == 0 && mounted) {
-          flickManager?.flickControlManager?.autoPause();
-        } else if (visibility.visibleFraction == 1) {
-          flickManager?.flickControlManager?.autoResume();
-        }
-      },
-      child: flickManager != null
-          ? FlickVideoPlayer(
-              flickManager: flickManager!,
-              flickVideoWithControls: const FlickVideoWithControls(
-                playerLoadingFallback: Center(
-                    child: CircularProgressIndicator(
-                  color: colorThemePink,
-                )),
-                closedCaptionTextStyle: TextStyle(fontSize: 8),
-                controls: FlickPortraitControls(),
-              ),
-              flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-                playerLoadingFallback: Center(
-                    child: CircularProgressIndicator(
-                  color: colorThemePink,
-                )),
-                controls: FlickLandscapeControls(),
-              ),
-            )
-          : Container(),
-    );
+  Widget videoWidget(Key key, flickManager) {
+    return flickManager != null
+        ? FlickVideoPlayer(
+            key: key,
+            flickManager: flickManager!,
+            flickVideoWithControls: const FlickVideoWithControls(
+              playerLoadingFallback: Center(
+                  child: CircularProgressIndicator(
+                color: colorThemePink,
+              )),
+              closedCaptionTextStyle: TextStyle(fontSize: 8),
+              controls: FlickPortraitControls(),
+            ),
+            flickVideoWithControlsFullscreen: const FlickVideoWithControls(
+              playerLoadingFallback: Center(
+                  child: CircularProgressIndicator(
+                color: colorThemePink,
+              )),
+              controls: FlickLandscapeControls(),
+            ),
+          )
+        : Container();
   }
 
   Future<void> showBottomSheet(Size size) async {
@@ -1482,7 +1486,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     );
   }
 
-  void initialController(feedIndex, currentMediaIndex) {
+  FlickManager? initialController(feedIndex, currentMediaIndex) {
+    var flickManager = null;
     if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType ==
         "audio") {
       initWaveData(contentImageUrl +
@@ -1496,15 +1501,14 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       flickManager = FlickManager(
         videoPlayerController: /*VideoPlayerController.network(contentImageUrl +
             feedDataList[feedIndex].contentDataList[currentMediaIndex].media),*/
-
             VideoPlayerController.networkUrl(
-          Uri.parse(
+          Uri.parse(contentImageUrl +
               feedDataList[feedIndex].contentDataList[currentMediaIndex].media),
         ),
         autoPlay: false,
       );
     }
-    setState(() {});
+    return flickManager;
   }
 
   /// Filter List API

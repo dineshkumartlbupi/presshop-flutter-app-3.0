@@ -1375,21 +1375,6 @@ class _SignUpScreenState extends State<SignUpScreen>
     });
   }
 
-  void setPhoneListener() {
-    phoneController.addListener(() {
-      debugPrint("Phone:${phoneController.text}");
-      if (phoneController.text.trim().isNotEmpty &&
-          phoneController.text.trim().length > 9) {
-        debugPrint("notsuccess");
-        checkPhoneApi();
-      } else {
-        phoneAlreadyExists = false;
-      }
-
-      setState(() {});
-    });
-  }
-
   void setPasswordListener() {
     passwordController.addListener(() {
       var m = passwordExpression.hasMatch(passwordController.text.trim());

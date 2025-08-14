@@ -128,7 +128,9 @@ class MyContentScreenState extends State<MyContentScreen>
                         return InkWell(
                             onTap: () {
                               if (myContentList[index].status.toLowerCase() ==
-                                  "pending") {
+                                      "pending" ||
+                                  myContentList[index].status.toLowerCase() ==
+                                      "rejected") {
                                 return;
                               }
                               Navigator.of(context)
@@ -183,7 +185,8 @@ class MyContentScreenState extends State<MyContentScreen>
             children: [
               Expanded(
                 child: Text(
-                  item.status.toLowerCase() == "pending"
+                  item.status.toLowerCase() == "pending" ||
+                          item.status.toLowerCase() == "rejected"
                       ? item.textValue
                       : item.title,
                   maxLines: 2,
@@ -295,7 +298,8 @@ class MyContentScreenState extends State<MyContentScreen>
                   ),
                 ],
               ),
-              item.status.toLowerCase() == "pending"
+              item.status.toLowerCase() == "pending" ||
+                      item.status.toLowerCase() == "rejected"
                   ? Container(
                       height: size.height * numD036,
                       width: size.width * numD17,
@@ -305,7 +309,9 @@ class MyContentScreenState extends State<MyContentScreen>
                               BorderRadius.circular(size.width * numD015)),
                       child: Center(
                         child: Text(
-                          "Under\nReview",
+                          item.status.toLowerCase() == "pending"
+                              ? "Under\nReview"
+                              : "Not\nApproved",
                           textAlign: TextAlign.center,
                           style: commonTextStyle(
                               size: size,
@@ -521,7 +527,9 @@ class MyContentScreenState extends State<MyContentScreen>
                     ),
                   )
                 : Image.network(
-                    "$contentImageUrl$url",
+                    type == 'video'
+                        ? "$mediaThumbnailUrl$url"
+                        : "$contentImageUrl$url",
                     height: size.width * numD30,
                     width: size.width,
                     fit: BoxFit.cover,
