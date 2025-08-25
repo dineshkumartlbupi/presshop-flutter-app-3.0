@@ -397,9 +397,7 @@ class MyContentScreenState extends State<MyContentScreen>
           item.contentMediaList.isNotEmpty
               ? showImage(
                   item.contentMediaList.first.mediaType,
-                  item.contentMediaList.first.mediaType == "video"
-                      ? item.contentMediaList.first.thumbNail
-                      : item.contentMediaList.first.media,
+                  item.contentMediaList.first.media,
                 )
               : Container(
                   decoration: const BoxDecoration(color: colorLightGrey),

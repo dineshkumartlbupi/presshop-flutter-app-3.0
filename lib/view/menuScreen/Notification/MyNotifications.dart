@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -383,6 +384,14 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                                   totalEarning: "0",
                                                 )));
                                   }
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "initiate_admin_chat") {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ConversationScreen(
+                                            hideLeading: false,
+                                            message: '',
+                                          )));
                                 }
                               },
                               child: Container(
@@ -483,7 +492,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                                 fontSize: size.width * numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
-                                            maxLines: 5,
+                                            maxLines: 10,
                                           ),
                                           SizedBox(
                                             height: size.width * numD040,

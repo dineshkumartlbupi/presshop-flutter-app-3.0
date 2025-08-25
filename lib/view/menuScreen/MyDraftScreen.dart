@@ -971,13 +971,13 @@ class ContentMediaData {
     mediaType = json["media_type"] ?? "";
     thumbNail = (json["thumbnail"] ?? json["media"]).toString();
     waterMark = (json["watermark"] ?? "").toString();
-    if (mediaType == "video") {
-      getVideoThumbNail(media).then((value) {
-        debugPrint("TValue: $value");
+    // if (mediaType == "video") {
+    //   getVideoThumbNail(media).then((value) {
+    //     debugPrint("TValue: $value");
 
-        thumbNail = value;
-      });
-    }
+    //     thumbNail = value;
+    //   });
+    // }
   }
 
   Future<String> getVideoThumbNail(String path) async {

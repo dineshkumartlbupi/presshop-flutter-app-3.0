@@ -3231,7 +3231,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                   right: 0,
                                   child: DotsIndicator(
                                     dotsCount: selectMultipleMediaList.length,
-                                    position: currentPage.toDouble(),
+                                    position: currentPage,
                                     decorator: const DotsDecorator(
                                       color: Colors.grey, // Inactive color
                                       activeColor: Colors.redAccent,

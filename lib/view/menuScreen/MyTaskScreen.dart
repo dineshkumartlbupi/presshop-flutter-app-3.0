@@ -35,7 +35,8 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
 
-  List<MyTaskModel> taskList = [];
+  List<TaskParentClass> taskList = [];
+  //List<MyTaskModel> pendingTaskList = [];
 
   bool _showData = false;
 
@@ -51,11 +52,12 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
     initializeFilter();
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => {
-          callAllGetTaskApi(),
-          if (widget.broadCastId != null)
-            {callTaskDetailApi(widget.broadCastId!)}
-        });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      callAllGetTaskApi();
+      if (widget.broadCastId != null) {
+        callTaskDetailApi(widget.broadCastId!);
+      }
+    });
   }
 
   void callTaskDetailApi(String id) {
@@ -362,229 +364,391 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                   vertical: size.width * numD04),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.82,
+                childAspectRatio: 0.75,
                 mainAxisSpacing: size.width * numD04,
                 crossAxisSpacing: size.width * numD04,
               ),
               itemBuilder: (context, index) {
-                var item = taskList[index];
-                return InkWell(
-                  onTap: () {
-                    /*   Navigator.of(context)
-                  .push(MaterialPageRoute(
-                  builder: (context) => TaskDetailScreen(
-                      taskStatus: item.status,
-                      taskId: item.taskDetail!.id,
-                      totalEarning:item.totalAmount
-                  )))
-                  .then((value) => callAllGetTaskApi());*/
-
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(
-                            builder: (context) => TaskDetailNewScreen(
-                                taskStatus: item.status,
-                                taskId: item.taskDetail!.id,
-                                totalEarning: item.totalAmount)))
-                        .then((value) => callAllGetTaskApi());
-
-                    //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        left: size.width * numD03,
-                        right: size.width * numD03,
-                        top: size.width * numD03),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              spreadRadius: 2,
-                              blurRadius: 1)
-                        ],
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// Image
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
-                              child: Image.network(
-                                item.taskDetail!.mediaHouseImage,
-                                height: size.width * numD28,
-                                width: size.width,
-                                fit: BoxFit.cover,
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Container(
-                                    alignment: Alignment.topCenter,
-                                    child: Image.asset(
-                                      "${commonImagePath}rabbitLogo.png",
-                                      height: size.width * numD26,
-                                      width: size.width * numD26,
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (context, exception, stackTrace) {
-                                  return Container(
-                                    alignment: Alignment.topCenter,
-                                    child: Image.asset(
-                                      "${commonImagePath}rabbitLogo.png",
-                                      height: size.width * numD26,
-                                      width: size.width * numD26,
-                                    ),
-                                  );
-                                },
+                if (taskList[index] is PendingTask) {
+                  var item = taskList[index] as PendingTask;
+                  return InkWell(
+                    onTap: () {
+                      //showToast("Please wait...");
+                      callTaskDetailApi(item.broadCastId);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: size.width * numD03,
+                          right: size.width * numD03,
+                          top: size.width * numD03),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                spreadRadius: 2,
+                                blurRadius: 1)
+                          ],
+                          borderRadius:
+                              BorderRadius.circular(size.width * numD04)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Image
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                child: Image.network(
+                                  item.taskDetail!.mediaHouseImage,
+                                  height: size.width * numD28,
+                                  width: size.width,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      alignment: Alignment.topCenter,
+                                      child: Image.asset(
+                                        "${commonImagePath}rabbitLogo.png",
+                                        height: size.width * numD26,
+                                        width: size.width * numD26,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder:
+                                      (context, exception, stackTrace) {
+                                    return Container(
+                                      alignment: Alignment.topCenter,
+                                      child: Image.asset(
+                                        "${commonImagePath}rabbitLogo.png",
+                                        height: size.width * numD26,
+                                        width: size.width * numD26,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: size.width * numD01,
-                        ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
 
-                        /// Title
-                        Text(
-                          item.taskDetail!.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD03,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                        ),
+                          /// Title
+                          Text(
+                            item.taskDetail!.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
 
-                        const Spacer(),
+                          const Spacer(),
 
-                        /// Dead Line
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              "${iconsPath}ic_clock.png",
-                              height: size.width * numD029,
-                            ),
-                            SizedBox(
-                              width: size.width * numD01,
-                            ),
-                            Text(
-                              dateTimeFormatter(
-                                  dateTime:
-                                      item.taskDetail!.createdAt.toString(),
-                                  format: "hh:mm a"),
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD024,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            SizedBox(
-                              width: size.width * numD018,
-                            ),
-                            Image.asset(
-                              "${iconsPath}ic_yearly_calendar.png",
-                              height: size.width * numD028,
-                            ),
-                            SizedBox(
-                              width: size.width * numD01,
-                            ),
-                            Text(
-                              dateTimeFormatter(
-                                  dateTime:
-                                      item.taskDetail!.createdAt.toString(),
-                                  format: "dd MMM yyyy"),
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD024,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: size.width * numD013,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                                item.totalAmount == "0" &&
-                                        item.status == "accepted"
-                                    ? item.status.toUpperCase()
-                                    : "RECEIVED",
+                          /// Dead Line
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                "${iconsPath}ic_clock.png",
+                                height: size.width * numD029,
+                              ),
+                              SizedBox(
+                                width: size.width * numD01,
+                              ),
+                              Text(
+                                dateTimeFormatter(
+                                    dateTime:
+                                        item.taskDetail!.createdAt.toString(),
+                                    format: "hh:mm a"),
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD025,
-                                    color: item.status == "accepted" ||
-                                            item.status == "completed"
-                                        ? colorThemePink
-                                        : Colors.black,
-                                    fontWeight: FontWeight.normal)),
-                            item.status == "accepted"
-                                ? Container(
-                                    height: size.width * numD065,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD04,
-                                        vertical: size.width * numD01),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                        color: item.status == "accepted" &&
-                                                item.totalAmount == "0"
-                                            ? colorThemePink
-                                            : colorLightGrey,
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * numD015)),
-                                    child: Text(
-                                      item.status == "accepted" &&
-                                              item.totalAmount == "0"
-                                          ? "Live"
-                                          : "$euroUniqueCode${item.totalAmount}",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD025,
+                                    fontSize: size.width * numD024,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              SizedBox(
+                                width: size.width * numD018,
+                              ),
+                              Image.asset(
+                                "${iconsPath}ic_yearly_calendar.png",
+                                height: size.width * numD028,
+                              ),
+                              SizedBox(
+                                width: size.width * numD01,
+                              ),
+                              Text(
+                                dateTimeFormatter(
+                                    dateTime:
+                                        item.taskDetail!.createdAt.toString(),
+                                    format: "dd MMM yyyy"),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD024,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD013,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("TAP TO ACCEPT",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD025,
+                                      color: colorThemePink,
+                                      fontWeight: FontWeight.normal)),
+                              Container(
+                                alignment: Alignment.center,
+                                height: size.width * numD08,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD025,
+                                    vertical: size.width * numD01),
+                                decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD015)),
+                                child: Text(
+                                  "Available",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD025,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              )
+                            ],
+                          ),
+
+                          SizedBox(
+                            height: size.width * numD02,
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  var item = taskList[index] as MyTaskModel;
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (context) => TaskDetailNewScreen(
+                                  taskStatus: item.status,
+                                  taskId: item.taskDetail!.id,
+                                  totalEarning: item.totalAmount)))
+                          .then((value) => callAllGetTaskApi());
+
+                      //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: size.width * numD03,
+                          right: size.width * numD03,
+                          top: size.width * numD03),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                spreadRadius: 2,
+                                blurRadius: 1)
+                          ],
+                          borderRadius:
+                              BorderRadius.circular(size.width * numD04)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Image
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                child: Image.network(
+                                  item.taskDetail!.mediaHouseImage,
+                                  height: size.width * numD28,
+                                  width: size.width,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      alignment: Alignment.topCenter,
+                                      child: Image.asset(
+                                        "${commonImagePath}rabbitLogo.png",
+                                        height: size.width * numD26,
+                                        width: size.width * numD26,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder:
+                                      (context, exception, stackTrace) {
+                                    return Container(
+                                      alignment: Alignment.topCenter,
+                                      child: Image.asset(
+                                        "${commonImagePath}rabbitLogo.png",
+                                        height: size.width * numD26,
+                                        width: size.width * numD26,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
+
+                          /// Title
+                          Text(
+                            item.taskDetail!.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
+
+                          const Spacer(),
+
+                          /// Dead Line
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                "${iconsPath}ic_clock.png",
+                                height: size.width * numD029,
+                              ),
+                              SizedBox(
+                                width: size.width * numD01,
+                              ),
+                              Text(
+                                dateTimeFormatter(
+                                    dateTime:
+                                        item.taskDetail!.createdAt.toString(),
+                                    format: "hh:mm a"),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD024,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              SizedBox(
+                                width: size.width * numD018,
+                              ),
+                              Image.asset(
+                                "${iconsPath}ic_yearly_calendar.png",
+                                height: size.width * numD028,
+                              ),
+                              SizedBox(
+                                width: size.width * numD01,
+                              ),
+                              Text(
+                                dateTimeFormatter(
+                                    dateTime:
+                                        item.taskDetail!.createdAt.toString(),
+                                    format: "dd MMM yyyy"),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD024,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD013,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  item.totalAmount == "0" &&
+                                          item.status == "accepted"
+                                      ? item.status.toUpperCase()
+                                      : "RECEIVED",
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD025,
+                                      color: item.status == "accepted" ||
+                                              item.status == "completed"
+                                          ? colorThemePink
+                                          : Colors.black,
+                                      fontWeight: FontWeight.normal)),
+                              item.status == "accepted"
+                                  ? Container(
+                                      height: size.width * numD065,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * numD04,
+                                          vertical: size.width * numD01),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
                                           color: item.status == "accepted" &&
                                                   item.totalAmount == "0"
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  )
-                                : Container(
-                                    alignment: Alignment.center,
-                                    height: size.width * numD08,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD05,
-                                        vertical: size.width * numD01),
-                                    decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * numD015)),
-                                    child: Text(
-                                      "$euroUniqueCode${item.totalAmount}",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD025,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  )
-                          ],
-                        ),
+                                              ? colorThemePink
+                                              : colorLightGrey,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD015)),
+                                      child: Text(
+                                        item.status == "accepted" &&
+                                                item.totalAmount == "0"
+                                            ? "Live"
+                                            : "$euroUniqueCode${item.totalAmount}",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD025,
+                                            color: item.status == "accepted" &&
+                                                    item.totalAmount == "0"
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    )
+                                  : Container(
+                                      alignment: Alignment.center,
+                                      height: size.width * numD08,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * numD05,
+                                          vertical: size.width * numD01),
+                                      decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD015)),
+                                      child: Text(
+                                        "$euroUniqueCode${item.totalAmount}",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD025,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    )
+                            ],
+                          ),
 
-                        SizedBox(
-                          height: size.width * numD02,
-                        )
-                      ],
+                          SizedBox(
+                            height: size.width * numD02,
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
             ),
           )
@@ -1014,7 +1178,12 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
           debugPrint("getAllMyTaskReq Success : $data");
 
           var dataModel = data["data"] as List;
+
+          var pendingTaskList = data["pending_unaccepted"] as List;
           var list = dataModel.map((e) => MyTaskModel.fromJson(e)).toList();
+          var pendingList = pendingTaskList.isNotEmpty
+              ? pendingTaskList.map((e) => PendingTask.fromJson(e)).toList()
+              : <PendingTask>[];
 
           if (list.isNotEmpty) {
             _refreshController.loadComplete();
@@ -1029,6 +1198,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
           }
 
           taskList.addAll(list);
+          taskList.addAll(pendingList);
           debugPrint("taskList Length : ${taskList.length}");
           _showData = true;
 
@@ -1065,10 +1235,28 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
   }
 }
 
-class MyTaskModel {
-  TaskDetailModel? taskDetail;
+class TaskParentClass {
   String status = "";
   String totalAmount = "";
+}
+
+class PendingTask extends TaskParentClass {
+  TaskDetailModel? taskDetail;
+  String title = "";
+  String body = "";
+  String broadCastId = "";
+  PendingTask.fromJson(Map<String, dynamic> json) {
+    taskDetail = TaskDetailModel.fromJson(json["task"] ?? {});
+    status = "pending";
+    totalAmount = '0';
+    broadCastId = (json["broadCast_id"] ?? "").toString();
+    title = (json["title"] ?? "").toString();
+    body = (json["body"] ?? "").toString();
+  }
+}
+
+class MyTaskModel extends TaskParentClass {
+  TaskDetailModel? taskDetail;
 
   MyTaskModel.fromJson(Map<String, dynamic> json) {
     taskDetail = TaskDetailModel.fromJson(json["task_id"] ?? {});

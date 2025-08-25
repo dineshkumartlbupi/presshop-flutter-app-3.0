@@ -1740,6 +1740,9 @@ class _ConversationScreenState extends State<ConversationScreen>
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Container(
+                              width: document.get('uploadPercent') < 100
+                                  ? size.width * numD60
+                                  : size.width * numD60,
                               decoration: BoxDecoration(
                                   color: colorLightGrey,
                                   borderRadius: BorderRadius.circular(
@@ -3175,10 +3178,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       'duration': duration,
       'senderUserName': sharedPreferences!.getString(userNameKey),
       'videoThumbnail': thumbnailPath,
-      'date': dateTimeFormatter(
-          dateTime: DateTime.now().toString(),
-          format: "yyyy-MM-dd HH:mm:ss",
-          utc: true),
+      'date': DateTime.now().toString(),
       'uploadPercent': 0.0,
       'readStatus': "unread",
       'replyType': "text",
@@ -3748,7 +3748,7 @@ String timeParse(String time) {
   debugPrint("Time parse Value : ${utc.toUtc().toLocal()}");
   debugPrint("Time parse Value : $utc");
 
-  utc = utc.add(DateTime.parse(time).timeZoneOffset);
+  //utc = utc.add(DateTime.parse(time).timeZoneOffset);
 
   String finalDate = DateFormat('hh:mm a, dd MMM yyyy').format(utc).toString();
 

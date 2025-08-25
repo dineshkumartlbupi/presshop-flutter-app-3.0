@@ -2812,7 +2812,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 alignment: Alignment.bottomCenter,
                 child: DotsIndicator(
                   dotsCount: widget.myContentData!.contentMediaList.length,
-                  position: _currentMediaIndex.toDouble(),
+                  position: _currentMediaIndex,
                   decorator: const DotsDecorator(
                     color: Colors.grey, // Inactive color
                     activeColor: Colors.redAccent,

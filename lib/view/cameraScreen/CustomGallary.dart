@@ -274,76 +274,35 @@ class CustomGalleryState extends State<CustomGallery> {
                             });
                           }
                         } else {
-                          if (value.absolute.path.contains(".HEIC")) {
-                            convertHEICToJPEG(
-                                    value.absolute.path,
-                                    _mediaList[index].width,
-                                    _mediaList[index].height)
-                                .then((imgValue) {
-                              debugPrint("FinalPath: $imgValue");
-
-                              imgPath = imgValue;
-                              camListData.add(CameraData(
-                                path: imgPath,
-                                mimeType: "image",
-                                videoImagePath: "",
-                                latitude: sharedPreferences!
+                          camListData.add(CameraData(
+                            path: imgPath,
+                            mimeType: "image",
+                            videoImagePath: "",
+                            fromGallary: true,
+                            latitude: sharedPreferences!
                                     .getDouble(currentLat)
-                                    .toString(),
-                                longitude: sharedPreferences!
+                                    .toString() ??
+                                "",
+                            longitude: sharedPreferences!
                                     .getDouble(currentLon)
-                                    .toString(),
-                                dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                    .format(DateTime.now()),
-                                location: sharedPreferences!
-                                        .getString(currentAddress) ??
+                                    .toString() ??
+                                "",
+                            dateTime: DateFormat("HH:mm, dd MMM yyyy")
+                                .format(DateTime.now()),
+                            location:
+                                sharedPreferences!.getString(currentAddress) ??
                                     "",
-                                country: sharedPreferences!
-                                        .getString(currentCountry) ??
+                            country:
+                                sharedPreferences!.getString(currentCountry) ??
                                     "",
-                                city:
-                                    sharedPreferences!.getString(currentCity) ??
-                                        "",
-                                state: sharedPreferences!
-                                        .getString(currentState) ??
-                                    "",
-                              ));
-                              setState(() {
-                                isSelectedImageProcessing = true;
-                              });
-                            });
-                          } else {
-                            camListData.add(CameraData(
-                              path: imgPath,
-                              mimeType: "image",
-                              videoImagePath: "",
-                              fromGallary: true,
-                              latitude: sharedPreferences!
-                                      .getDouble(currentLat)
-                                      .toString() ??
-                                  "",
-                              longitude: sharedPreferences!
-                                      .getDouble(currentLon)
-                                      .toString() ??
-                                  "",
-                              dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                  .format(DateTime.now()),
-                              location: sharedPreferences!
-                                      .getString(currentAddress) ??
-                                  "",
-                              country: sharedPreferences!
-                                      .getString(currentCountry) ??
-                                  "",
-                              city: sharedPreferences!.getString(currentCity) ??
-                                  "",
-                              state:
-                                  sharedPreferences!.getString(currentState) ??
-                                      "",
-                            ));
-                            setState(() {
-                              isSelectedImageProcessing = true;
-                            });
-                          }
+                            city:
+                                sharedPreferences!.getString(currentCity) ?? "",
+                            state: sharedPreferences!.getString(currentState) ??
+                                "",
+                          ));
+                          setState(() {
+                            isSelectedImageProcessing = true;
+                          });
                         }
                       });
                     } else {
@@ -469,11 +428,25 @@ class CustomGalleryState extends State<CustomGallery> {
 
   Future<String> convertHEICToJPEG(String path, int width, int height) async {
     try {
-      // Convert HEIC to JPEG
-      var result = await fic.FlutterImageCompress.compressWithFile(path,
-          quality: 95, format: fic.CompressFormat.jpeg);
+      // Generate a new file path for the JPEG
+      final dir = await getTemporaryDirectory();
+      final fileName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
+      final newPath = "${dir.path}/$fileName";
 
-      return File.fromRawPath(result!).path;
+      // Convert HEIC to JPEG and save to newPath
+      var result = await fic.FlutterImageCompress.compressAndGetFile(
+        path,
+        newPath,
+        quality: 95,
+        format: fic.CompressFormat.jpeg,
+      );
+
+      if (result != null) {
+        return result.path;
+      } else {
+        debugPrint('Conversion failed, result is null');
+        return "";
+      }
     } catch (error) {
       debugPrint('Error converting HEIC to JPEG: $error');
       return "";

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
@@ -18,9 +19,11 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     implements NetworkResponse {
+  var openChatScreen = false;
   @override
   void initState() {
     super.initState();
+    _checkInitialMessage();
     debugPrint("rememberMe: $rememberMe");
     if (rememberMe) {
       Future.delayed(Duration.zero, () {
@@ -32,6 +35,19 @@ class _SplashScreenState extends State<SplashScreen>
             MaterialPageRoute(builder: (context) => Walkthrough()),
             (route) => false);
       });
+    }
+  }
+
+  Future<void> _checkInitialMessage() async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      // Handle data from the initial message here
+      if (initialMessage.data.isNotEmpty &&
+          initialMessage.data["notification_type"].toString() ==
+              "initiate_admin_chat") {
+        openChatScreen = true;
+      }
     }
   }
 
@@ -98,6 +114,7 @@ class _SplashScreenState extends State<SplashScreen>
                 MaterialPageRoute(
                     builder: (context) => Dashboard(
                           initialPosition: 2,
+                          openChatScreen: openChatScreen,
                         )),
                 (route) => false);
           }

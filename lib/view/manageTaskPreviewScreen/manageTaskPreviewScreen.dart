@@ -270,7 +270,7 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
             mediaList.isNotEmpty && mediaList.length > 1
                 ? DotsIndicator(
                     dotsCount: mediaList.length,
-                    position: currentPage.toDouble(),
+                    position: currentPage,
                     decorator: const DotsDecorator(
                       color: Colors.grey, // Inactive color
                       activeColor: Colors.redAccent,

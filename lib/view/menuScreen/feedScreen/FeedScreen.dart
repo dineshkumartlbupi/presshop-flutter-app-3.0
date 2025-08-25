@@ -301,7 +301,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       dotsCount: feedDataList[index]
                                           .contentDataList
                                           .length,
-                                      position: _currentMediaIndex.toDouble(),
+                                      position: _currentMediaIndex,
                                       decorator: const DotsDecorator(
                                         color: Colors.grey, // Inactive color
                                         activeColor: Colors.redAccent,

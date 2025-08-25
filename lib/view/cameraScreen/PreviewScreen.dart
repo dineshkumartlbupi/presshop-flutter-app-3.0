@@ -391,7 +391,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       dotsCount: mediaList.length,
-                                      position: currentPage.toDouble(),
+                                      position: currentPage,
                                       decorator: const DotsDecorator(
                                         color: Colors.grey, // Inactive color
                                         activeColor: Colors.redAccent,

@@ -15,6 +15,7 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/dashboardInterface.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
+import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
@@ -34,10 +35,12 @@ class Dashboard extends StatefulWidget {
   int initialPosition = 2;
   String? broadCastId;
   String? taskStatus = "";
+  bool openChatScreen = false;
 
   Dashboard({
     super.key,
     required this.initialPosition,
+    this.openChatScreen = false,
     this.broadCastId,
     this.taskStatus,
   });
@@ -111,6 +114,21 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     }
     isGetLatLong = false;
     // requestLocationPermissions();
+    if (widget.openChatScreen) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConversationScreen(
+                hideLeading: false,
+                message: '',
+              ),
+            ),
+          );
+        }
+      });
+    }
     super.initState();
   }
 
@@ -342,8 +360,24 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
           if (mounted) {
             callTaskDetailApi(message.data["broadCast_id"]);
           }
+        } else if (message.data.isNotEmpty &&
+            message.data["notification_type"].toString() ==
+                "initiate_admin_chat") {
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConversationScreen(
+                    hideLeading: false,
+                    message: '',
+                  ),
+                ),
+              );
+            }
+          });
         } else {
-          localNotificationService.showFlutterNotification(message);
+          // localNotificationService.showFlutterNotification(message);
         }
         if (message.notification != null) {
           debugPrint(message.notification!.title);

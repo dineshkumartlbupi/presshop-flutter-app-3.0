@@ -426,7 +426,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 alignment: Alignment.bottomCenter,
                 child: DotsIndicator(
                   dotsCount: myContentData!.contentMediaList.length,
-                  position: _currentMediaIndex.toDouble(),
+                  position: _currentMediaIndex,
                   decorator: const DotsDecorator(
                     color: Colors.grey, // Inactive color
                     activeColor: Colors.redAccent,
