@@ -22,6 +22,8 @@ import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonWigdets.dart';
 import '../../utils/commonEnums.dart';
 import '../../utils/location_service.dart';
@@ -51,7 +53,9 @@ class Dashboard extends StatefulWidget {
   }
 }
 
-class DashboardState extends State<Dashboard> implements NetworkResponse {
+class DashboardState extends State<Dashboard>
+    with AnalyticsPageMixin
+    implements NetworkResponse {
   int currentIndex = 2;
   String fcmToken = "";
   String deviceId = "";
@@ -84,6 +88,17 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     const MenuScreen()
   ];
   late AppLinks linkStream;
+
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.dashboard;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'initial_position': widget.initialPosition.toString(),
+        'user_id': sharedPreferences?.getString(hopperIdKey) ?? 'unknown',
+        'current_tab': currentIndex.toString(),
+      };
 
   @override
   void initState() {
@@ -506,11 +521,36 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
       );
       return;
     }*/
+
+    // Track tab switches
+    trackAction(ActionNames.tabSwitch, parameters: {
+      'from_tab': currentIndex.toString(),
+      'to_tab': index.toString(),
+      'tab_name': _getTabName(index),
+    });
+
     if (index != 2) {
       updateLocationData();
     }
     currentIndex = index;
     setState(() {});
+  }
+
+  String _getTabName(int index) {
+    switch (index) {
+      case 0:
+        return 'my_content';
+      case 1:
+        return 'my_tasks';
+      case 2:
+        return 'camera';
+      case 3:
+        return 'chat_bot';
+      case 4:
+        return 'menu';
+      default:
+        return 'unknown';
+    }
   }
 
   void callUpdateCurrentData() {

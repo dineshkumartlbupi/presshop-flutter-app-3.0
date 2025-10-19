@@ -1,33 +1,39 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
+
 class ManageTaskPreviewMediaScreen extends StatefulWidget {
   const ManageTaskPreviewMediaScreen({super.key});
 
   @override
-  State<ManageTaskPreviewMediaScreen> createState() => _ManageTaskPreviewMediaScreenState();
+  State<ManageTaskPreviewMediaScreen> createState() =>
+      _ManageTaskPreviewMediaScreenState();
 }
 
-class _ManageTaskPreviewMediaScreenState extends State<ManageTaskPreviewMediaScreen> {
+class _ManageTaskPreviewMediaScreenState
+    extends State<ManageTaskPreviewMediaScreen> with AnalyticsPageMixin {
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      backgroundColor: Colors.black,
+    return Scaffold(
+        backgroundColor: Colors.black,
         body: Column(
           children: [
             Expanded(
               child: PageView.builder(
                 onPageChanged: (value) {
-                 // currentPage = value;
+                  // currentPage = value;
                   setState(() {});
                 },
                 itemBuilder: (context, index) {
-                  return Image.asset("assets/dummyImages/dummy_charity_life.png");
+                  return Image.asset(
+                      "assets/dummyImages/dummy_charity_life.png");
                 },
                 itemCount: 3,
               ),
             ),
-        /*    widget.type == "draft"
+            /*    widget.type == "draft"
                 ? Container(
               height: size.width * numD17,
               width: double.infinity,
@@ -99,7 +105,7 @@ class _ManageTaskPreviewMediaScreenState extends State<ManageTaskPreviewMediaScr
                           });
                         }
 
-                        *//*getImageMetaData(widget.cameraData);*//*
+                        */ /*getImageMetaData(widget.cameraData);*/ /*
                       }),
                     ),
                   ),
@@ -212,7 +218,10 @@ class _ManageTaskPreviewMediaScreenState extends State<ManageTaskPreviewMediaScr
               ),
             ),*/
           ],
-        )
-    );
+        ));
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.manageTaskPreviewMedia;
 }

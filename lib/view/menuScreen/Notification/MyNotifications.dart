@@ -413,26 +413,30 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: size.width * numD02),
-                                      padding:
-                                          EdgeInsets.all(size.width * numD02),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.grey.shade200,
-                                                spreadRadius: 2,
-                                                blurRadius: 2)
-                                          ]),
-                                      child: Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * numD07,
-                                        width: size.width * numD07,
-                                      ),
-                                    ),
+                                        margin: EdgeInsets.only(
+                                          top: size.width * numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: Colors.grey.shade300,
+                                                  spreadRadius: 2)
+                                            ]),
+                                        child: ClipOval(
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(
+                                                size.width * numD01),
+                                            child: Image.asset(
+                                              "${commonImagePath}ic_black_rabbit.png",
+                                              color: Colors.white,
+                                              width: size.width * numD07,
+                                              height: size.width * numD07,
+                                            ),
+                                          ),
+                                        )),
                                     SizedBox(
                                       width: size.width * numD035,
                                     ),
@@ -443,28 +447,12 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  notificationList[index].title,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD035,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: size.width * numD02,
-                                              ),
-                                              Text(
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 10.0),
+                                              child: Text(
                                                 dateTimeFormatter(
                                                     dateTime:
                                                         notificationList[index]
@@ -472,6 +460,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                                     format:
                                                         "hh:mm a, dd MMM yyyy",
                                                     utc: false),
+                                                textAlign: TextAlign.right,
                                                 style: commonTextStyle(
                                                     size: size,
                                                     fontSize:
@@ -480,11 +469,40 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                                     fontWeight:
                                                         FontWeight.w300),
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                          SizedBox(
-                                            height: size.width * numD02,
+                                          Text(
+                                            notificationList[index].title,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD035,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600),
                                           ),
+                                          if (notificationList[index]
+                                              .imageUrl
+                                              .isNotEmpty) ...[
+                                            SizedBox(
+                                              height: size.width * numD04,
+                                            ),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Image.network(
+                                                notificationList[index]
+                                                    .imageUrl,
+                                                width: size.width * num1,
+                                                fit: BoxFit.fitHeight,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Container();
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: size.width * numD04,
+                                            ),
+                                          ],
                                           Text(
                                             notificationList[index].description,
                                             style: commonTextStyle(
@@ -492,7 +510,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                                 fontSize: size.width * numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
-                                            maxLines: 10,
                                           ),
                                           SizedBox(
                                             height: size.width * numD040,

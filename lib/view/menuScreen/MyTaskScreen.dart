@@ -3,11 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
+import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/view/task_details_new_screen/task_details_new_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonModel.dart';
 import '../../utils/networkOperations/NetworkResponse.dart';
 import '../boardcastScreen/BroardcastScreen.dart';
@@ -26,9 +30,22 @@ class MyTaskScreen extends StatefulWidget {
   }
 }
 
-class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
+class MyTaskScreenState extends State<MyTaskScreen>
+    with SingleTickerProviderStateMixin, AnalyticsPageMixin
+    implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.myTasks;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'hide_leading': widget.hideLeading.toString(),
+        'broadcast_id': widget.broadCastId ?? 'none',
+      };
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  late AnimationController _blinkingController;
 
   late Size size;
 
@@ -50,6 +67,10 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
   void initState() {
     debugPrint("class:::::::$runtimeType");
     initializeFilter();
+    _blinkingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -167,7 +188,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                           "Vivamus sit amet commodo risus. Ut dictum rutrum lacinia. Ut at nunc a mi facilisis ornare...",
                           "3 miles away",
                           "2h:30m:00s",
-                          "${euroUniqueCode}150 to ${euroUniqueCode}500",
+                          "${currencySymbol}150 to ${currencySymbol}500",
                           size,
                               () {},"");
                     },
@@ -270,7 +291,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                         child: Text(
                           myTaskList[index].taskStatus == "Live"
                               ? myTaskList[index].taskStatus
-                              : "$euroUniqueCode${myTaskList[index].amountStatus} ${receivedText.toTitleCase()}",
+                              : "$currencySymbol${myTaskList[index].amountStatus} ${receivedText.toTitleCase()}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD025,
@@ -291,7 +312,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                             borderRadius: BorderRadius.circular(
                                 size.width * numD015)),
                         child: Text(
-                          "$euroUniqueCode${myTaskList[index].amountStatus}",
+                          "$currencySymbol${myTaskList[index].amountStatus}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD025,
@@ -338,13 +359,15 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
 
     filterList.addAll([
       FilterModel(
-          name: liveContentText, icon: "ic_live_content.png", isSelected: true),
-      FilterModel(
-          name: paymentsReceivedText,
-          icon: "ic_payment_reviced.png",
+          name: liveContentText,
+          icon: "ic_live_content.png",
           isSelected: false),
-      FilterModel(
-          name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+      // FilterModel(
+      //     name: paymentsReceivedText,
+      //     icon: "ic_payment_reviced.png",
+      //     isSelected: false),
+      // FilterModel(
+      //     name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
     ]);
   }
 
@@ -502,12 +525,17 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("TAP TO ACCEPT",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD025,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.normal)),
+                              Text(
+                                "TAP TO ACCEPT",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD025,
+                                    color: colorThemePink,
+                                    fontWeight: FontWeight.normal),
+                              ),
+
+                              // Animated blinking/highlight effect
+                              // Blinking "Available" badge with infinite animation
                               Container(
                                 alignment: Alignment.center,
                                 height: size.width * numD08,
@@ -515,7 +543,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                                     horizontal: size.width * numD025,
                                     vertical: size.width * numD01),
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
+                                    color: colorThemePink,
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD015)),
                                 child: Text(
@@ -613,7 +641,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
 
                           /// Title
                           Text(
-                            item.taskDetail!.title,
+                            item.taskDetail!.title.toTitleCase(),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
@@ -700,7 +728,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                                       decoration: BoxDecoration(
                                           color: item.status == "accepted" &&
                                                   item.totalAmount == "0"
-                                              ? colorThemePink
+                                              ? Colors.black
                                               : colorLightGrey,
                                           borderRadius: BorderRadius.circular(
                                               size.width * numD015)),
@@ -708,7 +736,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                                         item.status == "accepted" &&
                                                 item.totalAmount == "0"
                                             ? "Live"
-                                            : "$euroUniqueCode${item.totalAmount}",
+                                            : "$currencySymbol${item.totalAmount}",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD025,
@@ -730,7 +758,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                                           borderRadius: BorderRadius.circular(
                                               size.width * numD015)),
                                       child: Text(
-                                        "$euroUniqueCode${item.totalAmount}",
+                                        "$currencySymbol${item.totalAmount}",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD025,
@@ -794,7 +822,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                           ),
                         ),
                         Text(
-                          "Sort and Filter",
+                          "Filter",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * appBarHeadingFontSizeNew,
@@ -824,22 +852,22 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                       height: size.width * numD085,
                     ),
 
-                    /// Sort Heading
-                    Text(
-                      sortText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
-                    ),
+                    // /// Sort Heading
+                    // Text(
+                    //   sortText,
+                    //   style: commonTextStyle(
+                    //       size: size,
+                    //       fontSize: size.width * numD05,
+                    //       color: Colors.black,
+                    //       fontWeight: FontWeight.w500),
+                    // ),
 
-                    filterListWidget(sortList, stateSetter, size, true),
+                    // filterListWidget(sortList, stateSetter, size, true),
 
                     /// Filter
-                    SizedBox(
-                      height: size.width * numD05,
-                    ),
+                    // SizedBox(
+                    //   height: size.width * numD05,
+                    // ),
 
                     /// Filter Heading
                     Text(
@@ -880,7 +908,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                       }),
                     ),
                     SizedBox(
-                      height: size.width * numD04,
+                      height: size.width * numD08,
                     )
                   ],
                 ),
@@ -1219,7 +1247,9 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
             size: MediaQuery.of(context).size,
             taskDetail: broadCastedData,
             onTapView: () {
-              Navigator.pop(context);
+              if (widget.broadCastId != null) {
+                Navigator.pop(context);
+              }
               Navigator.pop(context);
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => BroadCastScreen(

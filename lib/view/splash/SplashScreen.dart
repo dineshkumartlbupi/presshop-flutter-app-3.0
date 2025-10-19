@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
+import 'package:presshop/utils/AnalyticsConstants.dart';
+import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
@@ -18,7 +20,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.splash;
+
   var openChatScreen = false;
   @override
   void initState() {
@@ -106,6 +113,10 @@ class _SplashScreenState extends State<SplashScreen>
           debugPrint("MyProfileSuccess:$map");
 
           if (map["code"] == 200) {
+            sharedPreferences!.setString(currencySymbolKey,
+                map['userData'][currencySymbolKey]['symbol']);
+            currencySymbol =
+                sharedPreferences!.getString(currencySymbolKey) ?? "£";
             sharedPreferences!
                 .setString(referralCode, map['userData'][referralCode]);
             sharedPreferences!.setString(

@@ -16,6 +16,8 @@ import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/WelcomeScreen.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonTextField.dart';
 import '../../utils/CommonWigdets.dart';
@@ -44,7 +46,7 @@ class SocialSignUp extends StatefulWidget {
 }
 
 class _SocialSignUpState extends State<SocialSignUp>
-    with SingleTickerProviderStateMixin
+    with SingleTickerProviderStateMixin, AnalyticsPageMixin
     implements NetworkResponse {
   var formKey = GlobalKey<FormState>();
   var scrollController = ScrollController();
@@ -385,7 +387,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                           ),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: size.width * numD085,
-                          suffixIcon: phoneController.text.trim().length >= 10
+                          suffixIcon: phoneController.text.trim().length >= 7
                               ? phoneAlreadyExists
                                   ? const Icon(
                                       Icons.highlight_remove,
@@ -978,6 +980,8 @@ class _SocialSignUpState extends State<SocialSignUp>
             sharedPreferences!.setString(phoneKey, map["user"][phoneKey]);
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
+            sharedPreferences!.setString(totalHopperArmy,
+                map['user'][currencySymbolKey]['symbol'].toString());
             sharedPreferences!
                 .setString(countryCodeKey, map["user"][countryCodeKey]);
             sharedPreferences!.setString(addressKey, map["user"][addressKey]);
@@ -995,6 +999,8 @@ class _SocialSignUpState extends State<SocialSignUp>
               sharedPreferences!
                   .setString(profileImageKey, map["user"][profileImageKey]);
             }
+            currencySymbol =
+                sharedPreferences!.getString(currencySymbolKey) ?? "£";
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => WelcomeScreen(
@@ -1151,6 +1157,10 @@ class _SocialSignUpState extends State<SocialSignUp>
       debugPrint("$e");
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.socialSignup;
 }
 
 class AvatarsData {

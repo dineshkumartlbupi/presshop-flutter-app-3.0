@@ -17,6 +17,8 @@ import 'package:presshop/utils/location_service.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonModel.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../utils/countdownTimerScreen.dart';
@@ -37,6 +39,7 @@ class BroadCastScreen extends StatefulWidget {
 }
 
 class _BroadCastScreenState extends State<BroadCastScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
   late Size size;
   LatLng? _latLng;
@@ -628,7 +631,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       onTap: () async {
                         try {
                           Share.share(
-                              "${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
+                              "${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${broadCastedData!.minimumPriceRange} to $currencySymbol${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
                         } catch (e) {
                           debugPrint("Share Error: $e");
                         }
@@ -673,7 +676,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedPhoto
-                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.photoPrice))}"
+                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.photoPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -717,7 +720,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedInterview
-                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.interviewPrice))}"
+                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.interviewPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -761,7 +764,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedVideo
-                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.videoPrice))}"
+                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.videoPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -1103,7 +1106,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       path: phoneNumber,
                                                       queryParameters: {
                                                         'body':
-                                                            '${broadCastedData!.headline}\n${broadCastedData!.taskDescription}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task.Cheers'
+                                                            '${broadCastedData!.headline}\n${broadCastedData!.taskDescription}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${broadCastedData!.minimumPriceRange} to $currencySymbol${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task.Cheers'
                                                       });
                                                   if (await canLaunchUrl(uri)) {
                                                     await launchUrl(uri);
@@ -1131,7 +1134,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                           "\n\n ${Uri.parse(appUrl)}")}"); */
 
                                                   Share.share(Uri.encodeComponent(
-                                                      "${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers"));
+                                                      "${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${broadCastedData!.minimumPriceRange} to $currencySymbol${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers"));
                                                 },
                                                 icon: Padding(
                                                   padding: EdgeInsets.only(
@@ -1513,6 +1516,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       debugPrint("$e");
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.broadcastScreen;
 }
 
 class ContactListModel {

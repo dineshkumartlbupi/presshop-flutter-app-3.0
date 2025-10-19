@@ -1,6 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+        package="com.presshop.app"
+    >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -13,6 +18,9 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- AppsFlyer Permissions -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -44,7 +52,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="PressHop"
         android:allowBackup="false"
-        android:fullBackupContent="false"
+        tools:replace="android:allowBackup"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
@@ -64,42 +72,27 @@
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
+                <meta-data
+                android:name="com.appsflyer.sdk.AF_DEV_KEY"
+                android:value="bxvwnv53n3J7eKMAiDmX7J"
+                />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <!-- Deep Linking Start-->
-            <meta-data
+             <meta-data
                 android:name="flutter_deeplinking_enabled"
                 android:value="true" />
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="betazone.promaticstechnologies.com"
-                    android:scheme="https" />
-
-            </intent-filter>
-            <!-- Deep Linking Code End -->
-
             <!-- App Links Start-->
-            <intent-filter android:autoVerify="true">
+            <intent-filter  android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                 <data android:scheme="presshopapp" android:host="deeplinking"/>
+                 <data android:scheme="https" android:host="presshopapp.onelink.me" />
                 <!-- Accepts URIs that begin with https://YOUR_HOST -->
-                <data
-                    android:host="betazone.promaticstechnologies.com"
-                    android:scheme="https" />
+         
             </intent-filter>
-
-           
-
         </activity>
 
  <activity
@@ -110,6 +103,16 @@
             android:name="me.pirajohn.foreground_service.ForegroundService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- AppsFlyer Install Referrer Receiver -->
+        <receiver
+            android:name="com.appsflyer.SingleInstallBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -121,6 +124,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- AppsFlyer Configuration -->
+        <meta-data
+            android:name="com.appsflyer.ApiKey"
+            android:value="bxvwnv53n3J7eKMAiDmX7J" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

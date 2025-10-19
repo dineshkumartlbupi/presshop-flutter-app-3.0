@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonWigdets.dart';
@@ -193,7 +194,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                         SizedBox(width: 6),
                         Text(
                           widget.transactionData!.payableT0Hopper != "null"
-                              ? "£${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
+                              ? "$currencySymbol${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
                               : "",
                           style: commonTextStyle(
                               size: size,
@@ -685,8 +686,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.totalEarningAmt != "null"
-                          ? "£ ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
-                          : "£ 0",
+                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
+                          : "$currencySymbol 0",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -716,7 +717,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£ ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
+                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -745,7 +746,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£ ${formatDouble(double.parse(widget.transactionData!.stripefee))}",
+                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.stripefee))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -776,7 +777,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.payableT0Hopper != "null"
-                          ? "£ ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
+                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
                           : "",
                       style: commonTextStyle(
                           size: size,
@@ -1017,7 +1018,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               fontFamily: "AirbnbCereal"),
                         ),
                         Text(
-                          " £ ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
+                          " $currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD035,
@@ -1339,8 +1340,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.totalEarningAmt != "null"
-                          ? "£ ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
-                          : "£ 0",
+                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
+                          : "$currencySymbol 0",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -1370,7 +1371,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£ ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
+                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -1399,8 +1400,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.stripefee.isNotEmpty
-                          ? "£ ${formatDouble(double.parse(widget.transactionData!.stripefee))}"
-                          : "£ 0",
+                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.stripefee))}"
+                          : "$currencySymbol 0",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -1430,7 +1431,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£ ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
+                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,

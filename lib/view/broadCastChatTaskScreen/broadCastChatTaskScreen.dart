@@ -344,7 +344,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               children: [
                                 Text(
                                   widget.taskDetail!.isNeedPhoto
-                                      ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -392,7 +392,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               children: [
                                 Text(
                                   widget.taskDetail!.isNeedInterview
-                                      ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -440,7 +440,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               children: [
                                 Text(
                                   widget.taskDetail!.isNeedVideo
-                                      ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -717,7 +717,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                       TextSpan(
                                         text: widget.taskDetail!.interviewPrice
                                                 .isNotEmpty
-                                            ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
+                                            ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
                                             : "-",
                                         style: commonTextStyle(
                                             size: size,
@@ -835,7 +835,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                       ),
                                       TextSpan(
                                         text:
-                                            "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                            "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD036,
@@ -1730,7 +1730,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
-                        text: "$euroUniqueCode$amount",
+                        text: "$currencySymbol$amount",
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD036,
@@ -1830,7 +1830,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                             fontWeight: FontWeight.normal),
                       ),
                       TextSpan(
-                        text: " $euroUniqueCode$amount",
+                        text: " $currencySymbol$amount",
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD036,
@@ -1928,7 +1928,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                 height: size.width * numD04,
               ),
               Text(
-                "Congrats, you’ve received £$amount from Reuters Media ",
+                "Congrats, you’ve received $currencySymbol$amount from Reuters Media ",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * numD035,
@@ -2342,7 +2342,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           Text(
                             item.hopperPrice.isEmpty
                                 ? ""
-                                : "$euroUniqueCode${formatDouble(double.parse(item.hopperPrice))}",
+                                : "$currencySymbol${formatDouble(double.parse(item.hopperPrice))}",
                             style: TextStyle(
                                 fontSize: size.width * numD045,
                                 color: colorLightGreen,
@@ -2441,7 +2441,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           TextSpan(
                             text: item.hopperPrice.isEmpty
                                 ? ""
-                                : "$euroUniqueCode${formatDouble(double.parse(item.hopperPrice))}",
+                                : "$currencySymbol${formatDouble(double.parse(item.hopperPrice))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD036,
@@ -2546,7 +2546,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           TextSpan(
                             text: item.payableHopperPrice.isEmpty
                                 ? ""
-                                : "$euroUniqueCode${formatDouble(double.parse(item.payableHopperPrice))}",
+                                : "$currencySymbol${formatDouble(double.parse(item.payableHopperPrice))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD036,

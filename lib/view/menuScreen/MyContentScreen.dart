@@ -9,6 +9,9 @@ import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/menuScreen/MyContentDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
 import '../myEarning/MyEarningScreen.dart';
@@ -28,7 +31,18 @@ class MyContentScreen extends StatefulWidget {
 }
 
 class MyContentScreenState extends State<MyContentScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.myContent;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'hide_leading': widget.hideLeading.toString(),
+        'content_count': myContentList.length.toString(),
+      };
+
   late Size size;
 
   final RefreshController _refreshController =
@@ -363,7 +377,7 @@ class MyContentScreenState extends State<MyContentScreen>
                             ),
                           ),
                           Text(
-                            "$euroUniqueCode${formatDouble(double.parse(item.amount))}",
+                            "$currencySymbol${formatDouble(double.parse(item.amount))}",
                             textAlign: TextAlign.center,
                             style: commonTextStyle(
                                 size: size,

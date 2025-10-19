@@ -21,6 +21,9 @@ import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsHelper.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../bankScreens/AddBankScreen.dart';
@@ -33,7 +36,9 @@ class LoginScreen extends StatefulWidget {
   State<StatefulWidget> createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
+class LoginScreenState extends State<LoginScreen>
+    with AnalyticsPageMixin
+    implements NetworkResponse {
   var formKey = GlobalKey<FormState>();
   GoogleSignIn googleSignIn = GoogleSignIn(
     scopes: [
@@ -731,7 +736,25 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
           //log("LoginResponse success:::::::$map");
 
           if (map["code"] == 200) {
+            try {
+              AnalyticsHelper.setUserProperties(
+                userId: map["user"][hopperIdKey],
+                properties: {
+                  'user_type': 'hopper',
+                  'user_id': map["user"][hopperIdKey],
+                  'user_name': map["user"][firstNameKey] ?? 'unknown',
+                  'signup_method': 'email',
+                  'is_verified': "true",
+                },
+              );
+              // Track login success
+              AnalyticsHelper.trackAuthEvent('username', true);
+            } catch (e) {
+              debugPrint("Exception catch======> $e");
+            }
             rememberMe = true;
+            sharedPreferences!.setString(
+                currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
             sharedPreferences!.setBool(rememberKey, true);
             sharedPreferences!.setString(tokenKey, map[tokenKey]);
             sharedPreferences!
@@ -813,6 +836,8 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                 firstName: map["user"][firstNameKey],
                 lastName: map["user"][lastNameKey],
               );
+              currencySymbol =
+                  sharedPreferences!.getString(currencySymbolKey) ?? "£";
 
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
@@ -882,6 +907,22 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
 
           if (map["code"] == 200) {
             if (map["token"] != null) {
+              try {
+                AnalyticsHelper.setUserProperties(
+                  userId: map["user"][hopperIdKey],
+                  properties: {
+                    'user_type': 'hopper',
+                    'user_id': map["user"][hopperIdKey],
+                    'user_name': map["user"][firstNameKey] ?? 'unknown',
+                    'signup_method': 'email',
+                    'is_verified': "true",
+                  },
+                );
+                // Track login success
+                AnalyticsHelper.trackAuthEvent('username', true);
+              } catch (e) {
+                debugPrint("Exception catch======> $e");
+              }
               debugPrint("inside this::::::");
               rememberMe = true;
               sharedPreferences!.setBool(rememberKey, true);
@@ -890,6 +931,9 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                   .setString(hopperIdKey, map["user"][hopperIdKey]);
               sharedPreferences!
                   .setString(referralCode, map["user"][referralCode]);
+              sharedPreferences!.setString(
+                  currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
+
               sharedPreferences!.setString(
                   totalHopperArmy, map['user'][totalHopperArmy].toString());
               sharedPreferences!
@@ -925,7 +969,8 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                 sharedPreferences!
                     .setString(profileImageKey, map["user"][profileImageKey]);
               }
-
+              currencySymbol =
+                  sharedPreferences!.getString(currencySymbolKey) ?? "£";
               if (map["user"]["doc_to_become_pro"] != null) {
                 debugPrint("InsideDoc");
                 if (map["user"]["doc_to_become_pro"]["govt_id"] != null) {
@@ -1005,4 +1050,8 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
       debugPrint("$e");
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.login;
 }

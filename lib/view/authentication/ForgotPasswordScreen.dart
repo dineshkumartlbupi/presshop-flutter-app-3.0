@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:presshop/utils/AnalyticsConstants.dart';
+import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonTextField.dart';
@@ -17,7 +19,12 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.forgotPassword;
+
   var formKey = GlobalKey<FormState>();
 
   TextEditingController emailAddressController = TextEditingController();

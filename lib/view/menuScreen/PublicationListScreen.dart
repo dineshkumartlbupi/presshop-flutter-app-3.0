@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 
+import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonModel.dart';
@@ -175,7 +176,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 FittedBox(
                                   child: Text(
                                     totalPublicationAmount.isNotEmpty
-                                        ? "£${formatDouble(double.parse(totalPublicationAmount))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(totalPublicationAmount))}"
                                         : '£0',
                                     style: commonTextStyle(
                                         size: size,
@@ -389,7 +390,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                         color: colorGrey3, width: 1)),
                                 child: Text(
                                   item.payableT0Hopper.isNotEmpty
-                                      ? "£${currencyFormat.format(double.parse(item.payableT0Hopper))}"
+                                      ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
                                       : "£0",
                                   style: commonTextStyle(
                                       size: size,
@@ -616,7 +617,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 ),
                                 child: Text(
                                   item.amount.isNotEmpty
-                                      ? "£${currencyFormat.format(double.parse(item.payableT0Hopper))}"
+                                      ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
@@ -675,7 +676,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 ),
                                 Text(
                                   item.totalEarningAmt != "null"
-                                      ? "£${formatDouble(double.parse(item.totalEarningAmt))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}"
                                       : "0",
                                   style: commonTextStyle(
                                       size: size,
@@ -703,7 +704,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 ),
                                 Text(
                                   item.payableCommission.isNotEmpty
-                                      ? "£${formatDouble(double.parse(item.payableCommission))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(item.payableCommission))}"
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
@@ -730,7 +731,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 ),
                                 Text(
                                   item.payableCommission.isNotEmpty
-                                      ? "£${formatDouble(double.parse(item.stripefee))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(item.stripefee))}"
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
@@ -758,7 +759,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                 ),
                                 Text(
                                   item.amount.isNotEmpty
-                                      ? "£${formatDouble(double.parse(item.payableT0Hopper))}"
+                                      ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
                                       : "",
                                   style: commonTextStyle(
                                       size: size,

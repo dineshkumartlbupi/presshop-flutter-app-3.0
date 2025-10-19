@@ -187,7 +187,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> implements Netwo
                                                         textAlign: TextAlign.center,
                                                       ),
                                                       Text(
-                                                        "£${formatDouble(double.parse(ratingReviewList[index].totalEarning))}",
+                                                        "$currencySymbol${formatDouble(double.parse(ratingReviewList[index].totalEarning))}",
                                                         style: TextStyle(color: Colors.black, fontSize: size.width * 0.026, fontWeight: FontWeight.w700),
                                                         textAlign: TextAlign.center,
                                                       ),

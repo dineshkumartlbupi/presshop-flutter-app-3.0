@@ -18,6 +18,8 @@ import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/VerifyAccountScreen.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonTextField.dart';
 import '../../utils/CommonWigdets.dart';
@@ -44,8 +46,18 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen>
-    with SingleTickerProviderStateMixin
+    with SingleTickerProviderStateMixin, AnalyticsPageMixin
     implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.signup;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'social_login': widget.socialLogin.toString(),
+        'has_email': widget.email.isNotEmpty.toString(),
+      };
+
   var formKey = GlobalKey<FormState>();
   var scrollController = ScrollController();
 
@@ -464,7 +476,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                           ),
                           prefixIconHeight: size.width * numD06,
                           suffixIconIconHeight: size.width * numD085,
-                          suffixIcon: phoneController.text.trim().length >= 10
+                          suffixIcon: phoneController.text.trim().length >= 7
                               ? phoneAlreadyExists
                                   ? const Icon(
                                       Icons.highlight_remove,
@@ -1965,6 +1977,8 @@ class _SignUpScreenState extends State<SignUpScreen>
               sharedPreferences!
                   .setString(countryCodeKey, map["user"][countryCodeKey]);
               sharedPreferences!.setString(addressKey, map["user"][addressKey]);
+              sharedPreferences!.setString(
+                  currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
               sharedPreferences!
                   .setString(latitudeKey, map["user"][latitudeKey].toString());
               sharedPreferences!.setString(

@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../main.dart';
 import '../../utils/AnimatedButton.dart';
 import '../../utils/CommonModel.dart';
 import '../../utils/manage_content_widget.dart';
@@ -713,7 +714,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                             right: size.width * numD02,
                           ),
                           child: Text(
-                            "$euroUniqueCode${formatDouble(double.parse(myContentData!.amount))}",
+                            "$currencySymbol${formatDouble(double.parse(myContentData!.amount))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD05,
@@ -757,7 +758,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                             right: size.width * numD02,
                           ),
                           child: Text(
-                            "$euroUniqueCode${formatDouble(double.parse(myContentData!.totalEarning))}",
+                            "$currencySymbol${formatDouble(double.parse(myContentData!.totalEarning))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD05,
@@ -944,7 +945,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                     fontWeight: FontWeight.normal),
                               ),
                               Text(
-                                "$euroUniqueCode${item.initialOfferAmount}",
+                                "$currencySymbol${item.initialOfferAmount}",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: commonTextStyle(
@@ -980,7 +981,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
-                            "$euroUniqueCode${amountFormat(item.initialOfferAmount)}",
+                            "$currencySymbol${amountFormat(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(

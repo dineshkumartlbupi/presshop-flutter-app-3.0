@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
@@ -15,6 +16,8 @@ import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../authentication/SignUpScreen.dart';
@@ -33,7 +36,9 @@ class MyProfile extends StatefulWidget {
   }
 }
 
-class MyProfileState extends State<MyProfile> implements NetworkResponse {
+class MyProfileState extends State<MyProfile>
+    with AnalyticsPageMixin
+    implements NetworkResponse {
   late Size size;
 
   var formKey = GlobalKey<FormState>();
@@ -53,6 +58,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
 
   List<AvatarsData> avatarList = [];
   MyProfileData? myProfileData;
+
   String selectedCountryCode = "",
       userImagePath = "",
       latitude = "",
@@ -303,59 +309,60 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                           CommonTextField(
                             size: size,
                             maxLines: 1,
-                            textInputFormatters: null,
                             borderColor: colorTextFieldBorder,
                             controller: phoneNumberController,
-                            hintText:
-                                "${enterText.toTitleCase()} $phoneText $numberText",
-                            prefixIcon: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const ImageIcon(
-                                  AssetImage(
-                                    "${iconsPath}ic_phone.png",
+                            hintText: phoneHintText,
+                            textInputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                            ],
+                            prefixIcon: InkWell(
+                              onTap: () {
+                                openCountryCodePicker();
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.call_outlined),
+                                  SizedBox(
+                                    width: size.width * numD01,
                                   ),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD02,
-                                ),
-                                Text(
-                                  selectedCountryCode,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD032,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                SizedBox(
-                                  width: size.width * 0.01,
-                                ),
-                                Image.asset(
-                                  "${iconsPath}ic_drop_down.png",
-                                  width: size.width * 0.025,
-                                ),
-                                SizedBox(
-                                  width: size.width * 0.01,
-                                ),
-                              ],
+                                  Text(
+                                    selectedCountryCode,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: size.width * numD07,
+                                  )
+                                ],
+                              ),
                             ),
-                            prefixIconHeight: size.width * numD045,
-                            suffixIconIconHeight: 0,
-                            suffixIcon: null,
+                            prefixIconHeight: size.width * numD06,
+                            suffixIconIconHeight: size.width * numD085,
+                            suffixIcon:
+                                phoneNumberController.text.trim().length >= 7
+                                    ? phoneAlreadyExists
+                                        ? const Icon(
+                                            Icons.highlight_remove,
+                                            color: Colors.red,
+                                          )
+                                        : const Icon(
+                                            Icons.check_circle,
+                                            color: Colors.green,
+                                          )
+                                    : null,
                             hidePassword: false,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: false, signed: true),
-                            validator: null /*checkSignupPhoneValidator*/,
-                            enableValidations: false,
-                            filled: true,
-                            filledColor: widget.editProfileScreen
-                                ? colorLightGrey
-                                : colorLightGrey,
+                            validator: checkSignupPhoneValidator,
+                            enableValidations: true,
+                            filled: false,
+                            filledColor: Colors.transparent,
                             autofocus: false,
-                            readOnly: phoneNumberController.text.length > 9
-                                ? true
-                                : false,
                           ),
                           SizedBox(
                             height: size.width * numD06,
@@ -1243,7 +1250,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
                 height: size.width * numD005,
               ),
               Text(
-                  "$earningsText - ${euroUniqueCode}${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
+                  "$earningsText - ${currencySymbol}${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD035,
@@ -1350,7 +1357,8 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
       if (widget.editProfileScreen) {
         debugPrint("Phone:${phoneNumberController.text}");
         if (phoneNumberController.text.trim().isNotEmpty &&
-            phoneNumberController.text.trim().length > 9) {
+            phoneNumberController.text.trim().length > 7 &&
+            phoneNumberController.text != myProfileData!.phoneNumber) {
           debugPrint("notsuccess");
           checkPhoneApi();
         } else {
@@ -1474,6 +1482,22 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
   }
 */
 
+  // void openCountryCodePicker() {
+  //   showCountryPicker(
+  //     context: context,
+  //     showPhoneCode: true,
+  //     onSelect: (Country country) {
+  //       debugPrint('Select country: ${country.displayName}');
+  //       debugPrint('Select country: ${country.countryCode}');
+  //       debugPrint('Select country: ${country.hashCode}');
+  //       debugPrint('Select country: ${country.displayNameNoCountryCode}');
+  //       debugPrint('Select country: ${country.phoneCode}');
+  //       selectedCountryCodePicker = "+${country.phoneCode}";
+  //       setState(() {});
+  //     },
+  //   );
+  // }
+
   Future<List<Placemark>> getCurrentLocationFxn(
       String latitude, longitude) async {
     try {
@@ -1506,7 +1530,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
         debugPrint('Select country: ${country.displayNameNoCountryCode}');
         debugPrint('Select country: ${country.phoneCode}');
 
-        myProfileData!.countryCode = country.phoneCode;
+        selectedCountryCode = country.phoneCode;
         setState(() {});
       },
     );
@@ -1516,7 +1540,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
     //<-- add String? as a return type
     if (value!.isEmpty) {
       return requiredText;
-    } else if (value.length < 10) {
+    } else if (value.length < 7) {
       return phoneErrorText;
     } else if (phoneAlreadyExists) {
       return phoneExistsErrorText;
@@ -1590,7 +1614,7 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
         lastNameKey: lastNameController.text.trim(),
         userNameKey: userNameController.text.trim().toLowerCase(),
         emailKey: emailAddressController.text.trim(),
-        countryCodeKey: myProfileData!.countryCode,
+        countryCodeKey: selectedCountryCode.trim(),
         phoneKey: phoneNumberController.text.trim(),
         addressKey: addressController.text.trim(),
         latitudeKey: latitude.isNotEmpty ? latitude : myProfileData!.latitude,
@@ -1722,6 +1746,10 @@ class MyProfileState extends State<MyProfile> implements NetworkResponse {
       debugPrint("$e");
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.profile;
 }
 
 class MyProfileData {

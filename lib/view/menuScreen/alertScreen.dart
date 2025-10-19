@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
+import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/menuScreen/FAQScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonWigdets.dart';
@@ -150,7 +152,7 @@ class _AlertScreenState extends State<AlertScreen> implements NetworkResponse {
                                       size.width * numD06),
                                 ),
                                 child: Text(
-                                    "Earn £${item.minEarning} - £${item.maxEarning}",
+                                    "Earn $currencySymbol${item.minEarning} - $currencySymbol${item.maxEarning}",
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize: size.width * numD035,
@@ -163,7 +165,7 @@ class _AlertScreenState extends State<AlertScreen> implements NetworkResponse {
                             height: size.width * numD035,
                           ),
                           Text(
-                            item.description.trim(),
+                            item.description.trim().toCapitalized(),
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD035,

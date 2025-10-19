@@ -1559,7 +1559,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                                                      "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                                                   style: commonTextStyle(
                                                                       size:
                                                                           size,
@@ -1739,7 +1739,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                                                      "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                                                   style: commonTextStyle(
                                                                       size:
                                                                           size,
@@ -3104,7 +3104,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             right: size.width * numD02,
                           ),
                           child: Text(
-                            "$euroUniqueCode${formatDouble(double.parse(widget.myContentData!.amount))}",
+                            "$currencySymbol${formatDouble(double.parse(widget.myContentData!.amount))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD05,
@@ -3149,7 +3149,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             right: size.width * numD02,
                           ),
                           child: Text(
-                            "$euroUniqueCode${formatDouble(double.parse(widget.myContentData!.totalEarning))}",
+                            "$currencySymbol${formatDouble(double.parse(widget.myContentData!.totalEarning))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD05,
@@ -3697,7 +3697,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           // TextSpan(
                           //   text: item.hopperPrice.isEmpty
                           //       ? ""
-                          //       : "$euroUniqueCode${amountFormat(item.hopperPrice)} ",
+                          //       : "$currencySymbol${amountFormat(item.hopperPrice)} ",
                           //   style: commonTextStyle(
                           //       size: size,
                           //       fontSize: size.width * numD036,
@@ -3975,7 +3975,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     Text(
                       item.amount.isEmpty
                           ? ""
-                          : "$euroUniqueCode${formatDouble(double.parse(item.amount))}",
+                          : "$currencySymbol${formatDouble(double.parse(item.amount))}",
                       style: TextStyle(
                           fontSize: size.width * numD045,
                           color: Colors.white,
@@ -4266,7 +4266,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             children: [
                               Text(
                                 widget.taskDetail!.isNeedPhoto
-                                    ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
+                                    ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
@@ -4310,7 +4310,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             children: [
                               Text(
                                 widget.taskDetail!.isNeedInterview
-                                    ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
+                                    ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
@@ -4355,7 +4355,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             children: [
                               Text(
                                 widget.taskDetail!.isNeedVideo
-                                    ? "$euroUniqueCode${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
+                                    ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
@@ -5094,7 +5094,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: " $euroUniqueCode${model.amount}",
+                          text: " $currencySymbol${model.amount}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD036,
@@ -5104,7 +5104,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         // TextSpan(
                         //   text: item.hopperPrice.isEmpty
                         //       ? ""
-                        //       : "$euroUniqueCode${amountFormat(item.hopperPrice)} ",
+                        //       : "$currencySymbol${amountFormat(item.hopperPrice)} ",
                         //   style: commonTextStyle(
                         //       size: size,
                         //       fontSize: size.width * numD036,
@@ -5197,7 +5197,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         TextSpan(
                           text: model.payableHopperPrice.isEmpty
                               ? ""
-                              : "$euroUniqueCode${formatDouble(double.parse(model.payableHopperPrice))}",
+                              : "$currencySymbol${formatDouble(double.parse(model.payableHopperPrice))}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD036,
@@ -5328,7 +5328,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: "£$hopperAmount ",
+                          text: "$currencySymbol$hopperAmount ",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD036,
@@ -5344,7 +5344,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: '£$amount',
+                          text: '$currencySymbol$amount',
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD036,
@@ -5723,7 +5723,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             child: Column(
                               children: [
                                 Text(
-                                  "${euroUniqueCode}150",
+                                  "${currencySymbol}150",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD055,
@@ -5765,7 +5765,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             child: Column(
                               children: [
                                 Text(
-                                  "${euroUniqueCode}350",
+                                  "${currencySymbol}350",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD055,
@@ -5807,7 +5807,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             child: Column(
                               children: [
                                 Text(
-                                  "${euroUniqueCode}500",
+                                  "${currencySymbol}500",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD055,
@@ -6321,7 +6321,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
-                      text: "${euroUniqueCode}150 ",
+                      text: "${currencySymbol}150 ",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -6656,7 +6656,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
-                      text: "${euroUniqueCode}200 ",
+                      text: "${currencySymbol}200 ",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -7073,7 +7073,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 result.files[i].extension == 'jpg' ||
                 result.files[i].extension == 'png') {
               debugPrint("fileType====> ${result.files[i].extension}");
-              debugPrint("imagePath======£> ${result.files[i].path!}");
+              debugPrint(
+                  "imagePath======$currencySymbol> ${result.files[i].path!}");
               Map<String, String> mediaMap = {
                 "imageAndVideo": result.files[i].path!,
               };

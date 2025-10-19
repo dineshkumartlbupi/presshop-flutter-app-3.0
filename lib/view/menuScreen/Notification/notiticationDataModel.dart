@@ -11,6 +11,7 @@ class NotificationData {
   String paymentStatus = "";
   String contentId = "";
   String broadcastId = "";
+  String imageUrl = "";
 
   //String offerCount = "";
   bool exclusive = false;
@@ -29,6 +30,7 @@ class NotificationData {
       required this.paymentStatus,
       required this.contentId,
       required this.transactionDetailData,
+      this.imageUrl = "",
       //    required this.offerCount,
       required this.exclusive,
       this.broadcastId = ""});
@@ -38,6 +40,7 @@ class NotificationData {
         title: json['title'] ?? "",
         id: json['_id'] ?? "",
         description: json['body'] ?? "",
+        imageUrl: json['image_url'] ?? "",
         messageType: json['message_type'] ?? "",
         //  time:json['timestamp_forsorting'] ?? "",
         time: json['createdAt'] ?? "",
@@ -48,15 +51,23 @@ class NotificationData {
             : "",
         senderId: json['sender_id'] != null ? json['sender_id']['_id'] : '',
         unread: json['is_read'] ?? false,
-        paymentStatus: json['content_details'] != null ? json['content_details']['status'] : "",
-        contentId: json['content_details'] != null ? json['content_details']['_id'] : "",
+        paymentStatus: json['content_details'] != null
+            ? json['content_details']['status']
+            : "",
+        contentId: json['content_details'] != null
+            ? json['content_details']['_id']
+            : "",
         // offerCount: json['content_details']!=null?json['content_details']['offer_content_size']:"0",
         exclusive: json['content_details'] != null
             ? json['content_details']['type'] == "shared"
                 ? false
                 : true
             : false,
-        transactionDetailData: json['sold_item_details'] != null ? json['sold_item_details'] is Map? EarningTransactionDetail.fromJson(json['sold_item_details']) : null:null,
+        transactionDetailData: json['sold_item_details'] != null
+            ? json['sold_item_details'] is Map
+                ? EarningTransactionDetail.fromJson(json['sold_item_details'])
+                : null
+            : null,
         broadcastId: json["broadCast_id"] ?? "");
   }
 }

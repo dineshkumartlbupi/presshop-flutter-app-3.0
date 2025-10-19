@@ -13,6 +13,8 @@ import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/publishContentScreen/PublishContentScreen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:location/location.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonWigdets.dart';
 import '../dashboard/Dashboard.dart';
@@ -43,7 +45,7 @@ class PreviewScreen extends StatefulWidget {
   }
 }
 
-class PreviewScreenState extends State<PreviewScreen> {
+class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
   VideoPlayerController? _controller;
 
   String currentTIme = "00:00",
@@ -116,9 +118,11 @@ class PreviewScreenState extends State<PreviewScreen> {
             media.longitude = media.longitude.isNotEmpty
                 ? media.longitude
                 : longitude.toString();
-            media.location = data.address;
+            media.location =
+                media.location.isNotEmpty ? media.location : data.address;
+            mediaAddress =
+                media.location.isNotEmpty ? media.location : data.address;
           }
-          mediaAddress = data.address;
           country = data.country;
           state = data.state;
           city = data.city;
@@ -438,11 +442,6 @@ class PreviewScreenState extends State<PreviewScreen> {
                                           ),
                                           Text(
                                             mediaList[index].dateTime,
-                                            // ,dateTimeFormatter(
-                                            //   dateTime:
-                                            //       mediaList[index].dateTime,
-                                            //   format: "dd MMM yyyy hh:mm a",
-                                            // ),
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width * numD025,
@@ -484,30 +483,36 @@ class PreviewScreenState extends State<PreviewScreen> {
                                           SizedBox(
                                             width: size.width * numD25,
                                             child: Text(
-                                              mediaList[index].location.isEmpty
+                                              mediaList[currentPage]
+                                                      .location
+                                                      .isEmpty
                                                   ? isLocationFetching
                                                       ? ""
                                                       : ""
-                                                  : mediaList[index].location,
+                                                  : mediaList[currentPage]
+                                                      .location,
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize: mediaList[index]
-                                                          .location
-                                                          .isEmpty
-                                                      ? size.width * numD025
-                                                      : size.width * numD025,
-                                                  color: mediaList[index]
+                                                  fontSize:
+                                                      mediaList[currentPage]
+                                                              .location
+                                                              .isEmpty
+                                                          ? size.width * numD025
+                                                          : size.width *
+                                                              numD025,
+                                                  color: mediaList[currentPage]
                                                           .location
                                                           .isEmpty
                                                       ? isLocationFetching
                                                           ? colorGrey6
                                                           : Colors.red
                                                       : Colors.black,
-                                                  fontWeight: mediaList[index]
-                                                          .location
-                                                          .isEmpty
-                                                      ? FontWeight.bold
-                                                      : FontWeight.normal),
+                                                  fontWeight:
+                                                      mediaList[currentPage]
+                                                              .location
+                                                              .isEmpty
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -966,6 +971,10 @@ class PreviewScreenState extends State<PreviewScreen> {
       setState(() {});
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.contentPreview;
 }
 
 class PublishData {

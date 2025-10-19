@@ -11,6 +11,7 @@ import 'package:presshop/view/authentication/LoginScreen.dart';
 import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
 import 'package:presshop/view/bankScreens/MyBanksScreen.dart';
+import 'package:presshop/view/leaderboard/leaderboard_screen.dart';
 import 'package:presshop/view/menuScreen/ChangePassword.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/DigitalIdScreen.dart';
@@ -27,6 +28,8 @@ import 'package:presshop/view/ratingReviewsScreen/RatingReviewScreen.dart';
 import 'package:presshop/view/refer_screen/refer_screen.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../chatBotScreen/chatBotScreen.dart';
 import 'alertScreen.dart';
@@ -40,9 +43,22 @@ class MenuScreen extends StatefulWidget {
   }
 }
 
-class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
+class MenuScreenState extends State<MenuScreen>
+    with AnalyticsPageMixin
+    implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.menu;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'notification_count': notificationCount.toString(),
+        'alert_count': alertCount.toString(),
+      };
+
   List<MenuData> menuList = [];
   int notificationCount = 0;
+  int alertCount = 0;
   String? selectedCurrency = "GBP";
 
   @override
@@ -203,7 +219,7 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                                                       padding: EdgeInsets.all(
                                                           size.width * numD004),
                                                       child: Text(
-                                                        "3",
+                                                        "$alertCount",
                                                         style: commonTextStyle(
                                                             size: size,
                                                             fontSize:
@@ -297,7 +313,7 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         name: myProfileText,
         icon: "${iconsPath}ic_my_profile.png",
         classWidget: MyProfile(
-          editProfileScreen: false,
+          editProfileScreen: true,
           screenType: myProfileText,
         )));
     menuList.add(MenuData(
@@ -307,6 +323,11 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
           editProfileScreen: true,
           screenType: editProfileText,
         )));
+    // menuList.add(MenuData(
+    //     name: leaderboardText,
+    //     icon: "${iconsPath}ic_edit_profile.png",
+    //     classWidget: LeaderboardScreen()));
+
     menuList.add(MenuData(
         name: myDraftText,
         icon: "${iconsPath}ic_my_draft.png",
@@ -338,10 +359,10 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
     //     name: chooseCurrencyText,
     //     icon: "${iconsPath}choose_currency.png",
     //     classWidget: const MyBanksScreen()));
-    // menuList.add(MenuData(
-    //     name: "Alerts",
-    //     icon: "${iconsPath}ic_alert.png",
-    //     classWidget: const AlertScreen()));
+    menuList.add(MenuData(
+        name: "Alerts",
+        icon: "${iconsPath}ic_alert.png",
+        classWidget: const AlertScreen()));
     menuList.add(MenuData(
         name: notificationText,
         icon: "${iconsPath}ic_feed.png",
@@ -772,6 +793,7 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
           var dataList = data['readCount'];
           debugPrint("dataList:::: $dataList");
           notificationCount = data['unreadCount'] ?? 0;
+          alertCount = data['hopperAlertCount'] ?? 0;
 
           if (mounted) {
             setState(() {});
@@ -820,7 +842,7 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                     children: [
                       _buildCurrencyRow("AUD", "\$", setState),
                       _buildCurrencyRow("INR", "₹", setState),
-                      _buildCurrencyRow("GBP", "£", setState),
+                      _buildCurrencyRow("GBP", "$currencySymbol", setState),
                       _buildCurrencyRow("USD", "\$", setState),
                     ],
                   ),

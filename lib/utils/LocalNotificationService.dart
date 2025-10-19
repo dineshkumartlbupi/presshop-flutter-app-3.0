@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:gallery_saver/files.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
+import 'package:http/http.dart' as http;
 
 import '../view/dashboard/Dashboard.dart';
 
@@ -197,7 +200,19 @@ class LocalNotificationService {
     }
   }
 
-  void showFlutterNotificationWithSound(RemoteMessage message) {
+  Future<void> showFlutterNotificationWithSound(RemoteMessage message) async {
+    StyleInformation? styleInformation;
+    if (message.data['image_url'] != null) {
+      final http.Response response =
+          await http.get(Uri.parse(message.data['image_url']));
+      styleInformation = BigPictureStyleInformation(
+          ByteArrayAndroidBitmap.fromBase64String(
+              base64Encode(response.bodyBytes)));
+    } else {
+      styleInformation =
+          BigTextStyleInformation(message.notification?.body ?? "");
+    }
+
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
     if (notification != null && android != null) {
@@ -218,8 +233,7 @@ class LocalNotificationService {
                   enableVibration: true,
                   audioAttributesUsage: AudioAttributesUsage.alarm,
                   category: AndroidNotificationCategory.message,
-                  styleInformation:
-                      BigTextStyleInformation(notification.body ?? "")),
+                  styleInformation: styleInformation),
               iOS: const DarwinNotificationDetails(
                 presentSound: true,
                 presentBadge: true,

@@ -9,6 +9,8 @@ import 'package:presshop/utils/commonWebView.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -24,6 +26,7 @@ class MyBanksScreen extends StatefulWidget {
 }
 
 class MyBanksScreenState extends State<MyBanksScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
   List<MyBankListData> myBankList = [];
   String deleteBankId = '';
@@ -953,6 +956,10 @@ class MyBanksScreenState extends State<MyBanksScreen>
       debugPrint("$e");
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.bankDetails;
 
   ///
 }

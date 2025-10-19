@@ -48,7 +48,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         elevation: 0,
         title: Text(
           digitalId,
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: true,
         titleSpacing: 0,
@@ -60,7 +63,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)),
+                  (route) => false);
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -81,7 +87,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
           top: size.width * numD02,
           bottom: size.width * numD1,
         ),
-        decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1.0, color: Colors.black)),
+        decoration: BoxDecoration(
+            color: colorLightGrey,
+            borderRadius: BorderRadius.circular(size.width * numD03),
+            border: Border.all(width: 1.0, color: Colors.black)),
         child: Stack(
           alignment: Alignment.centerRight,
           children: [
@@ -120,17 +129,31 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                 children: [
                                   Text(
                                     "press",
-                                    style: TextStyle(fontSize: size.width * numD065, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.normal),
+                                    style: TextStyle(
+                                        fontSize: size.width * numD065,
+                                        color: Colors.black,
+                                        fontFamily: "AirbnbCereal",
+                                        fontWeight: FontWeight.normal),
                                   ),
                                   Text(
                                     "hop",
-                                    style: TextStyle(fontSize: size.width * numD065, color: Colors.black, letterSpacing: 0, fontFamily: "AirbnbCereal", fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontSize: size.width * numD065,
+                                        color: Colors.black,
+                                        letterSpacing: 0,
+                                        fontFamily: "AirbnbCereal",
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
                               Text(
                                 "news delivered",
-                                style: TextStyle(fontSize: size.width * numD04, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.normal),
+                                style: TextStyle(
+                                    fontSize: size.width * numD04,
+                                    color: Colors.black,
+                                    fontFamily: "AirbnbCereal",
+                                    fontWeight: FontWeight.normal),
                               ),
                               SizedBox(height: 8)
                             ],
@@ -167,7 +190,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                       Center(
                         child: Text(
                           userName,
-                          style: commonTextStyle(size: size, fontSize: size.width * numD06, color: Colors.black, fontWeight: FontWeight.bold),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD06,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(
@@ -183,7 +210,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: Colors.black,
-                            borderRadius: BorderRadius.circular(size.width * numD02),
+                            borderRadius:
+                                BorderRadius.circular(size.width * numD02),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -204,7 +232,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               Text(
                                 verifiedHopperText,
                                 textAlign: TextAlign.start,
-                                style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.white, fontWeight: FontWeight.w400),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD05,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400),
                               ),
                             ],
                           )),
@@ -218,16 +250,29 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             vertical: size.width * numD03,
                             horizontal: size.width * numD03,
                           ),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD02), border: Border.all(width: 1.0, color: Colors.black)),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(size.width * numD02),
+                              border:
+                                  Border.all(width: 1.0, color: Colors.black)),
                           child: RichText(
                             textAlign: TextAlign.start,
                             text: TextSpan(
                               text: digitalIdExpireOnText,
-                              style: TextStyle(fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                              style: TextStyle(
+                                  fontSize: size.width * numD036,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.5),
                               children: [
                                 TextSpan(
-                                  text: DateFormat("dd MMM yyyy").format(DateTime.now()),
-                                  style: TextStyle(fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w600, height: 1.5),
+                                  text: DateFormat("dd MMM yyyy")
+                                      .format(DateTime.now()),
+                                  style: TextStyle(
+                                      fontSize: size.width * numD036,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.5),
                                 )
                               ],
                             ),
@@ -242,7 +287,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                           padding: EdgeInsets.symmetric(
                             vertical: size.width * numD02,
                           ),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD02), border: Border.all(width: 1.0, color: Colors.black)),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(size.width * numD02),
+                              border:
+                                  Border.all(width: 1.0, color: Colors.black)),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -254,7 +303,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                 height: size.width * numD16,
                                 width: size.width * numD16,
                                 child: QrImageView(
-                                  data: Platform.isAndroid ? "https://play.google.com/store/apps/details?id=" : "https://apps.apple.com/in/app/",
+                                  data: "https://www.presshop.co.uk/",
                                   version: QrVersions.auto,
                                   padding: const EdgeInsets.all(2),
                                 ),
@@ -269,19 +318,35 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                   children: [
                                     Text(
                                       "PressHop Media UK Limited",
-                                      style: TextStyle(fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w600, height: 1.5),
+                                      style: TextStyle(
+                                          fontSize: size.width * numD03,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.5),
                                     ),
                                     Text(
                                       "167-169, Great Portland St",
-                                      style: TextStyle(fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                                      style: TextStyle(
+                                          fontSize: size.width * numD03,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400,
+                                          height: 1.5),
                                     ),
                                     Text(
                                       "London, United Kingdom",
-                                      style: TextStyle(fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                                      style: TextStyle(
+                                          fontSize: size.width * numD03,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400,
+                                          height: 1.5),
                                     ),
                                     Text(
                                       "Company No: 13522872",
-                                      style: TextStyle(fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                                      style: TextStyle(
+                                          fontSize: size.width * numD03,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400,
+                                          height: 1.5),
                                     ),
                                   ],
                                 ),
@@ -332,7 +397,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
           top: size.width * numD02,
           bottom: size.width * numD1,
         ),
-        decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1.0, color: Colors.black)),
+        decoration: BoxDecoration(
+            color: colorLightGrey,
+            borderRadius: BorderRadius.circular(size.width * numD03),
+            border: Border.all(width: 1.0, color: Colors.black)),
         padding: EdgeInsets.only(
           left: size.width * numD05,
           right: size.width * numD05,
@@ -372,7 +440,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             },
                           )),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(size.width * numD08),
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD08),
                         /*child: Image.network(
                             height: size.width * numD20,
                             width: size.width * numD20,
@@ -403,7 +472,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                       ),
                       child: Text(
                         userName,
-                        style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD05,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -414,7 +487,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                     height: size.width * numD30,
                     child: QrImageView(
                       // data: "$userId\n https://www.presshop.co.uk",
-                      data: Platform.isAndroid ? "https://play.google.com/store/apps/details?id=" : "https://apps.apple.com/in/app/",
+                      data: Platform.isAndroid
+                          ? "https://play.google.com/store/apps/details?id="
+                          : "https://apps.apple.com/in/app/",
                       version: QrVersions.auto,
                     ),
                   ),
@@ -447,7 +522,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                     Text(
                       verifiedHopperText,
                       textAlign: TextAlign.start,
-                      style: commonTextStyle(size: size, fontSize: size.width * numD06, color: Colors.white, fontWeight: FontWeight.w500),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD06,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
                     ),
                   ],
                 )),
@@ -461,16 +540,26 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                   vertical: size.width * numD03,
                   horizontal: size.width * numD03,
                 ),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1.0, color: Colors.black)),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    border: Border.all(width: 1.0, color: Colors.black)),
                 child: RichText(
                   textAlign: TextAlign.start,
                   text: TextSpan(
                     text: digitalIdExpireOnText,
-                    style: TextStyle(fontSize: size.width * numD038, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                    style: TextStyle(
+                        fontSize: size.width * numD038,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        height: 1.5),
                     children: [
                       TextSpan(
                         text: DateFormat("dd MMM yyyy").format(DateTime.now()),
-                        style: TextStyle(fontSize: size.width * numD038, color: Colors.black, fontWeight: FontWeight.w600, height: 1.5),
+                        style: TextStyle(
+                            fontSize: size.width * numD038,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            height: 1.5),
                       )
                     ],
                   ),
@@ -484,7 +573,9 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                   vertical: size.width * numD05,
                   horizontal: size.width * numD03,
                 ),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1.0, color: Colors.black)),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    border: Border.all(width: 1.0, color: Colors.black)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,23 +618,43 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                         children: [
                           Text(
                             "Presso Media UK Limited",
-                            style: TextStyle(fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w600, height: 1.5),
+                            style: TextStyle(
+                                fontSize: size.width * numD036,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                height: 1.5),
                           ),
                           Text(
                             "Company number:13522872",
-                            style: TextStyle(fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                            style: TextStyle(
+                                fontSize: size.width * numD033,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5),
                           ),
                           Text(
                             "167-169, Great Portland Street",
-                            style: TextStyle(fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                            style: TextStyle(
+                                fontSize: size.width * numD033,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5),
                           ),
                           Text(
                             "London, W1W 5PF",
-                            style: TextStyle(fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400, height: 1.5),
+                            style: TextStyle(
+                                fontSize: size.width * numD033,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5),
                           ),
                           Text(
                             "hello@presshop.co.uk",
-                            style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold, height: 1.5),
+                            style: TextStyle(
+                                fontSize: size.width * numD035,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                height: 1.5),
                           ),
                           InkWell(
                             onTap: () {
@@ -551,7 +662,12 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             },
                             child: Text(
                               "www.presshop.co.uk",
-                              style: TextStyle(decoration: TextDecoration.underline, fontSize: size.width * numD036, color: Colors.blue, fontWeight: FontWeight.w500, height: 1.5),
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: size.width * numD036,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5),
                             ),
                           ),
                         ],
@@ -569,7 +685,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   }
 
   void getUserData() {
-    userImage = avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
+    userImage =
+        avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
     userName = sharedPreferences!.getString(userNameKey)!;
     userId = sharedPreferences!.getString(hopperIdKey) ?? "";
 

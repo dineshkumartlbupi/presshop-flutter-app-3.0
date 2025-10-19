@@ -16,6 +16,7 @@ const lockSetKey = "lock_set";
 const postCodeKey = "post_code";
 const firstNameKey = "first_name";
 const referralCode = "referral_code";
+const currencySymbolKey = "preferred_currency_sign";
 const totalHopperArmy = "totalHopperArmy";
 const videoLimitKey = "videoLimit";
 

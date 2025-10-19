@@ -27,6 +27,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonSharedPrefrence.dart';
@@ -47,8 +49,15 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver
+    with
+        SingleTickerProviderStateMixin,
+        WidgetsBindingObserver,
+        AnalyticsPageMixin
     implements NetworkResponse {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.conversationScreen;
+
   late Size size;
 
   final swipeLeftKey = GlobalKey<ScaffoldState>();
@@ -117,9 +126,11 @@ class _ConversationScreenState extends State<ConversationScreen>
   bool isPlaying = false;
   String collectionId = "";
   DateTime? currentTime;
+  bool isFirstTime = true;
 
   @override
   void initState() {
+    isFirstTime = true;
     debugPrint('Class Name: $runtimeType');
     debugPrint('hopperName====>: ${sharedPreferences!.getString(avatarKey)}');
     debugPrint(
@@ -222,7 +233,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _receiverName.toUpperCase(),
+                            _receiverName,
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: size.width * numD045),
@@ -912,6 +923,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 filled: false,
                                 filledColor: Colors.transparent,
                                 maxLines: 3,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
                               ),
                               isRecordingLongPress
                                   ? Positioned.fill(
@@ -3162,6 +3175,12 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("::::: Inside Common Values ::::::::::");
 
     String messageId = DateTime.now().toUtc().millisecondsSinceEpoch.toString();
+    if (isFirstTime) {
+      isFirstTime = false;
+      NetworkClass.fromNetworkClass(
+              sendchatInitToAdminUrl, this, sendchatInitToAdminReq, {})
+          .callRequestServiceHeader(false, "post", null);
+    }
 
     Map<String, dynamic> map = {
       'messageId': messageId,
@@ -3237,19 +3256,43 @@ class _ConversationScreenState extends State<ConversationScreen>
     /// Video thumbnail Upload
     if (thumbnail.isNotEmpty) {
       debugPrint("::::: Inside Upload Thumbnail Func ::::::::::");
+
+      // Generate unique filename for thumbnail
+      String fileName =
+          'thumbnail_${DateTime.now().millisecondsSinceEpoch}.png';
       Reference thumbnailStorageReference =
-          FirebaseStorage.instance.ref().child('Media/$thumbnail');
-      UploadTask thumbnailUploadTask =
-          thumbnailStorageReference.putFile(File(thumbnail));
+          FirebaseStorage.instance.ref().child('Media/$fileName');
+
+      // Check if file exists before upload
+      File thumbnailFile = File(thumbnail);
+      if (!await thumbnailFile.exists()) {
+        debugPrint('Thumbnail file does not exist: $thumbnail');
+        return;
+      }
+
+      debugPrint('Thumbnail file size: ${await thumbnailFile.length()} bytes');
+
+      UploadTask thumbnailUploadTask = thumbnailStorageReference.putFile(
+        thumbnailFile,
+        SettableMetadata(
+          contentType: 'image/png',
+          customMetadata: {
+            'uploaded_by': _senderId,
+            'message_id': messageId,
+          },
+        ),
+      );
 
       thumbnailUploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
         var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        debugPrint('Task state---: ${snapshot.state}');
-        debugPrint('Progress---: $progress %');
+        debugPrint('Thumbnail Task state---: ${snapshot.state}');
+        debugPrint('Thumbnail Progress---: $progress %');
         uploadPercent = progress;
         // updateChatNew("", progress, messageId,subCollectionId);
       }, onError: (e) {
-        debugPrint(thumbnailUploadTask.snapshot.toString());
+        debugPrint('Thumbnail upload error: ${e.toString()}');
+        debugPrint('Error code: ${e.code}');
+        debugPrint('Error message: ${e.message}');
         if (e.code == 'permission-denied') {
           debugPrint(
               'User does not have permission to upload to this reference.');

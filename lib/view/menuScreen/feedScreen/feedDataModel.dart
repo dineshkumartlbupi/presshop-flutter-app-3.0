@@ -737,6 +737,7 @@ class FeedsDataModel {
   bool firstLevelCheckGDPR = false;
   String saleStatus = "";
   String paymentPending = "";
+  String feedImage = "";
   String pressshop = "";
   bool checkAndApprove = false;
   String mode = "";
@@ -822,6 +823,7 @@ class FeedsDataModel {
     required this.viewCount,
     required this.offerCount,
     required this.total_earnings,
+    required this.feedImage,
   });
 
   factory FeedsDataModel.fromJson(Map<String, dynamic> json) {
@@ -873,6 +875,10 @@ class FeedsDataModel {
         isLiked: json['is_liked'] ?? false,
         isEmoji: json['is_emoji'] ?? false,
         isClap: json['is_clap'] ?? false,
+        feedImage: (json['purchased_mediahouse_user'] != null &&
+                (json['purchased_mediahouse_user'] as List).isNotEmpty)
+            ? json['purchased_mediahouse_user'][0]['profile_image'] ?? ""
+            : "",
         // viewCount: json['count_for_hopper'] ?? 0,
         viewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
         offerCount: json["purchased_mediahouse"] != null

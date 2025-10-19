@@ -538,6 +538,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
             sharedPreferences!.setString(
+                currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
+            sharedPreferences!.setString(
                 totalHopperArmy, map['user'][totalHopperArmy].toString());
             sharedPreferences!
                 .setString(longitudeKey, map["user"][longitudeKey].toString());
@@ -551,6 +553,9 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
               sharedPreferences!
                   .setString(profileImageKey, map["user"][profileImageKey]);
             }
+            currencySymbol =
+                sharedPreferences!.getString(currencySymbolKey) ?? "£";
+
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => WelcomeScreen(

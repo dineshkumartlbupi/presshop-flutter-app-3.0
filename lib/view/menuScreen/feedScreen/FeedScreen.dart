@@ -13,6 +13,7 @@ import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
+import 'package:presshop/view/menuScreen/feedScreen/feed_description.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
@@ -315,9 +316,10 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                             Row(
                               children: [
                                 Container(
+                                  width: size.width * numD09,
+                                  height: size.width * numD09,
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD017,
-                                      vertical: size.width * numD01),
+                                      horizontal: 1, vertical: 1),
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
@@ -329,10 +331,10 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD06),
-                                      child: Image.asset(
-                                        "${dummyImagePath}news.png",
+                                      child: Image.network(
+                                        feedDataList[index].feedImage,
                                         height: size.width * numD06,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                       )),
                                 ),
                                 SizedBox(
@@ -387,17 +389,22 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                             SizedBox(
                               height: size.width * numD02,
                             ),
-                            Text(
-                              feedDataList[index].description,
-                              maxLines: 4,
-                              textAlign: TextAlign.justify,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: Colors.black,
-                                  lineHeight: 2,
-                                  fontWeight: FontWeight.normal),
+                            ExpandableText(
+                              text: feedDataList[index]
+                                  .description
+                                  .toCapitalizeText(),
                             ),
+                            // Text(
+                            //   feedDataList[index].description,
+                            //   maxLines: 4,
+                            //   textAlign: TextAlign.justify,
+                            //   style: commonTextStyle(
+                            //       size: size,
+                            //       fontSize: size.width * numD03,
+                            //       color: Colors.black,
+                            //       lineHeight: 2,
+                            //       fontWeight: FontWeight.normal),
+                            // ),
                             SizedBox(
                               height: size.width * numD02,
                             ),
@@ -813,7 +820,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       ),
                                       FittedBox(
                                         child: Text(
-                                          "$euroUniqueCode${amountFormat(feedDataList[index].total_earnings)}",
+                                          "$currencySymbol${amountFormat(feedDataList[index].total_earnings)}",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: commonTextStyle(

@@ -7,6 +7,7 @@ import 'package:location/location.dart';
 import 'package:presshop/utils/location_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../main.dart';
 import '../../utils/AnimatedButton.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
@@ -623,7 +624,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                               children: [
                                 Text(
                                     taskDetail!.isNeedPhoto
-                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.photoPrice))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.photoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -661,7 +662,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                               children: [
                                 Text(
                                     taskDetail!.isNeedInterview
-                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.interviewPrice))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.interviewPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -699,7 +700,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                               children: [
                                 Text(
                                     taskDetail!.isNeedVideo
-                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.videoPrice))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.videoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -974,7 +975,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                             fontWeight: FontWeight.w700),
                                       ),
                                       Text(
-                                        "${euroUniqueCode}0",
+                                        "${currencySymbol}0",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD065,

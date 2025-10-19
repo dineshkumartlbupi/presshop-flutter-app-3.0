@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
+import 'package:geocoder2/geocoder2.dart';
 import 'package:intl/intl.dart';
 import 'package:native_exif/native_exif.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,6 +14,8 @@ import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../dashboard/Dashboard.dart';
@@ -31,12 +34,22 @@ class CustomGallery extends StatefulWidget {
   }
 }
 
-class CustomGalleryState extends State<CustomGallery> {
+class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
   List<AssetEntity> _mediaList = [];
   List<CameraData> camListData = [];
   AssetPathEntity? _path;
   String address = "";
   bool isLongPress = false;
+
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.customGallery;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'pic_again': widget.picAgain.toString(),
+        'media_count': _mediaList.length.toString(),
+      };
   bool isLoading = false;
   bool isSelectedImageProcessing = true;
 
@@ -139,18 +152,6 @@ class CustomGalleryState extends State<CustomGallery> {
                             }
                           }
                           if (validationVideoLenght) {
-                            for (var item in camListData) {
-                              var exif = await Exif.fromPath(item.path);
-                              try {
-                                var data = await exif.getLatLong();
-                                item.latitude =
-                                    data?.latitude.toString() ?? item.latitude;
-                                item.longitude = data?.longitude.toString() ??
-                                    item.longitude;
-                              } catch (e) {
-                                debugPrint("Exif Error: $e");
-                              }
-                            }
                             Navigator.push(
                                 navigatorKey.currentState!.context,
                                 MaterialPageRoute(
@@ -274,31 +275,40 @@ class CustomGalleryState extends State<CustomGallery> {
                             });
                           }
                         } else {
+                          GeoData? data;
+                          try {
+                            var exif = await Exif.fromPath(imgPath);
+                            final latLong = await exif.getLatLong();
+                            data = await Geocoder2.getDataFromCoordinates(
+                                latitude: latLong?.latitude ??
+                                    sharedPreferences!.getDouble(currentLat)!,
+                                longitude: latLong?.longitude ??
+                                    sharedPreferences!.getDouble(currentLon)!,
+                                googleMapApiKey: Platform.isIOS
+                                    ? appleMapAPiKey
+                                    : googleMapAPiKey);
+                          } catch (e) {
+                            debugPrint("Exif Error: $e");
+                          }
                           camListData.add(CameraData(
                             path: imgPath,
                             mimeType: "image",
                             videoImagePath: "",
                             fromGallary: true,
-                            latitude: sharedPreferences!
+                            latitude: data?.latitude.toString() ??
+                                sharedPreferences!
                                     .getDouble(currentLat)
-                                    .toString() ??
-                                "",
-                            longitude: sharedPreferences!
+                                    .toString(),
+                            longitude: data?.longitude.toString() ??
+                                sharedPreferences!
                                     .getDouble(currentLon)
-                                    .toString() ??
-                                "",
+                                    .toString(),
                             dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                 .format(DateTime.now()),
-                            location:
-                                sharedPreferences!.getString(currentAddress) ??
-                                    "",
-                            country:
-                                sharedPreferences!.getString(currentCountry) ??
-                                    "",
-                            city:
-                                sharedPreferences!.getString(currentCity) ?? "",
-                            state: sharedPreferences!.getString(currentState) ??
-                                "",
+                            location: data?.address ?? "",
+                            country: data?.country ?? "",
+                            city: data?.city ?? "",
+                            state: data?.state ?? "",
                           ));
                           setState(() {
                             isSelectedImageProcessing = true;

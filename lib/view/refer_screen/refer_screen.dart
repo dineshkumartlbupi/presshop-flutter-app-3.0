@@ -7,13 +7,28 @@ import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonWigdets.dart';
 import '../dashboard/Dashboard.dart';
 import '../myEarning/MyEarningScreen.dart';
 
-class ReferScreen extends StatelessWidget {
+class ReferScreen extends StatefulWidget {
   const ReferScreen({super.key});
+
+  @override
+  State<ReferScreen> createState() => _ReferScreenState();
+}
+
+class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
+  @override
+  String get pageName => PageNames.referScreen;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'referral_code': 'your_referral_code',
+      };
 
   @override
   Widget build(BuildContext context) {

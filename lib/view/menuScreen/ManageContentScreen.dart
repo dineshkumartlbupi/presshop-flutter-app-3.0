@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonWigdets.dart';
@@ -230,7 +231,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 fontWeight: FontWeight.normal),
                           ),
                           Text(
-                            "${euroUniqueCode}350",
+                            "${currencySymbol}350",
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
@@ -296,7 +297,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                             height: size.width * numD04,
                           ),
                           Text(
-                            "Congrats, you’ve received £200 from Reuters Media ",
+                            "Congrats, you’ve received $currencySymbol 200 from Reuters Media ",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD035,
@@ -645,7 +646,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                   fontWeight: FontWeight.w600),
                             ),
                             TextSpan(
-                              text: "${euroUniqueCode}150 ",
+                              text: "${currencySymbol}150 ",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * numD035,
@@ -988,7 +989,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                   fontWeight: FontWeight.w600),
                             ),
                             TextSpan(
-                              text: "${euroUniqueCode}200 ",
+                              text: "${currencySymbol}200 ",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * numD035,

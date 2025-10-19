@@ -791,7 +791,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                       ),
                                       Text(
                                         widget.price,
-                                        //   "$euroUniqueCode ${amountFormat(widget.myContentDetail!.originalAmount.toString())}",
+                                        //   "$currencySymbol ${amountFormat(widget.myContentDetail!.originalAmount.toString())}",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD045,

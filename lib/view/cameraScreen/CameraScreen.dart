@@ -25,6 +25,8 @@ import 'package:record/record.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import 'dart:ui' as ui;
 import '../../utils/image_crop_util.dart';
 import '../dashboard/Dashboard.dart';
@@ -54,7 +56,18 @@ class CameraScreen extends StatefulWidget {
 }
 
 class CameraScreenState extends State<CameraScreen>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+    with WidgetsBindingObserver, TickerProviderStateMixin, AnalyticsPageMixin {
+  // Analytics Mixin Requirements
+  @override
+  String get pageName => PageNames.camera;
+
+  @override
+  Map<String, Object>? get pageParameters => {
+        'pic_again': widget.picAgain.toString(),
+        'previous_screen': widget.previousScreen.name,
+        'selected_type': selectedType,
+      };
+
   CameraController? cameraController;
   late LocationService _locationService;
 
@@ -898,8 +911,8 @@ class CameraScreenState extends State<CameraScreen>
         path: picture.path,
         mimeType: "image",
         videoImagePath: "",
-        latitude: sharedPreferences!.getDouble(currentLat).toString() ?? "",
-        longitude: sharedPreferences!.getDouble(currentLon).toString() ?? "",
+        latitude: sharedPreferences!.getDouble(currentLat).toString(),
+        longitude: sharedPreferences!.getDouble(currentLon).toString(),
         dateTime: DateFormat("HH:mm, dd MMM yyyy").format(DateTime.now()),
         location: sharedPreferences!.getString(currentAddress) ?? "",
         country: sharedPreferences!.getString(currentCountry) ?? "",
@@ -1575,7 +1588,7 @@ class CameraScreenState extends State<CameraScreen>
       camListData.add(CameraData(
         path: file.path,
         mimeType: mimeType,
-        fromGallary: true,
+        fromGallary: false,
         videoImagePath: '',
         latitude: sharedPreferences!.getDouble(currentLat).toString() ?? "",
         longitude: sharedPreferences!.getDouble(currentLon).toString() ?? "",

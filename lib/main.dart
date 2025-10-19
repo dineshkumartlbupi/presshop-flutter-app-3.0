@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -18,9 +19,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import 'package:presshop/utils/AnalyticsHelper.dart';
+import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/LocalNotificationService.dart';
+import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
 import 'package:presshop/view/splash/SplashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,11 +38,58 @@ FacebookAppEvents facebookAppEvents = FacebookAppEvents();
 SharedPreferences? sharedPreferences;
 final player = AudioPlayer();
 const iOSLocalizedLabels = false;
+String currencySymbol = "";
+// AppsFlyer SDK instance
+late AppsflyerSdk _appsflyerSdk;
 
 List<CameraDescription> cameras = <CameraDescription>[];
 LocalNotificationService localNotificationService = LocalNotificationService();
 
 List<MediaData> contentMediaList = [];
+
+// Initialize AppsFlyer SDK
+Future<void> initializeAppsFlyer() async {
+  final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
+    appId: "6744651614",
+    afDevKey: "bxvwnv53n3J7eKMAiDmX7J",
+    showDebug: false,
+    timeToWaitForATTUserAuthorization: 40,
+  );
+  _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
+  // Listen to install conversion data
+  _appsflyerSdk.onInstallConversionData((data) {
+    // Print each key-value pair for better readability
+    if (data is Map) {
+      data.forEach((key, value) {
+        debugPrint("$key: $value");
+      });
+    }
+    // Convert data to string
+    String dataString = data.toString();
+    debugPrint("Data as string: $dataString");
+    onDeeplinkCallbackApi(dataString, true);
+  });
+
+  // Listen to app open attribution
+  _appsflyerSdk.onAppOpenAttribution((data) {
+    if (data is Map) {
+      data.forEach((key, value) {
+        debugPrint("$key: $value");
+      });
+    }
+    // Convert data to string
+    String dataString = data.toString();
+    onDeeplinkCallbackApi(dataString, false);
+  });
+
+  // Initialize the SDK
+  await _appsflyerSdk.initSdk(
+    registerConversionDataCallback: true,
+    registerOnAppOpenAttributionCallback: true,
+  );
+
+  debugPrint("AppsFlyer SDK initialized successfully");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +129,7 @@ void main() async {
     debugPrint("CameraException: $e");
   }
 
-  getSharedPreferences().then((value) {
+  getSharedPreferences().then((value) async {
     sharedPreferences = value;
     sharedPreferences!.setBool(
         "isIpad",
@@ -97,8 +148,12 @@ void main() async {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
+    if (!rememberMe) {
+      // Initialize AppsFlyer SDK
+      await initializeAppsFlyer();
+    }
     setCrashlyticsIdentity();
-
+    currencySymbol = sharedPreferences!.getString(currencySymbolKey) ?? "£";
     player.onPlayerStateChanged.listen((state) {
       if (state == PlayerState.completed) {
         player.play(
@@ -110,6 +165,11 @@ void main() async {
     runApp(MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [
+        // Add analytics observers
+        AnalyticsHelper.observer, // Firebase Analytics Observer
+        AnalyticsRouteObserver(), // Custom Route Observer
+      ],
       theme: ThemeData(
           fontFamily: "AirbnbCereal",
           scaffoldBackgroundColor: Colors.white,
@@ -120,18 +180,32 @@ void main() async {
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'image_watermark',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+Future<void> onDeeplinkCallbackApi(
+    String data, bool isAppInstallCallback) async {
+  try {
+    Dio dio = Dio(
+      BaseOptions(
+        baseUrl: adminBaseUrl,
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
       ),
-      home: const SplashScreen(),
     );
+
+    Response response = await dio.post(
+      isAppInstallCallback ? onAppInstallCallback : onDeeplinkCallback,
+      data: {"data": data},
+    );
+
+    if (response.statusCode! <= 201) {
+      debugPrint("Deeplink callback success: ${response.data}");
+      // Handle success response
+      // onDeeplinkCallback(response.data);
+    } else {
+      debugPrint(
+          "Deeplink callback failed with status code: ${response.statusCode}");
+    }
+  } catch (e) {
+    debugPrint("Deeplink callback error: $e");
   }
 }
 
@@ -200,12 +274,28 @@ Future<void> uploadMediaUsingDio(
         int progress = ((sent / total) * 100).toInt();
         debugPrint("progress:::::$progress");
 
-        if (progress < 100 && progress % 2 == 0) {
+        if ((progress >= 1 &&
+                progress <= 10 &&
+                (sharedPreferences!.getBool('notify_10') ?? true)) ||
+            (progress >= 30 &&
+                progress <= 40 &&
+                (sharedPreferences!.getBool('notify_40') ?? true)) ||
+            (progress >= 80 &&
+                progress <= 90 &&
+                (sharedPreferences!.getBool('notify_90') ?? true))) {
           _showProgressNotification(
               localNotificationService.flutterLocalNotificationsPlugin,
               progress,
               isDraft: jsonBody?['is_draft'] == 'true');
+
+          if (progress <= 10) sharedPreferences!.setBool('notify_10', false);
+          if (progress <= 40) sharedPreferences!.setBool('notify_40', false);
+          if (progress <= 90) sharedPreferences!.setBool('notify_90', false);
         } else if (progress == 100) {
+          // Reset notification flags for next upload
+          sharedPreferences!.remove('notify_10');
+          sharedPreferences!.remove('notify_40');
+          sharedPreferences!.remove('notify_90');
           _showProgressNotification(
               localNotificationService.flutterLocalNotificationsPlugin,
               progress,
@@ -283,23 +373,6 @@ void _showCompletionNotification(
     isDraft
         ? "Draft saved successfully"
         : 'Your Media has been uploaded successfully.',
-    const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'upload_channel',
-        'Video Upload',
-        importance: Importance.max,
-        priority: Priority.high,
-      ),
-    ),
-  );
-}
-
-void _showErrorNotification(
-    FlutterLocalNotificationsPlugin notificationPlugin) {
-  notificationPlugin.show(
-    0,
-    'Upload Failed',
-    'There was an error uploading the video.',
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'upload_channel',

@@ -4,6 +4,8 @@ import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/myEarning/earningDataModel.dart';
 
+import '../../main.dart';
+
 class CommissionWidget extends StatelessWidget {
   final CommissionData commissionData;
   late Size size;
@@ -123,7 +125,7 @@ class CommissionWidget extends StatelessWidget {
                   color: colorThemePink,
                 ),
                 child: Text(
-                  "£${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
+                  "$currencySymbol${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD04,
@@ -157,7 +159,7 @@ class CommissionWidget extends StatelessWidget {
                   color: Colors.black,
                 ),
                 child: Text(
-                  "£${formatDouble(double.parse(commissionData.commission.toString()))}",
+                  "$currencySymbol${formatDouble(double.parse(commissionData.commission.toString()))}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD04,
@@ -204,7 +206,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                "£${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
+                "$currencySymbol${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * numD035,
@@ -227,7 +229,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                "£${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
+                "$currencySymbol${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * numD035,

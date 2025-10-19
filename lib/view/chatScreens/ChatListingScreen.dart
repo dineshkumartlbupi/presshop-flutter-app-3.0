@@ -6,6 +6,8 @@ import 'package:presshop/main.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonModel.dart';
@@ -25,6 +27,7 @@ class ChatListingScreen extends StatefulWidget {
 }
 
 class _ChatListingScreenState extends State<ChatListingScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
   late Size size;
 
@@ -260,7 +263,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
         return InkWell(
           onTap: () {
             debugPrint("converstatio screen ======> ");
-           /* Navigator.of(context)
+            /* Navigator.of(context)
                 .push(MaterialPageRoute(
                     builder: (context) => ConversationScreen(
                           receiverId:  item.id.isNotEmpty? item.id:'' ,
@@ -516,10 +519,9 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                   Positioned(
                                     bottom: 5,
                                     right: 0,
-                                    child:  checkOnlineOffline(
-                                        context, size, document.get('receiverId')),
+                                    child: checkOnlineOffline(context, size,
+                                        document.get('receiverId')),
                                   )
-
                                 ],
                               ),
                               SizedBox(
@@ -914,4 +916,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
         break;
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.chatListing;
 }

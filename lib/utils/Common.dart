@@ -13,6 +13,7 @@ const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 //--------production urls----------------
 
 const baseUrl = "https://datastream22843-r.presshop.news:6003/";
+const adminBaseUrl = "https://datastream22843-r.presshop.news:7001/";
 
 const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
 
@@ -41,8 +42,9 @@ const oldappUrl = "https://developers.promaticstechnologies.com/";
 
 const socketUrl = "https://datastream22843-r.presshop.news:4005";
 
-//--------staging urls----------------
+//--------staging urls------- ---------
 // const baseUrl = "https://dev-api.presshop.news:5019/";
+// const adminBaseUrl = "https://dev-api.presshop.news:5020/";
 
 // const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 // const googleMapURL =
@@ -68,9 +70,8 @@ const checkUserNameUrlRequest = 1;
 const getAvatarsUrl = "users/getAvatars";
 const getAvatarsUrlRequest = 2;
 
-String get appUrl => Platform.isAndroid
-    ? "https://play.google.com/store/apps/details?id=com.presshop.app"
-    : "https://apps.apple.com/in/app/presshop/id6744651614";
+String get appUrl =>
+    "Android: https://play.google.com/store/apps/details?id=com.presshop.app\niOS: https://apps.apple.com/in/app/presshop/id6744651614";
 
 /*const getAllCmsUrl = "users/getCMSForHopper";
 const getAllCmsUrlRequest = 3;*/
@@ -320,6 +321,15 @@ const commissionGetRequest = 81;
 const getLatestVersionUrl = "auth/getLatestVersion";
 const getLatestVersionReq = 82;
 
+const sendchatInitToAdminUrl = "hopper/sendChatInitiatedMailToAdmin";
+const sendchatInitToAdminReq = 83;
+
+const onDeeplinkCallback = "admin/onDeeplinkCallback";
+const onDeeplinkCallbackReq = 84;
+
+const onAppInstallCallback = "admin/onAppInstallCallback";
+const onAppInstallCallbackReq = 85;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";
@@ -531,6 +541,7 @@ const receivedText = "Received";
 const givenText = "Given";
 const myProfileText = "My profile";
 const editProfileText = "Edit profile";
+const leaderboardText = "Leaderboard";
 const myDraftText = "My drafts";
 const myContentText = "My content";
 const contentText = "Content";
@@ -1024,7 +1035,7 @@ const headerFontSize = 0.06;
 const appBarHeadingFontSize = 0.045;
 const appBarHeadingFontSizeNew = 0.05;
 /*----------------------------------*/
-const euroUniqueCode = "\u{000A3}";
+//const eurosUniqueCode = "\u{000A3}";
 
 String changeDateFormat(String inputFormat, String input, String outputFormat) {
   debugPrint("InpoutDate: $input");
@@ -1164,3 +1175,28 @@ bool isKeyEmptyMap(Map<String, dynamic> data, String key) {
 }
 
 bool get isIpad => sharedPreferences?.getBool("isIpad") ?? false;
+
+extension StringExtension on String {
+  String toCapitalizeText() {
+    if (isEmpty) return this; // Return empty string as is
+    if (trim().isEmpty) return this; // Return string with only spaces as is
+
+    // Find the first alphabetic character
+    int firstLetterIndex = 0;
+    for (var i = 0; i < length; i++) {
+      if (this[i].toUpperCase() != this[i].toLowerCase()) {
+        // Found a letter (since upper and lower case differ)
+        firstLetterIndex = i;
+        break;
+      }
+    }
+
+    // If no letter found, return original string
+    if (firstLetterIndex >= length) return this;
+
+    // Capitalize the first letter and concatenate with the rest
+    return substring(0, firstLetterIndex) +
+        this[firstLetterIndex].toUpperCase() +
+        substring(firstLetterIndex + 1);
+  }
+}

@@ -2056,10 +2056,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                     inputFormatters: [
                       // CurrencyTextInputFormatter(NumberFormat.compactCurrency(
                       //   decimalDigits: 0,
-                      //   symbol: euroUniqueCode,
+                      //   symbol: currencySymbol,
                       // )),
                       CurrencyTextInputFormatter(NumberFormat.currency(
-                          decimalDigits: 0, symbol: euroUniqueCode))
+                          decimalDigits: 0, symbol: currencySymbol))
                     ],
                     style: commonTextStyle(
                         size: size,
@@ -2067,7 +2067,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         color: Colors.black,
                         fontWeight: FontWeight.normal),
                     decoration: InputDecoration(
-                      hintText: "${euroUniqueCode}0",
+                      hintText: "${currencySymbol}0",
                       hintStyle: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD06,
@@ -2792,7 +2792,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       selectedHashtagList.addAll(widget.myContentData!.hashTagList);
       debugPrint("priceValuee=====> ${widget.myContentData!.amount}");
       priceController.text = widget.myContentData!.amount.isNotEmpty
-          ? "$euroUniqueCode${widget.myContentData!.amount}"
+          ? "$currencySymbol${widget.myContentData!.amount}"
           : '';
       selectedCategory = widget.myContentData!.categoryData;
       selectedSellType =
@@ -2912,7 +2912,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           ? priceController.text
               .trim()
               .replaceAll(',', '')
-              .split(euroUniqueCode)
+              .split(currencySymbol)
               .last
           : "",
       "timestamp": changeDateFormat("HH:mm, dd MMM yyyy",

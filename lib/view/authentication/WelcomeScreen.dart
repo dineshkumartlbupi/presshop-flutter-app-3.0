@@ -5,6 +5,8 @@ import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/menuScreen/MyDraftScreen.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/CommonAppBar.dart';
 import '../dashboard/Dashboard.dart';
 
@@ -23,7 +25,7 @@ class WelcomeScreen extends StatefulWidget {
   State<StatefulWidget> createState() => WelcomeScreenState();
 }
 
-class WelcomeScreenState extends State<WelcomeScreen> {
+class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
   String userName = sharedPreferences!.getString(userNameKey) ?? '';
 
   @override
@@ -273,4 +275,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       ),
     );
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.welcomeScreen;
 }

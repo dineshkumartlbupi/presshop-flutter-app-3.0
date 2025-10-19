@@ -508,7 +508,7 @@ void broadcastDialog({
                                 children: [
                                   Text(
                                     taskDetail.isNeedPhoto
-                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail.photoPrice))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.photoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -552,7 +552,7 @@ void broadcastDialog({
                                 children: [
                                   Text(
                                     taskDetail.isNeedInterview
-                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail.interviewPrice))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.interviewPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -596,7 +596,7 @@ void broadcastDialog({
                                 children: [
                                   Text(
                                     taskDetail.isNeedVideo
-                                        ? "$euroUniqueCode${formatDouble(double.parse(taskDetail.videoPrice))}"
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.videoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,

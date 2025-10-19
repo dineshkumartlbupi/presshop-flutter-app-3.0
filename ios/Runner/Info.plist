@@ -32,6 +32,16 @@
 				<string>com.googleusercontent.apps.750460561502-geuno4tt1ic52cor9l2obl1vhuogvsp0</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>presshopapp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>presshopapp</string>
+			</array>
+		</dict>
 	</array>
 	<key>FacebookAppID</key>
 	<string>4098273470461354</string>
@@ -55,11 +65,25 @@
 	<array>
 		<string>sms</string>
 		<string>tel</string>
+		<string>fb</string>
+		<string>twitter</string>
+		<string>whatsapp</string>
+		<string>prograd</string>
+		<string>waze</string>
+		<string>snapchat</string>
+		<string>instagram</string>
 	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized content and measure campaign performance.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+<!-- AppsFlyer -->
+<key>AppsFlyerAppID</key>
+<string>6744651614</string>
+<key>AppsFlyerDevKey</key>
+<string>bxvwnv53n3J7eKMAiDmX7J</string>	
 <key>NSAppleMusicUsageDescription</key>
 <string>PressHop needs access to your Apple Music so that you can add background audio or music to your content before uploading.</string>
 <key>NSCalendarsUsageDescription</key>

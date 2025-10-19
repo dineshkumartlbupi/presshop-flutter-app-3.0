@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 
+import '../main.dart';
+
 class ManageContentWidget extends StatelessWidget {
   Map<String, dynamic> data = {};
   ManageContentWidget(this.data, {super.key});
@@ -128,7 +130,7 @@ class ManageContentWidget extends StatelessWidget {
                         right: size.width * numD02,
                       ),
                       child: Text(
-                        "$euroUniqueCode${formatDouble(double.parse(data['amount']))}",
+                        "$currencySymbol${formatDouble(double.parse(data['amount']))}",
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD05,

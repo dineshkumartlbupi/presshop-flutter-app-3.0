@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:presshop/utils/AnalyticsConstants.dart';
+import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
@@ -30,7 +32,9 @@ class FAQScreen extends StatefulWidget {
   }
 }
 
-class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
+class FAQScreenState extends State<FAQScreen>
+    with AnalyticsPageMixin
+    implements NetworkResponse {
   ScrollController listController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -572,6 +576,10 @@ class FAQScreenState extends State<FAQScreen> implements NetworkResponse {
       debugPrint("$e");
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.faq;
 }
 
 class FAQPriceTipsData {

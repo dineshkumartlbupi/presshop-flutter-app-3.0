@@ -12,6 +12,8 @@ import 'package:presshop/view/myEarning/commission_widget.dart';
 import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
 
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonWigdets.dart';
@@ -31,7 +33,7 @@ class MyEarningScreen extends StatefulWidget {
 }
 
 class _MyEarningScreenState extends State<MyEarningScreen>
-    with TickerProviderStateMixin
+    with TickerProviderStateMixin, AnalyticsPageMixin
     implements NetworkResponse {
   late Size size;
   late TabController _tabController;
@@ -237,7 +239,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         ),
                                         Text(
                                           earningData!.totalEarning.isNotEmpty
-                                              ? '£${formatDouble(double.parse(earningData!.totalEarning))}'
+                                              ? '$currencySymbol${formatDouble(double.parse(earningData!.totalEarning))}'
                                               : '£0',
                                           style: commonTextStyle(
                                               size: size,
@@ -812,7 +814,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 ),
                                 child: Text(
                                   item.amount.isNotEmpty
-                                      ? "£${currencyFormat.format(double.parse(item.payableT0Hopper))}"
+                                      ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
@@ -1075,7 +1077,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             child: Text(
                               item.amount.isNotEmpty
-                                  ? "£${formatDouble(double.parse(item.payableT0Hopper))}"
+                                  ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
                                   : "",
                               style: commonTextStyle(
                                   size: size,
@@ -1189,10 +1191,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             Text(
                               item.type == "content"
                                   ? item.totalEarningAmt != "null"
-                                      ? '£${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      ? '$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}'
                                       : "£0"
                                   : item.totalEarningAmt != "null"
-                                      ? '£${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      ? '$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}'
                                       : "£0",
                               style: commonTextStyle(
                                   size: size,
@@ -1220,7 +1222,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               item.payableCommission.isNotEmpty
-                                  ? "£${formatDouble(double.parse(item.payableCommission))}"
+                                  ? "$currencySymbol${formatDouble(double.parse(item.payableCommission))}"
                                   : "£0",
                               style: commonTextStyle(
                                   size: size,
@@ -1246,7 +1248,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              "£${formatDouble(double.parse(item.stripefee))}",
+                              "$currencySymbol${formatDouble(double.parse(item.stripefee))}",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * numD035,
@@ -1273,7 +1275,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               item.amount.isNotEmpty
-                                  ? "£${formatDouble(double.parse(item.payableT0Hopper))}"
+                                  ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
                                   : "",
                               style: commonTextStyle(
                                   size: size,
@@ -1907,6 +1909,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
       debugPrint("Exception catch======> $e");
     }
   }
+
+  @override
+  String get pageName => PageNames.myEarnings;
 }
 
 class FilterModel {

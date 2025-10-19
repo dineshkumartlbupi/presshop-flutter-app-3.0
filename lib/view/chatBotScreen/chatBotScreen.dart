@@ -8,6 +8,8 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import '../../main.dart';
+import '../../utils/AnalyticsConstants.dart';
+import '../../utils/AnalyticsMixin.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonTextField.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -23,6 +25,7 @@ class ChatBotScreen extends StatefulWidget {
 }
 
 class _ChatBotScreenState extends State<ChatBotScreen>
+    with AnalyticsPageMixin
     implements NetworkResponse {
   late DialogFlowtter dialogFlowtter;
   final messageController = TextEditingController();
@@ -63,7 +66,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
             padding: EdgeInsets.only(
                 left: widget.hideLeading ? size.width * numD04 : 0),
             child: Text(
-              "Emily",
+              "Chat",
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -743,23 +746,24 @@ class _ChatBotScreenState extends State<ChatBotScreen>
 
     if (response.message != null) {
       if (response.queryResult!.action == "input.unknown") {
-        failCount++;
         chatList.add(
           ChatModel(
-              message: failCount < 3
+              message: failCount < 1
                   ? "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help."
                   : "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?",
               isUser: false,
               isNavigate: false,
               time: DateTime.now().toString(),
-              hasShownFirstFailMsg: failCount > 2),
+              hasShownFirstFailMsg: failCount > 0),
         );
-        if (failCount < 3) {
+
+        if (failCount < 1) {
           callAddMessageApi(
               "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help.",
               DateTime.now().toString(),
               "false");
         }
+        failCount++;
       } else {
         resetFailCount();
         chatList.add(ChatModel(
@@ -880,6 +884,10 @@ class _ChatBotScreenState extends State<ChatBotScreen>
       debugPrint(exception.toString());
     }
   }
+
+  @override
+  // TODO: implement pageName
+  String get pageName => PageNames.chatBot;
 }
 
 class ChatModel {

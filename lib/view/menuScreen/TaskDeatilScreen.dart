@@ -12,6 +12,7 @@ import 'package:presshop/view/menuScreen/ManageTaskScreen.dart';
 import 'package:presshop/view/myEarning/MyEarningScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonModel.dart';
@@ -479,7 +480,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                                                           FontWeight.normal),
                                                 ),
                                                 Text(
-                                                  "$euroUniqueCode${widget.totalEarning}",
+                                                  "$currencySymbol${widget.totalEarning}",
                                                   maxLines: 4,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -799,7 +800,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                                               fontWeight: FontWeight.w700),
                                         ),
                                         Text(
-                                          "${euroUniqueCode}0",
+                                          "${currencySymbol}0",
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width * numD065,
@@ -859,7 +860,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedPhoto
-                        ? "$euroUniqueCode${taskDetail!.photoPrice}"
+                        ? "$currencySymbol${taskDetail!.photoPrice}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -903,7 +904,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedInterview
-                        ? "$euroUniqueCode${taskDetail!.interviewPrice}"
+                        ? "$currencySymbol${taskDetail!.interviewPrice}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -947,7 +948,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedVideo
-                        ? "$euroUniqueCode${taskDetail!.videoPrice}"
+                        ? "$currencySymbol${taskDetail!.videoPrice}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
