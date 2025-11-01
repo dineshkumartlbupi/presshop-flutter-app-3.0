@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:gallery_saver/files.dart';
 import 'package:presshop/main.dart';
+import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,8 +21,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       'notification_type::::::: ${message.data["notification_type"].toString()}');
   debugPrint('message.data::::::${message.data}');
 
-  if (message.data.isNotEmpty &&
-      message.data["notification_type"].toString() == "media_house_tasks") {
+  if (message.data.isNotEmpty) {
     localNotificationService.flutterLocalNotificationsPlugin.cancelAll();
     debugPrint("Inside Background notification");
     localNotificationService.showFlutterNotificationWithSound(message);
@@ -156,6 +156,26 @@ class LocalNotificationService {
                               initialPosition: 2,
                             )),
                     (route) => false);
+              } else if (taskDetail["notification_type"].toString() ==
+                  "initiate_admin_chat") {
+                Navigator.pushAndRemoveUntil(
+                    navigatorKey.currentContext!,
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              initialPosition: 2,
+                              openChatScreen: true,
+                            )),
+                    (route) => false);
+              } else if (taskDetail["image"].toString().isNotEmpty) {
+                Navigator.pushAndRemoveUntil(
+                    navigatorKey.currentContext!,
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              initialPosition: 2,
+                              openChatScreen: false,
+                              openNotification: true,
+                            )),
+                    (route) => false);
               }
             }
 
@@ -202,9 +222,9 @@ class LocalNotificationService {
 
   Future<void> showFlutterNotificationWithSound(RemoteMessage message) async {
     StyleInformation? styleInformation;
-    if (message.data['image_url'] != null) {
+    if (message.data['image'] != null) {
       final http.Response response =
-          await http.get(Uri.parse(message.data['image_url']));
+          await http.get(Uri.parse(message.data['image']));
       styleInformation = BigPictureStyleInformation(
           ByteArrayAndroidBitmap.fromBase64String(
               base64Encode(response.bodyBytes)));
@@ -227,8 +247,6 @@ class LocalNotificationService {
                   importance: Importance.high,
                   priority: Priority.high,
                   color: Colors.black,
-                  sound:
-                      const RawResourceAndroidNotificationSound('task_sound'),
                   playSound: true,
                   enableVibration: true,
                   audioAttributesUsage: AudioAttributesUsage.alarm,

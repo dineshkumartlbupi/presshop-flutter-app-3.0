@@ -209,7 +209,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             const CircularProgressIndicator(),
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
-                                          "${dummyImagePath}dummy_earnings.png",
+                                          "${commonImagePath}rabbitLogo.png",
                                           fit: BoxFit.cover,
                                           height: size.width * numD32,
                                           width: size.width * numD35,
@@ -871,7 +871,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       ),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
-                                        "assets/commonImages/no_image.jpg",
+                                        "${commonImagePath}rabbitLogo.png",
                                         fit: BoxFit.cover,
                                         height: size.width * numD11,
                                         width: size.width * numD12,
@@ -890,7 +890,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, i, b) =>
                                             Image.asset(
-                                              "${dummyImagePath}news.png",
+                                              "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
                                               height: size.width * numD11,
                                               width: size.width * numD12,
@@ -1144,7 +1144,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   ),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
-                                    "assets/commonImages/no_image.jpg",
+                                    "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.cover,
                                     height: size.width * numD11,
                                     width: size.width * numD12,
@@ -1163,7 +1163,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, i, b) =>
                                         Image.asset(
-                                          "${dummyImagePath}news.png",
+                                          "${commonImagePath}rabbitLogo.png",
                                           fit: BoxFit.cover,
                                           height: size.width * numD11,
                                           width: size.width * numD12,

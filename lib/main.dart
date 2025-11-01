@@ -24,7 +24,6 @@ import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/LocalNotificationService.dart';
-import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
 import 'package:presshop/view/splash/SplashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';

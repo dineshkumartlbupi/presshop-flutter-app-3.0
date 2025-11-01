@@ -3720,7 +3720,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         width: size.width * numD12,
                       ),
                       errorWidget: (context, url, error) => Image.asset(
-                        "assets/commonImages/no_image.jpg",
+                        "${commonImagePath}rabbitLogo.png",
                         fit: BoxFit.cover,
                         height: size.width * numD11,
                         width: size.width * numD12,
@@ -5389,7 +5389,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
             fit: BoxFit.contain,
             errorBuilder: (ctx, obj, stace) {
               return Image.asset(
-                "${dummyImagePath}news.png",
+                "${commonImagePath}rabbitLogo.png",
                 width: size.width * numD09,
                 height: size.width * numD09,
               );
@@ -7211,7 +7211,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       "offset": offset.toString()*/
     };
 
-    NetworkClass(GetDetailsById, this, reqGetDetailsById)
+    NetworkClass(getDetailsById, this, reqGetDetailsById)
         .callRequestServiceHeader(true, 'get', map);
   }
 

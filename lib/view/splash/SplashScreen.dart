@@ -6,6 +6,7 @@ import 'package:presshop/utils/AnalyticsConstants.dart';
 import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
+import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
@@ -27,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
   String get pageName => PageNames.splash;
 
   var openChatScreen = false;
+  var openNotification = false;
   @override
   void initState() {
     super.initState();
@@ -46,15 +48,36 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkInitialMessage() async {
+    // Check for initial message when app was terminated
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
+
     if (initialMessage != null) {
-      // Handle data from the initial message here
-      if (initialMessage.data.isNotEmpty &&
-          initialMessage.data["notification_type"].toString() ==
-              "initiate_admin_chat") {
-        openChatScreen = true;
-      }
+      _handleMessage(initialMessage);
+    }
+
+    // Listen for messages when app is in foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _handleMessage(message);
+    });
+
+    // Listen for messages when app is in background but not terminated
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleMessage(message);
+    });
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    // Handle data from the message here
+    if (message.data.isNotEmpty &&
+        message.data["notification_type"].toString() == "initiate_admin_chat") {
+      openChatScreen = true;
+      openNotification = false;
+    } else if (message.data.isNotEmpty &&
+        message.data["image"] != null &&
+        message.data["image"].isNotEmpty) {
+      openNotification = true;
+      openChatScreen = false;
     }
   }
 
@@ -79,6 +102,11 @@ class _SplashScreenState extends State<SplashScreen>
         .callRequestServiceHeader(false, "get", null);
   }
 
+  void refreshToken() {
+    NetworkClass(appRefreshTokenUrl, this, appRefreshTokenReq)
+        .callRequestServiceHeaderForRefreshToken("get");
+  }
+
   @override
   void onError({required int requestCode, required String response}) {
     try {
@@ -87,17 +115,24 @@ class _SplashScreenState extends State<SplashScreen>
           var map = jsonDecode(response);
           debugPrint("MyProfileError:$map");
           if (map['body'] == "Unauthorized") {
-            rememberMe = false;
-            sharedPreferences!.clear();
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+            refreshToken();
+            // rememberMe = false;
+            // sharedPreferences!.clear();
+            // Navigator.of(context).pushAndRemoveUntil(
+            //     MaterialPageRoute(builder: (context) => const LoginScreen()),
+            //     (route) => false);
           } else {
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => Walkthrough()),
                 (route) => false);
           }
           break;
+        case appRefreshTokenReq:
+          rememberMe = false;
+          sharedPreferences!.clear();
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (route) => false);
       }
     } on Exception catch (e) {
       debugPrint("$e");
@@ -108,13 +143,24 @@ class _SplashScreenState extends State<SplashScreen>
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case appRefreshTokenReq:
+          var map = jsonDecode(response);
+          debugPrint("RefreshTokenSuccess:$map");
+          sharedPreferences!.setString(tokenKey, map[tokenKey]);
+          sharedPreferences!.setString(refreshtokenKey, map[refreshtokenKey]);
+          myProfileApi();
+          break;
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileSuccess:$map");
 
           if (map["code"] == 200) {
-            sharedPreferences!.setString(currencySymbolKey,
-                map['userData'][currencySymbolKey]['symbol']);
+            try {
+              sharedPreferences!.setString(currencySymbolKey,
+                  map['userData'][currencySymbolKey]['symbol']);
+            } catch (e) {
+              sharedPreferences!.setString(currencySymbolKey, "£");
+            }
             currencySymbol =
                 sharedPreferences!.getString(currencySymbolKey) ?? "£";
             sharedPreferences!
@@ -126,6 +172,7 @@ class _SplashScreenState extends State<SplashScreen>
                     builder: (context) => Dashboard(
                           initialPosition: 2,
                           openChatScreen: openChatScreen,
+                          openNotification: openNotification,
                         )),
                 (route) => false);
           }

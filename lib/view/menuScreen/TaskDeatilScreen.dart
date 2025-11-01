@@ -689,7 +689,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                                                         errorBuilder: (context,
                                                             error, stackTrace) {
                                                           return Image.asset(
-                                                            '${dummyImagePath}placeholderImage.png',
+                                                            "${commonImagePath}rabbitLogo.png",
                                                             width:
                                                                 size.width / 2,
                                                             height:

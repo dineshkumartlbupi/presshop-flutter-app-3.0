@@ -323,10 +323,10 @@ class MenuScreenState extends State<MenuScreen>
           editProfileScreen: true,
           screenType: editProfileText,
         )));
-    // menuList.add(MenuData(
-    //     name: leaderboardText,
-    //     icon: "${iconsPath}ic_edit_profile.png",
-    //     classWidget: LeaderboardScreen()));
+    menuList.add(MenuData(
+        name: leaderboardText,
+        icon: "${iconsPath}ic_ranking.png",
+        classWidget: LeaderboardScreen()));
 
     menuList.add(MenuData(
         name: myDraftText,

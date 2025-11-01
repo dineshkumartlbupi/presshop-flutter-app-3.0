@@ -524,6 +524,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             rememberMe = true;
             sharedPreferences!.setBool(rememberKey, true);
             sharedPreferences!.setString(tokenKey, map[tokenKey]);
+            sharedPreferences!.setString(refreshtokenKey, map[refreshtokenKey]);
+
             sharedPreferences!.setString(hopperIdKey, map["user"][hopperIdKey]);
             sharedPreferences!
                 .setString(firstNameKey, map["user"][firstNameKey]);

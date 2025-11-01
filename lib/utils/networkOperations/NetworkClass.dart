@@ -241,8 +241,72 @@ class NetworkClass {
     }
   }
 
-  Future<void> callRequestServiceHeader(bool showLoader, String requestType,
-      Map<String, dynamic>? queryParameters) async {
+  Future<void> callRequestServiceHeaderForRefreshToken(
+      String requestType) async {
+    try {
+      Uri uri;
+
+      uri = Uri.parse(baseUrl + endUrl);
+      debugPrint("RequestType: $requestType");
+      debugPrint("RequestUrl: $uri");
+      debugPrint("Json Body : $jsonBody");
+      var request = http.Request(requestType, uri);
+
+      String refreshHeaderToken = "";
+
+      if (sharedPreferences!.getString(refreshtokenKey) != null) {
+        refreshHeaderToken = sharedPreferences!.getString(refreshtokenKey)!;
+        var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+        // Add headers
+        request.headers.addAll({
+          refreshHeaderKey: refreshHeaderToken,
+          headerDeviceTypeKey:
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+          headerDeviceIdKey: deviceID
+        });
+      }
+
+      debugPrint("HeadersAre: ${request.headers}");
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse)
+          .timeout(const Duration(seconds: 20), onTimeout: () {
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
+              .pop();
+        }
+        showSnackBar("Connection timeout", "Connection timeout", Colors.red);
+        return http.Response("Error", 408);
+      });
+
+      debugPrint("BodyIs: ${response.body.toString()}");
+      if (response.statusCode <= 201) {
+        networkResponse!.onResponse(
+            requestCode: requestCode, response: response.body.toString());
+      } else {
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+
+        networkResponse!.onError(
+            requestCode: requestCode, response: response.body.toString());
+      }
+    } on SocketException catch (e) {
+      if (alertDialog != null && isShowing) {
+        isShowing = false;
+        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+      }
+      commonSocketException(e.osError!.errorCode, e.message);
+    }
+  }
+
+  Future<void> callRequestServiceHeader(
+    bool showLoader,
+    String requestType,
+    Map<String, dynamic>? queryParameters,
+  ) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;

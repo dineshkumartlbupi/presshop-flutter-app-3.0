@@ -32,17 +32,20 @@ import '../cameraScreen/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 
 import '../chatBotScreen/chatBotScreen.dart';
+import '../menuScreen/Notification/MyNotifications.dart';
 
 class Dashboard extends StatefulWidget {
   int initialPosition = 2;
   String? broadCastId;
   String? taskStatus = "";
   bool openChatScreen = false;
+  bool openNotification = false;
 
   Dashboard({
     super.key,
     required this.initialPosition,
     this.openChatScreen = false,
+    this.openNotification = false,
     this.broadCastId,
     this.taskStatus,
   });
@@ -106,6 +109,7 @@ class DashboardState extends State<Dashboard>
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     _locationService = LocationService();
     forceUpdateCheck();
+    callGetRoomIdApi();
     facebookAppEvents.logEvent(
       name: "dashboard_open",
       parameters: {
@@ -142,6 +146,17 @@ class DashboardState extends State<Dashboard>
             ),
           );
         }
+      });
+    } else if (widget.openNotification) {
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyNotificationScreen(
+              count: 1,
+            ),
+          ),
+        );
       });
     }
     super.initState();
@@ -186,6 +201,18 @@ class DashboardState extends State<Dashboard>
 
     if (!mounted) return;
     setState(() {});
+  }
+
+  /// Get Room Id
+  void callGetRoomIdApi() {
+    Map<String, String> map = {
+      //Need to pass receiver id
+      "receiver_id": sharedPreferences!.getString(adminIdKey).toString(),
+      "room_type": "HoppertoAdmin",
+    };
+    debugPrint("Map : $map");
+    NetworkClass.fromNetworkClass(getRoomIdUrl, this, getRoomIdReq, map)
+        .callRequestServiceHeader(false, "post", null);
   }
 
   /// Navigate other screen using share link
@@ -358,7 +385,7 @@ class DashboardState extends State<Dashboard>
       } else {
         debugPrint("inside else------>");
         debugPrint("desensitising------>${message.notification!.android}");
-        localNotificationService.showFlutterNotification(message);
+        localNotificationService.showFlutterNotificationWithSound(message);
       }
     });
 
@@ -391,8 +418,17 @@ class DashboardState extends State<Dashboard>
               );
             }
           });
-        } else {
-          // localNotificationService.showFlutterNotification(message);
+        } else if ((message.data.isNotEmpty &&
+            message.data["image"] != null &&
+            message.data["image"].isNotEmpty)) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyNotificationScreen(
+                count: 1,
+              ),
+            ),
+          );
         }
         if (message.notification != null) {
           debugPrint(message.notification!.title);
@@ -641,6 +677,15 @@ class DashboardState extends State<Dashboard>
       switch (requestCode) {
         case addDeviceUrlRequest:
           debugPrint("AddDeviceSuccess: $response");
+          break;
+        case getRoomIdReq:
+          var data = jsonDecode(response);
+          debugPrint("getRoomIdReq Success : $data");
+          if (data["details"] != null) {
+            var roomId = data["details"]["room_id"] ?? "";
+            sharedPreferences!.setString(adminRoomIdKey, roomId);
+            debugPrint("Room Id : $roomId");
+          }
           break;
         case getLatestVersionReq:
           debugPrint("getLatestVersionReq: $response");

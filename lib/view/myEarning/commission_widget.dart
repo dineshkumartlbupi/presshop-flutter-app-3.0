@@ -93,7 +93,7 @@ class CommissionWidget extends StatelessWidget {
                     width: size.width * numD24,
                     fit: BoxFit.cover,
                     errorBuilder: (context, i, b) => Image.asset(
-                          "${dummyImagePath}placeholderImage.png",
+                          "${commonImagePath}rabbitLogo.png",
                           fit: BoxFit.cover,
                           height: size.width * numD11,
                           width: size.width * numD12,

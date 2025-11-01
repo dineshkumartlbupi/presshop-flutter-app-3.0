@@ -307,7 +307,7 @@ class TutorialsScreenState extends State<TutorialsScreen>
                                                       Object exception,
                                                       StackTrace? stackTrace) {
                                                     return Image.asset(
-                                                      "${dummyImagePath}placeholderImage.png",
+                                                      "${commonImagePath}rabbitLogo.png",
                                                       width: size.width,
                                                       fit: BoxFit.cover,
                                                     );

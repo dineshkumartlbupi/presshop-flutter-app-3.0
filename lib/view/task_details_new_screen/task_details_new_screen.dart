@@ -837,7 +837,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return Image.asset(
-                                                  '${dummyImagePath}placeholderImage.png',
+                                                  "${commonImagePath}rabbitLogo.png",
                                                   width: size.width / 2,
                                                   height: double.infinity,
                                                   fit: BoxFit.cover,
@@ -852,7 +852,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return Image.asset(
-                                                  '${dummyImagePath}placeholderImage.png',
+                                                  "${commonImagePath}rabbitLogo.png",
                                                   width: size.width / 2,
                                                   height: double.infinity,
                                                   fit: BoxFit.cover,

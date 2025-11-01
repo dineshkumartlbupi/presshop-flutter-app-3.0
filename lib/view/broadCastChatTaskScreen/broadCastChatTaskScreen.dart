@@ -1034,7 +1034,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           fit: BoxFit.cover,
                           errorBuilder: (c, s, o) {
                             return Image.asset(
-                              '${dummyImagePath}placeholderImage.png',
+                              "${commonImagePath}rabbitLogo.png",
                               height: size.height / 3,
                               width: double.infinity,
                               fit: BoxFit.cover,
@@ -1971,7 +1971,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
             fit: BoxFit.contain,
             errorBuilder: (ctx, obj, stace) {
               return Image.asset(
-                "${dummyImagePath}news.png",
+                "${commonImagePath}rabbitLogo.png",
                 width: size.width * numD09,
                 height: size.width * numD09,
               );
@@ -2306,7 +2306,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                 errorBuilder: (BuildContext context,
                                     Object exception, StackTrace? stackTrace) {
                                   return Image.asset(
-                                    "${dummyImagePath}news.png",
+                                    "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,
                                     width: size.width * numD20,
                                     height: size.width * numD20,
@@ -3339,7 +3339,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
       "media_house_id": id
     };
 
-    NetworkClass(GetDetailsById, this, reqGetDetailsById)
+    NetworkClass(getDetailsById, this, reqGetDetailsById)
         .callRequestServiceHeader(true, 'get', map);
   }
 

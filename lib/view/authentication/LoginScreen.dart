@@ -674,6 +674,8 @@ class LoginScreenState extends State<LoginScreen>
           var map = jsonDecode(response);
           commonErrorDialogDialog(MediaQuery.of(context).size,
               map["message"].toString(), map["code"].toString(), () {
+            sharedPreferences!.clear();
+            googleSignIn.signOut();
             Navigator.pop(context);
           });
           break;
@@ -753,10 +755,16 @@ class LoginScreenState extends State<LoginScreen>
               debugPrint("Exception catch======> $e");
             }
             rememberMe = true;
-            sharedPreferences!.setString(
-                currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
+            try {
+              sharedPreferences!.setString(
+                  currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
+            } catch (e) {
+              debugPrint("Exception in rememberMe======> $e");
+            }
             sharedPreferences!.setBool(rememberKey, true);
             sharedPreferences!.setString(tokenKey, map[tokenKey]);
+            sharedPreferences!.setString(refreshtokenKey, map[refreshtokenKey]);
+
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
             sharedPreferences!.setString(
@@ -927,6 +935,9 @@ class LoginScreenState extends State<LoginScreen>
               rememberMe = true;
               sharedPreferences!.setBool(rememberKey, true);
               sharedPreferences!.setString(tokenKey, map[tokenKey]);
+              sharedPreferences!
+                  .setString(refreshtokenKey, map[refreshtokenKey]);
+
               sharedPreferences!
                   .setString(hopperIdKey, map["user"][hopperIdKey]);
               sharedPreferences!

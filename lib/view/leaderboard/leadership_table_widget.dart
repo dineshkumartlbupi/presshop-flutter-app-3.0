@@ -1,10 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
+import 'package:presshop/view/leaderboard/leaderboard_model.dart';
 
 import '../../utils/CommonWigdets.dart';
 
 class LeadershipTableWidget extends StatelessWidget {
-  const LeadershipTableWidget({super.key});
+  final List<Member> memberList;
+  const LeadershipTableWidget({super.key, required this.memberList});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +21,8 @@ class LeadershipTableWidget extends StatelessWidget {
           Positioned(
               top: size.height * numD045,
               left: 0,
-              child: ProfileImageWidget(size: size)),
+              child: profileImageWidget(
+                  isLeader: false, size: size, member: memberList[2])),
           Positioned(
               left: size.width * numD32,
               bottom: 15,
@@ -33,11 +38,11 @@ class LeadershipTableWidget extends StatelessWidget {
                 scale: 2,
               )),
           Positioned(
-              top: 20,
+              top: 15,
               left: 10,
               child: Image.asset(
                 '${iconsPath}leader_rectangle.png',
-                scale: 2,
+                scale: 3,
               )),
           Positioned(
               top: size.height * numD02,
@@ -47,13 +52,14 @@ class LeadershipTableWidget extends StatelessWidget {
                 scale: 3,
               )),
           Align(
-            alignment: Alignment.topCenter,
-            child: ProfileImageWidget(isLeader: true, size: size),
-          ),
+              alignment: Alignment.topCenter,
+              child: profileImageWidget(
+                  isLeader: true, size: size, member: memberList[0])),
           Positioned(
               top: size.height * numD08,
               right: 0,
-              child: ProfileImageWidget(size: size)),
+              child: profileImageWidget(
+                  isLeader: false, size: size, member: memberList[1])),
           Align(
             alignment: Alignment.bottomCenter,
             child: Image.asset(
@@ -67,7 +73,8 @@ class LeadershipTableWidget extends StatelessWidget {
     );
   }
 
-  Widget ProfileImageWidget({bool isLeader = false, required Size size}) {
+  Widget profileImageWidget(
+      {bool isLeader = false, required Size size, required Member member}) {
     return SizedBox(
       height: size.height * numD18,
       width: size.width * numD34,
@@ -79,7 +86,7 @@ class LeadershipTableWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "\$100",
+                  "$currencySymbol${member.totalEarnings}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD04,
@@ -100,10 +107,9 @@ class LeadershipTableWidget extends StatelessWidget {
                     ),
                     child: ClipOval(
                       clipBehavior: Clip.antiAlias,
-                      child: Image.network(
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZpsXXKBYFCxvA8z2LAdRyohI_5VJd5lk0eQ&s",
-                        errorBuilder: (BuildContext context, Object exception,
-                            StackTrace? stackTrace) {
+                      child: CachedNetworkImage(
+                        imageUrl: avatarImageUrl + member.avatar,
+                        errorWidget: (context, url, error) {
                           return Image.asset(
                             "${commonImagePath}rabbitLogo.png",
                             height: size.width * numD06,
@@ -117,7 +123,7 @@ class LeadershipTableWidget extends StatelessWidget {
                   height: size.height * numD005,
                 ),
                 Text(
-                  "Sakil",
+                  member.userName,
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD035,
@@ -129,11 +135,11 @@ class LeadershipTableWidget extends StatelessWidget {
           ),
           if (isLeader)
             Positioned(
-              left: 0,
+              left: -2,
               top: 20,
               child: Image.asset(
                 "${iconsPath}leader_king.png",
-                scale: 3,
+                scale: 3.5,
               ),
             ),
         ],

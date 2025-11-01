@@ -260,7 +260,7 @@ const reqClearNotification = 61;
 const uploadStripeFiles = "hopper/uploadStipeFiles";
 const reqUploadStripeFiles = 62;
 
-const GetDetailsById = "hopper/getdetailsbyid";
+const getDetailsById = "hopper/getdetailsbyid";
 const reqGetDetailsById = 63;
 
 /// aditya
@@ -329,6 +329,12 @@ const onDeeplinkCallbackReq = 84;
 
 const onAppInstallCallback = "admin/onAppInstallCallback";
 const onAppInstallCallbackReq = 85;
+
+const appRefreshTokenUrl = "auth/refreshToken";
+const appRefreshTokenReq = 86;
+
+const leadershipurl = "hopper/getLeaderboardList";
+const leadershipReq = 87;
 
 ///--------------------------------------------------------------
 
