@@ -6,7 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:geocoder2/geocoder2.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
@@ -93,26 +93,56 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     getCurrentLocation();
   }
 
+  // void getCurrentLocation() async {
+  //   try {
+  //     locationData = await LocationService()
+  //         .getCurrentLocation(context, shouldShowSettingPopup: false);
+  //     debugPrint("GettingLocation ==> $locationData");
+  //     if (locationData != null) {
+  //       debugPrint("NotNull");
+  //       if (locationData!.latitude != null) {
+  //         latitude = locationData!.latitude!;
+  //         longitude = locationData!.longitude!;
+  //         GeoData data = await Geocoder2.getDataFromCoordinates(
+  //             latitude: latitude,
+  //             longitude: longitude,
+  //             googleMapApiKey:
+  //                 Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
+  //         address = data.address;
+  //       }
+  //       debugPrint("Address:> $address");
+  //     }
+  //   } on Exception catch (e) {
+  //     debugPrint("PEx: $e");
+  //   }
+  // }
+
   void getCurrentLocation() async {
     try {
+      // Fetch current location using your custom LocationService
       locationData = await LocationService()
           .getCurrentLocation(context, shouldShowSettingPopup: false);
+
       debugPrint("GettingLocation ==> $locationData");
-      if (locationData != null) {
-        debugPrint("NotNull");
-        if (locationData!.latitude != null) {
-          latitude = locationData!.latitude!;
-          longitude = locationData!.longitude!;
-          GeoData data = await Geocoder2.getDataFromCoordinates(
-              latitude: latitude,
-              longitude: longitude,
-              googleMapApiKey:
-                  Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
-          address = data.address;
-        }
+
+      if (locationData != null && locationData!.latitude != null) {
+        double latitude = locationData!.latitude!;
+        double longitude = locationData!.longitude!;
+
+        // ✅ Reverse geocode without needing an API key
+        List<Placemark> placemarks =
+            await placemarkFromCoordinates(latitude, longitude);
+        Placemark place = placemarks.first;
+
+        // ✅ Create readable address string
+        String address =
+            "${place.street ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
+
         debugPrint("Address:> $address");
+      } else {
+        debugPrint("Location data is null");
       }
-    } on Exception catch (e) {
+    } catch (e) {
       debugPrint("PEx: $e");
     }
   }

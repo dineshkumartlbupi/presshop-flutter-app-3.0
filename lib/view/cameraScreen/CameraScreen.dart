@@ -7,7 +7,9 @@ import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:native_exif/native_exif.dart';
@@ -905,7 +907,14 @@ class CameraScreenState extends State<CameraScreen>
         debugPrint("Error in exif: $e");
       }
 
-      GallerySaver.saveImage(picture.path);
+      // ImageGallerySaverPlus.saveImage(picture.path);
+      final bytes = await File(picture.path).readAsBytes();
+
+      // Save to gallery
+      await ImageGallerySaverPlus.saveImage(
+        Uint8List.fromList(bytes),
+        name: "captured_image_${DateTime.now().millisecondsSinceEpoch}",
+      );
 
       camListData.add(CameraData(
         path: picture.path,
@@ -1259,7 +1268,15 @@ class CameraScreenState extends State<CameraScreen>
         _isRecordingInProgress = false;
       });
 
-      GallerySaver.saveVideo(renamedFile.path);
+      // GallerySaver.saveVideo(renamedFile.path);
+
+      final bytes = await File(renamedFile.path).readAsBytes();
+
+      // Save to gallery
+      final result = await ImageGallerySaverPlus.saveImage(
+        Uint8List.fromList(bytes),
+        name: "captured_image_${DateTime.now().millisecondsSinceEpoch}",
+      );
       cameraController!.pausePreview();
 
       Future.delayed(const Duration(milliseconds: 300), () async {

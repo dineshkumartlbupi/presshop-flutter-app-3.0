@@ -8,7 +8,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoder2/geocoder2.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonModel.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
@@ -340,24 +340,24 @@ class DashboardState extends State<Dashboard>
       },
     );
 
-    localNotificationService.flutterLocalNotificationsPlugin
-        .getNotificationAppLaunchDetails()
-        .then((notificationDetail) async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (notificationDetail != null &&
-          notificationDetail.didNotificationLaunchApp &&
-          context.mounted) {
-        if (notificationDetail.notificationResponse != null &&
-            notificationDetail.notificationResponse!.payload != null) {
-          var taskDetail =
-              jsonDecode(notificationDetail.notificationResponse!.payload!);
-          if (taskDetail["notification_type"].toString() ==
-              "media_house_tasks") {
-            callTaskDetailApi(taskDetail["broadCast_id"].toString());
-          }
-        }
-      }
-    });
+    // localNotificationService.flutterLocalNotificationsPlugin
+    //     .getNotificationAppLaunchDetails()
+    //     .then((notificationDetail) async {
+    //   await Future.delayed(const Duration(seconds: 1));
+    //   if (notificationDetail != null &&
+    //       notificationDetail.didNotificationLaunchApp &&
+    //       context.mounted) {
+    //     if (notificationDetail.notificationResponse != null &&
+    //         notificationDetail.notificationResponse!.payload != null) {
+    //       var taskDetail =
+    //           jsonDecode(notificationDetail.notificationResponse!.payload!);
+    //       if (taskDetail["notification_type"].toString() ==
+    //           "media_house_tasks") {
+    //         callTaskDetailApi(taskDetail["broadCast_id"].toString());
+    //       }
+    //     }
+    //   }
+    // });
 
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint("Fi1rebaseMessage: ${message.data}");
@@ -365,7 +365,7 @@ class DashboardState extends State<Dashboard>
       if (message.data.isNotEmpty &&
           message.data["notification_type"].toString() == "media_house_tasks") {
         debugPrint("Inside Task Assigned notification");
-        localNotificationService.showFlutterNotificationWithSound(message);
+        // localNotificationService.showFlutterNotificationWithSound(message);
 
         /// --------------------------------------------------------------------
         /// --------------------------------------------------------------------
@@ -385,7 +385,7 @@ class DashboardState extends State<Dashboard>
       } else {
         debugPrint("inside else------>");
         debugPrint("desensitising------>${message.notification!.android}");
-        localNotificationService.showFlutterNotificationWithSound(message);
+        // localNotificationService.showFlutterNotificationWithSound(message);
       }
     });
 
@@ -500,25 +500,49 @@ class DashboardState extends State<Dashboard>
       if (locationData.latitude != null) {
         latitude = locationData.latitude!;
         longitude = locationData.longitude!;
-        GeoData data = await Geocoder2.getDataFromCoordinates(
-            latitude: latitude,
-            longitude: longitude,
-            googleMapApiKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
 
-        debugPrint("address=====> ${data.address}");
-        sharedPreferences!.setDouble(currentLat, latitude);
-        sharedPreferences!.setDouble(currentLon, longitude);
-        sharedPreferences!.setString(currentAddress, data.address);
-        sharedPreferences!.setString(currentCountry, data.country);
-        sharedPreferences!.setString(currentState, data.state);
-        sharedPreferences!.setString(currentCity, data.city);
+        try {
+          // Get address details from coordinates
+          List<Placemark> placemarks =
+              await placemarkFromCoordinates(latitude, longitude);
 
-        isGetLatLong = false;
-        callUpdateCurrentData();
-        setState(() {});
-        if (alertDialog != null) {
-          alertDialog = null;
-          Navigator.of(navigatorKey.currentContext!).pop();
+          if (placemarks.isNotEmpty) {
+            final place = placemarks.first;
+
+            String fullAddress = [
+              if (place.street?.isNotEmpty ?? false) place.street,
+              if (place.locality?.isNotEmpty ?? false) place.locality,
+              if (place.administrativeArea?.isNotEmpty ?? false)
+                place.administrativeArea,
+              if (place.country?.isNotEmpty ?? false) place.country,
+            ].whereType<String>().join(", ");
+
+            debugPrint("Address: $fullAddress");
+
+            // Save in shared preferences
+            sharedPreferences!.setDouble(currentLat, latitude);
+            sharedPreferences!.setDouble(currentLon, longitude);
+            sharedPreferences!.setString(currentAddress, fullAddress);
+            sharedPreferences!.setString(currentCountry, place.country ?? "");
+            sharedPreferences!
+                .setString(currentState, place.administrativeArea ?? "");
+            sharedPreferences!.setString(currentCity, place.locality ?? "");
+
+            isGetLatLong = false;
+            callUpdateCurrentData();
+            setState(() {});
+
+            if (alertDialog != null) {
+              alertDialog = null;
+              Navigator.of(navigatorKey.currentContext!).pop();
+            }
+          } else {
+            debugPrint("No placemarks found");
+            showSnackBar("Error", "Unable to find address", Colors.black);
+          }
+        } catch (e) {
+          debugPrint("Geocoding error: $e");
+          showSnackBar("Error", "Failed to get address: $e", Colors.black);
         }
       }
     } else {
@@ -526,6 +550,40 @@ class DashboardState extends State<Dashboard>
       showSnackBar("Location Error", "nullLocationText", Colors.black);
     }
   }
+
+// rajesh
+  // void proceedWithLocation(lc.LocationData? locationData) async {
+  //   if (locationData != null) {
+  //     debugPrint("NotNull");
+  //     if (locationData.latitude != null) {
+  //       latitude = locationData.latitude!;
+  //       longitude = locationData.longitude!;
+  //       GeoData data = await Geocoder2.getDataFromCoordinates(
+  //           latitude: latitude,
+  //           longitude: longitude,
+  //           googleMapApiKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
+
+  //       debugPrint("address=====> ${data.address}");
+  //       sharedPreferences!.setDouble(currentLat, latitude);
+  //       sharedPreferences!.setDouble(currentLon, longitude);
+  //       sharedPreferences!.setString(currentAddress, data.address);
+  //       sharedPreferences!.setString(currentCountry, data.country);
+  //       sharedPreferences!.setString(currentState, data.state);
+  //       sharedPreferences!.setString(currentCity, data.city);
+
+  //       isGetLatLong = false;
+  //       callUpdateCurrentData();
+  //       setState(() {});
+  //       if (alertDialog != null) {
+  //         alertDialog = null;
+  //         Navigator.of(navigatorKey.currentContext!).pop();
+  //       }
+  //     }
+  //   } else {
+  //     debugPrint("Null-ll");
+  //     showSnackBar("Location Error", "nullLocationText", Colors.black);
+  //   }
+  // }
 
 /*  void _onBottomBarItemTapped(int index) {
     currentIndex = index;

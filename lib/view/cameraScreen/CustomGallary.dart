@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as fic;
-import 'package:geocoder2/geocoder2.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:native_exif/native_exif.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -275,44 +275,67 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             });
                           }
                         } else {
-                          GeoData? data;
                           try {
                             var exif = await Exif.fromPath(imgPath);
                             final latLong = await exif.getLatLong();
-                            data = await Geocoder2.getDataFromCoordinates(
-                                latitude: latLong?.latitude ??
-                                    sharedPreferences!.getDouble(currentLat)!,
-                                longitude: latLong?.longitude ??
-                                    sharedPreferences!.getDouble(currentLon)!,
-                                googleMapApiKey: Platform.isIOS
-                                    ? appleMapAPiKey
-                                    : googleMapAPiKey);
+
+                            final latitude = latLong?.latitude ??
+                                sharedPreferences!.getDouble(currentLat)!;
+                            final longitude = latLong?.longitude ??
+                                sharedPreferences!.getDouble(currentLon)!;
+
+                            // 🔹 Use geocoding to get address info
+                            List<Placemark> placemarks =
+                                await placemarkFromCoordinates(
+                                    latitude, longitude);
+                            final place = placemarks.first;
+
+                            camListData.add(CameraData(
+                              path: imgPath,
+                              mimeType: "image",
+                              videoImagePath: "",
+                              fromGallary: true,
+                              latitude: latitude.toString(),
+                              longitude: longitude.toString(),
+                              dateTime: DateFormat("HH:mm, dd MMM yyyy")
+                                  .format(DateTime.now()),
+                              location:
+                                  "${place.street}, ${place.locality}, ${place.country}",
+                              country: place.country ?? "",
+                              city: place.locality ?? "",
+                              state: place.administrativeArea ?? "",
+                            ));
+
+                            setState(() {
+                              isSelectedImageProcessing = true;
+                            });
                           } catch (e) {
                             debugPrint("Exif Error: $e");
                           }
-                          camListData.add(CameraData(
-                            path: imgPath,
-                            mimeType: "image",
-                            videoImagePath: "",
-                            fromGallary: true,
-                            latitude: data?.latitude.toString() ??
-                                sharedPreferences!
-                                    .getDouble(currentLat)
-                                    .toString(),
-                            longitude: data?.longitude.toString() ??
-                                sharedPreferences!
-                                    .getDouble(currentLon)
-                                    .toString(),
-                            dateTime: DateFormat("HH:mm, dd MMM yyyy")
-                                .format(DateTime.now()),
-                            location: data?.address ?? "",
-                            country: data?.country ?? "",
-                            city: data?.city ?? "",
-                            state: data?.state ?? "",
-                          ));
-                          setState(() {
-                            isSelectedImageProcessing = true;
-                          });
+
+                          // camListData.add(CameraData(
+                          //   path: imgPath,
+                          //   mimeType: "image",
+                          //   videoImagePath: "",
+                          //   fromGallary: true,
+                          //   latitude: data?.latitude.toString() ??
+                          //       sharedPreferences!
+                          //           .getDouble(currentLat)
+                          //           .toString(),
+                          //   longitude: data?.longitude.toString() ??
+                          //       sharedPreferences!
+                          //           .getDouble(currentLon)
+                          //           .toString(),
+                          //   dateTime: DateFormat("HH:mm, dd MMM yyyy")
+                          //       .format(DateTime.now()),
+                          //   location: data?.address ?? "",
+                          //   country: data?.country ?? "",
+                          //   city: data?.city ?? "",
+                          //   state: data?.state ?? "",
+                          // ));
+                          // setState(() {
+                          //   isSelectedImageProcessing = true;
+                          // });
                         }
                       });
                     } else {

@@ -8,7 +8,6 @@
 .buildlog/
 .history
 .svn/
-*.jks
 # IntelliJ related
 *.ipr
 *.iws
@@ -73,5 +72,5 @@
 ios/Pods/*
 ios/build/*
 
-android/keystore.properties
+# android/keystore.properties
 assets/dialog_flow_auth.json

@@ -44,7 +44,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     debugPrint('class:::::::: $runtimeType');
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => callNotificationList());
-
     Future.delayed(const Duration(seconds: 5), () {
       callUpdateNotification();
     });

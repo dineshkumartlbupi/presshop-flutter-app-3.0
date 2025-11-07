@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
+import 'package:presshop/utils/LocalNotificationService.dart';
 import 'package:presshop/view/authentication/LoginScreen.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Walkthrough extends StatefulWidget {
   Walkthrough({super.key});
@@ -86,6 +89,15 @@ class _WalkthroughState extends State<Walkthrough> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     await WakelockPlus.enable();
+                  //     await Future.delayed(Duration(seconds: 15));
+                  //     await LocalNotificationService().showTestNotification();
+                  //     await WakelockPlus.disable();
+                  //   },
+                  //   child: Text("Test Wakelock"),
+                  // ),
                   SizedBox(
                     height: size.width * numD06,
                   ),

@@ -597,8 +597,8 @@ class LoginScreenState extends State<LoginScreen>
       } else {
         socialProfileImage = "";
       }
-      /*callSocialLoginGoogleApi(
-          "google", socialId, socialName, socialEmail, socialProfileImage);*/
+      // callSocialLoginGoogleApi(
+      //     "google", socialId, socialName, socialEmail, socialProfileImage);
       socialType = "google";
       socialExistsApi(socialType: "google");
       debugPrint("userObj ::${_userObj.toString()}");

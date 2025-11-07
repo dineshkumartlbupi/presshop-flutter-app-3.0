@@ -29,10 +29,13 @@ class _SplashScreenState extends State<SplashScreen>
 
   var openChatScreen = false;
   var openNotification = false;
+
   @override
   void initState() {
     super.initState();
+
     _checkInitialMessage();
+
     debugPrint("rememberMe: $rememberMe");
     if (rememberMe) {
       Future.delayed(Duration.zero, () {

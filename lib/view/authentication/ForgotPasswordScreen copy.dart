@@ -248,8 +248,6 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           debugPrint("ForgotPasswordResponse: $response");
 
           if (map["code"] == 200) {
-            showSnackBar("Message", map["data"] ?? "Invalid OTP", Colors.green);
-
             showOtpBottomSheet(context, emailAddressController.text.trim());
           }
           break;
@@ -258,13 +256,14 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           var map = jsonDecode(response);
           debugPrint("VerifyForgotPasswordOTPResponse: $response");
 
-          if (map["otp_match"]) {
-            Navigator.pop(context);
+          if (map["code"] == 200) {
+            Navigator.pop(context); // close OTP sheet
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => ResetPasswordScreen(
-                  emailAddressValue: emailAddressController.text.trim(),
+                  emailAddressValue: map["data"]["email"] ??
+                      emailAddressController.text.trim(),
                 ),
               ),
             );
@@ -299,15 +298,15 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           debugPrint("VerifyForgotPasswordOTPError: $response");
           var map = jsonDecode(response);
 
-          // Navigator.pop(context);
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (_) => ResetPasswordScreen(
-          //       emailAddressValue: emailAddressController.text.trim(),
-          //     ),
-          //   ),
-          // );
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResetPasswordScreen(
+                emailAddressValue: emailAddressController.text.trim(),
+              ),
+            ),
+          );
           showSnackBar(
             "Error",
             map["errors"]["msg"]
@@ -324,12 +323,15 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   void showOtpBottomSheet(BuildContext context, String email) {
-    bool _isBottomSheetOpen = false;
-
     final otpPinController = GlobalKey<OtpPinFieldState>();
+    final formKey = GlobalKey<FormState>();
 
-    if (_isBottomSheetOpen) return;
-    _isBottomSheetOpen = true;
+    if (myTimer != null) {
+      myTimer!.cancel();
+    }
+    expireTimeValue = "5:00";
+    showResend = false;
+    startResendTime();
 
     showModalBottomSheet(
       context: context,
@@ -337,29 +339,15 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder: (bottomSheetContext) {
-        var size = MediaQuery.of(bottomSheetContext).size;
+      builder: (context) {
+        var size = MediaQuery.of(context).size;
 
-        int secondsLeft = 30; // set your desired timer duration here
-        Timer? localTimer;
-
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            // Start timer once
-            localTimer ??= Timer.periodic(const Duration(seconds: 1), (timer) {
-              if (secondsLeft > 0) {
-                secondsLeft--;
-                setModalState(() {});
-              } else {
-                timer.cancel();
-                setModalState(() {});
-              }
-            });
-
-            String minutes = (secondsLeft ~/ 60).toString().padLeft(2, '0');
-            String seconds = (secondsLeft % 60).toString().padLeft(2, '0');
-            String expireTimeValue = "$minutes:$seconds";
-
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.55,
+          maxChildSize: 0.8,
+          minChildSize: 0.4,
+          builder: (_, controller) {
             return Padding(
               padding: EdgeInsets.only(
                 left: size.width * numD06,
@@ -367,112 +355,118 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 top: size.width * numD05,
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: size.width * numD05),
-                  Text(
-                    "Verify OTP",
-                    style: TextStyle(
-                      fontFamily: 'AirbnbCereal_W_Bd',
-                      fontSize: size.width * numD06,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: size.width * numD02),
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "We’ve sent a 5-digit verification code to ",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: size.width * numD036,
-                            fontFamily: 'AirbnbCereal_W_Lt',
-                          ),
-                        ),
-                        TextSpan(
-                          text: email,
-                          style: TextStyle(
-                            color: colorThemePink,
-                            fontFamily: 'AirbnbCereal_W_Bd',
-                            fontSize: size.width * numD036,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: size.width * numD08),
+                    SizedBox(height: size.width * numD05),
 
-                  // OTP input
-                  OtpPinField(
-                    key: otpPinController,
-                    onSubmit: (pin) => debugPrint("Entered OTP: $pin"),
-                    onChange: (pin) => debugPrint("OTP Changed: $pin"),
-                    otpPinFieldStyle: OtpPinFieldStyle(
-                      defaultFieldBorderColor: colorTextFieldBorder,
-                      activeFieldBorderColor: colorTextFieldIcon,
-                      defaultFieldBackgroundColor: colorLightGrey,
-                      activeFieldBackgroundColor: colorLightGrey,
-                      fieldBorderRadius: size.width * numD02,
-                      fieldBorderWidth: 0.5,
-                    ),
-                    maxLength: 5,
-                    showCursor: true,
-                    cursorColor: colorTextFieldIcon,
-                    showCustomKeyboard: false,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    otpPinFieldDecoration: OtpPinFieldDecoration.custom,
-                  ),
-
-                  SizedBox(height: size.width * numD1),
-
-                  // Verify button
-                  SizedBox(
-                    width: size.width,
-                    height: size.width * (isIpad ? numD1 : numD14),
-                    child: commonElevatedButton(
-                      "Verify OTP",
-                      size,
-                      commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: Colors.white,
+                    /// Title
+                    Text(
+                      "Enter OTP",
+                      style: TextStyle(
+                        fontFamily: 'AirbnbCereal_W_Bd',
+                        fontSize: size.width * numD06,
                         fontWeight: FontWeight.w700,
                       ),
-                      commonButtonStyle(size, colorThemePink),
-                      () {
-                        String otpValue =
-                            otpPinController.currentState?.controller.text ??
-                                "";
-                        if (otpValue.isEmpty || otpValue.length < 5) {
-                          showSnackBar(
-                            "Error",
-                            "Please enter the 5-digit OTP",
-                            Colors.red,
-                          );
-                          return;
-                        }
-                        verifyForgotPasswordOtpApi(email, otpValue);
-                      },
                     ),
-                  ),
+                    SizedBox(height: size.width * numD02),
 
-                  SizedBox(height: size.width * numD07),
+                    /// Subtext
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "We’ve sent a 5-digit verification code to ",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: size.width * numD036,
+                              fontFamily: 'AirbnbCereal_W_Lt',
+                            ),
+                          ),
+                          TextSpan(
+                            text: email,
+                            style: TextStyle(
+                              color: colorThemePink,
+                              fontFamily: 'AirbnbCereal_W_Bd',
+                              fontSize: size.width * numD036,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: size.width * numD08),
 
-                  // Countdown timer
-                  if (secondsLeft != 0)
+                    /// ✅ OTP FIELD CENTERED
+                    Center(
+                      child: SizedBox(
+                        width: size.width * 0.7, // adjust spacing
+                        child: OtpPinField(
+                          key: otpPinController,
+                          onSubmit: (pin) => debugPrint("Entered OTP: $pin"),
+                          onChange: (pin) => debugPrint("OTP Changed: $pin"),
+                          otpPinFieldStyle: OtpPinFieldStyle(
+                            defaultFieldBorderColor: colorTextFieldBorder,
+                            activeFieldBorderColor: colorTextFieldIcon,
+                            defaultFieldBackgroundColor: colorLightGrey,
+                            activeFieldBackgroundColor: colorLightGrey,
+                            fieldBorderRadius: size.width * numD02,
+                            fieldBorderWidth: 0.5,
+                          ),
+                          maxLength: 5,
+                          showCursor: true,
+                          cursorColor: colorTextFieldIcon,
+                          showCustomKeyboard: false,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          otpPinFieldDecoration: OtpPinFieldDecoration.custom,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: size.width * numD1),
+
+                    /// Verify OTP Button
+                    Container(
+                      width: size.width,
+                      height: size.width * (isIpad ? numD1 : numD14),
+                      child: commonElevatedButton(
+                        "Verify OTP",
+                        size,
+                        commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD035,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        commonButtonStyle(size, colorThemePink),
+                        () async {
+                          String otpValue =
+                              otpPinController.currentState?.controller.text ??
+                                  "";
+                          if (otpValue.isEmpty || otpValue.length < 5) {
+                            showSnackBar("Error",
+                                "Please enter the 5-digit OTP", Colors.red);
+                            return;
+                          }
+                          verifyForgotPasswordOtpApi(email, otpValue);
+                        },
+                      ),
+                    ),
+                    SizedBox(height: size.width * numD07),
+
+                    /// Timer Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -491,70 +485,58 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         ),
                       ],
                     ),
+                    SizedBox(height: size.width * numD06),
 
-                  if (secondsLeft != 0) SizedBox(height: size.width * numD06),
-
-                  // Resend OTP
-                  if (secondsLeft == 0)
-                    TextButton(
-                      onPressed: () {
-                        // ✅ Close only bottom sheet, not screen
-                        Navigator.pop(bottomSheetContext);
-
-                        // ✅ Stop timer
-                        localTimer?.cancel();
-
-                        // ✅ Call resend logic
-                        forgotPasswordApi();
-
-                        // ✅ Restart resend timer logic
-                        myTimer?.cancel();
-                        startResendTime();
-                      },
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: otpNotReceivedText,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD04),
-                            ),
-                            WidgetSpan(
-                                child: SizedBox(width: size.width * 0.01)),
-                            TextSpan(
-                              text: clickHereText,
-                              style: TextStyle(
-                                color: colorThemePink,
-                                fontSize: size.width * numD038,
-                                fontWeight: FontWeight.w500,
+                    /// Resend Button
+                    showResend
+                        ? TextButton(
+                            onPressed: () {
+                              forgotPasswordApi();
+                              myTimer?.cancel();
+                              startResendTime();
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: otpNotReceivedText,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD04),
+                                  ),
+                                  WidgetSpan(
+                                      child:
+                                          SizedBox(width: size.width * 0.01)),
+                                  TextSpan(
+                                    text: clickHereText,
+                                    style: TextStyle(
+                                      color: colorThemePink,
+                                      fontSize: size.width * numD038,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  WidgetSpan(
+                                      child:
+                                          SizedBox(width: size.width * 0.01)),
+                                  TextSpan(
+                                    text: anotherOneText,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD04,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            WidgetSpan(
-                                child: SizedBox(width: size.width * 0.01)),
-                            TextSpan(
-                              text: anotherOneText,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD04,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                  SizedBox(height: size.width * numD06),
-                ],
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
               ),
             );
           },
         );
       },
-    ).whenComplete(() {
-      // Cleanup when sheet is closed
-      _isBottomSheetOpen = false;
-    });
+    );
   }
 }

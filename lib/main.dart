@@ -14,7 +14,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_foreground_service/flutter_foreground_service.dart';
+// import 'package:flutter_foreground_service/flutter_foreground_service.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http_parser/http_parser.dart';
@@ -214,7 +215,8 @@ Future<void> uploadMediaUsingDio(
   List filePathList,
   String imageParams,
 ) async {
-  ForegroundService().start();
+  // ForegroundService().start();
+  await WakelockPlus.enable();
   Dio dio = Dio(
     BaseOptions(
       baseUrl: baseUrl,
@@ -317,12 +319,14 @@ Future<void> uploadMediaUsingDio(
       debugPrint("Upload failed with status code: ${response.statusCode}");
       debugPrint("add content error:::: ${jsonDecode(response.data)}");
     }
-    ForegroundService().stop();
+    // ForegroundService().stop();
   } catch (e) {
     debugPrint("Error: $e");
     _failedNotification(
         localNotificationService.flutterLocalNotificationsPlugin);
-    ForegroundService().stop();
+    await WakelockPlus.disable();
+  } finally {
+    await WakelockPlus.disable();
   }
 }
 

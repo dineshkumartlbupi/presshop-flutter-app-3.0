@@ -152,7 +152,7 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
                             decoration: BoxDecoration(
                               color:
                                   selectedCountryCode == countryItem.countryCode
-                                      ? Colors.blue
+                                      ? colorThemePink
                                       : Colors.grey[300],
                               borderRadius:
                                   BorderRadius.circular(size.width * numD02),

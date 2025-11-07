@@ -46,12 +46,23 @@ class _ChatBotScreenState extends State<ChatBotScreen>
     super.initState();
   }
 
+  // initDialogFlow() async {
+  //   DialogFlowtter.fromFile().then((instance) => dialogFlowtter = instance);
+  // }
+
   initDialogFlow() async {
-    DialogFlowtter.fromFile().then((instance) => dialogFlowtter = instance);
+    dialogFlowtter = DialogFlowtter();
+    setState(() {});
   }
 
+  // initDialogFlow() async {
+  //   final credentials =
+  //       await DialogAuthCredentials.fromFile('assets/dialog_flow_auth.json');
+  //   dialogFlowtter = DialogFlowtter(credentials: credentials);
+  // }
+
   dispose() {
-    dialogFlowtter.dispose();
+    // dialogFlowtter.dispose();
     super.dispose();
   }
 

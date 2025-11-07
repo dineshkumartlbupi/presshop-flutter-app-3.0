@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoder2/geocoder2.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:path/path.dart' as path;
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
@@ -92,44 +92,58 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
   void proceedWithLocation(LocationData? locationData) async {
     if (locationData != null) {
       debugPrint("NotNull");
-      if (locationData.latitude != null) {
+      if (locationData.latitude != null && locationData.longitude != null) {
         var latitude = locationData.latitude!;
         var longitude = locationData.longitude!;
-        GeoData data = await Geocoder2.getDataFromCoordinates(
-            latitude: latitude,
-            longitude: longitude,
-            googleMapApiKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
 
-        debugPrint("address=====> ${data.address}");
-        sharedPreferences!.setDouble(currentLat, latitude);
-        sharedPreferences!.setDouble(currentLon, longitude);
-        sharedPreferences!.setString(currentAddress, data.address);
-        sharedPreferences!.setString(currentCountry, data.country);
-        sharedPreferences!.setString(currentState, data.state);
-        sharedPreferences!.setString(currentCity, data.city);
-        sharedPreferences!.setString(contryCode, data.countryCode);
+        try {
+          // Get placemarks from coordinates
+          List<Placemark> placemarks =
+              await placemarkFromCoordinates(latitude, longitude);
+          Placemark place = placemarks.first;
 
-        //callUpdateCurrentData();
-        setState(() {
-          for (var media in mediaList) {
-            media.latitude = media.latitude.isNotEmpty
-                ? media.latitude
-                : latitude.toString();
-            media.longitude = media.longitude.isNotEmpty
-                ? media.longitude
-                : longitude.toString();
-            media.location =
-                media.location.isNotEmpty ? media.location : data.address;
-            mediaAddress =
-                media.location.isNotEmpty ? media.location : data.address;
-          }
-          country = data.country;
-          state = data.state;
-          city = data.city;
-          this.latitude = latitude.toString();
-          this.longitude = longitude.toString();
-          isLocationFetching = false;
-        });
+          String address =
+              "${place.street ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
+
+          debugPrint("address=====> $address");
+
+          // Save in SharedPreferences
+          sharedPreferences!.setDouble(currentLat, latitude);
+          sharedPreferences!.setDouble(currentLon, longitude);
+          sharedPreferences!.setString(currentAddress, address);
+          sharedPreferences!.setString(currentCountry, place.country ?? '');
+          sharedPreferences!
+              .setString(currentState, place.administrativeArea ?? '');
+          sharedPreferences!.setString(currentCity, place.locality ?? '');
+          sharedPreferences!.setString(contryCode, place.isoCountryCode ?? '');
+
+          // Update UI and local variables
+          setState(() {
+            for (var media in mediaList) {
+              media.latitude = media.latitude.isNotEmpty
+                  ? media.latitude
+                  : latitude.toString();
+              media.longitude = media.longitude.isNotEmpty
+                  ? media.longitude
+                  : longitude.toString();
+              media.location =
+                  media.location.isNotEmpty ? media.location : address;
+              mediaAddress =
+                  media.location.isNotEmpty ? media.location : address;
+            }
+
+            country = place.country ?? '';
+            state = place.administrativeArea ?? '';
+            city = place.locality ?? '';
+            this.latitude = latitude.toString();
+            this.longitude = longitude.toString();
+            isLocationFetching = false;
+          });
+        } catch (e) {
+          debugPrint("Error fetching location data: $e");
+          showSnackBar(
+              "Location Error", "Unable to fetch address", Colors.black);
+        }
       }
     } else {
       debugPrint("Null-ll");

@@ -22,7 +22,7 @@ class LeadershipTableWidget extends StatelessWidget {
               top: size.height * numD045,
               left: 0,
               child: profileImageWidget(
-                  isLeader: false, size: size, member: memberList[2])),
+                  isLeader: false, size: size, member: memberList[1])),
           Positioned(
               left: size.width * numD32,
               bottom: 15,
@@ -59,12 +59,12 @@ class LeadershipTableWidget extends StatelessWidget {
               top: size.height * numD08,
               right: 0,
               child: profileImageWidget(
-                  isLeader: false, size: size, member: memberList[1])),
+                  isLeader: false, size: size, member: memberList[2])),
           Align(
             alignment: Alignment.bottomCenter,
             child: Image.asset(
               "${iconsPath}leader_table_icon.png",
-              color: Color(0xFFF3F5F4),
+              color: Color.fromARGB(255, 234, 234, 234),
               fit: BoxFit.scaleDown,
             ),
           ),

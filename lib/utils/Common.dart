@@ -43,6 +43,7 @@ const oldappUrl = "https://developers.promaticstechnologies.com/";
 const socketUrl = "https://datastream22843-r.presshop.news:4005";
 
 //--------staging urls------- ---------
+
 // const baseUrl = "https://dev-api.presshop.news:5019/";
 // const adminBaseUrl = "https://dev-api.presshop.news:5020/";
 
@@ -336,6 +337,9 @@ const appRefreshTokenReq = 86;
 const leadershipurl = "hopper/getLeaderboardList";
 const leadershipReq = 87;
 
+const verifyForgotPasswordOTPUrl = "auth/hopper/verifyForgotPasswordOTP";
+const verifyForgotPasswordOtpRequest = 89;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";
@@ -394,7 +398,7 @@ const textData =
 const goodMorningText = "Good morning";
 const loginSubTitleText =
     "Welcome back, you were missed. Please hop right back in";
-const loginUserHint = "Enter user name / phone number";
+const loginUserHint = "Enter user name / phone number / email Id";
 const enterPasswordHint = "Enter password";
 const enterNewPasswordHint = "Enter new password";
 const requiredText = "Required";

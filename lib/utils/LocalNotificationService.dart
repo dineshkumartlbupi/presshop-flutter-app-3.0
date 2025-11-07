@@ -6,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:gallery_saver/files.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
@@ -91,6 +90,25 @@ void onDidReceiveNotificationResponse(
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  /// QUICK TEST NOTIFICATION — tap any button to see it
+  Future<void> showTestNotification() async {
+    await flutterLocalNotificationsPlugin.show(
+      999,
+      'Test Notification',
+      'Your notifications are WORKING!',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'upload_channel',
+          'Video Upload',
+          importance: Importance.high,
+          priority: Priority.high,
+          playSound: true,
+          icon: 'ic_noti_logo',
+        ),
+      ),
+    );
+  }
 
   Future<void> setup() async {
     /// Notification Permission For Android 12 or Android 13 Versions
