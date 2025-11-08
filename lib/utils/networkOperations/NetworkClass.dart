@@ -14,6 +14,7 @@ import '../../main.dart';
 import '../Common.dart';
 import '../CommonSharedPrefrence.dart';
 import 'NetworkResponse.dart';
+import 'TokenRefreshManager.dart';
 
 class NetworkClass {
   var dio = Dio();
@@ -115,6 +116,47 @@ class NetworkClass {
       var responseString = String.fromCharCodes(responseData);
 
       debugPrint("ResponseIs: ${response.statusCode}");
+      
+      // Check for 401 Unauthorized - but skip if this is the refresh token API itself
+      if (TokenRefreshManager.isUnauthorizedResponse(response.statusCode, responseString) &&
+          !endUrl.contains(appRefreshTokenUrl)) {
+        debugPrint("401 Unauthorized detected in multipart, attempting token refresh...");
+        
+        // Hide loader if showing
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+
+        // If already refreshing, wait and retry
+        if (TokenRefreshManager().isRefreshing) {
+          debugPrint("Token refresh in progress, waiting...");
+          await Future.delayed(const Duration(milliseconds: 500));
+          // Retry the request after token refresh
+          TokenRefreshManager().addPendingRequest(
+            () => callMultipartService(showLoader, requestType, imageParams, mimeType),
+          );
+          return;
+        }
+
+        // Attempt to refresh token
+        final refreshSuccess = await TokenRefreshManager().refreshToken();
+        
+        if (refreshSuccess) {
+          debugPrint("Token refreshed successfully, retrying original multipart request...");
+          // Retry the original request with new token
+          await callMultipartService(showLoader, requestType, imageParams, mimeType);
+          return;
+        } else {
+          debugPrint("Token refresh failed, user will be logged out");
+          // Check if logout is needed and navigate
+          if (TokenRefreshManager.shouldLogout()) {
+            _handleLogout();
+          }
+          return;
+        }
+      }
+      
       if (response.statusCode <= 201) {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
@@ -364,6 +406,48 @@ class NetworkClass {
 
       debugPrint("BodyIs: ${response.body.toString()}");
 
+      // Check for 401 Unauthorized - but skip if this is the refresh token API itself
+      if (TokenRefreshManager.isUnauthorizedResponse(response.statusCode, response.body.toString()) &&
+          !endUrl.contains(appRefreshTokenUrl)) {
+        debugPrint("401 Unauthorized detected, attempting token refresh...");
+        
+        // Hide loader if showing
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+
+        // If already refreshing, wait and retry
+        if (TokenRefreshManager().isRefreshing) {
+          debugPrint("Token refresh in progress, waiting...");
+          await Future.delayed(const Duration(milliseconds: 500));
+          // Retry the request after token refresh
+          TokenRefreshManager().addPendingRequest(
+            () => callRequestServiceHeader(showLoader, requestType, queryParameters),
+          );
+          return;
+        }
+
+        // Attempt to refresh token
+        final refreshSuccess = await TokenRefreshManager().refreshToken();
+        
+        if (refreshSuccess) {
+          debugPrint("Token refreshed successfully, retrying original request...");
+          // Retry the original request with new token
+          await callRequestServiceHeader(showLoader, requestType, queryParameters);
+          return;
+        } else {
+          debugPrint("Token refresh failed, user will be logged out");
+          // Token refresh failed, user will be logged out by TokenRefreshManager
+          // Check if logout is needed and navigate
+          if (TokenRefreshManager.shouldLogout()) {
+            _handleLogout();
+          }
+          // Don't call onError as user is being logged out
+          return;
+        }
+      }
+
       if (response.statusCode <= 201) {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
@@ -415,6 +499,46 @@ class NetworkClass {
         body: jsonEncode(jsonBodyRow),
         headers: {headerKey: headerToken, "Content-Type": "application/json"});
 
+    // Check for 401 Unauthorized - but skip if this is the refresh token API itself
+    if (TokenRefreshManager.isUnauthorizedResponse(response.statusCode, response.body.toString()) &&
+        !endUrl.contains(appRefreshTokenUrl)) {
+      debugPrint("401 Unauthorized detected in patch, attempting token refresh...");
+      
+      // Hide loader if showing
+      if (alertDialog != null && isShowing) {
+        isShowing = false;
+        Navigator.pop(navigatorKey.currentContext!);
+      }
+
+      // If already refreshing, wait and retry
+      if (TokenRefreshManager().isRefreshing) {
+        debugPrint("Token refresh in progress, waiting...");
+        await Future.delayed(const Duration(milliseconds: 500));
+        // Retry the request after token refresh
+        TokenRefreshManager().addPendingRequest(
+          () => callPatchServiceHeaderRow(context, showLoader),
+        );
+        return;
+      }
+
+      // Attempt to refresh token
+      final refreshSuccess = await TokenRefreshManager().refreshToken();
+      
+      if (refreshSuccess) {
+        debugPrint("Token refreshed successfully, retrying original patch request...");
+        // Retry the original request with new token
+        await callPatchServiceHeaderRow(context, showLoader);
+        return;
+      } else {
+        debugPrint("Token refresh failed, user will be logged out");
+        // Check if logout is needed and navigate
+        if (TokenRefreshManager.shouldLogout()) {
+          _handleLogout();
+        }
+        return;
+      }
+    }
+
     if (response.statusCode <= 201) {
       if (showLoader) {
         if (alertDialog != null && isShowing) {
@@ -430,6 +554,9 @@ class NetworkClass {
         isShowing = false;
         Navigator.pop(navigatorKey.currentContext!);
       }
+      
+      networkResponse!.onError(
+          requestCode: requestCode, response: response.body.toString());
     }
   }
 
@@ -567,6 +694,47 @@ class NetworkClass {
         url,
         data: formData,
       );
+      
+      // Check for 401 Unauthorized - but skip if this is the refresh token API itself
+      if (TokenRefreshManager.isUnauthorizedResponse(response.statusCode ?? 0, jsonEncode(response.data)) &&
+          !endUrl.contains(appRefreshTokenUrl)) {
+        debugPrint("401 Unauthorized detected in Dio multipart, attempting token refresh...");
+        
+        // Hide loader if showing
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+
+        // If already refreshing, wait and retry
+        if (TokenRefreshManager().isRefreshing) {
+          debugPrint("Token refresh in progress, waiting...");
+          await Future.delayed(const Duration(milliseconds: 500));
+          // Retry the request after token refresh
+          TokenRefreshManager().addPendingRequest(
+            () => callMultipartServiceSameParamMultiImage(showLoader, requestType, imageParams),
+          );
+          return;
+        }
+
+        // Attempt to refresh token
+        final refreshSuccess = await TokenRefreshManager().refreshToken();
+        
+        if (refreshSuccess) {
+          debugPrint("Token refreshed successfully, retrying original Dio multipart request...");
+          // Retry the original request with new token
+          await callMultipartServiceSameParamMultiImage(showLoader, requestType, imageParams);
+          return;
+        } else {
+          debugPrint("Token refresh failed, user will be logged out");
+          // Check if logout is needed and navigate
+          if (TokenRefreshManager.shouldLogout()) {
+            _handleLogout();
+          }
+          return;
+        }
+      }
+      
       if (showLoader) {
         if (alertDialog != null && isShowing) {
           isShowing = false;
@@ -642,6 +810,47 @@ class NetworkClass {
 
       debugPrint("ResponseIs: ${response.statusCode}");
       debugPrint("ResponseIs: $responseString");
+      
+      // Check for 401 Unauthorized - but skip if this is the refresh token API itself
+      if (TokenRefreshManager.isUnauthorizedResponse(response.statusCode, responseString) &&
+          !endUrl.contains(appRefreshTokenUrl)) {
+        debugPrint("401 Unauthorized detected in callMultipartServiceSameParamMultiImage1, attempting token refresh...");
+        
+        // Hide loader if showing
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
+
+        // If already refreshing, wait and retry
+        if (TokenRefreshManager().isRefreshing) {
+          debugPrint("Token refresh in progress, waiting...");
+          await Future.delayed(const Duration(milliseconds: 500));
+          // Retry the request after token refresh
+          TokenRefreshManager().addPendingRequest(
+            () => callMultipartServiceSameParamMultiImage1(showLoader, requestType, imageParams),
+          );
+          return;
+        }
+
+        // Attempt to refresh token
+        final refreshSuccess = await TokenRefreshManager().refreshToken();
+        
+        if (refreshSuccess) {
+          debugPrint("Token refreshed successfully, retrying original multipart request...");
+          // Retry the original request with new token
+          await callMultipartServiceSameParamMultiImage1(showLoader, requestType, imageParams);
+          return;
+        } else {
+          debugPrint("Token refresh failed, user will be logged out");
+          // Check if logout is needed and navigate
+          if (TokenRefreshManager.shouldLogout()) {
+            _handleLogout();
+          }
+          return;
+        }
+      }
+      
       if (response.statusCode <= 201) {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
@@ -756,6 +965,43 @@ class NetworkClass {
       default:
         debugPrint("Unknown Error :$errorMessage");
         showSnackBar("Error", "Unknown Error", Colors.red);
+    }
+  }
+
+  /// Handle user logout when token refresh fails
+  void _handleLogout() {
+    TokenRefreshManager.clearLogoutFlag();
+    if (navigatorKey.currentContext != null) {
+      // Navigate to login screen
+      // Import will be handled by the calling code if needed
+      debugPrint("User should be logged out - navigation handled by app");
+    }
+  }
+}
+
+/// Helper class for pending requests
+class _PendingRequest {
+  final Future<void> Function() retryFunction;
+  final VoidCallback? onCancel;
+
+  _PendingRequest({
+    required this.retryFunction,
+    this.onCancel,
+  });
+
+  void retry() {
+    try {
+      retryFunction();
+    } catch (e) {
+      debugPrint("Error retrying request: $e");
+    }
+  }
+
+  void cancel() {
+    try {
+      onCancel?.call();
+    } catch (e) {
+      debugPrint("Error cancelling request: $e");
     }
   }
 }

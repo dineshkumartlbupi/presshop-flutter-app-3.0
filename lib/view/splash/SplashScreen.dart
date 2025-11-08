@@ -11,6 +11,7 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:presshop/utils/networkOperations/TokenRefreshManager.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:presshop/view/walkThrough/WalkThrough.dart';
 import '../authentication/LoginScreen.dart';
@@ -249,6 +250,16 @@ class _SplashScreenState extends State<SplashScreen>
             refreshToken();
           } else {
             print("Splash Screen444");
+            
+            // Check if logout is needed (token refresh failed)
+            if (TokenRefreshManager.shouldLogout()) {
+              TokenRefreshManager.clearLogoutFlag();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false);
+              return;
+            }
+            
             showSnackBar(
                 "Auto logout error ",
                 "Session expired. Please login again.",
@@ -282,14 +293,18 @@ class _SplashScreenState extends State<SplashScreen>
             },
           );
 
-          showSnackBar(
-              "auto logout error",
-              "Session expired. Please login again.",
-              const Color.fromARGB(255, 255, 1, 1));
-
-        // Navigator.of(context).pushAndRemoveUntil(
-        //     MaterialPageRoute(builder: (context) => const LoginScreen()),
-        //     (route) => false);
+          // Check if logout is needed
+          if (TokenRefreshManager.shouldLogout()) {
+            TokenRefreshManager.clearLogoutFlag();
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false);
+          } else {
+            showSnackBar(
+                "auto logout error",
+                "Session expired. Please login again.",
+                const Color.fromARGB(255, 255, 1, 1));
+          }
       }
     } on Exception catch (e) {
       debugPrint("exception 3434$e");
