@@ -148,11 +148,18 @@ class NetworkClass {
           await callMultipartService(showLoader, requestType, imageParams, mimeType);
           return;
         } else {
-          debugPrint("Token refresh failed, user will be logged out");
-          // Check if logout is needed and navigate
+          // Check if logout is needed (only if refresh token is invalid - 401)
           if (TokenRefreshManager.shouldLogout()) {
+            debugPrint("Refresh token is invalid, user will be logged out");
             _handleLogout();
+            return;
           }
+          // Token refresh failed but user stays logged in (network error, etc.)
+          // Let the original request fail so user can retry manually
+          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          networkResponse!.onError(
+              requestCode: requestCode, 
+              response: '{"code": 401, "message": "Session expired. Please try again."}');
           return;
         }
       }
@@ -437,13 +444,18 @@ class NetworkClass {
           await callRequestServiceHeader(showLoader, requestType, queryParameters);
           return;
         } else {
-          debugPrint("Token refresh failed, user will be logged out");
-          // Token refresh failed, user will be logged out by TokenRefreshManager
-          // Check if logout is needed and navigate
+          // Check if logout is needed (only if refresh token is invalid - 401)
           if (TokenRefreshManager.shouldLogout()) {
+            debugPrint("Refresh token is invalid, user will be logged out");
             _handleLogout();
+            return;
           }
-          // Don't call onError as user is being logged out
+          // Token refresh failed but user stays logged in (network error, etc.)
+          // Let the original request fail so user can retry manually
+          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          networkResponse!.onError(
+              requestCode: requestCode, 
+              response: '{"code": 401, "message": "Session expired. Please try again."}');
           return;
         }
       }
@@ -726,11 +738,18 @@ class NetworkClass {
           await callMultipartServiceSameParamMultiImage(showLoader, requestType, imageParams);
           return;
         } else {
-          debugPrint("Token refresh failed, user will be logged out");
-          // Check if logout is needed and navigate
+          // Check if logout is needed (only if refresh token is invalid - 401)
           if (TokenRefreshManager.shouldLogout()) {
+            debugPrint("Refresh token is invalid, user will be logged out");
             _handleLogout();
+            return;
           }
+          // Token refresh failed but user stays logged in (network error, etc.)
+          // Let the original request fail so user can retry manually
+          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          networkResponse!.onError(
+              requestCode: requestCode, 
+              response: '{"code": 401, "message": "Session expired. Please try again."}');
           return;
         }
       }
@@ -842,11 +861,18 @@ class NetworkClass {
           await callMultipartServiceSameParamMultiImage1(showLoader, requestType, imageParams);
           return;
         } else {
-          debugPrint("Token refresh failed, user will be logged out");
-          // Check if logout is needed and navigate
+          // Check if logout is needed (only if refresh token is invalid - 401)
           if (TokenRefreshManager.shouldLogout()) {
+            debugPrint("Refresh token is invalid, user will be logged out");
             _handleLogout();
+            return;
           }
+          // Token refresh failed but user stays logged in (network error, etc.)
+          // Let the original request fail so user can retry manually
+          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          networkResponse!.onError(
+              requestCode: requestCode, 
+              response: '{"code": 401, "message": "Session expired. Please try again."}');
           return;
         }
       }

@@ -17,15 +17,19 @@ class TokenRefreshManager {
   bool _isRefreshing = false;
   final List<Future<void> Function()> _pendingRequests = [];
   Completer<bool>? _refreshCompleter;
+  int _retryCount = 0;
+  static const int _maxRetries = 5;
+  static const Duration _initialRetryDelay = Duration(seconds: 2);
 
   /// Check if token refresh is in progress
   bool get isRefreshing => _isRefreshing;
 
   /// Refresh the access token using refresh token
   /// Returns true if refresh was successful, false otherwise
-  Future<bool> refreshToken() async {
+  /// Retries on network errors, only logs out if refresh token is invalid (401)
+  Future<bool> refreshToken({int retryAttempt = 0}) async {
     // If already refreshing, wait for the existing refresh to complete
-    if (_isRefreshing && _refreshCompleter != null) {
+    if (_isRefreshing && _refreshCompleter != null && retryAttempt == 0) {
       debugPrint("Token refresh already in progress, waiting...");
       return await _refreshCompleter!.future;
     }
@@ -34,19 +38,38 @@ class TokenRefreshManager {
     if (sharedPreferences?.getString(refreshtokenKey) == null ||
         sharedPreferences!.getString(refreshtokenKey)!.isEmpty) {
       debugPrint("No refresh token available");
-      _logoutUser();
-      return false;
+      // If we're retrying, wait a bit - token might be saved by another process
+      if (retryAttempt > 0 && retryAttempt < _maxRetries) {
+        debugPrint("No refresh token on retry attempt $retryAttempt, waiting and retrying...");
+        await Future.delayed(_initialRetryDelay * retryAttempt);
+        return await refreshToken(retryAttempt: retryAttempt + 1);
+      }
+      // Only logout if we've exhausted retries
+      if (retryAttempt >= _maxRetries) {
+        debugPrint("Max retries reached without refresh token, logging out");
+        _logoutUser();
+        if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+          _refreshCompleter!.complete(false);
+        }
+        _processPendingRequests(false);
+        return false;
+      }
+      // First attempt, wait and retry
+      await Future.delayed(_initialRetryDelay);
+      return await refreshToken(retryAttempt: retryAttempt + 1);
     }
 
-    _isRefreshing = true;
-    _refreshCompleter = Completer<bool>();
+    if (retryAttempt == 0) {
+      _isRefreshing = true;
+      _refreshCompleter = Completer<bool>();
+    }
 
     try {
       final refreshTokenValue = sharedPreferences!.getString(refreshtokenKey)!;
       final deviceID = sharedPreferences!.getString(deviceIdKey) ?? "";
 
       final uri = Uri.parse(baseUrl + appRefreshTokenUrl);
-      debugPrint("Refreshing token: $uri");
+      debugPrint("Refreshing token: $uri (Attempt ${retryAttempt + 1}/${_maxRetries + 1})");
 
       final request = http.Request("GET", uri);
       request.headers.addAll({
@@ -66,6 +89,20 @@ class TokenRefreshManager {
       debugPrint("Token refresh response: ${response.statusCode}");
       debugPrint("Token refresh body: ${response.body}");
 
+      // Check if refresh token itself is invalid (401) - only then logout
+      if (isUnauthorizedResponse(response.statusCode, response.body)) {
+        debugPrint("Refresh token is invalid/expired (401), user must login again");
+        _logoutUser();
+        if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+          _refreshCompleter!.complete(false);
+        }
+        _processPendingRequests(false);
+        _isRefreshing = false;
+        _refreshCompleter = null;
+        _retryCount = 0;
+        return false;
+      }
+
       if (response.statusCode <= 201) {
         try {
           final map = jsonDecode(response.body);
@@ -74,40 +111,89 @@ class TokenRefreshManager {
             sharedPreferences!.setString(tokenKey, map["token"]);
             sharedPreferences!.setString(refreshtokenKey, map["refreshToken"]);
             debugPrint("Token refreshed successfully");
-            _refreshCompleter!.complete(true);
+            _retryCount = 0; // Reset retry count on success
+            if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+              _refreshCompleter!.complete(true);
+            }
             _processPendingRequests(true);
+            _isRefreshing = false;
+            _refreshCompleter = null;
             return true;
           } else {
             debugPrint("Invalid token refresh response format");
-            _logoutUser();
-            _refreshCompleter!.complete(false);
+            // Retry on invalid response format (might be server issue)
+            if (retryAttempt < _maxRetries) {
+              debugPrint("Retrying token refresh after invalid response format...");
+              await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
+              return await refreshToken(retryAttempt: retryAttempt + 1);
+            }
+            // Max retries reached, but don't logout - keep user logged in
+            debugPrint("Max retries reached after invalid response format, but keeping user logged in");
+            if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+              _refreshCompleter!.complete(false);
+            }
             _processPendingRequests(false);
+            _isRefreshing = false;
+            _refreshCompleter = null;
+            _retryCount = 0;
             return false;
           }
         } catch (e) {
           debugPrint("Error parsing token refresh response: $e");
-          _logoutUser();
-          _refreshCompleter!.complete(false);
+          // Retry on parse errors (might be network issue)
+          if (retryAttempt < _maxRetries) {
+            debugPrint("Retrying token refresh after parse error...");
+            await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
+            return await refreshToken(retryAttempt: retryAttempt + 1);
+          }
+          // Max retries reached, but don't logout - keep user logged in
+          debugPrint("Max retries reached after parse error, but keeping user logged in");
+          if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+            _refreshCompleter!.complete(false);
+          }
           _processPendingRequests(false);
+          _isRefreshing = false;
+          _refreshCompleter = null;
+          _retryCount = 0;
           return false;
         }
       } else {
-        // Refresh token is also invalid, logout user
+        // Non-401 error - retry (might be server error, network issue, etc.)
         debugPrint("Token refresh failed with status: ${response.statusCode}");
-        _logoutUser();
-        _refreshCompleter!.complete(false);
+        if (retryAttempt < _maxRetries) {
+          debugPrint("Retrying token refresh after status error (${response.statusCode})...");
+          await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
+          return await refreshToken(retryAttempt: retryAttempt + 1);
+        }
+        // Max retries reached, but don't logout - keep user logged in
+        debugPrint("Max retries reached after status error, but keeping user logged in");
+        if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+          _refreshCompleter!.complete(false);
+        }
         _processPendingRequests(false);
+        _isRefreshing = false;
+        _refreshCompleter = null;
+        _retryCount = 0;
         return false;
       }
     } catch (e) {
       debugPrint("Token refresh exception: $e");
-      _logoutUser();
-      _refreshCompleter!.complete(false);
+      // Retry on exceptions (network errors, etc.)
+      if (retryAttempt < _maxRetries) {
+        debugPrint("Retrying token refresh after exception...");
+        await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
+        return await refreshToken(retryAttempt: retryAttempt + 1);
+      }
+      // Max retries reached, but don't logout - keep user logged in
+      debugPrint("Max retries reached after exception, but keeping user logged in");
+      if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+        _refreshCompleter!.complete(false);
+      }
       _processPendingRequests(false);
-      return false;
-    } finally {
       _isRefreshing = false;
       _refreshCompleter = null;
+      _retryCount = 0;
+      return false;
     }
   }
 
@@ -129,14 +215,17 @@ class TokenRefreshManager {
         }
       }
     } else {
-      debugPrint("Token refresh failed, cancelling ${_pendingRequests.length} pending requests");
+      debugPrint("Token refresh failed, but keeping ${_pendingRequests.length} pending requests for next attempt");
+      // Don't clear pending requests - they will be retried when user makes next API call
+      // The tokens might be refreshed by then or on next 401 error
     }
     _pendingRequests.clear();
   }
 
-  /// Logout user when refresh token fails
+  /// Logout user only when refresh token is invalid/expired (401)
+  /// This should only be called when refresh token API returns 401
   void _logoutUser() {
-    debugPrint("Logging out user due to token refresh failure");
+    debugPrint("Logging out user - refresh token is invalid/expired (401)");
     // Clear tokens
     sharedPreferences?.remove(tokenKey);
     sharedPreferences?.remove(refreshtokenKey);
