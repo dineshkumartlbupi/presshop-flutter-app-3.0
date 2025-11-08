@@ -808,20 +808,21 @@ class MenuScreenState extends State<MenuScreen>
         case removeDeviceReq:
           var data = jsonDecode(response);
           debugPrint("removeDeviceReq-Success: $data");
-          rememberMe = false;
-          debugPrint("rememberMe: $rememberMe");
-          sharedPreferences!.clear();
-          googleSignIn.signOut();
+          // NEVER logout automatically - removing device token should not logout user
+          // Just show success message - user stays logged in
+          debugPrint("Device token removed successfully, but keeping user logged in");
+          showSnackBar(
+              "Success",
+              "Device removed successfully",
+              Colors.green);
           await FirebaseAnalytics.instance.logEvent(
-            name: 'auto_logout from menu screen',
+            name: 'device_token_removed',
             parameters: {
-              'message': 'User logged out successfully',
+              'message': 'Device token removed successfully',
               'timestamp': DateTime.now().toIso8601String(),
             },
           );
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false);
+          // User stays logged in - no navigation to login screen
           break;
       }
     } on Exception catch (e) {

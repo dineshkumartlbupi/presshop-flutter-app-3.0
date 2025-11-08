@@ -251,20 +251,9 @@ class _SplashScreenState extends State<SplashScreen>
           } else {
             print("Splash Screen444");
             
-            // Check if logout is needed (token refresh failed)
-            if (TokenRefreshManager.shouldLogout()) {
-              TokenRefreshManager.clearLogoutFlag();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false);
-              return;
-            }
-            
-            showSnackBar(
-                "Auto logout error ",
-                "Session expired. Please login again.",
-                const Color.fromARGB(255, 56, 1, 255));
-            debugPrint("Auto logout error");
+            // NEVER logout automatically - keep user logged in
+            // Just retry the profile API
+            debugPrint("Profile API failed, but keeping user logged in and retrying...");
 
             showSnackBar("Profile error",
                 "Could not fetch profile. Retrying...", Colors.red);
@@ -293,18 +282,13 @@ class _SplashScreenState extends State<SplashScreen>
             },
           );
 
-          // Check if logout is needed
-          if (TokenRefreshManager.shouldLogout()) {
-            TokenRefreshManager.clearLogoutFlag();
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
-          } else {
-            showSnackBar(
-                "auto logout error",
-                "Session expired. Please login again.",
-                const Color.fromARGB(255, 255, 1, 1));
-          }
+          // NEVER logout automatically - keep user logged in
+          // Just show a message and let user retry
+          debugPrint("Refresh token API failed, but keeping user logged in");
+          showSnackBar(
+              "Session Error",
+              "Unable to refresh session. Please try again later.",
+              const Color.fromARGB(255, 255, 1, 1));
       }
     } on Exception catch (e) {
       debugPrint("exception 3434$e");

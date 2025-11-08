@@ -18,7 +18,7 @@ class TokenRefreshManager {
   final List<Future<void> Function()> _pendingRequests = [];
   Completer<bool>? _refreshCompleter;
   int _retryCount = 0;
-  static const int _maxRetries = 5;
+  static const int _maxRetries = 20; // Increased retries to prevent logout
   static const Duration _initialRetryDelay = Duration(seconds: 2);
 
   /// Check if token refresh is in progress
@@ -38,25 +38,22 @@ class TokenRefreshManager {
     if (sharedPreferences?.getString(refreshtokenKey) == null ||
         sharedPreferences!.getString(refreshtokenKey)!.isEmpty) {
       debugPrint("No refresh token available");
-      // If we're retrying, wait a bit - token might be saved by another process
-      if (retryAttempt > 0 && retryAttempt < _maxRetries) {
+      // Keep retrying - token might be saved by another process or will be available later
+      if (retryAttempt < _maxRetries) {
         debugPrint("No refresh token on retry attempt $retryAttempt, waiting and retrying...");
-        await Future.delayed(_initialRetryDelay * retryAttempt);
+        await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
         return await refreshToken(retryAttempt: retryAttempt + 1);
       }
-      // Only logout if we've exhausted retries
-      if (retryAttempt >= _maxRetries) {
-        debugPrint("Max retries reached without refresh token, logging out");
-        _logoutUser();
-        if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-          _refreshCompleter!.complete(false);
-        }
-        _processPendingRequests(false);
-        return false;
+      // Max retries reached, but NEVER logout - keep user logged in
+      debugPrint("Max retries reached without refresh token, but keeping user logged in");
+      if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+        _refreshCompleter!.complete(false);
       }
-      // First attempt, wait and retry
-      await Future.delayed(_initialRetryDelay);
-      return await refreshToken(retryAttempt: retryAttempt + 1);
+      _processPendingRequests(false);
+      _isRefreshing = false;
+      _refreshCompleter = null;
+      _retryCount = 0;
+      return false;
     }
 
     if (retryAttempt == 0) {
@@ -89,10 +86,18 @@ class TokenRefreshManager {
       debugPrint("Token refresh response: ${response.statusCode}");
       debugPrint("Token refresh body: ${response.body}");
 
-      // Check if refresh token itself is invalid (401) - only then logout
+      // Even if refresh token returns 401, don't logout - keep retrying
+      // The token might be valid but server had a temporary issue
       if (isUnauthorizedResponse(response.statusCode, response.body)) {
-        debugPrint("Refresh token is invalid/expired (401), user must login again");
-        _logoutUser();
+        debugPrint("Refresh token API returned 401, but keeping user logged in and retrying...");
+        // Retry even on 401 - might be temporary server issue
+        if (retryAttempt < _maxRetries) {
+          debugPrint("Retrying token refresh after 401 response...");
+          await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
+          return await refreshToken(retryAttempt: retryAttempt + 1);
+        }
+        // Max retries reached, but NEVER logout - keep user logged in
+        debugPrint("Max retries reached after 401, but keeping user logged in");
         if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
           _refreshCompleter!.complete(false);
         }
@@ -222,22 +227,20 @@ class TokenRefreshManager {
     _pendingRequests.clear();
   }
 
-  /// Logout user only when refresh token is invalid/expired (401)
-  /// This should only be called when refresh token API returns 401
+  /// NOTE: This method is kept for reference but should NEVER be called automatically
+  /// Users should only be logged out through explicit user action (logout button)
+  /// This method is intentionally not used to prevent automatic logouts
   void _logoutUser() {
-    debugPrint("Logging out user - refresh token is invalid/expired (401)");
-    // Clear tokens
-    sharedPreferences?.remove(tokenKey);
-    sharedPreferences?.remove(refreshtokenKey);
-    rememberMe = false;
-    
-    // Set a flag that logout is needed - NetworkClass will handle navigation
-    sharedPreferences?.setBool("force_logout", true);
+    debugPrint("WARNING: _logoutUser() called - this should only happen on manual logout");
+    // This method is kept but should not be called automatically
+    // Only manual logout should clear tokens
   }
   
   /// Check if user should be logged out
+  /// Always returns false to prevent automatic logouts
   static bool shouldLogout() {
-    return sharedPreferences?.getBool("force_logout") ?? false;
+    // NEVER return true automatically - only manual logout should work
+    return false;
   }
   
   /// Clear logout flag

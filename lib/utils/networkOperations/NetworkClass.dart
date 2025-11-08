@@ -148,15 +148,10 @@ class NetworkClass {
           await callMultipartService(showLoader, requestType, imageParams, mimeType);
           return;
         } else {
-          // Check if logout is needed (only if refresh token is invalid - 401)
-          if (TokenRefreshManager.shouldLogout()) {
-            debugPrint("Refresh token is invalid, user will be logged out");
-            _handleLogout();
-            return;
-          }
-          // Token refresh failed but user stays logged in (network error, etc.)
+          // NEVER logout automatically - always keep user logged in
+          // Token refresh failed but user stays logged in
           // Let the original request fail so user can retry manually
-          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          debugPrint("Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
           networkResponse!.onError(
               requestCode: requestCode, 
               response: '{"code": 401, "message": "Session expired. Please try again."}');
@@ -444,15 +439,10 @@ class NetworkClass {
           await callRequestServiceHeader(showLoader, requestType, queryParameters);
           return;
         } else {
-          // Check if logout is needed (only if refresh token is invalid - 401)
-          if (TokenRefreshManager.shouldLogout()) {
-            debugPrint("Refresh token is invalid, user will be logged out");
-            _handleLogout();
-            return;
-          }
-          // Token refresh failed but user stays logged in (network error, etc.)
+          // NEVER logout automatically - always keep user logged in
+          // Token refresh failed but user stays logged in
           // Let the original request fail so user can retry manually
-          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          debugPrint("Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
           networkResponse!.onError(
               requestCode: requestCode, 
               response: '{"code": 401, "message": "Session expired. Please try again."}');
@@ -738,15 +728,10 @@ class NetworkClass {
           await callMultipartServiceSameParamMultiImage(showLoader, requestType, imageParams);
           return;
         } else {
-          // Check if logout is needed (only if refresh token is invalid - 401)
-          if (TokenRefreshManager.shouldLogout()) {
-            debugPrint("Refresh token is invalid, user will be logged out");
-            _handleLogout();
-            return;
-          }
-          // Token refresh failed but user stays logged in (network error, etc.)
+          // NEVER logout automatically - always keep user logged in
+          // Token refresh failed but user stays logged in
           // Let the original request fail so user can retry manually
-          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          debugPrint("Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
           networkResponse!.onError(
               requestCode: requestCode, 
               response: '{"code": 401, "message": "Session expired. Please try again."}');
@@ -861,15 +846,10 @@ class NetworkClass {
           await callMultipartServiceSameParamMultiImage1(showLoader, requestType, imageParams);
           return;
         } else {
-          // Check if logout is needed (only if refresh token is invalid - 401)
-          if (TokenRefreshManager.shouldLogout()) {
-            debugPrint("Refresh token is invalid, user will be logged out");
-            _handleLogout();
-            return;
-          }
-          // Token refresh failed but user stays logged in (network error, etc.)
+          // NEVER logout automatically - always keep user logged in
+          // Token refresh failed but user stays logged in
           // Let the original request fail so user can retry manually
-          debugPrint("Token refresh failed (non-401), keeping user logged in. Original request will fail.");
+          debugPrint("Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
           networkResponse!.onError(
               requestCode: requestCode, 
               response: '{"code": 401, "message": "Session expired. Please try again."}');
@@ -995,13 +975,13 @@ class NetworkClass {
   }
 
   /// Handle user logout when token refresh fails
+  /// NOTE: This method is kept for reference but should NEVER be called automatically
+  /// Users should only be logged out through explicit user action (logout button)
   void _handleLogout() {
+    // This method should not be called automatically
+    // Only manual logout should navigate to login screen
+    debugPrint("WARNING: _handleLogout() called - this should only happen on manual logout");
     TokenRefreshManager.clearLogoutFlag();
-    if (navigatorKey.currentContext != null) {
-      // Navigate to login screen
-      // Import will be handled by the calling code if needed
-      debugPrint("User should be logged out - navigation handled by app");
-    }
   }
 }
 
