@@ -163,6 +163,14 @@ class CameraScreenState extends State<CameraScreen>
     super.dispose();
   }
 
+  void closeCamera() {
+    debugPrint("Closing camera manually");
+    if (cameraController != null) {
+      cameraController!.dispose();
+      cameraController = null;
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

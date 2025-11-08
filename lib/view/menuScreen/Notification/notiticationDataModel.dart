@@ -57,6 +57,7 @@ class NotificationData {
       imageUrl: json['image_url'] ?? "",
       messageType: json['message_type'] ?? "",
       time: json['createdAt'] ?? "",
+
       // senderImage: "",
       // senderId: "",
       // unread: !(json['is_read'] ?? false),

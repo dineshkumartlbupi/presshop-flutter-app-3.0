@@ -674,7 +674,9 @@ class LoginScreenState extends State<LoginScreen>
           var map = jsonDecode(response);
           commonErrorDialogDialog(MediaQuery.of(context).size,
               map["message"].toString(), map["code"].toString(), () {
-            sharedPreferences!.clear();
+            // rajesh
+            // sharedPreferences!.clear();
+
             googleSignIn.signOut();
             Navigator.pop(context);
           });

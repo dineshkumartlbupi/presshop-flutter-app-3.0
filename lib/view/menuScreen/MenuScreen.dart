@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
@@ -359,10 +360,13 @@ class MenuScreenState extends State<MenuScreen>
     //     name: chooseCurrencyText,
     //     icon: "${iconsPath}choose_currency.png",
     //     classWidget: const MyBanksScreen()));
-    menuList.add(MenuData(
-        name: "Alerts",
-        icon: "${iconsPath}ic_alert.png",
-        classWidget: const AlertScreen()));
+
+    //rajesh
+    // menuList.add(MenuData(
+    //     name: "Alerts",
+    //     icon: "${iconsPath}ic_alert.png",
+    //     classWidget: const AlertScreen()));
+
     menuList.add(MenuData(
         name: notificationText,
         icon: "${iconsPath}ic_feed.png",
@@ -783,7 +787,7 @@ class MenuScreenState extends State<MenuScreen>
   }
 
   @override
-  void onResponse({required int requestCode, required String response}) {
+  void onResponse({required int requestCode, required String response}) async {
     try {
       switch (requestCode) {
         case reqNotificationListAPI:
@@ -808,6 +812,13 @@ class MenuScreenState extends State<MenuScreen>
           debugPrint("rememberMe: $rememberMe");
           sharedPreferences!.clear();
           googleSignIn.signOut();
+          await FirebaseAnalytics.instance.logEvent(
+            name: 'auto_logout from menu screen',
+            parameters: {
+              'message': 'User logged out successfully',
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const LoginScreen()),
               (route) => false);
@@ -815,6 +826,14 @@ class MenuScreenState extends State<MenuScreen>
       }
     } on Exception catch (e) {
       debugPrint('exception catch====> $e');
+
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'api_response_exception auto logout',
+        parameters: {
+          'error': e.toString(),
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
     }
   }
 

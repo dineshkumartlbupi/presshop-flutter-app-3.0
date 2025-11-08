@@ -35,7 +35,7 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
     _revealAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeInOutCubic, // Smoother curve
+        curve: Curves.easeInOutCubic,
       ),
     );
     _opacityAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(

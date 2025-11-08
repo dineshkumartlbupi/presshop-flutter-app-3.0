@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
@@ -23,7 +25,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with AnalyticsPageMixin
     implements NetworkResponse {
-  // Analytics Mixin Requirements
   @override
   String get pageName => PageNames.splash;
 
@@ -33,21 +34,28 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    print("Splash Screen111");
 
     _checkInitialMessage();
 
     debugPrint("rememberMe: $rememberMe");
     if (rememberMe) {
+      print("Splash Screen222");
       Future.delayed(Duration.zero, () {
         myProfileApi();
       });
+      print("Splash Screen7777");
     } else {
+      print("Splash Screen111222");
+
       Future.delayed(const Duration(seconds: 3), () {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => Walkthrough()),
             (route) => false);
       });
     }
+
+    print("Splash Screen888");
   }
 
   Future<void> _checkInitialMessage() async {
@@ -100,50 +108,209 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   ///-------ApisSection-----------
-  void myProfileApi() {
-    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
+
+  void myProfileApi() async {
+    try {
+      print("Splash Screen111 refresh myProfileApi");
+
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'profile_api_call',
+        parameters: {
+          'page': 'splash',
+          'rememberMe': rememberMe ? 'true' : 'false',
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+
+      FirebaseCrashlytics.instance
+          .log("myProfileApi() called from SplashScreen");
+
+      NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+          .callRequestServiceHeader(false, "get", null);
+
+      print("Splash2222 Screen222 refresh myProfileApi");
+    } catch (e, stackTrace) {
+      await FirebaseCrashlytics.instance
+          .recordError(e, stackTrace, reason: 'Profile API failed');
+
+      debugPrint("Profile API Exception: $e");
+
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'profile_api_failed',
+        parameters: {
+          'error': e.toString(),
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+    }
   }
 
   void refreshToken() {
+    print("Splash Screen111 refresh 555");
     NetworkClass(appRefreshTokenUrl, this, appRefreshTokenReq)
         .callRequestServiceHeaderForRefreshToken("get");
   }
 
-  @override
-  void onError({required int requestCode, required String response}) {
+  // @override
+  // void onError({required int requestCode, required String response}) {
+  //   print("on error1234543");
+  //   try {
+  //     switch (requestCode) {
+  //       case myProfileUrlRequest:
+  //         var map = jsonDecode(response);
+  //         debugPrint("MyProfileError:$map");
+
+  //         if (map['body'] == "Unauthorized" ||
+  //             map['code'] == 401 ||
+  //             requestCode == 401) {
+  //           print("Splash Screen333");
+  //           refreshToken();
+
+  //           // rememberMe = false;
+  //           // sharedPreferences!.clear();
+
+  //           // Navigator.of(context).pushAndRemoveUntil(
+  //           //     MaterialPageRoute(builder: (context) => const LoginScreen()),
+  //           //     (route) => false);
+  //         }
+  //         // cause of issue to auto logout on profile api error
+  //         else {
+  //           print("Splash Screen444");
+  //           showSnackBar(
+  //               "Auto logout error ",
+  //               "Session expired. Please login again.",
+  //               const Color.fromARGB(255, 56, 1, 255));
+  //           debugPrint("Auto logout error");
+
+  //           showSnackBar("Profile error",
+  //               "Could not fetch profile. Retrying...", Colors.red);
+  //           Future.delayed(const Duration(seconds: 2), myProfileApi);
+
+  //           // rajesh
+  //           // Navigator.of(context).pushAndRemoveUntil(
+  //           //     MaterialPageRoute(builder: (context) => Walkthrough()),
+  //           //     (route) => false);
+  //         }
+  //         break;
+  //       case appRefreshTokenReq:
+  //         // rajesh
+  //         // rememberMe = false;
+  //         // sharedPreferences!.clear();
+  //         debugPrint("RefreshTokenError and also you are logout:$response");
+  //         showSnackBar(
+  //             "auto logout error",
+  //             "Session expired. Please login again.",
+  //             const Color.fromARGB(255, 56, 1, 255));
+
+  //         Navigator.of(context).pushAndRemoveUntil(
+  //             MaterialPageRoute(builder: (context) => const LoginScreen()),
+  //             (route) => false);
+  //     }
+  //   } on Exception catch (e) {
+  //     debugPrint("exception 3434$e");
+  //     showSnackBar(
+  //         "Auto logout error $e",
+  //         "Session expired. Please login again.",
+  //         const Color.fromARGB(255, 56, 1, 255));
+  //   }
+  // }
+
+  void onError({required int requestCode, required String response}) async {
+    print("on error1234543");
     try {
       switch (requestCode) {
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileError:$map");
-          if (map['body'] == "Unauthorized") {
+
+          await FirebaseAnalytics.instance.logEvent(
+            name: 'profile_api_error',
+            parameters: {
+              'request_code': requestCode.toString(),
+              'error_code': map['code']?.toString() ?? 'unknown',
+              'error_body': map['body']?.toString() ?? 'empty',
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
+
+          if (map['body'] == "Unauthorized" ||
+              map['code'] == 401 ||
+              requestCode == 401) {
+            print("Splash Screen333");
+
+            await FirebaseAnalytics.instance.logEvent(
+              name: 'profile_api_unauthorized',
+              parameters: {
+                'action': 'refresh_token_called',
+                'timestamp': DateTime.now().toIso8601String(),
+              },
+            );
+
             refreshToken();
-            // rememberMe = false;
-            // sharedPreferences!.clear();
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     MaterialPageRoute(builder: (context) => const LoginScreen()),
-            //     (route) => false);
           } else {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Walkthrough()),
-                (route) => false);
+            print("Splash Screen444");
+            showSnackBar(
+                "Auto logout error ",
+                "Session expired. Please login again.",
+                const Color.fromARGB(255, 56, 1, 255));
+            debugPrint("Auto logout error");
+
+            showSnackBar("Profile error",
+                "Could not fetch profile. Retrying...", Colors.red);
+
+            await FirebaseAnalytics.instance.logEvent(
+              name: 'profile_api_retry',
+              parameters: {
+                'action': 'retrying_myProfileApi',
+                'timestamp': DateTime.now().toIso8601String(),
+              },
+            );
+
+            Future.delayed(const Duration(seconds: 2), myProfileApi);
           }
           break;
+
         case appRefreshTokenReq:
-          rememberMe = false;
-          sharedPreferences!.clear();
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false);
+          debugPrint("RefreshTokenError and also you are logout:$response");
+
+          await FirebaseAnalytics.instance.logEvent(
+            name: 'refresh_token_error',
+            parameters: {
+              'request_code': requestCode.toString(),
+              'response': response,
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
+
+          showSnackBar(
+              "auto logout error",
+              "Session expired. Please login again.",
+              const Color.fromARGB(255, 255, 1, 1));
+
+        // Navigator.of(context).pushAndRemoveUntil(
+        //     MaterialPageRoute(builder: (context) => const LoginScreen()),
+        //     (route) => false);
       }
     } on Exception catch (e) {
-      debugPrint("$e");
+      debugPrint("exception 3434$e");
+      showSnackBar(
+          "Auto logout error $e",
+          "Session expired. Please login again.",
+          const Color.fromARGB(255, 56, 1, 255));
+
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'profile_api_exception',
+        parameters: {
+          'error': e.toString(),
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
     }
   }
 
   @override
   void onResponse({required int requestCode, required String response}) {
+    print("on response 1234543");
     try {
       switch (requestCode) {
         case appRefreshTokenReq:
@@ -155,6 +322,7 @@ class _SplashScreenState extends State<SplashScreen>
           break;
         case myProfileUrlRequest:
           var map = jsonDecode(response);
+          debugPrint("remember me:$rememberMe");
           debugPrint("MyProfileSuccess:$map");
 
           if (map["code"] == 200) {
@@ -179,6 +347,7 @@ class _SplashScreenState extends State<SplashScreen>
                         )),
                 (route) => false);
           }
+
           break;
       }
     } on Exception catch (e) {

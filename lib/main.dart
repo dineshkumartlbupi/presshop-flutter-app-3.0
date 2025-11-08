@@ -47,7 +47,6 @@ LocalNotificationService localNotificationService = LocalNotificationService();
 
 List<MediaData> contentMediaList = [];
 
-// Initialize AppsFlyer SDK
 Future<void> initializeAppsFlyer() async {
   final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
     appId: "6744651614",
@@ -101,6 +100,7 @@ void main() async {
       "version": Platform.version,
     },
   );
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark));

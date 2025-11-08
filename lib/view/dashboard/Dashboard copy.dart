@@ -64,8 +64,6 @@ class DashboardState extends State<Dashboard>
   String deviceId = "";
   StreamSubscription? _sub;
   static DashBoardInterface? dashBoardInterface;
-  final GlobalKey<CameraScreenState> _cameraKey =
-      GlobalKey<CameraScreenState>();
 
   /// Prince
   lc.LocationData? locationData;
@@ -81,20 +79,17 @@ class DashboardState extends State<Dashboard>
   List<AdminDetailModel> adminList = [];
   List<String> adminIDList = [];
   DateTime? currentTime;
-  late List<Widget> bottomNavigationScreens;
-
-  // final bottomNavigationScreens = <Widget>[
-  //   MyContentScreen(hideLeading: true),
-  //   MyTaskScreen(hideLeading: true),
-  //   CameraScreen(
-  //     key: _cameraKey,
-  //     picAgain: false,
-  //     previousScreen: ScreenNameEnum.dashboardScreen,
-  //   ),
-  //   ChatBotScreen(),
-  //   //ChatListingScreen(hideLeading: true),
-  //   const MenuScreen()
-  // ];
+  final bottomNavigationScreens = <Widget>[
+    MyContentScreen(hideLeading: true),
+    MyTaskScreen(hideLeading: true),
+    const CameraScreen(
+      picAgain: false,
+      previousScreen: ScreenNameEnum.dashboardScreen,
+    ),
+    ChatBotScreen(),
+    //ChatListingScreen(hideLeading: true),
+    const MenuScreen()
+  ];
   late AppLinks linkStream;
 
   // Analytics Mixin Requirements
@@ -111,26 +106,10 @@ class DashboardState extends State<Dashboard>
   @override
   void initState() {
     /// Light statusBar mode-->
-    bottomNavigationScreens = <Widget>[
-      MyContentScreen(hideLeading: true),
-      MyTaskScreen(hideLeading: true),
-      CameraScreen(
-        key: _cameraKey,
-        picAgain: false,
-        previousScreen: ScreenNameEnum.dashboardScreen,
-      ),
-      ChatBotScreen(),
-      //ChatListingScreen(hideLeading: true),
-      const MenuScreen()
-    ];
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     _locationService = LocationService();
-
     forceUpdateCheck();
-
     callGetRoomIdApi();
-
     facebookAppEvents.logEvent(
       name: "dashboard_open",
       parameters: {
@@ -636,13 +615,6 @@ class DashboardState extends State<Dashboard>
       );
       return;
     }*/
-
-// rajesh
-    if (currentIndex == 1 && index != 1) {
-      _cameraKey.currentState?.closeCamera();
-    }
-
-/////
 
     // Track tab switches
     trackAction(ActionNames.tabSwitch, parameters: {

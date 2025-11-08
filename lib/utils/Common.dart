@@ -12,42 +12,11 @@ const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 
 //--------production urls----------------
 
-const baseUrl = "https://datastream22843-r.presshop.news:6003/";
-const adminBaseUrl = "https://datastream22843-r.presshop.news:7001/";
+// const baseUrl = "https://datastream22843-r.presshop.news:6003/";
+// const adminBaseUrl = "https://datastream22843-r.presshop.news:7001/";
 
-const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
+// const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
 
-const googleMapURL =
-    "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-
-const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
-const profileImageUrl = "${mediaBaseUrl}userImages/";
-const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
-
-const contentImageUrl =
-    "https://livestreamdata-r.presshop.news/public/contentData/";
-
-const imageUrlBefore =
-    "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
-
-const taskMediaUrl =
-    "https://livestreamdata-r.presshop.news/public/uploadContent/";
-
-const mediaThumbnailUrl =
-    "https://livestreamdata-r.presshop.news/public/thumbnail/";
-
-const adminProfileUrl = "${mediaBaseUrl}adminImages/";
-
-const oldappUrl = "https://developers.promaticstechnologies.com/";
-
-const socketUrl = "https://datastream22843-r.presshop.news:4005";
-
-//--------staging urls------- ---------
-
-// const baseUrl = "https://dev-api.presshop.news:5019/";
-// const adminBaseUrl = "https://dev-api.presshop.news:5020/";
-
-// const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 // const googleMapURL =
 //     "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 
@@ -55,14 +24,45 @@ const socketUrl = "https://datastream22843-r.presshop.news:4005";
 // const profileImageUrl = "${mediaBaseUrl}userImages/";
 // const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
 
-// const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
+// const contentImageUrl =
+//     "https://livestreamdata-r.presshop.news/public/contentData/";
+
 // const imageUrlBefore =
 //     "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
 
-// const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
-// const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
+// const taskMediaUrl =
+//     "https://livestreamdata-r.presshop.news/public/uploadContent/";
+
+// const mediaThumbnailUrl =
+//     "https://livestreamdata-r.presshop.news/public/thumbnail/";
+
 // const adminProfileUrl = "${mediaBaseUrl}adminImages/";
-// const socketUrl = "https://dev-api.presshop.news:3005";
+
+// const oldappUrl = "https://developers.promaticstechnologies.com/";
+
+// const socketUrl = "https://datastream22843-r.presshop.news:4005";
+
+//--------staging urls------- ---------
+
+const baseUrl = "https://dev-api.presshop.news:5019/";
+const adminBaseUrl = "https://dev-api.presshop.news:5020/";
+
+const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+const googleMapURL =
+    "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+
+const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
+const profileImageUrl = "${mediaBaseUrl}userImages/";
+const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
+
+const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
+const imageUrlBefore =
+    "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
+
+const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
+const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
+const adminProfileUrl = "${mediaBaseUrl}adminImages/";
+const socketUrl = "https://dev-api.presshop.news:3005";
 
 //===========url-endpoint============
 const checkUserNameUrl = "users/checkIfUserNameExist/";
@@ -399,7 +399,7 @@ const goodMorningText = "Good morning";
 const loginSubTitleText =
     "Welcome back, you were missed. Please hop right back in";
 const loginUserHint = "Enter user name / phone number / email Id";
-const enterPasswordHint = "Enter password";
+const enterPasswordHint = "Enter password *";
 const enterNewPasswordHint = "Enter new password";
 const requiredText = "Required";
 const validUserNameOrPhoneText = "Please enter valid user name or phone number";
@@ -689,12 +689,12 @@ const companyName = "Company # 135 22 872";
 
 /*-----Vishal--------*/
 const signUpText = 'Sign Up';
-const firstNameHintText = 'Enter first name';
-const lastNameHintText = 'Enter last name';
-const userNameHintText = 'Enter user name';
-const referralCodeHintText = "Enter referral code (if any)";
-const phoneHintText = 'Enter mobile number';
-const emailHintText = 'Enter email';
+const firstNameHintText = 'Enter first name *';
+const lastNameHintText = 'Enter last name *';
+const userNameHintText = 'Enter user name *';
+const referralCodeHintText = "Enter referral code (optional)";
+const phoneHintText = 'Enter mobile number *';
+const emailHintText = 'Enter email *';
 const apartmentNoHintText = 'Apartment number / House name';
 const emailAddressHintText = 'Enter email address';
 const addressHintText = 'Enter house name/number';
@@ -704,7 +704,7 @@ const cityHintText = 'Enter city';
 const postalCodeHintText = 'Enter post code';
 const countryHintText = 'Enter country';
 const passwordHintText = 'Enter password';
-const confirmPwdHintText = 'Confirm password';
+const confirmPwdHintText = 'Confirm password *';
 const selectDobHintText = 'Select date of birth';
 const signUpSubTitleText =
     'Join our growing tribe, and connect directly with the press.';

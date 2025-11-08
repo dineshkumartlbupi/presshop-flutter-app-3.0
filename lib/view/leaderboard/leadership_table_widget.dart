@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/view/leaderboard/leaderboard_model.dart';
@@ -75,6 +76,9 @@ class LeadershipTableWidget extends StatelessWidget {
 
   Widget profileImageWidget(
       {bool isLeader = false, required Size size, required Member member}) {
+    print('member.totalEarnings====> ${member.totalEarnings}');
+    print('member.userName====> ${member.userName}');
+    print('member.avatar====> ${currencySymbol}');
     return SizedBox(
       height: size.height * numD18,
       width: size.width * numD34,
@@ -86,13 +90,25 @@ class LeadershipTableWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "$currencySymbol${member.totalEarnings}",
+                  formatCurrency(member.totalEarnings, currencySymbol),
                   style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD04,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                    size: size,
+                    fontSize: size.width * numD04,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+
+                // Text(
+                //   // formatCurrency(member.totalEarnings, currencySymbol),
+
+                //   "$currencySymbol${member.totalEarnings}",
+                //   style: commonTextStyle(
+                //       size: size,
+                //       fontSize: size.width * numD04,
+                //       color: Colors.black,
+                //       fontWeight: FontWeight.bold),
+                // ),
                 SizedBox(
                   height: size.height * numD005,
                 ),
@@ -145,5 +161,31 @@ class LeadershipTableWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String formatCurrency(dynamic amount, String currencySymbol) {
+    double value = double.tryParse(amount.toString()) ?? 0.0;
+
+    String locale;
+    switch (currencySymbol) {
+      case '₹':
+        locale = 'en_IN';
+        break;
+      case '\$':
+        locale = 'en_US';
+        break;
+      case '£':
+        locale = 'en_GB';
+        break;
+      case '€':
+        locale = 'en_EU';
+        break;
+      default:
+        locale = 'en_US';
+    }
+
+    final format =
+        NumberFormat.currency(locale: locale, symbol: currencySymbol);
+    return format.format(value);
   }
 }

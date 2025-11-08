@@ -52,7 +52,6 @@ android {
         }
     }
 
-
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
@@ -60,7 +59,6 @@ android {
             ndk {
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a")
             }
-            // Optional:
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
