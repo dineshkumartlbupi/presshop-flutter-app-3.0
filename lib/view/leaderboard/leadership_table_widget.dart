@@ -65,7 +65,7 @@ class LeadershipTableWidget extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Image.asset(
               "${iconsPath}leader_table_icon.png",
-              color: Color.fromARGB(255, 234, 234, 234),
+              color: Color(0xFFF3F5F4),
               fit: BoxFit.scaleDown,
             ),
           ),
@@ -76,9 +76,6 @@ class LeadershipTableWidget extends StatelessWidget {
 
   Widget profileImageWidget(
       {bool isLeader = false, required Size size, required Member member}) {
-    print('member.totalEarnings====> ${member.totalEarnings}');
-    print('member.userName====> ${member.userName}');
-    print('member.avatar====> ${currencySymbol}');
     return SizedBox(
       height: size.height * numD18,
       width: size.width * numD34,
@@ -91,24 +88,13 @@ class LeadershipTableWidget extends StatelessWidget {
               children: [
                 Text(
                   formatCurrency(member.totalEarnings, currencySymbol),
+                  // "$currencySymbol${member.totalEarnings}",
                   style: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * numD04,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      size: size,
+                      fontSize: size.width * numD04,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
-
-                // Text(
-                //   // formatCurrency(member.totalEarnings, currencySymbol),
-
-                //   "$currencySymbol${member.totalEarnings}",
-                //   style: commonTextStyle(
-                //       size: size,
-                //       fontSize: size.width * numD04,
-                //       color: Colors.black,
-                //       fontWeight: FontWeight.bold),
-                // ),
                 SizedBox(
                   height: size.height * numD005,
                 ),

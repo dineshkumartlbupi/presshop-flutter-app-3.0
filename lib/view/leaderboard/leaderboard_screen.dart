@@ -278,6 +278,7 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
                                 Text(
                                   formatCurrency(
                                       memberItem.totalEarnings, currencySymbol),
+
                                   // "$currencySymbol${memberItem.totalEarnings}",
                                   style: commonTextStyle(
                                       size: size,
@@ -329,29 +330,30 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
         break;
     }
   }
-}
 
-String formatCurrency(dynamic amount, String currencySymbol) {
-  double value = double.tryParse(amount.toString()) ?? 0.0;
+  String formatCurrency(dynamic amount, String currencySymbol) {
+    double value = double.tryParse(amount.toString()) ?? 0.0;
 
-  String locale;
-  switch (currencySymbol) {
-    case '₹':
-      locale = 'en_IN';
-      break;
-    case '\$':
-      locale = 'en_US';
-      break;
-    case '£':
-      locale = 'en_GB';
-      break;
-    case '€':
-      locale = 'en_EU';
-      break;
-    default:
-      locale = 'en_US';
+    String locale;
+    switch (currencySymbol) {
+      case '₹':
+        locale = 'en_IN';
+        break;
+      case '\$':
+        locale = 'en_US';
+        break;
+      case '£':
+        locale = 'en_GB';
+        break;
+      case '€':
+        locale = 'en_EU';
+        break;
+      default:
+        locale = 'en_US';
+    }
+
+    final format =
+        NumberFormat.currency(locale: locale, symbol: currencySymbol);
+    return format.format(value);
   }
-
-  final format = NumberFormat.currency(locale: locale, symbol: currencySymbol);
-  return format.format(value);
 }
