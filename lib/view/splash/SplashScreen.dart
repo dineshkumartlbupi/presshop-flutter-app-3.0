@@ -11,6 +11,7 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:presshop/utils/networkOperations/TokenRefreshManager.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:presshop/view/walkThrough/WalkThrough.dart';
 import '../authentication/LoginScreen.dart';
@@ -249,11 +250,11 @@ class _SplashScreenState extends State<SplashScreen>
             refreshToken();
           } else {
             print("Splash Screen444");
-            showSnackBar(
-                "Auto logout error ",
-                "Session expired. Please login again.",
-                const Color.fromARGB(255, 56, 1, 255));
-            debugPrint("Auto logout error");
+
+            // NEVER logout automatically - keep user logged in
+            // Just retry the profile API
+            debugPrint(
+                "Profile API failed, but keeping user logged in and retrying...");
 
             showSnackBar("Profile error",
                 "Could not fetch profile. Retrying...", Colors.red);
@@ -282,14 +283,13 @@ class _SplashScreenState extends State<SplashScreen>
             },
           );
 
+          // NEVER logout automatically - keep user logged in
+          // Just show a message and let user retry
+          debugPrint("Refresh token API failed, but keeping user logged in");
           showSnackBar(
-              "auto logout error",
-              "Session expired. Please login again.",
+              "Session Error",
+              "Unable to refresh session. Please try again later.",
               const Color.fromARGB(255, 255, 1, 1));
-
-        // Navigator.of(context).pushAndRemoveUntil(
-        //     MaterialPageRoute(builder: (context) => const LoginScreen()),
-        //     (route) => false);
       }
     } on Exception catch (e) {
       debugPrint("exception 3434$e");
