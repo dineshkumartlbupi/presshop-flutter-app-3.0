@@ -85,6 +85,7 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,

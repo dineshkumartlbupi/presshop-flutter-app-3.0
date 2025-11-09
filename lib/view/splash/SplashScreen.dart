@@ -250,10 +250,11 @@ class _SplashScreenState extends State<SplashScreen>
             refreshToken();
           } else {
             print("Splash Screen444");
-            
+
             // NEVER logout automatically - keep user logged in
             // Just retry the profile API
-            debugPrint("Profile API failed, but keeping user logged in and retrying...");
+            debugPrint(
+                "Profile API failed, but keeping user logged in and retrying...");
 
             showSnackBar("Profile error",
                 "Could not fetch profile. Retrying...", Colors.red);
