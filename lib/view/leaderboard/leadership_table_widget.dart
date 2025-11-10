@@ -92,7 +92,6 @@ class LeadershipTableWidget extends StatelessWidget {
             child: Image.asset(
               "${iconsPath}leader_table_icon.png",
               color: const Color.fromARGB(255, 234, 234, 234),
-              color: Color(0xFFF3F5F4),
               fit: BoxFit.scaleDown,
             ),
           ),
@@ -114,8 +113,6 @@ class LeadershipTableWidget extends StatelessWidget {
     print(
         '🧍 Member Debug -> Name: $name | Earnings: $earnings | Avatar: $avatar');
 
-  Widget profileImageWidget(
-      {bool isLeader = false, required Size size, required Member member}) {
     return SizedBox(
       height: size.height * numD18,
       width: size.width * numD34,
@@ -130,17 +127,7 @@ class LeadershipTableWidget extends StatelessWidget {
                   hasData
                       ? formatCurrency(earnings, currencySymbol)
                       : formatCurrency(0, currencySymbol),
-                  formatCurrency(member.totalEarnings, currencySymbol),
-                  // "$currencySymbol${member.totalEarnings}",
                   style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD04,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: size.height * numD005,
-                ),
                     size: size,
                     fontSize: size.width * numD04,
                     color: Colors.black,
