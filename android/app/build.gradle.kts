@@ -25,8 +25,8 @@ android {
         applicationId = "com.presshop.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = 36
+        versionName = "1.0.24"
     }
 
     // signingConfigs {

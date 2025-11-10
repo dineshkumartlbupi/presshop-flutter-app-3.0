@@ -110,6 +110,7 @@ flutter:
     - assets/lottieFiles/
     - assets/audio/
     - assets/chatIcons/
+    - assets/dialog_flow_auth.json
 
   fonts:
     - family: AirbnbCereal
