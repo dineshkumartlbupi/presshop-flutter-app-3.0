@@ -87,8 +87,8 @@ class TokenRefreshManager {
 
       final request = http.Request("GET", uri);
       request.headers.addAll({
-        refreshHeaderKey: "",
-        accessHeaderKey: "",
+        refreshHeaderKey: refreshTokenValue,
+        accessHeaderKey: tokenforAccess,
         headerDeviceTypeKey:
             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
         headerDeviceIdKey: deviceID,

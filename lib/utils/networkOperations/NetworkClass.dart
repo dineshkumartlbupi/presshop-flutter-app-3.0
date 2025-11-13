@@ -329,8 +329,8 @@ class NetworkClass {
 
         print("tokenAccess123 ${tokenforAccess}");
         request.headers.addAll({
-          refreshHeaderKey: "",
-          accessHeaderKey: "",
+          refreshHeaderKey: refreshHeaderToken,
+          accessHeaderKey: tokenforAccess,
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
           headerDeviceIdKey: deviceID

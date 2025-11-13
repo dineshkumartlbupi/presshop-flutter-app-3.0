@@ -37,38 +37,34 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    forceUpdateCheck();
+    _initSplash();
+  }
+
+  Future<void> _initSplash() async {
     print("from splash screen");
 
     print(sharedPreferences!.getString(tokenKey) ?? "tokenfailed");
     print(
         sharedPreferences!.getString(refreshtokenKey) ?? "refreshtokenfailed");
 
-    // sharedPreferences!.remove("refreshtokenKey");
-    // sharedPreferences!.clear();
-
-    print("Splash Screen111");
-
     _checkInitialMessage();
 
-    debugPrint("rememberMe: $rememberMe");
     if (rememberMe) {
       print("Splash Screen222");
-      Future.delayed(Duration.zero, () {
-        myProfileApi();
-      });
-      print("Splash Screen7777");
+
+      // Force update dialog check
+      await forceUpdateCheck1();
+
+      // After dialog, call profile API
+      myProfileApi();
     } else {
       print("Splash Screen111222");
 
-      Future.delayed(const Duration(seconds: 3), () {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Walkthrough()),
-            (route) => false);
-      });
+      await Future.delayed(const Duration(seconds: 3));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Walkthrough()),
+          (route) => false);
     }
-
-    print("Splash Screen888");
   }
 
   void forceUpdateCheck() {
@@ -166,16 +162,14 @@ class _SplashScreenState extends State<SplashScreen>
         .callRequestServiceHeaderForRefreshToken("get");
   }
 
-  void forceUpdateCheck1() async {
+  Future<void> forceUpdateCheck1() async {
     bool needsUpdate = await VersionService.isUpdateAvailable(
       androidPackage: 'com.presshop.app',
       iosAppId: '6744651614',
     );
-    print("needupdatedebug");
-    print(needsUpdate);
 
-    if (needsUpdate && mounted) {
-      commonErrorDialogDialog(
+    if (needsUpdate) {
+      await commonErrorDialogDialog1(
         shouldShowClosedButton: false,
         isFromNetworkError: false,
         MediaQuery.of(context).size,
@@ -186,6 +180,8 @@ class _SplashScreenState extends State<SplashScreen>
           final appUrl = Platform.isAndroid
               ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
               : 'https://apps.apple.com/app/id6744651614';
+
+          print(" appurl check $appUrl");
           final Uri uri = Uri.parse(appUrl);
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
