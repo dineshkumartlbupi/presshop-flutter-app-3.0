@@ -342,7 +342,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       builder: (bottomSheetContext) {
         var size = MediaQuery.of(bottomSheetContext).size;
 
-        int secondsLeft = 30; // set your desired timer duration here
+        int secondsLeft = 300; // 5 minutes in seconds
         Timer? localTimer;
 
         return StatefulBuilder(
@@ -421,7 +421,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   "We’ve sent a 5-digit verification code to ",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * numD035,
                                 fontFamily: 'AirbnbCereal_W_Lt',
                               ),
                             ),
@@ -430,7 +430,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               style: TextStyle(
                                 color: colorThemePink,
                                 fontFamily: 'AirbnbCereal_W_Bd',
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * numD035,
                               ),
                             ),
                           ],
@@ -504,14 +504,11 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               height: size.width * numD06,
                             ),
                             SizedBox(width: size.width * numD02),
-                            Text(
-                              "$otpExpireText $expireTimeValue $minutesText",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD035,
-                                fontFamily: 'AirbnbCereal_W_Bk',
-                              ),
-                            ),
+                            Text("$otpExpireText $expireTimeValue $minutesText",
+                                style: TextStyle(
+                                    fontFamily: 'AirbnbCereal',
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035)),
                           ],
                         ),
 
@@ -540,19 +537,20 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: otpNotReceivedText,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: size.width * numD04),
-                                ),
+                                    text: otpNotReceivedText,
+                                    style: TextStyle(
+                                        fontFamily: 'AirbnbCereal',
+                                        color: Colors.black,
+                                        fontSize: size.width * numD035)),
                                 WidgetSpan(
                                     child: SizedBox(width: size.width * 0.01)),
                                 TextSpan(
                                   text: clickHereText,
                                   style: TextStyle(
+                                    fontFamily: 'AirbnbCereal',
                                     color: colorThemePink,
                                     fontSize: size.width * numD038,
-                                    fontWeight: FontWeight.w500,
+                                    // fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 WidgetSpan(
@@ -560,9 +558,9 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                 TextSpan(
                                   text: anotherOneText,
                                   style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: size.width * numD04,
-                                  ),
+                                      fontFamily: 'AirbnbCereal',
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035),
                                 ),
                               ],
                             ),
@@ -581,6 +579,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     ).whenComplete(() {
       // Cleanup when sheet is closed
       _isBottomSheetOpen = false;
+      // localTimer?.cancel();
     });
   }
 }

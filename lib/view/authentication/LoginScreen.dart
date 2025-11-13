@@ -18,6 +18,7 @@ import 'package:presshop/view/authentication/ForgotPasswordScreen.dart';
 import 'package:presshop/view/authentication/SignUpScreen.dart';
 import 'package:presshop/view/authentication/SocialSignup.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../main.dart';
@@ -314,64 +315,7 @@ class LoginScreenState extends State<LoginScreen>
                           child: InkWell(
                             splashColor: Colors.grey.shade300,
                             onTap: () async {
-                              // Request credential for the currently signed in Apple account.
-                              final appleCredential =
-                                  await SignInWithApple.getAppleIDCredential(
-                                scopes: [
-                                  AppleIDAuthorizationScopes.email,
-                                  AppleIDAuthorizationScopes.fullName,
-                                ],
-                                nonce: nonce,
-                              );
-
-                              // Create an `OAuthCredential` from the credential returned by Apple.
-                              final oauthCredential =
-                                  OAuthProvider("apple.com");
-
-                              oauthCredential.setScopes([
-                                'email',
-                                'fullName',
-                              ]);
-
-                              var appleAuthProvider =
-                                  oauthCredential.credential(
-                                idToken: appleCredential.identityToken,
-                                accessToken: appleCredential.authorizationCode,
-                                rawNonce: rawNonce,
-                              );
-
-                              // Sign in the user with Firebase. If the nonce we generated earlier does
-                              // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-                              final credential = await _firebaseAuth
-                                  .signInWithCredential(appleAuthProvider);
-                              debugPrint("AppleCredentials: $credential");
-
-                              if (credential.user?.email == null ||
-                                  credential.user!.email!.isEmpty) {
-                                showSnackBar(
-                                    "Error",
-                                    "Email is not provided by Apple. Please try again.",
-                                    Colors.red);
-                                return;
-                              } else {
-                                socialId = credential.user?.uid ?? "";
-                                socialEmail = credential.user?.email ?? "";
-                                if (credential.user?.displayName != null &&
-                                    credential.user!.displayName!.isNotEmpty) {
-                                  socialName = credential.user!.displayName!;
-                                } else {
-                                  socialName =
-                                      credential.user?.email?.split('@')[0] ??
-                                          "";
-                                }
-                                //socialPhoneNumber = '';
-
-                                debugPrint("socialEmail: $socialEmail");
-                                debugPrint("socialName: $socialName");
-                                debugPrint("SocialId: $socialId");
-                                socialType = "apple";
-                                socialExistsApi(socialType: "apple");
-                              }
+                              appleLogin();
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -401,77 +345,6 @@ class LoginScreenState extends State<LoginScreen>
                   SizedBox(
                     height: size.width * numD05,
                   ),
-                  /*   Platform.isIOS
-                      ? Container(
-                    width: size.width,
-                    height: size.width * numD12,
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.circular(size.width * numD04),
-                        border: Border.all(color: colorGoogleButtonBorder)),
-                    child: InkWell(
-                      splashColor: Colors.grey.shade300,
-                      onTap: () async {
-                        User? user = await Authentication.signInWithGoogle(
-                            context: context);
-                        if (user != null) {
-                          final credential = await SignInWithApple
-                              .getAppleIDCredential(
-                            scopes: [
-                              AppleIDAuthorizationScopes.email,
-                              AppleIDAuthorizationScopes.fullName,
-                            ],
-                          );
-
-                          debugPrint("AppleCredentials: $credential");
-                          if (credential != null) {
-                            // socialId = credential.userIdentifier ?? "";
-                            socialId = credential.userIdentifier ?? "";
-                            socialEmail = credential.email ?? "";
-                            socialName = credential.givenName ??
-                                credential.familyName ??
-                                "";
-                            //socialPhoneNumber = '';
-
-                            debugPrint("socialEmail: $socialEmail");
-                            debugPrint("socialName: $socialName");
-                            debugPrint("SocialId: $socialId");
-                            socialExistsApi();
-                          }
-                        } else {
-                          debugPrint("Some Google Login Error");
-                        }
-                      },
-                      child: Stack(
-                        children: [
-                          Positioned(
-                              top: 0,
-                              bottom: 0,
-                              left: size.width * numD01,
-                              child: Padding(
-                                padding: EdgeInsets.all(size.width * numD025),
-                                child: Image.asset(
-                                  "assets/icons/appleLogo.png",
-                                ),
-                              )),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              continueGoogleText,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD035,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                      : Container(),*/
-
-                  /// Google SignIn
                   InkWell(
                     splashColor: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(size.width * numD04),
@@ -608,6 +481,113 @@ class LoginScreenState extends State<LoginScreen>
     }).catchError((e) {
       debugPrint("error encountered ::: ${e.toString()}");
     });
+  }
+
+  Future<void> appleLogin() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final rawNonce = generateNonce();
+      final nonce = sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final oauthProvider = OAuthProvider("apple.com");
+      final appleAuthCredential = oauthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+        rawNonce: rawNonce,
+      );
+
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(appleAuthCredential);
+
+      debugPrint("Apple sign-in success: ${userCredential.user?.uid}");
+      debugPrint("AppleCredential Email: ${appleCredential.email}");
+      debugPrint("Firebase User Email: ${userCredential.user?.email}");
+
+      // STEP 1 — Get best available email
+      String? emailFromApple = appleCredential.email;
+      String? emailFromFirebase = userCredential.user?.email;
+      String? finalEmail = emailFromApple?.isNotEmpty == true
+          ? emailFromApple
+          : (emailFromFirebase?.isNotEmpty == true ? emailFromFirebase : null);
+
+      // STEP 2 — Fallback email if missing
+      if (finalEmail == null || finalEmail.isEmpty) {
+        final fallbackEmail =
+            "${appleCredential.userIdentifier ?? userCredential.user?.uid ?? 'user'}@privaterelay.appleid.com";
+        finalEmail = fallbackEmail;
+        debugPrint(" Using fallback email: $finalEmail");
+      }
+
+      // STEP 3 — Get best available name
+      String? nameFromApple = (appleCredential.givenName != null ||
+              appleCredential.familyName != null)
+          ? "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}"
+              .trim()
+          : null;
+
+      String? finalName;
+      if (nameFromApple != null && nameFromApple.isNotEmpty) {
+        finalName = nameFromApple;
+      } else if (userCredential.user?.displayName != null &&
+          userCredential.user!.displayName!.isNotEmpty) {
+        finalName = userCredential.user!.displayName!;
+      } else if (finalEmail.isNotEmpty) {
+        finalName = finalEmail.split('@')[0];
+      } else {
+        finalName = "User";
+      }
+
+      // STEP 4 — Save fallback data locally
+      await prefs.setString('apple_email', finalEmail);
+      await prefs.setString('apple_name', finalName);
+      await prefs.setString('apple_id',
+          userCredential.user?.uid ?? appleCredential.userIdentifier ?? "");
+
+      // STEP 5 — Set social values
+      final socialId =
+          userCredential.user?.uid ?? appleCredential.userIdentifier ?? "";
+      const socialType = "apple";
+      final socialEmail = finalEmail;
+      final socialName = finalName;
+
+      debugPrint("socialEmail: $socialEmail");
+      debugPrint("socialName: $socialName");
+      debugPrint("socialId: $socialId");
+
+      // STEP 6 — Call your backend API
+      socialExistsApi(socialType: socialType);
+    } catch (e) {
+      debugPrint("❌ Apple Sign-In Error: $e");
+
+      // Attempt local fallback if available
+      final prefs = await SharedPreferences.getInstance();
+      final savedEmail = prefs.getString('apple_email');
+      final savedName = prefs.getString('apple_name');
+      final savedId = prefs.getString('apple_id');
+
+      if (savedEmail != null && savedEmail.isNotEmpty) {
+        debugPrint("⚙️ Using locally saved Apple data");
+        final socialType = "apple";
+        socialEmail = savedEmail;
+        socialName = savedName ?? "User";
+        socialId = savedId ?? "";
+        socialExistsApi(socialType: socialType);
+      } else {
+        showSnackBar(
+          "Apple Sign-In Failed",
+          "We couldn’t complete your sign-in. Please try again.",
+          Colors.red,
+        );
+      }
+    }
   }
 
   ///-------LoginApi-----------
@@ -939,7 +919,9 @@ class LoginScreenState extends State<LoginScreen>
               sharedPreferences!.setString(tokenKey, map[tokenKey]);
               sharedPreferences!
                   .setString(refreshtokenKey, map[refreshtokenKey]);
-
+              print("token data lko00");
+              print(map[refreshtokenKey]);
+              print(map[tokenKey]);
               sharedPreferences!
                   .setString(hopperIdKey, map["user"][hopperIdKey]);
               sharedPreferences!

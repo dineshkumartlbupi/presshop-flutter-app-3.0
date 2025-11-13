@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /*----SharedPreference Common Keys-----*/
 const headerKey = "Authorization";
 const refreshHeaderKey = "x-refresh-token";
+const accessHeaderKey = "x-access-token";
 
 const headerDeviceTypeKey = "X-Device-Type";
 const headerDeviceIdKey = "X-Device-ID";

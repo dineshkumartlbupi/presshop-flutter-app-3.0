@@ -63,23 +63,19 @@ class LocationService implements NetworkResponse {
     };
 
     debugPrint('map: $params');
-
     NetworkClass.fromNetworkClass(
             updateLocation, this, updateLocationRequest, params)
         .callRequestServiceHeader(false, "post", null);
   }
 
-  // Fetch current location
   Future<LocationData?> getCurrentLocation(BuildContext context,
       {bool shouldShowSettingPopup = true}) async {
-    // Request permission
     bool hasPermission =
         await _requestLocationPermission(context, shouldShowSettingPopup);
     if (!hasPermission) {
       return null;
     }
 
-    // Check and request GPS
     bool gpsEnabled = await _checkAndRequestGps();
     if (!gpsEnabled) {
       return null;

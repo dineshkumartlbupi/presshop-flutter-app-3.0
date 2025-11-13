@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,12 +10,13 @@ import 'package:presshop/utils/AnalyticsMixin.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
+import 'package:presshop/utils/LocalNotificationService.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
-import 'package:presshop/utils/networkOperations/TokenRefreshManager.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
+import 'package:presshop/view/dashboard/version_checker.dart';
 import 'package:presshop/view/walkThrough/WalkThrough.dart';
-import '../authentication/LoginScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,6 +37,16 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    forceUpdateCheck();
+    print("from splash screen");
+
+    print(sharedPreferences!.getString(tokenKey) ?? "tokenfailed");
+    print(
+        sharedPreferences!.getString(refreshtokenKey) ?? "refreshtokenfailed");
+
+    // sharedPreferences!.remove("refreshtokenKey");
+    // sharedPreferences!.clear();
+
     print("Splash Screen111");
 
     _checkInitialMessage();
@@ -59,21 +71,23 @@ class _SplashScreenState extends State<SplashScreen>
     print("Splash Screen888");
   }
 
+  void forceUpdateCheck() {
+    print("checkforceupdate");
+    NetworkClass.fromNetworkClass(
+            getLatestVersionUrl, this, getLatestVersionReq, null)
+        .callRequestServiceHeader(false, "get", null);
+  }
+
   Future<void> _checkInitialMessage() async {
-    // Check for initial message when app was terminated
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
       _handleMessage(initialMessage);
     }
-
-    // Listen for messages when app is in foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _handleMessage(message);
     });
-
-    // Listen for messages when app is in background but not terminated
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleMessage(message);
     });
@@ -150,6 +164,35 @@ class _SplashScreenState extends State<SplashScreen>
     print("Splash Screen111 refresh 555");
     NetworkClass(appRefreshTokenUrl, this, appRefreshTokenReq)
         .callRequestServiceHeaderForRefreshToken("get");
+  }
+
+  void forceUpdateCheck1() async {
+    bool needsUpdate = await VersionService.isUpdateAvailable(
+      androidPackage: 'com.presshop.app',
+      iosAppId: '6744651614',
+    );
+    print("needupdatedebug");
+    print(needsUpdate);
+
+    if (needsUpdate && mounted) {
+      commonErrorDialogDialog(
+        shouldShowClosedButton: false,
+        isFromNetworkError: false,
+        MediaQuery.of(context).size,
+        "To keep enjoying all the latest features and improvements, please update your PressHop app now.",
+        "Update required",
+        actionButton: "Update Now",
+        () async {
+          final appUrl = Platform.isAndroid
+              ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
+              : 'https://apps.apple.com/app/id6744651614';
+          final Uri uri = Uri.parse(appUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      );
+    }
   }
 
   // @override
@@ -285,6 +328,7 @@ class _SplashScreenState extends State<SplashScreen>
 
           // NEVER logout automatically - keep user logged in
           // Just show a message and let user retry
+
           debugPrint("Refresh token API failed, but keeping user logged in");
           showSnackBar(
               "Session Error",
@@ -319,6 +363,30 @@ class _SplashScreenState extends State<SplashScreen>
           sharedPreferences!.setString(tokenKey, map[tokenKey]);
           sharedPreferences!.setString(refreshtokenKey, map[refreshtokenKey]);
           myProfileApi();
+          break;
+        case getLatestVersionReq:
+          debugPrint("getLatestVersionReq: $response");
+          var map = jsonDecode(response);
+          if (map["code"] == 200) {
+            var versionData = map["data"];
+            sharedPreferences!
+                .setInt(videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
+
+            if (Platform.isAndroid) {
+              print("plateformios");
+              print(Platform.isAndroid);
+              if (versionData['aOSshouldForceUpdate']) {
+                forceUpdateCheck1();
+              }
+            } else {
+              // if (true) {
+              if (versionData['iOSshouldForceUpdate']) {
+                forceUpdateCheck1();
+              }
+            }
+          } else {
+            showSnackBar(map["message"], "error", Colors.red);
+          }
           break;
         case myProfileUrlRequest:
           var map = jsonDecode(response);
