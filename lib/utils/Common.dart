@@ -12,42 +12,11 @@ const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
 
 //--------production urls----------------
 
-const baseUrl = "https://datastream22843-r.presshop.news:6003/";
-const adminBaseUrl = "https://datastream22843-r.presshop.news:7001/";
+// const baseUrl = "https://datastream22843-r.presshop.news:6003/";
+// const adminBaseUrl = "https://datastream22843-r.presshop.news:7001/";
 
-const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
+// const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
 
-const googleMapURL =
-    "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-
-const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
-const profileImageUrl = "${mediaBaseUrl}userImages/";
-const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
-
-const contentImageUrl =
-    "https://livestreamdata-r.presshop.news/public/contentData/";
-
-const imageUrlBefore =
-    "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
-
-const taskMediaUrl =
-    "https://livestreamdata-r.presshop.news/public/uploadContent/";
-
-const mediaThumbnailUrl =
-    "https://livestreamdata-r.presshop.news/public/thumbnail/";
-
-const adminProfileUrl = "${mediaBaseUrl}adminImages/";
-
-const oldappUrl = "https://developers.promaticstechnologies.com/";
-
-const socketUrl = "https://datastream22843-r.presshop.news:4005";
-
-//--------staging urls------- ---------
-
-// const baseUrl = "https://dev-api.presshop.news:5019/";
-// const adminBaseUrl = "https://dev-api.presshop.news:5020/";
-
-// const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 // const googleMapURL =
 //     "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 
@@ -55,14 +24,45 @@ const socketUrl = "https://datastream22843-r.presshop.news:4005";
 // const profileImageUrl = "${mediaBaseUrl}userImages/";
 // const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
 
-// const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
+// const contentImageUrl =
+//     "https://livestreamdata-r.presshop.news/public/contentData/";
+
 // const imageUrlBefore =
 //     "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
 
-// const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
-// const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
+// const taskMediaUrl =
+//     "https://livestreamdata-r.presshop.news/public/uploadContent/";
+
+// const mediaThumbnailUrl =
+//     "https://livestreamdata-r.presshop.news/public/thumbnail/";
+
 // const adminProfileUrl = "${mediaBaseUrl}adminImages/";
-// const socketUrl = "https://dev-api.presshop.news:3005";
+
+// const oldappUrl = "https://developers.promaticstechnologies.com/";
+
+// const socketUrl = "https://datastream22843-r.presshop.news:4005";
+
+//--------staging urls------- ---------
+
+const baseUrl = "https://dev-api.presshop.news:5019/";
+const adminBaseUrl = "https://dev-api.presshop.news:5020/";
+
+const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+const googleMapURL =
+    "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+
+const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
+const profileImageUrl = "${mediaBaseUrl}userImages/";
+const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
+
+const contentImageUrl = "https://dev-cdn.presshop.news/public/contentData/";
+const imageUrlBefore =
+    "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
+
+const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
+const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
+const adminProfileUrl = "${mediaBaseUrl}adminImages/";
+const socketUrl = "https://dev-api.presshop.news:3005";
 
 //===========url-endpoint============
 const checkUserNameUrl = "users/checkIfUserNameExist/";
@@ -71,8 +71,12 @@ const checkUserNameUrlRequest = 1;
 const getAvatarsUrl = "users/getAvatars";
 const getAvatarsUrlRequest = 2;
 
-String get appUrl =>
-    "Android: https://play.google.com/store/apps/details?id=com.presshop.app\niOS: https://apps.apple.com/in/app/presshop/id6744651614";
+// String get appUrl =>
+//     "Android: https://play.google.com/store/apps/details?id=com.presshop.app\niOS: https://apps.apple.com/in/app/presshop/id6744651614";
+
+final String appUrl = Platform.isAndroid
+    ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
+    : 'https://apps.apple.com/in/app/presshop/id6744651614';
 
 /*const getAllCmsUrl = "users/getCMSForHopper";
 const getAllCmsUrlRequest = 3;*/

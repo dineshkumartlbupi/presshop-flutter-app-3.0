@@ -16,6 +16,7 @@ import 'package:presshop/utils/dashboardInterface.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
+import 'package:presshop/view/dashboard/version_checker.dart';
 import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
@@ -550,7 +551,7 @@ class DashboardState extends State<Dashboard>
             sharedPreferences!.setString(currentCity, place.locality ?? "");
 
             isGetLatLong = false;
-            callUpdateCurrentData();
+            callUpdateCurrentData1();
             setState(() {});
 
             if (alertDialog != null) {
@@ -675,7 +676,7 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-  void callUpdateCurrentData() {
+  void callUpdateCurrentData1() {
     Map<String, String> params = {
       "hopper_id": sharedPreferences!.getString(hopperIdKey).toString(),
       "longitude": longitude.toString(),
@@ -737,25 +738,78 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-  void _verifyVersion() async {
-    await AppVersionUpdate.checkForUpdates(
-      appleId: '6744651614',
-      playStoreId: 'com.presshop.app',
-    ).then((result) async {
-      if (result.canUpdate!) {
-        commonErrorDialogDialog(
-            shouldShowClosedButton: false,
-            isFromNetworkError: false,
-            MediaQuery.of(context).size,
-            "To keep enjoying all the latest features and improvements, please update your PressHop app now. It only takes a moment!",
-            "Update required",
-            actionButton: "Update Now", () async {
-          await launchUrl(Uri.parse(appUrl),
-              mode: LaunchMode.externalApplication);
-        });
-      }
-    });
+  void forceUpdateCheck1() async {
+    bool needsUpdate = await VersionService.isUpdateAvailable(
+      androidPackage: 'com.presshop.app',
+      iosAppId: '6744651614',
+    );
+
+    if (needsUpdate && mounted) {
+      commonErrorDialogDialog(
+        shouldShowClosedButton: false,
+        isFromNetworkError: false,
+        MediaQuery.of(context).size,
+        "To keep enjoying all the latest features and improvements, please update your PressHop app now.",
+        "Update required",
+        actionButton: "Update Now",
+        () async {
+          final appUrl = Platform.isAndroid
+              ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
+              : 'https://apps.apple.com/app/id6744651614';
+          final Uri uri = Uri.parse(appUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      );
+    }
   }
+
+  // void _verifyVersion() async {
+  //   forceUpdateCheck1();
+  //   await AppVersionUpdate.checkForUpdates(
+  //     appleId: '6744651614',
+  //     playStoreId: 'com.presshop.app',
+  //   ).then((result) async {
+  //     print("verify version");
+  //     print(result.canUpdate);
+  //     // print("Current Installed Version: ${result.appVersion}");
+
+  //     print("store Version: ${result.storeVersion}");
+
+  //     print("relevent store url  ${result.storeUrl}");
+
+  //     print(" apple id  ${result.appleId}");
+  //     print(" playstore id  ${result.playStoreId}");
+  //     print(" apple id  ${result.platform}");
+
+  //     print("Can Update: ${result.canUpdate}");
+  //     if (result.canUpdate!) {
+  //       commonErrorDialogDialog(
+  //           shouldShowClosedButton: false,
+  //           isFromNetworkError: false,
+  //           MediaQuery.of(context).size,
+  //           "To keep enjoying all the latest features and improvements, please update your PressHop app now. It only takes a moment!",
+  //           "Update required",
+  //           actionButton: "Update Now", () async {
+  //         // await launchUrl(Uri.parse(appUrl),
+  //         //     mode: LaunchMode.externalApplication);
+
+  //         try {
+  //           final Uri uri = Uri.parse(appUrl);
+
+  //           if (await canLaunchUrl(uri)) {
+  //             await launchUrl(uri, mode: LaunchMode.externalApplication);
+  //           } else {
+  //             print('Could not launch $uri');
+  //           }
+  //         } catch (e) {
+  //           print('Error launching URL: $e');
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
 
   @override
   void onResponse({required int requestCode, required String response}) {
@@ -780,13 +834,14 @@ class DashboardState extends State<Dashboard>
             var versionData = map["data"];
             sharedPreferences!
                 .setInt(videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
+
             if (Platform.isAndroid) {
               if (versionData['aOSshouldForceUpdate']) {
-                _verifyVersion();
+                forceUpdateCheck1();
               }
             } else {
               if (versionData['iOSshouldForceUpdate']) {
-                _verifyVersion();
+                forceUpdateCheck1();
               }
             }
           } else {

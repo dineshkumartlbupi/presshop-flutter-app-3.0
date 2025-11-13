@@ -305,12 +305,32 @@ class NetworkClass {
 
       String refreshHeaderToken = "";
 
+      print("refresh token called ");
+
       if (sharedPreferences!.getString(refreshtokenKey) != null) {
         refreshHeaderToken = sharedPreferences!.getString(refreshtokenKey)!;
+
+        String token = sharedPreferences!.getString(tokenKey)!;
+
         var deviceID = sharedPreferences!.getString(deviceIdKey)!;
+
+        print("new variable112112");
+        print(token);
+        print(refreshHeaderToken);
         // Add headers
+        // refreshHeaderToken.isNotEmpty
+        //       ? refreshHeaderToken
+        //       : accessHeaderKey,
+
+        // accessHeaderKey
+
+        String tokenforAccess =
+            refreshHeaderToken == "" || refreshHeaderToken == null ? token : "";
+
+        print("tokenAccess123 ${tokenforAccess}");
         request.headers.addAll({
-          refreshHeaderKey: refreshHeaderToken,
+          refreshHeaderKey: "",
+          accessHeaderKey: "",
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
           headerDeviceIdKey: deviceID

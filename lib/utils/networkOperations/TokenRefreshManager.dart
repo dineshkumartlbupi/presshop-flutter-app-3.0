@@ -65,15 +65,30 @@ class TokenRefreshManager {
 
     try {
       final refreshTokenValue = sharedPreferences!.getString(refreshtokenKey)!;
+      final token = sharedPreferences!.getString(tokenKey)!;
       final deviceID = sharedPreferences!.getString(deviceIdKey) ?? "";
 
       final uri = Uri.parse(baseUrl + appRefreshTokenUrl);
       debugPrint(
           "Refreshing token: $uri (Attempt ${retryAttempt + 1}/${_maxRetries + 1})");
 
+      // request.headers.addAll({
+      // refreshHeaderKey: refreshHeaderToken,
+      // accessHeaderKey: tokenforAccess,
+      //         headerDeviceTypeKey:
+      //             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
+      //         headerDeviceIdKey: deviceID
+      //       });
+
+      String tokenforAccess =
+          refreshTokenValue == "" || refreshTokenValue == null ? token : "";
+
+      print("Token Access12345 $tokenforAccess");
+
       final request = http.Request("GET", uri);
       request.headers.addAll({
-        refreshHeaderKey: refreshTokenValue,
+        refreshHeaderKey: "",
+        accessHeaderKey: "",
         headerDeviceTypeKey:
             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
         headerDeviceIdKey: deviceID,

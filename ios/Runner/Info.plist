@@ -50,7 +50,7 @@
 	<key>FacebookClientToken</key>
 	<string>511f243cec6c666dc39a378e0eb084ef</string>
 	<key>CFBundleVersion</key>
-	<string>36</string>
+	<string>38</string>
 	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
 	<string>YES</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
