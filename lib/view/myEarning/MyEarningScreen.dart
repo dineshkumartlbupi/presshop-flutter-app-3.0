@@ -227,7 +227,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Total Earning",
+                                          "Total earnings",
                                           style: commonTextStyle(
                                               size: size,
                                               fontSize: size.width * numD045,
