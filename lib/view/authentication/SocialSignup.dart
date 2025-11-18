@@ -700,8 +700,11 @@ class _SocialSignUpState extends State<SocialSignUp>
     if (value!.isEmpty) {
       return requiredText;
     }
+
     String firstName = widget.name.trim().toLowerCase();
     String username = value.trim().toLowerCase();
+
+    print("firstName = $firstName");
 
     if (firstName.isEmpty) {
       return "First name must be filled.";
@@ -965,8 +968,10 @@ class _SocialSignUpState extends State<SocialSignUp>
           setState(() {});
           break;
         case socialLoginRegisterUrlRequest:
-          debugPrint("SocialSuccess: $response");
+          debugPrint("SocialSuccess 878dfdfd: $response");
           var map = jsonDecode(response);
+
+          print(map);
 
           if (map["code"] == 200) {
             rememberMe = true;
@@ -1003,6 +1008,32 @@ class _SocialSignUpState extends State<SocialSignUp>
             }
             currencySymbol =
                 sharedPreferences!.getString(currencySymbolKey) ?? "£";
+
+            var src = map["user"]["source"];
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            print("source data from socialsignupsdfsd324");
+            var sourceDataIsOpened = src?["is_opened"] ?? false;
+            var sourceDataType = src?["type"] ?? "";
+            var sourceDataUrl = src?["url"] ?? "";
+            var sourceDataHeading = src?["heading"] ?? "";
+            var sourceDataDescription = src?["description"] ?? "";
+            var isClick = src?["is_clicked"] ?? "";
+            print(isClick);
+
+            sharedPreferences!
+                .setBool(sourceDataIsOpenedKey, sourceDataIsOpened);
+
+            sharedPreferences!.setString(sourceDataTypeKey, sourceDataType);
+            sharedPreferences!.setString(sourceDataUrlKey, sourceDataUrl);
+            sharedPreferences!
+                .setString(sourceDataHeadingKey, sourceDataHeading);
+            sharedPreferences!
+                .setString(sourceDataDescriptionKey, sourceDataDescription);
+            sharedPreferences!.setBool(sourceDataIsClickKey, isClick);
+
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => WelcomeScreen(
@@ -1081,6 +1112,31 @@ class _SocialSignUpState extends State<SocialSignUp>
                 sharedPreferences!
                     .setString(profileImageKey, map["user"][profileImageKey]);
               }
+
+              // var src = map["response"]["user"]["source"];
+
+              // var sourceDataIsOpened = true;
+              // var sourceDataType = "student_beans";
+              // var sourceDataUrl = src?["url"] ?? "";
+              // print("aalprint");
+              // var sourceDataIsOpened = src?["is_opened"] ?? false;
+              // var sourceDataType = src?["type"] ?? "";
+              // var sourceDataUrl = src?["url"] ?? "";
+              // var sourceDataHeading = src?["heading"] ?? "";
+              // var sourceDataDescription = src?["description"] ?? "";
+              // var isClick = src?["is_clicked"] ?? "";
+              // print(isClick);
+
+              // sharedPreferences!
+              //     .setBool(sourceDataIsOpenedKey, sourceDataIsOpened);
+
+              // sharedPreferences!.setString(sourceDataTypeKey, sourceDataType);
+              // sharedPreferences!.setString(sourceDataUrlKey, sourceDataUrl);
+              // sharedPreferences!
+              //     .setString(sourceDataHeadingKey, sourceDataHeading);
+              // sharedPreferences!
+              //     .setString(sourceDataDescriptionKey, sourceDataDescription);
+              // sharedPreferences!.setBool(sourceDataIsClickKey, isClick);
 
               if (map["user"]["doc_to_become_pro"] != null) {
                 debugPrint("InsideDoc");

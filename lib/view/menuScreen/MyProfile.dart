@@ -1694,6 +1694,26 @@ class MyProfileState extends State<MyProfile>
               sharedPreferences!.setString(
                   avatarKey, map["userData"]['avatarData'][avatarKey]);
             }
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            final src1 = map["source"];
+
+// source fields
+            final sourceDataIsOpened = src1?["is_opened"] ?? false;
+            final sourceDataType = src1?["type"] ?? "";
+            final sourceDataUrl = src1?["url"] ?? "";
+            final sourceDataHeading = src1?["heading"] ?? "";
+            final sourceDataDescription = src1?["description"] ?? "";
+
+            print("print new data data data ");
+            print(sourceDataIsOpened);
+            print(sourceDataType);
+            print(sourceDataUrl);
+            print(sourceDataHeading);
+            print(sourceDataDescription);
+
             isLoading = true;
             setProfileData();
             setState(() {});

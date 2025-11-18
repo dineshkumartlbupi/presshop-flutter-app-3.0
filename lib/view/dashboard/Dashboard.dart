@@ -41,15 +41,28 @@ class Dashboard extends StatefulWidget {
   String? taskStatus = "";
   bool openChatScreen = false;
   bool openNotification = false;
+  bool openBeansActivation = false;
+  String? sourceDataType = "";
+  bool? sourceDataIsOpened = false;
+  String? sourceDataUrl = "";
+  String? sourceDataHeading = "";
+  String? sourceDataDescription = "";
+  bool? isClick = false;
 
-  Dashboard({
-    super.key,
-    required this.initialPosition,
-    this.openChatScreen = false,
-    this.openNotification = false,
-    this.broadCastId,
-    this.taskStatus,
-  });
+  Dashboard(
+      {super.key,
+      required this.initialPosition,
+      this.openChatScreen = false,
+      this.openNotification = false,
+      this.openBeansActivation = false,
+      this.broadCastId,
+      this.taskStatus,
+      this.sourceDataType = "",
+      this.sourceDataIsOpened = false,
+      this.sourceDataUrl = "",
+      this.sourceDataHeading = "",
+      this.sourceDataDescription = "",
+      this.isClick = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -68,6 +81,9 @@ class DashboardState extends State<Dashboard>
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
 
+  String? savedSourceDataHeading = "";
+  String? savedSourceDataDescription = "";
+
   /// Prince
   lc.LocationData? locationData;
   late LocationService _locationService;
@@ -76,8 +92,10 @@ class DashboardState extends State<Dashboard>
   double x = 0, y = 0, latitude = 22.5744, longitude = 88.3629;
 
   int page = 0;
+  Completer<String?>? _studentBeansCompleter;
 
   bool isGetLatLong = false;
+  String? studentBeansResponseUrlGlobal = "";
 
   List<AdminDetailModel> adminList = [];
   List<String> adminIDList = [];
@@ -111,7 +129,13 @@ class DashboardState extends State<Dashboard>
 
   @override
   void initState() {
-    /// Light statusBar mode-->
+    setIsClickForBeansActivation();
+
+    print("attottotot");
+    print("slkjfsldkjflksdfjsldkjflk $studentBeansResponseUrlGlobal");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUpdateAndShowPopup();
+    });
     bottomNavigationScreens = <Widget>[
       MyContentScreen(hideLeading: true),
       MyTaskScreen(hideLeading: true),
@@ -121,7 +145,6 @@ class DashboardState extends State<Dashboard>
         previousScreen: ScreenNameEnum.dashboardScreen,
       ),
       ChatBotScreen(),
-      //ChatListingScreen(hideLeading: true),
       const MenuScreen()
     ];
 
@@ -154,7 +177,6 @@ class DashboardState extends State<Dashboard>
       callGetActiveAdmin();
     }
     isGetLatLong = false;
-    // requestLocationPermissions();
     if (widget.openChatScreen) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
@@ -180,9 +202,93 @@ class DashboardState extends State<Dashboard>
           ),
         );
       });
+    } else if (widget.openBeansActivation) {
+      Future.delayed(const Duration(seconds: 2), () {
+        setIsClickForBeansActivation();
+      });
     }
     super.initState();
   }
+
+  Future<String?> fetchStudentBeansUrl(
+      {Duration timeout = const Duration(seconds: 10)}) async {
+    // If a previous completer is still pending, return its future
+    if (_studentBeansCompleter != null &&
+        !_studentBeansCompleter!.isCompleted) {
+      return _studentBeansCompleter!.future
+          .timeout(timeout, onTimeout: () => null);
+    }
+
+    _studentBeansCompleter = Completer<String?>();
+
+    try {
+      NetworkClass.fromNetworkClass(
+        studentBeansActivationUrl,
+        this,
+        studentBeansActivationRequest,
+        null,
+      ).callRequestServiceHeader(false, "post", null);
+    } catch (e) {
+      // Ensure completer completes on error
+      if (!_studentBeansCompleter!.isCompleted) {
+        _studentBeansCompleter!.complete(null);
+      }
+      return null;
+    }
+
+    // Wait for onResponse to complete the completer (or timeout -> null)
+    try {
+      return await _studentBeansCompleter!.future
+          .timeout(timeout, onTimeout: () => null);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _checkUpdateAndShowPopup() async {
+    final String? savedSourceDataType =
+        sharedPreferences?.getString(sourceDataTypeKey);
+    // final String? savedSourceDataUrl =
+    //     sharedPreferences?.getString(sourceDataUrlKey);
+    savedSourceDataHeading = sharedPreferences?.getString(sourceDataHeadingKey);
+    savedSourceDataDescription =
+        sharedPreferences?.getString(sourceDataDescriptionKey);
+    final bool? savedSourceDataIsOpened =
+        sharedPreferences?.getBool(sourceDataIsOpenedKey);
+    final bool? savedSourceDataIsClickKey =
+        sharedPreferences?.getBool(sourceDataIsClickKey);
+
+    debugPrint('savedSourceDataTypeghgg: $savedSourceDataType');
+    debugPrint('savedSourceDataHeading: $savedSourceDataHeading');
+    debugPrint('savedSourceDataDescription: $savedSourceDataDescription');
+    debugPrint('savedSourceDataIsOpened: $savedSourceDataIsOpened');
+    debugPrint('savedSourceDataIsClickKey: $savedSourceDataIsClickKey');
+
+    if ((savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+        (savedSourceDataIsOpened == false) &&
+        savedSourceDataIsClickKey == false) {
+      // if (true) {
+      final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+      _showForceUpdateDialog(size);
+    }
+  }
+
+  // void _checkUpdateAndShowPopup() async {
+  //   print("checking____here");
+  //   print(widget.sourceDataType);
+  //   print((widget.sourceDataType ?? '').toLowerCase() == 'studentbeans');
+
+  //   print(widget.sourceDataIsOpened);
+  //   print(widget.sourceDataIsOpened == false);
+
+  //   if ((widget.sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+  //       (widget.sourceDataIsOpened == false) &&
+  //       widget.isClick == false) {
+  //     // if (true) {
+  //     final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+  //     _showForceUpdateDialog(size);
+  //   }
+  // }
 
   /// An implementation using a link Amit
   initPlatformStateForStringUniLinks() async {
@@ -215,8 +321,6 @@ class DashboardState extends State<Dashboard>
       initialLink = await linkStream.getInitialLink();
       debugPrint('initial link: $initialLink');
       jump2Screen(initialLink!.path);
-
-      ///if (initialLink != null) initialUri = Uri.parse(initialLink);
     } catch (e) {
       debugPrint('exception -----> $e');
     }
@@ -235,6 +339,13 @@ class DashboardState extends State<Dashboard>
     debugPrint("Map : $map");
     NetworkClass.fromNetworkClass(getRoomIdUrl, this, getRoomIdReq, map)
         .callRequestServiceHeader(false, "post", null);
+  }
+
+  Future<void> setIsClickForBeansActivation() async {
+    NetworkClass.fromNetworkClass(studentBeansActivationUrl, this,
+            studentBeansActivationRequest, null)
+        .callRequestServiceHeader(false, "post", null);
+    // return;
   }
 
   /// Navigate other screen using share link
@@ -262,6 +373,215 @@ class DashboardState extends State<Dashboard>
             "groupId : ${groupId.replaceAll("group_id=", "").replaceAll("&type=Group", "")}");
       }
     }
+  }
+
+  void _showForceUpdateDialog(Size size) {
+    showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                savedSourceDataHeading ??
+                                    "Brains, beans, and breaking news!",
+                                // "Brains, beans, and breaking news!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD04,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: const Divider(
+                            color: Colors.black,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 120, // fixed width
+                                height: 120, // fixed height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    "${commonImagePath}dog2.jpg",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  savedSourceDataDescription ??
+                                      "Please confirm your student status to continue",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              // Expanded(
+                              //     child: SizedBox(
+                              //   height: size.width * numD12,
+                              //   child: commonElevatedButton(
+                              //       logoutText,
+                              //       size,
+                              //       commonButtonTextStyle(size),
+                              //       commonButtonStyle(size, Colors.black), () {
+                              //     Navigator.pop(context);
+                              //     // callRemoveDeviceApi();
+                              //   }),
+                              // )),
+                              // SizedBox(
+                              //   width: size.width * numD04,
+                              // ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: size.width * numD12,
+                                  child: commonElevatedButton(
+                                    "Confirm",
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(size, colorThemePink),
+                                    () async {
+                                      try {
+                                        await setIsClickForBeansActivation();
+
+                                        print(
+                                            "studentBeansResponseUrlGlobal23232");
+                                        print(studentBeansResponseUrlGlobal);
+                                        final url = studentBeansResponseUrlGlobal ??
+                                            "https://www.studentbeans.com/en-gb/uk/beansid-connect/hosted-app/presshop/student/b150bab7-1e1d-4bb6-98e9-50acd2b44011";
+
+                                        if (url.isEmpty) {
+                                          debugPrint("URL is empty");
+                                          return;
+                                        }
+
+                                        final uri = Uri.parse(url);
+                                        final launched = await launchUrl(
+                                          uri,
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                        sharedPreferences!.setBool(
+                                            sourceDataIsClickKey, true);
+                                        sharedPreferences!.setBool(
+                                            sourceDataIsOpenedKey, true);
+                                        Navigator.pop(context);
+
+                                        if (!launched) {
+                                          debugPrint(
+                                              "Could not launch URL: $url");
+                                        }
+                                      } catch (e) {
+                                        debugPrint("Error launching URL: $e");
+                                      }
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
+    // showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       title: const Text(
+    //         "Update Required",
+    //         style: TextStyle(fontWeight: FontWeight.bold),
+    //       ),
+    //       content: const Text(
+    //         "A new version of the app is available.\nPlease update to continue.",
+    //       ),
+    //       actions: [
+    //         TextButton(
+    // onPressed: () {
+    //   launchUrl(
+    //     Uri.parse(
+    //       "https://play.google.com/store/apps/details?id=com.your.app",
+    //     ),
+    //   );
+    // },
+    //           child: const Text("UPDATE NOW"),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   @override
@@ -328,11 +648,16 @@ class DashboardState extends State<Dashboard>
                   label: menuText),
             ],
           ),
-          body: Visibility(
-            visible: !isGetLatLong,
-            replacement: showLoader(isForLocation: false),
-            child: bottomNavigationScreens[currentIndex],
-            //  )
+          body: Stack(
+            children: [
+              Center(child: Text("This is the center Text for popup")),
+              Visibility(
+                visible: !isGetLatLong,
+                replacement: showLoader(isForLocation: false),
+                child: bottomNavigationScreens[currentIndex],
+                //  )
+              ),
+            ],
           )),
     );
   }
@@ -415,6 +740,11 @@ class DashboardState extends State<Dashboard>
       (message) {
         if (mounted) {
           setState(() {});
+        }
+        if (message.data.isNotEmpty &&
+            message.data["notification_type"].toString() == "studentbeans") {
+          _checkUpdateAndShowPopup();
+          return;
         }
         debugPrint("FirebaseMessaging.onMessageOpenedApp.listen");
         if (message.data.isNotEmpty &&
@@ -728,6 +1058,9 @@ class DashboardState extends State<Dashboard>
         case taskDetailUrlRequest:
           debugPrint("BroadcastData::::Error");
           break;
+        case studentBeansActivationRequest:
+          debugPrint("BroadcastData::::Error $response");
+          break;
 
         case addDeviceUrlRequest:
           debugPrint("AddDeviceError: $response");
@@ -818,6 +1151,29 @@ class DashboardState extends State<Dashboard>
         case addDeviceUrlRequest:
           debugPrint("AddDeviceSuccess: $response");
           break;
+        case studentBeansActivationRequest:
+          debugPrint("studentBeansActivationRequest32434: $response");
+          try {
+            var map = jsonDecode(response);
+            var studentBeansResponseUrl = map["url"];
+            studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+            // Complete the completer if someone is waiting
+            print(
+                "studentBeansResponseUrlGlobal$studentBeansResponseUrlGlobal");
+            if (_studentBeansCompleter != null &&
+                !_studentBeansCompleter!.isCompleted) {
+              _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+            }
+          } catch (e) {
+            debugPrint("Error parsing studentBeans response: $e");
+            if (_studentBeansCompleter != null &&
+                !_studentBeansCompleter!.isCompleted) {
+              _studentBeansCompleter!.complete(null);
+            }
+          }
+          break;
+
         case getRoomIdReq:
           var data = jsonDecode(response);
           debugPrint("getRoomIdReq Success : $data");

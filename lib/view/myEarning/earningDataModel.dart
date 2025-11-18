@@ -92,7 +92,8 @@ class EarningTransactionDetail {
   String userFirstName = "";
   String userLastName = "";
   String userEmail = "";
-  int userPhone = 0;
+  // int userPhone = 0;
+  String userPhone = "";
   String userAddress = "";
   String vat = '';
   String amount = '';
@@ -265,7 +266,8 @@ class EarningTransactionDetail {
         userFirstName: json['hopper_id'] != null ? json['hopper_id']['first_name'] : '',
         userLastName: json['hopper_id'] != null ? json['hopper_id']['last_name'] : '',
         userEmail: json['hopper_id'] != null ? json['hopper_id']['email'] : '',
-        userPhone: json['hopper_id'] != null ? json['hopper_id']['phone'] : 0,
+        // userPhone: json['hopper_id'] != null ? json['hopper_id']['phone'] : 0,
+        userPhone: json['hopper_id'] != null ? (json['hopper_id']['phone']?.toString() ?? "") : "",
         userAddress: json['hopper_id'] != null ? json['hopper_id']['address'] : '',
         hopperAvatar: json['hopper_id'] != null ? json['hopper_id']['avatar'] ?? "" : '',
         hopperBankName: json["received_bank_detail"] != null ? json["received_bank_detail"]["bank_name"] ?? "" : "",

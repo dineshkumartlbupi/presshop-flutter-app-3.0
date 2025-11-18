@@ -66,6 +66,13 @@ const currentCountry = "currentCountry";
 const currentCity = "currentCity";
 const contryCode = "contryCode";
 
+const sourceDataIsOpenedKey = "sourceDataIsOpened";
+const sourceDataTypeKey = "sourceDataType";
+const sourceDataUrlKey = "sourceDataUrl";
+const sourceDataHeadingKey = "sourceDataHeading";
+const sourceDataDescriptionKey = "sourceDataDescription";
+const sourceDataIsClickKey = "isClick";
+
 /*------------------------------------*/
 
 Future<SharedPreferences> getSharedPreferences() async {

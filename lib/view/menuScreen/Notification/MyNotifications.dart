@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:presshop/main.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../utils/Common.dart';
 import '../../../utils/CommonAppBar.dart';
@@ -38,16 +42,265 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
   bool showData = false, isLoading = false;
   bool uploadFirst = false, uploadSecond = false, showThird = false;
   int counting = 0;
+  Completer<String?>? _studentBeansCompleter;
+  final String? savedSourceDataHeading = "";
+  bool isGetLatLong = false;
+  String? studentBeansResponseUrlGlobal = "";
+  String? savedSourceDataDescription = "";
 
   @override
   void initState() {
-    debugPrint('class:::::::: $runtimeType');
+    debugPrint('class::::::::sdfsdf $runtimeType');
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => callNotificationList());
     Future.delayed(const Duration(seconds: 5), () {
       callUpdateNotification();
     });
     super.initState();
+  }
+
+  Future<void> setIsClickForBeansActivation() async {
+    NetworkClass.fromNetworkClass(studentBeansActivationUrl, this,
+            studentBeansActivationRequest, null)
+        .callRequestServiceHeader(false, "post", null);
+    // return;
+  }
+
+  void _checkUpdateAndShowPopup() async {
+    final String? savedSourceDataType =
+        sharedPreferences?.getString(sourceDataTypeKey);
+    // final String? savedSourceDataUrl =
+    //     sharedPreferences?.getString(sourceDataUrlKey);
+    final String? savedSourceDataHeading =
+        sharedPreferences?.getString(sourceDataHeadingKey);
+    final String? savedSourceDataDescription =
+        sharedPreferences?.getString(sourceDataDescriptionKey);
+    final bool? savedSourceDataIsOpened =
+        sharedPreferences?.getBool(sourceDataIsOpenedKey);
+    final bool? savedSourceDataIsClickKey =
+        sharedPreferences?.getBool(sourceDataIsClickKey);
+
+    print("saved source data from notification");
+    print(savedSourceDataHeading);
+    print(savedSourceDataDescription);
+    print(savedSourceDataIsOpened);
+    print(savedSourceDataIsClickKey);
+    print(savedSourceDataType);
+
+    if ((savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+        (savedSourceDataIsOpened == false) &&
+        savedSourceDataIsClickKey == false) {
+      // if (true) {
+      final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+      _showForceUpdateDialog(size);
+    }
+  }
+
+  void _showForceUpdateDialog(Size size) {
+    showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                studentBeansResponseUrlGlobal ??
+                                    "Brains, beans, and breaking news!",
+                                // "Brains, beans, and breaking news!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD04,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: const Divider(
+                            color: Colors.black,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 120, // fixed width
+                                height: 120, // fixed height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    "${commonImagePath}dog2.jpg",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  savedSourceDataDescription ??
+                                      "Please confirm your student status to continue",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              // Expanded(
+                              //     child: SizedBox(
+                              //   height: size.width * numD12,
+                              //   child: commonElevatedButton(
+                              //       logoutText,
+                              //       size,
+                              //       commonButtonTextStyle(size),
+                              //       commonButtonStyle(size, Colors.black), () {
+                              //     Navigator.pop(context);
+                              //     // callRemoveDeviceApi();
+                              //   }),
+                              // )),
+                              // SizedBox(
+                              //   width: size.width * numD04,
+                              // ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: size.width * numD12,
+                                  child: commonElevatedButton(
+                                    "Confirm",
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(size, colorThemePink),
+                                    () async {
+                                      try {
+                                        await setIsClickForBeansActivation();
+
+                                        // print(studentBeansResponseUrlGlobal);
+                                        final url = studentBeansResponseUrlGlobal ??
+                                            "https://www.studentbeans.com/en-gb/uk/beansid-connect/hosted-app/presshop/student/b150bab7-1e1d-4bb6-98e9-50acd2b44011";
+
+                                        if (url.isEmpty) {
+                                          debugPrint("URL is empty");
+                                          return;
+                                        }
+
+                                        final uri = Uri.parse(url);
+                                        final launched = await launchUrl(
+                                          uri,
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                        sharedPreferences!.setBool(
+                                            sourceDataIsClickKey, true);
+                                        sharedPreferences!.setBool(
+                                            sourceDataIsOpenedKey, true);
+                                        Navigator.pop(context);
+
+                                        if (!launched) {
+                                          debugPrint(
+                                              "Could not launch URL: $url");
+                                        }
+                                      } catch (e) {
+                                        debugPrint("Error launching URL: $e");
+                                      }
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
+    // showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       title: const Text(
+    //         "Update Required",
+    //         style: TextStyle(fontWeight: FontWeight.bold),
+    //       ),
+    //       content: const Text(
+    //         "A new version of the app is available.\nPlease update to continue.",
+    //       ),
+    //       actions: [
+    //         TextButton(
+    // onPressed: () {
+    //   launchUrl(
+    //     Uri.parse(
+    //       "https://play.google.com/store/apps/details?id=com.your.app",
+    //     ),
+    //   );
+    // },
+    //           child: const Text("UPDATE NOW"),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   void deleteNotificationDialog() {
@@ -305,6 +558,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
+                                // _checkUpdateAndShowPopup();
+
                                 debugPrint(
                                     "Notification Type: ${notificationList[index].messageType}");
 
@@ -391,6 +646,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                             hideLeading: false,
                                             message: '',
                                           )));
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "studentbeans") {
+                                  print("sldkfsdfsd");
+                                  _checkUpdateAndShowPopup();
                                 }
                               },
                               child: Container(
@@ -566,7 +826,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     _refreshController.loadComplete();
   }
 
-  /// Api Section
   callNotificationList() {
     NetworkClass("$notificationListAPI?limit=10&offset=$offset", this,
             reqNotificationListAPI)
@@ -596,8 +855,29 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case studentBeansActivationRequest:
+          debugPrint("studentBeansActivationRequest32434: $response");
+          try {
+            var map = jsonDecode(response);
+            var studentBeansResponseUrl = map["url"];
+            studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+            // Complete the completer if someone is waiting
+            if (_studentBeansCompleter != null &&
+                !_studentBeansCompleter!.isCompleted) {
+              _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+            }
+          } catch (e) {
+            debugPrint("Error parsing studentBeans response: $e");
+            if (_studentBeansCompleter != null &&
+                !_studentBeansCompleter!.isCompleted) {
+              _studentBeansCompleter!.complete(null);
+            }
+          }
+          break;
         case reqNotificationListAPI:
-          log("success response===> ${jsonDecode(response)}");
+          log("success response123NOT===> ${jsonDecode(response)}");
+          print("success response123NOTwewe===> ${jsonDecode(response)}");
           var data = jsonDecode(response);
           var dataList = data['data'] as List;
           counting = data['unreadCount'];
@@ -623,7 +903,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
 
           break;
         case reqNotificationReadAPI:
-          debugPrint("success response===> ${jsonDecode(response)}");
+          debugPrint("success responseREAD===> ${jsonDecode(response)}");
           callNotificationList();
           break;
 
