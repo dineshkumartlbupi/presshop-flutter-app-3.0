@@ -26,6 +26,7 @@ import '../../utils/CommonWigdets.dart';
 import '../dashboard/Dashboard.dart';
 import 'UploadDocumnetsScreen.dart';
 
+// ignore: must_be_immutable
 class SignUpScreen extends StatefulWidget {
   bool socialLogin = false;
   String socialId = "";
@@ -163,6 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
     final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
         .chain(CurveTween(curve: Curves.elasticIn))
         .animate(controller)
@@ -223,7 +225,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                         SizedBox(
                           height: size.width * numD04,
                         ),
-
                         selectedAvatar.isEmpty
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -344,7 +345,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                           ),
                           textAlign: TextAlign.justify,
                         ),
-
                         SizedBox(
                           height: size.width * numD06,
                         ),
@@ -427,7 +427,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             return null;
                           },
                         ),
-
                         SizedBox(
                           height: size.width * numD01,
                         ),
@@ -499,7 +498,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             checkPhoneApi();
                           },
                         ),
-
                         SizedBox(
                           height: size.width * numD06,
                         ),
@@ -531,7 +529,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                         SizedBox(
                           height: size.width * numD06,
                         ),
-
                         CommonTextField(
                           size: size,
                           maxLines: 1,
@@ -563,7 +560,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             return null;
                           },
                         ),
-
                         SizedBox(
                           height: size.width * numD01,
                         ),
@@ -575,7 +571,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                         SizedBox(
                           height: size.width * numD04,
                         ),
-
                         !widget.socialLogin
                             ? CommonTextField(
                                 size: size,
@@ -929,58 +924,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 autofocus: false,
                               )
                             : Container(),
-
-                        // SizedBox(
-                        //   height: !widget.socialLogin ? size.width * numD04 : 0,
-                        // ),
-
-                        // InkWell(
-                        //   onTap: () {
-                        //     FocusScope.of(context).requestFocus(FocusNode());
-                        //     isSelectCheck = !isSelectCheck;
-                        //     setState(() {});
-                        //   },
-                        //   child: Row(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       isSelectCheck
-                        //           ? Container(
-                        //               margin: EdgeInsets.only(
-                        //                   top: size.width * numD008),
-                        //               child: Image.asset(
-                        //                 "${iconsPath}ic_checkbox_filled.png",
-                        //                 height: size.width * numD06,
-                        //               ),
-                        //             )
-                        //           : Container(
-                        //               margin: EdgeInsets.only(
-                        //                   top: size.width * numD008),
-                        //               child: Image.asset(
-                        //                   "${iconsPath}ic_checkbox_empty.png",
-                        //                   height: size.width * numD06),
-                        //             ),
-                        //       SizedBox(
-                        //         width: size.width * numD02,
-                        //       ),
-                        //       Expanded(
-                        //         child: Text(
-                        //           enableNotificationText,
-                        //           style: TextStyle(
-                        //               color: Colors.black,
-                        //               fontFamily: "AirbnbCereal",
-                        //               fontSize: size.width * numD035),
-                        //         ),
-                        //       ),
-                        //       SizedBox(
-                        //         width: size.width * numD02,
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                         SizedBox(
                           height: size.width * numD04,
                         ),
-
                         InkWell(
                           onTap: () {
                             FocusScope.of(context).requestFocus(FocusNode());
@@ -1033,11 +979,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                             ],
                           ),
                         ),
-
                         SizedBox(
                           height: size.width * numD06,
                         ),
-
                         Container(
                           margin: EdgeInsets.symmetric(
                               horizontal: size.width * numD04),
@@ -1071,116 +1015,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             setState(() {});
                           }),
                         ),
-
-                        /// Or
-                        // Align(
-                        //   alignment: Alignment.center,
-                        //   child: Padding(
-                        //     padding: EdgeInsets.symmetric(
-                        //         vertical: size.width * numD04),
-                        //     child: Text(
-                        //       orText,
-                        //       style: TextStyle(
-                        //           color: Colors.black,
-                        //           fontFamily: "AirbnbCereal",
-                        //           fontSize: size.width * numD04),
-                        //     ),
-                        //   ),
-                        // ),
-
-                        // Platform.isIOS
-                        //     ? Container(
-                        //         width: size.width,
-                        //         height: size.width * numD13,
-                        //         margin: EdgeInsets.symmetric(
-                        //             horizontal: size.width * numD04),
-                        //         alignment: Alignment.centerLeft,
-                        //         decoration: BoxDecoration(
-                        //             color: Colors.black,
-                        //             borderRadius: BorderRadius.circular(
-                        //                 size.width * numD04),
-                        //             border: Border.all(
-                        //                 color: colorGoogleButtonBorder)),
-                        //         child: InkWell(
-                        //           splashColor: Colors.grey.shade300,
-                        //           onTap: () async {
-                        //             final credential = await SignInWithApple
-                        //                 .getAppleIDCredential(
-                        //               scopes: [
-                        //                 AppleIDAuthorizationScopes.email,
-                        //                 AppleIDAuthorizationScopes.fullName,
-                        //               ],
-                        //             );
-
-                        //             debugPrint("AppleCredentials: $credential");
-                        //           },
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               Image.asset(
-                        //                 "${iconsPath}appleLogo.png",
-                        //                 height: size.width * numD045,
-                        //                 width: size.width * numD045,
-                        //                 color: Colors.white,
-                        //               ),
-                        //               SizedBox(width: size.width * numD01),
-                        //               Align(
-                        //                 alignment: Alignment.center,
-                        //                 child: Text(
-                        //                   "Sign in with Apple",
-                        //                   style: TextStyle(
-                        //                       color: Colors.white,
-                        //                       fontFamily: "AirbnbCereal",
-                        //                       fontSize: size.width * numD036,
-                        //                       fontWeight: FontWeight.w500),
-                        //                 ),
-                        //               )
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(
-                        //         width: size.width,
-                        //         height: size.width * numD13,
-                        //         margin: EdgeInsets.symmetric(
-                        //             horizontal: size.width * numD04),
-                        //         decoration: BoxDecoration(
-                        //             borderRadius: BorderRadius.circular(
-                        //                 size.width * numD04),
-                        //             border: Border.all(
-                        //                 color: colorGoogleButtonBorder)),
-                        //         child: InkWell(
-                        //           splashColor: Colors.grey.shade300,
-                        //           borderRadius: BorderRadius.circular(
-                        //               size.width * numD04),
-                        //           onTap: () async {
-                        //             googleLogin();
-                        //           },
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               Image.asset(
-                        //                 "${iconsPath}ic_google.png",
-                        //                 height: size.width * numD045,
-                        //                 width: size.width * numD045,
-                        //               ),
-                        //               SizedBox(width: size.width * numD01),
-                        //               Align(
-                        //                 alignment: Alignment.center,
-                        //                 child: Text(
-                        //                   continueGoogleText,
-                        //                   style: TextStyle(
-                        //                       color: Colors.black,
-                        //                       fontFamily: "AirbnbCereal",
-                        //                       fontSize: size.width * numD036,
-                        //                       fontWeight: FontWeight.w500),
-                        //                 ),
-                        //               )
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       ),
-
                         !widget.socialLogin
                             ? Align(
                                 alignment: Alignment.center,

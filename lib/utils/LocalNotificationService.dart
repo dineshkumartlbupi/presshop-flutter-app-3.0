@@ -184,6 +184,16 @@ class LocalNotificationService {
                               openChatScreen: true,
                             )),
                     (route) => false);
+              } else if (taskDetail["notification_type"].toString() ==
+                  "studentbeans") {
+                Navigator.pushAndRemoveUntil(
+                    navigatorKey.currentContext!,
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              initialPosition: 2,
+                              openBeansActivation: true,
+                            )),
+                    (route) => false);
               } else if (taskDetail["image"].toString().isNotEmpty) {
                 Navigator.pushAndRemoveUntil(
                     navigatorKey.currentContext!,

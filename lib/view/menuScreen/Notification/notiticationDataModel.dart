@@ -53,7 +53,11 @@ class NotificationData {
           : "",
 
       id: json['_id'] ?? "",
-      description: json['description'] ?? "",
+
+      // description: json['description'] ?? "",
+
+      description: json['body'] ?? "",
+
       imageUrl: json['image_url'] ?? "",
       messageType: json['message_type'] ?? "",
       time: json['createdAt'] ?? "",
@@ -85,7 +89,7 @@ class NotificationData {
 
       // transactionDetailData: null,  // working
 
-      broadcastId: json['broadcast_id'] ?? "",
+      broadcastId: json['broadCast_id'] ?? "",
     );
   }
 

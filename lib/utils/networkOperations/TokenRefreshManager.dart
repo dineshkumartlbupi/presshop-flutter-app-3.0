@@ -130,6 +130,7 @@ class TokenRefreshManager {
       if (response.statusCode <= 201) {
         try {
           final map = jsonDecode(response.body);
+          // print()
           if (map["token"] != null && map["refreshToken"] != null) {
             // Save new tokens
             sharedPreferences!.setString(tokenKey, map["token"]);

@@ -43,6 +43,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   String fromDate = "";
   String toDate = "";
+  String totalEarningGlobalVar = "";
 
   bool showData = false;
   bool isSorting = false;
@@ -219,12 +220,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        left: size.width * numD06),
+                                        left: size.width * numD10),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.start,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Total earnings",
@@ -235,11 +236,38 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                               fontWeight: FontWeight.w500),
                                         ),
                                         SizedBox(
-                                          height: size.width * numD02,
+                                          height: size.width * num0,
                                         ),
                                         Text(
                                           earningData!.totalEarning.isNotEmpty
                                               ? '$currencySymbol${formatDouble(double.parse(earningData!.totalEarning))}'
+                                              : '£0',
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD075,
+                                              color: colorThemePink,
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD02,
+                                        ),
+                                        Text(
+                                          "Monthly earnings",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD045,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * num0,
+                                        ),
+                                        Text(
+                                          // totalEarningGlobalVar,
+                                          totalEarningGlobalVar
+                                                  .toString()
+                                                  .isNotEmpty
+                                              ? '$currencySymbol${formatDouble(double.parse(totalEarningGlobalVar))}'
                                               : '£0',
                                           style: commonTextStyle(
                                               size: size,
@@ -427,6 +455,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                   );
                                                 },
                                               );
+                                              // here is calling api
                                               if (picked != null) {
                                                 toDate = picked
                                                     .toString()
@@ -1769,16 +1798,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
   }
 
   /// API Section
-  callGEtEarningDataAPI() {
-    Map<String, String> map = {};
-    int pos = sortList.indexWhere((element) => element.isSelected);
-    if (sortList[pos].name == filterDateText) {
-      map["year"] = sortList[pos].fromDate!;
-      map["month"] = sortList[pos].toDate!;
-    }
-    NetworkClass(getEarningDataAPI, this, reqGetEarningDataAPI)
-        .callRequestServiceHeader(false, 'get', map);
-  }
 
   callGetCommissionAPI() {
     isCommissionLoading = true;
@@ -1790,6 +1809,17 @@ class _MyEarningScreenState extends State<MyEarningScreen>
       map["month"] = sortList[pos].toDate!;
     }
     NetworkClass(commissionGetUrl, this, commissionGetRequest)
+        .callRequestServiceHeader(false, 'get', map);
+  }
+
+  callGEtEarningDataAPI() {
+    Map<String, String> map = {};
+    int pos = sortList.indexWhere((element) => element.isSelected);
+    if (sortList[pos].name == filterDateText) {
+      map["year"] = sortList[pos].fromDate!;
+      map["month"] = sortList[pos].toDate!;
+    }
+    NetworkClass(getEarningDataAPI, this, reqGetEarningDataAPI)
         .callRequestServiceHeader(false, 'get', map);
   }
 
@@ -1893,6 +1923,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         case reqGetAllEarningTransactionAPI:
           debugPrint("reqGetAllEarning=> ${jsonDecode(response)}");
           var data = jsonDecode(response);
+
+          var totalEarning = data['totalEarning'];
+          totalEarningGlobalVar = totalEarning.toString();
+
+          print("totalEarning New1234 $totalEarning");
           var dataList = data['data'] as List;
           earningTransactionDataList = dataList
               .map((e) => EarningTransactionDetail.fromJson(e))

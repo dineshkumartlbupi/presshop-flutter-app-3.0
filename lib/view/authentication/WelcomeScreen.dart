@@ -14,12 +14,25 @@ class WelcomeScreen extends StatefulWidget {
   bool hideLeading = false;
   String screenType = "";
   bool isSocialLogin = false;
+  String? sourceDataType = "";
+  bool? sourceDataIsOpened = false;
+  String? sourceDataUrl = "";
+  String? sourceDataHeading = "";
+  String? sourceDataDescription = "";
+  bool isClick = false;
 
-  WelcomeScreen(
-      {super.key,
-      required this.hideLeading,
-      required this.screenType,
-      this.isSocialLogin = false});
+  WelcomeScreen({
+    super.key,
+    required this.hideLeading,
+    required this.screenType,
+    this.isSocialLogin = false,
+    this.sourceDataType = "",
+    this.sourceDataIsOpened = false,
+    this.sourceDataUrl = "",
+    this.sourceDataHeading = "",
+    this.sourceDataDescription = "",
+    this.isClick = false,
+  });
 
   @override
   State<StatefulWidget> createState() => WelcomeScreenState();
@@ -31,6 +44,12 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
+    print("Data for source2343243423423 ");
+    print(widget.sourceDataType ?? "");
+    print(widget.sourceDataIsOpened ?? "");
+    print(widget.sourceDataUrl ?? "");
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -264,8 +283,15 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)));
+                            builder: (context) => Dashboard(
+                                initialPosition: 2,
+                                sourceDataIsOpened: widget.sourceDataIsOpened,
+                                sourceDataType: widget.sourceDataType,
+                                sourceDataUrl: widget.sourceDataUrl,
+                                sourceDataHeading: widget.sourceDataHeading,
+                                sourceDataDescription:
+                                    widget.sourceDataDescription,
+                                isClick: widget.isClick)));
                   }
                 }),
               ),

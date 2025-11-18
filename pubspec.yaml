@@ -92,13 +92,14 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   image_gallery_saver_plus: ^4.0.1
   dialog_flowtter: ^0.2.0-nullsafety.0
+  upgrader: ^12.3.0
+  force_update_helper: ^0.2.1
   # flutter_foreground_service: ^0.4.1
   # image_cropper: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
 
 flutter:
