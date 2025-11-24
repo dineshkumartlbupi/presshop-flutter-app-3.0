@@ -26,8 +26,8 @@ android {
         applicationId = "com.presshop.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 40
-        versionName = "1.0.25"
+        versionCode = 42
+        versionName = "1.0.27"
 
         ndk {
             abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))

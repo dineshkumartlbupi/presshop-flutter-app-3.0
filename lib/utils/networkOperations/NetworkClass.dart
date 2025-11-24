@@ -50,6 +50,30 @@ class NetworkClass {
   NetworkClass.multipartNetworkClassFiles(this.endUrl, this.networkResponse,
       this.requestCode, this.jsonBody, this._files);
 
+// NetworkClass.multipartNetworkClassFiles(
+//   String endUrl,
+//   NetworkResponse networkResponse,
+//   int requestCode,
+//   Map<String, String> jsonBody,
+//   List<File>? files,
+// ) {
+//   this.endUrl = endUrl;
+//   this.networkResponse = networkResponse;
+//   this.requestCode = requestCode;
+//   this.jsonBody = jsonBody;
+
+//   // validate files BEFORE storing
+//   if (files != null && files.isNotEmpty) {
+//     this._files = files.where((f) {
+//       final exists = f.existsSync();
+//       if (!exists) debugPrint("⚠️ Skipping invalid file: ${f.path}");
+//       return exists;
+//     }).toList();
+//   } else {
+//     this._files = []; // keep safe
+//   }
+// }
+
   Future<void> callMultipartService(bool showLoader, String requestType,
       List<String> imageParams, List<String>? mimeType) async {
     try {

@@ -89,6 +89,13 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
         widget.publishData?.country != "United Kingdom" ||
             sharedPreferences!.getString(contryCode) != "GB";
 
+    print(
+        "from content submitted isUserOutSideOfUnitedKingdom screen ==>>> $isUserOutSideOfUnitedKingdom");
+    print("from content submitted screen ==>>> ${widget.isBeta}");
+    print("from content submitted screen ==>>> ${widget.publishData?.country}");
+    print(
+        "from content submitted screen ==>>> ${sharedPreferences!.getString(contryCode)}");
+
     return WillPopScope(
       onWillPop: () {
         Navigator.push(
@@ -713,11 +720,14 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 padding:
                                     EdgeInsets.only(top: size.width * numD04),
                                 child: Text(
-                                  isUserOutSideOfUnitedKingdom
+                                  // isUserOutSideOfUnitedKingdom
+                                  //     ? "PressHop’s en route to your city ✈"
+                                  //     :
+
+                                  widget.isBeta
+                                      // ? contentBetaSubmittedHeadingText
                                       ? "PressHop’s en route to your city ✈"
-                                      : widget.isBeta
-                                          ? contentBetaSubmittedHeadingText
-                                          : contentSubmittedHeadingText,
+                                      : contentSubmittedHeadingText,
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD038,
@@ -812,7 +822,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 SizedBox(
                   height: size.width * numD04,
                 ),
-                if (isUserOutSideOfUnitedKingdom) ...[
+                // if (isUserOutSideOfUnitedKingdom) ...[
+                if (widget.isBeta) ...[
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: size.width * numD04),
@@ -930,89 +941,94 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           ),
                         ])),
                   )
-                ] else if (widget.isBeta) ...[
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
-                    child: RichText(
-                        textAlign: TextAlign.justify,
-                        text: TextSpan(children: [
-                          TextSpan(
-                            text: contentBetaSubmittedMessageText,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          TextSpan(
-                            text: "Got questions? Check out our ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FAQScreen(
-                                              priceTipsSelected: false,
-                                              type: 'faq',
-                                              index: 0,
-                                            )));
-                              },
-                            text: faqText,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          TextSpan(
-                            text: " $orText ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ChatBotScreen()));
-                              },
-                            text: "Chat ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          TextSpan(
-                            text:
-                                "with us on the app. We’re all ears and happy to help",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ])),
-                  )
-                ] else ...[
+                ]
+
+// ============================>
+                // else if (widget.isBeta) ...[
+                //   Padding(
+                //     padding:
+                //         EdgeInsets.symmetric(horizontal: size.width * numD04),
+                //     child: RichText(
+                //         textAlign: TextAlign.justify,
+                //         text: TextSpan(children: [
+                //           TextSpan(
+                //             text: contentBetaSubmittedMessageText,
+                //             style: commonTextStyle(
+                //                 size: size,
+                //                 fontSize: size.width * numD03,
+                //                 color: Colors.black,
+                //                 lineHeight: 2,
+                //                 fontWeight: FontWeight.normal),
+                //           ),
+                //           TextSpan(
+                //             text: "Got questions? Check out our ",
+                //             style: commonTextStyle(
+                //                 size: size,
+                //                 fontSize: size.width * numD03,
+                //                 color: Colors.black,
+                //                 lineHeight: 2,
+                //                 fontWeight: FontWeight.normal),
+                //           ),
+                //           TextSpan(
+                //             recognizer: TapGestureRecognizer()
+                //               ..onTap = () {
+                //                 Navigator.push(
+                //                     context,
+                //                     MaterialPageRoute(
+                //                         builder: (context) => FAQScreen(
+                //                               priceTipsSelected: false,
+                //                               type: 'faq',
+                //                               index: 0,
+                //                             )));
+                //               },
+                //             text: faqText,
+                //             style: commonTextStyle(
+                //                 size: size,
+                //                 fontSize: size.width * numD03,
+                //                 color: colorThemePink,
+                //                 lineHeight: 2,
+                //                 fontWeight: FontWeight.w600),
+                //           ),
+                //           TextSpan(
+                //             text: " $orText ",
+                //             style: commonTextStyle(
+                //                 size: size,
+                //                 fontSize: size.width * numD03,
+                //                 color: Colors.black,
+                //                 lineHeight: 2,
+                //                 fontWeight: FontWeight.normal),
+                //           ),
+                //           TextSpan(
+                //             recognizer: TapGestureRecognizer()
+                //               ..onTap = () {
+                //                 Navigator.push(
+                //                     context,
+                //                     MaterialPageRoute(
+                //                         builder: (context) => ChatBotScreen()));
+                //               },
+                //             text: "Chat ",
+                //             style: commonTextStyle(
+                //                 size: size,
+                //                 fontSize: size.width * numD03,
+                //                 color: colorThemePink,
+                //                 lineHeight: 2,
+                //                 fontWeight: FontWeight.w600),
+                //           ),
+                //           TextSpan(
+                //             text:
+                //                 "with us on the app. We’re all ears and happy to help",
+                //             style: commonTextStyle(
+                //                 size: size,
+                //                 fontSize: size.width * numD03,
+                //                 color: Colors.black,
+                //                 lineHeight: 2,
+                //                 fontWeight: FontWeight.normal),
+                //           ),
+                //         ])),
+                //   )
+                // ]
+
+                else ...[
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: size.width * numD04),

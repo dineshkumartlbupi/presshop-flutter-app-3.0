@@ -324,13 +324,6 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   void showOtpBottomSheet(BuildContext context, String email) {
-    bool _isBottomSheetOpen = false;
-
-    final otpPinController = GlobalKey<OtpPinFieldState>();
-
-    if (_isBottomSheetOpen) return;
-    _isBottomSheetOpen = true;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -340,246 +333,242 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (bottomSheetContext) {
-        var size = MediaQuery.of(bottomSheetContext).size;
-
-        int secondsLeft = 300; // 5 minutes in seconds
-        Timer? localTimer;
-
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            // Start timer once
-            localTimer ??= Timer.periodic(const Duration(seconds: 1), (timer) {
-              if (secondsLeft > 0) {
-                secondsLeft--;
-                setModalState(() {});
-              } else {
-                timer.cancel();
-                setModalState(() {});
-              }
-            });
-
-            String minutes = (secondsLeft ~/ 60).toString().padLeft(2, '0');
-            String seconds = (secondsLeft % 60).toString().padLeft(2, '0');
-            String expireTimeValue = "$minutes:$seconds";
-
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.black54),
-                        onPressed: () {
-                          Navigator.pop(context); // close manually
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: size.width * numD06,
-                    right: size.width * numD06,
-                    top: size.width * numD02,
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      /// Top drag handle + close icon
-
-                      SizedBox(height: size.width * numD05),
-                      // Center(
-                      //   child: Container(
-                      //     width: 40,
-                      //     height: 5,
-                      //     decoration: BoxDecoration(
-                      //       color: Colors.grey[300],
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      // ),
-                      // SizedBox(height: size.width * numD05),
-                      Text(
-                        "Verify OTP",
-                        style: TextStyle(
-                          fontFamily: 'AirbnbCereal_W_Bd',
-                          fontSize: size.width * numD06,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: size.width * numD02),
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text:
-                                  "We’ve sent a 5-digit verification code to ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD035,
-                                fontFamily: 'AirbnbCereal_W_Lt',
-                              ),
-                            ),
-                            TextSpan(
-                              text: email,
-                              style: TextStyle(
-                                color: colorThemePink,
-                                fontFamily: 'AirbnbCereal_W_Bd',
-                                fontSize: size.width * numD035,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: size.width * numD08),
-
-                      // OTP input
-                      OtpPinField(
-                        key: otpPinController,
-                        onSubmit: (pin) => debugPrint("Entered OTP: $pin"),
-                        onChange: (pin) => debugPrint("OTP Changed: $pin"),
-                        otpPinFieldStyle: OtpPinFieldStyle(
-                          defaultFieldBorderColor: colorTextFieldBorder,
-                          activeFieldBorderColor: colorTextFieldIcon,
-                          defaultFieldBackgroundColor: colorLightGrey,
-                          activeFieldBackgroundColor: colorLightGrey,
-                          fieldBorderRadius: size.width * numD02,
-                          fieldBorderWidth: 0.5,
-                        ),
-                        maxLength: 5,
-                        showCursor: true,
-                        cursorColor: colorTextFieldIcon,
-                        showCustomKeyboard: false,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        otpPinFieldDecoration: OtpPinFieldDecoration.custom,
-                      ),
-
-                      SizedBox(height: size.width * numD1),
-
-                      // Verify button
-                      SizedBox(
-                        width: size.width,
-                        height: size.width * (isIpad ? numD1 : numD14),
-                        child: commonElevatedButton(
-                          "Verify OTP",
-                          size,
-                          commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          commonButtonStyle(size, colorThemePink),
-                          () {
-                            String otpValue = otpPinController
-                                    .currentState?.controller.text ??
-                                "";
-                            if (otpValue.isEmpty || otpValue.length < 5) {
-                              showSnackBar(
-                                "Error",
-                                "Please enter the 5-digit OTP",
-                                Colors.red,
-                              );
-                              return;
-                            }
-                            verifyForgotPasswordOtpApi(email, otpValue);
-                          },
-                        ),
-                      ),
-
-                      SizedBox(height: size.width * numD07),
-
-                      // Countdown timer
-                      if (secondsLeft != 0)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "${iconsPath}ic_time.png",
-                              height: size.width * numD06,
-                            ),
-                            SizedBox(width: size.width * numD02),
-                            Text("$otpExpireText $expireTimeValue $minutesText",
-                                style: TextStyle(
-                                    fontFamily: 'AirbnbCereal',
-                                    color: Colors.black,
-                                    fontSize: size.width * numD035)),
-                          ],
-                        ),
-
-                      if (secondsLeft != 0)
-                        SizedBox(height: size.width * numD06),
-
-                      // Resend OTP
-                      if (secondsLeft == 0)
-                        TextButton(
-                          onPressed: () {
-                            // ✅ Close only bottom sheet, not screen
-                            Navigator.pop(bottomSheetContext);
-
-                            // ✅ Stop timer
-                            localTimer?.cancel();
-
-                            // ✅ Call resend logic
-                            forgotPasswordApi();
-
-                            // ✅ Restart resend timer logic
-                            myTimer?.cancel();
-                            startResendTime();
-                          },
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: otpNotReceivedText,
-                                    style: TextStyle(
-                                        fontFamily: 'AirbnbCereal',
-                                        color: Colors.black,
-                                        fontSize: size.width * numD035)),
-                                WidgetSpan(
-                                    child: SizedBox(width: size.width * 0.01)),
-                                TextSpan(
-                                  text: clickHereText,
-                                  style: TextStyle(
-                                    fontFamily: 'AirbnbCereal',
-                                    color: colorThemePink,
-                                    fontSize: size.width * numD038,
-                                    // fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                WidgetSpan(
-                                    child: SizedBox(width: size.width * 0.01)),
-                                TextSpan(
-                                  text: anotherOneText,
-                                  style: TextStyle(
-                                      fontFamily: 'AirbnbCereal',
-                                      color: Colors.black,
-                                      fontSize: size.width * numD035),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                      SizedBox(height: size.width * numD06),
-                    ],
-                  ),
-                ),
-              ],
-            );
+        return OtpBottomSheet(
+          email: email,
+          onVerify: (email, otp) => verifyForgotPasswordOtpApi(email, otp),
+          onResend: () {
+            Navigator.pop(bottomSheetContext);
+            forgotPasswordApi();
+            myTimer?.cancel();
+            startResendTime();
           },
         );
       },
-    ).whenComplete(() {
-      // Cleanup when sheet is closed
-      _isBottomSheetOpen = false;
-      // localTimer?.cancel();
-    });
+    );
   }
 }
+
+class OtpBottomSheet extends StatefulWidget {
+  final String email;
+  final Function(String, String) onVerify;
+  final VoidCallback onResend;
+
+  const OtpBottomSheet({
+    super.key,
+    required this.email,
+    required this.onVerify,
+    required this.onResend,
+  });
+
+  @override
+  State<OtpBottomSheet> createState() => _OtpBottomSheetState();
+}
+
+class _OtpBottomSheetState extends State<OtpBottomSheet> {
+  int secondsLeft = 300;
+  Timer? _timer;
+  final GlobalKey<OtpPinFieldState> _otpPinController =
+      GlobalKey<OtpPinFieldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (secondsLeft > 0) {
+        setState(() {
+          secondsLeft--;
+        });
+      } else {
+        _timer?.cancel();
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    String minutes = (secondsLeft ~/ 60).toString().padLeft(2, '0');
+    String seconds = (secondsLeft % 60).toString().padLeft(2, '0');
+    String expireTimeValue = "$minutes:$seconds";
+
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.black54),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: size.width * numD06,
+            right: size.width * numD06,
+            top: size.width * numD02,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: size.width * numD05),
+              Text(
+                "Verify OTP",
+                style: TextStyle(
+                  fontFamily: 'AirbnbCereal_W_Bd',
+                  fontSize: size.width * numD06,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: size.width * numD02),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "We’ve sent a 5-digit verification code to ",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: size.width * numD035,
+                        fontFamily: 'AirbnbCereal_W_Lt',
+                      ),
+                    ),
+                    TextSpan(
+                      text: widget.email,
+                      style: TextStyle(
+                        color: colorThemePink,
+                        fontFamily: 'AirbnbCereal_W_Bd',
+                        fontSize: size.width * numD035,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: size.width * numD08),
+              OtpPinField(
+                key: _otpPinController,
+                onSubmit: (pin) => debugPrint("Entered OTP: $pin"),
+                onChange: (pin) => debugPrint("OTP Changed: $pin"),
+                otpPinFieldStyle: OtpPinFieldStyle(
+                  defaultFieldBorderColor: colorTextFieldBorder,
+                  activeFieldBorderColor: colorTextFieldIcon,
+                  defaultFieldBackgroundColor: colorLightGrey,
+                  activeFieldBackgroundColor: colorLightGrey,
+                  fieldBorderRadius: size.width * numD02,
+                  fieldBorderWidth: 0.5,
+                ),
+                maxLength: 5,
+                showCursor: true,
+                cursorColor: colorTextFieldIcon,
+                showCustomKeyboard: false,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                otpPinFieldDecoration: OtpPinFieldDecoration.custom,
+              ),
+              SizedBox(height: size.width * numD1),
+              SizedBox(
+                width: size.width,
+                height: size.width * (isIpad ? numD1 : numD14),
+                child: commonElevatedButton(
+                  "Verify OTP",
+                  size,
+                  commonTextStyle(
+                    size: size,
+                    fontSize: size.width * numD035,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  commonButtonStyle(size, colorThemePink),
+                  () {
+                    String otpValue =
+                        _otpPinController.currentState?.controller.text ?? "";
+                    if (otpValue.isEmpty || otpValue.length < 5) {
+                      showSnackBar(
+                        "Error",
+                        "Please enter the 5-digit OTP",
+                        Colors.red,
+                      );
+                      return;
+                    }
+                    widget.onVerify(widget.email, otpValue);
+                  },
+                ),
+              ),
+              SizedBox(height: size.width * numD07),
+              if (secondsLeft != 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "${iconsPath}ic_time.png",
+                      height: size.width * numD06,
+                    ),
+                    SizedBox(width: size.width * numD02),
+                    Text("$otpExpireText $expireTimeValue $minutesText",
+                        style: TextStyle(
+                            fontFamily: 'AirbnbCereal',
+                            color: Colors.black,
+                            fontSize: size.width * numD035)),
+                  ],
+                ),
+              if (secondsLeft != 0) SizedBox(height: size.width * numD06),
+              if (secondsLeft == 0)
+                TextButton(
+                  onPressed: widget.onResend,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                            text: otpNotReceivedText,
+                            style: TextStyle(
+                                fontFamily: 'AirbnbCereal',
+                                color: Colors.black,
+                                fontSize: size.width * numD035)),
+                        WidgetSpan(child: SizedBox(width: size.width * 0.01)),
+                        TextSpan(
+                          text: clickHereText,
+                          style: TextStyle(
+                            fontFamily: 'AirbnbCereal',
+                            color: colorThemePink,
+                            fontSize: size.width * numD038,
+                          ),
+                        ),
+                        WidgetSpan(child: SizedBox(width: size.width * 0.01)),
+                        TextSpan(
+                          text: anotherOneText,
+                          style: TextStyle(
+                              fontFamily: 'AirbnbCereal',
+                              color: Colors.black,
+                              fontSize: size.width * numD035),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              SizedBox(height: size.width * numD06),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+// 344444

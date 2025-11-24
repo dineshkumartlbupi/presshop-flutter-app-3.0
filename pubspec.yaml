@@ -17,7 +17,7 @@ dependencies:
   shared_preferences: ^2.0.18
   lottie: ^3.0.0
   otp_pin_field: ^1.1.2+2
-  camera: any
+  camera: ^0.11.3
   native_exif: ^0.6.0
   # gallery_saver: ^2.3.2
   location: ^7.0.1
