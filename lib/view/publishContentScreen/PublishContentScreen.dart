@@ -2984,6 +2984,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
     debugPrint("LocalMedia: ${filesPath.length}");
     log("AddContent Params: $params");
     log("AddContent URL: $addContentUrl");
+
     uploadMediaUsingDio(
       addContentUrl,
       params,
@@ -3044,7 +3045,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq error: $response");
           var data = jsonDecode(response);
+
           var isBeta = data['is_beta'] ?? false;
+
           if (data['message'] == "not verified") {
             callAddContentApi();
             // currently publish not required for publish content
@@ -3057,6 +3060,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                   media.thumbnail,
                   media.thumbnail));
             });
+
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
@@ -3067,6 +3071,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           price: priceController.text,
                           isBeta: isBeta,
                         )));
+
             // onBoardingCompleteDialog(
             //     size: MediaQuery.of(navigatorKey.currentContext!).size,
             //     func: () {
@@ -3225,7 +3230,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq success: $response");
           var data = jsonDecode(response);
+
           var isBeta = data['is_beta'] ?? false;
+
+          // var isBeta = true;
+
+          print("isBeta========>>>> $isBeta");
+
           callAddContentApi();
           // currently publish not required for publish content
           //if (data['message'] == "verified") {

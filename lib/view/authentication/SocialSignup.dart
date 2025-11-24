@@ -610,6 +610,7 @@ class _SocialSignUpState extends State<SocialSignUp>
         socialLoginRegisterUrlRequest,
         params,
       ).callRequestServiceHeader(false, "post", null);
+
       NetworkClass.multipartNetworkClassFiles(socialLoginRegisterUrl, this,
               socialLoginRegisterUrlRequest, params, [File(userImagePath)])
           .callMultipartService(true, "post", ["profile_image"], []);
@@ -617,6 +618,38 @@ class _SocialSignUpState extends State<SocialSignUp>
       debugPrint("$e");
     }
   }
+
+//   void socialRegisterLoginApi() {
+//   try {
+//     Map<String, String> params = {
+//       emailKey: widget.email.trim().toLowerCase(),
+//       isTermAcceptedKey: termConditionsChecked.toString(),
+//       firstNameKey: widget.name,
+//       receiveTaskNotificationKey: isSelectCheck.toString(),
+//       phoneKey: phoneController.text.trim(),
+//       roleKey: "Hopper",
+//       avatarIdKey: selectedAvatarId,
+//       "social_id": widget.socialId,
+//       "social_type": widget.socialType.toLowerCase(),
+//       userNameKey: userNameController.text.trim().toLowerCase(),
+//     };
+
+//     if (isRefferalCodeValid) {
+//       params[referredCodeKey] = referralCodeController.text.trim();
+//     }
+
+//     NetworkClass.multipartNetworkClassFiles(
+//       socialLoginRegisterUrl,
+//       this,
+//       socialLoginRegisterUrlRequest,
+//       params,
+//       userImagePath.isNotEmpty ? [File(userImagePath)] : [],
+//     ).callMultipartService(true, "post", ["profile_image"], []);
+
+//   } catch (e) {
+//     debugPrint("Error: $e");
+//   }
+// }
 
   void verifyReferredCode() {
     try {
