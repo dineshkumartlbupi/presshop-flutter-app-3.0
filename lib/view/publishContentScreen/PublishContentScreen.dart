@@ -3229,6 +3229,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           callAddContentApi();
           // currently publish not required for publish content
           //if (data['message'] == "verified") {
+
           widget.publishData?.mediaList.forEach((media) {
             widget.myContentData?.contentMediaList.add(ContentMediaData(
                 "",

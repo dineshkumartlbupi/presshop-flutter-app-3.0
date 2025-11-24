@@ -28,6 +28,10 @@ android {
         targetSdk = 35
         versionCode = 40
         versionName = "1.0.25"
+
+        ndk {
+            abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
+        }
     }
 
     // signingConfigs {

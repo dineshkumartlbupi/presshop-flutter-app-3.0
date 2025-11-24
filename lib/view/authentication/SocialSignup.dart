@@ -914,7 +914,7 @@ class _SocialSignUpState extends State<SocialSignUp>
       NetworkClass(getAvatarsUrl, this, getAvatarsUrlRequest)
           .callRequestServiceHeader(false, "get", null);
     } on Exception catch (e) {
-      debugPrint("$e");
+      debugPrint("Error during avatar api $e");
     }
   }
 

@@ -315,7 +315,90 @@ class LoginScreenState extends State<LoginScreen>
                           child: InkWell(
                             splashColor: Colors.grey.shade300,
                             onTap: () async {
-                              appleLogin();
+                              // Request credential for the currently signed in Apple account.
+                              final appleCredential =
+                                  await SignInWithApple.getAppleIDCredential(
+                                scopes: [
+                                  AppleIDAuthorizationScopes.email,
+                                  AppleIDAuthorizationScopes.fullName,
+                                ],
+                                nonce: nonce,
+                              );
+
+                              // Create an `OAuthCredential` from the credential returned by Apple.
+                              final oauthCredential =
+                                  OAuthProvider("apple.com");
+
+                              oauthCredential.setScopes([
+                                'email',
+                                'fullName',
+                              ]);
+
+                              var appleAuthProvider =
+                                  oauthCredential.credential(
+                                idToken: appleCredential.identityToken,
+                                accessToken: appleCredential.authorizationCode,
+                                rawNonce: rawNonce,
+                              );
+
+                              final credential = await _firebaseAuth
+                                  .signInWithCredential(appleAuthProvider);
+                              debugPrint("AppleCredentials: $credential");
+
+                              debugPrint(
+                                  "AppleCredential Email: ${appleCredential.email}");
+                              debugPrint(
+                                  "Firebase User Email: ${credential.user?.email}");
+
+                              String? emailFromApple = appleCredential.email;
+                              String? emailFromFirebase =
+                                  credential.user?.email;
+
+                              String? finalEmail =
+                                  emailFromApple?.isNotEmpty == true
+                                      ? emailFromApple
+                                      : (emailFromFirebase?.isNotEmpty == true
+                                          ? emailFromFirebase
+                                          : null);
+
+                              if (finalEmail == null || finalEmail.isEmpty) {
+                                finalEmail =
+                                    "${appleCredential.userIdentifier ?? credential.user?.uid ?? 'user'}@privaterelay.appleid.com";
+                                debugPrint("Using fallback email: $finalEmail");
+                              }
+
+                              socialId = credential.user?.uid ??
+                                  appleCredential.userIdentifier ??
+                                  "";
+                              socialEmail = finalEmail ?? "";
+
+                              String? nameFromApple = appleCredential
+                                              .givenName !=
+                                          null ||
+                                      appleCredential.familyName != null
+                                  ? "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}"
+                                      .trim()
+                                  : null;
+
+                              if (nameFromApple != null &&
+                                  nameFromApple.isNotEmpty) {
+                                socialName = nameFromApple;
+                              } else if (credential.user?.displayName != null &&
+                                  credential.user!.displayName!.isNotEmpty) {
+                                socialName = credential.user!.displayName!;
+                              } else if (finalEmail != null &&
+                                  finalEmail.isNotEmpty) {
+                                socialName = finalEmail.split('@')[0];
+                              } else {
+                                socialName = "User";
+                              }
+
+                              debugPrint("socialEmail: $socialEmail");
+                              debugPrint("socialName: $socialName");
+                              debugPrint("SocialId: $socialId");
+                              socialType = "apple";
+
+                              socialExistsApi(socialType: "apple");
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -345,10 +428,82 @@ class LoginScreenState extends State<LoginScreen>
                   SizedBox(
                     height: size.width * numD05,
                   ),
+                  /*   Platform.isIOS
+                      ? Container(
+                    width: size.width,
+                    height: size.width * numD12,
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                        borderRadius:
+                        BorderRadius.circular(size.width * numD04),
+                        border: Border.all(color: colorGoogleButtonBorder)),
+                    child: InkWell(
+                      splashColor: Colors.grey.shade300,
+                      onTap: () async {
+                        User? user = await Authentication.signInWithGoogle(
+                            context: context);
+                        if (user != null) {
+                          final credential = await SignInWithApple
+                              .getAppleIDCredential(
+                            scopes: [
+                              AppleIDAuthorizationScopes.email,
+                              AppleIDAuthorizationScopes.fullName,
+                            ],
+                          );
+
+                          debugPrint("AppleCredentials: $credential");
+                          if (credential != null) {
+                            // socialId = credential.userIdentifier ?? "";
+                            socialId = credential.userIdentifier ?? "";
+                            socialEmail = credential.email ?? "";
+                            socialName = credential.givenName ??
+                                credential.familyName ??
+                                "";
+                            //socialPhoneNumber = '';
+
+                            debugPrint("socialEmail: $socialEmail");
+                            debugPrint("socialName: $socialName");
+                            debugPrint("SocialId: $socialId");
+                            socialExistsApi();
+                          }
+                        } else {
+                          debugPrint("Some Google Login Error");
+                        }
+                      },
+                      child: Stack(
+                        children: [
+                          Positioned(
+                              top: 0,
+                              bottom: 0,
+                              left: size.width * numD01,
+                              child: Padding(
+                                padding: EdgeInsets.all(size.width * numD025),
+                                child: Image.asset(
+                                  "assets/icons/appleLogo.png",
+                                ),
+                              )),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              continueGoogleText,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: size.width * numD035,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                      : Container(),*/
+
+                  /// Google SignIn
                   InkWell(
                     splashColor: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(size.width * numD04),
                     onTap: () async {
+                      googleSignIn.signOut();
                       googleLogin();
                     },
                     child: Container(
@@ -472,6 +627,7 @@ class LoginScreenState extends State<LoginScreen>
       }
       // callSocialLoginGoogleApi(
       //     "google", socialId, socialName, socialEmail, socialProfileImage);
+
       socialType = "google";
       socialExistsApi(socialType: "google");
       debugPrint("userObj ::${_userObj.toString()}");
@@ -486,6 +642,7 @@ class LoginScreenState extends State<LoginScreen>
   Future<void> appleLogin() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+
       final rawNonce = generateNonce();
       final nonce = sha256ofString(rawNonce);
 
@@ -507,7 +664,7 @@ class LoginScreenState extends State<LoginScreen>
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(appleAuthCredential);
 
-      debugPrint("Apple sign-in success: ${userCredential.user?.uid}");
+      debugPrint("✅ Apple sign-in success: ${userCredential.user?.uid}");
       debugPrint("AppleCredential Email: ${appleCredential.email}");
       debugPrint("Firebase User Email: ${userCredential.user?.email}");
 
@@ -523,7 +680,7 @@ class LoginScreenState extends State<LoginScreen>
         final fallbackEmail =
             "${appleCredential.userIdentifier ?? userCredential.user?.uid ?? 'user'}@privaterelay.appleid.com";
         finalEmail = fallbackEmail;
-        debugPrint(" Using fallback email: $finalEmail");
+        debugPrint("⚠️ Using fallback email: $finalEmail");
       }
 
       // STEP 3 — Get best available name
@@ -652,6 +809,7 @@ class LoginScreenState extends State<LoginScreen>
       switch (requestCode) {
         case socialExistUrlRequest:
           var map = jsonDecode(response);
+          print("map==>>> $map");
           commonErrorDialogDialog(MediaQuery.of(context).size,
               map["message"].toString(), map["code"].toString(), () {
             // rajesh
@@ -919,9 +1077,7 @@ class LoginScreenState extends State<LoginScreen>
               sharedPreferences!.setString(tokenKey, map[tokenKey]);
               sharedPreferences!
                   .setString(refreshtokenKey, map[refreshtokenKey]);
-              print("token data lko00");
-              print(map[refreshtokenKey]);
-              print(map[tokenKey]);
+
               sharedPreferences!
                   .setString(hopperIdKey, map["user"][hopperIdKey]);
               sharedPreferences!
@@ -1005,16 +1161,18 @@ class LoginScreenState extends State<LoginScreen>
                     (route) => false);
               }
             } else {
-              Navigator.of(navigatorKey.currentState!.context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => SocialSignUp(
-                            socialLogin: true,
-                            socialId: socialId,
-                            name: socialName,
-                            email: socialEmail,
-                            phoneNumber: "",
-                            socialType: socialType,
-                          )));
+              Navigator.of(navigatorKey.currentState!.context).push(
+                MaterialPageRoute(
+                  builder: (context) => SocialSignUp(
+                    socialLogin: true,
+                    socialId: socialId,
+                    name: socialName,
+                    email: socialEmail,
+                    phoneNumber: "",
+                    socialType: socialType,
+                  ),
+                ),
+              );
             }
           }
           break;

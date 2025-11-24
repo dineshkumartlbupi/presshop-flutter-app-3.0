@@ -62,7 +62,6 @@ Future<void> initializeAppsFlyer() async {
   _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
   // Listen to install conversion data
   _appsflyerSdk.onInstallConversionData((data) {
-    // Print each key-value pair for better readability
     if (data is Map) {
       data.forEach((key, value) {
         debugPrint("$key: $value");
