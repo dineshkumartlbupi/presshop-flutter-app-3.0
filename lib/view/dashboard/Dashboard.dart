@@ -605,60 +605,77 @@ class DashboardState extends State<Dashboard>
         }
       },
       child: Scaffold(
-          bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            currentIndex: currentIndex,
-            showUnselectedLabels: true,
-            showSelectedLabels: true,
-            unselectedItemColor: Colors.black,
-            selectedItemColor: colorThemePink,
-            elevation: 0,
-            iconSize: size.width * numD05,
-            selectedFontSize: size.width * numD03,
-            unselectedFontSize: size.width * numD03,
-            type: BottomNavigationBarType.fixed,
-            onTap: _onBottomBarItemTapped,
-            items: const [
-              BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage("${iconsPath}ic_content.png"),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          currentIndex: currentIndex,
+          showUnselectedLabels: true,
+          showSelectedLabels: true,
+          unselectedItemColor: Colors.black,
+          selectedItemColor: colorThemePink,
+          elevation: 0,
+          iconSize: size.width * numD05,
+          selectedFontSize: size.width * numD03,
+          unselectedFontSize: size.width * numD03,
+          type: BottomNavigationBarType.fixed,
+          onTap: _onBottomBarItemTapped,
+          items: const [
+            BottomNavigationBarItem(
+                icon: ImageIcon(
+                  AssetImage("${iconsPath}ic_content.png"),
+                ),
+                label: contentText),
+            BottomNavigationBarItem(
+                icon: ImageIcon(
+                  AssetImage("${iconsPath}ic_task.png"),
+                ),
+                label: taskText),
+            BottomNavigationBarItem(
+                icon: ImageIcon(
+                  AssetImage(
+                    "${iconsPath}ic_camera.png",
                   ),
-                  label: contentText),
-              BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage("${iconsPath}ic_task.png"),
-                  ),
-                  label: taskText),
-              BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage(
-                      "${iconsPath}ic_camera.png",
-                    ),
-                  ),
-                  label: cameraText),
-              BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage("${iconsPath}ic_chat.png"),
-                  ),
-                  label: chatText),
-              BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage("${iconsPath}ic_menu.png"),
-                  ),
-                  label: menuText),
-            ],
-          ),
-          body: Stack(
-            children: [
-              Center(child: Text("This is the center Text for popup")),
-              Visibility(
-                visible: !isGetLatLong,
-                replacement: showLoader(isForLocation: false),
-                child: bottomNavigationScreens[currentIndex],
-                //  )
+                ),
+                label: cameraText),
+            BottomNavigationBarItem(
+                icon: ImageIcon(
+                  AssetImage("${iconsPath}ic_chat.png"),
+                ),
+                label: chatText),
+            BottomNavigationBarItem(
+                icon: ImageIcon(
+                  AssetImage("${iconsPath}ic_menu.png"),
+                ),
+                label: menuText),
+          ],
+        ),
+        // body: Stack(
+        //   children: [
+        //     Center(child: Text("This is the center Text for popup")),
+        //     Visibility(
+        //       visible: !isGetLatLong,
+        //       replacement: showLoader(isForLocation: false),
+        //       child: bottomNavigationScreens[currentIndex],
+        //       //  )
+        //     ),
+        //   ],
+        // )),
+        body: Stack(
+          children: [
+            // Background text (optional)
+            const Center(child: Text("This is the center Text for popup")),
+
+            // Show loader while getting location
+            Visibility(
+              visible: !isGetLatLong,
+              replacement: showLoader(isForLocation: false),
+              child: IndexedStack(
+                index: currentIndex,
+                children: bottomNavigationScreens,
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
