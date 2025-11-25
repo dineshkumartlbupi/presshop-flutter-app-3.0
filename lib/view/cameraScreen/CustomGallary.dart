@@ -345,7 +345,9 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             (cameraData) => cameraData.path == imgPath);
 
                         debugPrint("Filepath:::::::> $index  $indexing");
-                        camListData.removeAt(indexing);
+                        if (indexing != -1 && indexing < camListData.length) {
+                          camListData.removeAt(indexing);
+                        }
                         setState(() {
                           isSelectedImageProcessing = true;
                         });
@@ -422,7 +424,11 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
       }
       selectedList = List.filled(_mediaList.length, false);
 
-      debugPrint("SelectedList: ${selectedList.first}");
+      if (selectedList.isNotEmpty) {
+        debugPrint("SelectedList: ${selectedList.first}");
+      } else {
+        debugPrint("SelectedList is empty");
+      }
       debugPrint("SelectedList: ${selectedList.length}");
       debugPrint("_mediaList.length: ${_mediaList.length}");
       isLoading = true;

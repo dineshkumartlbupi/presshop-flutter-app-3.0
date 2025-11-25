@@ -819,6 +819,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
 
   void _onLoading() async {
     await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
     setState(() {
       offset += 10;
       callNotificationList();
