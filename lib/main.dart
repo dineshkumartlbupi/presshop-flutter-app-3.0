@@ -425,6 +425,7 @@ Future<void> uploadMediaUsingDio(
 
   try {
     log("callAddContentApi finished" + DateTime.now().toString());
+    print("callAddContentApi finished" + DateTime.now().toString());
     Response response = await dio.post(
       baseUrl + endUrl,
       data: formData,
@@ -461,6 +462,8 @@ Future<void> uploadMediaUsingDio(
         }
       },
     );
+    print("add content success:::111" + DateTime.now().toString());
+
     debugPrint("add content success::: ${response.data}");
     if (response.statusCode! <= 201) {
       debugPrint("Upload successful: ${response.data}");
