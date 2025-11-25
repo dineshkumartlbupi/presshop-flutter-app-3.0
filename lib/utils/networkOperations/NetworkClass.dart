@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -713,125 +712,6 @@ class NetworkClass {
     }
   }
 
-  // Future<void> callMultipartServiceSameParamMultiImage(
-  //   bool showLoader,
-  //   String requestType,
-  //   String imageParams,
-  // ) async {
-  //   if (showLoader && alertDialog == null && !isShowing) {
-  //     isShowing = true;
-  //     showLoaderDialog(navigatorKey.currentContext!);
-  //   }
-  //   var url = baseUrl + endUrl;
-  //   Dio dio = Dio();
-  //   FormData formData = FormData();
-  //   if (imageParams.isNotEmpty) {
-  //     for (var element in _files!) {
-  //       var mArray = lookupMimeType(element.path)!.split("/");
-  //       var file = await MultipartFile.fromFile(
-  //         element.path,
-  //         contentType: MediaType(mArray.first, mArray.last),
-  //       );
-  //       formData.files.add(MapEntry(imageParams, file));
-  //     }
-  //   }
-
-  //   if (sharedPreferences!.getString(tokenKey) != null) {
-  //     var headerToken = sharedPreferences!.getString(tokenKey)!;
-  //     var deviceID = sharedPreferences!.getString(deviceIdKey)!;
-  //     dio.options.headers = {
-  //       "Authorization": "Bearer $headerToken",
-  //       //headerKey: headerToken,
-  //       headerDeviceTypeKey:
-  //           "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-  //       headerDeviceIdKey: deviceID
-  //     };
-  //   }
-  //   if (jsonBody != null && jsonBody!.isNotEmpty) {
-  //     jsonBody!.forEach((key, value) {
-  //       formData.fields.add(MapEntry(key, value.toString()));
-  //     });
-  //   }
-  //   try {
-  //     Response response = await dio.post(
-  //       url,
-  //       data: formData,
-  //     );
-
-  //     // Check for 401 Unauthorized - but skip if this is the refresh token API itself
-  //     if (TokenRefreshManager.isUnauthorizedResponse(
-  //             response.statusCode ?? 0, jsonEncode(response.data)) &&
-  //         !endUrl.contains(appRefreshTokenUrl)) {
-  //       debugPrint(
-  //           "401 Unauthorized detected in Dio multipart, attempting token refresh...");
-
-  //       // Hide loader if showing
-  //       if (alertDialog != null && isShowing) {
-  //         isShowing = false;
-  //         Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-  //       }
-
-  //       // If already refreshing, wait and retry
-  //       if (TokenRefreshManager().isRefreshing) {
-  //         debugPrint("Token refresh in progress, waiting...");
-  //         await Future.delayed(const Duration(milliseconds: 500));
-  //         // Retry the request after token refresh
-  //         TokenRefreshManager().addPendingRequest(
-  //           () => callMultipartServiceSameParamMultiImage(
-  //               showLoader, requestType, imageParams),
-  //         );
-  //         return;
-  //       }
-
-  //       // Attempt to refresh token
-  //       final refreshSuccess = await TokenRefreshManager().refreshToken();
-
-  //       if (refreshSuccess) {
-  //         debugPrint(
-  //             "Token refreshed successfully, retrying original Dio multipart request...");
-  //         // Retry the original request with new token
-  //         await callMultipartServiceSameParamMultiImage(
-  //             showLoader, requestType, imageParams);
-  //         return;
-  //       } else {
-  //         // NEVER logout automatically - always keep user logged in
-  //         // Token refresh failed but user stays logged in
-  //         // Let the original request fail so user can retry manually
-  //         debugPrint(
-  //             "Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
-  //         networkResponse!.onError(
-  //             requestCode: requestCode,
-  //             response:
-  //                 '{"code": 401, "message": "Session expired. Please try again."}');
-  //         return;
-  //       }
-  //     }
-
-  //     if (showLoader) {
-  //       if (alertDialog != null && isShowing) {
-  //         isShowing = false;
-  //         Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-  //       }
-  //     }
-
-  //     if (response.statusCode! <= 201) {
-  //       networkResponse!.onResponse(
-  //           requestCode: requestCode, response: jsonEncode(response.data));
-  //     } else {
-  //       networkResponse!.onError(
-  //           requestCode: requestCode, response: jsonEncode(response.data));
-  //     }
-  //   } on SocketException catch (e) {
-  //     if (alertDialog != null && isShowing) {
-  //       isShowing = false;
-  //       Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-  //     }
-  //     commonSocketException(e.osError!.errorCode, e.message);
-  //     return;
-  //   }
-  // }
-
-// @rajesh
   Future<void> callMultipartServiceSameParamMultiImage(
     bool showLoader,
     String requestType,
@@ -841,132 +721,112 @@ class NetworkClass {
       isShowing = true;
       showLoaderDialog(navigatorKey.currentContext!);
     }
-
     var url = baseUrl + endUrl;
     Dio dio = Dio();
     FormData formData = FormData();
-
-    // Validate files
-    if (_files != null && _files!.isNotEmpty && imageParams.isNotEmpty) {
-      try {
-        for (var element in _files!) {
-          if (!await element.exists()) continue; // skip missing files
-          var mime = lookupMimeType(element.path) ?? 'application/octet-stream';
-          var mArray = mime.split("/");
-          var file = await MultipartFile.fromFile(
-            element.path,
-            contentType: MediaType(mArray.first, mArray.last),
-          );
-          formData.files.add(MapEntry(imageParams, file));
-        }
-      } catch (e, st) {
-        FirebaseCrashlytics.instance
-            .recordError(e, st, reason: "Error preparing multipart files");
-        debugPrint("Error preparing files: $e");
-        if (alertDialog != null && isShowing) {
-          isShowing = false;
-          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-        }
-        return;
+    if (imageParams.isNotEmpty) {
+      for (var element in _files!) {
+        var mArray = lookupMimeType(element.path)!.split("/");
+        var file = await MultipartFile.fromFile(
+          element.path,
+          contentType: MediaType(mArray.first, mArray.last),
+        );
+        formData.files.add(MapEntry(imageParams, file));
       }
     }
 
-    // Add token & headers
-    if (sharedPreferences?.getString(tokenKey) != null) {
+    if (sharedPreferences!.getString(tokenKey) != null) {
       var headerToken = sharedPreferences!.getString(tokenKey)!;
-      var deviceID = sharedPreferences!.getString(deviceIdKey) ?? '';
+      var deviceID = sharedPreferences!.getString(deviceIdKey)!;
       dio.options.headers = {
         "Authorization": "Bearer $headerToken",
+        //headerKey: headerToken,
         headerDeviceTypeKey:
             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
         headerDeviceIdKey: deviceID
       };
     }
-
-    // Add JSON body
     if (jsonBody != null && jsonBody!.isNotEmpty) {
       jsonBody!.forEach((key, value) {
         formData.fields.add(MapEntry(key, value.toString()));
       });
     }
-
     try {
-      Response response = await dio.post(url, data: formData);
+      Response response = await dio.post(
+        url,
+        data: formData,
+      );
 
-      // Handle 401 Unauthorized
+      // Check for 401 Unauthorized - but skip if this is the refresh token API itself
       if (TokenRefreshManager.isUnauthorizedResponse(
               response.statusCode ?? 0, jsonEncode(response.data)) &&
           !endUrl.contains(appRefreshTokenUrl)) {
+        debugPrint(
+            "401 Unauthorized detected in Dio multipart, attempting token refresh...");
+
+        // Hide loader if showing
         if (alertDialog != null && isShowing) {
           isShowing = false;
           Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
         }
+
+        // If already refreshing, wait and retry
+        if (TokenRefreshManager().isRefreshing) {
+          debugPrint("Token refresh in progress, waiting...");
+          await Future.delayed(const Duration(milliseconds: 500));
+          // Retry the request after token refresh
+          TokenRefreshManager().addPendingRequest(
+            () => callMultipartServiceSameParamMultiImage(
+                showLoader, requestType, imageParams),
+          );
+          return;
+        }
+
+        // Attempt to refresh token
         final refreshSuccess = await TokenRefreshManager().refreshToken();
+
         if (refreshSuccess) {
+          debugPrint(
+              "Token refreshed successfully, retrying original Dio multipart request...");
+          // Retry the original request with new token
           await callMultipartServiceSameParamMultiImage(
               showLoader, requestType, imageParams);
           return;
         } else {
-          networkResponse?.onError(
-            requestCode: requestCode,
-            response:
-                '{"code": 401, "message": "Session expired. Please try again."}',
-          );
+          // NEVER logout automatically - always keep user logged in
+          // Token refresh failed but user stays logged in
+          // Let the original request fail so user can retry manually
+          debugPrint(
+              "Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
+          networkResponse!.onError(
+              requestCode: requestCode,
+              response:
+                  '{"code": 401, "message": "Session expired. Please try again."}');
           return;
         }
       }
 
-      if (showLoader && alertDialog != null && isShowing) {
-        isShowing = false;
-        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+      if (showLoader) {
+        if (alertDialog != null && isShowing) {
+          isShowing = false;
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+        }
       }
 
-      if (response.statusCode != null && response.statusCode! <= 201) {
-        networkResponse?.onResponse(
-          requestCode: requestCode,
-          response: jsonEncode(response.data),
-        );
+      if (response.statusCode! <= 201) {
+        networkResponse!.onResponse(
+            requestCode: requestCode, response: jsonEncode(response.data));
       } else {
-        networkResponse?.onError(
-          requestCode: requestCode,
-          response: jsonEncode(response.data),
-        );
+        networkResponse!.onError(
+            requestCode: requestCode, response: jsonEncode(response.data));
       }
-    } on DioError catch (e, st) {
-      // Handle Dio-specific errors
-      FirebaseCrashlytics.instance
-          .recordError(e, st, reason: "Dio multipart upload failed");
-      debugPrint("DioError: ${e.message}");
+    } on SocketException catch (e) {
       if (alertDialog != null && isShowing) {
         isShowing = false;
         Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
       }
-      networkResponse?.onError(
-        requestCode: requestCode,
-        response:
-            '{"code": ${e.response?.statusCode ?? -1}, "message": "${e.message}"}',
-      );
-    } on SocketException catch (e, st) {
-      FirebaseCrashlytics.instance
-          .recordError(e, st, reason: "SocketException during upload");
-      if (alertDialog != null && isShowing) {
-        isShowing = false;
-        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-      }
-      commonSocketException(e.osError?.errorCode ?? -1, e.message);
-    } catch (e, st) {
-      // Catch-all for any other exceptions
-      FirebaseCrashlytics.instance
-          .recordError(e, st, reason: "Unknown error during multipart upload");
-      debugPrint("Unknown error: $e");
-      if (alertDialog != null && isShowing) {
-        isShowing = false;
-        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-      }
-      networkResponse?.onError(
-        requestCode: requestCode,
-        response: '{"code": -1, "message": "Unknown error occurred"}',
-      );
+      commonSocketException(e.osError!.errorCode, e.message);
+      return;
     }
   }
 

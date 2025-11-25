@@ -839,32 +839,11 @@ class DashboardState extends State<Dashboard>
         deviceId, Platform.isAndroid ? "android" : "ios", fcmToken);
   }
 
-  // Future<void> updateLocationData() async {
-  //   locationData = await _locationService.getCurrentLocation(context,
-  //       shouldShowSettingPopup: false);
-  //   if (locationData != null) {
-  //     proceedWithLocation(locationData);
-  //   }
-  // }
-  // @rajesh
   Future<void> updateLocationData() async {
-    if (!mounted) return; // Ensure widget is still in the tree
-
-    try {
-      locationData = await _locationService.getCurrentLocation(
-        context,
-        shouldShowSettingPopup: false,
-      );
-
-      if (locationData != null) {
-        proceedWithLocation(locationData);
-      } else {
-        debugPrint("Location data is null, showing error screen");
-        goToLocationErrorScreen();
-      }
-    } catch (e) {
-      debugPrint("Error getting location: $e");
-      goToLocationErrorScreen();
+    locationData = await _locationService.getCurrentLocation(context,
+        shouldShowSettingPopup: false);
+    if (locationData != null) {
+      proceedWithLocation(locationData);
     }
   }
 
