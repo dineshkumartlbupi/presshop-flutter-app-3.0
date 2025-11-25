@@ -1672,6 +1672,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
           }
           isLoading = true;
           debugPrint("feedDataList length:::::::::${feedDataList.length}");
+          if (!mounted) return;
           setState(() {});
           break;
         case reqLikeFavFeedAPI:

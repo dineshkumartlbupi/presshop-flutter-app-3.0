@@ -121,6 +121,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       debugPrint("filePath::::${widget.publishData!.mediaList.length}");
 
       audioPath = filePath;
+
       setState(() {});
 
       /*emit(state.copyWith(
@@ -3229,6 +3230,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq success: $response");
+
           var data = jsonDecode(response);
 
           var isBeta = data['is_beta'] ?? false;

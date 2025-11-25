@@ -69,7 +69,7 @@ Future<void> initializeAppsFlyer() async {
     }
     // Convert data to string
     String dataString = data.toString();
-    debugPrint("Data as string: $dataString");
+    debugPrint("Data as string 11: $dataString");
     onDeeplinkCallbackApi(dataString, true);
   });
 
