@@ -94,6 +94,10 @@ dependencies:
   dialog_flowtter: ^0.2.0-nullsafety.0
   upgrader: ^12.3.0
   force_update_helper: ^0.2.1
+  flutter_lucide: ^1.7.0
+  flutter_riverpod: ^3.0.3
+  flutter_polyline_points: ^3.0.1
+  image: ^4.5.4
   # flutter_foreground_service: ^0.4.1
   # image_cropper: any
 
@@ -110,6 +114,7 @@ flutter:
     - assets/icons/
     - assets/lottieFiles/
     - assets/audio/
+    - assets/markers/
     - assets/chatIcons/
     - assets/dialog_flow_auth.json
 

@@ -46,25 +46,14 @@ class _SplashScreenState extends State<SplashScreen>
 
     FirebaseCrashlytics.instance.log("SplashScreen -> initState()");
     FirebaseAnalytics.instance.logEvent(name: "splash_opened");
-
-    // Start the splash flow
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _initSplash(); // ensure this runs after first frame & system dialogs
+      await _initSplash();
     });
   }
 
   Future<void> _initSplash() async {
     print("Splash init started");
     try {
-      // final force = await ForceUpdateRepository.checkForceUpdate();
-      // print("force = $force");
-      // if (!mounted) return;
-
-      // if (force) {
-      //   setState(() => mustForceUpdate = true);
-      //   return;
-      // }
-
       await _checkInitialMessage();
 
       if (rememberMe) {
@@ -147,31 +136,66 @@ class _SplashScreenState extends State<SplashScreen>
   // FIREBASE MESSAGE HANDLING
   // --------------------------------------------------------------
   Future<void> _checkInitialMessage() async {
+    print("_checkInitialMessage");
     RemoteMessage? message =
         await FirebaseMessaging.instance.getInitialMessage();
+    print("_checkInitialMessage123 $message");
 
     if (message != null) _handleMessage(message);
+    print("_checkInitialMessage123");
 
     FirebaseMessaging.onMessage.listen(_handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
   }
 
   void _handleMessage(RemoteMessage message) {
-    if (message.data["notification_type"] == "initiate_admin_chat") {
-      openChatScreen = true;
-      openNotification = false;
-    } else if (message.data["image"] != null &&
-        message.data["image"].isNotEmpty) {
-      openNotification = true;
-      openChatScreen = false;
-    }
+    print("_handleMessage");
+    if (!mounted) return;
 
-    //🔥 Added
-    FirebaseAnalytics.instance.logEvent(
-      name: "notification_received",
-      parameters: {"type": message.data["notification_type"]},
-    );
+    try {
+      final data = message.data;
+
+      if (data.isEmpty) return;
+
+      final type = data["notification_type"]?.toString() ?? "";
+      final image = data["image"]?.toString() ?? "";
+
+      if (type == "initiate_admin_chat") {
+        openChatScreen = true;
+        openNotification = false;
+      } else if (image.isNotEmpty) {
+        openNotification = true;
+        openChatScreen = false;
+      }
+
+      print("notification_type123");
+
+      FirebaseAnalytics.instance.logEvent(
+        name: "notification_received",
+        parameters: {"type": type},
+      );
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st);
+      debugPrint("Notification handling failed: $e");
+    }
   }
+
+  // void _handleMessage(RemoteMessage message) {
+  //   if (message.data["notification_type"] == "initiate_admin_chat") {
+  //     openChatScreen = true;
+  //     openNotification = false;
+  //   } else if (message.data["image"] != null &&
+  //       message.data["image"].isNotEmpty) {
+  //     openNotification = true;
+  //     openChatScreen = false;
+  //   }
+
+  //   //🔥 Added
+  //   FirebaseAnalytics.instance.logEvent(
+  //     name: "notification_received",
+  //     parameters: {"type": message.data["notification_type"]},
+  //   );
+  // }
 
   // --------------------------------------------------------------
   // UI
