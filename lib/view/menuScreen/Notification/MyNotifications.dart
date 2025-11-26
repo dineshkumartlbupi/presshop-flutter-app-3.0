@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
+import 'package:presshop/view/menuScreen/Notification/InlineFlickPlayer.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -762,6 +763,29 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                               height: size.width * numD04,
                                             ),
                                           ],
+                                          // if (notificationList[index]
+                                          //         .imageUrl
+                                          //         ?.isNotEmpty ==
+                                          //     true) ...[
+                                          //   SizedBox(
+                                          //       height: size.width * numD02),
+                                          //   Padding(
+                                          //     padding: EdgeInsets.symmetric(
+                                          //         vertical:
+                                          //             size.width * numD02),
+                                          //     child: ClipRRect(
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(12),
+                                          //       child: InlineFlickPlayer(
+                                          //         videoUrl:
+                                          //             "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                                          //         height: 220,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          //   SizedBox(
+                                          //       height: size.width * numD02),
+                                          // ],
                                           Text(
                                             notificationList[index].description,
                                             style: commonTextStyle(
