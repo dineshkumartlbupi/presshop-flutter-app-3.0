@@ -13,7 +13,6 @@ import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
 import 'package:presshop/view/bankScreens/MyBanksScreen.dart';
 import 'package:presshop/view/leaderboard/leaderboard_screen.dart';
-import 'package:presshop/view/mapView/screens/marketplace_screen.dart';
 import 'package:presshop/view/menuScreen/ChangePassword.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/DigitalIdScreen.dart';
