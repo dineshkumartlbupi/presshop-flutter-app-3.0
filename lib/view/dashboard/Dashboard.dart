@@ -18,7 +18,6 @@ import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import 'package:presshop/view/dashboard/version_checker.dart';
 import 'package:presshop/view/locationErrorScreen.dart';
-import 'package:presshop/view/mapView/screens/marketplace_screen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyProfile.dart';
