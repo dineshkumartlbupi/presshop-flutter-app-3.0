@@ -21,6 +21,7 @@ import 'package:presshop/view/locationErrorScreen.dart';
 import 'package:presshop/view/mapView/screens/marketplace_screen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
+import 'package:presshop/view/menuScreen/MyProfile.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
@@ -146,8 +147,8 @@ class DashboardState extends State<Dashboard>
         previousScreen: ScreenNameEnum.dashboardScreen,
       ),
       ChatBotScreen(),
-      // const MenuScreen()
-      MarketplaceScreen()
+      const MenuScreen()
+      // MarketplaceScreen()
     ];
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -212,39 +213,44 @@ class DashboardState extends State<Dashboard>
     super.initState();
   }
 
-  Future<String?> fetchStudentBeansUrl(
-      {Duration timeout = const Duration(seconds: 10)}) async {
-    // If a previous completer is still pending, return its future
-    if (_studentBeansCompleter != null &&
-        !_studentBeansCompleter!.isCompleted) {
-      return _studentBeansCompleter!.future
-          .timeout(timeout, onTimeout: () => null);
-    }
+  // Future<String?> fetchStudentBeansUrl(
+  //     {Duration timeout = const Duration(seconds: 10)}) async {
+  //   // If a previous completer is still pending, return its future
+  //   if (_studentBeansCompleter != null &&
+  //       !_studentBeansCompleter!.isCompleted) {
+  //     return _studentBeansCompleter!.future
+  //         .timeout(timeout, onTimeout: () => null);
+  //   }
 
-    _studentBeansCompleter = Completer<String?>();
+  //   _studentBeansCompleter = Completer<String?>();
 
-    try {
-      NetworkClass.fromNetworkClass(
-        studentBeansActivationUrl,
-        this,
-        studentBeansActivationRequest,
-        null,
-      ).callRequestServiceHeader(false, "post", null);
-    } catch (e) {
-      // Ensure completer completes on error
-      if (!_studentBeansCompleter!.isCompleted) {
-        _studentBeansCompleter!.complete(null);
-      }
-      return null;
-    }
+  //   try {
+  //     NetworkClass.fromNetworkClass(
+  //       studentBeansActivationUrl,
+  //       this,
+  //       studentBeansActivationRequest,
+  //       null,
+  //     ).callRequestServiceHeader(false, "post", null);
+  //   } catch (e) {
+  //     // Ensure completer completes on error
+  //     if (!_studentBeansCompleter!.isCompleted) {
+  //       _studentBeansCompleter!.complete(null);
+  //     }
+  //     return null;
+  //   }
 
-    // Wait for onResponse to complete the completer (or timeout -> null)
-    try {
-      return await _studentBeansCompleter!.future
-          .timeout(timeout, onTimeout: () => null);
-    } catch (_) {
-      return null;
-    }
+  //   // Wait for onResponse to complete the completer (or timeout -> null)
+  //   try {
+  //     return await _studentBeansCompleter!.future
+  //         .timeout(timeout, onTimeout: () => null);
+  //   } catch (_) {
+  //     return null;
+  //   }
+  // }
+
+  void myProfileApi() {
+    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+        .callRequestServiceHeader(false, "get", null);
   }
 
   void _checkUpdateAndShowPopup() async {
@@ -266,31 +272,23 @@ class DashboardState extends State<Dashboard>
     debugPrint('savedSourceDataIsOpened: $savedSourceDataIsOpened');
     debugPrint('savedSourceDataIsClickKey: $savedSourceDataIsClickKey');
 
-    if ((savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
-        (savedSourceDataIsOpened == false) &&
-        savedSourceDataIsClickKey == false) {
+    // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+    // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+    // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+    bool checkFromLocalStorage =
+        (savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+            (savedSourceDataIsOpened == false) &&
+            savedSourceDataIsClickKey == false;
+
+    if (checkFromLocalStorage) {
       // if (true) {
       final size = MediaQuery.of(navigatorKey.currentState!.context).size;
-      _showForceUpdateDialog(size);
+      _showForceUpdateDialog(
+        size,
+      );
     }
   }
-
-  // void _checkUpdateAndShowPopup() async {
-  //   print("checking____here");
-  //   print(widget.sourceDataType);
-  //   print((widget.sourceDataType ?? '').toLowerCase() == 'studentbeans');
-
-  //   print(widget.sourceDataIsOpened);
-  //   print(widget.sourceDataIsOpened == false);
-
-  //   if ((widget.sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
-  //       (widget.sourceDataIsOpened == false) &&
-  //       widget.isClick == false) {
-  //     // if (true) {
-  //     final size = MediaQuery.of(navigatorKey.currentState!.context).size;
-  //     _showForceUpdateDialog(size);
-  //   }
-  // }
 
   /// An implementation using a link Amit
   initPlatformStateForStringUniLinks() async {
@@ -343,11 +341,17 @@ class DashboardState extends State<Dashboard>
         .callRequestServiceHeader(false, "post", null);
   }
 
-  Future<void> setIsClickForBeansActivation() async {
-    NetworkClass.fromNetworkClass(studentBeansActivationUrl, this,
-            studentBeansActivationRequest, null)
-        .callRequestServiceHeader(false, "post", null);
-    // return;
+  Future<String?> setIsClickForBeansActivation() async {
+    _studentBeansCompleter = Completer<String?>();
+
+    NetworkClass.fromNetworkClass(
+      studentBeansActivationUrl,
+      this,
+      studentBeansActivationRequest,
+      null,
+    ).callRequestServiceHeader(false, "post", null);
+
+    return _studentBeansCompleter!.future;
   }
 
   /// Navigate other screen using share link
@@ -377,7 +381,8 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-  void _showForceUpdateDialog(Size size) {
+  void _showForceUpdateDialog(Size size,
+      {String? sourceDataHeading, String? sourceDataDescription}) {
     showDialog(
         barrierDismissible: false,
         context: navigatorKey.currentState!.context,
@@ -404,13 +409,16 @@ class DashboardState extends State<Dashboard>
                           child: Row(
                             children: [
                               Text(
-                                savedSourceDataHeading ??
-                                    "Brains, beans, and breaking news!",
-                                // "Brains, beans, and breaking news!",
+                                (savedSourceDataHeading?.isNotEmpty == true
+                                    ? savedSourceDataHeading
+                                    : sourceDataHeading?.isNotEmpty == true
+                                        ? sourceDataHeading
+                                        : "Brains, beans, and breaking news!")!,
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: size.width * numD04,
-                                    fontWeight: FontWeight.bold),
+                                  color: Colors.black,
+                                  fontSize: size.width * numD04,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const Spacer(),
                               IconButton(
@@ -464,14 +472,20 @@ class DashboardState extends State<Dashboard>
                               ),
                               Expanded(
                                 child: Text(
-                                  savedSourceDataDescription ??
-                                      "Please confirm your student status to continue",
+                                  (savedSourceDataDescription?.isNotEmpty ==
+                                          true
+                                      ? savedSourceDataDescription
+                                      : sourceDataDescription?.isNotEmpty ==
+                                              true
+                                          ? sourceDataDescription
+                                          : "Please confirm your student status to continue")!,
                                   style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: size.width * numD035,
-                                      fontWeight: FontWeight.w500),
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),
@@ -507,45 +521,39 @@ class DashboardState extends State<Dashboard>
                                 child: SizedBox(
                                   height: size.width * numD12,
                                   child: commonElevatedButton(
-                                    "Confirm",
-                                    size,
-                                    commonButtonTextStyle(size),
-                                    commonButtonStyle(size, colorThemePink),
-                                    () async {
-                                      try {
-                                        await setIsClickForBeansActivation();
+                                      "Confirm",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(size, colorThemePink),
+                                      () async {
+                                    try {
+                                      final url =
+                                          await setIsClickForBeansActivation();
 
-                                        print(
-                                            "studentBeansResponseUrlGlobal23232");
-                                        print(studentBeansResponseUrlGlobal);
-                                        final url = studentBeansResponseUrlGlobal ??
-                                            "https://www.studentbeans.com/en-gb/uk/beansid-connect/hosted-app/presshop/student/b150bab7-1e1d-4bb6-98e9-50acd2b44011";
-
-                                        if (url.isEmpty) {
-                                          debugPrint("URL is empty");
-                                          return;
-                                        }
-
-                                        final uri = Uri.parse(url);
-                                        final launched = await launchUrl(
-                                          uri,
-                                          mode: LaunchMode.externalApplication,
-                                        );
-                                        sharedPreferences!.setBool(
-                                            sourceDataIsClickKey, true);
-                                        sharedPreferences!.setBool(
-                                            sourceDataIsOpenedKey, true);
-                                        Navigator.pop(context);
-
-                                        if (!launched) {
-                                          debugPrint(
-                                              "Could not launch URL: $url");
-                                        }
-                                      } catch (e) {
-                                        debugPrint("Error launching URL: $e");
+                                      if (url == null || url.isEmpty) {
+                                        debugPrint("URL is empty");
+                                        return;
                                       }
-                                    },
-                                  ),
+
+                                      final uri = Uri.parse(url);
+                                      final launched = await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsClickKey, true);
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsOpenedKey, true);
+                                      Navigator.pop(context);
+
+                                      if (!launched)
+                                        debugPrint(
+                                            "Could not launch URL: $url");
+                                    } catch (e) {
+                                      debugPrint("Error launching URL: $e");
+                                    }
+                                  }),
                                 ),
                               )
                             ],
@@ -557,33 +565,6 @@ class DashboardState extends State<Dashboard>
                 },
               ));
         });
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (context) {
-    //     return AlertDialog(
-    //       title: const Text(
-    //         "Update Required",
-    //         style: TextStyle(fontWeight: FontWeight.bold),
-    //       ),
-    //       content: const Text(
-    //         "A new version of the app is available.\nPlease update to continue.",
-    //       ),
-    //       actions: [
-    //         TextButton(
-    // onPressed: () {
-    //   launchUrl(
-    //     Uri.parse(
-    //       "https://play.google.com/store/apps/details?id=com.your.app",
-    //     ),
-    //   );
-    // },
-    //           child: const Text("UPDATE NOW"),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 
   @override
@@ -762,7 +743,7 @@ class DashboardState extends State<Dashboard>
         }
         if (message.data.isNotEmpty &&
             message.data["notification_type"].toString() == "studentbeans") {
-          _checkUpdateAndShowPopup();
+          myProfileApi();
           return;
         }
         debugPrint("FirebaseMessaging.onMessageOpenedApp.listen");
@@ -1172,6 +1153,68 @@ class DashboardState extends State<Dashboard>
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case myProfileUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("MyProfileSuccess:$map");
+          print("MyProfileSuccess11:$response");
+
+          if (map["code"] == 200) {
+            var myProfileData = MyProfileData.fromJson(map["userData"]);
+
+            // sharedPreferences!.setString(
+            //     latitudeKey, map["userData"][latitudeKey].toString());
+            // sharedPreferences!.setString(
+            //     longitudeKey, map["userData"][longitudeKey].toString());
+            // sharedPreferences!.setString(
+            //     avatarIdKey, map["userData"][avatarIdKey].toString());
+            // sharedPreferences!.setString(
+            //     totalIncomeKey, map["userData"]["totalEarnings"].toString());
+
+            if (map["userData"]['avatarData'] != null) {
+              sharedPreferences!.setString(
+                  avatarKey, map["userData"]['avatarData'][avatarKey]);
+            }
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            final src1 = map["userData"]["source"];
+            print("source ===> $src1");
+
+// source fields
+            final sourceDataIsOpened = src1?["is_opened"] ?? false;
+            final sourceDataType = src1?["type"] ?? "";
+            final sourceDataUrl = src1?["url"] ?? "";
+            final sourceDataHeading = src1?["heading"] ?? "";
+            final sourceDataDescription = src1?["description"] ?? "";
+            final isClick = src1?["is_clicked"] ?? false;
+
+            print("print new data data data ");
+            print("sourceDataIsOpened = $sourceDataIsOpened");
+            print("sourceDataType $sourceDataType");
+            print("sourceDataType $sourceDataUrl");
+            print("sourceDataHeading $sourceDataHeading");
+            print("sourceDataDescription $sourceDataDescription");
+            print("isClick $isClick");
+
+            // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+            // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+            // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+                (sourceDataIsOpened == false) &&
+                isClick == false) {
+              // if (true) {
+              final size =
+                  MediaQuery.of(navigatorKey.currentState!.context).size;
+              _showForceUpdateDialog(size,
+                  sourceDataHeading: sourceDataHeading,
+                  sourceDataDescription: sourceDataDescription);
+            }
+
+            setState(() {});
+          }
+          break;
         case addDeviceUrlRequest:
           debugPrint("AddDeviceSuccess: $response");
           break;

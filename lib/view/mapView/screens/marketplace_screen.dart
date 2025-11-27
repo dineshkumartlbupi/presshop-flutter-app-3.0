@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/utils/Common.dart';
 import 'package:presshop/view/mapView/controller/map_controller.dart';
+import 'package:presshop/view/mapView/models/map_state.dart';
 import 'package:presshop/view/mapView/widgets/custom_app_bar.dart';
 import 'package:presshop/view/mapView/widgets/custom_info_window.dart';
 import 'package:presshop/view/mapView/widgets/danger_zone_info_window.dart';
@@ -218,6 +220,12 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
         _pendingAlertType = alertType;
       });
     }
+
+    // Close alert panel if open
+    final state = ref.read(mapControllerProvider);
+    if (state.showAlertPanel) {
+      ref.read(mapControllerProvider.notifier).toggleAlertPanel();
+    }
   }
 
   bool _isSelectingAlertLocation = false;
@@ -253,12 +261,63 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
     final state = ref.watch(mapControllerProvider);
     final mapController = ref.read(mapControllerProvider.notifier);
 
+    ref.listen(mapControllerProvider, (previous, next) {
+      if (previous?.selectedPosition != next.selectedPosition ||
+          previous?.selectedPolygonPosition != next.selectedPolygonPosition) {
+        _updateInfoWindow();
+      }
+    });
+
     if (state.myLocation == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+    var size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: CustomMapAppBar(),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        currentIndex: 4,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: colorThemePink,
+        elevation: 0,
+        iconSize: size.width * numD05,
+        selectedFontSize: size.width * numD03,
+        unselectedFontSize: size.width * numD03,
+        type: BottomNavigationBarType.fixed,
+        // onTap: _onBottomBarItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+              icon: ImageIcon(
+                AssetImage("${iconsPath}ic_content.png"),
+              ),
+              label: contentText),
+          BottomNavigationBarItem(
+              icon: ImageIcon(
+                AssetImage("${iconsPath}ic_task.png"),
+              ),
+              label: taskText),
+          BottomNavigationBarItem(
+              icon: ImageIcon(
+                AssetImage(
+                  "${iconsPath}ic_camera.png",
+                ),
+              ),
+              label: cameraText),
+          BottomNavigationBarItem(
+              icon: ImageIcon(
+                AssetImage("${iconsPath}ic_chat.png"),
+              ),
+              label: chatText),
+          BottomNavigationBarItem(
+              icon: ImageIcon(
+                AssetImage("${iconsPath}map2.png"),
+              ),
+              label: "Map"),
+        ],
+      ),
       body: Stack(
         children: [
           GoogleMap(
@@ -275,21 +334,23 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
             //////
             onCameraMoveStarted: () {
               mapController.setDragging(true);
-              setState(() => _infoOffset = null);
+              // Don't close info window when dragging starts
+              // setState(() => _infoOffset = null);
             },
             onCameraMove: (_) => _updateInfoWindow(),
             onCameraIdle: () {
-              Future.delayed(const Duration(milliseconds: 600), () {
-                if (mounted) {
-                  mapController.setDragging(false);
-                  _updateInfoWindow();
-                }
-              });
+              if (mounted) {
+                mapController.setDragging(false);
+                _updateInfoWindow();
+              }
             },
             onTap: (pos) async {
               // Handle alert location selection
               if (_isSelectingAlertLocation && _pendingAlertType != null) {
-                await mapController.addAlertMarker(_pendingAlertType!, pos);
+                await mapController.setPreviewAlertMarker(
+                  _pendingAlertType!,
+                  pos,
+                );
                 setState(() {
                   _isSelectingAlertLocation = false;
                   _pendingAlertType = null;
@@ -356,9 +417,9 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
           if (_infoOffset != null && state.selectedIncident != null)
             Positioned(
               left: _infoOffset!.dx -
-                  (state.selectedIncident!.markerType == 'content' ? 140 : 110),
+                  (state.selectedIncident!.markerType == 'content' ? 90 : 140),
               top: _infoOffset!.dy -
-                  (state.selectedIncident!.markerType == 'content' ? 340 : 140),
+                  (state.selectedIncident!.markerType == 'content' ? 230 : 195),
               child: state.selectedIncident!.markerType == 'content'
                   ? ContentMarkerPopup(
                       incident: state.selectedIncident!,
@@ -393,6 +454,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                 ),
               ),
 
+          // Search + Filter Bar
           Positioned(
             top: 10,
             left: 0,
@@ -401,6 +463,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
               height: 390,
               child: Stack(
                 children: [
+                  // Replace the SearchAndFilterBar's input field with a TextField and connect controller/focus below!
                   SearchAndFilterBar(
                     searchController: _searchController,
                     searchFocusNode: _searchFocusNode,
@@ -621,6 +684,116 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                     ),
                   ],
                 ),
+              ),
+            ),
+
+          // Selection Mode Status Banner
+          if (_isSelectingAlertLocation || state.isDestinationSelectionMode)
+            Positioned(
+              top: 100,
+              left: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.touch_app, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _isSelectingAlertLocation
+                            ? 'Tap on map to place ${_pendingAlertType ?? "alert"}'
+                            : 'Tap on map to select location',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white70),
+                      onPressed: () {
+                        if (_isSelectingAlertLocation) {
+                          setState(() {
+                            _isSelectingAlertLocation = false;
+                            _pendingAlertType = null;
+                          });
+                        } else {
+                          mapController.setDestinationSelectionMode(false);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          // Preview Alert Confirmation UI
+          if (state.previewAlertMarkerId != null)
+            Positioned(
+              bottom: 30,
+              left: 20,
+              right: 20,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'Long press and drag marker to adjust position',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          mapController.cancelPreviewAlert();
+                        },
+                        icon: const Icon(Icons.close),
+                        label: const Text('Cancel'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          mapController.finalizeAlertMarker();
+                        },
+                        icon: const Icon(Icons.check),
+                        label: const Text('Send Alert'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
         ],
