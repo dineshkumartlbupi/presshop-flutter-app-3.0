@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
+import 'package:presshop/view/menuScreen/MyProfile.dart';
 import 'package:presshop/view/menuScreen/Notification/InlineFlickPlayer.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -48,6 +49,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
   bool isGetLatLong = false;
   String? studentBeansResponseUrlGlobal = "";
   String? savedSourceDataDescription = "";
+  MyProfileData? myProfileData;
 
   @override
   void initState() {
@@ -57,17 +59,24 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     Future.delayed(const Duration(seconds: 5), () {
       callUpdateNotification();
     });
+
     super.initState();
   }
 
-  Future<void> setIsClickForBeansActivation() async {
-    NetworkClass.fromNetworkClass(studentBeansActivationUrl, this,
-            studentBeansActivationRequest, null)
-        .callRequestServiceHeader(false, "post", null);
-    // return;
+  Future<String?> setIsClickForBeansActivation() async {
+    _studentBeansCompleter = Completer<String?>();
+
+    NetworkClass.fromNetworkClass(
+      studentBeansActivationUrl,
+      this,
+      studentBeansActivationRequest,
+      null,
+    ).callRequestServiceHeader(false, "post", null);
+
+    return _studentBeansCompleter!.future;
   }
 
-  void _checkUpdateAndShowPopup() async {
+  void _checkUpdateAndShowPopup({bool? isOpen, bool? isClick}) async {
     final String? savedSourceDataType =
         sharedPreferences?.getString(sourceDataTypeKey);
     // final String? savedSourceDataUrl =
@@ -88,8 +97,12 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     print(savedSourceDataIsClickKey);
     print(savedSourceDataType);
 
+    // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+    // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+    // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
     if ((savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
-        (savedSourceDataIsOpened == false) &&
+        savedSourceDataIsOpened == false &&
         savedSourceDataIsClickKey == false) {
       // if (true) {
       final size = MediaQuery.of(navigatorKey.currentState!.context).size;
@@ -97,7 +110,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     }
   }
 
-  void _showForceUpdateDialog(Size size) {
+  void _showForceUpdateDialog(Size size,
+      {String? sourceDataHeading, String? sourceDataDescription}) {
     showDialog(
         barrierDismissible: false,
         context: navigatorKey.currentState!.context,
@@ -124,13 +138,13 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                           child: Row(
                             children: [
                               Text(
-                                studentBeansResponseUrlGlobal ??
-                                    "Brains, beans, and breaking news!",
-                                // "Brains, beans, and breaking news!",
+                                (sourceDataHeading ??
+                                    "Brains, beans, and breaking news!")!,
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: size.width * numD04,
-                                    fontWeight: FontWeight.bold),
+                                  color: Colors.black,
+                                  fontSize: size.width * numD04,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const Spacer(),
                               IconButton(
@@ -184,14 +198,15 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                               ),
                               Expanded(
                                 child: Text(
-                                  savedSourceDataDescription ??
-                                      "Please confirm your student status to continue",
+                                  (sourceDataDescription ??
+                                      "Please confirm your student status to continue")!,
                                   style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: size.width * numD035,
-                                      fontWeight: FontWeight.w500),
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),
@@ -227,43 +242,39 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                 child: SizedBox(
                                   height: size.width * numD12,
                                   child: commonElevatedButton(
-                                    "Confirm",
-                                    size,
-                                    commonButtonTextStyle(size),
-                                    commonButtonStyle(size, colorThemePink),
-                                    () async {
-                                      try {
-                                        await setIsClickForBeansActivation();
+                                      "Confirm",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(size, colorThemePink),
+                                      () async {
+                                    try {
+                                      final url =
+                                          await setIsClickForBeansActivation();
 
-                                        // print(studentBeansResponseUrlGlobal);
-                                        final url = studentBeansResponseUrlGlobal ??
-                                            "https://www.studentbeans.com/en-gb/uk/beansid-connect/hosted-app/presshop/student/b150bab7-1e1d-4bb6-98e9-50acd2b44011";
-
-                                        if (url.isEmpty) {
-                                          debugPrint("URL is empty");
-                                          return;
-                                        }
-
-                                        final uri = Uri.parse(url);
-                                        final launched = await launchUrl(
-                                          uri,
-                                          mode: LaunchMode.externalApplication,
-                                        );
-                                        sharedPreferences!.setBool(
-                                            sourceDataIsClickKey, true);
-                                        sharedPreferences!.setBool(
-                                            sourceDataIsOpenedKey, true);
-                                        Navigator.pop(context);
-
-                                        if (!launched) {
-                                          debugPrint(
-                                              "Could not launch URL: $url");
-                                        }
-                                      } catch (e) {
-                                        debugPrint("Error launching URL: $e");
+                                      if (url == null || url.isEmpty) {
+                                        debugPrint("URL is empty");
+                                        return;
                                       }
-                                    },
-                                  ),
+
+                                      final uri = Uri.parse(url);
+                                      final launched = await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsClickKey, true);
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsOpenedKey, true);
+                                      Navigator.pop(context);
+
+                                      if (!launched)
+                                        debugPrint(
+                                            "Could not launch URL: $url");
+                                    } catch (e) {
+                                      debugPrint("Error launching URL: $e");
+                                    }
+                                  }),
                                 ),
                               )
                             ],
@@ -275,33 +286,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                 },
               ));
         });
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (context) {
-    //     return AlertDialog(
-    //       title: const Text(
-    //         "Update Required",
-    //         style: TextStyle(fontWeight: FontWeight.bold),
-    //       ),
-    //       content: const Text(
-    //         "A new version of the app is available.\nPlease update to continue.",
-    //       ),
-    //       actions: [
-    //         TextButton(
-    // onPressed: () {
-    //   launchUrl(
-    //     Uri.parse(
-    //       "https://play.google.com/store/apps/details?id=com.your.app",
-    //     ),
-    //   );
-    // },
-    //           child: const Text("UPDATE NOW"),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 
   void deleteNotificationDialog() {
@@ -559,7 +543,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
-                                // _checkUpdateAndShowPopup();
+                                // myProfileApi();
 
                                 debugPrint(
                                     "Notification Type: ${notificationList[index].messageType}");
@@ -651,7 +635,9 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                         .messageType ==
                                     "studentbeans") {
                                   print("sldkfsdfsd");
-                                  _checkUpdateAndShowPopup();
+                                  myProfileApi();
+
+                                  // _checkUpdateAndShowPopup();
                                 }
                               },
                               child: Container(
@@ -867,6 +853,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
         .callRequestServiceHeader(true, 'patch', null);
   }
 
+  void myProfileApi() {
+    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+        .callRequestServiceHeader(false, "get", null);
+  }
+
   @override
   void onError({required int requestCode, required String response}) {
     try {
@@ -880,6 +871,69 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case myProfileUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("MyProfileSuccess:$map");
+          print("MyProfileSuccess11:$response");
+
+          if (map["code"] == 200) {
+            myProfileData = MyProfileData.fromJson(map["userData"]);
+
+            // sharedPreferences!.setString(
+            //     latitudeKey, map["userData"][latitudeKey].toString());
+            // sharedPreferences!.setString(
+            //     longitudeKey, map["userData"][longitudeKey].toString());
+            // sharedPreferences!.setString(
+            //     avatarIdKey, map["userData"][avatarIdKey].toString());
+            // sharedPreferences!.setString(
+            //     totalIncomeKey, map["userData"]["totalEarnings"].toString());
+
+            if (map["userData"]['avatarData'] != null) {
+              sharedPreferences!.setString(
+                  avatarKey, map["userData"]['avatarData'][avatarKey]);
+            }
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            final src1 = map["userData"]["source"];
+            print("source ===> $src1");
+
+// source fields
+            final sourceDataIsOpened = src1?["is_opened"] ?? false;
+            final sourceDataType = src1?["type"] ?? "";
+            final sourceDataUrl = src1?["url"] ?? "";
+            final sourceDataHeading = src1?["heading"] ?? "";
+            final sourceDataDescription = src1?["description"] ?? "";
+            final isClick = src1?["is_clicked"] ?? false;
+
+            print("print new data data data ");
+            print("sourceDataIsOpened = $sourceDataIsOpened");
+            print("sourceDataType $sourceDataType");
+            print("sourceDataType $sourceDataUrl");
+            print("sourceDataHeading $sourceDataHeading");
+            print("sourceDataDescription $sourceDataDescription");
+            print("isClick $isClick");
+
+            // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+            // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+            // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+                (sourceDataIsOpened == false) &&
+                isClick == false) {
+              // if (true) {
+              final size =
+                  MediaQuery.of(navigatorKey.currentState!.context).size;
+              _showForceUpdateDialog(size,
+                  sourceDataHeading: sourceDataHeading,
+                  sourceDataDescription: sourceDataDescription);
+            }
+
+            isLoading = true;
+            setState(() {});
+          }
+          break;
         case studentBeansActivationRequest:
           debugPrint("studentBeansActivationRequest32434: $response");
           try {

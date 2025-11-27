@@ -13,6 +13,7 @@ import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
 import 'package:presshop/view/bankScreens/MyBanksScreen.dart';
 import 'package:presshop/view/leaderboard/leaderboard_screen.dart';
+import 'package:presshop/view/mapView/screens/marketplace_screen.dart';
 import 'package:presshop/view/menuScreen/ChangePassword.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/DigitalIdScreen.dart';
@@ -324,10 +325,16 @@ class MenuScreenState extends State<MenuScreen>
           editProfileScreen: true,
           screenType: editProfileText,
         )));
+
     menuList.add(MenuData(
         name: leaderboardText,
         icon: "${iconsPath}ic_ranking.png",
         classWidget: LeaderboardScreen()));
+
+    // menuList.add(MenuData(
+    //     name: "Map view",
+    //     icon: "${iconsPath}map2.png",
+    //     classWidget: MarketplaceScreen()));
 
     menuList.add(MenuData(
         name: myDraftText,

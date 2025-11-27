@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,6 +15,7 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonTextField.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
 import '../../utils/AnalyticsConstants.dart';
@@ -43,6 +45,7 @@ class MyProfileState extends State<MyProfile>
 
   var formKey = GlobalKey<FormState>();
   var scrollController = ScrollController();
+  String? studentBeansResponseUrlGlobal = "";
 
   TextEditingController userNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
@@ -58,6 +61,7 @@ class MyProfileState extends State<MyProfile>
 
   List<AvatarsData> avatarList = [];
   MyProfileData? myProfileData;
+  Completer<String?>? _studentBeansCompleter;
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -1639,6 +1643,9 @@ class MyProfileState extends State<MyProfile>
   void onError({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case studentBeansActivationRequest:
+          debugPrint("BroadcastData::::Error $response");
+          break;
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileError:$map");
@@ -1654,13 +1661,62 @@ class MyProfileState extends State<MyProfile>
     }
   }
 
+  Future<String?> setIsClickForBeansActivation() async {
+    _studentBeansCompleter = Completer<String?>();
+
+    NetworkClass.fromNetworkClass(
+      studentBeansActivationUrl,
+      this,
+      studentBeansActivationRequest,
+      null,
+    ).callRequestServiceHeader(false, "post", null);
+
+    return _studentBeansCompleter!.future;
+  }
+
   @override
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        // case studentBeansActivationRequest:
+        //   debugPrint("studentBeansActivationRequest32434: $response");
+        //   try {
+        //     var map = jsonDecode(response);
+        //     var studentBeansResponseUrl = map["url"];
+        //     studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+        //     // Complete the completer if someone is waiting
+        //     print(
+        //         "studentBeansResponseUrlGlobal$studentBeansResponseUrlGlobal");
+        //     // if (_studentBeansCompleter != null &&
+        //     //     !_studentBeansCompleter!.isCompleted) {
+        //     //   _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+        //     // }
+        //   } catch (e) {
+        //     debugPrint("Error parsing studentBeans response: $e");
+        //     // if (_studentBeansCompleter != null &&
+        //     //     !_studentBeansCompleter!.isCompleted) {
+        //     //   _studentBeansCompleter!.complete(null);
+        //     // }
+        //   }
+        //   break;
+
+        case studentBeansActivationRequest:
+          var map = jsonDecode(response);
+          print("studentBeansActivationRequest234534645423 $map");
+          var studentBeansResponseUrl = map["url"];
+          studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+          if (_studentBeansCompleter != null &&
+              !_studentBeansCompleter!.isCompleted) {
+            _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+          }
+          break;
+
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileSuccess:$map");
+          print("MyProfileSuccess11:$response");
 
           if (map["code"] == 200) {
             myProfileData = MyProfileData.fromJson(map["userData"]);
@@ -1698,7 +1754,8 @@ class MyProfileState extends State<MyProfile>
             // var sourceDataIsOpened = true;
             // var sourceDataType = "student_beans";
             // var sourceDataUrl = src?["url"] ?? "";
-            final src1 = map["source"];
+            final src1 = map["userData"]["source"];
+            print("source ===> $src1");
 
 // source fields
             final sourceDataIsOpened = src1?["is_opened"] ?? false;
@@ -1706,13 +1763,29 @@ class MyProfileState extends State<MyProfile>
             final sourceDataUrl = src1?["url"] ?? "";
             final sourceDataHeading = src1?["heading"] ?? "";
             final sourceDataDescription = src1?["description"] ?? "";
+            final isClick = src1?["is_clicked"] ?? false;
 
             print("print new data data data ");
-            print(sourceDataIsOpened);
-            print(sourceDataType);
-            print(sourceDataUrl);
-            print(sourceDataHeading);
-            print(sourceDataDescription);
+            print("sourceDataIsOpened = $sourceDataIsOpened");
+            print("sourceDataType $sourceDataType");
+            print("sourceDataType $sourceDataUrl");
+            print("sourceDataHeading $sourceDataHeading");
+            print("sourceDataDescription $sourceDataDescription");
+            print("isClick $isClick");
+
+            // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+            // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+            // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+                (sourceDataIsOpened == false) &&
+                isClick == false) {
+              // if (true) {
+              final size =
+                  MediaQuery.of(navigatorKey.currentState!.context).size;
+              _showForceUpdateDialog(
+                  size, sourceDataHeading, sourceDataDescription);
+            }
 
             isLoading = true;
             setProfileData();
@@ -1770,6 +1843,183 @@ class MyProfileState extends State<MyProfile>
   @override
   // TODO: implement pageName
   String get pageName => PageNames.profile;
+
+  void _showForceUpdateDialog(
+      Size size, sourceDataHeading, sourceDataDescription) {
+    showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                sourceDataHeading ??
+                                    "Brains, beans, and breaking news!",
+                                // "Brains, beans, and breaking news!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD04,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: const Divider(
+                            color: Colors.black,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 120, // fixed width
+                                height: 120, // fixed height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    "${commonImagePath}dog2.jpg",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  sourceDataDescription ??
+                                      "Please confirm your student status to continue",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              // Expanded(
+                              //     child: SizedBox(
+                              //   height: size.width * numD12,
+                              //   child: commonElevatedButton(
+                              //       logoutText,
+                              //       size,
+                              //       commonButtonTextStyle(size),
+                              //       commonButtonStyle(size, Colors.black), () {
+                              //     Navigator.pop(context);
+                              //     // callRemoveDeviceApi();
+                              //   }),
+                              // )),
+                              // SizedBox(
+                              //   width: size.width * numD04,
+                              // ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: size.width * numD12,
+                                  child: commonElevatedButton(
+                                      "Confirm",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(size, colorThemePink),
+                                      () async {
+                                    try {
+                                      final url =
+                                          await setIsClickForBeansActivation();
+
+                                      if (url == null || url.isEmpty) {
+                                        debugPrint("URL is empty");
+                                        return;
+                                      }
+
+                                      final uri = Uri.parse(url);
+                                      final launched = await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsClickKey, true);
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsOpenedKey, true);
+                                      Navigator.pop(context);
+
+                                      if (!launched)
+                                        debugPrint(
+                                            "Could not launch URL: $url");
+                                    } catch (e) {
+                                      debugPrint("Error launching URL: $e");
+                                    }
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
+  }
 }
 
 class MyProfileData {

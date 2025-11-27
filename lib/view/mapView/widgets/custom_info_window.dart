@@ -22,137 +22,116 @@ class CustomInfoWindow extends StatelessWidget {
   };
 
   String _getDisplayName() {
-    if (incident.markerType == 'icon') {
-      if (incident.address != null && incident.address!.isNotEmpty) {
-        return incident.address!;
-      }
-      if (incident.type != null) {
-        return incident.type![0].toUpperCase() + incident.type!.substring(1);
-      }
-      return "Incident";
-    } else if (incident.markerType == 'content') {
-      return incident.title ?? incident.name ?? "Content";
-    } else if (incident.markerType == 'hopper') {
-      return incident.name ?? "Hopper";
+    if (incident.type != null) {
+      return incident.type![0].toUpperCase() + incident.type!.substring(1);
     }
-    return incident.name ?? incident.title ?? "Incident";
-  }
-
-  Widget _getImageWidget() {
-    if (incident.markerType == 'icon' && incident.type != null) {
-      // For icon markers, use asset image
-      final assetPath = markerIcons[incident.type] ?? markerIcons['accident']!;
-      return Image.asset(
-        assetPath,
-        width: 60,
-        height: 60,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: 60,
-            height: 60,
-            color: Colors.grey[300],
-            child: const Icon(Icons.error),
-          );
-        },
-      );
-    } else if (incident.image != null && incident.image!.isNotEmpty) {
-      // For content/hopper markers, use network image
-      return Image.network(
-        incident.image!,
-        width: 60,
-        height: 60,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: 60,
-            height: 60,
-            color: Colors.grey[300],
-            child: const Icon(Icons.error),
-          );
-        },
-      );
-    } else {
-      // Fallback
-      return Container(
-        width: 60,
-        height: 60,
-        color: Colors.grey[300],
-        child: const Icon(Icons.place),
-      );
-    }
+    return incident.name ?? "Incident";
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 8,
-      color: Colors.transparent, // Important
+      color: Colors.transparent,
+      elevation: 6,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // MAIN CARD
           Container(
-            width: 220,
-            padding: const EdgeInsets.all(10),
+            width: 280,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black12,
                   blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  offset: Offset(0, 4),
                 ),
               ],
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: _getImageWidget(),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
+                // TOP ROW (ICON + TITLE)
+                Row(
+                  children: [
+                    Image.asset(
+                      markerIcons[incident.type] ?? markerIcons["accident"]!,
+                      width: 40,
+                      height: 40,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
                         _getDisplayName(),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                // DIVIDER
+                Container(height: 1, color: Colors.grey.shade300),
+
+                const SizedBox(height: 12),
+
+                // TIME ROW
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: 20,
+                      color: Colors.grey.shade800,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      incident.time ?? "Unknown Time",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                // LOCATION ROW
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 22,
+                      color: Colors.grey.shade800,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        incident.address ?? "Unknown Location",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade700,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (incident.time != null) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          incident.time!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 4),
-                      ElevatedButton(
-                        onPressed: onPressed,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 6,
-                            horizontal: 12,
-                          ),
-                        ),
-                        child: const Text("View Details"),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
 
-          // 🔽 POINTER TRIANGLE
-          CustomPaint(size: const Size(20, 10), painter: _TrianglePainter()),
+          // TRIANGLE
+          CustomPaint(size: const Size(20, 12), painter: _TrianglePainter()),
         ],
       ),
     );
@@ -168,7 +147,6 @@ class _TrianglePainter extends CustomPainter {
       ..lineTo(size.width / 2, size.height)
       ..lineTo(size.width, 0)
       ..close();
-
     canvas.drawPath(path, paint);
   }
 

@@ -1048,12 +1048,16 @@ class _SocialSignUpState extends State<SocialSignUp>
             // var sourceDataType = "student_beans";
             // var sourceDataUrl = src?["url"] ?? "";
             print("source data from socialsignupsdfsd324");
+
             var sourceDataIsOpened = src?["is_opened"] ?? false;
+
             var sourceDataType = src?["type"] ?? "";
             var sourceDataUrl = src?["url"] ?? "";
             var sourceDataHeading = src?["heading"] ?? "";
             var sourceDataDescription = src?["description"] ?? "";
-            var isClick = src?["is_clicked"] ?? "";
+
+            var isClick = src?["is_clicked"] ?? false;
+
             print(isClick);
 
             sharedPreferences!

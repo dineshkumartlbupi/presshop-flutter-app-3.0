@@ -21,15 +21,15 @@ class ContentMarkerPopup extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 280,
+            width: 180, // even smaller width
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
+                  color: Colors.black26,
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -37,142 +37,96 @@ class ContentMarkerPopup extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Image Section
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                      child: incident.image != null
-                          ? CachedNetworkImage(
-                              imageUrl: incident.image!,
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                height: 150,
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                height: 150,
-                                color: Colors.grey[300],
-                                child: const Icon(Icons.error),
-                              ),
-                            )
-                          : Container(
-                              height: 150,
-                              width: double.infinity,
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.image, size: 50),
-                            ),
-                    ),
-                    // Play Button Overlay
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow_rounded,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ],
+                // Image
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(14)),
+                  child: incident.image != null
+                      ? CachedNetworkImage(
+                          imageUrl: incident.image!,
+                          height: 80, // very small
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          height: 80,
+                          width: double.infinity,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image, size: 30),
+                        ),
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(8.0), // minimal padding
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
                       Text(
                         incident.title ?? "No Title",
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          fontSize: 13, // smaller text
+                          fontWeight: FontWeight.w600,
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 5),
 
                       // Location
                       Row(
                         children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
+                          const Icon(Icons.location_on_outlined,
+                              size: 12, color: Colors.grey),
+                          const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               incident.address ?? "Unknown Location",
                               style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
+                                  fontSize: 11, color: Colors.grey[600]),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
 
                       // Time
                       Row(
                         children: [
-                          const Icon(
-                            Icons.access_time,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
+                          const Icon(Icons.access_time,
+                              size: 12, color: Colors.grey),
+                          const SizedBox(width: 4),
                           Text(
-                            incident.time != null
-                                ? "11 feb 2026, ${incident.time}" // Using dummy date to match screenshot style or just use time
-                                : "Unknown Time",
+                            incident.time ?? "Unknown Time",
                             style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
+                                fontSize: 11, color: Colors.grey[600]),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 10),
 
-                      // View Button
+                      // Small View Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: onViewPressed,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xFFEF4444), // Red color
+                            backgroundColor: const Color(0xFFEF4444),
                             foregroundColor: Colors.white,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 22),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(6),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
                             elevation: 0,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: const Text(
                             "View",
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 10,
+                              height: 1,
                             ),
                           ),
                         ),
@@ -183,8 +137,6 @@ class ContentMarkerPopup extends StatelessWidget {
               ],
             ),
           ),
-
-          // Triangle Pointer
           CustomPaint(
             size: const Size(24, 12),
             painter: _TrianglePainter(),

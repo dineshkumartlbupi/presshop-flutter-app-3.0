@@ -169,176 +169,175 @@ void main() async {
     });
 
     runApp(
-      ProviderScope(
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
-          builder: (context, child) {
-            return ForceUpdateWidget(
-              navigatorKey: navigatorKey,
-              forceUpdateClient: ForceUpdateClient(
-                fetchRequiredVersion: () async {
-                  try {
-                    final force =
-                        await ForceUpdateRepository.checkForceUpdate();
-                    print("forceupdateddata $force");
+      // ProviderScope(
+      //   child:
 
-                    if (force) return "999.0.0";
+      MaterialApp(
+        navigatorKey: navigatorKey,
+        builder: (context, child) {
+          return ForceUpdateWidget(
+            navigatorKey: navigatorKey,
+            forceUpdateClient: ForceUpdateClient(
+              fetchRequiredVersion: () async {
+                try {
+                  final force = await ForceUpdateRepository.checkForceUpdate();
+                  print("forceupdateddata $force");
 
-                    final info = await PackageInfo.fromPlatform();
-                    return info.version;
-                  } catch (e) {
-                    print("Force update check failed: $e");
+                  if (force) return "999.0.0";
 
-                    // Use global navigator key to show snackbar
-                    if (context != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Failed to check updates."),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
+                  final info = await PackageInfo.fromPlatform();
+                  return info.version;
+                } catch (e) {
+                  print("Force update check failed: $e");
 
-                    // Fallback: let app continue normally
-                    final info = await PackageInfo.fromPlatform();
-                    return info.version;
+                  // Use global navigator key to show snackbar
+                  if (context != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Failed to check updates."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
                   }
-                },
-                iosAppStoreId: '6744651614',
-              ),
-              allowCancel: false,
-              showForceUpdateAlert: (context, allowCancel) {
-                final size = MediaQuery.of(context).size;
-                return showDialog(
-                  context: context,
-                  barrierDismissible: allowCancel,
-                  builder: (context) {
-                    return AlertDialog(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        contentPadding: EdgeInsets.zero,
-                        insetPadding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
-                        content: StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD045)),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: size.width * numD04,
-                                        top: size.width * numD02),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "Update Required",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: size.width * numD04,
-                                              fontWeight: FontWeight.bold),
+
+                  // Fallback: let app continue normally
+                  final info = await PackageInfo.fromPlatform();
+                  return info.version;
+                }
+              },
+              iosAppStoreId: '6744651614',
+            ),
+            allowCancel: false,
+            showForceUpdateAlert: (context, allowCancel) {
+              final size = MediaQuery.of(context).size;
+              return showDialog(
+                context: context,
+                barrierDismissible: allowCancel,
+                builder: (context) {
+                  return AlertDialog(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      contentPadding: EdgeInsets.zero,
+                      insetPadding:
+                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                    size.width * numD045)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: size.width * numD04,
+                                      top: size.width * numD02),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Update Required",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: size.width * numD04,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD04),
+                                  child: const Divider(
+                                    color: Colors.black,
+                                    thickness: 0.5,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: size.width * numD02,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD04),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD04),
                                         ),
-                                        const Spacer(),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD04),
-                                    child: const Divider(
-                                      color: Colors.black,
-                                      thickness: 0.5,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * numD02,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD04),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
+                                        child: ClipRRect(
                                             borderRadius: BorderRadius.circular(
                                                 size.width * numD04),
-                                          ),
-                                          child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD04),
-                                              child: Image.asset(
-                                                "${commonImagePath}dog.png",
-                                                height: size.width * numD25,
-                                                width: size.width * numD35,
-                                                fit: BoxFit.cover,
-                                              )),
+                                            child: Image.asset(
+                                              "${commonImagePath}dog.png",
+                                              height: size.width * numD25,
+                                              width: size.width * numD35,
+                                              fit: BoxFit.cover,
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        width: size.width * numD04,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "A newer version of PressHop is available. Please update the app to continue using all features smoothly.",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: size.width * numD035,
+                                              fontWeight: FontWeight.normal),
                                         ),
-                                        SizedBox(
-                                          width: size.width * numD04,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "A newer version of PressHop is available. Please update the app to continue using all features smoothly.",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: size.width * numD035,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    height: size.width * numD08,
+                                ),
+                                SizedBox(
+                                  height: size.width * numD08,
+                                ),
+                                SizedBox(
+                                  height: size.width * numD12,
+                                  width: size.width * numD35,
+                                  child: commonElevatedButton(
+                                    "Update Now",
+                                    size,
+                                    commonButtonTextStyle(size),
+                                    commonButtonStyle(size, colorThemePink),
+                                    _openStore,
                                   ),
-                                  SizedBox(
-                                    height: size.width * numD12,
-                                    width: size.width * numD35,
-                                    child: commonElevatedButton(
-                                      "Update Now",
-                                      size,
-                                      commonButtonTextStyle(size),
-                                      commonButtonStyle(size, colorThemePink),
-                                      _openStore,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * numD05,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ));
-                  },
-                );
-              },
-              showStoreListing: (Uri storeUrl) async {},
-              child: child ?? const SizedBox(),
-            );
-          },
-          debugShowCheckedModeBanner: false,
-          navigatorObservers: [
-            AnalyticsHelper.observer,
-            AnalyticsRouteObserver(),
-          ],
-          theme: ThemeData(
-            fontFamily: "AirbnbCereal",
-            scaffoldBackgroundColor: Colors.white,
-            useMaterial3: false,
-          ),
-          home: const SplashScreen(),
+                                ),
+                                SizedBox(
+                                  height: size.width * numD05,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ));
+                },
+              );
+            },
+            showStoreListing: (Uri storeUrl) async {},
+            child: child ?? const SizedBox(),
+          );
+        },
+        debugShowCheckedModeBanner: false,
+        navigatorObservers: [
+          AnalyticsHelper.observer,
+          AnalyticsRouteObserver(),
+        ],
+        theme: ThemeData(
+          fontFamily: "AirbnbCereal",
+          scaffoldBackgroundColor: Colors.white,
+          useMaterial3: false,
         ),
+        home: const SplashScreen(),
       ),
+      // ),
     );
   });
 }
