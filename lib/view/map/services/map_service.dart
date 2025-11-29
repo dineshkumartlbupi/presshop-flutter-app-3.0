@@ -23,6 +23,7 @@ class MapService {
     final route = data['routes'][0];
     final leg = route['legs'][0];
 
+    // Get distance in meters and convert to km
     final distanceMeters = leg['distance']['value'] as int;
     final distanceKm = distanceMeters / 1000.0;
 

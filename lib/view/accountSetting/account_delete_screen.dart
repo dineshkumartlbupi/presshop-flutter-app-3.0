@@ -217,7 +217,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: Image.asset(
-                                      "${commonImagePath}dog.png",
+                                      "assets/rabbits/delete_rabbit2.png",
                                       height: size.width * numD30,
                                       width: size.width * numD35,
                                       fit: BoxFit.cover,

@@ -116,6 +116,7 @@ flutter:
     - assets/lottieFiles/
     - assets/audio/
     - assets/markers/
+    - assets/rabbits/
     - assets/chatIcons/
     - assets/dialog_flow_auth.json
 

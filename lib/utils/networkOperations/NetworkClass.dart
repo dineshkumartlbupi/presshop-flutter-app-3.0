@@ -981,14 +981,7 @@ class NetworkClass {
           )),
     );
 
-    showDialog(
-      barrierColor: Colors.white.withOpacity(0),
-      useSafeArea: false,
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alertDialog!;
-      },
+  
     );
   }*/
   showLoaderDialog(BuildContext context) {

@@ -61,15 +61,15 @@ class CustomMapAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 Text(
                   'Photo',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
                 ),
                 Text(
                   'Video',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
                 ),
                 Text(
                   'Audio',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
                 ),
               ],
             ),

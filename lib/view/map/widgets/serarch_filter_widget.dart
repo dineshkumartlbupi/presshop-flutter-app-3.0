@@ -37,7 +37,8 @@ class SearchAndFilterBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -136,7 +137,15 @@ class SearchAndFilterBar extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: _FilterDropdown(
-                        items: const ['Category', 'Latest', 'Crime', 'Event','Political','Celebrity','Sports'],
+                        items: const [
+                          'Category',
+                          'Latest',
+                          'Crime',
+                          'Event',
+                          'Political',
+                          'Celebrity',
+                          'Sports'
+                        ],
                         selected: selectedCategory ?? 'Category',
                         onChanged: onCategoryChanged,
                       ),
