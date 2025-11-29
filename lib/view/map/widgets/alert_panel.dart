@@ -8,15 +8,40 @@ class AlertPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alertItems = [
-      {'icon': 'assets/markers/fire.gif', 'label': 'Accident'},
-      {'icon': 'assets/markers/car-crash.gif', 'label': 'Crash'},
-      {'icon': 'assets/markers/fight.gif', 'label': 'Fight'},
-      {'icon': 'assets/markers/fire.gif', 'label': 'Fire Alert'},
-      {'icon': 'assets/markers/knife.gif', 'label': 'Knife'},
-      {'icon': 'assets/markers/medicine.gif', 'label': 'Medicine'},
-      {'icon': 'assets/markers/protesters.gif', 'label': 'Protest'},
-      {'icon': 'assets/markers/gun.gif', 'label': 'Gun Fire'},
+    // final alertItems = [
+    // {'icon': 'assets/markers/fire.gif', 'label': 'Accident'},
+    // {'icon': 'assets/markers/car-crash.gif', 'label': 'Crash'},
+    // {'icon': 'assets/markers/fight.gif', 'label': 'Fight'},
+    // {'icon': 'assets/markers/fire.gif', 'label': 'Fire Alert'},
+    // {'icon': 'assets/markers/knife.gif', 'label': 'Knife'},
+    // {'icon': 'assets/markers/medicine.gif', 'label': 'Medicine'},
+    // {'icon': 'assets/markers/protesters.gif', 'label': 'Protest'},
+    // {'icon': 'assets/markers/gun.gif', 'label': 'Gun Fire'},
+
+    final List<Map<String, String>> alertTypes = [
+      {
+        'type': 'accident',
+        'icon': 'assets/markers/car-crash.gif',
+        'label': 'Accident',
+      },
+      {
+        'type': 'fire',
+        'icon': 'assets/markers/fire.gif',
+        'label': 'Fire Alert',
+      },
+      {'type': 'fight', 'icon': 'assets/markers/fight.gif', 'label': 'Fight'},
+      {'type': 'knife', 'icon': 'assets/markers/knife.gif', 'label': 'Knife'},
+      {'type': 'gun', 'icon': 'assets/markers/gun.gif', 'label': 'gun'},
+      {
+        'type': 'medical',
+        'icon': 'assets/markers/medicine.gif',
+        'label': 'Medical',
+      },
+      {
+        'type': 'protest',
+        'icon': 'assets/markers/protesters.gif',
+        'label': 'Protest',
+      },
     ];
 
     return Stack(
@@ -75,11 +100,9 @@ class AlertPanel extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // 🔥 Grid of GIF icons
                 GridView.builder(
                   shrinkWrap: true,
-                  itemCount: alertItems.length,
+                  itemCount: alertTypes.length,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
@@ -88,10 +111,10 @@ class AlertPanel extends StatelessWidget {
                     mainAxisSpacing: 6,
                   ),
                   itemBuilder: (context, i) {
-                    final item = alertItems[i];
+                    final item = alertTypes[i];
                     return GestureDetector(
                       onTap: () {
-                        onAlertSelected?.call(item['label']!);
+                        onAlertSelected?.call(item['type']!);
                         onClose();
                       },
                       child: Container(
@@ -116,7 +139,6 @@ class AlertPanel extends StatelessWidget {
                                 fontSize: 8,
                                 color: Colors.grey.shade700,
                               ),
-
                               textAlign: TextAlign.center,
                             ),
                           ],

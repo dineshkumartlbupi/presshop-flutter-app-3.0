@@ -1018,8 +1018,10 @@ class _SocialSignUpState extends State<SocialSignUp>
             sharedPreferences!.setString(lastNameKey, map["user"][lastNameKey]);
             sharedPreferences!.setString(userNameKey, map["user"][userNameKey]);
             sharedPreferences!.setString(phoneKey, map["user"][phoneKey]);
+
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
+
             sharedPreferences!.setString(totalHopperArmy,
                 map['user'][currencySymbolKey]['symbol'].toString());
             sharedPreferences!

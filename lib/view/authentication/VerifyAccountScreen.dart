@@ -501,6 +501,22 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
                 sharedPreferences!.setString(
                     avatarKey, map["response"]["user"][avatarIdKey][avatarKey]);
               }
+              //////////////////////////
+              ///
+              print("referrasdfsdflCodereferralCodewerwesd");
+              // print(
+              //     " referrasdfsdflCodereferralCode ==> ${map["user"][referralCode]}");
+              print(
+                  " response response  ==> ${map["response"]["user"][referralCode]}");
+
+              print("referrasdfsdflCodereferralCode123456");
+
+              sharedPreferences!.setString(
+                referralCode,
+                map["response"]["user"][referralCode] ?? "",
+              );
+
+              //////////////////////////////////
 
               sharedPreferences!.setBool(receiveTaskNotificationKey,
                   map["response"]["user"][receiveTaskNotificationKey]);
@@ -594,8 +610,16 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             sharedPreferences!.setString(addressKey, map["user"][addressKey]);
             sharedPreferences!
                 .setString(latitudeKey, map["user"][latitudeKey].toString());
+
+            print("referrasdfsdflCodereferralCode");
+            print(map["user"][referralCode]);
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
+
+            var data = sharedPreferences!.getString(referralCode);
+
+            print("datasrdf234 data data data $data");
+
             sharedPreferences!.setString(
                 currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
             sharedPreferences!.setString(

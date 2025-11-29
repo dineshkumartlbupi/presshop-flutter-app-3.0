@@ -181,15 +181,11 @@ void main() async {
                     final force =
                         await ForceUpdateRepository.checkForceUpdate();
                     print("forceupdateddata $force");
-
                     if (force) return "999.0.0";
-
                     final info = await PackageInfo.fromPlatform();
                     return info.version;
                   } catch (e) {
                     print("Force update check failed: $e");
-
-                    // Use global navigator key to show snackbar
                     if (context != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -198,8 +194,6 @@ void main() async {
                         ),
                       );
                     }
-
-                    // Fallback: let app continue normally
                     final info = await PackageInfo.fromPlatform();
                     return info.version;
                   }
@@ -276,7 +270,7 @@ void main() async {
                                                   BorderRadius.circular(
                                                       size.width * numD04),
                                               child: Image.asset(
-                                                "${commonImagePath}dog.png",
+                                                "assets/rabbits/update_rabbit.png",
                                                 height: size.width * numD25,
                                                 width: size.width * numD35,
                                                 fit: BoxFit.cover,

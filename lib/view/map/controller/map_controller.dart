@@ -5,25 +5,122 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/main.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/view/map/models/map_state.dart';
 import 'package:presshop/view/map/models/marker_model.dart';
+import 'package:presshop/view/map/services/socket_service.dart';
 
 import '../services/marker_service.dart';
 import '../services/map_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui' as ui;
 
+const String BASE_URL = 'https://dev-api.presshop.news:5019/';
+
 class MapController extends StateNotifier<MapState> {
   final MapService mapService;
   final MarkerService markerService;
+  final SocketService socketService; // Added socketService
   Timer? _demoRouteTimer;
   int _demoRouteIndex = 0;
   String _demoRouteInfo = '';
   DateTime? _lastDragEndTime;
   Timer? _allowMarkerSelectionTimer;
 
+  final String _userId = sharedPreferences!.getString(hopperIdKey).toString();
+
   MapController({required this.mapService, required this.markerService})
-      : super(MapState());
+      : socketService = SocketService(),
+        super(MapState()) {
+    socketService.onIncidentNew = (data) {
+      _handleNewIncident(data);
+    };
+
+    socketService.onIncidentUpdated = (data) {
+      _handleUpdatedIncident(data);
+    };
+
+    socketService.onIncidentCreated = (data) {
+      _handleNewIncident(data);
+    };
+
+    socketService.initSocket(
+      userId: _userId,
+      joinAs: "hopper",
+    );
+
+    fetchInitialIncidents(); // Fetch initial incidents
+  }
+
+  void _handleNewIncident(dynamic data) {
+    try {
+      final incident = Incident.fromJson(data);
+      // Avoid duplicates
+      if (state.markers.any((m) => m.markerId.value == incident.id)) {
+        return;
+      }
+      _addIncidentToMap(incident);
+    } catch (e) {
+      debugPrint("Error handling new incident: $e");
+    }
+  }
+
+  void _handleUpdatedIncident(dynamic data) {
+    try {
+      final updatedIncident = Incident.fromJson(data);
+
+      // To properly update, we should probably just re-add it
+      _addIncidentToMap(updatedIncident);
+    } catch (e) {
+      debugPrint("Error handling updated incident: $e");
+    }
+  }
+
+  Future<void> _addIncidentToMap(Incident incident) async {
+    const markerIconSize = 142;
+    String? iconType;
+    final type = incident.type ?? incident.alertType ?? 'accident';
+
+    if (type.toLowerCase().contains('accident') ||
+        type.toLowerCase().contains('crash')) {
+      iconType = 'accident';
+    } else if (type.toLowerCase().contains('fire')) {
+      iconType = 'fire';
+    } else if (type.toLowerCase().contains('gun')) {
+      iconType = 'gun';
+    } else if (type.toLowerCase().contains('knife')) {
+      iconType = 'knife';
+    } else if (type.toLowerCase().contains('fight')) {
+      iconType = 'fight';
+    } else if (type.toLowerCase().contains('protest')) {
+      iconType = 'protest';
+    } else if (type.toLowerCase().contains('medicine') ||
+        type.toLowerCase().contains('medical')) {
+      iconType = 'medical';
+    } else {
+      iconType = 'accident'; // default
+    }
+
+    final assetPath = markerService.markerIcons[iconType] ??
+        markerService.markerIcons['accident']!;
+
+    final icon = await markerService.bitmapFromIncidentAsset(
+      assetPath,
+      markerIconSize,
+    );
+
+    final marker = Marker(
+      markerId: MarkerId(incident.id),
+      position: incident.position,
+      icon: icon,
+      onTap: () {
+        selectMarker(incident);
+      },
+    );
+
+    state = state.copyWith(markers: {...state.markers, marker});
+  }
 
   Future<void> setMyLocation(LatLng location) async {
     final updatedCircles = {
@@ -312,10 +409,19 @@ class MapController extends StateNotifier<MapState> {
     if (state.previewAlertMarkerId != null &&
         state.previewAlertType != null &&
         state.previewAlertPosition != null) {
+      // Add marker to map
       await _createAndAddAlertMarker(
         state.previewAlertType!,
         state.previewAlertPosition!,
       );
+
+      // Emit alert via socket
+      socketService.emitAlert(
+        alertType: state.previewAlertType!,
+        position: state.previewAlertPosition!,
+        userId: _userId,
+      );
+
       cancelPreviewAlert();
     }
   }
@@ -327,7 +433,7 @@ class MapController extends StateNotifier<MapState> {
       selectedCategory: category,
     );
     // Refresh markers with new filters
-    addNearbyMarkers();
+    // addNearbyMarkers();
   }
 
   double _parseDistance(String distanceStr) {
@@ -348,76 +454,6 @@ class MapController extends StateNotifier<MapState> {
             math.sin(dLng / 2);
     final c = 2 * math.atan2(math.sqrt(a1), math.sqrt(1 - a1));
     return earthRadius * c;
-  }
-
-  Future<void> addNearbyMarkers() async {
-    if (state.myLocation == null) return;
-
-    const markerIconSize = 142;
-    var incidents = markerService.getIncidents();
-
-    // Apply filters
-    if (state.selectedAlertType != null && state.selectedAlertType != 'Alert') {
-      incidents = incidents.where((incident) {
-        return incident.alertType == state.selectedAlertType;
-      }).toList();
-    }
-
-    if (state.selectedCategory != null &&
-        state.selectedCategory != 'Category') {
-      incidents = incidents.where((incident) {
-        return incident.category == state.selectedCategory;
-      }).toList();
-    }
-
-    if (state.selectedDistance != null && state.selectedDistance != '2 miles') {
-      final maxDistance = _parseDistance(state.selectedDistance!);
-      incidents = incidents.where((incident) {
-        final distance = _calculateDistance(
-          state.myLocation!,
-          incident.position,
-        );
-        return distance <= maxDistance;
-      }).toList();
-    }
-
-    final List<Marker> markers = [];
-
-    for (var incident in incidents) {
-      BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
-
-      if (incident.markerType == 'icon') {
-        final assetPath = markerService.markerIcons[incident.type] ??
-            markerService.markerIcons['accident']!;
-        icon = await markerService.bitmapFromIncidentAsset(
-          assetPath,
-          markerIconSize,
-        );
-      } else if (incident.markerType == 'content' ||
-          incident.markerType == 'hopper') {
-        icon = await bitmapFromNetwork(incident.image!, size: 120);
-      }
-
-      markers.add(
-        Marker(
-          markerId: MarkerId(incident.id),
-          position: incident.position,
-          icon: icon,
-          onTap: () {
-            selectMarker(incident);
-          },
-          infoWindow: const InfoWindow(),
-        ),
-      );
-    }
-
-    // Remove old incident markers, keep user location and demo markers
-    final filteredMarkers = state.markers.where((m) {
-      return m.markerId.value == 'me' ||
-          m.markerId.value == 'demo_route_marker';
-    }).toSet();
-
-    state = state.copyWith(markers: {...filteredMarkers, ...markers});
   }
 
   void addDemoPolygon() {
@@ -663,9 +699,7 @@ class MapController extends StateNotifier<MapState> {
 
     state = state.copyWith(currentNavigationPosition: position);
 
-    // Update polyline to erase behind user
     if (state.routeInfo != null && state.routeInfo!.points.isNotEmpty) {
-      // Find the closest point on the route to current position
       int closestIndex = 0;
       double minDistance = double.infinity;
 
@@ -700,6 +734,80 @@ class MapController extends StateNotifier<MapState> {
   void dispose() {
     _demoRouteTimer?.cancel();
     _allowMarkerSelectionTimer?.cancel();
+    socketService.dispose();
     super.dispose();
+  }
+
+  Future<void> fetchInitialIncidents() async {
+    try {
+      final String token = sharedPreferences!.getString(tokenKey).toString();
+
+      final res = await http.get(
+        Uri.parse("${BASE_URL}hopper/getAlertIncidents"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      print(":::fetchInitialIncidents ${res.body}");
+
+      if (res.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(res.body);
+        final List<Incident> incidents =
+            data.map((j) => Incident.fromJson(j)).toList();
+
+        final Set<Marker> newMarkers = {};
+        const markerIconSize = 142;
+
+        for (final incident in incidents) {
+          String? iconType;
+          final type = incident.type ?? incident.alertType ?? 'accident';
+
+          if (type.toLowerCase().contains('accident') ||
+              type.toLowerCase().contains('crash')) {
+            iconType = 'accident';
+          } else if (type.toLowerCase().contains('fire')) {
+            iconType = 'fire';
+          } else if (type.toLowerCase().contains('gun')) {
+            iconType = 'gun';
+          } else if (type.toLowerCase().contains('knife')) {
+            iconType = 'knife';
+          } else if (type.toLowerCase().contains('fight')) {
+            iconType = 'fight';
+          } else if (type.toLowerCase().contains('protest')) {
+            iconType = 'protest';
+          } else if (type.toLowerCase().contains('medicine') ||
+              type.toLowerCase().contains('medical')) {
+            iconType = 'medical';
+          } else {
+            iconType = 'accident'; // default
+          }
+
+          final assetPath = markerService.markerIcons[iconType] ??
+              markerService.markerIcons['accident']!;
+
+          final icon = await markerService.bitmapFromIncidentAsset(
+            assetPath,
+            markerIconSize,
+          );
+
+          newMarkers.add(
+            Marker(
+              markerId: MarkerId(incident.id),
+              position: incident.position,
+              icon: icon,
+              onTap: () {
+                selectMarker(incident);
+              },
+            ),
+          );
+        }
+
+        state = state.copyWith(markers: {...state.markers, ...newMarkers});
+      }
+    } catch (e) {
+      debugPrint("Error fetching incidents: $e");
+    }
   }
 }

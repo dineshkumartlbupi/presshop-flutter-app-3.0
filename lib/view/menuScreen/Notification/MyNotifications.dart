@@ -186,7 +186,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
                                   child: Image.asset(
-                                    "${commonImagePath}dog2.jpg",
+                                    "assets/rabbits/student_beans_rabbit2.png",
                                     width: 120,
                                     height: 120,
                                     fit: BoxFit.cover,

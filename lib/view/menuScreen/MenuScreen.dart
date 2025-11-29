@@ -522,7 +522,7 @@ class MenuScreenState extends State<MenuScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: Image.asset(
-                                      "${commonImagePath}tea.png",
+                                      "assets/rabbits/logout_rabbit.png",
                                       height: size.width * numD30,
                                       width: size.width * numD35,
                                       fit: BoxFit.cover,
