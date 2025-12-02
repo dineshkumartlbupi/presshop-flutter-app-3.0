@@ -331,10 +331,10 @@ class MenuScreenState extends State<MenuScreen>
         icon: "${iconsPath}ic_ranking.png",
         classWidget: LeaderboardScreen()));
 
-    menuList.add(MenuData(
-        name: "Map view",
-        icon: "${iconsPath}map2.png",
-        classWidget: MarketplaceScreen()));
+    // menuList.add(MenuData(
+    //     name: "Map view",
+    //     icon: "${iconsPath}map2.png",
+    //     classWidget: MarketplaceScreen()));
 
     menuList.add(MenuData(
         name: myDraftText,
