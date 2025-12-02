@@ -3209,6 +3209,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           ? playAudioWidget()
                           : item.mediaType == "video"
                               ? videoWidget()
+                              // ? Container()
                               : item.mediaType == "pdf"
                                   ? Padding(
                                       padding:

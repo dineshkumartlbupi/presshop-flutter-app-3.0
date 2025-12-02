@@ -21,29 +21,26 @@ enum MediaTypeEnum {
   pickFile,
 }
 
-class MediaViewScreen extends StatefulWidget {
+class MediaViewScreen2 extends StatefulWidget {
   final String mediaFile;
   final MediaTypeEnum type;
   final isFromTutorialScreen;
 
-  const MediaViewScreen(
+  const MediaViewScreen2(
       {super.key,
       required this.mediaFile,
       required this.type,
       this.isFromTutorialScreen = false});
 
   @override
-  _MediaViewScreenState createState() => _MediaViewScreenState();
+  _MediaViewScreen2State createState() => _MediaViewScreen2State();
 }
 
-class _MediaViewScreenState extends State<MediaViewScreen>
+class _MediaViewScreen2State extends State<MediaViewScreen2>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   FlickManager? flickManager;
-  VideoPlayerController? _videoPlayerController;
-  // Use a FutureBuilder key to track the initialization of the video
-  Future<void>? _initializeVideoPlayerFuture;
 
   late Size size;
 
@@ -56,20 +53,12 @@ class _MediaViewScreenState extends State<MediaViewScreen>
   void initState() {
     debugPrint("mediaUrl =====> ${widget.mediaFile}");
     if (widget.type == MediaTypeEnum.video) {
-      final videoUrl = widget.isFromTutorialScreen
-          ? widget.mediaFile
-          : (taskMediaUrl + widget.mediaFile);
-
-      debugPrint("mediaUrl1111 =====> ${videoUrl}");
-
-      _videoPlayerController =
-          VideoPlayerController.networkUrl(Uri.parse(videoUrl));
-
       flickManager = FlickManager(
-        videoPlayerController: _videoPlayerController!,
+        videoPlayerController: VideoPlayerController.network(
+            widget.isFromTutorialScreen
+                ? widget.mediaFile
+                : (taskMediaUrl + widget.mediaFile)),
       );
-      // Store the initialization future
-      _initializeVideoPlayerFuture = _videoPlayerController!.initialize();
     } else if (widget.type == MediaTypeEnum.audio) {
       initWaveData();
     }
@@ -83,7 +72,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
   @override
   void dispose() {
     flickManager?.dispose();
-    _videoPlayerController?.dispose();
     _animationController.dispose();
     controller.dispose();
     super.dispose();
@@ -120,6 +108,40 @@ class _MediaViewScreenState extends State<MediaViewScreen>
           },
           actionWidget: [],
           hideLeading: false),
+
+      // AppBar(
+      //   elevation: 0,
+      //   backgroundColor:
+      //       widget.type == MediaTypeEnum.audio ? Colors.white : Colors.black,
+      //   centerTitle: true,
+      //   automaticallyImplyLeading: false,
+      //   leadingWidth: size.width * numD11,
+      //   title: Text(
+      //     widget.type == MediaTypeEnum.video ? 'Playing Video' : "",
+      //     style: TextStyle(
+      //         color: widget.type == MediaTypeEnum.video
+      //             ? Colors.white
+      //             : Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * appBarHeadingFontSize),
+      //   ),
+      //   leading: Container(
+      //     margin: EdgeInsets.only(left: size.width * numD04),
+      //     child: InkWell(
+      //       child: Image.asset(
+      //         "${iconsPath}ic_arrow_left.png",
+      //         height: size.width * numD03,
+      //         width: size.width * numD03,
+      //         color: widget.type == MediaTypeEnum.audio
+      //             ? Colors.black
+      //             : Colors.white,
+      //       ),
+      //       onTap: () {
+      //         Navigator.pop(context);
+      //       },
+      //     ),
+      //   ),
+      // ),
       body: SafeArea(
         child: widget.type == MediaTypeEnum.video
             ? videoWidget()
@@ -133,37 +155,12 @@ class _MediaViewScreenState extends State<MediaViewScreen>
   }
 
   Widget videoWidget() {
-    // This is the correct logic for fixing the zoomed video
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // Video is initialized, now we can get its aspect ratio
-          final videoController = _videoPlayerController!;
-          final double videoAspectRatio = videoController.value.aspectRatio;
-
-          // Wrap the FlickVideoPlayer in AspectRatio to respect the video's dimensions
-          return Center(
-            // Center the video within the screen
-            child: AspectRatio(
-              aspectRatio: videoAspectRatio,
-              child: FlickVideoPlayer(
-                flickManager: flickManager!,
-                flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-                  willVideoPlayerControllerChange: false,
-                  // Flick Landscape controls usually use BoxFit.fit which is good.
-                  controls: FlickLandscapeControls(),
-                ),
-              ),
-            ),
-          );
-        } else {
-          // While the video is loading, show a circular progress indicator
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
+    return FlickVideoPlayer(
+      flickManager: flickManager!,
+      flickVideoWithControlsFullscreen: const FlickVideoWithControls(
+        willVideoPlayerControllerChange: false,
+        controls: FlickLandscapeControls(),
+      ),
     );
   }
 
@@ -212,7 +209,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
     try {
       await dio.download(widget.mediaFile, filepath);
     } catch (e) {
-      // Assuming 'taskMediaUrl' is correctly defined elsewhere
       await dio.download(taskMediaUrl + widget.mediaFile, filepath);
     }
 
@@ -322,7 +318,6 @@ class _MediaViewScreenState extends State<MediaViewScreen>
           )
         : const Center(
             child: CircularProgressIndicator(
-              // Assuming 'colorThemePink' is defined in Common.dart
               color: colorThemePink,
             ),
           );
