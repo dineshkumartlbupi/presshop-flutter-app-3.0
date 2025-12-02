@@ -724,6 +724,8 @@ class NetworkClass {
     }
     var url = baseUrl + endUrl;
     Dio dio = Dio();
+    dio.options.connectTimeout = const Duration(minutes: 5);
+    dio.options.receiveTimeout = const Duration(minutes: 5);
     FormData formData = FormData();
     if (imageParams.isNotEmpty) {
       for (var element in _files!) {

@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,6 @@ import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/location_service.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/broadCastChatTaskScreen/MediaPreviewScreen.dart';
-import 'package:presshop/view/cameraScreen/AudioWaveFormWidgetScreen.dart';
 
 import '../../main.dart';
 import '../../utils/Common.dart';
@@ -22,7 +21,6 @@ import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonModel.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonWigdets.dart';
-import '../../utils/VideoWidget.dart';
 import '../../utils/commonEnums.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../authentication/TermCheckScreen.dart';
@@ -93,6 +91,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -104,18 +103,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                 }
               });
             }
-            return AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(height: 20),
-                  Text(uploadProgress >= 1.0
-                      ? "Processing..."
-                      : "Uploading... ${(uploadProgress * 100).toStringAsFixed(0)}%"),
-                ],
-              ),
-            );
+            return LoadingDialogContent(progress: uploadProgress);
           },
         );
       },
@@ -157,6 +145,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   //   }
   // }
   void dismissProgressDialog() {
+    _shouldCloseDialog = true;
     if (_dialogStateSetter != null) {
       Navigator.of(context, rootNavigator: true).pop();
       _dialogStateSetter = null;
@@ -172,8 +161,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
       debugPrint("GettingLocation ==> $locationData");
 
       if (locationData != null && locationData!.latitude != null) {
-        double latitude = locationData!.latitude!;
-        double longitude = locationData!.longitude!;
+        latitude = locationData!.latitude!;
+        longitude = locationData!.longitude!;
 
         // ✅ Reverse geocode without needing an API key
         List<Placemark> placemarks =
@@ -181,7 +170,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
         Placemark place = placemarks.first;
 
         // ✅ Create readable address string
-        String address =
+        address =
             "${place.street ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
 
         debugPrint("Address:> $address");
@@ -3242,10 +3231,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
               ),
             );
           }
-
-          await previewBottomSheet();
-          setState(() {});
         }
+        await previewBottomSheet();
+        setState(() {});
       } else {
         debugPrint("No videos selected.");
       }
@@ -3301,6 +3289,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
       'task_id': widget.taskDetail!.id,
       "latitude": latitude.toString(),
       "longitude": longitude.toString(),
+      "address": address,
     };
 
     debugPrint('map:::::::$map');
@@ -3722,4 +3711,60 @@ class MediaModel {
     required this.mediaFile,
     required this.mimetype,
   });
+}
+
+class LoadingDialogContent extends StatefulWidget {
+  final double progress;
+  const LoadingDialogContent({super.key, required this.progress});
+
+  @override
+  State<LoadingDialogContent> createState() => _LoadingDialogContentState();
+}
+
+class _LoadingDialogContentState extends State<LoadingDialogContent> {
+  int _dotCount = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (mounted) {
+        setState(() {
+          _dotCount = (_dotCount + 1) % 4;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String dots = "." * _dotCount;
+    String text;
+    if (widget.progress >= 1.0) {
+      text = "Processing$dots";
+    } else {
+      text = "Uploading$dots ${(widget.progress * 100).toStringAsFixed(0)}%";
+    }
+
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: Text(
+          text,
+          style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.none),
+        ),
+      ),
+    );
+  }
 }

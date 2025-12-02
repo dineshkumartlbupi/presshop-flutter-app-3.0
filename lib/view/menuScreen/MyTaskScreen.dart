@@ -1179,6 +1179,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
       }
     }
 
+    print("Params Params =======>$params");
+    // print(params);
+
     NetworkClass(getAllMyTaskUrl, this, getAllMyTaskReq)
         .callRequestServiceHeader(false, "get", params);
   }
