@@ -13,6 +13,7 @@ import 'package:mime/mime.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/location_service.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:presshop/view/broadCastChatTaskScreen/MediaPreviewScreen.dart';
 import 'package:presshop/view/cameraScreen/AudioWaveFormWidgetScreen.dart';
 
 import '../../main.dart';
@@ -83,6 +84,45 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   lc.Location location = lc.Location();
   double latitude = 0, longitude = 0;
   String address = "";
+  double uploadProgress = 0.0;
+  StateSetter? _dialogStateSetter;
+  bool _shouldCloseDialog = false;
+
+  void showProgressDialog() {
+    _shouldCloseDialog = false;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            _dialogStateSetter = setState;
+            if (_shouldCloseDialog) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && Navigator.canPop(context)) {
+                  Navigator.of(context, rootNavigator: true).pop();
+                }
+              });
+            }
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 20),
+                  Text(uploadProgress >= 1.0
+                      ? "Processing..."
+                      : "Uploading... ${(uploadProgress * 100).toStringAsFixed(0)}%"),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((_) {
+      _dialogStateSetter = null;
+    });
+  }
 
   @override
   void initState() {
@@ -116,6 +156,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   //     debugPrint("PEx: $e");
   //   }
   // }
+  void dismissProgressDialog() {
+    if (_dialogStateSetter != null) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _dialogStateSetter = null;
+    }
+  }
 
   void getCurrentLocation() async {
     try {
@@ -374,7 +420,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               children: [
                                 Text(
                                   widget.taskDetail!.isNeedPhoto
-                                      ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.photoPrice))}"
+                                      ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.photoPrice) ?? 0.0)}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -422,7 +468,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               children: [
                                 Text(
                                   widget.taskDetail!.isNeedInterview
-                                      ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
+                                      ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -470,7 +516,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               children: [
                                 Text(
                                   widget.taskDetail!.isNeedVideo
-                                      ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.videoPrice))}"
+                                      ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.videoPrice) ?? 0.0)}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -747,7 +793,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                       TextSpan(
                                         text: widget.taskDetail!.interviewPrice
                                                 .isNotEmpty
-                                            ? "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}"
+                                            ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
                                             : "-",
                                         style: commonTextStyle(
                                             size: size,
@@ -865,7 +911,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                       ),
                                       TextSpan(
                                         text:
-                                            "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                            "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}",
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD036,
@@ -2372,7 +2418,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           Text(
                             item.hopperPrice.isEmpty
                                 ? ""
-                                : "$currencySymbol${formatDouble(double.parse(item.hopperPrice))}",
+                                : "$currencySymbol${formatDouble(double.tryParse(item.hopperPrice) ?? 0.0)}",
                             style: TextStyle(
                                 fontSize: size.width * numD045,
                                 color: colorLightGreen,
@@ -2471,7 +2517,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           TextSpan(
                             text: item.hopperPrice.isEmpty
                                 ? ""
-                                : "$currencySymbol${formatDouble(double.parse(item.hopperPrice))}",
+                                : "$currencySymbol${formatDouble(double.tryParse(item.hopperPrice) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD036,
@@ -2576,7 +2622,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                           TextSpan(
                             text: item.payableHopperPrice.isEmpty
                                 ? ""
-                                : "$currencySymbol${formatDouble(double.parse(item.payableHopperPrice))}",
+                                : "$currencySymbol${formatDouble(double.tryParse(item.payableHopperPrice) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD036,
@@ -3197,7 +3243,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
             );
           }
 
-          previewBottomSheet();
+          await previewBottomSheet();
           setState(() {});
         }
       } else {
@@ -3208,159 +3254,26 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     }
   }
 
-  void previewBottomSheet() {
-    var size = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: false,
-        enableDrag: false,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, avatarState) {
-            return Stack(
-              children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          PageView.builder(
-                            onPageChanged: (value) {
-                              currentPage = value;
-                              avatarState(() {});
-                            },
-                            itemBuilder: (context, index) {
-                              var item = selectMultipleMediaList[index];
-                              debugPrint("type:::${item.mimeType}");
-                              debugPrint("file:::${item.mediaPath}");
-                              if (item.mimeType.startsWith('image')) {
-                                return Container(
-                                  color: Colors.black,
-                                  child: Image.file(
-                                    File(item.mediaPath),
-                                    fit: item.isFromGallery
-                                        ? BoxFit.contain
-                                        : BoxFit.fill,
-                                    gaplessPlayback: true,
-                                  ),
-                                );
-                              } else if (item.mimeType.startsWith('video')) {
-                                return VideoWidget(mediaData: item);
-                              } else if (item.mimeType.startsWith('audio')) {
-                                return AudioWaveFormWidgetScreen(
-                                    mediaPath: item.mediaPath);
-                              }
-                            },
-                            itemCount: selectMultipleMediaList.length,
-                          ),
-                          selectMultipleMediaList.isNotEmpty &&
-                                  selectMultipleMediaList.length > 1
-                              ? Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: DotsIndicator(
-                                    dotsCount: selectMultipleMediaList.length,
-                                    position: currentPage,
-                                    decorator: const DotsDecorator(
-                                      color: Colors.grey, // Inactive color
-                                      activeColor: Colors.redAccent,
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD02),
-                            height: size.width * numD18,
-                            child: commonElevatedButton(
-                                "Add more",
-                                size,
-                                commonButtonTextStyle(size),
-                                commonButtonStyle(size, Colors.black), () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CameraScreen(
-                                            picAgain: true,
-                                            previousScreen:
-                                                ScreenNameEnum.manageTaskScreen,
-                                          ))).then((value) {
-                                if (value != null) {
-                                  debugPrint(
-                                      "value:::::$value::::::::${value.first.path}");
-                                  List<CameraData> temData = value;
-                                  temData.forEach((element) {
-                                    selectMultipleMediaList.add(
-                                      MediaData(
-                                        isFromGallery: element.fromGallary,
-                                        dateTime: "",
-                                        latitude: latitude.toString(),
-                                        location: address,
-                                        longitude: longitude.toString(),
-                                        mediaPath: element.path,
-                                        mimeType: element.mimeType,
-                                        thumbnail: "",
-                                      ),
-                                    );
-                                  });
-                                  previewBottomSheet();
-                                }
-                              });
-                            }),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD02),
-                            height: size.width * numD18,
-                            child: commonElevatedButton(
-                                "Next",
-                                size,
-                                commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink), () {
-                              Navigator.pop(context);
-                              callUploadMediaApi({}, "");
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * numD015,
-                    ),
-                  ],
-                ),
-                Positioned(
-                    top: size.width * numD06,
-                    right: size.width * numD02,
-                    child: IconButton(
-                        onPressed: () {
-                          selectMultipleMediaList.removeAt(currentPage);
-                          if (selectMultipleMediaList.isEmpty) {
-                            Navigator.pop(context);
-                          }
-                          avatarState(() {});
-                        },
-                        icon: Icon(
-                          Icons.highlight_remove,
-                          color: Colors.white,
-                          size: size.width * numD07,
-                        ))),
-              ],
-            );
-          });
-        });
+  Future<void> previewBottomSheet() async {
+    debugPrint("previewBottomSheet: Pushing MediaPreviewScreen");
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MediaPreviewScreen(
+          mediaList: selectMultipleMediaList,
+          onMediaUpdated: (updatedList) {
+            selectMultipleMediaList = updatedList;
+            setState(() {});
+          },
+        ),
+      ),
+    );
+    debugPrint("previewBottomSheet: Popped with result: $result");
+
+    if (result == "upload") {
+      debugPrint("previewBottomSheet: Triggering upload");
+      callUploadMediaApi({}, "");
+    }
   }
 
   void callDetailApi(String id) {
@@ -3392,9 +3305,18 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
     debugPrint('map:::::::$map');
 
+    await Future.delayed(const Duration(milliseconds: 500));
+    showProgressDialog();
+
     NetworkClass.multipartNetworkClassFiles(
             uploadTaskMediaUrl, this, uploadTaskMediaReq, map, filesPath)
-        .callMultipartServiceSameParamMultiImage(true, "post", "files");
+        .callMultipartServiceSameParamMultiImage(false, "post", "files",
+            onProgress: (sent, total) {
+      uploadProgress = sent / total;
+      if (_dialogStateSetter != null) {
+        _dialogStateSetter!(() {});
+      }
+    });
   }
 
   /// Get Listing
@@ -3414,6 +3336,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     switch (requestCode) {
       /// Upload Media
       case uploadTaskMediaReq:
+        dismissProgressDialog();
         var data = jsonDecode(response);
         debugPrint("uploadTaskMediaReq Error : $data");
         showSnackBar("Manage task", data["message"].toString(), Colors.red);
@@ -3442,6 +3365,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     switch (requestCode) {
       /// Upload Media
       case uploadTaskMediaReq:
+        dismissProgressDialog();
+        selectMultipleMediaList.clear();
         var data = jsonDecode(response);
         debugPrint("uploadTaskMediaReq Success : $data");
 
@@ -3492,7 +3417,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
         contentPurchased = data["purchased_count"].toString();
         if (data["rating"] != null) {
           ratingReviewController1.text = data["rating"]["review"];
-          ratings = double.parse(data["rating"]["rating"]);
+          ratings = double.tryParse(data["rating"]["rating"].toString()) ?? 0.0;
           // dataList.addAll(data["rating"]["features"].toList());
           isRatingGiven = true;
           for (String data in data["rating"]["features"]) {

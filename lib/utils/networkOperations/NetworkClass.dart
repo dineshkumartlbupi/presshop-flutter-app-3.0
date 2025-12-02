@@ -715,8 +715,9 @@ class NetworkClass {
   Future<void> callMultipartServiceSameParamMultiImage(
     bool showLoader,
     String requestType,
-    String imageParams,
-  ) async {
+    String imageParams, {
+    Function(int sent, int total)? onProgress,
+  }) async {
     if (showLoader && alertDialog == null && !isShowing) {
       isShowing = true;
       showLoaderDialog(navigatorKey.currentContext!);
@@ -755,6 +756,7 @@ class NetworkClass {
       Response response = await dio.post(
         url,
         data: formData,
+        onSendProgress: onProgress,
       );
 
       // Check for 401 Unauthorized - but skip if this is the refresh token API itself
@@ -827,6 +829,18 @@ class NetworkClass {
       }
       commonSocketException(e.osError!.errorCode, e.message);
       return;
+    } on DioException catch (e) {
+      if (alertDialog != null && isShowing) {
+        isShowing = false;
+        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+      }
+      if (e.response != null) {
+        networkResponse!.onError(
+            requestCode: requestCode, response: jsonEncode(e.response!.data));
+      } else {
+        networkResponse!.onError(
+            requestCode: requestCode, response: '{"message": "${e.message}"}');
+      }
     }
   }
 
