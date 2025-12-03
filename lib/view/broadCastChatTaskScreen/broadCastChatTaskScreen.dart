@@ -3756,13 +3756,24 @@ class _LoadingDialogContentState extends State<LoadingDialogContent> {
     return Center(
       child: Material(
         color: Colors.transparent,
-        child: Text(
-          text,
-          style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.none),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset(
+              "assets/lottieFiles/loader_new.json",
+              height: 100,
+              width: 100,
+            ),
+            // const SizedBox(height: 0),
+            Text(
+              text,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.none),
+            ),
+          ],
         ),
       ),
     );
