@@ -449,7 +449,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                           textInputFormatters: [
                             FilteringTextInputFormatter.allow(RegExp("[0-9]")),
                             LengthLimitingTextInputFormatter(
-                                _getMaxPhoneLength()), // Dynamic limit!
+                                _getMaxPhoneLength()),
                           ],
                           prefixIcon: InkWell(
                             onTap: () {
