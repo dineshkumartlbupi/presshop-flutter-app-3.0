@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AppsFlyerAppID</key>
+	<string>6744651614</string>
+	<key>AppsFlyerDevKey</key>
+	<string>bxvwnv53n3J7eKMAiDmX7J</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -19,7 +23,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>1.0.30</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -43,16 +47,16 @@
 			</array>
 		</dict>
 	</array>
-	<key>FacebookAppID</key>
-	<string>4098273470461354</string>
-	<key>FacebookDisplayName</key>
-	<string>PressHop</string>
-	<key>FacebookClientToken</key>
-	<string>511f243cec6c666dc39a378e0eb084ef</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>45</string>
 	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
 	<string>YES</string>
+	<key>FacebookAppID</key>
+	<string>4098273470461354</string>
+	<key>FacebookClientToken</key>
+	<string>511f243cec6c666dc39a378e0eb084ef</string>
+	<key>FacebookDisplayName</key>
+	<string>PressHop</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>FirebaseScreenReportingEnabled</key>
@@ -73,41 +77,36 @@
 		<string>snapchat</string>
 		<string>instagram</string>
 	</array>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This identifier will be used to deliver personalized content and measure campaign performance.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
-<!-- AppsFlyer -->
-<key>AppsFlyerAppID</key>
-<string>6744651614</string>
-<key>AppsFlyerDevKey</key>
-<string>bxvwnv53n3J7eKMAiDmX7J</string>	
-<key>NSAppleMusicUsageDescription</key>
-<string>PressHop needs access to your Apple Music so that you can add background audio or music to your content before uploading.</string>
-<key>NSCalendarsUsageDescription</key>
-<string>Allow PressHop to access your calendar for reminders and scheduling.</string>
-<key>NSCameraUsageDescription</key>
-<string>Allow PressHop to use the camera for taking photos and videos for news content submissions.</string>
-<key>NSContactsUsageDescription</key>
-<string>We needs access to your contacts so you can invite friends or share content with people you trust in future updates.</string>
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>PressHop needs your location to display tasks in your area and to validate content submissions, even when running in the background.</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>PressHop requires your location at all times to help match you with nearby tasks and to verify your location even when the app is in the background</string>
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>PressHop uses your location while the app is open to show local tasks, enable the camera for submissions, and ensure accurate task matching.</string>
-<key>NSMicrophoneUsageDescription</key>
-<string>Allow PressHop to record audio during video capture or interviews.</string>
-<key>NSMotionUsageDescription</key>
-<string>Used for camera stability or future motion-based features.</string>
-<key>NSPhotoLibraryAddUsageDescription</key>
-<string>Allow saving captured content to your device's gallery.</string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>We need permission to access your photo library so that you can upload and sell your photos and videos instantly.</string>
-<key>NSSpeechRecognitionUsageDescription</key>
-<string>We need speech recognition to let you convert your voice into text for audio captions and to support future features. Your voice data is handled securely and never stored without consent.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>PressHop needs access to your Apple Music so that you can add background audio or music to your content before uploading.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Allow PressHop to access your calendar for reminders and scheduling.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow PressHop to use the camera for taking photos and videos for news content submissions.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>We needs access to your contacts so you can invite friends or share content with people you trust in future updates.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>PressHop needs your location to display tasks in your area and to validate content submissions, even when running in the background.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>PressHop requires your location at all times to help match you with nearby tasks and to verify your location even when the app is in the background</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PressHop uses your location while the app is open to show local tasks, enable the camera for submissions, and ensure accurate task matching.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow PressHop to record audio during video capture or interviews.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Used for camera stability or future motion-based features.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow saving captured content to your device's gallery.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need permission to access your photo library so that you can upload and sell your photos and videos instantly.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We need speech recognition to let you convert your voice into text for audio captions and to support future features. Your voice data is handled securely and never stored without consent.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized content and measure campaign performance.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -123,6 +122,8 @@
 	<string>Main</string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
+	<key>UIStatusBarStyle</key>
+	<string></string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

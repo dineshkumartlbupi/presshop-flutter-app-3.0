@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
@@ -12,6 +13,7 @@ import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
 import 'package:presshop/view/bankScreens/MyBanksScreen.dart';
 import 'package:presshop/view/leaderboard/leaderboard_screen.dart';
+import 'package:presshop/view/map/screens/marketplace_screen.dart';
 import 'package:presshop/view/menuScreen/ChangePassword.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/DigitalIdScreen.dart';
@@ -323,10 +325,16 @@ class MenuScreenState extends State<MenuScreen>
           editProfileScreen: true,
           screenType: editProfileText,
         )));
+
     menuList.add(MenuData(
         name: leaderboardText,
         icon: "${iconsPath}ic_ranking.png",
         classWidget: LeaderboardScreen()));
+
+    // menuList.add(MenuData(
+    //     name: "Map view",
+    //     icon: "${iconsPath}map2.png",
+    //     classWidget: MarketplaceScreen()));
 
     menuList.add(MenuData(
         name: myDraftText,
@@ -359,10 +367,13 @@ class MenuScreenState extends State<MenuScreen>
     //     name: chooseCurrencyText,
     //     icon: "${iconsPath}choose_currency.png",
     //     classWidget: const MyBanksScreen()));
-    menuList.add(MenuData(
-        name: "Alerts",
-        icon: "${iconsPath}ic_alert.png",
-        classWidget: const AlertScreen()));
+
+    //rajesh
+    // menuList.add(MenuData(
+    //     name: "Alerts",
+    //     icon: "${iconsPath}ic_alert.png",
+    //     classWidget: const AlertScreen()));
+
     menuList.add(MenuData(
         name: notificationText,
         icon: "${iconsPath}ic_feed.png",
@@ -511,7 +522,7 @@ class MenuScreenState extends State<MenuScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: Image.asset(
-                                      "${commonImagePath}tea.png",
+                                      "assets/rabbits/logout_rabbit.png",
                                       height: size.width * numD30,
                                       width: size.width * numD35,
                                       fit: BoxFit.cover,
@@ -783,7 +794,7 @@ class MenuScreenState extends State<MenuScreen>
   }
 
   @override
-  void onResponse({required int requestCode, required String response}) {
+  void onResponse({required int requestCode, required String response}) async {
     try {
       switch (requestCode) {
         case reqNotificationListAPI:
@@ -800,7 +811,6 @@ class MenuScreenState extends State<MenuScreen>
           }
           break;
 
-        /// Remove Device Api
         case removeDeviceReq:
           var data = jsonDecode(response);
           debugPrint("removeDeviceReq-Success: $data");
@@ -811,10 +821,46 @@ class MenuScreenState extends State<MenuScreen>
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const LoginScreen()),
               (route) => false);
+          await FirebaseAnalytics.instance.logEvent(
+            name: 'device_token_removed',
+            parameters: {
+              'message': 'Device token removed successfully',
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
           break;
+
+        /// Remove Device Api
+        // case removeDeviceReq:
+        //   var data = jsonDecode(response);
+        //   debugPrint("removeDeviceReq-Success: $data");
+        //   // NEVER logout automatically - removing device token should not logout user
+        //   // Just show success message - user stays logged in
+        //   debugPrint(
+        //       "Device token removed successfully, but keeping user logged in");
+        //   showSnackBar("Success", "Device removed successfully", Colors.green);
+
+        // await FirebaseAnalytics.instance.logEvent(
+        //   name: 'device_token_removed',
+        //   parameters: {
+        //     'message': 'Device token removed successfully',
+        //     'timestamp': DateTime.now().toIso8601String(),
+        //   },
+        // );
+
+        //   // User stays logged in - no navigation to login screen
+        //   break;
       }
     } on Exception catch (e) {
       debugPrint('exception catch====> $e');
+
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'api_response_exception auto logout',
+        parameters: {
+          'error': e.toString(),
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
     }
   }
 

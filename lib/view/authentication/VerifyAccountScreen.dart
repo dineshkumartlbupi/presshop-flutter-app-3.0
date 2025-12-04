@@ -354,6 +354,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
         registerUrlRequest,
         widget.params,
       ).callRequestServiceHeader(true, "post", null);
+
       /* NetworkClass.multipartNetworkClassFiles(registerUrl, this,
               registerUrlRequest, widget.params, [File(widget.imagePath)])
           .callMultipartService(true, "post", ["profile_image"],[]);*/
@@ -461,58 +462,130 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
           debugPrint("RegisterSuccess: $response");
           var map = jsonDecode(response);
 
-          if (map["code"] == 200) {
-            rememberMe = true;
-            sharedPreferences!.setBool(rememberKey, true);
-            sharedPreferences!.setString(tokenKey, map["response"][tokenKey]);
-            sharedPreferences!
-                .setString(hopperIdKey, map["response"]["user"][hopperIdKey]);
-            sharedPreferences!
-                .setString(firstNameKey, map["response"]["user"][firstNameKey]);
-            sharedPreferences!
-                .setString(lastNameKey, map["response"]["user"][lastNameKey]);
-            sharedPreferences!
-                .setString(userNameKey, map["response"]["user"][userNameKey]);
-            sharedPreferences!
-                .setString(emailKey, map["response"]["user"][emailKey]);
-            sharedPreferences!.setString(
-                countryCodeKey, map["response"]["user"][countryCodeKey]);
-            sharedPreferences!
-                .setString(addressKey, map["response"]["user"][addressKey]);
-            sharedPreferences!.setString(
-                latitudeKey, map["response"]["user"][latitudeKey].toString());
-            sharedPreferences!.setString(
-                longitudeKey, map["response"]["user"][longitudeKey].toString());
+          try {
+            if (map["code"] == 200) {
+              print("Normal Register Response");
+              print(map["response"]);
+              print("source data");
+              print(map["response"]["user"]["source"]["is_opened"]);
+              print(map["response"]["user"]["source"]);
 
-            if (map["response"]["user"][avatarIdKey] != null) {
-              sharedPreferences!.setString(avatarIdKey,
-                  map["response"]["user"][avatarIdKey]["_id"].toString());
+              // sharedPreferences!.setBool(sourceDataType, true);
+              // sharedPreferences!.setBool(sourceDataIsOpened, true);
+
+              rememberMe = true;
+              sharedPreferences!.setBool(rememberKey, true);
+              sharedPreferences!.setString(tokenKey, map["response"][tokenKey]);
+              sharedPreferences!
+                  .setString(hopperIdKey, map["response"]["user"][hopperIdKey]);
               sharedPreferences!.setString(
-                  avatarKey, map["response"]["user"][avatarIdKey][avatarKey]);
+                  firstNameKey, map["response"]["user"][firstNameKey]);
+              sharedPreferences!
+                  .setString(lastNameKey, map["response"]["user"][lastNameKey]);
+              sharedPreferences!
+                  .setString(userNameKey, map["response"]["user"][userNameKey]);
+              sharedPreferences!
+                  .setString(emailKey, map["response"]["user"][emailKey]);
+              sharedPreferences!.setString(
+                  countryCodeKey, map["response"]["user"][countryCodeKey]);
+              sharedPreferences!
+                  .setString(addressKey, map["response"]["user"][addressKey]);
+              sharedPreferences!.setString(
+                  latitudeKey, map["response"]["user"][latitudeKey].toString());
+              sharedPreferences!.setString(longitudeKey,
+                  map["response"]["user"][longitudeKey].toString());
+
+              if (map["response"]["user"][avatarIdKey] != null) {
+                sharedPreferences!.setString(avatarIdKey,
+                    map["response"]["user"][avatarIdKey]["_id"].toString());
+                sharedPreferences!.setString(
+                    avatarKey, map["response"]["user"][avatarIdKey][avatarKey]);
+              }
+              //////////////////////////
+              ///
+              print("referrasdfsdflCodereferralCodewerwesd");
+              // print(
+              //     " referrasdfsdflCodereferralCode ==> ${map["user"][referralCode]}");
+              print(
+                  " response response  ==> ${map["response"]["user"][referralCode]}");
+
+              print("referrasdfsdflCodereferralCode123456");
+
+              sharedPreferences!.setString(
+                referralCode,
+                map["response"]["user"][referralCode] ?? "",
+              );
+
+              //////////////////////////////////
+
+              sharedPreferences!.setBool(receiveTaskNotificationKey,
+                  map["response"]["user"][receiveTaskNotificationKey]);
+              sharedPreferences!.setBool(isTermAcceptedKey,
+                  map["response"]["user"][isTermAcceptedKey]);
+
+              var src = map["response"]["user"]["source"];
+
+              // var sourceDataIsOpened = true;
+              // var sourceDataType = "student_beans";
+              // var sourceDataUrl = src?["url"] ?? "";
+
+              print("sourcedata!!");
+              print(src);
+
+              var sourceDataIsOpened = src?["is_opened"] ?? false;
+              var sourceDataType = src?["type"] ?? "";
+              var sourceDataUrl = src?["url"] ?? "";
+              var sourceDataHeading = src?["heading"] ?? "";
+              var sourceDataDescription = src?["description"] ?? "";
+              var isClick = src?["is_clicked"] ?? false;
+
+              print("aalprint");
+              print("sourceDataIsOpened: $sourceDataIsOpened");
+              print("sourceDataType: $sourceDataType");
+              print("sourceDataUrl: $sourceDataUrl");
+              print("sourceDataHeading: $sourceDataHeading");
+              print("sourceDataDescription: $sourceDataDescription");
+              print("isClick: $isClick");
+
+              sharedPreferences!
+                  .setBool(sourceDataIsOpenedKey, sourceDataIsOpened);
+
+              sharedPreferences!.setString(sourceDataTypeKey, sourceDataType);
+              sharedPreferences!.setString(sourceDataUrlKey, sourceDataUrl);
+              sharedPreferences!
+                  .setString(sourceDataHeadingKey, sourceDataHeading);
+              sharedPreferences!
+                  .setString(sourceDataDescriptionKey, sourceDataDescription);
+              sharedPreferences!.setBool(sourceDataIsClickKey, isClick);
+
+              // studentbeans
+
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => WelcomeScreen(
+                            hideLeading: false,
+                            screenType: '',
+                            sourceDataIsOpened: sourceDataIsOpened,
+                            sourceDataType: sourceDataType,
+                            sourceDataUrl: sourceDataUrl,
+                            sourceDataHeading: sourceDataHeading,
+                            sourceDataDescription: sourceDataDescription,
+                            isClick: isClick,
+                          )),
+                  (route) => false);
+
+              // Navigator.of(context).pushAndRemoveUntil(
+              //     MaterialPageRoute(
+              //         builder: (context) => AddBankScreen(
+              //               editBank: false,
+              //               myBankList: [],
+              //               screenType: "",
+              //               myBankData: null,
+              //             )),
+              //     (route) => false);
             }
-
-            sharedPreferences!.setBool(receiveTaskNotificationKey,
-                map["response"]["user"][receiveTaskNotificationKey]);
-            sharedPreferences!.setBool(
-                isTermAcceptedKey, map["response"]["user"][isTermAcceptedKey]);
-
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(
-                          hideLeading: false,
-                          screenType: '',
-                        )),
-                (route) => false);
-
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     MaterialPageRoute(
-            //         builder: (context) => AddBankScreen(
-            //               editBank: false,
-            //               myBankList: [],
-            //               screenType: "",
-            //               myBankData: null,
-            //             )),
-            //     (route) => false);
+          } catch (e) {
+            print("error211 while verifying account $e");
           }
 
           break;
@@ -537,8 +610,16 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             sharedPreferences!.setString(addressKey, map["user"][addressKey]);
             sharedPreferences!
                 .setString(latitudeKey, map["user"][latitudeKey].toString());
+
+            print("referrasdfsdflCodereferralCode");
+            print(map["user"][referralCode]);
             sharedPreferences!
                 .setString(referralCode, map["user"][referralCode]);
+
+            var data = sharedPreferences!.getString(referralCode);
+
+            print("datasrdf234 data data data $data");
+
             sharedPreferences!.setString(
                 currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
             sharedPreferences!.setString(
@@ -558,12 +639,43 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
             currencySymbol =
                 sharedPreferences!.getString(currencySymbolKey) ?? "£";
 
+            var src = map["response"]["user"]["source"];
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            print("aalprint");
+            var sourceDataIsOpened = src?["is_opened"] ?? false;
+            var sourceDataType = src?["type"] ?? "";
+            var sourceDataUrl = src?["url"] ?? "";
+            var sourceDataHeading = src?["heading"] ?? "";
+            var sourceDataDescription = src?["description"] ?? "";
+            var isClick = src?["is_clicked"] ?? "";
+            print(isClick);
+
+            sharedPreferences!
+                .setBool(sourceDataIsOpenedKey, sourceDataIsOpened);
+
+            sharedPreferences!.setString(sourceDataTypeKey, sourceDataType);
+            sharedPreferences!.setString(sourceDataUrlKey, sourceDataUrl);
+            sharedPreferences!
+                .setString(sourceDataHeadingKey, sourceDataHeading);
+            sharedPreferences!
+                .setString(sourceDataDescriptionKey, sourceDataDescription);
+            sharedPreferences!.setBool(sourceDataIsClickKey, isClick);
+
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(
-                          hideLeading: false,
-                          screenType: '',
-                        )),
+                  builder: (context) => WelcomeScreen(
+                      hideLeading: false,
+                      screenType: '',
+                      sourceDataIsOpened: sourceDataIsOpened,
+                      sourceDataType: sourceDataType,
+                      sourceDataUrl: sourceDataUrl,
+                      sourceDataHeading: sourceDataHeading,
+                      sourceDataDescription: sourceDataDescription,
+                      isClick: isClick),
+                ),
                 (route) => false);
           }
 

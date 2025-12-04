@@ -9,6 +9,7 @@ import '../../utils/CommonAppBar.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../../utils/networkOperations/NetworkResponse.dart';
 
+// ignore: must_be_immutable
 class ResetPasswordScreen extends StatefulWidget {
   String emailAddressValue = "";
 
@@ -20,7 +21,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class ResetPasswordScreenState extends State<ResetPasswordScreen>
     implements NetworkResponse {
-  final _otpPinFieldController = GlobalKey<OtpPinFieldState>();
+  // final _otpPinFieldController = GlobalKey<OtpPinFieldState>();
   var formKey = GlobalKey<FormState>();
 
   Timer? myTimer;
@@ -80,9 +81,10 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
           key: formKey,
           child: ListView(
             padding: EdgeInsets.only(
-                left: size.width * numD04,
-                right: size.width * numD04,
-                top: size.width * numD20),
+              left: size.width * numD04,
+              right: size.width * numD04,
+              // top: size.width * numD20
+            ),
             children: [
               Text(
                 resetPasswordText,
@@ -95,74 +97,15 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
               SizedBox(
                 height: size.width * numD02,
               ),
-              RichText(
-                text: TextSpan(children: [
-                  TextSpan(
-                      text: resetPasswordSubHeading,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: size.width * numD036,
-                          fontFamily: 'AirbnbCereal_W_Lt')),
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: SizedBox(
-                        width: size.width * numD01,
-                      )),
-                  TextSpan(
-                      text: widget.emailAddressValue,
-                      style: TextStyle(
-                          color: colorThemePink,
-                          fontFamily: 'AirbnbCerea',
-                          fontSize: size.width * numD036))
-                ]),
-              ),
-              SizedBox(
-                height: size.width * numD08,
-              ),
-
-              /// OTP Controller
-              OtpPinField(
-                key: _otpPinFieldController,
-
-                /// to clear the Otp pin Controller
-                onSubmit: (text) {
-                  debugPrint('Entered pin is $text');
-
-                  /// return the entered pin
-                },
-                onChange: (text) {
-                  debugPrint('Enter on change pin is $text');
-
-                  /// return the entered pin
-                },
-
-                /// to decorate your Otp_Pin_Field
-                otpPinFieldStyle: OtpPinFieldStyle(
-                  // border color for inactive/unfocused Otp_Pin_Field
-                  defaultFieldBorderColor: colorTextFieldBorder,
-                  // border color for active/focused Otp_Pin_Field
-                  activeFieldBorderColor: colorTextFieldIcon,
-
-                  /// Background Color for inactive/unfocused Otp_Pin_Field
-                  defaultFieldBackgroundColor: colorLightGrey,
-                  activeFieldBackgroundColor: colorLightGrey,
-                  fieldBorderRadius: size.width * numD02,
-                  fieldBorderWidth: 0.5,
-                ),
-                maxLength: 5,
-                showCursor: true,
-                cursorColor: colorTextFieldIcon,
-                showCustomKeyboard: false,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                otpPinFieldDecoration: OtpPinFieldDecoration.custom,
-              ),
-              SizedBox(
-                height: size.width * numD08,
-              ),
+              Text(
+                  "Reset your password below to regain access to your account.",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.width * numD036,
+                      fontFamily: 'AirbnbCereal_W_Lt')),
               SizedBox(
                 height: size.width * numD06,
               ),
-
               CommonTextField(
                 size: size,
                 maxLines: 1,
@@ -271,6 +214,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
                     showSpecialcase = true;
                     setState(() {});
                   }
+                  return null;
                 },
                 enableValidations: true,
                 filled: false,
@@ -495,62 +439,6 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
               SizedBox(
                 height: size.width * numD07,
               ),
-              Row(
-                children: [
-                  Image.asset(
-                    "${iconsPath}ic_time.png",
-                    height: size.width * numD06,
-                  ),
-                  SizedBox(
-                    width: size.width * numD02,
-                  ),
-                  Text("$otpExpireText $expireTimeValue $minutesText",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: size.width * numD035,
-                          fontFamily: 'AirbnbCereal_W_Bk'))
-                ],
-              ),
-              SizedBox(
-                height: size.width * numD04,
-              ),
-              showResend
-                  ? TextButton(
-                      onPressed: () {
-                        forgotPasswordApi();
-                      },
-                      child: RichText(
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: otpNotReceivedText,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD04)),
-                          WidgetSpan(
-                              child: SizedBox(
-                            width: size.width * 0.01,
-                          )),
-                          TextSpan(
-                              text: clickHereText,
-                              style: TextStyle(
-                                  color: colorThemePink,
-                                  fontSize: size.width * numD038,
-                                  fontWeight: FontWeight.w500)),
-                          WidgetSpan(
-                              child: SizedBox(
-                            width: size.width * 0.01,
-                          )),
-                          TextSpan(
-                              text: anotherOneText,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD04)),
-                        ]),
-                      ))
-                  : Container(),
-              SizedBox(
-                height: size.width * numD07,
-              ),
               Container(
                 width: size.width,
                 height: size.width * numD14,
@@ -655,7 +543,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
   void resetPasswordApi() {
     Map<String, String> params = {
       "email": widget.emailAddressValue,
-      "otp": _otpPinFieldController.currentState!.controller.text,
+      // "otp": _otpPinFieldController.currentState!.controller.text,
       "password": passwordController.text.trim(),
     };
     debugPrint("ChangePasswordParams: $params");

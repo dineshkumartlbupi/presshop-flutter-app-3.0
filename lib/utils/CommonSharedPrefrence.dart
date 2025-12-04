@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /*----SharedPreference Common Keys-----*/
 const headerKey = "Authorization";
 const refreshHeaderKey = "x-refresh-token";
+const accessHeaderKey = "x-access-token";
 
 const headerDeviceTypeKey = "X-Device-Type";
 const headerDeviceIdKey = "X-Device-ID";
@@ -64,6 +65,13 @@ const currentState = "currentLState";
 const currentCountry = "currentCountry";
 const currentCity = "currentCity";
 const contryCode = "contryCode";
+
+const sourceDataIsOpenedKey = "sourceDataIsOpened";
+const sourceDataTypeKey = "sourceDataType";
+const sourceDataUrlKey = "sourceDataUrl";
+const sourceDataHeadingKey = "sourceDataHeading";
+const sourceDataDescriptionKey = "sourceDataDescription";
+const sourceDataIsClickKey = "isClick";
 
 /*------------------------------------*/
 

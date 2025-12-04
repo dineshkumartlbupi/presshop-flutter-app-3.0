@@ -8,7 +8,6 @@
 .buildlog/
 .history
 .svn/
-*.jks
 # IntelliJ related
 *.ipr
 *.iws
@@ -71,7 +70,7 @@
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 #ioS
 ios/Pods/*
-ios/build/*
+ios/build/*r
 
-android/keystore.properties
-assets/dialog_flow_auth.json
+# android/keystore.properties
+# assets/dialog_flow_auth.json

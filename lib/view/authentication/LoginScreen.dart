@@ -18,6 +18,7 @@ import 'package:presshop/view/authentication/ForgotPasswordScreen.dart';
 import 'package:presshop/view/authentication/SignUpScreen.dart';
 import 'package:presshop/view/authentication/SocialSignup.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../main.dart';
@@ -314,63 +315,118 @@ class LoginScreenState extends State<LoginScreen>
                           child: InkWell(
                             splashColor: Colors.grey.shade300,
                             onTap: () async {
-                              // Request credential for the currently signed in Apple account.
-                              final appleCredential =
-                                  await SignInWithApple.getAppleIDCredential(
-                                scopes: [
-                                  AppleIDAuthorizationScopes.email,
-                                  AppleIDAuthorizationScopes.fullName,
-                                ],
-                                nonce: nonce,
-                              );
+                              try {
+                                // Request credential for the currently signed in Apple account.
+                                final appleCredential =
+                                    await SignInWithApple.getAppleIDCredential(
+                                  scopes: [
+                                    AppleIDAuthorizationScopes.email,
+                                    AppleIDAuthorizationScopes.fullName,
+                                  ],
+                                  nonce: nonce,
+                                );
 
-                              // Create an `OAuthCredential` from the credential returned by Apple.
-                              final oauthCredential =
-                                  OAuthProvider("apple.com");
+                                // Create an `OAuthCredential` from the credential returned by Apple.
+                                final oauthCredential =
+                                    OAuthProvider("apple.com");
 
-                              oauthCredential.setScopes([
-                                'email',
-                                'fullName',
-                              ]);
+                                oauthCredential.setScopes([
+                                  'email',
+                                  'fullName',
+                                ]);
 
-                              var appleAuthProvider =
-                                  oauthCredential.credential(
-                                idToken: appleCredential.identityToken,
-                                accessToken: appleCredential.authorizationCode,
-                                rawNonce: rawNonce,
-                              );
+                                var appleAuthProvider =
+                                    oauthCredential.credential(
+                                  idToken: appleCredential.identityToken,
+                                  accessToken:
+                                      appleCredential.authorizationCode,
+                                  rawNonce: rawNonce,
+                                );
 
-                              // Sign in the user with Firebase. If the nonce we generated earlier does
-                              // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-                              final credential = await _firebaseAuth
-                                  .signInWithCredential(appleAuthProvider);
-                              debugPrint("AppleCredentials: $credential");
+                                final credential = await _firebaseAuth
+                                    .signInWithCredential(appleAuthProvider);
+                                debugPrint("AppleCredentials: $credential");
 
-                              if (credential.user?.email == null ||
-                                  credential.user!.email!.isEmpty) {
-                                showSnackBar(
-                                    "Error",
-                                    "Email is not provided by Apple. Please try again.",
-                                    Colors.red);
-                                return;
-                              } else {
-                                socialId = credential.user?.uid ?? "";
-                                socialEmail = credential.user?.email ?? "";
-                                if (credential.user?.displayName != null &&
+                                debugPrint(
+                                    "AppleCredential Email: ${appleCredential.email}");
+                                debugPrint(
+                                    "Firebase User Email: ${credential.user?.email}");
+
+                                String? emailFromApple = appleCredential.email;
+                                String? emailFromFirebase =
+                                    credential.user?.email;
+
+                                String? finalEmail =
+                                    emailFromApple?.isNotEmpty == true
+                                        ? emailFromApple
+                                        : (emailFromFirebase?.isNotEmpty == true
+                                            ? emailFromFirebase
+                                            : null);
+
+                                if (finalEmail == null || finalEmail.isEmpty) {
+                                  finalEmail =
+                                      "${appleCredential.userIdentifier ?? credential.user?.uid ?? 'user'}@privaterelay.appleid.com";
+                                  debugPrint(
+                                      "Using fallback email: $finalEmail");
+                                }
+
+                                socialId = credential.user?.uid ??
+                                    appleCredential.userIdentifier ??
+                                    "";
+                                socialEmail = finalEmail ?? "";
+
+                                String? nameFromApple = appleCredential
+                                                .givenName !=
+                                            null ||
+                                        appleCredential.familyName != null
+                                    ? "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}"
+                                        .trim()
+                                    : null;
+
+                                if (nameFromApple != null &&
+                                    nameFromApple.isNotEmpty) {
+                                  socialName = nameFromApple;
+                                } else if (credential.user?.displayName !=
+                                        null &&
                                     credential.user!.displayName!.isNotEmpty) {
                                   socialName = credential.user!.displayName!;
+                                } else if (finalEmail != null &&
+                                    finalEmail.isNotEmpty) {
+                                  socialName = finalEmail.split('@')[0];
                                 } else {
-                                  socialName =
-                                      credential.user?.email?.split('@')[0] ??
-                                          "";
+                                  socialName = "User";
                                 }
-                                //socialPhoneNumber = '';
 
                                 debugPrint("socialEmail: $socialEmail");
                                 debugPrint("socialName: $socialName");
                                 debugPrint("SocialId: $socialId");
                                 socialType = "apple";
+
                                 socialExistsApi(socialType: "apple");
+                              } on SignInWithAppleAuthorizationException catch (e) {
+                                print("Error code");
+                                print(e.code);
+                                if (e.code == AuthorizationErrorCode.canceled) {
+                                  debugPrint(
+                                      "Apple Sign-In was cancelled by user");
+
+                                  return;
+                                } else {
+                                  debugPrint(
+                                      "Apple Sign-In failed: ${e.code} - ${e.message}");
+                                  showSnackBar(
+                                    "Sign in with Apple failed",
+                                    "Please try again or use another method.",
+                                    Colors.red,
+                                  );
+                                }
+                              } catch (e) {
+                                debugPrint(
+                                    "Unexpected error during Apple Sign-In: $e");
+                                showSnackBar(
+                                    "An error occurred. Please try again.",
+                                    "",
+                                    Colors.red);
                               }
                             },
                             child: Row(
@@ -476,6 +532,7 @@ class LoginScreenState extends State<LoginScreen>
                     splashColor: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(size.width * numD04),
                     onTap: () async {
+                      googleSignIn.signOut();
                       googleLogin();
                     },
                     child: Container(
@@ -580,6 +637,10 @@ class LoginScreenState extends State<LoginScreen>
 
   Future<void> googleLogin() async {
     googleSignIn.signIn().then((userData) {
+      if (userData == null) {
+        debugPrint("Google Sign-In cancelled by user");
+        return;
+      }
       _isLoggedIn = true;
       _userObj = userData!;
 
@@ -597,8 +658,9 @@ class LoginScreenState extends State<LoginScreen>
       } else {
         socialProfileImage = "";
       }
-      /*callSocialLoginGoogleApi(
-          "google", socialId, socialName, socialEmail, socialProfileImage);*/
+      // callSocialLoginGoogleApi(
+      //     "google", socialId, socialName, socialEmail, socialProfileImage);
+
       socialType = "google";
       socialExistsApi(socialType: "google");
       debugPrint("userObj ::${_userObj.toString()}");
@@ -608,6 +670,114 @@ class LoginScreenState extends State<LoginScreen>
     }).catchError((e) {
       debugPrint("error encountered ::: ${e.toString()}");
     });
+  }
+
+  Future<void> appleLogin() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      final rawNonce = generateNonce();
+      final nonce = sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final oauthProvider = OAuthProvider("apple.com");
+      final appleAuthCredential = oauthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+        rawNonce: rawNonce,
+      );
+
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(appleAuthCredential);
+
+      debugPrint("✅ Apple sign-in success: ${userCredential.user?.uid}");
+      debugPrint("AppleCredential Email: ${appleCredential.email}");
+      debugPrint("Firebase User Email: ${userCredential.user?.email}");
+
+      // STEP 1 — Get best available email
+      String? emailFromApple = appleCredential.email;
+      String? emailFromFirebase = userCredential.user?.email;
+      String? finalEmail = emailFromApple?.isNotEmpty == true
+          ? emailFromApple
+          : (emailFromFirebase?.isNotEmpty == true ? emailFromFirebase : null);
+
+      // STEP 2 — Fallback email if missing
+      if (finalEmail == null || finalEmail.isEmpty) {
+        final fallbackEmail =
+            "${appleCredential.userIdentifier ?? userCredential.user?.uid ?? 'user'}@privaterelay.appleid.com";
+        finalEmail = fallbackEmail;
+        debugPrint("⚠️ Using fallback email: $finalEmail");
+      }
+
+      // STEP 3 — Get best available name
+      String? nameFromApple = (appleCredential.givenName != null ||
+              appleCredential.familyName != null)
+          ? "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}"
+              .trim()
+          : null;
+
+      String? finalName;
+      if (nameFromApple != null && nameFromApple.isNotEmpty) {
+        finalName = nameFromApple;
+      } else if (userCredential.user?.displayName != null &&
+          userCredential.user!.displayName!.isNotEmpty) {
+        finalName = userCredential.user!.displayName!;
+      } else if (finalEmail.isNotEmpty) {
+        finalName = finalEmail.split('@')[0];
+      } else {
+        finalName = "User";
+      }
+
+      // STEP 4 — Save fallback data locally
+      await prefs.setString('apple_email', finalEmail);
+      await prefs.setString('apple_name', finalName);
+      await prefs.setString('apple_id',
+          userCredential.user?.uid ?? appleCredential.userIdentifier ?? "");
+
+      // STEP 5 — Set social values
+      final socialId =
+          userCredential.user?.uid ?? appleCredential.userIdentifier ?? "";
+      const socialType = "apple";
+      final socialEmail = finalEmail;
+      final socialName = finalName;
+
+      debugPrint("socialEmail: $socialEmail");
+      debugPrint("socialName: $socialName");
+      debugPrint("socialId: $socialId");
+
+      // STEP 6 — Call your backend API
+      socialExistsApi(socialType: socialType);
+    } catch (e) {
+      debugPrint("❌ Apple Sign-In Error: $e");
+
+      // Attempt local fallback if available
+      final prefs = await SharedPreferences.getInstance();
+      final savedEmail = prefs.getString('apple_email');
+      final savedName = prefs.getString('apple_name');
+      final savedId = prefs.getString('apple_id');
+
+      if (savedEmail != null && savedEmail.isNotEmpty) {
+        debugPrint("⚙️ Using locally saved Apple data");
+        final socialType = "apple";
+        socialEmail = savedEmail;
+        socialName = savedName ?? "User";
+        socialId = savedId ?? "";
+        socialExistsApi(socialType: socialType);
+      } else {
+        showSnackBar(
+          "Apple Sign-In Failed",
+          "We couldn’t complete your sign-in. Please try again.",
+          Colors.red,
+        );
+      }
+    }
   }
 
   ///-------LoginApi-----------
@@ -672,9 +842,12 @@ class LoginScreenState extends State<LoginScreen>
       switch (requestCode) {
         case socialExistUrlRequest:
           var map = jsonDecode(response);
+          print("map==>>> $map");
           commonErrorDialogDialog(MediaQuery.of(context).size,
               map["message"].toString(), map["code"].toString(), () {
-            sharedPreferences!.clear();
+            // rajesh
+            // sharedPreferences!.clear();
+
             googleSignIn.signOut();
             Navigator.pop(context);
           });
@@ -1021,16 +1194,18 @@ class LoginScreenState extends State<LoginScreen>
                     (route) => false);
               }
             } else {
-              Navigator.of(navigatorKey.currentState!.context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => SocialSignUp(
-                            socialLogin: true,
-                            socialId: socialId,
-                            name: socialName,
-                            email: socialEmail,
-                            phoneNumber: "",
-                            socialType: socialType,
-                          )));
+              Navigator.of(navigatorKey.currentState!.context).push(
+                MaterialPageRoute(
+                  builder: (context) => SocialSignUp(
+                    socialLogin: true,
+                    socialId: socialId,
+                    name: socialName,
+                    email: socialEmail,
+                    phoneNumber: "",
+                    socialType: socialType,
+                  ),
+                ),
+              );
             }
           }
           break;

@@ -66,16 +66,14 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
             Expanded(
               child: TextField(
                 controller: hashTagController,
-
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[^#]*$'))],
-
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^[^#]*$'))
+                ],
                 onChanged: (val) {
-                  debounce =
-                      Timer(const Duration(milliseconds: 500), () {
-                        searchHashTagsApi(val);
-                      });
+                  debounce = Timer(const Duration(milliseconds: 500), () {
+                    searchHashTagsApi(val);
+                  });
                 },
-
                 decoration: InputDecoration(
                     filled: true,
                     fillColor: colorLightGrey,
@@ -120,11 +118,10 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
                           width: 0,
                           style: BorderStyle.none,
                         )),
-                    contentPadding:
-                        EdgeInsets.only(left: size.width * numD06)),
+                    contentPadding: EdgeInsets.only(left: size.width * numD06)),
               ),
             ),
-        /*    SizedBox(
+            /*    SizedBox(
               width:  size.width * numD04 ,
             ),
             commonElevatedButton(
@@ -141,7 +138,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
 
               }
             })*/
-
           ],
         ),
       ),
@@ -154,7 +150,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
               SizedBox(
                 height: size.width * numD035,
               ),
-           /*   Wrap(
+              /*   Wrap(
                // spacing: size.width * numD02,
                 children: List.generate(hashtagList.length, (index) {
                   return Stack(
@@ -220,71 +216,79 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
               ),*/
               Wrap(
                 children: List.generate(selectedHashTagList.length, (index) {
-                  return true?  Container(
-                    margin: EdgeInsets.only(right: size.width * numD02),
-                    child: Chip(
-                      label: Text(
-                        "#${selectedHashTagList[index].name}",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD03,
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      deleteIcon: Icon(
-                          Icons.close,
-                    color: Colors.white,
-                        size: size.width*numD045,
-                      ),
-                      onDeleted: (){
-                        hashtagSearchList[index].selected = false;
-                        if (index >= 0 && index < selectedHashTagList.length) {
-                          var hashtagToRemove = selectedHashTagList[index];
-                          selectedHashTagList.removeAt(index);
-                          int searchListIndex = hashtagSearchList.indexOf(hashtagToRemove);
-                          debugPrint("searchListIndex::::$searchListIndex");
-                          if (searchListIndex >= 0) {
-                            hashtagSearchList[searchListIndex].selected = false;
-                            debugPrint("hashtagSearchList value::::::${hashtagSearchList[searchListIndex].selected}");
-                          }
-                        }
-                        setState(() {});
-
-                      },
-                      backgroundColor:Colors.black
-
-                    ),
-                  ):Stack(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                         /* selectedHashTagList[index].selected =
-                          !selectedHashTagList[index].selected;
-                          setState(() {});*/
-                        },
-                        child: Container(
+                  return true
+                      ? Container(
                           margin: EdgeInsets.only(right: size.width * numD02),
                           child: Chip(
-                            label: Text(
-                              "#${selectedHashTagList[index].name}",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: selectedHashTagList[index].selected
-                                      ? Colors.white
-                                      : colorHint,
-                                  fontWeight: FontWeight.normal),
+                              label: Text(
+                                "#${selectedHashTagList[index].name}",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              deleteIcon: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: size.width * numD045,
+                              ),
+                              onDeleted: () {
+                                hashtagSearchList[index].selected = false;
+                                if (index >= 0 &&
+                                    index < selectedHashTagList.length) {
+                                  var hashtagToRemove =
+                                      selectedHashTagList[index];
+                                  selectedHashTagList.removeAt(index);
+                                  int searchListIndex = hashtagSearchList
+                                      .indexOf(hashtagToRemove);
+                                  debugPrint(
+                                      "searchListIndex::::$searchListIndex");
+                                  if (searchListIndex >= 0) {
+                                    hashtagSearchList[searchListIndex]
+                                        .selected = false;
+                                    debugPrint(
+                                        "hashtagSearchList value::::::${hashtagSearchList[searchListIndex].selected}");
+                                  }
+                                }
+                                setState(() {});
+                              },
+                              backgroundColor: Colors.black),
+                        )
+                      : Stack(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                /* selectedHashTagList[index].selected =
+                          !selectedHashTagList[index].selected;
+                          setState(() {});*/
+                              },
+                              child: Container(
+                                margin:
+                                    EdgeInsets.only(right: size.width * numD02),
+                                child: Chip(
+                                  label: Text(
+                                    "#${selectedHashTagList[index].name}",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD03,
+                                        color:
+                                            selectedHashTagList[index].selected
+                                                ? Colors.white
+                                                : colorHint,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  deleteIcon: Icon(
+                                    Icons.close,
+                                  ),
+                                  backgroundColor:
+                                      selectedHashTagList[index].selected
+                                          ? Colors.black
+                                          : colorLightGrey,
+                                ),
+                              ),
                             ),
-                            deleteIcon: Icon(
-                              Icons.close,
-                            ),
-                            backgroundColor:selectedHashTagList[index].selected
-                                ? Colors.black
-                                : colorLightGrey,
-                          ),
-                        ),
-                      ),
-                    /*   Positioned(
+                            /*   Positioned(
                               top: 0,
                               right: 0,
                               child: InkWell(
@@ -308,9 +312,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
                                   ),
                                 ),
                               ))*/
-
-                    ],
-                  );
+                          ],
+                        );
                 }),
               ),
               SizedBox(
@@ -321,19 +324,22 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                           if(hashtagSearchList[index].id.isNotEmpty){
-                             if (!hashtagSearchList[index].selected) {
-                               hashtagSearchList[index].selected = true;
-                               if (!selectedHashTagList.contains(hashtagSearchList[index])) {
-                                 selectedHashTagList.add(hashtagSearchList[index]);
-                               } else {
-                                 debugPrint('This hashtag is already selected.');
-                               }
-                             }
-                             debugPrint("selectedHashTagList:::::${selectedHashTagList.length}");
-                             setState(() {});
-                           }
-
+                            if (hashtagSearchList[index].id.isNotEmpty) {
+                              if (!hashtagSearchList[index].selected) {
+                                hashtagSearchList[index].selected = true;
+                                if (!selectedHashTagList
+                                    .contains(hashtagSearchList[index])) {
+                                  selectedHashTagList
+                                      .add(hashtagSearchList[index]);
+                                } else {
+                                  debugPrint(
+                                      'This hashtag is already selected.');
+                                }
+                              }
+                              debugPrint(
+                                  "selectedHashTagList:::::${selectedHashTagList.length}");
+                              setState(() {});
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -354,39 +360,47 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
                                       fontWeight: FontWeight.w700),
                                 ),
                                 const Spacer(),
-                               hashtagSearchList[index].id.isEmpty?
-                               InkWell(
-                                 onTap: (){
-                                   if(hashTagController.text.trim().isNotEmpty){
-                                     addHashTagsApi();
-                                   }
-                                   if(hashtagSearchList[index].id.isEmpty){
-                                     hashtagSearchList.removeAt(index);
-                                     setState(() {});
-                                   }
-                                 },
-                                 child: Container(
-                                   padding: EdgeInsets.symmetric(horizontal:size.width*numD02,vertical: size.width*numD005),
-                                   decoration: BoxDecoration(
-                                     color: colorThemePink,
-                                     borderRadius: BorderRadius.circular(size.width*numD025)
-                                   ),
-                                   child:  Text(
-                                     "Add",
-                                     style: commonTextStyle(
-                                         size: size,
-                                         fontSize: size.width * numD03,
-                                         color: Colors.white,
-                                         fontWeight: FontWeight.w500),
-                                   ),
-                                 ),
-                               )
-                                   :( hashtagSearchList[index].selected?Icon(
-                                        Icons.check,
-                                        color:Colors.black,
-                                        size: size.width * numD06,
-                                      ):Container())
-
+                                hashtagSearchList[index].id.isEmpty
+                                    ? InkWell(
+                                        onTap: () {
+                                          if (hashTagController.text
+                                              .trim()
+                                              .isNotEmpty) {
+                                            addHashTagsApi();
+                                          }
+                                          if (hashtagSearchList[index]
+                                              .id
+                                              .isEmpty) {
+                                            hashtagSearchList.removeAt(index);
+                                            setState(() {});
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: size.width * numD02,
+                                              vertical: size.width * numD005),
+                                          decoration: BoxDecoration(
+                                              color: colorThemePink,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * numD025)),
+                                          child: Text(
+                                            "Add",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      )
+                                    : (hashtagSearchList[index].selected
+                                        ? Icon(
+                                            Icons.check,
+                                            color: Colors.black,
+                                            size: size.width * numD06,
+                                          )
+                                        : Container())
                               ],
                             ),
                           ),
@@ -398,7 +412,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
                         );
                       },
                       itemCount: hashtagSearchList.length)),
-
               SizedBox(
                 height: size.width * numD13,
                 width: size.width,
@@ -460,7 +473,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
   }
 
   void searchHashTagsApi(String searchParam) {
-
     Map<String, String> params = {};
     if (searchParam.trim().isNotEmpty) {
       params["tagName"] = searchParam;
@@ -505,19 +517,22 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
-       case getHashTagsUrlRequest:
+        case getHashTagsUrlRequest:
           var map = jsonDecode(response);
           debugPrint("GetHashTags: $response");
           if (map["code"] == 200) {
             var list = map["tags"] as List;
-            hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+            hashtagSearchList =
+                list.map((e) => HashTagData.fromJson(e)).toList();
           }
           var tageName = hashtagSearchList.first.name;
           for (var element in widget.tagData) {
             if (element.name == tageName) {
-              hashtagSearchList.add(HashTagData(id: element.id, name: element.name, selected: true));
+              hashtagSearchList.add(HashTagData(
+                  id: element.id, name: element.name, selected: true));
             } else {
-              hashtagSearchList.add(HashTagData(id: element.id, name: element.name, selected: false));
+              hashtagSearchList.add(HashTagData(
+                  id: element.id, name: element.name, selected: false));
             }
           }
           setState(() {});
@@ -529,28 +544,28 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
           debugPrint("SearchHashTags: $response");
           if (map["code"] == 200) {
             var list = map["tags"] as List;
-            hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+            hashtagSearchList =
+                list.map((e) => HashTagData.fromJson(e)).toList();
           }
-          if (hashtagSearchList.isEmpty && hashTagController.text.trim().isNotEmpty) {
+          if (hashtagSearchList.isEmpty &&
+              hashTagController.text.trim().isNotEmpty) {
             addNew = true;
           } else {
-           addNew =false;
+            addNew = false;
           }
-          if(hashtagSearchList.isEmpty){
+          if (hashtagSearchList.isEmpty) {
             debugPrint("add new:::::::");
             hashtagSearchList.add(HashTagData(
-                id: '',
-                name: hashTagController.text.trim(),
-                selected: false));
+                id: '', name: hashTagController.text.trim(), selected: false));
           }
           for (var i = 0; i < hashtagSearchList.length; i++) {
-            bool isSelected = selectedHashTagList.any((selectedItem) =>
-            selectedItem.id == hashtagSearchList[i].id);
+            bool isSelected = selectedHashTagList.any(
+                (selectedItem) => selectedItem.id == hashtagSearchList[i].id);
             if (isSelected) {
               hashtagSearchList[i].selected = true;
             }
           }
-         /* var tageName= hashtagSearchList.first.name;
+          /* var tageName= hashtagSearchList.first.name;
           for (var element in selectedHashTagList) {
             if (element.name == tageName) {
               debugPrint("true:::::if :::::::${element.name}");
@@ -597,8 +612,6 @@ class HashTagData {
 
   factory HashTagData.fromJson(Map<String, dynamic> json) {
     return HashTagData(
-        id: json["_id"] ?? '',
-        name: json["name"] ?? '',
-        selected: false);
+        id: json["_id"] ?? '', name: json["name"] ?? '', selected: false);
   }
 }

@@ -164,7 +164,6 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                         height: size.width * numD04,
                       ),
 
-                      /// User image
                       Center(
                         child: Image.network(
                           height: size.height * numD25,

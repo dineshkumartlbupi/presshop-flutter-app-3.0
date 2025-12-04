@@ -1,10 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:presshop/main.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
+import 'package:presshop/view/menuScreen/MyProfile.dart';
+import 'package:presshop/view/menuScreen/Notification/InlineFlickPlayer.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../utils/Common.dart';
 import '../../../utils/CommonAppBar.dart';
@@ -38,17 +44,248 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
   bool showData = false, isLoading = false;
   bool uploadFirst = false, uploadSecond = false, showThird = false;
   int counting = 0;
+  Completer<String?>? _studentBeansCompleter;
+  final String? savedSourceDataHeading = "";
+  bool isGetLatLong = false;
+  String? studentBeansResponseUrlGlobal = "";
+  String? savedSourceDataDescription = "";
+  MyProfileData? myProfileData;
 
   @override
   void initState() {
-    debugPrint('class:::::::: $runtimeType');
+    debugPrint('class::::::::sdfsdf $runtimeType');
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => callNotificationList());
-
     Future.delayed(const Duration(seconds: 5), () {
       callUpdateNotification();
     });
+
     super.initState();
+  }
+
+  Future<String?> setIsClickForBeansActivation() async {
+    _studentBeansCompleter = Completer<String?>();
+
+    NetworkClass.fromNetworkClass(
+      studentBeansActivationUrl,
+      this,
+      studentBeansActivationRequest,
+      null,
+    ).callRequestServiceHeader(false, "post", null);
+
+    return _studentBeansCompleter!.future;
+  }
+
+  void _checkUpdateAndShowPopup({bool? isOpen, bool? isClick}) async {
+    final String? savedSourceDataType =
+        sharedPreferences?.getString(sourceDataTypeKey);
+    // final String? savedSourceDataUrl =
+    //     sharedPreferences?.getString(sourceDataUrlKey);
+    final String? savedSourceDataHeading =
+        sharedPreferences?.getString(sourceDataHeadingKey);
+    final String? savedSourceDataDescription =
+        sharedPreferences?.getString(sourceDataDescriptionKey);
+    final bool? savedSourceDataIsOpened =
+        sharedPreferences?.getBool(sourceDataIsOpenedKey);
+    final bool? savedSourceDataIsClickKey =
+        sharedPreferences?.getBool(sourceDataIsClickKey);
+
+    print("saved source data from notification");
+    print(savedSourceDataHeading);
+    print(savedSourceDataDescription);
+    print(savedSourceDataIsOpened);
+    print(savedSourceDataIsClickKey);
+    print(savedSourceDataType);
+
+    // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+    // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+    // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+    if ((savedSourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+        savedSourceDataIsOpened == false &&
+        savedSourceDataIsClickKey == false) {
+      // if (true) {
+      final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+      _showForceUpdateDialog(size);
+    }
+  }
+
+  void _showForceUpdateDialog(Size size,
+      {String? sourceDataHeading, String? sourceDataDescription}) {
+    showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                (sourceDataHeading ??
+                                    "Brains, beans, and breaking news!")!,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: size.width * numD04,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: const Divider(
+                            color: Colors.black,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 120, // fixed width
+                                height: 120, // fixed height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    "assets/rabbits/student_beans_rabbit2.png",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  (sourceDataDescription ??
+                                      "Please confirm your student status to continue")!,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              // Expanded(
+                              //     child: SizedBox(
+                              //   height: size.width * numD12,
+                              //   child: commonElevatedButton(
+                              //       logoutText,
+                              //       size,
+                              //       commonButtonTextStyle(size),
+                              //       commonButtonStyle(size, Colors.black), () {
+                              //     Navigator.pop(context);
+                              //     // callRemoveDeviceApi();
+                              //   }),
+                              // )),
+                              // SizedBox(
+                              //   width: size.width * numD04,
+                              // ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: size.width * numD12,
+                                  child: commonElevatedButton(
+                                      "Confirm",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(size, colorThemePink),
+                                      () async {
+                                    try {
+                                      final url =
+                                          await setIsClickForBeansActivation();
+
+                                      if (url == null || url.isEmpty) {
+                                        debugPrint("URL is empty");
+                                        return;
+                                      }
+
+                                      final uri = Uri.parse(url);
+                                      final launched = await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsClickKey, true);
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsOpenedKey, true);
+                                      Navigator.pop(context);
+
+                                      if (!launched)
+                                        debugPrint(
+                                            "Could not launch URL: $url");
+                                    } catch (e) {
+                                      debugPrint("Error launching URL: $e");
+                                    }
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
   }
 
   void deleteNotificationDialog() {
@@ -306,6 +543,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
+                                // myProfileApi();
+
                                 debugPrint(
                                     "Notification Type: ${notificationList[index].messageType}");
 
@@ -392,6 +631,13 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                             hideLeading: false,
                                             message: '',
                                           )));
+                                } else if (notificationList[index]
+                                        .messageType ==
+                                    "studentbeans") {
+                                  print("sldkfsdfsd");
+                                  myProfileApi();
+
+                                  // _checkUpdateAndShowPopup();
                                 }
                               },
                               child: Container(
@@ -503,6 +749,29 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                               height: size.width * numD04,
                                             ),
                                           ],
+                                          // if (notificationList[index]
+                                          //         .imageUrl
+                                          //         ?.isNotEmpty ==
+                                          //     true) ...[
+                                          //   SizedBox(
+                                          //       height: size.width * numD02),
+                                          //   Padding(
+                                          //     padding: EdgeInsets.symmetric(
+                                          //         vertical:
+                                          //             size.width * numD02),
+                                          //     child: ClipRRect(
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(12),
+                                          //       child: InlineFlickPlayer(
+                                          //         videoUrl:
+                                          //             "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                                          //         height: 220,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          //   SizedBox(
+                                          //       height: size.width * numD02),
+                                          // ],
                                           Text(
                                             notificationList[index].description,
                                             style: commonTextStyle(
@@ -560,6 +829,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
 
   void _onLoading() async {
     await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
     setState(() {
       offset += 10;
       callNotificationList();
@@ -567,7 +837,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     _refreshController.loadComplete();
   }
 
-  /// Api Section
   callNotificationList() {
     NetworkClass("$notificationListAPI?limit=10&offset=$offset", this,
             reqNotificationListAPI)
@@ -584,6 +853,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
         .callRequestServiceHeader(true, 'patch', null);
   }
 
+  void myProfileApi() {
+    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+        .callRequestServiceHeader(false, "get", null);
+  }
+
   @override
   void onError({required int requestCode, required String response}) {
     try {
@@ -597,8 +871,92 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case myProfileUrlRequest:
+          var map = jsonDecode(response);
+          debugPrint("MyProfileSuccess:$map");
+          print("MyProfileSuccess11:$response");
+
+          if (map["code"] == 200) {
+            myProfileData = MyProfileData.fromJson(map["userData"]);
+
+            // sharedPreferences!.setString(
+            //     latitudeKey, map["userData"][latitudeKey].toString());
+            // sharedPreferences!.setString(
+            //     longitudeKey, map["userData"][longitudeKey].toString());
+            // sharedPreferences!.setString(
+            //     avatarIdKey, map["userData"][avatarIdKey].toString());
+            // sharedPreferences!.setString(
+            //     totalIncomeKey, map["userData"]["totalEarnings"].toString());
+
+            if (map["userData"]['avatarData'] != null) {
+              sharedPreferences!.setString(
+                  avatarKey, map["userData"]['avatarData'][avatarKey]);
+            }
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            final src1 = map["userData"]["source"];
+            print("source ===> $src1");
+
+// source fields
+            final sourceDataIsOpened = src1?["is_opened"] ?? false;
+            final sourceDataType = src1?["type"] ?? "";
+            final sourceDataUrl = src1?["url"] ?? "";
+            final sourceDataHeading = src1?["heading"] ?? "";
+            final sourceDataDescription = src1?["description"] ?? "";
+            final isClick = src1?["is_clicked"] ?? false;
+
+            print("print new data data data ");
+            print("sourceDataIsOpened = $sourceDataIsOpened");
+            print("sourceDataType $sourceDataType");
+            print("sourceDataType $sourceDataUrl");
+            print("sourceDataHeading $sourceDataHeading");
+            print("sourceDataDescription $sourceDataDescription");
+            print("isClick $isClick");
+
+            // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+            // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+            // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+                (sourceDataIsOpened == false) &&
+                isClick == false) {
+              // if (true) {
+              final size =
+                  MediaQuery.of(navigatorKey.currentState!.context).size;
+              _showForceUpdateDialog(size,
+                  sourceDataHeading: sourceDataHeading,
+                  sourceDataDescription: sourceDataDescription);
+            }
+
+            isLoading = true;
+            setState(() {});
+          }
+          break;
+        case studentBeansActivationRequest:
+          debugPrint("studentBeansActivationRequest32434: $response");
+          try {
+            var map = jsonDecode(response);
+            var studentBeansResponseUrl = map["url"];
+            studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+            // Complete the completer if someone is waiting
+            if (_studentBeansCompleter != null &&
+                !_studentBeansCompleter!.isCompleted) {
+              _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+            }
+          } catch (e) {
+            debugPrint("Error parsing studentBeans response: $e");
+            if (_studentBeansCompleter != null &&
+                !_studentBeansCompleter!.isCompleted) {
+              _studentBeansCompleter!.complete(null);
+            }
+          }
+          break;
         case reqNotificationListAPI:
-          log("success response===> ${jsonDecode(response)}");
+          log("success response123NOT===> ${jsonDecode(response)}");
+          print("success response123NOTwewe===> ${jsonDecode(response)}");
           var data = jsonDecode(response);
           var dataList = data['data'] as List;
           counting = data['unreadCount'];
@@ -624,7 +982,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
 
           break;
         case reqNotificationReadAPI:
-          debugPrint("success response===> ${jsonDecode(response)}");
+          debugPrint("success responseREAD===> ${jsonDecode(response)}");
           callNotificationList();
           break;
 

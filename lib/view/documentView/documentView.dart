@@ -6,9 +6,9 @@ import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 
 class DocumentView extends StatefulWidget {
-  String path= '';
+  String path = '';
 
-   DocumentView({Key? key,required this.path}) : super(key: key);
+  DocumentView({Key? key, required this.path}) : super(key: key);
 
   @override
   State<DocumentView> createState() => _DocumentViewState();
@@ -41,10 +41,9 @@ class _DocumentViewState extends State<DocumentView> {
           Navigator.pop(context);
         },
         actionWidget: [
-
           InkWell(
-            onTap: (){
-             /* Navigator.of(context).pushAndRemoveUntil(
+            onTap: () {
+              /* Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                       builder: (context) =>
                           Dashboard(initialPosition: 2)),
@@ -60,14 +59,13 @@ class _DocumentViewState extends State<DocumentView> {
           ),
         ],
       ),
-      body:
-      SafeArea(
+      body: SafeArea(
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: size.width*numD035),
-          child: SfPdfViewer.network(widget.path,
-            key: _pdfViewerKey,
-          )
-        ),
+            padding: EdgeInsets.symmetric(horizontal: size.width * numD035),
+            child: SfPdfViewer.network(
+              widget.path,
+              key: _pdfViewerKey,
+            )),
       ),
     );
   }

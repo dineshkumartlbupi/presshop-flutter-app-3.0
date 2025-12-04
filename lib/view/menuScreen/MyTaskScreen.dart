@@ -1118,6 +1118,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   void _onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return; // FIX
     setState(() {
       _showData = false;
       _offset = 0;
@@ -1129,6 +1130,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   void _onLoading() async {
     await Future.delayed(const Duration(milliseconds: 1000));
+
+    if (!mounted) return;
     setState(() {
       _offset += 10;
       callAllGetTaskApi();
@@ -1176,6 +1179,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
       }
     }
 
+    print("Params Params =======>$params");
+    // print(params);
+
     NetworkClass(getAllMyTaskUrl, this, getAllMyTaskReq)
         .callRequestServiceHeader(false, "get", params);
   }
@@ -1185,8 +1191,24 @@ class MyTaskScreenState extends State<MyTaskScreen>
     switch (requestCode) {
       case getAllMyTaskReq:
         {
-          var data = jsonDecode(response);
-          debugPrint("getAllMyTaskReq Error : $data");
+          Map<String, dynamic>? data;
+
+          try {
+            if (response.isNotEmpty &&
+                response.trim().startsWith("{") &&
+                response.trim().endsWith("}")) {
+              data = jsonDecode(response);
+            } else {
+              debugPrint(
+                  "getAllMyTaskReq Error: NON-JSON response → $response");
+              return;
+            }
+          } catch (e) {
+            debugPrint("JSON Parsing Failed in onError: $e");
+            return;
+          }
+
+          debugPrint("getAllMyTaskReq Error Parsed: $data");
           break;
         }
 
