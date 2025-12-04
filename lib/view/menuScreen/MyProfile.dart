@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,6 +15,7 @@ import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonTextField.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
 import '../../utils/AnalyticsConstants.dart';
@@ -43,6 +45,7 @@ class MyProfileState extends State<MyProfile>
 
   var formKey = GlobalKey<FormState>();
   var scrollController = ScrollController();
+  String? studentBeansResponseUrlGlobal = "";
 
   TextEditingController userNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
@@ -58,6 +61,7 @@ class MyProfileState extends State<MyProfile>
 
   List<AvatarsData> avatarList = [];
   MyProfileData? myProfileData;
+  Completer<String?>? _studentBeansCompleter;
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -87,6 +91,166 @@ class MyProfileState extends State<MyProfile>
     if (widget.editProfileScreen) {
       getAvatarsApi();
     }
+  }
+
+  String? userNameValidator(String? value) {
+    if (value!.isEmpty) {
+      return requiredText;
+    }
+    String firstName = firstNameController.text.trim().toLowerCase();
+    String lastName = lastNameController.text.trim().toLowerCase();
+    String username = value.trim().toLowerCase();
+
+    if (firstName.isEmpty) {
+      return "First name must be filled.";
+    }
+    if (lastName.isEmpty) {
+      return "Last name must be filled.";
+    }
+    List<String> generateSubstrings(String text) {
+      List<String> substrings = [];
+      for (int i = 0; i < text.length; i++) {
+        for (int j = i + 4; j <= text.length; j++) {
+          substrings.add(text.substring(i, j));
+        }
+      }
+      return substrings;
+    }
+
+    List<String> firstNameSubstrings = generateSubstrings(firstName);
+    List<String> lastNameSubstrings = generateSubstrings(lastName);
+
+    final RegExp _restrictPattern = RegExp(
+      r"@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com)$",
+      caseSensitive: true,
+    );
+
+    final RegExp _restrictPatter2 = RegExp(r'@(gmail|yahoo|hotmail|outlook)\.');
+    final RegExp _restrictPatter3 =
+        RegExp('gmail|yahoo|hotmail|outlook', caseSensitive: false);
+
+    bool containsAnySubstring(String username, List<String> substrings) {
+      for (var substring in substrings) {
+        if (username.contains(substring)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    if (containsAnySubstring(username, firstNameSubstrings)) {
+      return "Your username cannot contain any sequence from your first name.";
+    }
+
+    if (containsAnySubstring(username, lastNameSubstrings)) {
+      return "Your username cannot contain any sequence from your last name.";
+    }
+    if (value.length < 4) {
+      return "Your username must be at least 4 characters in length.";
+    }
+    if (_restrictPattern.hasMatch(value.trim()) ||
+        _restrictPatter2.hasMatch(value.trim()) ||
+        _restrictPatter3.hasMatch(value.trim())) {
+      return "Domain names are not allowed for security reasons.";
+    }
+    if (userNameAlreadyExists) {
+      return "This username is already taken. Please choose another one.";
+    }
+
+    return null;
+  }
+
+  static final Map<String, int> phoneNumberMaxLengthByCountry = {
+    // Format: '+CountryCode': maxDigits
+    '+1': 10, // USA, Canada
+    '+44': 10, // UK
+    '+91': 10, // India
+    '+33': 9, // France
+    '+49': 11, // Germany
+    '+39': 10, // Italy
+    '+34': 9, // Spain
+    '+81': 11, // Japan
+    '+86': 11, // China
+    '+61': 9, // Australia
+    '+55': 11, // Brazil
+    '+52': 10, // Mexico
+    '+7': 10, // Russia
+    '+27': 9, // South Africa
+    '+82': 10, // South Korea
+    '+90': 10, // Turkey
+    '+234': 10, // Nigeria
+    '+20': 10, // Egypt
+    '+92': 10, // Pakistan
+    '+880': 10, // Bangladesh
+    '+62': 12, // Indonesia
+    '+63': 10, // Philippines
+    '+84': 10, // Vietnam
+    '+66': 9, // Thailand
+    // Add more countries as needed
+  };
+
+  int _getMaxPhoneLength() {
+    return phoneNumberMaxLengthByCountry[selectedCountryCode] ?? 15;
+  }
+
+  static final Map<String, Map<String, int>> phoneNumberLengthByCountryCode = {
+    '+1': {'min': 10, 'max': 10}, // USA, Canada
+    '+44': {'min': 10, 'max': 10}, // UK
+    '+91': {'min': 10, 'max': 10}, // India
+    '+33': {'min': 9, 'max': 9}, // France
+    '+49': {'min': 10, 'max': 11}, // Germany
+    '+39': {'min': 9, 'max': 10}, // Italy
+    '+34': {'min': 9, 'max': 9}, // Spain
+    '+81': {'min': 10, 'max': 11}, // Japan
+    '+86': {'min': 11, 'max': 11}, // China
+    '+61': {'min': 9, 'max': 9}, // Australia
+    '+55': {'min': 10, 'max': 11}, // Brazil
+    '+52': {'min': 10, 'max': 10}, // Mexico
+    '+7': {'min': 10, 'max': 10}, // Russia, Kazakhstan
+    '+27': {'min': 9, 'max': 9}, // South Africa
+    '+82': {'min': 9, 'max': 10}, // South Korea
+    '+90': {'min': 10, 'max': 10}, // Turkey
+    '+234': {'min': 10, 'max': 10}, // Nigeria
+    '+20': {'min': 10, 'max': 10}, // Egypt
+    '+92': {'min': 10, 'max': 10}, // Pakistan
+    '+880': {'min': 10, 'max': 10}, // Bangladesh
+    '+62': {'min': 9, 'max': 12}, // Indonesia
+    '+63': {'min': 10, 'max': 10}, // Philippines
+    '+84': {'min': 9, 'max': 10}, // Vietnam
+    '+66': {'min': 9, 'max': 9}, // Thailand
+    // Add more if needed
+  };
+
+  String? checkSignupPhoneValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return requiredText;
+    }
+
+    String digitsOnly = value.trim().replaceAll(RegExp(r'\D+'), '');
+
+    // Default fallback
+    int minLength = 7;
+    int maxLength = 15;
+
+    // Try to get country-specific length
+    final countryData = phoneNumberLengthByCountryCode[selectedCountryCode];
+    if (countryData != null) {
+      minLength = countryData['min']!;
+      maxLength = countryData['max']!;
+    }
+
+    if (digitsOnly.length < minLength) {
+      return "Too short for selected country";
+    }
+    if (digitsOnly.length > maxLength) {
+      return "Too long for selected country";
+    }
+
+    if (phoneAlreadyExists) {
+      return phoneExistsErrorText;
+    }
+
+    return null;
   }
 
   @override
@@ -244,7 +408,7 @@ class MyProfileState extends State<MyProfile>
                             suffixIcon: null,
                             hidePassword: false,
                             keyboardType: TextInputType.text,
-                            validator: checkRequiredValidator,
+                            validator: firstNameValidator,
                             enableValidations: true,
                             filled: true,
                             filledColor: widget.editProfileScreen
@@ -285,7 +449,7 @@ class MyProfileState extends State<MyProfile>
                             suffixIcon: null,
                             hidePassword: false,
                             keyboardType: TextInputType.text,
-                            validator: checkRequiredValidator,
+                            validator: lastNameValidator,
                             enableValidations: true,
                             filled: true,
                             filledColor: widget.editProfileScreen
@@ -313,7 +477,10 @@ class MyProfileState extends State<MyProfile>
                             controller: phoneNumberController,
                             hintText: phoneHintText,
                             textInputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                              FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9]")),
+                              LengthLimitingTextInputFormatter(
+                                  _getMaxPhoneLength()), // This line enforces max length
                             ],
                             prefixIcon: InkWell(
                               onTap: () {
@@ -1290,23 +1457,70 @@ class MyProfileState extends State<MyProfile>
     }
   }
 
-  String? userNameValidator(String? value) {
-    //<-- add String? as a return type
-    if (value!.isEmpty) {
+  String? firstNameValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
       return requiredText;
-    } else if (firstNameController.text.trim().isEmpty) {
-      return "First name must be filled.";
-    } else if (lastNameController.text.trim().isEmpty) {
-      return "Last name must be filled.";
     }
-    if (value.toLowerCase().contains(firstNameController.text.toLowerCase()) ||
-        value.toLowerCase().contains(lastNameController.text.toLowerCase())) {
-      return "First name or Last name are not allowed in user name.";
-    } else if (value.length < 4) {
-      return "Your user name must be at least 4 characters in length";
-    } else if (userNameAlreadyExists) {
-      return "This user name already occupied. Please try another one";
+
+    String username = userNameController.text.trim().toLowerCase();
+
+    // If username is empty or too short, we can't check substring yet → just require input
+    if (username.isEmpty || username.length < 4) {
+      return null;
     }
+
+    List<String> generateSubstrings(String text) {
+      List<String> substrings = [];
+      for (int i = 0; i < text.length; i++) {
+        for (int j = i + 4; j <= text.length; j++) {
+          substrings.add(text.substring(i, j));
+        }
+      }
+      return substrings;
+    }
+
+    List<String> usernameSubstrings = generateSubstrings(username);
+    String firstNameLower = value.trim().toLowerCase();
+
+    for (var substring in usernameSubstrings) {
+      if (firstNameLower.contains(substring)) {
+        return "First name cannot contain any sequence from your username.";
+      }
+    }
+
+    return null;
+  }
+
+  String? lastNameValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return requiredText;
+    }
+
+    String username = userNameController.text.trim().toLowerCase();
+
+    if (username.isEmpty || username.length < 4) {
+      return null;
+    }
+
+    List<String> generateSubstrings(String text) {
+      List<String> substrings = [];
+      for (int i = 0; i < text.length; i++) {
+        for (int j = i + 4; j <= text.length; j++) {
+          substrings.add(text.substring(i, j));
+        }
+      }
+      return substrings;
+    }
+
+    List<String> usernameSubstrings = generateSubstrings(username);
+    String lastNameLower = value.trim().toLowerCase();
+
+    for (var substring in usernameSubstrings) {
+      if (lastNameLower.contains(substring)) {
+        return "Last name cannot contain any sequence from your username.";
+      }
+    }
+
     return null;
   }
 
@@ -1536,17 +1750,17 @@ class MyProfileState extends State<MyProfile>
     );
   }
 
-  String? checkSignupPhoneValidator(String? value) {
-    //<-- add String? as a return type
-    if (value!.isEmpty) {
-      return requiredText;
-    } else if (value.length < 7) {
-      return phoneErrorText;
-    } else if (phoneAlreadyExists) {
-      return phoneExistsErrorText;
-    }
-    return null;
-  }
+  // String? checkSignupPhoneValidator(String? value) {
+  //   //<-- add String? as a return type
+  //   if (value!.isEmpty) {
+  //     return requiredText;
+  //   } else if (value.length < 7) {
+  //     return phoneErrorText;
+  //   } else if (phoneAlreadyExists) {
+  //     return phoneExistsErrorText;
+  //   }
+  //   return null;
+  // }
 
   String? checkSignupEmailValidator(String? value) {
     //<-- add String? as a return type
@@ -1639,6 +1853,9 @@ class MyProfileState extends State<MyProfile>
   void onError({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        case studentBeansActivationRequest:
+          debugPrint("BroadcastData::::Error $response");
+          break;
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileError:$map");
@@ -1654,13 +1871,62 @@ class MyProfileState extends State<MyProfile>
     }
   }
 
+  Future<String?> setIsClickForBeansActivation() async {
+    _studentBeansCompleter = Completer<String?>();
+
+    NetworkClass.fromNetworkClass(
+      studentBeansActivationUrl,
+      this,
+      studentBeansActivationRequest,
+      null,
+    ).callRequestServiceHeader(false, "post", null);
+
+    return _studentBeansCompleter!.future;
+  }
+
   @override
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
+        // case studentBeansActivationRequest:
+        //   debugPrint("studentBeansActivationRequest32434: $response");
+        //   try {
+        //     var map = jsonDecode(response);
+        //     var studentBeansResponseUrl = map["url"];
+        //     studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+        //     // Complete the completer if someone is waiting
+        //     print(
+        //         "studentBeansResponseUrlGlobal$studentBeansResponseUrlGlobal");
+        //     // if (_studentBeansCompleter != null &&
+        //     //     !_studentBeansCompleter!.isCompleted) {
+        //     //   _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+        //     // }
+        //   } catch (e) {
+        //     debugPrint("Error parsing studentBeans response: $e");
+        //     // if (_studentBeansCompleter != null &&
+        //     //     !_studentBeansCompleter!.isCompleted) {
+        //     //   _studentBeansCompleter!.complete(null);
+        //     // }
+        //   }
+        //   break;
+
+        case studentBeansActivationRequest:
+          var map = jsonDecode(response);
+          print("studentBeansActivationRequest234534645423 $map");
+          var studentBeansResponseUrl = map["url"];
+          studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+
+          if (_studentBeansCompleter != null &&
+              !_studentBeansCompleter!.isCompleted) {
+            _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
+          }
+          break;
+
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileSuccess:$map");
+          print("MyProfileSuccess11:$response");
 
           if (map["code"] == 200) {
             myProfileData = MyProfileData.fromJson(map["userData"]);
@@ -1694,6 +1960,43 @@ class MyProfileState extends State<MyProfile>
               sharedPreferences!.setString(
                   avatarKey, map["userData"]['avatarData'][avatarKey]);
             }
+
+            // var sourceDataIsOpened = true;
+            // var sourceDataType = "student_beans";
+            // var sourceDataUrl = src?["url"] ?? "";
+            final src1 = map["userData"]["source"];
+            print("source ===> $src1");
+
+// source fields
+            final sourceDataIsOpened = src1?["is_opened"] ?? false;
+            final sourceDataType = src1?["type"] ?? "";
+            final sourceDataUrl = src1?["url"] ?? "";
+            final sourceDataHeading = src1?["heading"] ?? "";
+            final sourceDataDescription = src1?["description"] ?? "";
+            final isClick = src1?["is_clicked"] ?? false;
+
+            print("print new data data data ");
+            print("sourceDataIsOpened = $sourceDataIsOpened");
+            print("sourceDataType $sourceDataType");
+            print("sourceDataType $sourceDataUrl");
+            print("sourceDataHeading $sourceDataHeading");
+            print("sourceDataDescription $sourceDataDescription");
+            print("isClick $isClick");
+
+            // sharedPreferences!.setBool(sourceDataIsClickKey, false);
+            // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
+            // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
+
+            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+                (sourceDataIsOpened == false) &&
+                isClick == false) {
+              // if (true) {
+              final size =
+                  MediaQuery.of(navigatorKey.currentState!.context).size;
+              _showForceUpdateDialog(
+                  size, sourceDataHeading, sourceDataDescription);
+            }
+
             isLoading = true;
             setProfileData();
             setState(() {});
@@ -1750,6 +2053,183 @@ class MyProfileState extends State<MyProfile>
   @override
   // TODO: implement pageName
   String get pageName => PageNames.profile;
+
+  void _showForceUpdateDialog(
+      Size size, sourceDataHeading, sourceDataDescription) {
+    showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              contentPadding: EdgeInsets.zero,
+              insetPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD045)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                sourceDataHeading ??
+                                    "Brains, beans, and breaking news!",
+                                // "Brains, beans, and breaking news!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * numD04,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: const Divider(
+                            color: Colors.black,
+                            thickness: 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 120, // fixed width
+                                height: 120, // fixed height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    "assets/rabbits/student_beans_rabbit2.png",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  sourceDataDescription ??
+                                      "Please confirm your student status to continue",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD035,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        SizedBox(
+                          height: size.width * numD02,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD04),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              // Expanded(
+                              //     child: SizedBox(
+                              //   height: size.width * numD12,
+                              //   child: commonElevatedButton(
+                              //       logoutText,
+                              //       size,
+                              //       commonButtonTextStyle(size),
+                              //       commonButtonStyle(size, Colors.black), () {
+                              //     Navigator.pop(context);
+                              //     // callRemoveDeviceApi();
+                              //   }),
+                              // )),
+                              // SizedBox(
+                              //   width: size.width * numD04,
+                              // ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: size.width * numD12,
+                                  child: commonElevatedButton(
+                                      "Confirm",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(size, colorThemePink),
+                                      () async {
+                                    try {
+                                      final url =
+                                          await setIsClickForBeansActivation();
+
+                                      if (url == null || url.isEmpty) {
+                                        debugPrint("URL is empty");
+                                        return;
+                                      }
+
+                                      final uri = Uri.parse(url);
+                                      final launched = await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsClickKey, true);
+                                      sharedPreferences!
+                                          .setBool(sourceDataIsOpenedKey, true);
+                                      Navigator.pop(context);
+
+                                      if (!launched)
+                                        debugPrint(
+                                            "Could not launch URL: $url");
+                                    } catch (e) {
+                                      debugPrint("Error launching URL: $e");
+                                    }
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
+        });
+  }
 }
 
 class MyProfileData {

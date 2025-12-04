@@ -62,6 +62,7 @@ class FAQScreenState extends State<FAQScreen>
 
   void _onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
     setState(() {
       _offset = 0;
       if (widget.priceTipsSelected) {
@@ -75,6 +76,7 @@ class FAQScreenState extends State<FAQScreen>
 
   void _onLoading() async {
     await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
     setState(() {
       _offset += 10;
       if (widget.priceTipsSelected) {

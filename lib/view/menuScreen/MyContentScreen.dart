@@ -982,8 +982,12 @@ class MyContentScreenState extends State<MyContentScreen>
       if (sortList[pos].name == filterDateText) {
         params["startdate"] = DateFormat("yyyy-MM-ddTHH:mm:ss")
             .format(DateTime.parse(sortList[pos].fromDate!));
-        params["endDate"] = DateFormat("yyyy-MM-ddTHH:mm:ss")
-            .format(DateTime.parse(sortList[pos].toDate!));
+
+        // rajesh
+        if (sortList[pos].toDate != null) {
+          params["endDate"] = DateFormat("yyyy-MM-ddTHH:mm:ss")
+              .format(DateTime.parse(sortList[pos].toDate!));
+        }
       } else if (sortList[pos].name == viewMonthlyText) {
         params["posted_date"] = "31";
       } else if (sortList[pos].name == viewYearlyText) {

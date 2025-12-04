@@ -31,8 +31,19 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
       };
 
   @override
+  void initState() {
+    super.initState();
+
+    // Print referral code when entering this page
+    var refCode = sharedPreferences!.getString(referralCode) ?? "";
+    print("Referral Code on ReferScreen: $refCode");
+  }
+
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    var refrral_code = sharedPreferences!.getString(referralCode) ?? "";
+    print("this this this tis");
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
@@ -209,10 +220,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            Clipboard.setData(ClipboardData(
-                                text: sharedPreferences!
-                                        .getString(referralCode) ??
-                                    ""));
+                            Clipboard.setData(
+                                ClipboardData(text: refrral_code));
                             showToast("Referral code copied to clipboard");
                           },
                           child: Row(

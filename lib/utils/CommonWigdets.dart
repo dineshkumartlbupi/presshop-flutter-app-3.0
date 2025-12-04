@@ -672,6 +672,132 @@ void broadcastDialog({
 
 ///:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ///:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// Future<void> commonErrorDialogDialog1(
+//     Size size, String message, String errorCode, VoidCallback callback,
+//     {String actionButton = "Ok",
+//     bool isFromNetworkError = true,
+//     bool shouldShowClosedButton = true}) {
+//   return showDialog(
+//       context: navigatorKey.currentState!.context,
+//       barrierDismissible: false,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//             backgroundColor: Colors.transparent,
+//             elevation: 0,
+//             contentPadding: EdgeInsets.zero,
+//             insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+//             content: StatefulBuilder(
+//               builder: (BuildContext context, StateSetter setState) {
+//                 return Container(
+//                   decoration: BoxDecoration(
+//                       color: Colors.white,
+//                       borderRadius:
+//                           BorderRadius.circular(size.width * numD045)),
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.start,
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: [
+//                       Padding(
+//                         padding: EdgeInsets.only(
+//                             left: size.width * numD04,
+//                             top: size.width * numD02),
+//                         child: Row(
+//                           children: [
+//                             Text(
+//                               isFromNetworkError
+//                                   ? "$errorDialogText $errorCode!"
+//                                   : errorCode,
+//                               style: TextStyle(
+//                                   color: Colors.black,
+//                                   fontSize: size.width * numD04,
+//                                   fontWeight: FontWeight.bold),
+//                             ),
+//                             const Spacer(),
+//                             if (shouldShowClosedButton)
+//                               IconButton(
+//                                   onPressed: () {
+//                                     Navigator.pop(context);
+//                                   },
+//                                   icon: Icon(
+//                                     Icons.close,
+//                                     color: Colors.black,
+//                                     size: size.width * numD06,
+//                                   ))
+//                           ],
+//                         ),
+//                       ),
+//                       Padding(
+//                         padding: EdgeInsets.symmetric(
+//                             horizontal: size.width * numD04),
+//                         child: const Divider(
+//                           color: Colors.black,
+//                           thickness: 0.5,
+//                         ),
+//                       ),
+//                       SizedBox(
+//                         height: size.width * numD02,
+//                       ),
+//                       Padding(
+//                         padding: EdgeInsets.symmetric(
+//                             horizontal: size.width * numD04),
+//                         child: Row(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               decoration: BoxDecoration(
+//                                 borderRadius:
+//                                     BorderRadius.circular(size.width * numD04),
+//                               ),
+//                               child: ClipRRect(
+//                                   borderRadius: BorderRadius.circular(
+//                                       size.width * numD04),
+//                                   child: Image.asset(
+//                                     "${commonImagePath}dog.png",
+//                                     height: size.width * numD25,
+//                                     width: size.width * numD35,
+//                                     fit: BoxFit.cover,
+//                                   )),
+//                             ),
+//                             SizedBox(
+//                               width: size.width * numD04,
+//                             ),
+//                             Expanded(
+//                               child: Text(
+//                                 message,
+//                                 style: TextStyle(
+//                                     color: Colors.black,
+//                                     fontSize: size.width * numD035,
+//                                     fontWeight: FontWeight.normal),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                       SizedBox(
+//                         height: size.width * numD08,
+//                       ),
+//                       SizedBox(
+//                         height: size.width * numD12,
+//                         width: size.width * numD35,
+//                         child: commonElevatedButton(
+//                             actionButton,
+//                             size,
+//                             commonButtonTextStyle(size),
+//                             commonButtonStyle(size, colorThemePink), () {
+//                           Navigator.pop(context); // dismiss dialog first
+//                           callback(); // then call the callback
+//                         }),
+//                       ),
+//                       SizedBox(
+//                         height: size.width * numD05,
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             ));
+//       });
+// }
 
 void commonErrorDialogDialog(
     Size size, String message, String errorCode, VoidCallback callback,

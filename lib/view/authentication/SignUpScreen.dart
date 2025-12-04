@@ -26,6 +26,7 @@ import '../../utils/CommonWigdets.dart';
 import '../dashboard/Dashboard.dart';
 import 'UploadDocumnetsScreen.dart';
 
+// ignore: must_be_immutable
 class SignUpScreen extends StatefulWidget {
   bool socialLogin = false;
   String socialId = "";
@@ -133,6 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   String socialName = "";
   String socialProfileImage = "";
   String socialType = "";
+  final ValueNotifier<bool> _avatarsNotifier = ValueNotifier(false);
 
   @override
   void initState() {
@@ -157,12 +159,14 @@ class _SignUpScreenState extends State<SignUpScreen>
   @override
   void dispose() {
     controller.dispose();
+    _avatarsNotifier.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
     final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
         .chain(CurveTween(curve: Curves.elasticIn))
         .animate(controller)
@@ -223,7 +227,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                         SizedBox(
                           height: size.width * numD04,
                         ),
-
                         selectedAvatar.isEmpty
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -344,7 +347,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                           ),
                           textAlign: TextAlign.justify,
                         ),
-
                         SizedBox(
                           height: size.width * numD06,
                         ),
@@ -427,7 +429,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             return null;
                           },
                         ),
-
                         SizedBox(
                           height: size.width * numD01,
                         ),
@@ -446,7 +447,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                           controller: phoneController,
                           hintText: phoneHintText,
                           textInputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+                            LengthLimitingTextInputFormatter(
+                                _getMaxPhoneLength()),
                           ],
                           prefixIcon: InkWell(
                             onTap: () {
@@ -499,7 +502,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             checkPhoneApi();
                           },
                         ),
-
                         SizedBox(
                           height: size.width * numD06,
                         ),
@@ -531,7 +533,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                         SizedBox(
                           height: size.width * numD06,
                         ),
-
                         CommonTextField(
                           size: size,
                           maxLines: 1,
@@ -563,7 +564,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             return null;
                           },
                         ),
-
                         SizedBox(
                           height: size.width * numD01,
                         ),
@@ -575,7 +575,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                         SizedBox(
                           height: size.width * numD04,
                         ),
-
                         !widget.socialLogin
                             ? CommonTextField(
                                 size: size,
@@ -929,58 +928,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 autofocus: false,
                               )
                             : Container(),
-
-                        // SizedBox(
-                        //   height: !widget.socialLogin ? size.width * numD04 : 0,
-                        // ),
-
-                        // InkWell(
-                        //   onTap: () {
-                        //     FocusScope.of(context).requestFocus(FocusNode());
-                        //     isSelectCheck = !isSelectCheck;
-                        //     setState(() {});
-                        //   },
-                        //   child: Row(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       isSelectCheck
-                        //           ? Container(
-                        //               margin: EdgeInsets.only(
-                        //                   top: size.width * numD008),
-                        //               child: Image.asset(
-                        //                 "${iconsPath}ic_checkbox_filled.png",
-                        //                 height: size.width * numD06,
-                        //               ),
-                        //             )
-                        //           : Container(
-                        //               margin: EdgeInsets.only(
-                        //                   top: size.width * numD008),
-                        //               child: Image.asset(
-                        //                   "${iconsPath}ic_checkbox_empty.png",
-                        //                   height: size.width * numD06),
-                        //             ),
-                        //       SizedBox(
-                        //         width: size.width * numD02,
-                        //       ),
-                        //       Expanded(
-                        //         child: Text(
-                        //           enableNotificationText,
-                        //           style: TextStyle(
-                        //               color: Colors.black,
-                        //               fontFamily: "AirbnbCereal",
-                        //               fontSize: size.width * numD035),
-                        //         ),
-                        //       ),
-                        //       SizedBox(
-                        //         width: size.width * numD02,
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                         SizedBox(
                           height: size.width * numD04,
                         ),
-
                         InkWell(
                           onTap: () {
                             FocusScope.of(context).requestFocus(FocusNode());
@@ -1033,11 +983,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                             ],
                           ),
                         ),
-
                         SizedBox(
                           height: size.width * numD06,
                         ),
-
                         Container(
                           margin: EdgeInsets.symmetric(
                               horizontal: size.width * numD04),
@@ -1071,116 +1019,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                             setState(() {});
                           }),
                         ),
-
-                        /// Or
-                        // Align(
-                        //   alignment: Alignment.center,
-                        //   child: Padding(
-                        //     padding: EdgeInsets.symmetric(
-                        //         vertical: size.width * numD04),
-                        //     child: Text(
-                        //       orText,
-                        //       style: TextStyle(
-                        //           color: Colors.black,
-                        //           fontFamily: "AirbnbCereal",
-                        //           fontSize: size.width * numD04),
-                        //     ),
-                        //   ),
-                        // ),
-
-                        // Platform.isIOS
-                        //     ? Container(
-                        //         width: size.width,
-                        //         height: size.width * numD13,
-                        //         margin: EdgeInsets.symmetric(
-                        //             horizontal: size.width * numD04),
-                        //         alignment: Alignment.centerLeft,
-                        //         decoration: BoxDecoration(
-                        //             color: Colors.black,
-                        //             borderRadius: BorderRadius.circular(
-                        //                 size.width * numD04),
-                        //             border: Border.all(
-                        //                 color: colorGoogleButtonBorder)),
-                        //         child: InkWell(
-                        //           splashColor: Colors.grey.shade300,
-                        //           onTap: () async {
-                        //             final credential = await SignInWithApple
-                        //                 .getAppleIDCredential(
-                        //               scopes: [
-                        //                 AppleIDAuthorizationScopes.email,
-                        //                 AppleIDAuthorizationScopes.fullName,
-                        //               ],
-                        //             );
-
-                        //             debugPrint("AppleCredentials: $credential");
-                        //           },
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               Image.asset(
-                        //                 "${iconsPath}appleLogo.png",
-                        //                 height: size.width * numD045,
-                        //                 width: size.width * numD045,
-                        //                 color: Colors.white,
-                        //               ),
-                        //               SizedBox(width: size.width * numD01),
-                        //               Align(
-                        //                 alignment: Alignment.center,
-                        //                 child: Text(
-                        //                   "Sign in with Apple",
-                        //                   style: TextStyle(
-                        //                       color: Colors.white,
-                        //                       fontFamily: "AirbnbCereal",
-                        //                       fontSize: size.width * numD036,
-                        //                       fontWeight: FontWeight.w500),
-                        //                 ),
-                        //               )
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(
-                        //         width: size.width,
-                        //         height: size.width * numD13,
-                        //         margin: EdgeInsets.symmetric(
-                        //             horizontal: size.width * numD04),
-                        //         decoration: BoxDecoration(
-                        //             borderRadius: BorderRadius.circular(
-                        //                 size.width * numD04),
-                        //             border: Border.all(
-                        //                 color: colorGoogleButtonBorder)),
-                        //         child: InkWell(
-                        //           splashColor: Colors.grey.shade300,
-                        //           borderRadius: BorderRadius.circular(
-                        //               size.width * numD04),
-                        //           onTap: () async {
-                        //             googleLogin();
-                        //           },
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               Image.asset(
-                        //                 "${iconsPath}ic_google.png",
-                        //                 height: size.width * numD045,
-                        //                 width: size.width * numD045,
-                        //               ),
-                        //               SizedBox(width: size.width * numD01),
-                        //               Align(
-                        //                 alignment: Alignment.center,
-                        //                 child: Text(
-                        //                   continueGoogleText,
-                        //                   style: TextStyle(
-                        //                       color: Colors.black,
-                        //                       fontFamily: "AirbnbCereal",
-                        //                       fontSize: size.width * numD036,
-                        //                       fontWeight: FontWeight.w500),
-                        //                 ),
-                        //               )
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       ),
-
                         !widget.socialLogin
                             ? Align(
                                 alignment: Alignment.center,
@@ -1512,112 +1350,125 @@ class _SignUpScreenState extends State<SignUpScreen>
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return StatefulBuilder(builder: (context, avatarState) {
-            return Container(
-              height: size.height * 0.6,
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: size.width * numD04),
-                    child: Row(
+          return ValueListenableBuilder<bool>(
+              valueListenable: _avatarsNotifier,
+              builder: (context, value, child) {
+                return StatefulBuilder(builder: (context, avatarState) {
+                  return Container(
+                    height: size.height * 0.6,
+                    padding: EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          chooseAvatarText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD05,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700),
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * numD04),
+                          child: Row(
+                            children: [
+                              Text(
+                                chooseAvatarText,
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD05,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  splashRadius: size.width * numD06,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                    size: size.width * numD06,
+                                  ))
+                            ],
+                          ),
                         ),
-                        const Spacer(),
-                        IconButton(
-                            splashRadius: size.width * numD06,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(
-                              Icons.close,
-                              color: Colors.black,
-                              size: size.width * numD06,
-                            ))
+                        Expanded(
+                            child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: avatarList.isEmpty
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                : StaggeredGrid.count(
+                                    crossAxisCount: 6,
+                                    mainAxisSpacing: 3.0,
+                                    crossAxisSpacing: 4.0,
+                                    axisDirection: AxisDirection.down,
+                                    children: avatarList.map<Widget>((item) {
+                                      return InkWell(
+                                        onTap: () {
+                                          int pos = avatarList.indexWhere(
+                                              (element) => element.selected);
+
+                                          if (pos >= 0) {
+                                            avatarList[pos].selected = false;
+                                          }
+                                          selectedAvatar = item.avatar;
+                                          selectedAvatarId = item.id;
+                                          item.selected = true;
+                                          showAvatarError = false;
+                                          avatarState(() {});
+                                          setState(() {});
+                                          Navigator.pop(context);
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            Image.network(
+                                              "$avatarBaseUrl/${item.avatar}",
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                                return Image.asset(
+                                                  "${commonImagePath}rabbitLogo.png",
+                                                  fit: BoxFit.contain,
+                                                  width: size.width * numD20,
+                                                  height: size.width * numD20,
+                                                );
+                                              },
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: Colors.black,
+                                                    strokeWidth: 2,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            if (item.selected)
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: Icon(
+                                                  Icons.check,
+                                                  color: Colors.black,
+                                                  size: size.width * numD06,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                          ),
+                        ))
                       ],
                     ),
-                  ),
-                  Expanded(
-                      child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: StaggeredGrid.count(
-                        crossAxisCount: 6,
-                        mainAxisSpacing: 3.0,
-                        crossAxisSpacing: 4.0,
-                        axisDirection: AxisDirection.down,
-                        children: avatarList.map<Widget>((item) {
-                          return InkWell(
-                            onTap: () {
-                              int pos = avatarList
-                                  .indexWhere((element) => element.selected);
-
-                              if (pos >= 0) {
-                                avatarList[pos].selected = false;
-                              }
-                              selectedAvatar = item.avatar;
-                              selectedAvatarId = item.id;
-                              item.selected = true;
-                              showAvatarError = false;
-                              avatarState(() {});
-                              setState(() {});
-                              Navigator.pop(context);
-                            },
-                            child: Stack(
-                              children: [
-                                Image.network(
-                                  "$avatarBaseUrl/${item.avatar}",
-                                  errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                    return Image.asset(
-                                      "${commonImagePath}rabbitLogo.png",
-                                      fit: BoxFit.contain,
-                                      width: size.width * numD20,
-                                      height: size.width * numD20,
-                                    );
-                                  },
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.black,
-                                        strokeWidth: 2,
-                                      ),
-                                    );
-                                  },
-                                ),
-                                if (item.selected)
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.black,
-                                      size: size.width * numD06,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ))
-                ],
-              ),
-            );
-          });
+                  );
+                });
+              });
         });
   }
 
@@ -1729,14 +1580,109 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  // String? checkSignupPhoneValidator(String? value) {
+  //   if (value!.isEmpty) {
+  //     return requiredText;
+  //   } else if (value.length < 10) {
+  //     return phoneErrorText;
+  //   } else if (phoneAlreadyExists) {
+  //     return phoneExistsErrorText;
+  //   }
+  //   return null;
+  // }
+
+  // Add this map at the top of your state class
+  static final Map<String, int> phoneNumberMaxLengthByCountry = {
+    // Format: '+CountryCode': maxDigits
+    '+1': 10, // USA, Canada
+    '+44': 10, // UK
+    '+91': 10, // India
+    '+33': 9, // France
+    '+49': 11, // Germany
+    '+39': 10, // Italy
+    '+34': 9, // Spain
+    '+81': 11, // Japan
+    '+86': 11, // China
+    '+61': 9, // Australia
+    '+55': 11, // Brazil
+    '+52': 10, // Mexico
+    '+7': 10, // Russia
+    '+27': 9, // South Africa
+    '+82': 10, // South Korea
+    '+90': 10, // Turkey
+    '+234': 10, // Nigeria
+    '+20': 10, // Egypt
+    '+92': 10, // Pakistan
+    '+880': 10, // Bangladesh
+    '+62': 12, // Indonesia
+    '+63': 10, // Philippines
+    '+84': 10, // Vietnam
+    '+66': 9, // Thailand
+    // Add more countries as needed
+  };
+
+  int _getMaxPhoneLength() {
+    return phoneNumberMaxLengthByCountry[selectedCountryCodePicker] ?? 15;
+  }
+
+  static final Map<String, Map<String, int>> phoneNumberLengthByCountryCode = {
+    '+1': {'min': 10, 'max': 10}, // USA, Canada
+    '+44': {'min': 10, 'max': 10}, // UK
+    '+91': {'min': 10, 'max': 10}, // India
+    '+33': {'min': 9, 'max': 9}, // France
+    '+49': {'min': 10, 'max': 11}, // Germany
+    '+39': {'min': 9, 'max': 10}, // Italy
+    '+34': {'min': 9, 'max': 9}, // Spain
+    '+81': {'min': 10, 'max': 11}, // Japan
+    '+86': {'min': 11, 'max': 11}, // China
+    '+61': {'min': 9, 'max': 9}, // Australia
+    '+55': {'min': 10, 'max': 11}, // Brazil
+    '+52': {'min': 10, 'max': 10}, // Mexico
+    '+7': {'min': 10, 'max': 10}, // Russia, Kazakhstan
+    '+27': {'min': 9, 'max': 9}, // South Africa
+    '+82': {'min': 9, 'max': 10}, // South Korea
+    '+90': {'min': 10, 'max': 10}, // Turkey
+    '+234': {'min': 10, 'max': 10}, // Nigeria
+    '+20': {'min': 10, 'max': 10}, // Egypt
+    '+92': {'min': 10, 'max': 10}, // Pakistan
+    '+880': {'min': 10, 'max': 10}, // Bangladesh
+    '+62': {'min': 9, 'max': 12}, // Indonesia
+    '+63': {'min': 10, 'max': 10}, // Philippines
+    '+84': {'min': 9, 'max': 10}, // Vietnam
+    '+66': {'min': 9, 'max': 9}, // Thailand
+    // Add more if needed
+  };
+
   String? checkSignupPhoneValidator(String? value) {
-    if (value!.isEmpty) {
+    if (value == null || value.isEmpty) {
       return requiredText;
-    } else if (value.length < 10) {
-      return phoneErrorText;
-    } else if (phoneAlreadyExists) {
+    }
+
+    String digitsOnly = value.trim().replaceAll(RegExp(r'\D+'), '');
+
+    // Default fallback
+    int minLength = 7;
+    int maxLength = 15;
+
+    // Try to get country-specific length
+    final countryData =
+        phoneNumberLengthByCountryCode[selectedCountryCodePicker];
+    if (countryData != null) {
+      minLength = countryData['min']!;
+      maxLength = countryData['max']!;
+    }
+
+    if (digitsOnly.length < minLength) {
+      return "Too short for selected country";
+    }
+    if (digitsOnly.length > maxLength) {
+      return "Too long for selected country";
+    }
+
+    if (phoneAlreadyExists) {
       return phoneExistsErrorText;
     }
+
     return null;
   }
 
@@ -1891,6 +1837,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           var list = map["response"] as List;
           avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
           debugPrint("AvatarList: ${avatarList.length}");
+          _avatarsNotifier.value = !_avatarsNotifier.value;
           setState(() {});
           break;
         case sendOtpUrlRequest:

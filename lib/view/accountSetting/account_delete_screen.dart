@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
@@ -216,7 +217,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: Image.asset(
-                                      "${commonImagePath}dog.png",
+                                      "assets/rabbits/delete_rabbit2.png",
                                       height: size.width * numD30,
                                       width: size.width * numD35,
                                       fit: BoxFit.cover,
@@ -313,13 +314,20 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
   }
 
   @override
-  void onResponse({required int requestCode, required String response}) {
+  void onResponse({required int requestCode, required String response}) async {
     try {
       switch (requestCode) {
         case deleteAccountUrlReq:
           var map = jsonDecode(response);
           debugPrint("deleteAccount response: $response");
           if (map["code"] == 200) {
+            await FirebaseAnalytics.instance.logEvent(
+              name: 'account deleted successfully',
+              parameters: {
+                'error': 'Account deleted successfully',
+                'timestamp': DateTime.now().toIso8601String(),
+              },
+            );
             sharedPreferences!.clear();
             googleSignIn.signOut();
             showToast(map['message']);
@@ -331,6 +339,14 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen>
       }
     } on Exception catch (e) {
       debugPrint("$e");
+
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'auto logout error on account delete',
+        parameters: {
+          'error': e.toString(),
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
     }
   }
 }

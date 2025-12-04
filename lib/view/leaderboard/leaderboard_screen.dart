@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
@@ -84,6 +85,7 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
@@ -152,7 +154,7 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
                             decoration: BoxDecoration(
                               color:
                                   selectedCountryCode == countryItem.countryCode
-                                      ? Colors.blue
+                                      ? colorThemePink
                                       : Colors.grey[300],
                               borderRadius:
                                   BorderRadius.circular(size.width * numD02),
@@ -275,7 +277,10 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
                                 ),
                                 Spacer(),
                                 Text(
-                                  "$currencySymbol${memberItem.totalEarnings}",
+                                  formatCurrency(
+                                      memberItem.totalEarnings, currencySymbol),
+
+                                  // "$currencySymbol${memberItem.totalEarnings}",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD04,
@@ -325,5 +330,31 @@ class LeaderboardScreenState extends State<LeaderboardScreen>
         });
         break;
     }
+  }
+
+  String formatCurrency(dynamic amount, String currencySymbol) {
+    double value = double.tryParse(amount.toString()) ?? 0.0;
+
+    String locale;
+    switch (currencySymbol) {
+      case '₹':
+        locale = 'en_IN';
+        break;
+      case '\$':
+        locale = 'en_US';
+        break;
+      case '£':
+        locale = 'en_GB';
+        break;
+      case '€':
+        locale = 'en_EU';
+        break;
+      default:
+        locale = 'en_US';
+    }
+
+    final format =
+        NumberFormat.currency(locale: locale, symbol: currencySymbol);
+    return format.format(value);
   }
 }
