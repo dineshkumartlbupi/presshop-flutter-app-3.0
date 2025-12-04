@@ -406,7 +406,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
     final PermissionState result = await PhotoManager.requestPermissionExtend();
     if (result.hasAccess) {
       List<AssetPathEntity> paths =
-          await PhotoManager.getAssetPathList(type: RequestType.all);
+          await PhotoManager.getAssetPathList(onlyAll: true);
       debugPrint("all Path values====>  $paths");
 
       if (paths.isNotEmpty) {
