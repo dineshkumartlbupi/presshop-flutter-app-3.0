@@ -76,8 +76,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   bool showCelebration = false;
   bool isLoading = false;
   String imageId = "", chatId = "", contentView = "", contentPurchased = "";
-  VideoPlayerController? _controller;
-  late Future<void> _initializeVideoPlayerFuture;
   lc.LocationData? locationData;
   lc.Location location = lc.Location();
   double latitude = 0, longitude = 0;
@@ -382,6 +380,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                 height: size.width * numD10,
                                 width: size.width * numD10,
                                 fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    "${commonImagePath}rabbitLogo.png", // Fallback image
+                                    height: size.width * numD10,
+                                    width: size.width * numD10,
+                                    fit: BoxFit.contain,
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -3023,83 +3029,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
               )
             : Container(),
       ],
-    );
-  }
-
-  Widget videoWidget(String videoUrl, var size) {
-    _controller = VideoPlayerController.file(File(videoUrl));
-    super.initState();
-    _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
-      setState(() {});
-    });
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Container(
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: VideoPlayer(_controller!)),
-                Container(
-                  padding: EdgeInsets.only(
-                      left: size.width * numD02, right: size.width * numD04),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            if (_controller!.value.isPlaying) {
-                              _controller!.pause();
-                            } else {
-                              _controller!.play();
-                            }
-                          });
-                        },
-                        child: Icon(
-                          _controller!.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                          size: size.width * numD08,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Expanded(
-                          child: Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: size.width * numD02),
-                        child: VideoProgressIndicator(
-                          _controller!,
-                          allowScrubbing: true,
-                          colors: VideoProgressColors(
-                            backgroundColor: Colors.black.withOpacity(0.2),
-                            playedColor: colorThemePink,
-                            bufferedColor: Colors.grey.withOpacity(0.5),
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                      )),
-                      Text(
-                        "${_controller!.value.duration.inSeconds}",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD025,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        } else {
-          return Center(
-            child: showLoader(),
-          );
-        }
-      },
     );
   }
 
