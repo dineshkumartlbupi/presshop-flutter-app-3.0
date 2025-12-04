@@ -404,52 +404,64 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 
   Future<void> getMedia() async {
     final PermissionState result = await PhotoManager.requestPermissionExtend();
-    if (result.hasAccess) {
-      List<AssetPathEntity> paths =
-          await PhotoManager.getAssetPathList(onlyAll: true);
-      debugPrint("all Path values====>  $paths");
 
-      if (paths.isNotEmpty) {
-        setState(() {
-          _path = paths.first;
-        });
-
-        totalEntitiesCount = await _path!.assetCountAsync;
-        debugPrint("Total entities count: $totalEntitiesCount");
-
-        List<AssetEntity> media =
-            await _path!.getAssetListPaged(page: page, size: _sizePerPage);
-        _mediaList = media;
-
-        debugPrint("Fetched media count: ${media.length}");
-        for (var asset in media) {
-          debugPrint("Asset type: ${asset.type}, ID: ${asset.id}");
-        }
-
-        hasMoreToLoad = media.length < totalEntitiesCount;
-      }
-      selectedList = List.filled(_mediaList.length, false);
-
-      if (selectedList.isNotEmpty) {
-        debugPrint("SelectedList: ${selectedList.first}");
-      } else {
-        debugPrint("SelectedList is empty");
-      }
-      debugPrint("SelectedList: ${selectedList.length}");
-      debugPrint("_mediaList.length: ${_mediaList.length}");
-      isLoading = true;
-      setState(() {});
-      if (!mounted) {
-        return;
-      }
-    } else {
+    if (!result.hasAccess) {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PermissionErrorScreen(permissionsStatus: {
-                    Permission.photos: false,
-                  })));
+        context,
+        MaterialPageRoute(
+          builder: (context) => PermissionErrorScreen(
+            permissionsStatus: {Permission.photos: false},
+          ),
+        ),
+      );
+      return;
     }
+
+    // 🔥 Use proper filter options
+    final filter = FilterOptionGroup(
+      containsPathModified: true,
+      imageOption: const FilterOption(),
+      videoOption: const FilterOption(
+        durationConstraint: DurationConstraint(
+          max: Duration(seconds: 600),
+        ),
+      ),
+      orders: [
+        OrderOption(
+          type: OrderOptionType.updateDate,
+          asc: false, // latest first
+        ),
+      ],
+    );
+
+    List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
+      type: RequestType.all,
+      onlyAll: true,
+      filterOption: filter,
+    );
+
+    if (paths.isEmpty) {
+      setState(() {
+        _mediaList = [];
+        selectedList = [];
+      });
+      return;
+    }
+
+    _path = paths.first;
+
+    totalEntitiesCount = await _path!.assetCountAsync;
+
+    List<AssetEntity> media =
+        await _path!.getAssetListPaged(page: 0, size: _sizePerPage);
+
+    setState(() {
+      page = 0;
+      _mediaList = media;
+      selectedList = List.filled(media.length, false);
+      hasMoreToLoad = _mediaList.length < totalEntitiesCount;
+      isLoading = true;
+    });
   }
 
   Future<void> _loadMoreAsset() async {
