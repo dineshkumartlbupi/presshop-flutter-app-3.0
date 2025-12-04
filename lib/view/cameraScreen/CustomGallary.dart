@@ -406,7 +406,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
     final PermissionState result = await PhotoManager.requestPermissionExtend();
     if (result.hasAccess) {
       List<AssetPathEntity> paths =
-          await PhotoManager.getAssetPathList(onlyAll: true);
+          await PhotoManager.getAssetPathList(type: RequestType.all);
       debugPrint("all Path values====>  $paths");
 
       if (paths.isNotEmpty) {
@@ -415,11 +415,17 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
         });
 
         totalEntitiesCount = await _path!.assetCountAsync;
+        debugPrint("Total entities count: $totalEntitiesCount");
+
         List<AssetEntity> media =
             await _path!.getAssetListPaged(page: page, size: _sizePerPage);
         _mediaList = media;
 
-        debugPrint("MyMedia: $media");
+        debugPrint("Fetched media count: ${media.length}");
+        for (var asset in media) {
+          debugPrint("Asset type: ${asset.type}, ID: ${asset.id}");
+        }
+
         hasMoreToLoad = media.length < totalEntitiesCount;
       }
       selectedList = List.filled(_mediaList.length, false);

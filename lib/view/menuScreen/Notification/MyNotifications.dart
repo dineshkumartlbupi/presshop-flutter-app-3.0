@@ -718,7 +718,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                             ),
                                           ),
                                           Text(
-                                            notificationList[index].title,
+                                            notificationList[index]
+                                                    .title
+                                                    .isNotEmpty
+                                                ? notificationList[index].title
+                                                : "No title",
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width * numD035,
@@ -749,31 +753,41 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                               height: size.width * numD04,
                                             ),
                                           ],
-                                          // if (notificationList[index]
-                                          //         .imageUrl
-                                          //         ?.isNotEmpty ==
-                                          //     true) ...[
-                                          //   SizedBox(
-                                          //       height: size.width * numD02),
-                                          //   Padding(
-                                          //     padding: EdgeInsets.symmetric(
-                                          //         vertical:
-                                          //             size.width * numD02),
-                                          //     child: ClipRRect(
-                                          //       borderRadius:
-                                          //           BorderRadius.circular(12),
-                                          //       child: InlineFlickPlayer(
-                                          //         videoUrl:
-                                          //             "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                                          //         height: 220,
-                                          //       ),
-                                          //     ),
-                                          //   ),
-                                          //   SizedBox(
-                                          //       height: size.width * numD02),
-                                          // ],
+                                          if (notificationList[index]
+                                                  .videoUrl
+                                                  ?.isNotEmpty ==
+                                              true) ...[
+                                            SizedBox(
+                                                height: size.width * numD02),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical:
+                                                      size.width * numD02),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: InlineFlickPlayer(
+                                                  videoUrl: notificationList[
+                                                              index]
+                                                          .videoUrl
+                                                          .isNotEmpty
+                                                      ? notificationList[index]
+                                                          .videoUrl
+                                                      : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                                                  height: 220,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                height: size.width * numD02),
+                                          ],
                                           Text(
-                                            notificationList[index].description,
+                                            notificationList[index]
+                                                    .description
+                                                    .isNotEmpty
+                                                ? notificationList[index]
+                                                    .description
+                                                : "No description",
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width * numD03,
