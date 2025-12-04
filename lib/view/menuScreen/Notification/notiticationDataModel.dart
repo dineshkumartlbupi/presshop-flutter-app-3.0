@@ -12,6 +12,7 @@ class NotificationData {
   String contentId = "";
   String broadcastId = "";
   String imageUrl = "";
+  String videoUrl = "";
 
   //String offerCount = "";
   bool exclusive = false;
@@ -31,6 +32,7 @@ class NotificationData {
       required this.contentId,
       required this.transactionDetailData,
       this.imageUrl = "",
+      this.videoUrl = "",
       //    required this.offerCount,
       required this.exclusive,
       this.broadcastId = ""});
@@ -59,6 +61,12 @@ class NotificationData {
       description: json['body'] ?? "",
 
       imageUrl: json['image_url'] ?? "",
+      //////////////////
+      //////////////////
+      //////////////////
+      //////////////////
+      //////////////////
+      videoUrl: json['video_url'] ?? "",
       messageType: json['message_type'] ?? "",
       time: json['createdAt'] ?? "",
 

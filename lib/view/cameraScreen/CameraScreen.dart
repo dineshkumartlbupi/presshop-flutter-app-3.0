@@ -44,11 +44,13 @@ String getRandomString(int length) {
 class CameraScreen extends StatefulWidget {
   final bool picAgain;
   final ScreenNameEnum previousScreen;
+  final bool autoInitialize;
 
   const CameraScreen({
     super.key,
     required this.picAgain,
     required this.previousScreen,
+    this.autoInitialize = true,
   });
 
   @override
@@ -130,8 +132,13 @@ class CameraScreenState extends State<CameraScreen>
     pageReplaced = false;
     _initialiseControllers();
     // getMedia();
-    if (cameras.isNotEmpty) {
-      initCamera(cameras[0]);
+    if (widget.autoInitialize) {
+      if (cameras.isNotEmpty) {
+        initCamera(cameras[0]);
+      } else {
+        debugPrint("No cameras found");
+        // Optionally show a toast or handle UI for no camera
+      }
     }
 
     selectedType = photoText;
@@ -169,6 +176,18 @@ class CameraScreenState extends State<CameraScreen>
       cameraController!.dispose();
       cameraController = null;
     }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void resumeCamera() {
+    if (cameraController == null || !cameraController!.value.isInitialized) {
+      debugPrint("Resuming camera manually");
+      if (cameras.isNotEmpty) {
+        initCamera(frontCamera && cameras.length > 1 ? cameras[1] : cameras[0]);
+      }
+    }
   }
 
   @override
@@ -184,7 +203,7 @@ class CameraScreenState extends State<CameraScreen>
     debugPrint("LifecycleState: $state");
     if (state == AppLifecycleState.inactive) {
       if (cameraController != null && cameraController!.value.isInitialized) {
-        // cameraController!.dispose();
+        cameraController!.dispose();
         // cameraController = null;
       }
     } else if (state == AppLifecycleState.resumed) {
@@ -193,7 +212,10 @@ class CameraScreenState extends State<CameraScreen>
         //   cameraController!.dispose();
         // }
         // cameraController = null;
-        // initCamera(frontCamera ? cameras[1] : cameras[0]);
+        if (cameras.isNotEmpty) {
+          initCamera(
+              frontCamera && cameras.length > 1 ? cameras[1] : cameras[0]);
+        }
       }
     }
     super.didChangeAppLifecycleState(state);
@@ -216,22 +238,27 @@ class CameraScreenState extends State<CameraScreen>
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
-    if (cameraController == null || !cameraController!.value.isInitialized) {
-      cameraController = CameraController(
-          cameraDescription, ResolutionPreset.max,
-          imageFormatGroup: ImageFormatGroup.jpeg);
+    if (cameraController != null) {
+      await cameraController!.dispose();
     }
+
+    cameraController = CameraController(cameraDescription, ResolutionPreset.max,
+        imageFormatGroup: ImageFormatGroup.jpeg);
 
     cameraValue = null;
     cameraValue = cameraController!.initialize().then((_) async {
       debugPrint("Initialiseddddddd");
       //  cameraController!.setZoomLevel(1.0 - 0.5);
-      _minAvailableExposureOffset =
-          await cameraController!.getMinExposureOffset();
-      _maxAvailableExposureOffset =
-          await cameraController!.getMaxExposureOffset();
-      _maxAvailableZoom = await cameraController!.getMaxZoomLevel();
-      _minAvailableZoom = await cameraController!.getMinZoomLevel();
+      try {
+        _minAvailableExposureOffset =
+            await cameraController!.getMinExposureOffset();
+        _maxAvailableExposureOffset =
+            await cameraController!.getMaxExposureOffset();
+        _maxAvailableZoom = await cameraController!.getMaxZoomLevel();
+        _minAvailableZoom = await cameraController!.getMinZoomLevel();
+      } catch (e) {
+        debugPrint("Error getting camera info: $e");
+      }
 
       if (!mounted) {
         debugPrint("NotMounted");
@@ -351,7 +378,11 @@ class CameraScreenState extends State<CameraScreen>
                           }
                           selectedType = photoText;
                           frontCamera = false;
-                          initCamera(cameras[0]);
+                          selectedType = photoText;
+                          frontCamera = false;
+                          if (cameras.isNotEmpty) {
+                            initCamera(cameras[0]);
+                          }
                           setState(() {});
                         },
                         child: FittedBox(
@@ -374,7 +405,9 @@ class CameraScreenState extends State<CameraScreen>
                           }
                           selectedType = videoText;
                           frontCamera = false;
-                          initCamera(cameras[0]);
+                          if (cameras.isNotEmpty) {
+                            initCamera(cameras[0]);
+                          }
 
                           setState(() {});
                         },
@@ -714,9 +747,13 @@ class CameraScreenState extends State<CameraScreen>
                             ),
                             InkWell(
                               onTap: () {
-                                frontCamera = !frontCamera;
-                                initCamera(
-                                    frontCamera ? cameras[1] : cameras[0]);
+                                if (cameras.length > 1) {
+                                  frontCamera = !frontCamera;
+                                  initCamera(
+                                      frontCamera ? cameras[1] : cameras[0]);
+                                } else {
+                                  showToast("Front camera not available");
+                                }
                               },
                               child: Container(
                                 padding: EdgeInsets.all(size.width * numD01),

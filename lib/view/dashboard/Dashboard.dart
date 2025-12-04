@@ -144,6 +144,7 @@ class DashboardState extends State<Dashboard>
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
+        autoInitialize: widget.initialPosition == 2,
       ),
       ChatBotScreen(),
       const MenuScreen()
@@ -969,13 +970,13 @@ class DashboardState extends State<Dashboard>
 
 // rajesh
 
-    // if (index == 2) {
-    //   // Turn camera ON
-    //   _cameraKey.currentState?.openCamera();
-    // } else {
-    //   // Turn camera OFF
-    //   _cameraKey.currentState?.closeCamera();
-    // }
+    if (index == 2) {
+      // Turn camera ON
+      _cameraKey.currentState?.resumeCamera();
+    } else {
+      // Turn camera OFF
+      _cameraKey.currentState?.closeCamera();
+    }
 
 /////
 
