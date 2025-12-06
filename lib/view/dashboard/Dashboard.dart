@@ -22,6 +22,7 @@ import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyProfile.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
+import 'package:presshop/view/menuScreen/feedScreen/FeedScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
 import '../../utils/AnalyticsConstants.dart';
@@ -146,7 +147,8 @@ class DashboardState extends State<Dashboard>
         previousScreen: ScreenNameEnum.dashboardScreen,
         autoInitialize: widget.initialPosition == 2,
       ),
-      ChatBotScreen(),
+      // ChatBotScreen(),
+      FeedScreen(),
       const MenuScreen()
       // MarketplaceScreen()
     ];
@@ -621,9 +623,14 @@ class DashboardState extends State<Dashboard>
                 label: cameraText),
             BottomNavigationBarItem(
                 icon: ImageIcon(
-                  AssetImage("${iconsPath}ic_chat.png"),
+                  AssetImage("${iconsPath}ic_feed.png"),
                 ),
-                label: chatText),
+                label: feedText),
+            // BottomNavigationBarItem(
+            //     icon: ImageIcon(
+            //       AssetImage("${iconsPath}ic_chat.png"),
+            //     ),
+            //     label: chatText),
             BottomNavigationBarItem(
                 icon: ImageIcon(
                   AssetImage("${iconsPath}ic_menu.png"),

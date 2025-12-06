@@ -72,7 +72,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
     return Scaffold(
         appBar: CommonAppBar(
           elevation: 0,
-          hideLeading: widget.hideLeading,
+          hideLeading: false,
           title: Padding(
             padding: EdgeInsets.only(
                 left: widget.hideLeading ? size.width * numD04 : 0),
@@ -696,7 +696,7 @@ class _ChatBotScreenState extends State<ChatBotScreen>
               ),
             ),
             SizedBox(
-              height: size.width * numD02,
+              height: size.width * numD10,
             ),
           ],
         ));

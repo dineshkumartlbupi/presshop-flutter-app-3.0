@@ -76,13 +76,16 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
-        hideLeading: false,
-        title: Text(
-          feedText.toTitleCase(),
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+        hideLeading: true,
+        title: Padding(
+          padding: EdgeInsets.only(left: true ? size.width * numD04 : 0),
+          child: Text(
+            "Feed",
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: size.width * appBarHeadingFontSize),
+          ),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -93,35 +96,80 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
         },
         actionWidget: [
           InkWell(
-              onTap: () {
-                showBottomSheet(size);
-              },
-              child: commonFilterIcon(size)),
+            onTap: () {
+              showBottomSheet(size);
+            },
+            child: commonFilterIcon(size),
+          ),
           SizedBox(
             width: size.width * numD02,
           ),
-          Container(
-            margin: EdgeInsets.only(
-                bottom: size.width * numD02, right: size.width * numD016),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
-              },
-              child: Image.asset(
-                "${commonImagePath}rabbitLogo.png",
-                height: size.width * numD07,
-                width: size.width * numD07,
-              ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Dashboard(initialPosition: 2)),
+                  (route) => false);
+            },
+            child: Image.asset(
+              "${commonImagePath}rabbitLogo.png",
+              height: size.width * numD07,
+              width: size.width * numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD02,
-          ),
+            width: size.width * numD04,
+          )
         ],
       ),
+      // appBar: CommonAppBar(
+      //   elevation: 0,
+      //   hideLeading: true,
+      //   title: Text(
+      //     feedText.toTitleCase(),
+      //     style: TextStyle(
+      //         color: Colors.black,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: size.width * appBarHeadingFontSize),
+      //   ),
+      //   centerTitle: false,
+      //   titleSpacing: 0,
+      //   size: size,
+      //   showActions: true,
+      //   leadingFxn: () {
+      //     Navigator.pop(context);
+      //   },
+      //   actionWidget: [
+      //     InkWell(
+      //         onTap: () {
+      //           showBottomSheet(size);
+      //         },
+      //         child: commonFilterIcon(size)),
+      //     SizedBox(
+      //       width: size.width * numD02,
+      //     ),
+      //     Container(
+      //       margin: EdgeInsets.only(
+      //           bottom: size.width * numD02, right: size.width * numD016),
+      //       child: InkWell(
+      //         onTap: () {
+      //           Navigator.of(context).pushAndRemoveUntil(
+      //               MaterialPageRoute(
+      //                   builder: (context) => Dashboard(initialPosition: 2)),
+      //               (route) => false);
+      //         },
+      //         child: Image.asset(
+      //           "${commonImagePath}rabbitLogo.png",
+      //           height: size.width * numD07,
+      //           width: size.width * numD07,
+      //         ),
+      //       ),
+      //     ),
+      //     SizedBox(
+      //       width: size.width * numD02,
+      //     ),
+      //   ],
+      // ),
       body: SafeArea(
           child: isLoading
               ? SmartRefresher(

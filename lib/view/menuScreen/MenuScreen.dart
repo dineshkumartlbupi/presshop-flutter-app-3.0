@@ -12,6 +12,7 @@ import 'package:presshop/view/authentication/LoginScreen.dart';
 import 'package:presshop/view/authentication/TermCheckScreen.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
 import 'package:presshop/view/bankScreens/MyBanksScreen.dart';
+import 'package:presshop/view/chatScreens/ChatCopy.dart';
 import 'package:presshop/view/leaderboard/leaderboard_screen.dart';
 import 'package:presshop/view/map/screens/marketplace_screen.dart';
 import 'package:presshop/view/menuScreen/ChangePassword.dart';
@@ -331,10 +332,10 @@ class MenuScreenState extends State<MenuScreen>
         icon: "${iconsPath}ic_ranking.png",
         classWidget: LeaderboardScreen()));
 
-    // menuList.add(MenuData(
-    //     name: "Map view",
-    //     icon: "${iconsPath}map2.png",
-    //     classWidget: MarketplaceScreen()));
+    menuList.add(MenuData(
+        name: "Map view",
+        icon: "${iconsPath}map2.png",
+        classWidget: MarketplaceScreen()));
 
     menuList.add(MenuData(
         name: myDraftText,
@@ -379,10 +380,15 @@ class MenuScreenState extends State<MenuScreen>
         icon: "${iconsPath}ic_feed.png",
         classWidget: MyNotificationScreen(count: notificationCount)));
 
+    // menuList.add(MenuData(
+    //     name: feedText,
+    //     icon: "${iconsPath}ic_feed.png",
+    //     classWidget: FeedScreen()));
+
     menuList.add(MenuData(
-        name: feedText,
-        icon: "${iconsPath}ic_feed.png",
-        classWidget: FeedScreen()));
+        name: "Chat",
+        icon: "${iconsPath}ic_chat.png",
+        classWidget: ChatBotScreen()));
 
     menuList.add(MenuData(
         name: "$ratingText & ${reviewText.toLowerCase()}",
