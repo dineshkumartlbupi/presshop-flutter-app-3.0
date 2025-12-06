@@ -64,13 +64,20 @@ class _InlineFlickPlayerState extends State<InlineFlickPlayer> {
     if (isInitializing) return;
     isInitializing = true;
 
-    previewController?.dispose();
+    // Dispose preview
+    await previewController?.dispose();
     previewController = null;
 
+    // Create new FlickManager
+    final videoPlayerController =
+        VideoPlayerController.network(widget.videoUrl);
+
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.network(widget.videoUrl),
+      videoPlayerController: videoPlayerController,
+      autoPlay: true, // Important
     );
 
+    // CRITICAL: Set this as the active manager (your manager handles singleton)
     InlineVideoControllerManager.setActive(flickManager!);
 
     setState(() {
@@ -78,10 +85,17 @@ class _InlineFlickPlayerState extends State<InlineFlickPlayer> {
     });
 
     try {
-      final controller =
-          flickManager!.flickVideoManager!.videoPlayerController!;
-      await controller.initialize();
+      await videoPlayerController.initialize();
+
+      // THIS IS THE KEY LINE: Unmute the video
+      await videoPlayerController.setVolume(1.0);
+      flickManager?.flickControlManager?.unmute();
+
+      // Optional: Ensure playback starts
       flickManager!.flickControlManager?.play();
+
+      // Extra safety: force unmute again after play
+      videoPlayerController.setVolume(1.0);
     } catch (e) {
       debugPrint('Video init error: $e');
     } finally {

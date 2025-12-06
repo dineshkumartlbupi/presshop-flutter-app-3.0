@@ -544,6 +544,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                             return InkWell(
                               onTap: () {
                                 // myProfileApi();
+                                print("lsfjssldfkjs");
+                                print(notificationList
+                                    .map((e) => print(e.videoUrl))
+                                    .toString());
 
                                 debugPrint(
                                     "Notification Type: ${notificationList[index].messageType}");
@@ -730,8 +734,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           if (notificationList[index]
-                                              .imageUrl
-                                              .isNotEmpty) ...[
+                                                  .imageUrl
+                                                  .isNotEmpty &&
+                                              notificationList[index]
+                                                  .videoUrl
+                                                  .isEmpty) ...[
                                             SizedBox(
                                               height: size.width * numD04,
                                             ),
