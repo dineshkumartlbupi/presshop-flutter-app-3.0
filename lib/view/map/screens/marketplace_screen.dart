@@ -48,12 +48,12 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
   double _currentZoom = 14.0;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  final String googleApiKey = 'AIzaSyAI46rVhROb5Dztv1aIDLvGH6QtGe3Addk';
+  // final String googleApiKey = 'AIzaSyAI46rVhROb5Dztv1aIDLvGH6QtGe3Addk';
+  final String googleApiKey = 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI';
   Offset? infoWindowOffset;
   Offset? _infoOffset;
   Offset? _polygonInfoOffset;
 
-  // Burst Animation
   late AnimationController _burstController;
   List<BurstParticle> _particles = [];
 
@@ -405,6 +405,12 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
                 return;
               }
 
+              // Close alert panel if open when clicking on map
+              if (state.showAlertPanel) {
+                mapController.toggleAlertPanel();
+                return;
+              }
+
               // Handle origin/destination selection for navigation
               if (state.isDestinationSelectionMode) {
                 final mapController = ref.read(mapControllerProvider.notifier);
@@ -688,44 +694,29 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
               child: AnimatedScale(
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeOutBack,
-                scale: state.showAlertPanel ? 1 : 0.6,
-                child: AlertPanel(
-                  onClose: mapController.toggleAlertPanel,
-                  onAlertSelected: (alertType) async {
-                    // Direct alert placement flow
-                    if (state.myLocation != null) {
-                      // 1. Add marker to map
-                      await mapController.addAlertMarker(
-                        alertType,
-                        state.myLocation!,
-                      );
+                alignment: Alignment.bottomLeft,
+                scale: state.showAlertPanel ? 1 : 0.0,
+                child: IgnorePointer(
+                  ignoring: !state.showAlertPanel,
+                  child: AlertPanel(
+                    onClose: mapController.toggleAlertPanel,
+                    onAlertSelected: (alertType) async {
+                      if (state.myLocation != null) {
+                        await mapController.addAlertMarker(
+                          alertType,
+                          state.myLocation!,
+                        );
 
-                      // 2. Trigger burst animation
-                      _addBurst(state.myLocation!, alertType);
+                        _addBurst(state.myLocation!, alertType);
 
-                      // 3. Emit socket event (if not already handled by addAlertMarker,
-                      // but addAlertMarker in controller now calls _createAndAddAlertMarker
-                      // which adds to state. We need to ensure it emits too or we call emit separately.
-                      // Looking at controller, addAlertMarker just calls _createAndAddAlertMarker.
-                      // _createAndAddAlertMarker adds to state but DOES NOT emit.
-                      // finalizeAlertMarker DOES emit.
-                      // So we should probably call emit here or update controller.
-                      // Let's call emit directly via socketService for now to be safe and quick,
-                      // or better, let's update addAlertMarker in controller to also emit?
-                      // The user said "take rferent to this code handle socket service" previously.
-                      // In the previous turn I updated MapController but I didn't change addAlertMarker to emit.
-                      // I only updated finalizeAlertMarker to emit.
-                      // So I should probably manually emit here or create a new method in controller.
-                      // Actually, let's just use the socketService from controller.
-
-                      mapController.socketService.emitAlert(
-                        alertType: alertType,
-                        position: state.myLocation!,
-                        userId:
-                            "67ed646cd9889612efdd464c", // Using the hardcoded ID from controller
-                      );
-                    }
-                  },
+                        mapController.socketService.emitAlert(
+                          alertType: alertType,
+                          position: state.myLocation!,
+                          userId: "67ed646cd9889612efdd464c",
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
@@ -740,8 +731,12 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
               child: AnimatedScale(
                 duration: const Duration(milliseconds: 450),
                 curve: Curves.easeOutBack,
-                scale: state.showGetDirectionCard ? 1 : 0.6,
-                child: const GetDirectionCard(),
+                alignment: Alignment.topRight,
+                scale: state.showGetDirectionCard ? 1 : 0.0,
+                child: IgnorePointer(
+                  ignoring: !state.showGetDirectionCard,
+                  child: const GetDirectionCard(),
+                ),
               ),
             ),
           ),

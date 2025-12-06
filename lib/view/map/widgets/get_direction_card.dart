@@ -26,8 +26,7 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
   bool _isLoading = false;
   LatLng? _selectedOrigin;
   LatLng? _selectedDestination;
-  LatLng?
-      _lastProcessedMapLocation; // Track last processed location to avoid reprocessing
+  LatLng? _lastProcessedMapLocation;
 
   @override
   void initState() {
@@ -73,8 +72,9 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
       });
       return;
     }
-
-    const googleApiKey = 'AIzaSyAI46rVhROb5Dztv1aIDLvGH6QtGe3Addk';
+// const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
+// const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
+    const googleApiKey = 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI';
     final url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
         "?input=$input"
         "&key=$googleApiKey"
@@ -115,7 +115,8 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
     String description, {
     bool isOrigin = false,
   }) async {
-    const googleApiKey = 'AIzaSyAI46rVhROb5Dztv1aIDLvGH6QtGe3Addk';
+    // const googleApiKey = 'AIzaSyAI46rVhROb5Dztv1aIDLvGH6QtGe3Addk';
+    const googleApiKey = 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI';
     final url = "https://maps.googleapis.com/maps/api/place/details/json"
         "?place_id=$placeId"
         "&key=$googleApiKey";
@@ -237,6 +238,9 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
     }
   }
 
+  final LayerLink _originLayerLink = LayerLink();
+  final LayerLink _destinationLayerLink = LayerLink();
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(mapControllerProvider);
@@ -256,7 +260,7 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
         clipBehavior: Clip.none,
         children: [
           Container(
-            width: 233,
+            width: 260,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -309,212 +313,113 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
                     Expanded(
                       child: Column(
                         children: [
-                          Stack(
-                            children: [
-                              TextField(
-                                controller: _currentLocationController,
-                                focusNode: _currentLocationFocusNode,
-                                onChanged: (value) =>
-                                    _searchPlaces(value, isOrigin: true),
-                                decoration: InputDecoration(
-                                  hintText: 'Your Location',
-                                  filled: true,
-                                  hintStyle: const TextStyle(fontSize: 12),
-                                  fillColor: Colors.grey.shade100,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 12,
+                          CompositedTransformTarget(
+                            link: _originLayerLink,
+                            child: TextField(
+                              controller: _currentLocationController,
+                              focusNode: _currentLocationFocusNode,
+                              onChanged: (value) =>
+                                  _searchPlaces(value, isOrigin: true),
+                              decoration: InputDecoration(
+                                hintText: 'Your Location',
+                                filled: true,
+                                hintStyle: const TextStyle(fontSize: 12),
+                                fillColor: Colors.grey.shade100,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 12,
+                                ),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1,
                                   ),
-                                  isDense: true,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey,
-                                      width: 1,
-                                    ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
+                                    width: 1.2,
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      color: Colors.black,
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                  suffixIcon: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.my_location,
-                                          size: 18,
-                                        ),
-                                        onPressed: _useCurrentLocation,
-                                        tooltip: 'Use Current Location',
+                                ),
+                                suffixIcon: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.my_location,
+                                        size: 18,
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.map, size: 18),
-                                        onPressed: () {
-                                          ref
-                                              .read(
-                                                mapControllerProvider.notifier,
-                                              )
-                                              .setDestinationSelectionMode(
-                                                true,
-                                                isOrigin: true,
-                                              );
-                                          _currentLocationFocusNode.unfocus();
-                                        },
-                                        tooltip: 'Select on Map',
-                                      ),
-                                    ],
-                                  ),
+                                      onPressed: _useCurrentLocation,
+                                      tooltip: 'Use Current Location',
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.map, size: 18),
+                                      onPressed: () {
+                                        ref
+                                            .read(
+                                              mapControllerProvider.notifier,
+                                            )
+                                            .setDestinationSelectionMode(
+                                              true,
+                                              isOrigin: true,
+                                            );
+                                        _currentLocationFocusNode.unfocus();
+                                      },
+                                      tooltip: 'Select on Map',
+                                    ),
+                                  ],
                                 ),
                               ),
-                              if (_showCurrentLocationDropdown &&
-                                  _currentLocationPredictions.isNotEmpty)
-                                Positioned(
-                                  top: 40,
-                                  left: 0,
-                                  right: 0,
-                                  child: Material(
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxHeight: 150,
-                                      ),
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        padding: EdgeInsets.zero,
-                                        itemCount:
-                                            _currentLocationPredictions.length,
-                                        itemBuilder: (context, index) {
-                                          final prediction =
-                                              _currentLocationPredictions[
-                                                  index];
-                                          return InkWell(
-                                            onTap: () {
-                                              _selectPlace(
-                                                prediction['place_id'],
-                                                prediction['description'],
-                                                isOrigin: true,
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 8,
-                                              ),
-                                              child: Text(
-                                                prediction['description'],
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
+                            ),
                           ),
                           const SizedBox(height: 12),
-                          Stack(
-                            children: [
-                              TextField(
-                                controller: _destinationController,
-                                focusNode: _destinationFocusNode,
-                                onChanged: (value) =>
-                                    _searchPlaces(value, isOrigin: false),
-                                decoration: InputDecoration(
-                                  hintText: 'Destination',
-                                  hintStyle: const TextStyle(fontSize: 12),
-                                  filled: true,
-                                  fillColor: Colors.grey.shade100,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 12,
+                          CompositedTransformTarget(
+                            link: _destinationLayerLink,
+                            child: TextField(
+                              controller: _destinationController,
+                              focusNode: _destinationFocusNode,
+                              onChanged: (value) =>
+                                  _searchPlaces(value, isOrigin: false),
+                              decoration: InputDecoration(
+                                hintText: 'Destination',
+                                hintStyle: const TextStyle(fontSize: 12),
+                                filled: true,
+                                fillColor: Colors.grey.shade100,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 12,
+                                ),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1,
                                   ),
-                                  isDense: true,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey,
-                                      width: 1,
-                                    ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
+                                    width: 1.2,
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      color: Colors.black,
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                  suffixIcon: IconButton(
-                                    icon: const Icon(Icons.map, size: 18),
-                                    onPressed: () {
-                                      // Enable map selection mode
-                                      ref
-                                          .read(mapControllerProvider.notifier)
-                                          .setDestinationSelectionMode(true);
-                                      _destinationFocusNode.unfocus();
-                                    },
-                                    tooltip: 'Select on Map',
-                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.map, size: 18),
+                                  onPressed: () {
+                                    // Enable map selection mode
+                                    ref
+                                        .read(mapControllerProvider.notifier)
+                                        .setDestinationSelectionMode(true);
+                                    _destinationFocusNode.unfocus();
+                                  },
+                                  tooltip: 'Select on Map',
                                 ),
                               ),
-                              if (_showDestinationDropdown &&
-                                  _destinationPredictions.isNotEmpty)
-                                Positioned(
-                                  top: 40,
-                                  left: 0,
-                                  right: 0,
-                                  child: Material(
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxHeight: 150,
-                                      ),
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        padding: EdgeInsets.zero,
-                                        itemCount:
-                                            _destinationPredictions.length,
-                                        itemBuilder: (context, index) {
-                                          final prediction =
-                                              _destinationPredictions[index];
-                                          return InkWell(
-                                            onTap: () {
-                                              _selectPlace(
-                                                prediction['place_id'],
-                                                prediction['description'],
-                                                isOrigin: false,
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 8,
-                                              ),
-                                              child: Text(
-                                                prediction['description'],
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
@@ -603,6 +508,96 @@ class _GetDirectionCardState extends ConsumerState<GetDirectionCard> {
               child: Container(width: 22, height: 22, color: Colors.white),
             ),
           ),
+
+          /// ------- DROPDOWNS (On Top) -------
+          if (_showCurrentLocationDropdown &&
+              _currentLocationPredictions.isNotEmpty)
+            CompositedTransformFollower(
+              link: _originLayerLink,
+              showWhenUnlinked: false,
+              offset: const Offset(0, 40),
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxHeight: 150,
+                    maxWidth: 200, // Match approx width of text field
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: _currentLocationPredictions.length,
+                    itemBuilder: (context, index) {
+                      final prediction = _currentLocationPredictions[index];
+                      return InkWell(
+                        onTap: () {
+                          _selectPlace(
+                            prediction['place_id'],
+                            prediction['description'],
+                            isOrigin: true,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            prediction['description'],
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+
+          if (_showDestinationDropdown && _destinationPredictions.isNotEmpty)
+            CompositedTransformFollower(
+              link: _destinationLayerLink,
+              showWhenUnlinked: false,
+              offset: const Offset(0, 40),
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxHeight: 150,
+                    maxWidth: 200,
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: _destinationPredictions.length,
+                    itemBuilder: (context, index) {
+                      final prediction = _destinationPredictions[index];
+                      return InkWell(
+                        onTap: () {
+                          _selectPlace(
+                            prediction['place_id'],
+                            prediction['description'],
+                            isOrigin: false,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            prediction['description'],
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
