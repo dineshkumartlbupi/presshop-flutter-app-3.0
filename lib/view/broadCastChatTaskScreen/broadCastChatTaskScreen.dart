@@ -3674,6 +3674,8 @@ class _LoadingDialogContentState extends State<LoadingDialogContent> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     String dots = "." * _dotCount;
     String text;
     if (widget.progress >= 1.0) {
@@ -3696,11 +3698,11 @@ class _LoadingDialogContentState extends State<LoadingDialogContent> {
             // const SizedBox(height: 0),
             Text(
               text,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.none),
+              style: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * numD035,
+                  color: const Color.fromARGB(255, 204, 208, 208),
+                  fontWeight: FontWeight.normal),
             ),
           ],
         ),

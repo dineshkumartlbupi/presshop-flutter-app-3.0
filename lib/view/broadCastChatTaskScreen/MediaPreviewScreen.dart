@@ -121,12 +121,12 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                       "value:::::$value::::::::${value.first.path}");
                                   List<CameraData> temData = value;
                                   temData.forEach((element) {
-                                    widget.mediaList.add(
+                                    widget.mediaList.insert(
+                                      0,
                                       MediaData(
                                         isFromGallery: element.fromGallary,
                                         dateTime: "",
-                                        latitude:
-                                            "", // You might need to pass this or get it
+                                        latitude: "",
                                         location: "",
                                         longitude: "",
                                         mediaPath: element.path,
