@@ -19,7 +19,6 @@ class AlertButtonMap extends StatelessWidget {
           ),
         ],
       ),
-
       child: Row(
         spacing: 10,
         children: [
