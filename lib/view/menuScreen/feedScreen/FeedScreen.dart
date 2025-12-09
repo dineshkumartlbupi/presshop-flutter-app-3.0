@@ -184,6 +184,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                           horizontal: size.width * numD04,
                           vertical: size.width * numD04),
                       itemBuilder: (context, index) {
+                        print("feedDataListsdflkdsf");
+                        print(feedDataList[index].categoryName);
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
