@@ -878,7 +878,42 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             fontWeight: FontWeight.w600),
                                       ),
                                     )
-                                  : Container(),
+                                  : Container(
+                                      height: size.width * numD065,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * numD04,
+                                          vertical: size.width * numD01),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          color: item.status == "accepted"
+                                              // && item.totalAmount == "0"
+                                              ? Colors.black
+                                              : const Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD015)),
+                                      child: Text(""),
+                                    )
+
+                              // : Container(
+                              //     alignment: Alignment.center,
+                              //     height: size.width * numD08,
+                              //     padding: EdgeInsets.symmetric(
+                              //         horizontal: size.width * numD05,
+                              //         vertical: size.width * numD01),
+                              //     decoration: BoxDecoration(
+                              //         color: Colors.black,
+                              //         borderRadius: BorderRadius.circular(
+                              //             size.width * numD015)),
+                              //     child: Text(
+                              //       "$currencySymbol${item.totalAmount}",
+                              //       style: commonTextStyle(
+                              //           size: size,
+                              //           fontSize: size.width * numD025,
+                              //           color: Colors.white,
+                              //           fontWeight: FontWeight.w600),
+                              //     ),
+                              //   )
                             ],
                           ),
 
@@ -1230,15 +1265,18 @@ class MyTaskScreenState extends State<MyTaskScreen>
   }
 
   void _onRefresh() async {
+    print("on refresh called");
     await Future.delayed(const Duration(milliseconds: 1000));
-    if (!mounted) return; // FIX
+    if (!mounted) return;
     setState(() {
       _showData = false;
       _offset = 0;
       if (_tabController.index == 0) {
+        print("All List on Refresh : $allTaskList");
         callAllTaskApi();
       } else {
         taskList.clear();
+        print("Filter List on Refresh : $filterList");
         callAllLocalGetTaskApi();
       }
     });
@@ -1354,83 +1392,78 @@ class MyTaskScreenState extends State<MyTaskScreen>
   @override
   void onResponse({required int requestCode, required String response}) {
     switch (requestCode) {
-      case getAllMyTaskReq: // ← Local Tasks Tab
+      case getAllMyTaskReq:
         {
           var data = jsonDecode(response);
-          var dataModel = data["data"] as List? ?? [];
-          var pendingTaskList = data["pending_unaccepted"] as List? ?? [];
+          debugPrint("getAllMyTaskReq Success : $data");
 
-          var newAcceptedTasks =
-              dataModel.map((e) => MyTaskModel.fromJson(e)).toList();
-          var newPendingTasks =
-              pendingTaskList.map((e) => PendingTask.fromJson(e)).toList();
+          var dataModel = data["data"] as List;
 
-          // Clear only on refresh (first page)
+          var pendingTaskList = data["pending_unaccepted"] as List;
+          var list = dataModel.map((e) => MyTaskModel.fromJson(e)).toList();
+          var pendingList = pendingTaskList.isNotEmpty
+              ? pendingTaskList.map((e) => PendingTask.fromJson(e)).toList()
+              : <PendingTask>[];
+
+          if (list.isNotEmpty) {
+            _refreshController.loadComplete();
+          } else if (list.isEmpty) {
+            _refreshController.loadNoData();
+          } else {
+            _refreshController.loadFailed();
+          }
+
           if (_offset == 0) {
             taskList.clear();
           }
 
-          // Add items only if they don't exist (prevent duplicates)
-          int oldCount = taskList.length;
-
-          for (var task in newAcceptedTasks) {
-            if (!taskList.any((e) =>
-                e is MyTaskModel && e.taskDetail?.id == task.taskDetail?.id)) {
-              taskList.add(task);
-            }
-          }
-          for (var task in newPendingTasks) {
-            if (!taskList.any(
-                (e) => e is PendingTask && e.broadCastId == task.broadCastId)) {
-              taskList.add(task);
-            }
-          }
-
-          int newAddedCount = taskList.length - oldCount;
-
+          taskList.addAll(list);
+          taskList.addAll(pendingList);
+          debugPrint("taskList Length : ${taskList.length}");
           _showData = true;
 
-          // CRITICAL FIX: Check if ANY new items were added
-          if (newAddedCount == 0) {
-            // No new items → this is the end
-            _refreshController.loadNoData();
-          } else {
-            // New items added → allow loading more
-            _refreshController.loadComplete();
+          if (mounted) {
+            setState(() {});
           }
-
-          if (mounted) setState(() {});
           break;
         }
 
       case getAllTaskReq:
         {
+          // var data = jsonDecode(response);
+          // var dataModel = data["data"] as List;
+
+          // var list = dataModel.map((e) => AllTaskModel.fromJson(e)).toList();
+
+          // if (mounted) setState(() {});
+          // break;
+
           var data = jsonDecode(response);
-          var list = (data['data'] as List)
-              .map((e) => AllTaskModel.fromJson(e))
-              .toList();
+          debugPrint("getAllMyTaskReq Success : $data");
 
-          if (_offset == 0) {
-            allTaskList.clear();
-          }
+          var dataModel = data["data"] as List;
 
-          // Remove duplicates by ID
-          for (var task in list) {
-            if (!allTaskList.any((existing) => existing.id == task.id)) {
-              allTaskList.add(task);
-            }
-          }
+          var list = dataModel.map((e) => AllTaskModel.fromJson(e)).toList();
 
-          _showData = true;
-
-          if (list.isEmpty) {
+          if (list.isNotEmpty) {
+            _refreshController.loadComplete();
+          } else if (list.isEmpty) {
             _refreshController.loadNoData();
           } else {
-            _refreshController.loadComplete();
+            _refreshController.loadFailed();
           }
 
-          if (mounted) setState(() {});
-          break;
+          if (_offset == 0) {
+            taskList.clear();
+          }
+
+          allTaskList.addAll(list);
+          debugPrint("taskList Length : ${taskList.length}");
+          _showData = true;
+
+          if (mounted) {
+            setState(() {});
+          }
         }
 
       /// Get BroadCast task Detail
