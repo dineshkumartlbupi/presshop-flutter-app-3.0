@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/main.dart';
@@ -7,6 +8,10 @@ import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'package:path/path.dart' as path;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/CommonAppBar.dart';
@@ -24,12 +29,20 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   String userId = "0";
   String userImage = "";
   String userName = "";
+  String fullName = "";
 
   @override
   void initState() {
     super.initState();
-    getUserData();
+    fetchProfileImageFileName();
+    String firstName = sharedPreferences!.getString(firstNameKey) ?? "Hopper";
+    String lastName = sharedPreferences!.getString(lastNameKey) ?? "";
+    fullName = firstName + (lastName.isNotEmpty ? " " + lastName : "");
   }
+
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+  bool _isUploading = false;
 
   Future<void> _launchURL() async {
     const url = 'https://www.presshop.co.uk';
@@ -37,6 +50,203 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       await launch(url);
     } else {
       throw 'Could not launch $url';
+    }
+  }
+
+  var url = "https://dev-cdn.presshop.news/public/user/";
+
+  void _showImagePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+        _uploadImage(_imageFile!);
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
+    }
+  }
+
+  void fetchProfileImageFileName() async {
+    try {
+      setState(() {
+        _isUploading = true;
+      });
+
+      var dio = Dio();
+      dio.options.headers["Authorization"] =
+          "Bearer ${sharedPreferences!.getString(tokenKey)}";
+
+      var response = await dio.get(baseUrl + myProfileUrl);
+
+      if (response.statusCode == 200) {
+        var jsonResponse = response.data;
+
+        // Safely extract userData
+        var userData = jsonResponse["userData"] ??
+            jsonResponse["data"]; // fallback if structure differs
+
+        if (userData == null) {
+          debugPrint("No userData found in response");
+          setState(() {
+            userImage = "";
+            _isUploading = false;
+          });
+          return;
+        }
+
+        // Safely get profile_image (it can be null, empty, or missing)
+        String? profileImageFileName = userData["profile_image"];
+
+        // Also get user name while we're here
+        String? fetchedUserName =
+            userData["user_name"] ?? userData["first_name"] ?? "Hopper";
+
+        setState(() {
+          userName = fetchedUserName ??
+              sharedPreferences!.getString(userNameKey) ??
+              "Hopper";
+
+          if (profileImageFileName != null &&
+              profileImageFileName.toString().trim().isNotEmpty) {
+            userImage = url + profileImageFileName.trim();
+          } else {
+            userImage = ""; // Explicitly mark as no image
+          }
+
+          _isUploading = false;
+        });
+
+        print("Profile Image URL: $userImage");
+        print("User Name: $userName");
+      } else {
+        debugPrint("Failed to fetch profile. Status: ${response.statusCode}");
+      }
+    } catch (e, stack) {
+      debugPrint("Error in fetchProfileImageFileName: $e");
+      debugPrint("Stack Trace: $stack");
+
+      setState(() {
+        _isUploading = false;
+        userImage = ""; // Ensure UI shows placeholder on error
+      });
+    }
+  }
+
+  void editProfileApiForSaveImageName(String imageName) async {
+    try {
+      sharedPreferences!.getString(emailKey);
+      FormData formData = FormData.fromMap({
+        "profile_image": imageName,
+        "user_name": sharedPreferences!.getString(userNameKey),
+        "email": sharedPreferences!.getString(emailKey),
+        "phone": sharedPreferences!.getString(phoneKey),
+      });
+
+      var dio = Dio();
+      dio.options.headers["Authorization"] =
+          "Bearer ${sharedPreferences!.getString(tokenKey)}";
+
+      var response = await dio.patch(
+        baseUrl + editProfileUrl,
+        data: formData,
+      );
+
+      debugPrint("Edit Response: ${response.data}");
+    } catch (e) {
+      debugPrint("Edit API Error: $e");
+    }
+  }
+
+  Future<void> _uploadImage(File file) async {
+    setState(() {
+      _isUploading = true;
+    });
+
+    try {
+      String fileName = path.basename(file.path);
+      FormData formData = FormData.fromMap({
+        "media": await MultipartFile.fromFile(file.path, filename: fileName),
+        "path": "user",
+      });
+
+      var dio = Dio();
+      dio.options.headers["Authorization"] =
+          "Bearer ${sharedPreferences!.getString(tokenKey)}";
+
+      var response = await dio.post(
+        baseUrl + uploadUserMediaUrl,
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        String mediaUrl = data['mediaurl'];
+        String savedFileName = data['fileName']; // "user/..."
+
+        editProfileApiForSaveImageName(savedFileName);
+        setState(() {
+          userImage = mediaUrl;
+          _isUploading = false;
+        });
+
+        sharedPreferences!.setString(avatarKey, "${url + savedFileName}");
+
+        // Fluttertoast.showToast(msg: "Avatar updated successfully");
+
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text("Profile image updated successfully"),
+        //     backgroundColor: Colors.green,
+        //   ),
+        // );
+
+        showSnackBar(
+            "Success", "Profile image updated successfully", Colors.green);
+      } else {
+        setState(() {
+          _isUploading = false;
+        });
+        Fluttertoast.showToast(msg: "Failed to upload image");
+      }
+    } catch (e) {
+      setState(() {
+        _isUploading = false;
+      });
+      debugPrint("Error uploading image: $e");
+      Fluttertoast.showToast(msg: "Error uploading image");
     }
   }
 
@@ -165,20 +375,109 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                       ),
 
                       Center(
-                        child: Image.network(
-                          height: size.height * numD25,
-                          width: size.width * numD60,
-                          // width: size.width,
-                          userImage,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, exception, stacktrace) {
-                            return Padding(
-                              padding: EdgeInsets.all(size.width * numD07),
-                              child: Image.asset(
-                                "${commonImagePath}rabbitLogo.png",
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            _isUploading
+                                ? Container(
+                                    height: size.width * numD60,
+                                    width: size.width * numD70,
+                                    alignment: Alignment.center,
+                                    child: const CircularProgressIndicator(),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04),
+                                    child: CachedNetworkImage(
+                                      imageUrl: userImage.isEmpty
+                                          ? "https://via.placeholder.com/300"
+                                          : userImage,
+                                      height: size.width * numD60,
+                                      width: size.width * numD70,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(
+                                        height: size.width * numD60,
+                                        width: size.width * numD70,
+                                        alignment: Alignment.center,
+                                        child: const CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        height: size.width * numD65,
+                                        width: size.width * numD70,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 223, 223, 223)),
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD04),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "${iconsPath}ic_user.png",
+                                              width: size.width * numD11,
+                                              color: Colors.grey,
+                                            ),
+                                            SizedBox(
+                                                height: size.width * numD03),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 10),
+                                              child: Text(
+                                                "Upload a recent photo or take a selfie. It’s helps you show that you're a verified Hopper, and part of the  PressHop community. Cheers",
+                                                style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width * numD03,
+                                                  color: colorHint,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                                textAlign: TextAlign.justify,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            // Edit button
+                            Positioned(
+                              right: size.width * numD02,
+                              bottom: size.width * numD02,
+                              child: InkWell(
+                                onTap: _showImagePicker,
+                                child: Container(
+                                  padding: EdgeInsets.all(size.width * 0.007),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.all(size.width * 0.005),
+                                    decoration: const BoxDecoration(
+                                      color: colorThemePink,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Icon(
+                                        Icons.edit_outlined,
+                                        color: Colors.white,
+                                        size: size.width * numD04,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(
@@ -188,10 +487,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                       /// User name
                       Center(
                         child: Text(
-                          userName,
+                          fullName,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD06,
+                              fontSize: size.width * numD05,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
@@ -681,16 +980,5 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         ),
       ),
     );
-  }
-
-  void getUserData() {
-    userImage =
-        avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
-    userName = sharedPreferences!.getString(userNameKey)!;
-    userId = sharedPreferences!.getString(hopperIdKey) ?? "";
-
-    debugPrint("OriginalName: $userName");
-
-    setState(() {});
   }
 }

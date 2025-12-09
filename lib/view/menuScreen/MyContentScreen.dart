@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/utils/Common.dart';
@@ -8,6 +11,7 @@ import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:presshop/view/menuScreen/MyContentDetailScreen.dart';
+import 'package:presshop/view/menuScreen/myContentScreen/myContentDataModal.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../main.dart';
 import '../../utils/AnalyticsConstants.dart';
@@ -15,9 +19,7 @@ import '../../utils/AnalyticsMixin.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
 import '../myEarning/MyEarningScreen.dart';
-import '../publishContentScreen/HashTagSearchScreen.dart';
-import '../publishContentScreen/TutorialsScreen.dart';
-import 'MyDraftScreen.dart';
+
 import 'package:presshop/view/menuScreen/AllContentModel.dart';
 
 class MyContentScreen extends StatefulWidget {
@@ -1395,29 +1397,75 @@ class MyContentScreenState extends State<MyContentScreen>
         .callRequestServiceHeader(showLoader, "get", params);
   }
 
-  void allContentApi(bool showLoader) {
-    Map<String, dynamic> params = {};
-    NetworkClass(allContentUrl, this, allContentUrlRequest)
-        .callRequestServiceHeader(showLoader, "post", params);
+  Future<void> allContentApi(bool showLoader) async {
+    try {
+      final sp = await SharedPreferences.getInstance();
+      String token = sp.getString(tokenKey) ?? "";
+      var dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer $token";
+      dio.options.headers["Content-Type"] = "application/json";
+
+      debugPrint(
+          "MyContentScreen: calling allContentApi with limit $allLimit, offset $allOffset");
+
+      var response = await dio.post(
+        baseUrl + allContentUrl,
+        data: {"limit": allLimit, "offset": allOffset},
+      );
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        debugPrint("allContentApi Response Success: $data");
+
+        if (data["data"] != null) {
+          var listModel = data["data"] as List;
+          var list = listModel.map((e) => AllContentData.fromJson(e)).toList();
+
+          if (mounted) {
+            setState(() {
+              if (allOffset == 0) {
+                allContentList.clear();
+                _allRefreshController.refreshCompleted();
+              }
+              allContentList.addAll(list);
+              showAllData = true;
+            });
+
+            if (list.length < allLimit) {
+              _allRefreshController.loadNoData();
+            } else {
+              _allRefreshController.loadComplete();
+            }
+          }
+        } else {
+          if (mounted) {
+            _allRefreshController.loadNoData();
+            setState(() {});
+          }
+        }
+      } else {
+        debugPrint("allContentApi Response Error ${response.statusCode}");
+        if (mounted) {
+          _allRefreshController.loadFailed();
+        }
+      }
+    } catch (e) {
+      debugPrint("MyContentScreen: API Exception $e");
+      if (mounted) {
+        _allRefreshController.loadFailed();
+      }
+    }
   }
 
   void _onAllRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    setState(() {
-      showAllData = false;
-      allOffset = 0;
-      allContentList.clear();
-      allContentApi(true);
-    });
-    _allRefreshController.refreshCompleted();
+    allOffset = 0;
+    allContentApi(true);
   }
 
   void _onAllLoading() async {
     await Future.delayed(const Duration(milliseconds: 1000));
-    allOffset += 10;
+    allOffset += allLimit;
     allContentApi(false);
-    setState(() {});
-    _allRefreshController.loadComplete();
   }
 
   @override
@@ -1461,271 +1509,9 @@ class MyContentScreenState extends State<MyContentScreen>
           showData = true;
           setState(() {});
           break;
-
-        case allContentUrlRequest:
-          var map = jsonDecode(response);
-          log("allContentResponse: $response");
-          // Assuming response structure has 'data' as per curl snippet.
-          // If there is a 'code' field checking it is good practice, but not shown in snippet.
-          // Snippet: { "data": [...], "count": 103 }
-
-          if (map["data"] != null) {
-            var listModel = map["data"] as List;
-            var list =
-                listModel.map((e) => AllContentData.fromJson(e)).toList();
-
-            if (list.isNotEmpty) {
-              _allRefreshController.loadComplete();
-            } else if (list.isEmpty) {
-              _allRefreshController.loadNoData();
-            } else {
-              _allRefreshController.loadFailed();
-            }
-
-            if (allOffset == 0) {
-              allContentList.clear();
-            }
-
-            allContentList.addAll(list);
-          }
-          showAllData = true;
-          setState(() {});
-          break;
       }
     } on Exception catch (e) {
       debugPrint("$e");
     }
-  }
-}
-
-//  paymentStatus:
-//                                               myContentList[index].status,
-//                                           exclusive:
-//                                               myContentList[index].exclusive,
-//                                           contentId: myContentList[index].id,
-//                                           purchasedMediahouseCount:
-//                                               myContentList[index]
-//                                                   .purchasedMediahouseCount,
-//                                           offerCount:
-//                                               myContentList[index].offerCount,
-
-// status
-// shared
-// _id
-// purchased_mediahouse
-// offer_content_size
-
-class MyContentData {
-  String id = "";
-  String title = "";
-  String textValue = "";
-  String time = "";
-  String location = "";
-  String latitude = "";
-  String longitude = "";
-  String amount = "";
-  String originalAmount = "";
-  String totalEarning = "";
-  String status = "";
-  String soldStatus = "";
-  String paidStatus = "";
-  String contentType = "";
-  String dateTime = "";
-  bool isPaidStatusToHopper = false;
-  bool exclusive = false;
-  bool showVideo = false;
-  String audioDescription = '';
-  List<ContentMediaData> contentMediaList = [];
-  List<HashTagData> hashTagList = [];
-  CategoryDataModel? categoryData;
-  String completionPercent = "";
-  String discountPercent = "";
-  int leftPercent = 0;
-  int offerCount = 0;
-  String mediaHouseName = '';
-  String categoryId = '';
-  int contentView = 0;
-  int purchasedMediahouseCount = 0;
-  String userId = "";
-
-  MyContentData({
-    required this.id,
-    required this.title,
-    required this.textValue,
-    required this.time,
-    required this.location,
-    required this.latitude,
-    required this.longitude,
-    required this.amount,
-    required this.originalAmount,
-    required this.status,
-    required this.soldStatus,
-    required this.paidStatus,
-    required this.contentType,
-    required this.dateTime,
-    required this.isPaidStatusToHopper,
-    required this.exclusive,
-    required this.showVideo,
-    required this.audioDescription,
-    required this.contentMediaList,
-    required this.hashTagList,
-    required this.categoryData,
-    required this.completionPercent,
-    required this.discountPercent,
-    required this.leftPercent,
-    required this.offerCount,
-    required this.mediaHouseName,
-    required this.categoryId,
-    required this.contentView,
-    required this.purchasedMediahouseCount,
-    required this.totalEarning,
-  });
-
-  MyContentData.fromJson(json) {
-    id = json["_id"];
-    exclusive = json["type"] == "shared" ? false : true;
-    dateTime = json["timestamp"].toString();
-    purchasedMediahouseCount = (json["purchased_mediahouse"] as List).length;
-    time = json["timestamp"].toString();
-    title = json["heading"] ?? "";
-    textValue = json["description"] ?? "";
-    location = json["location"] ?? "";
-    latitude = json["latitude"].toString();
-    longitude = json["longitude"].toString();
-    amount = json["original_ask_price"] != null
-        ? json["original_ask_price"].toString()
-        : "0";
-    originalAmount = json["original_ask_price"] != null
-        ? json["original_ask_price"].toString()
-        : "0";
-
-    totalEarning = json["total_earnings"] != null
-        ? json["total_earnings"].toString()
-        : "0";
-    contentView = json["content_view_count_by_marketplace_for_app"];
-    status = json["status"].toString();
-    discountPercent = json["discount_percent"] ?? "";
-    soldStatus = json["sale_status"] ?? '';
-
-    paidStatus = json["paid_status"].toString();
-
-    isPaidStatusToHopper = json["paid_status_to_hopper"] ?? false;
-    contentType = json['type'] ?? '';
-    offerCount = json['offer_content_size'] ?? 0;
-
-    mediaHouseName = json['purchased_publication_details'] != null
-        ? json['purchased_publication_details']['company_name'] ?? ""
-        : "";
-    audioDescription = json['audio_description'] ?? '';
-    categoryId = json['category_id'] ?? '';
-    if (json["content"] != null) {
-      var contentList = json["content"] as List;
-      contentMediaList =
-          contentList.map((e) => ContentMediaData.fromJson(e)).toList();
-    }
-    if (json["tagData"] != null) {
-      var tagList = json["tagData"] as List;
-      hashTagList = tagList.map((e) => HashTagData.fromJson(e)).toList();
-    }
-    if (json["categoryData"] != null) {
-      categoryData = CategoryDataModel.fromJson(json["categoryData"]);
-    }
-
-    int count = 0;
-
-    if (textValue.trim().isNotEmpty) {
-      count += 1;
-    }
-    if (time.trim().isNotEmpty) {
-      count += 1;
-    }
-
-    if (location.trim().isNotEmpty) {
-      count += 1;
-    }
-
-    if (amount.trim().isNotEmpty) {
-      count += 1;
-    }
-
-    if (contentMediaList.isNotEmpty) {
-      count += 1;
-    }
-
-    if (hashTagList.isNotEmpty) {
-      count += 1;
-    }
-
-    if (categoryData != null) {
-      count += 1;
-    }
-
-    completionPercent = ((count * 14.286) / 100).round().toString();
-    leftPercent = ((7 - count) * 14.286).round();
-  }
-
-  MyContentData copyWith({
-    String? id,
-    String? title,
-    String? textValue,
-    String? time,
-    String? location,
-    String? latitude,
-    String? longitude,
-    String? amount,
-    String? originalAmount,
-    String? totalEarning,
-    String? status,
-    String? soldStatus,
-    String? paidStatus,
-    String? contentType,
-    String? dateTime,
-    bool? isPaidStatusToHopper,
-    bool? exclusive,
-    bool? showVideo,
-    String? audioDescription,
-    List<ContentMediaData>? contentMediaList,
-    List<HashTagData>? hashTagList,
-    CategoryDataModel? categoryData,
-    String? completionPercent,
-    String? discountPercent,
-    int? leftPercent,
-    int? offerCount,
-    String? mediaHouseName,
-    String? categoryId,
-    int? contentView,
-  }) {
-    return MyContentData(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        textValue: textValue ?? this.textValue,
-        time: time ?? this.time,
-        location: location ?? this.location,
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude,
-        amount: amount ?? this.amount,
-        originalAmount: originalAmount ?? this.originalAmount,
-        status: status ?? this.status,
-        soldStatus: soldStatus ?? this.soldStatus,
-        paidStatus: paidStatus ?? this.paidStatus,
-        contentType: contentType ?? this.contentType,
-        dateTime: dateTime ?? this.dateTime,
-        isPaidStatusToHopper: isPaidStatusToHopper ?? this.isPaidStatusToHopper,
-        exclusive: exclusive ?? this.exclusive,
-        showVideo: showVideo ?? this.showVideo,
-        audioDescription: audioDescription ?? this.audioDescription,
-        contentMediaList: contentMediaList ?? List.from(this.contentMediaList),
-        hashTagList: hashTagList ?? List.from(this.hashTagList),
-        categoryData: categoryData ?? this.categoryData,
-        completionPercent: completionPercent ?? this.completionPercent,
-        discountPercent: discountPercent ?? this.discountPercent,
-        leftPercent: leftPercent ?? this.leftPercent,
-        offerCount: offerCount ?? this.offerCount,
-        mediaHouseName: mediaHouseName ?? this.mediaHouseName,
-        categoryId: categoryId ?? this.categoryId,
-        contentView: contentView ?? this.contentView,
-        purchasedMediahouseCount:
-            purchasedMediahouseCount ?? this.purchasedMediahouseCount,
-        totalEarning: totalEarning ?? this.totalEarning);
   }
 }

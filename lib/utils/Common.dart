@@ -370,6 +370,9 @@ const verifyForgotPasswordOtpRequest = 89;
 const studentBeansActivationUrl = "hopper/studentBeansActivation";
 const studentBeansActivationRequest = 89;
 
+const uploadUserMediaUrl = "hopper/uploadUserMedia";
+const uploadUserMediaReq = 100;
+
 ///--------------------------------------------------------------
 
 const dummyImagePath = "assets/dummyImages/";

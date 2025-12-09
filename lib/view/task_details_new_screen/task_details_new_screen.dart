@@ -1155,13 +1155,15 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
               var myId = input.getString(hopperIdKey) ?? "";
               debugPrint("My Id : $myId");
               debugPrint("Task Owner Id : ${taskDetail!.userId}");
-              debugPrint("Accepted By List : ${taskDetail!.acceptedBy}");
+              debugPrint(
+                  "Accepted By List : ${taskDetail!.acceptedBy.map((e) => e.toString()).toList()}");
 
               if (taskDetail!.acceptedBy.contains(myId)) {
                 isOwner = true;
               } else {
                 isOwner = false;
               }
+              print("Is Owner1234 : $isOwner");
               if (mounted) {
                 setState(() {});
               }
