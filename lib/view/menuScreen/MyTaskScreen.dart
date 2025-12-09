@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
+import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
 import 'package:presshop/view/task_details_new_screen/task_details_new_screen.dart';
@@ -62,7 +65,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
   bool _showData = false;
   String myId = "";
 
-  int _offset = 0;
+  int _allTaskOffset = 0;
+  int _localTaskOffset = 0;
+  bool _isLocalLoading = false;
+  final int allTaskLimit = 10;
 
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
@@ -99,11 +105,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
         setState(() {});
       }
     });
-  }
-
-  void callAllTaskApi() {
-    NetworkClass(getAllTaskUrl, this, getAllTaskReq)
-        .callRequestServiceHeader(false, "post", null);
   }
 
   void callTaskDetailApi(String id) {
@@ -254,6 +255,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
   }
 
   Widget showLocalTasksDataWidget() {
+    if (_isLocalLoading && taskList.isEmpty) {
+      return showLoader();
+    }
     return taskList.isNotEmpty
         ? SmartRefresher(
             controller: _refreshController,
@@ -837,7 +841,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   // item.totalAmount == "0" &&
                                   item.status == "accepted"
                                       ? item.status.toUpperCase()
-                                      : "RECEIVED",
+                                      : "",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD025,
@@ -879,41 +883,24 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ),
                                     )
                                   : Container(
-                                      height: size.width * numD065,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD04,
-                                          vertical: size.width * numD01),
                                       alignment: Alignment.center,
+                                      height: size.width * numD06,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * numD025,
+                                          vertical: size.width * numD003),
                                       decoration: BoxDecoration(
-                                          color: item.status == "accepted"
-                                              // && item.totalAmount == "0"
-                                              ? Colors.black
-                                              : const Color.fromARGB(
-                                                  255, 255, 255, 255),
+                                          color: colorThemePink,
                                           borderRadius: BorderRadius.circular(
                                               size.width * numD015)),
-                                      child: Text(""),
+                                      child: Text(
+                                        "Available",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD025,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                      ),
                                     )
-
-                              // : Container(
-                              //     alignment: Alignment.center,
-                              //     height: size.width * numD08,
-                              //     padding: EdgeInsets.symmetric(
-                              //         horizontal: size.width * numD05,
-                              //         vertical: size.width * numD01),
-                              //     decoration: BoxDecoration(
-                              //         color: Colors.black,
-                              //         borderRadius: BorderRadius.circular(
-                              //             size.width * numD015)),
-                              //     child: Text(
-                              //       "$currencySymbol${item.totalAmount}",
-                              //       style: commonTextStyle(
-                              //           size: size,
-                              //           fontSize: size.width * numD025,
-                              //           color: Colors.white,
-                              //           fontWeight: FontWeight.w600),
-                              //     ),
-                              //   )
                             ],
                           ),
 
@@ -1265,48 +1252,96 @@ class MyTaskScreenState extends State<MyTaskScreen>
   }
 
   void _onRefresh() async {
-    print("on refresh called");
-    await Future.delayed(const Duration(milliseconds: 1000));
-    if (!mounted) return;
-    setState(() {
-      _showData = false;
-      _offset = 0;
-      if (_tabController.index == 0) {
-        print("All List on Refresh : $allTaskList");
-        callAllTaskApi();
-      } else {
-        taskList.clear();
-        print("Filter List on Refresh : $filterList");
-        callAllLocalGetTaskApi();
-      }
-    });
-    _refreshController.refreshCompleted();
+    if (_tabController.index == 0) {
+      _allTaskOffset = 0;
+      callAllTaskApi();
+    } else {
+      _localTaskOffset = 0;
+      callAllLocalGetTaskApi();
+    }
   }
 
   void _onLoading() async {
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    if (!mounted) return;
-    setState(() {
-      _offset += 10;
-      if (_tabController.index == 0) {
-        callAllTaskApi();
-      } else {
-        callAllLocalGetTaskApi();
-      }
-    });
-    _refreshController.loadComplete();
+    if (_tabController.index == 0) {
+      _allTaskOffset += allTaskLimit;
+      callAllTaskApi();
+    } else {
+      _localTaskOffset += 10;
+      callAllLocalGetTaskApi();
+    }
   }
 
-  void getAllTaskApi() {
-    Map<String, String> params = {"limit": "10", "offset": _offset.toString()};
+  Future<void> callAllTaskApi() async {
+    try {
+      final sp = await SharedPreferences.getInstance();
+      String token = sp.getString(tokenKey) ?? "";
+      var dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer $token";
+      dio.options.headers["Content-Type"] = "application/json";
 
-    NetworkClass("/hopper/getAllTask", this, getAllTaskReq)
-        .callRequestServiceHeader(false, "post", params);
+      debugPrint(
+          "MyTaskScreen: calling getAllTask with limit $allTaskLimit, offset $_allTaskOffset");
+      var response = await dio.post(
+        baseUrl + getAllTaskUrl,
+        data: {"limit": 10, "offset": _allTaskOffset}, // Int params
+      );
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        debugPrint("MyTaskScreen: Response Success: $data");
+
+        if (data['data'] != null) {
+          var list = (data['data'] as List)
+              .map((e) => AllTaskModel.fromJson(e))
+              .toList();
+
+          if (mounted) {
+            setState(() {
+              // Clear if refreshing
+              if (_allTaskOffset == 0) {
+                allTaskList.clear();
+                _refreshController.refreshCompleted();
+              }
+
+              allTaskList.addAll(list);
+              _showData = true; // Show data instead of loader
+            });
+
+            // Update footer state
+            if (list.isNotEmpty) {
+              // If full page received, we assume more might be available.
+              // Or better: check list length < limit.
+              if (list.length < allTaskLimit) {
+                _refreshController.loadNoData();
+              } else {
+                _refreshController.loadComplete();
+              }
+            } else {
+              _refreshController.loadNoData();
+            }
+          }
+        }
+      } else {
+        debugPrint("MyTaskScreen: Response Error ${response.statusCode}");
+        if (mounted) {
+          _refreshController.loadFailed();
+        }
+      }
+    } catch (e) {
+      debugPrint("MyTaskScreen: API Exception $e");
+      if (mounted) {
+        _refreshController.loadFailed();
+      }
+    }
   }
 
   void callAllLocalGetTaskApi() {
-    Map<String, String> params = {"limit": "10", "offset": _offset.toString()};
+    Map<String, String> params = {
+      "limit": "10",
+      "offset": _localTaskOffset.toString()
+    };
 
     int pos = sortList.indexWhere((element) => element.isSelected);
 
@@ -1348,6 +1383,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
     print("Params Params =======>$params");
     // print(params);
 
+    if (taskList.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isLocalLoading = true;
+        });
+      }
+    }
+
     NetworkClass(getAllMyTaskUrl, this, getAllMyTaskReq)
         .callRequestServiceHeader(false, "get", params);
   }
@@ -1375,6 +1418,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
           }
 
           debugPrint("getAllMyTaskReq Error Parsed: $data");
+          _isLocalLoading = false;
+          if (mounted) setState(() {});
           break;
         }
 
@@ -1413,16 +1458,20 @@ class MyTaskScreenState extends State<MyTaskScreen>
             _refreshController.loadFailed();
           }
 
-          if (_offset == 0) {
+          if (_localTaskOffset == 0) {
+            _refreshController.refreshCompleted();
             taskList.clear();
           }
 
           taskList.addAll(list);
-          taskList.addAll(pendingList);
+          if (_localTaskOffset == 0) {
+            taskList.addAll(pendingList);
+          }
           debugPrint("taskList Length : ${taskList.length}");
           _showData = true;
 
           if (mounted) {
+            _isLocalLoading = false;
             setState(() {});
           }
           break;
@@ -1430,40 +1479,28 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
       case getAllTaskReq:
         {
-          // var data = jsonDecode(response);
-          // var dataModel = data["data"] as List;
-
-          // var list = dataModel.map((e) => AllTaskModel.fromJson(e)).toList();
-
-          // if (mounted) setState(() {});
-          // break;
-
           var data = jsonDecode(response);
-          debugPrint("getAllMyTaskReq Success : $data");
-
           var dataModel = data["data"] as List;
 
           var list = dataModel.map((e) => AllTaskModel.fromJson(e)).toList();
 
           if (list.isNotEmpty) {
             _refreshController.loadComplete();
-          } else if (list.isEmpty) {
-            _refreshController.loadNoData();
           } else {
-            _refreshController.loadFailed();
+            _refreshController.loadNoData();
           }
 
-          if (_offset == 0) {
-            taskList.clear();
+          if (_allTaskOffset == 0) {
+            allTaskList.clear();
+            _refreshController.refreshCompleted();
           }
 
           allTaskList.addAll(list);
-          debugPrint("taskList Length : ${taskList.length}");
-          _showData = true;
 
-          if (mounted) {
-            setState(() {});
-          }
+          _showData = true;
+          if (mounted) setState(() {});
+
+          break;
         }
 
       /// Get BroadCast task Detail

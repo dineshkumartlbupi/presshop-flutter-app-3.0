@@ -18,6 +18,7 @@ import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
 import 'package:presshop/view/chatScreens/ChatScreen.dart';
 import 'package:presshop/view/dashboard/version_checker.dart';
 import 'package:presshop/view/locationErrorScreen.dart';
+import 'package:presshop/view/menuScreen/AllTaskDemo.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyProfile.dart';
@@ -140,6 +141,7 @@ class DashboardState extends State<Dashboard>
     });
     bottomNavigationScreens = <Widget>[
       MyContentScreen(hideLeading: true),
+      // AllTaskDemo(),
       MyTaskScreen(hideLeading: true),
       CameraScreen(
         key: _cameraKey,

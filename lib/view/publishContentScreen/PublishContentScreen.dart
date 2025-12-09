@@ -25,6 +25,7 @@ import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/FAQScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyDraftScreen.dart';
+import 'package:presshop/view/menuScreen/myContentScreen/myContentDataModal.dart';
 import 'package:presshop/view/publishContentScreen/ContentSubmittedScreen.dart';
 import 'package:presshop/view/publishContentScreen/HashTagSearchScreen.dart';
 import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
