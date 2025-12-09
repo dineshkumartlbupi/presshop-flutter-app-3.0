@@ -213,6 +213,188 @@ class MyTaskScreenState extends State<MyTaskScreen>
     );
   }
 
+  /*Widget oldData(){
+    return GridView.builder(
+        padding: EdgeInsets.symmetric(
+            horizontal: size.width * numD04,
+            vertical: size.width * numD04),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.85,
+          mainAxisSpacing: size.width * numD04,
+          crossAxisSpacing: size.width * numD04,
+        ),
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => TaskDetailScreen(
+                    taskStatus: myTaskList[index].taskStatus,taskId: "",)));
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * numD04,
+                  vertical: size.width * numD02),
+              decoration: BoxDecoration(
+                  border: Border.all(color: colorGoogleButtonBorder),
+                  borderRadius:
+                  BorderRadius.circular(size.width * numD04)),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      broadcastDialog(
+                          "REUTERS",
+                          "${dummyImagePath}news.png",
+                          "Vivamus sit amet commodo risus. Ut dictum rutrum lacinia. Ut at nunc a mi facilisis ornare...",
+                          "3 miles away",
+                          "2h:30m:00s",
+                          "${currencySymbol}150 to ${currencySymbol}500",
+                          size,
+                              () {},"");
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 1, horizontal: 1),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                              size.width * numD04),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade300,
+                                blurRadius: 1,
+                                spreadRadius: 2)
+                          ]),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            size.width * numD04),
+                        child: Image.asset(
+                          myTaskList[index].image,
+                          height: size.width * numD20,
+                          width: size.width,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+                  Text(
+                    myTaskList[index].textValue,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * numD03,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+                  Row(
+                    children: [
+                      Image.asset(
+                        "${iconsPath}ic_clock.png",
+                        height: size.width * numD03,
+                      ),
+                      SizedBox(
+                        width: size.width * numD01,
+                      ),
+                      Text(
+                        myTaskList[index].time,
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD025,
+                            color: Colors.black,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        myTaskList[index].status,
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD025,
+                            color: myTaskList[index].status ==
+                                "Accepted" ||
+                                myTaskList[index].status ==
+                                    "Completed"
+                                ? colorThemePink
+                                : Colors.black,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      myTaskList[index].status == "Accepted" ||
+                          myTaskList[index].status == "Completed"
+                          ? Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                            myTaskList[index].taskStatus ==
+                                "Live"
+                                ? size.width * numD03
+                                : size.width * numD01,
+                            vertical: size.width * numD01),
+                        decoration: BoxDecoration(
+                            color:
+                            myTaskList[index].taskStatus ==
+                                "Live"
+                                ? colorThemePink
+                                : colorLightGrey,
+                            borderRadius: BorderRadius.circular(
+                                size.width * numD015)),
+                        child: Text(
+                          myTaskList[index].taskStatus == "Live"
+                              ? myTaskList[index].taskStatus
+                              : "$currencySymbol${myTaskList[index].amountStatus} ${receivedText.toTitleCase()}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD025,
+                              color: myTaskList[index]
+                                  .taskStatus ==
+                                  "Live"
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      )
+                          : Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD05,
+                            vertical: size.width * numD01),
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(
+                                size.width * numD015)),
+                        child: Text(
+                          "$currencySymbol${myTaskList[index].amountStatus}",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD025,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+        itemCount: myTaskList.length);
+  }*/
+
+  /// Load Filter And Sort
   void initializeFilter() {
     sortList.addAll([
       FilterModel(
@@ -675,7 +857,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
             onLoading: _onLoading,
             footer: const CustomFooter(builder: commonRefresherFooter),
             child: GridView.builder(
-                itemCount: allTaskList.length,
+                itemCount: taskList.length,
                 padding: EdgeInsets.symmetric(
                     horizontal: size.width * numD04,
                     vertical: size.width * numD04),
@@ -686,22 +868,193 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   crossAxisSpacing: size.width * numD04,
                 ),
                 itemBuilder: (context, index) {
-                  var item = allTaskList[index];
+                  // if (allTaskList[index] is PendingTask) {
+                  // if (allTaskList[index].status == "pending") {
+                  //   var item = allTaskList[index] as PendingTask;
+                  //   return InkWell(
+                  //     onTap: () {
+                  //       //showToast("Please wait...");
+                  //       callTaskDetailApi(item.broadCastId);
+                  //     },
+                  //     child: Container(
+                  //       padding: EdgeInsets.only(
+                  //           left: size.width * numD03,
+                  //           right: size.width * numD03,
+                  //           top: size.width * numD03),
+                  //       decoration: BoxDecoration(
+                  //           color: Colors.white,
+                  //           boxShadow: [
+                  //             BoxShadow(
+                  //                 color: Colors.grey.shade200,
+                  //                 spreadRadius: 2,
+                  //                 blurRadius: 1)
+                  //           ],
+                  //           borderRadius:
+                  //               BorderRadius.circular(size.width * numD04)),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           /// Image
+                  //           Stack(
+                  //             children: [
+                  //               ClipRRect(
+                  //                 borderRadius:
+                  //                     BorderRadius.circular(size.width * numD04),
+                  //                 child: Image.network(
+                  //                   item.taskDetail!.mediaHouseImage,
+                  //                   height: size.width * numD28,
+                  //                   width: size.width,
+                  //                   fit: BoxFit.cover,
+                  //                   loadingBuilder:
+                  //                       (context, child, loadingProgress) {
+                  //                     if (loadingProgress == null) return child;
+                  //                     return Container(
+                  //                       alignment: Alignment.topCenter,
+                  //                       child: Image.asset(
+                  //                         "${commonImagePath}rabbitLogo.png",
+                  //                         height: size.width * numD26,
+                  //                         width: size.width * numD26,
+                  //                       ),
+                  //                     );
+                  //                   },
+                  //                   errorBuilder:
+                  //                       (context, exception, stackTrace) {
+                  //                     return Container(
+                  //                       alignment: Alignment.topCenter,
+                  //                       child: Image.asset(
+                  //                         "${commonImagePath}rabbitLogo.png",
+                  //                         height: size.width * numD26,
+                  //                         width: size.width * numD26,
+                  //                       ),
+                  //                     );
+                  //                   },
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //           SizedBox(
+                  //             height: size.width * numD02,
+                  //           ),
+
+                  //           /// Title
+                  //           Text(
+                  //             item.taskDetail!.title,
+                  //             maxLines: 2,
+                  //             overflow: TextOverflow.ellipsis,
+                  //             textAlign: TextAlign.start,
+                  //             style: commonTextStyle(
+                  //                 size: size,
+                  //                 fontSize: size.width * numD03,
+                  //                 color: Colors.black,
+                  //                 fontWeight: FontWeight.w500),
+                  //           ),
+
+                  //           const Spacer(),
+
+                  //           /// Dead Line
+                  //           Row(
+                  //             mainAxisSize: MainAxisSize.min,
+                  //             children: [
+                  //               Image.asset(
+                  //                 "${iconsPath}ic_clock.png",
+                  //                 height: size.width * numD029,
+                  //               ),
+                  //               SizedBox(
+                  //                 width: size.width * numD01,
+                  //               ),
+                  //               Text(
+                  //                 dateTimeFormatter(
+                  //                     dateTime:
+                  //                         item.taskDetail!.createdAt.toString(),
+                  //                     format: "hh:mm a"),
+                  //                 style: commonTextStyle(
+                  //                     size: size,
+                  //                     fontSize: size.width * numD024,
+                  //                     color: Colors.black,
+                  //                     fontWeight: FontWeight.normal),
+                  //               ),
+                  //               SizedBox(
+                  //                 width: size.width * numD018,
+                  //               ),
+                  //               Image.asset(
+                  //                 "${iconsPath}ic_yearly_calendar.png",
+                  //                 height: size.width * numD028,
+                  //               ),
+                  //               SizedBox(
+                  //                 width: size.width * numD01,
+                  //               ),
+                  //               Text(
+                  //                 dateTimeFormatter(
+                  //                     dateTime:
+                  //                         item.taskDetail!.createdAt.toString(),
+                  //                     format: "dd MMM yyyy"),
+                  //                 style: commonTextStyle(
+                  //                     size: size,
+                  //                     fontSize: size.width * numD024,
+                  //                     color: Colors.black,
+                  //                     fontWeight: FontWeight.normal),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //           SizedBox(
+                  //             height: size.width * numD013,
+                  //           ),
+                  //           Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //             children: [
+                  //               Text(
+                  //                 "TAP TO ACCEPT",
+                  //                 style: commonTextStyle(
+                  //                     size: size,
+                  //                     fontSize: size.width * numD025,
+                  //                     color: colorThemePink,
+                  //                     fontWeight: FontWeight.normal),
+                  //               ),
+
+                  //               // Animated blinking/highlight effect
+                  //               // Blinking "Available" badge with infinite animation
+                  //               Container(
+                  //                 alignment: Alignment.center,
+                  //                 height: size.width * numD08,
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     horizontal: size.width * numD025,
+                  //                     vertical: size.width * numD01),
+                  //                 decoration: BoxDecoration(
+                  //                     color: colorThemePink,
+                  //                     borderRadius: BorderRadius.circular(
+                  //                         size.width * numD015)),
+                  //                 child: Text(
+                  //                   "Available",
+                  //                   style: commonTextStyle(
+                  //                       size: size,
+                  //                       fontSize: size.width * numD025,
+                  //                       color: Colors.white,
+                  //                       fontWeight: FontWeight.w600),
+                  //                 ),
+                  //               )
+                  //             ],
+                  //           ),
+
+                  //           SizedBox(
+                  //             height: size.width * numD02,
+                  //           )
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   );
+                  // } else {
+                  var item = taskList[index] as AllTaskModel;
                   return InkWell(
                     onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => TaskDetailNewScreen(
-                                  taskStatus: item.status,
-                                  taskId: item.id,
-                                  totalEarning: "0")))
-                          .then((value) => callAllLocalGetTaskApi());
+                      // Navigator.of(context)
+                      //     .push(MaterialPageRoute(
+                      //         builder: (context) => TaskDetailNewScreen(
+                      //             taskStatus: item.status,
+                      //             taskId: item.taskDetail!.id,
+                      //             totalEarning: item.totalAmount)))
+                      //     .then((value) => callAllLocalGetTaskApi());
 
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             const TaskDetailNewScreen()));
+                      //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -846,8 +1199,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                           ? colorThemePink
                                           : Colors.black,
                                       fontWeight: FontWeight.normal)),
-
-                              //////////////
                               item.status == "accepted"
                                   ? Container(
                                       height: size.width * numD065,
@@ -879,6 +1230,25 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       ),
                                     )
                                   : Container(),
+                              // : Container(
+                              //     alignment: Alignment.center,
+                              //     height: size.width * numD08,
+                              //     padding: EdgeInsets.symmetric(
+                              //         horizontal: size.width * numD05,
+                              //         vertical: size.width * numD01),
+                              //     decoration: BoxDecoration(
+                              //         color: Colors.black,
+                              //         borderRadius: BorderRadius.circular(
+                              //             size.width * numD015)),
+                              //     child: Text(
+                              //       "$currencySymbol${item.totalAmount}",
+                              //       style: commonTextStyle(
+                              //           size: size,
+                              //           fontSize: size.width * numD025,
+                              //           color: Colors.white,
+                              //           fontWeight: FontWeight.w600),
+                              //     ),
+                              //   )
                             ],
                           ),
 
@@ -1354,82 +1724,65 @@ class MyTaskScreenState extends State<MyTaskScreen>
   @override
   void onResponse({required int requestCode, required String response}) {
     switch (requestCode) {
-      case getAllMyTaskReq: // ← Local Tasks Tab
+      case getAllMyTaskReq:
         {
           var data = jsonDecode(response);
-          var dataModel = data["data"] as List? ?? [];
-          var pendingTaskList = data["pending_unaccepted"] as List? ?? [];
+          debugPrint("getAllMyTaskReq Success : $data");
 
-          var newAcceptedTasks =
-              dataModel.map((e) => MyTaskModel.fromJson(e)).toList();
-          var newPendingTasks =
-              pendingTaskList.map((e) => PendingTask.fromJson(e)).toList();
+          var dataModel = data["data"] as List;
 
-          // Clear only on refresh (first page)
+          var pendingTaskList = data["pending_unaccepted"] as List;
+          var list = dataModel.map((e) => MyTaskModel.fromJson(e)).toList();
+          var pendingList = pendingTaskList.isNotEmpty
+              ? pendingTaskList.map((e) => PendingTask.fromJson(e)).toList()
+              : <PendingTask>[];
+
+          if (list.isNotEmpty) {
+            _refreshController.loadComplete();
+          } else if (list.isEmpty) {
+            _refreshController.loadNoData();
+          } else {
+            _refreshController.loadFailed();
+          }
+
           if (_offset == 0) {
             taskList.clear();
           }
 
-          // Add items only if they don't exist (prevent duplicates)
-          int oldCount = taskList.length;
-
-          for (var task in newAcceptedTasks) {
-            if (!taskList.any((e) =>
-                e is MyTaskModel && e.taskDetail?.id == task.taskDetail?.id)) {
-              taskList.add(task);
-            }
-          }
-          for (var task in newPendingTasks) {
-            if (!taskList.any(
-                (e) => e is PendingTask && e.broadCastId == task.broadCastId)) {
-              taskList.add(task);
-            }
-          }
-
-          int newAddedCount = taskList.length - oldCount;
-
+          taskList.addAll(list);
+          taskList.addAll(pendingList);
+          debugPrint("taskList Length : ${taskList.length}");
           _showData = true;
 
-          // CRITICAL FIX: Check if ANY new items were added
-          if (newAddedCount == 0) {
-            // No new items → this is the end
-            _refreshController.loadNoData();
-          } else {
-            // New items added → allow loading more
-            _refreshController.loadComplete();
+          if (mounted) {
+            setState(() {});
           }
-
-          if (mounted) setState(() {});
           break;
         }
 
       case getAllTaskReq:
         {
           var data = jsonDecode(response);
+          debugPrint("getAllTaskReq Success : $data");
           var list = (data['data'] as List)
               .map((e) => AllTaskModel.fromJson(e))
               .toList();
+
+          if (list.isNotEmpty) {
+            _refreshController.loadComplete();
+          } else if (list.isEmpty) {
+            _refreshController.loadNoData();
+          } else {
+            _refreshController.loadFailed();
+          }
 
           if (_offset == 0) {
             allTaskList.clear();
           }
 
-          // Remove duplicates by ID
-          for (var task in list) {
-            if (!allTaskList.any((existing) => existing.id == task.id)) {
-              allTaskList.add(task);
-            }
-          }
-
+          allTaskList.addAll(list);
           _showData = true;
-
-          if (list.isEmpty) {
-            _refreshController.loadNoData();
-          } else {
-            _refreshController.loadComplete();
-          }
-
-          if (mounted) setState(() {});
+          setState(() {});
           break;
         }
 
