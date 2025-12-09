@@ -328,14 +328,29 @@ class MenuScreenState extends State<MenuScreen>
         )));
 
     menuList.add(MenuData(
+        name: "Chat",
+        icon: "${iconsPath}ic_chat.png",
+        classWidget: ChatBotScreen()));
+
+    menuList.add(MenuData(
+        name: "$contactText PressHop", //client asked to lower case
+        icon: "${iconsPath}ic_contact_us.png",
+        classWidget: const ContactUsScreen()));
+
+    menuList.add(MenuData(
         name: leaderboardText,
         icon: "${iconsPath}ic_ranking.png",
         classWidget: LeaderboardScreen()));
 
+    // menuList.add(MenuData(
+    //     name: "Map view",
+    //     icon: "${iconsPath}map2.png",
+    //     classWidget: MarketplaceScreen()));
+
     menuList.add(MenuData(
-        name: "Map view",
-        icon: "${iconsPath}map2.png",
-        classWidget: MarketplaceScreen()));
+        name: paymentMethodText,
+        icon: "${iconsPath}ic_payment_method.png",
+        classWidget: const MyBanksScreen()));
 
     menuList.add(MenuData(
         name: myDraftText,
@@ -360,10 +375,6 @@ class MenuScreenState extends State<MenuScreen>
         classWidget: MyEarningScreen(
           openDashboard: false,
         )));
-    menuList.add(MenuData(
-        name: paymentMethodText,
-        icon: "${iconsPath}ic_payment_method.png",
-        classWidget: const MyBanksScreen()));
     // menuList.add(MenuData(
     //     name: chooseCurrencyText,
     //     icon: "${iconsPath}choose_currency.png",
@@ -386,11 +397,6 @@ class MenuScreenState extends State<MenuScreen>
     //     classWidget: FeedScreen()));
 
     menuList.add(MenuData(
-        name: "Chat",
-        icon: "${iconsPath}ic_chat.png",
-        classWidget: ChatBotScreen()));
-
-    menuList.add(MenuData(
         name: "$ratingText & ${reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
         classWidget: const RatingReviewScreen()));
@@ -405,6 +411,15 @@ class MenuScreenState extends State<MenuScreen>
           menuScreen: true,
           hideLeading: false,
         )));
+
+    menuList.add(MenuData(
+        name: faqText,
+        icon: "${iconsPath}ic_faq.png",
+        classWidget: FAQScreen(
+          priceTipsSelected: false,
+          type: 'faq',
+          index: 0,
+        )));
     menuList.add(MenuData(
         name: "$legalText $tcText",
         icon: "${iconsPath}ic_legal.png",
@@ -416,15 +431,6 @@ class MenuScreenState extends State<MenuScreen>
         icon: "${iconsPath}ic_privacy.png",
         classWidget: TermCheckScreen(
           type: 'privacy_policy',
-        )));
-
-    menuList.add(MenuData(
-        name: faqText,
-        icon: "${iconsPath}ic_faq.png",
-        classWidget: FAQScreen(
-          priceTipsSelected: false,
-          type: 'faq',
-          index: 0,
         )));
 
     menuList.add(MenuData(
@@ -443,10 +449,7 @@ class MenuScreenState extends State<MenuScreen>
         name: changePasswordText,
         icon: "${iconsPath}ic_change_password.png",
         classWidget: const ChangePasswordScreen()));
-    menuList.add(MenuData(
-        name: "$contactText PressHop", //client asked to lower case
-        icon: "${iconsPath}ic_contact_us.png",
-        classWidget: const ContactUsScreen()));
+
     menuList.add(MenuData(
         name: accountSettingText,
         icon: "${iconsPath}ic_my_profile.png",

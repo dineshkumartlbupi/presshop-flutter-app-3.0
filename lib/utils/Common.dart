@@ -174,6 +174,9 @@ const socialExistUrlRequest = 27;
 const myContentUrl = "hopper/getContentList";
 const myContentUrlRequest = 28;
 
+const allContentUrl = "hopper/getAllContent";
+const allContentUrlRequest = 90;
+
 const myDraftUrl = "hopper/getDraftContentList";
 const myDraftUrlRequest = 28;
 
@@ -191,6 +194,9 @@ const taskAcceptRejectRequestReq = 32;
 
 const getAllMyTaskUrl = "hopper/getAllmyTask";
 const getAllMyTaskReq = 33;
+
+const getAllTaskUrl = "hopper/getAllTask";
+const getAllTaskReq = 190;
 
 const uploadTaskMediaUrl = "hopper/addUploadedContent";
 const uploadTaskMediaReq = 34;
@@ -577,7 +583,7 @@ const myProfileText = "My profile";
 const editProfileText = "Edit profile";
 const leaderboardText = "Leaderboard";
 const myDraftText = "My drafts";
-const myContentText = "My content";
+const myContentText = "Content";
 const contentText = "Content";
 const detailsText = "details";
 const stayLoggedInText = "Stay Logged In";

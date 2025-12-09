@@ -97,6 +97,7 @@ class TaskDetailModel {
   String companyName = "";
   String title = "";
   String description = "";
+  List<String> acceptedBy = [];
   String specialReq = "";
   String location = "";
   String photoPrice = "";
@@ -114,6 +115,44 @@ class TaskDetailModel {
   String byFeet = "";
   String byCar = "";
   List<TaskDetailMediaModel> mediaList = [];
+  String broadcastLocation = "";
+
+  TaskDetailModel({
+    this.id = "",
+    this.isNeedPhoto = false,
+    this.isNeedVideo = false,
+    this.isNeedInterview = false,
+    this.mode = "",
+    this.type = "",
+    this.status = "",
+    this.paidStatus = "",
+    required this.deadLine,
+    this.mediaHouseId = "",
+    this.mediaHouseImage = "",
+    this.mediaHouseName = "",
+    this.companyName = "",
+    this.title = "",
+    this.description = "",
+    this.acceptedBy = const [],
+    this.specialReq = "",
+    this.location = "",
+    this.photoPrice = "",
+    this.videoPrice = "",
+    this.interviewPrice = "",
+    this.receivedAmount = "",
+    this.latitude = 0.0,
+    this.longitude = 0.0,
+    this.role = "",
+    this.categoryId = "",
+    this.userId = "",
+    this.createdAt = "",
+    this.discountPercent = "",
+    this.miles = "",
+    this.byFeet = "",
+    this.byCar = "",
+    this.mediaList = const [],
+    this.broadcastLocation = "",
+  });
 
   TaskDetailModel.fromJson(Map<String, dynamic> json) {
     debugPrint("json aditya::::$json");
@@ -176,6 +215,9 @@ class TaskDetailModel {
 
     title = (json["heading"] ?? "").toString();
     description = (json["task_description"] ?? "").toString();
+    if (json['accepted_by'] != null) {
+      acceptedBy = List<String>.from(json['accepted_by']);
+    }
     specialReq = (json["any_spcl_req"] ?? "").toString();
     location = (json["location"] ?? "").toString();
     photoPrice = (json["photo_price"] ?? "").toString();

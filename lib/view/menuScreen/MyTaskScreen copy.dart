@@ -1014,7 +1014,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   borderRadius: BorderRadius.circular(
                                       size.width * numD015)),
                               child: Text(
-                                "Available",
+                                item.acceptedTasks.any(
+                                        (element) => element.hopperId == myId)
+                                    ? "Manage"
+                                    : "Available",
                                 style: commonTextStyle(
                                     size: size,
                                     fontSize: size.width * numD025,
@@ -1551,7 +1554,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
           // if (_offset == 0) {
           //   allTaskList.clear();
           // }
-
           allTaskList.addAll(list);
           _showData = true;
           setState(() {});

@@ -18,6 +18,7 @@ import '../myEarning/MyEarningScreen.dart';
 import '../publishContentScreen/HashTagSearchScreen.dart';
 import '../publishContentScreen/TutorialsScreen.dart';
 import 'MyDraftScreen.dart';
+import 'package:presshop/view/menuScreen/AllContentModel.dart';
 
 class MyContentScreen extends StatefulWidget {
   bool hideLeading = false;
@@ -31,7 +32,7 @@ class MyContentScreen extends StatefulWidget {
 }
 
 class MyContentScreenState extends State<MyContentScreen>
-    with AnalyticsPageMixin
+    with AnalyticsPageMixin, SingleTickerProviderStateMixin
     implements NetworkResponse {
   // Analytics Mixin Requirements
   @override
@@ -56,6 +57,15 @@ class MyContentScreenState extends State<MyContentScreen>
   ScrollController listController = ScrollController();
   int limit = 10, offset = 0;
 
+  late TabController _tabController;
+  int _selectedTabbar = 0;
+  List<AllContentData> allContentList = [];
+  int allLimit = 10;
+  int allOffset = 0;
+  bool showAllData = false;
+  final RefreshController _allRefreshController =
+      RefreshController(initialRefresh: false);
+
   bool showData = false;
 
   @override
@@ -63,7 +73,19 @@ class MyContentScreenState extends State<MyContentScreen>
     super.initState();
     initializeFilter();
     WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => myContentApi(true));
+        .addPostFrameCallback((timeStamp) => allContentApi(true));
+
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {
+          _selectedTabbar = _tabController.index;
+        });
+        if (_selectedTabbar == 1 && myContentList.isEmpty) {
+          myContentApi(true);
+        }
+      }
+    });
   }
 
   @override
@@ -120,57 +142,170 @@ class MyContentScreenState extends State<MyContentScreen>
         ],
       ),
       body: SafeArea(
-          child: myContentList.isNotEmpty
-              ? SmartRefresher(
-                  controller: _refreshController,
-                  enablePullDown: true,
-                  enablePullUp: true,
-                  onRefresh: _onRefresh,
-                  onLoading: _onLoading,
-                  footer: const CustomFooter(builder: commonRefresherFooter),
-                  child: GridView.builder(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD04),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                        mainAxisSpacing: size.width * numD04,
-                        crossAxisSpacing: size.width * numD04,
-                      ),
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                            onTap: () {
-                              if (myContentList[index].status.toLowerCase() ==
-                                      "pending" ||
-                                  myContentList[index].status.toLowerCase() ==
-                                      "rejected") {
-                                return;
-                              }
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          MyContentDetailScreen(
-                                            paymentStatus:
-                                                myContentList[index].status,
-                                            exclusive:
-                                                myContentList[index].exclusive,
-                                            contentId: myContentList[index].id,
-                                            purchasedMediahouseCount:
-                                                myContentList[index]
-                                                    .purchasedMediahouseCount,
-                                            offerCount:
-                                                myContentList[index].offerCount,
-                                          )))
-                                  .then((value) => myContentApi(false));
-                            },
-                            child: contentWidget(myContentList[index]));
-                      },
-                      itemCount: myContentList.length),
-                )
-              : showData
-                  ? errorMessageWidget("No Content Published")
-                  : Container()),
+        child: Column(
+          children: [
+            SizedBox(height: size.width * numD04),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+              child: TabBar(
+                controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
+                labelColor: Colors.white,
+                dividerColor: colorThemePink,
+                unselectedLabelColor: Colors.black,
+                indicator: BoxDecoration(
+                  color: colorThemePink,
+                  borderRadius: BorderRadius.circular(size.width * numD02),
+                ),
+                labelStyle: commonTextStyle(
+                  size: size,
+                  fontSize: size.width * numD038,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                tabs: [
+                  Tab(text: "All Content"),
+                  Tab(
+                    text: "My Content",
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              color: Color(0xFFD8D8D8),
+              thickness: 1.5,
+            ),
+            Expanded(
+              child: _selectedTabbar == 0
+                  ? (allContentList.isNotEmpty
+                      ? SmartRefresher(
+                          controller: _allRefreshController,
+                          enablePullDown: true,
+                          enablePullUp: true,
+                          onRefresh: _onAllRefresh,
+                          onLoading: _onAllLoading,
+                          footer: const CustomFooter(
+                              builder: commonRefresherFooter),
+                          child: GridView.builder(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD04,
+                                  vertical: size.width * numD04),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                mainAxisSpacing: size.width * numD04,
+                                crossAxisSpacing: size.width * numD04,
+                              ),
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyContentDetailScreen(
+                                                    hopperID:
+                                                        allContentList[index]
+                                                            .hopperId,
+                                                    paymentStatus:
+                                                        allContentList[index]
+                                                            .status,
+                                                    exclusive:
+                                                        allContentList[index]
+                                                                .type ==
+                                                            "exclusive",
+                                                    contentId:
+                                                        allContentList[index]
+                                                            .id,
+                                                    purchasedMediahouseCount:
+                                                        allContentList[index]
+                                                            .totalSold,
+                                                    offerCount:
+                                                        allContentList[index]
+                                                            .totalOffer,
+                                                  )))
+                                          .then((value) {
+                                        if (value == true) {
+                                          allContentApi(false);
+                                        }
+                                      });
+                                    },
+                                    child: allContentWidget(
+                                        allContentList[index]));
+                              },
+                              itemCount: allContentList.length),
+                        )
+                      : showAllData
+                          ? errorMessageWidget("No Content Found")
+                          : Container())
+                  : (myContentList.isNotEmpty
+                      ? SmartRefresher(
+                          controller: _refreshController,
+                          enablePullDown: true,
+                          enablePullUp: true,
+                          onRefresh: _onRefresh,
+                          onLoading: _onLoading,
+                          footer: const CustomFooter(
+                              builder: commonRefresherFooter),
+                          child: GridView.builder(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD04,
+                                  vertical: size.width * numD04),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                mainAxisSpacing: size.width * numD04,
+                                crossAxisSpacing: size.width * numD04,
+                              ),
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                    onTap: () {
+                                      if (myContentList[index]
+                                                  .status
+                                                  .toLowerCase() ==
+                                              "pending" ||
+                                          myContentList[index]
+                                                  .status
+                                                  .toLowerCase() ==
+                                              "rejected") {
+                                        return;
+                                      }
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyContentDetailScreen(
+                                                    hopperID:
+                                                        allContentList[index]
+                                                            .hopperId,
+                                                    paymentStatus:
+                                                        myContentList[index]
+                                                            .status,
+                                                    exclusive:
+                                                        myContentList[index]
+                                                            .exclusive,
+                                                    contentId:
+                                                        myContentList[index].id,
+                                                    purchasedMediahouseCount:
+                                                        myContentList[index]
+                                                            .purchasedMediahouseCount,
+                                                    offerCount:
+                                                        myContentList[index]
+                                                            .offerCount,
+                                                  )))
+                                          .then((value) => myContentApi(false));
+                                    },
+                                    child: contentWidget(myContentList[index]));
+                              },
+                              itemCount: myContentList.length),
+                        )
+                      : showData
+                          ? errorMessageWidget("No Content Published")
+                          : Container()),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -575,6 +710,237 @@ class MyContentScreenState extends State<MyContentScreen>
                       );
                     },
                   );
+  }
+
+  /// All Content Widget
+  Widget allContentWidget(AllContentData item) {
+    return Container(
+      padding: EdgeInsets.only(
+          left: size.width * numD03,
+          right: size.width * numD03,
+          top: size.width * numD03),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.shade200, spreadRadius: 2, blurRadius: 1)
+          ],
+          borderRadius: BorderRadius.circular(size.width * numD04)),
+      child: Column(
+        children: [
+          showAllMediaWidget(item),
+          SizedBox(
+            height: size.width * numD02,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  item.heading,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD03,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+              SizedBox(
+                width: size.width * numD01,
+              ),
+              Image.asset(
+                item.type == "exclusive"
+                    ? "${iconsPath}ic_exclusive.png"
+                    : "${iconsPath}ic_share.png",
+                height: item.type == "exclusive"
+                    ? size.width * numD03
+                    : size.width * numD04,
+                color: colorTextFieldIcon,
+              )
+            ],
+          ),
+          const Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        "${iconsPath}dollar1.png",
+                        height: size.width * numD024,
+                        width: size.width * numD025,
+                        color:
+                            item.totalSold == 0 ? Colors.grey : colorThemePink,
+                      ),
+                      SizedBox(width: size.width * numD014),
+                      Text(
+                        '${item.totalSold.toString()} $sold',
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD026,
+                            color: item.totalSold == 0
+                                ? Colors.grey
+                                : colorThemePink,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.width * numD01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Image.asset(
+                        "${iconsPath}dollar1.png",
+                        width: size.width * numD025,
+                        height: size.width * numD025,
+                        color:
+                            item.totalOffer == 0 ? Colors.grey : colorThemePink,
+                      ),
+                      SizedBox(width: size.width * numD014),
+                      Text(
+                        '${item.totalOffer.toString()} ${item.totalOffer > 1 ? '${offerText}s' : offerText}',
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD026,
+                            color: item.totalOffer == 0
+                                ? Colors.grey
+                                : colorThemePink,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.width * numD01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        "${iconsPath}ic_view.png",
+                        height: size.width * numD026,
+                        width: size.width * numD025,
+                        color:
+                            item.totalView == 0 ? Colors.grey : colorThemePink,
+                      ),
+                      SizedBox(width: size.width * numD013),
+                      Text(
+                        '${item.totalView.toString()} ${item.totalView > 1 ? '${viewsText}s' : viewsText}',
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD026,
+                            color: item.totalView == 0
+                                ? Colors.grey
+                                : colorThemePink,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                height: size.width * numD08,
+                padding: EdgeInsets.symmetric(
+                    horizontal: size.width * numD015,
+                    vertical: size.width * numD01),
+                decoration: BoxDecoration(
+                    color: colorThemePink,
+                    borderRadius: BorderRadius.circular(size.width * numD015)),
+                child: Column(
+                  children: [
+                    Text(
+                      item.status.toCapitalized(),
+                      textAlign: TextAlign.center,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD022,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    Text(
+                      "$currencySymbol${item.displayPrice}",
+                      textAlign: TextAlign.center,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD022,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: size.width * numD02,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget showAllMediaWidget(AllContentData item) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size.width * numD04),
+      child: Stack(
+        children: [
+          item.content.isNotEmpty
+              ? showImage(
+                  item.content.first.mediaType,
+                  item.content.first.media,
+                )
+              : Container(
+                  decoration: const BoxDecoration(color: colorLightGrey),
+                  padding: EdgeInsets.all(size.width * numD06),
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * numD07,
+                    width: size.width * numD07,
+                  ),
+                ),
+          item.content.isNotEmpty
+              ? Image.asset(
+                  "${commonImagePath}watermark1.png",
+                  height: size.width * numD29,
+                  width: size.width,
+                  fit: BoxFit.cover,
+                )
+              : Container(),
+          Positioned(
+            right: size.width * numD02,
+            top: size.width * numD02,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * numD015,
+                vertical: size.width * 0.005,
+              ),
+              decoration: BoxDecoration(
+                  color: colorLightGreen.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(size.width * numD015)),
+              child: Center(
+                child: Text(
+                  "${item.content.length} ",
+                  textAlign: TextAlign.center,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD038,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> showBottomSheet(Size size) async {
@@ -983,7 +1349,6 @@ class MyContentScreenState extends State<MyContentScreen>
         params["startdate"] = DateFormat("yyyy-MM-ddTHH:mm:ss")
             .format(DateTime.parse(sortList[pos].fromDate!));
 
-        // rajesh
         if (sortList[pos].toDate != null) {
           params["endDate"] = DateFormat("yyyy-MM-ddTHH:mm:ss")
               .format(DateTime.parse(sortList[pos].toDate!));
@@ -1029,6 +1394,31 @@ class MyContentScreenState extends State<MyContentScreen>
         .callRequestServiceHeader(showLoader, "get", params);
   }
 
+  void allContentApi(bool showLoader) {
+    Map<String, dynamic> params = {};
+    NetworkClass(allContentUrl, this, allContentUrlRequest)
+        .callRequestServiceHeader(showLoader, "post", params);
+  }
+
+  void _onAllRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    setState(() {
+      showAllData = false;
+      allOffset = 0;
+      allContentList.clear();
+      allContentApi(true);
+    });
+    _allRefreshController.refreshCompleted();
+  }
+
+  void _onAllLoading() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    allOffset += 10;
+    allContentApi(false);
+    setState(() {});
+    _allRefreshController.loadComplete();
+  }
+
   @override
   void onError({required int requestCode, required String response}) {
     try {
@@ -1070,12 +1460,59 @@ class MyContentScreenState extends State<MyContentScreen>
           showData = true;
           setState(() {});
           break;
+
+        case allContentUrlRequest:
+          var map = jsonDecode(response);
+          log("allContentResponse: $response");
+          // Assuming response structure has 'data' as per curl snippet.
+          // If there is a 'code' field checking it is good practice, but not shown in snippet.
+          // Snippet: { "data": [...], "count": 103 }
+
+          if (map["data"] != null) {
+            var listModel = map["data"] as List;
+            var list =
+                listModel.map((e) => AllContentData.fromJson(e)).toList();
+
+            if (list.isNotEmpty) {
+              _allRefreshController.loadComplete();
+            } else if (list.isEmpty) {
+              _allRefreshController.loadNoData();
+            } else {
+              _allRefreshController.loadFailed();
+            }
+
+            if (allOffset == 0) {
+              allContentList.clear();
+            }
+
+            allContentList.addAll(list);
+          }
+          showAllData = true;
+          setState(() {});
+          break;
       }
     } on Exception catch (e) {
       debugPrint("$e");
     }
   }
 }
+
+//  paymentStatus:
+//                                               myContentList[index].status,
+//                                           exclusive:
+//                                               myContentList[index].exclusive,
+//                                           contentId: myContentList[index].id,
+//                                           purchasedMediahouseCount:
+//                                               myContentList[index]
+//                                                   .purchasedMediahouseCount,
+//                                           offerCount:
+//                                               myContentList[index].offerCount,
+
+// status
+// shared
+// _id
+// purchased_mediahouse
+// offer_content_size
 
 class MyContentData {
   String id = "";
@@ -1108,6 +1545,7 @@ class MyContentData {
   String categoryId = '';
   int contentView = 0;
   int purchasedMediahouseCount = 0;
+  String userId = "";
 
   MyContentData({
     required this.id,

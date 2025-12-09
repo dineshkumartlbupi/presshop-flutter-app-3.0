@@ -1,6 +1,7 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:async';
+import 'dart:convert';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:dio/dio.dart';
@@ -11,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/utils/Common.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
@@ -31,19 +33,21 @@ import 'MyContentScreen.dart';
 import 'MyDraftScreen.dart';
 
 class MyContentDetailScreen extends StatefulWidget {
+  String hopperID = "";
   final String contentId;
   final String paymentStatus;
   final bool exclusive;
   final int offerCount;
   final int purchasedMediahouseCount;
 
-  const MyContentDetailScreen(
+  MyContentDetailScreen(
       {super.key,
       required this.paymentStatus,
       required this.exclusive,
       required this.offerCount,
       required this.purchasedMediahouseCount,
-      required this.contentId});
+      required this.contentId,
+      this.hopperID = ""});
 
   @override
   State<StatefulWidget> createState() {
@@ -69,6 +73,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   bool isMediaOffer = false;
   bool isLoading = false;
   bool shouldRestartAnimation = false;
+  bool showTimer = false;
+  String _timeLeft = "";
+  Timer? _timer;
+  bool isOwner = false;
 
   @override
   void initState() {
@@ -77,6 +85,64 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
     super.initState();
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => myContentDetailApi());
+
+    _checkOwnershipAndStartTimer();
+  }
+
+  void _checkOwnershipAndStartTimer() async {
+    if (myContentData == null) return;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUserId = prefs.getString("_id") ?? "";
+
+    debugPrint(
+        "TimerCheck: CurrentUser: $currentUserId, ContentUser: ${myContentData!.userId}");
+
+    isOwner = currentUserId == widget.hopperID;
+
+    print("hopperID sdkfjn: ${widget.hopperID}");
+
+    if (currentUserId == myContentData!.userId) {
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    if (myContentData == null) return;
+    DateTime createdTime = DateTime.parse(myContentData!.dateTime);
+    DateTime endTime = createdTime.add(const Duration(hours: 24));
+
+    if (DateTime.now().isAfter(endTime)) {
+      setState(() {
+        showTimer = false;
+        _timeLeft = "00:00:00";
+      });
+      return;
+    }
+
+    showTimer = true;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      Duration difference = endTime.difference(DateTime.now());
+      if (difference.isNegative) {
+        _timer?.cancel();
+        setState(() {
+          showTimer = false;
+          _timeLeft = "00:00:00";
+        });
+      } else {
+        setState(() {
+          _timeLeft = _printDuration(difference);
+        });
+      }
+    });
+  }
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   @override
@@ -152,6 +218,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   headerWidget(),
+
                                   const Divider(
                                     color: colorGrey1,
                                   ),
@@ -171,34 +238,38 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                     SizedBox(
                                       height: size.width * numD02,
                                     ),
-                                    const Divider(color: colorGrey1),
+                                    if (isOwner)
+                                      const Divider(color: colorGrey1),
                                     SizedBox(
                                       height: size.width * numD02,
                                     ),
-                                    Text(manageContentText.toUpperCase(),
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD035,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w700)),
-                                    SizedBox(
-                                      height: size.width * numD02,
-                                    ),
-                                    ListView.builder(
-                                      itemBuilder: (context, index) {
-                                        return ManageContentWidget(
-                                            chatList[index]);
-                                      },
-                                      itemCount: chatList.length,
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                    ),
+                                    if (isOwner)
+                                      Text(manageContentText.toUpperCase(),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD035,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w700)),
+                                    if (isOwner)
+                                      SizedBox(
+                                        height: size.width * numD02,
+                                      ),
+                                    if (isOwner)
+                                      ListView.builder(
+                                        itemBuilder: (context, index) {
+                                          return ManageContentWidget(
+                                              chatList[index]);
+                                        },
+                                        itemCount: chatList.length,
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                      ),
                                   ],
                                   SizedBox(
                                     height: size.width * numD02,
                                   ),
-                                  const Divider(color: colorGrey1),
+                                  if (isOwner) const Divider(color: colorGrey1),
 
                                   Column(
                                       mainAxisSize: MainAxisSize.min,
@@ -206,37 +277,37 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                         SizedBox(
                                           height: size.width * numD03,
                                         ),
-                                        AnimatedButtonWidget(
-                                          shouldRestartAnimation:
-                                              shouldRestartAnimation,
-                                          size: size,
-                                          buttonText: manageContentText,
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ManageTaskScreen(
-                                                            roomId:
-                                                                myContentData!
-                                                                    .id,
-                                                            contentId:
-                                                                myContentData!
-                                                                    .id,
-                                                            type: 'content',
-                                                            mediaHouseDetail:
-                                                                null,
-                                                            contentMedia:
-                                                                showMediaWidget(),
-                                                            contentHeader:
-                                                                headerWidget(),
-                                                            myContentData:
-                                                                myContentData)))
-                                                .then((value) {
-                                              shouldRestartAnimation = true;
-                                              myContentDetailApi();
-                                            });
-                                          },
-                                        ),
+                                        if (isOwner)
+                                          AnimatedButtonWidget(
+                                            shouldRestartAnimation:
+                                                shouldRestartAnimation,
+                                            size: size,
+                                            buttonText: manageContentText,
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ManageTaskScreen(
+                                                              roomId: myContentData!
+                                                                  .id,
+                                                              contentId:
+                                                                  myContentData!
+                                                                      .id,
+                                                              type: 'content',
+                                                              mediaHouseDetail:
+                                                                  null,
+                                                              contentMedia:
+                                                                  showMediaWidget(),
+                                                              contentHeader:
+                                                                  headerWidget(),
+                                                              myContentData:
+                                                                  myContentData)))
+                                                  .then((value) {
+                                                shouldRestartAnimation = true;
+                                                myContentDetailApi();
+                                              });
+                                            },
+                                          ),
                                         SizedBox(
                                           height: size.width * numD05,
                                         ),
@@ -435,6 +506,26 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 ),
               )
             : Container(),
+
+        if (showTimer)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: size.width * numD02),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * numD04,
+                  vertical: size.width * numD02),
+              decoration: BoxDecoration(
+                  color: Colors.redAccent,
+                  borderRadius: BorderRadius.circular(size.width * numD02)),
+              child: Text(
+                "Time Left: $_timeLeft",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width * numD04),
+              ),
+            ),
+          ),
 
         (myContentData!.contentMediaList.length >= 0)
             ? SizedBox(
@@ -1304,6 +1395,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
               setState(() {});
               getMediaOfferApi();
               initialController();
+              _checkOwnershipAndStartTimer();
               Future.delayed(const Duration(microseconds: 500), () {
                 callGetAllTransactionDetail();
               });

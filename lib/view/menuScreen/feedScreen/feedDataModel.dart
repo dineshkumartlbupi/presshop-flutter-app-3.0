@@ -759,6 +759,8 @@ class FeedsDataModel {
   String categoryType = "";
   String askPrice = "";
   String total_earnings = "";
+  String displayPrice = "";
+  String displayCurrency = "";
   String timestamp;
   int viewCount = 0;
   int offerCount = 0;
@@ -823,6 +825,8 @@ class FeedsDataModel {
     required this.viewCount,
     required this.offerCount,
     required this.total_earnings,
+    required this.displayPrice,
+    required this.displayCurrency,
     required this.feedImage,
   });
 
@@ -858,6 +862,8 @@ class FeedsDataModel {
         askPrice: json["original_ask_price"].toString(),
         timestamp: json["timestamp"] ?? "",
         total_earnings: json["total_earnings"]?.toString() ?? "0",
+        displayPrice: json["display_price"]?.toString() ?? "0",
+        displayCurrency: json["display_currency"]?.toString() ?? "",
         contentDataList: contentData,
         createdAt: json['createdAt'].toString(),
         updatedAt: json['updatedAt'] ?? "",
