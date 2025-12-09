@@ -868,7 +868,11 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       ),
                                       FittedBox(
                                         child: Text(
-                                          "$currencySymbol${amountFormat(feedDataList[index].total_earnings)}",
+                                          // "$currencySymbol${amountFormat(feedDataList[index].total_earnings)}",
+                                          "$currencySymbol${amountFormat(feedDataList[index].displayPrice)}",
+
+                                          // "${feedDataList[index].displayCurrency} ${amountFormat(feedDataList[index].displayPrice)}",
+
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: commonTextStyle(
