@@ -513,6 +513,7 @@ class MyContentScreenState extends State<MyContentScreen>
                           ),
                           Text(
                             "$currencySymbol${formatDouble(double.parse(item.amount))}",
+                            // "$currencySymbol${formatDouble(double.parse(item.amount))}",
                             textAlign: TextAlign.center,
                             style: commonTextStyle(
                                 size: size,
