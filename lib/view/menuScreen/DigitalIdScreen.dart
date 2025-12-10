@@ -139,13 +139,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
               sharedPreferences!.getString(userNameKey) ??
               "Hopper";
 
-          if (profileImageFileName != null &&
-              profileImageFileName.toString().trim().isNotEmpty) {
-            userImage = url + profileImageFileName.trim();
+          if (profileImageFileName.toString().trim().isNotEmpty) {
+            userImage = url + profileImageFileName!.trim();
           } else {
             userImage = ""; // Explicitly mark as no image
           }
-
           _isUploading = false;
         });
 

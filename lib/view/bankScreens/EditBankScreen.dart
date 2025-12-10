@@ -239,6 +239,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                         sortCodeController.selection = TextSelection.collapsed(
                             offset: sortCodeController.text.length);
                         setState(() {});
+                        return null;
                       },
                       prefixIcon: const ImageIcon(
                         AssetImage(

@@ -1165,27 +1165,25 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               if (item.fromDate != null) {
                                 String? pickedDate = await commonDatePicker();
 
-                                if (pickedDate != null) {
-                                  DateTime parseFromDate =
-                                      DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate =
-                                      DateTime.parse(pickedDate);
+                                DateTime parseFromDate =
+                                    DateTime.parse(item.fromDate!);
+                                DateTime parseToDate =
+                                    DateTime.parse(pickedDate!);
 
-                                  debugPrint("parseFromDate : $parseFromDate");
-                                  debugPrint("parseToDate : $parseToDate");
+                                debugPrint("parseFromDate : $parseFromDate");
+                                debugPrint("parseToDate : $parseToDate");
 
-                                  if (parseToDate.isAfter(parseFromDate) ||
-                                      parseToDate
-                                          .isAtSameMomentAs(parseFromDate)) {
-                                    item.toDate = pickedDate;
-                                  } else {
-                                    showSnackBar(
-                                        "Date Error",
-                                        "Please select to date above from date",
-                                        Colors.red);
-                                  }
+                                if (parseToDate.isAfter(parseFromDate) ||
+                                    parseToDate
+                                        .isAtSameMomentAs(parseFromDate)) {
+                                  item.toDate = pickedDate;
+                                } else {
+                                  showSnackBar(
+                                      "Date Error",
+                                      "Please select to date above from date",
+                                      Colors.red);
                                 }
-                              }
+                                                            }
 
                               setState(() {});
                               stateSetter(() {});

@@ -390,8 +390,7 @@ class LoginScreenState extends State<LoginScreen>
                                         null &&
                                     credential.user!.displayName!.isNotEmpty) {
                                   socialName = credential.user!.displayName!;
-                                } else if (finalEmail != null &&
-                                    finalEmail.isNotEmpty) {
+                                } else if (finalEmail.isNotEmpty) {
                                   socialName = finalEmail.split('@')[0];
                                 } else {
                                   socialName = "User";

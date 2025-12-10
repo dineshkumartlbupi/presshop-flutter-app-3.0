@@ -500,6 +500,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                           autofocus: false,
                           onChanged: (val) {
                             checkPhoneApi();
+                            return null;
                           },
                         ),
                         SizedBox(
@@ -528,6 +529,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 Timer(const Duration(milliseconds: 300), () {
                               checkEmailApi();
                             });
+                            return null;
                           },
                         ),
                         SizedBox(
@@ -628,6 +630,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                     showSpecialcase = true;
                                     setState(() {});
                                   }
+                                  return null;
                                 },
                                 prefixIconHeight: size.width * numD08,
                                 suffixIconIconHeight: size.width * numD06,
@@ -1482,16 +1485,14 @@ class _SignUpScreenState extends State<SignUpScreen>
         initialDate: date13YearsAgo,
         firstDate: DateTime(1970),
         lastDate: date13YearsAgo);
-    if (picked != null) {
-      DateFormat formats = DateFormat("yyyy-MM-dd");
-      DateFormat formats1 = DateFormat("dd/MM/yyyy");
-      debugPrint("Selected Date  ${formats.format(picked)}");
-      selectedDates = formats.format(picked);
-      selectedDates1 = formats1.format(picked);
-      showDateError = false;
-      setState(() {});
+    DateFormat formats = DateFormat("yyyy-MM-dd");
+    DateFormat formats1 = DateFormat("dd/MM/yyyy");
+    debugPrint("Selected Date  ${formats.format(picked!)}");
+    selectedDates = formats.format(picked!);
+    selectedDates1 = formats1.format(picked!);
+    showDateError = false;
+    setState(() {});
     }
-  }
 
   Future<String?> selectedDate11() async {
     final DateTime? pickedDate = await showDatePicker(
@@ -1520,6 +1521,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     } else {
       return null;
     }
+    return null;
   }
 
   Future<String?> selectedDate() async {
@@ -1562,6 +1564,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     } else {
       return null;
     }
+    return null;
   }
 
   void openCountryCodePicker() {

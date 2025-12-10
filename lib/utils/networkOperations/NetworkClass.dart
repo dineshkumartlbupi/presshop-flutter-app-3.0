@@ -349,7 +349,7 @@ class NetworkClass {
         // accessHeaderKey
 
         String tokenforAccess =
-            refreshHeaderToken == "" || refreshHeaderToken == null ? token : "";
+            refreshHeaderToken == "" ? token : "";
 
         print("tokenAccess123 ${tokenforAccess}");
         request.headers.addAll({
@@ -1075,8 +1075,7 @@ class _PendingRequest {
   final VoidCallback? onCancel;
 
   _PendingRequest({
-    required this.retryFunction,
-    this.onCancel,
+    required this.retryFunction, this.onCancel,
   });
 
   void retry() {
