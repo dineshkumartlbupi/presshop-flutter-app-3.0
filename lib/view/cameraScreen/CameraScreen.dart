@@ -1211,7 +1211,7 @@ class CameraScreenState extends State<CameraScreen>
     });
     try {
       offset = await cameraController!.setExposureOffset(offset);
-    } on CameraException catch (e) {
+    } on CameraException {
       rethrow;
     }
   }
@@ -1231,7 +1231,7 @@ class CameraScreenState extends State<CameraScreen>
 
     try {
       await cameraController!.setExposureMode(mode);
-    } on CameraException catch (e) {
+    } on CameraException {
       rethrow;
     }
   }

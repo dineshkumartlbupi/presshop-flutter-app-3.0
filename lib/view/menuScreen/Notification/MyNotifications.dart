@@ -76,7 +76,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
     return _studentBeansCompleter!.future;
   }
 
-  void _checkUpdateAndShowPopup({bool? isOpen, bool? isClick}) async {
+  void _checkUpdateAndShowPopup() async {
     final String? savedSourceDataType =
         sharedPreferences?.getString(sourceDataTypeKey);
     // final String? savedSourceDataUrl =
@@ -139,7 +139,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                             children: [
                               Text(
                                 (sourceDataHeading ??
-                                    "Brains, beans, and breaking news!")!,
+                                    "Brains, beans, and breaking news!"),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: size.width * numD04,
@@ -199,7 +199,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                               Expanded(
                                 child: Text(
                                   (sourceDataDescription ??
-                                      "Please confirm your student status to continue")!,
+                                      "Please confirm your student status to continue"),
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: size.width * numD035,
@@ -762,7 +762,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen>
                                           ],
                                           if (notificationList[index]
                                                   .videoUrl
-                                                  ?.isNotEmpty ==
+                                                  .isNotEmpty ==
                                               true) ...[
                                             SizedBox(
                                                 height: size.width * numD02),

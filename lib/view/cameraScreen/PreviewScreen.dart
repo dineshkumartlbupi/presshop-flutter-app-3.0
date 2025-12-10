@@ -171,7 +171,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
           goToLocationErrorScreen();
         }
       }
-    } on Exception catch (e) {
+    } on Exception {
       isLocationFetching = false;
       if (showErrorLocationPage) {
         goToLocationErrorScreen();

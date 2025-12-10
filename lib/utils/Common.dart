@@ -1148,7 +1148,7 @@ bool dateTimeFormatCheck(String date) {
   try {
     DateTime covertValue = DateTime.parse(date);
     return true;
-  } on FormatException catch (e) {
+  } on FormatException {
     return false;
   }
 }

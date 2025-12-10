@@ -258,6 +258,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                           showSpecialcase = true;
                           setState(() {});
                         }
+                        return null;
                       },
                       suffixIcon: InkWell(
                         onTap: () {

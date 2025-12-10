@@ -413,6 +413,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                           autofocus: false,
                           onChanged: (val) {
                             checkPhoneApi();
+                            return null;
                           },
                         ),
                         SizedBox(

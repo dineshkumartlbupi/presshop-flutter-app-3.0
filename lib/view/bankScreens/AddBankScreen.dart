@@ -246,6 +246,7 @@ class _AddBankScreenState extends State<AddBankScreen>
                         sortCodeController.selection = TextSelection.collapsed(
                             offset: sortCodeController.text.length);
                         setState(() {});
+                        return null;
                       },
                       prefixIcon: const ImageIcon(
                         AssetImage(

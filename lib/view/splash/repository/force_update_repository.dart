@@ -72,13 +72,11 @@ class ForceUpdateRepository {
     String? token = sharedPreferences!.getString(tokenKey);
     String? deviceId = sharedPreferences!.getString(deviceIdKey);
 
-    if (token != null) {
-      headers[headerKey] = token;
-      headers[headerDeviceTypeKey] =
-          "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
-      headers[headerDeviceIdKey] = deviceId ?? "";
-    }
-
+    headers[headerKey] = token!;
+    headers[headerDeviceTypeKey] =
+        "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
+    headers[headerDeviceIdKey] = deviceId ?? "";
+  
     return headers;
   }
 
@@ -91,13 +89,11 @@ class ForceUpdateRepository {
       String? accessToken = sharedPreferences!.getString(tokenKey);
       String? deviceId = sharedPreferences!.getString(deviceIdKey);
 
-      if (refresh == null) return false;
-
       final response = await _dio.post(
         appRefreshTokenUrl,
         options: Options(headers: {
           refreshHeaderKey: refresh,
-          accessHeaderKey: refresh.isEmpty ? accessToken : "",
+          accessHeaderKey: refresh!.isEmpty ? accessToken : "",
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
           headerDeviceIdKey: deviceId ?? "",
