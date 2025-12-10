@@ -855,7 +855,9 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                       Text(
                                         feedDataList[index].saleStatus == "sold"
                                             ? "Sold"
-                                            : "Un Sold",
+                                            : "Sold",
+                                        // feedDataList[index].saleStatus,
+
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: commonTextStyle(
