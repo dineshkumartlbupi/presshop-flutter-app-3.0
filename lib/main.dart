@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:presshop/core/di/injection_container.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
@@ -16,21 +16,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:presshop/utils/CommonWigdets.dart';
-import 'package:presshop/view/splash/repository/force_update_repository.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/features/splash/data/repositories/force_update_repository.dart';
 // import 'package:flutter_foreground_service/flutter_foreground_service.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-import 'package:presshop/utils/AnalyticsHelper.dart';
-import 'package:presshop/utils/AnalyticsMixin.dart';
-import 'package:presshop/utils/Common.dart';
-import 'package:presshop/utils/CommonSharedPrefrence.dart';
-import 'package:presshop/utils/LocalNotificationService.dart';
-import 'package:presshop/view/cameraScreen/PreviewScreen.dart';
-import 'package:presshop/view/splash/SplashScreen.dart';
+import 'package:presshop/core/analytics/analytics_helper.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/splash/presentation/pages/SplashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:force_update_helper/force_update_helper.dart';
@@ -97,6 +96,7 @@ Future<void> initializeAppsFlyer() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
   facebookAppEvents.logEvent(
     name: "app_open",
     parameters: {
@@ -186,15 +186,13 @@ void main() async {
                     return info.version;
                   } catch (e) {
                     print("Force update check failed: $e");
-                    if (context != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Failed to check updates."),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                    final info = await PackageInfo.fromPlatform();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Failed to check updates."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                                      final info = await PackageInfo.fromPlatform();
                     return info.version;
                   }
                 },
@@ -388,27 +386,25 @@ Future<void> uploadMediaUsingDio(
       var mimeType = lookupMimeType(element.path);
       debugPrint("MediaMime: $mimeType");
       mimeType ??= "video/mp4";
-      if (mimeType != null) {
-        // var mArray = mimeType.split("/");
-        // formData.files.add(MapEntry(
-        //   imageParams,
-        //   await MultipartFile.fromFile(element.path, contentType: MediaType(mArray.first, mArray.last)),
-        // ));
+      // var mArray = mimeType.split("/");
+      // formData.files.add(MapEntry(
+      //   imageParams,
+      //   await MultipartFile.fromFile(element.path, contentType: MediaType(mArray.first, mArray.last)),
+      // ));
 
-        var mArray = mimeType.split("/");
-        var file = await MultipartFile.fromFile(
-          element.path,
-          contentType: MediaType(mArray.first, mArray.last),
-        );
-        formData.files.add(MapEntry(imageParams, file));
+      var mArray = mimeType.split("/");
+      var file = await MultipartFile.fromFile(
+        element.path,
+        contentType: MediaType(mArray.first, mArray.last),
+      );
+      formData.files.add(MapEntry(imageParams, file));
 
-        // **Print file details**
-        // debugPrint("Adding File:");
-        // debugPrint("Path: ${element.path}");
-        debugPrint("MimeType: $mimeType");
-        // debugPrint("Size: ${await element.length()} bytes");
-      }
-    }
+      // **Print file details**
+      // debugPrint("Adding File:");
+      // debugPrint("Path: ${element.path}");
+      debugPrint("MimeType: $mimeType");
+      // debugPrint("Size: ${await element.length()} bytes");
+        }
   }
 
   if (sharedPreferences!.getString(tokenKey) != null) {
@@ -424,8 +420,8 @@ Future<void> uploadMediaUsingDio(
   }
 
   try {
-    log("callAddContentApi finished" + DateTime.now().toString());
-    print("callAddContentApi finished" + DateTime.now().toString());
+    log("callAddContentApi finished${DateTime.now()}");
+    print("callAddContentApi finished${DateTime.now()}");
     Response response = await dio.post(
       baseUrl + endUrl,
       data: formData,
@@ -462,7 +458,7 @@ Future<void> uploadMediaUsingDio(
         }
       },
     );
-    print("add content success:::111" + DateTime.now().toString());
+    print("add content success:::111${DateTime.now()}");
 
     debugPrint("add content success::: ${response.data}");
     if (response.statusCode! <= 201) {
