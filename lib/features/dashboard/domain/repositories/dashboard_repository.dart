@@ -10,5 +10,6 @@ abstract class DashboardRepository {
   Future<Either<Failure, TaskDetail>> getTaskDetail(String id);
   Future<Either<Failure, Map<String, dynamic>>> getRoomId();
   Future<Either<Failure, Map<String, dynamic>>> checkAppVersion();
-  Future<Either<Failure, Map<String, dynamic>>> activateStudentBeans(); // URL map logic might be needed
+  Future<Either<Failure, Map<String, dynamic>>> activateStudentBeans();
+  Future<Either<Failure, void>> removeDevice(Map<String, dynamic> params);
 }

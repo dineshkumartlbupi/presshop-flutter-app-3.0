@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart'
     hide Navigator, debugPrint;
@@ -15,7 +16,6 @@ import 'package:presshop/features/authentication/presentation/pages/UploadDocumn
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatCopy.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
-import 'package:presshop/features/map/presentation/pages/screens/marketplace_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/DigitalIdScreen.dart';
@@ -25,7 +25,6 @@ import 'package:presshop/features/content/presentation/pages/my_draft_screen.dar
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
 import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
-import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
@@ -34,9 +33,8 @@ import 'package:presshop/features/referral/presentation/pages/refer_screen.dart'
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
-import 'alertScreen.dart';
+import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -47,34 +45,83 @@ class MenuScreen extends StatefulWidget {
   }
 }
 
-class MenuScreenState extends State<MenuScreen>
-    with AnalyticsPageMixin
-    implements NetworkResponse {
+class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
   // Analytics Mixin Requirements
   @override
   String get pageName => PageNames.menu;
 
   @override
   Map<String, Object>? get pageParameters => {
-        'notification_count': notificationCount.toString(),
-        'alert_count': alertCount.toString(),
+        'notification_count': _notificationCount.toString(),
+        'alert_count': _alertCount.toString(),
       };
 
   List<MenuData> menuList = [];
-  int notificationCount = 0;
-  int alertCount = 0;
+  int _notificationCount = 0;
+  int _alertCount = 0;
   String? selectedCurrency = "GBP";
 
   @override
   void initState() {
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => callNotificationList());
     addMenuData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<MenuBloc>()..add(MenuLoadCounts()),
+      child: BlocConsumer<MenuBloc, MenuState>(
+        listener: (context, state) {
+          if (state.status == MenuStatus.success) {
+            setState(() {
+              _notificationCount = state.notificationCount;
+              _alertCount = state.alertCount;
+            });
+          }
+          if (state.logoutStatus == MenuLogoutStatus.success) {
+            _handleLogoutSuccess();
+          } else if (state.logoutStatus == MenuLogoutStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage ?? "Logout failed")),
+            );
+          }
+        },
+        builder: (context, state) {
+          return _buildContent(context, state);
+        },
+      ),
+    );
+  }
+
+  void _handleLogoutSuccess() async {
+    rememberMe = false;
+    sharedPreferences!.clear();
+    // Assuming googleSignIn is globally available from main.dart
+    try {
+      if(await googleSignIn.isSignedIn()){
+          googleSignIn.signOut();
+      }
+    } catch (e) {
+      debugPrint("Error signing out google: $e");
+    }
+    
+    if(!mounted) return;
+    
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false);
+        
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'device_token_removed',
+      parameters: {
+        'message': 'Device token removed successfully',
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, MenuState state) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -104,34 +151,19 @@ class MenuScreenState extends State<MenuScreen>
                           return;
                         }
                         if (index == (menuList.length - 1)) {
-                          logoutDialog(size);
+                          logoutDialog(size, context);
                         } else {
                           debugPrint(
                               "value of navigation ===> ${menuList[index].name}");
-
-                          /* if (index == 5) {
-                            Fluttertoast.showToast(
-                              msg: "Launching soon",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: lightGrey,
-                              textColor: Colors.black,
-                              fontSize: 16.0,
-                            );
-                          } else {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        menuList[index].classWidget))
-                                .then((value) => {callNotificationList()});
-                          }*/
 
                           Navigator.of(context)
                               .push(MaterialPageRoute(
                                   builder: (context) =>
                                       menuList[index].classWidget))
-                              .then((value) => {callNotificationList()});
+                              .then((value) => {
+                                // Refresh counts when coming back
+                                context.read<MenuBloc>().add(MenuLoadCounts())
+                              });
                         }
                       },
                       child: Padding(
@@ -178,7 +210,7 @@ class MenuScreenState extends State<MenuScreen>
                                                 ),
                                               ),
                                               Text(
-                                                notificationCount.toString(),
+                                                state.notificationCount.toString(),
                                                 style: commonTextStyle(
                                                     size: size,
                                                     fontSize:
@@ -223,7 +255,7 @@ class MenuScreenState extends State<MenuScreen>
                                                       padding: EdgeInsets.all(
                                                           size.width * numD004),
                                                       child: Text(
-                                                        "$alertCount",
+                                                        "${state.alertCount}",
                                                         style: commonTextStyle(
                                                             size: size,
                                                             fontSize:
@@ -305,10 +337,6 @@ class MenuScreenState extends State<MenuScreen>
   }
 
   void addMenuData() {
-    // menuList.add(MenuData(
-    //     name: "Chat Bot",
-    //     icon: "${iconsPath}ic_logout.png",
-    //     classWidget: const ChatBotScreen()));
     menuList.add(MenuData(
         name: digitalIdText,
         icon: "${iconsPath}ic_id.png",
@@ -343,11 +371,6 @@ class MenuScreenState extends State<MenuScreen>
         icon: "${iconsPath}ic_ranking.png",
         classWidget: const LeaderboardPage()));
 
-    // menuList.add(MenuData(
-    //     name: "Map view",
-    //     icon: "${iconsPath}map2.png",
-    //     classWidget: MarketplaceScreen()));
-
     menuList.add(MenuData(
         name: paymentMethodText,
         icon: "${iconsPath}ic_payment_method.png",
@@ -376,27 +399,16 @@ class MenuScreenState extends State<MenuScreen>
         classWidget: MyEarningScreen(
           openDashboard: false,
         )));
-    // menuList.add(MenuData(
-    //     name: chooseCurrencyText,
-    //     icon: "${iconsPath}choose_currency.png",
-    //     classWidget: const MyBanksScreen()));
-
-    //rajesh
-    // menuList.add(MenuData(
-    //     name: "Alerts",
-    //     icon: "${iconsPath}ic_alert.png",
-    //     classWidget: const AlertScreen()));
 
     menuList.add(MenuData(
         name: notificationText,
         icon: "${iconsPath}ic_feed.png",
-        classWidget: MyNotificationScreen(count: notificationCount)));
-
-    // menuList.add(MenuData(
-    //     name: feedText,
-    //     icon: "${iconsPath}ic_feed.png",
-    //     classWidget: FeedScreen()));
-
+        classWidget: MyNotificationScreen(count: _notificationCount))); 
+        // Note: count here is just initial, screen should also be reactive or fetch on its own.
+        // MyNotificationScreen was refactored previously to fetch its own data (it accepts count but does it use it? 
+        // Previously edited MyNotifications.dart uses GetNotifications.
+        // So passing count might be redundant or just for display before load.
+        
     menuList.add(MenuData(
         name: "$ratingText & ${reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
@@ -461,10 +473,11 @@ class MenuScreenState extends State<MenuScreen>
         classWidget: const LoginScreen()));
   }
 
-  void logoutDialog(Size size) {
+  void logoutDialog(Size size, BuildContext context) {
     showDialog(
-        context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        context: context,
+        builder: (BuildContext dialogContext) { 
+          // Use dialogContext or just context inside builder
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -574,8 +587,9 @@ class MenuScreenState extends State<MenuScreen>
                                     size,
                                     commonButtonTextStyle(size),
                                     commonButtonStyle(size, Colors.black), () {
-                                  Navigator.pop(context);
-                                  callRemoveDeviceApi();
+                                  Navigator.pop(context); // Close dialog
+                                  // Call logout on BLoC
+                                  context.read<MenuBloc>().add(MenuLogoutRequested());
                                 }),
                               )),
                               SizedBox(
@@ -602,276 +616,6 @@ class MenuScreenState extends State<MenuScreen>
                 },
               ));
         });
-  }
-
-  void onBoardingDialog(Size size) {
-    showDialog(
-        context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
-              content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD045)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
-                          child: Row(
-                            children: [
-                              Text(
-                                youWIllBeMissedText,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: size.width * numD05,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Colors.black,
-                                    size: size.width * numD06,
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
-                          child: const Divider(
-                            color: Colors.black,
-                            thickness: 0.5,
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    border: Border.all(color: Colors.black)),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    child: Image.asset(
-                                      "${commonImagePath}tea.png",
-                                      height: size.width * numD30,
-                                      width: size.width * numD35,
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
-                              SizedBox(
-                                width: size.width * numD04,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  logoutMessageText,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: size.width * numD035,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Expanded(
-                                  child: SizedBox(
-                                height: size.width * numD12,
-                                child: commonElevatedButton(
-                                    logoutText,
-                                    size,
-                                    commonButtonTextStyle(size),
-                                    commonButtonStyle(size, Colors.black), () {
-                                  Navigator.pop(context);
-                                  callRemoveDeviceApi();
-                                }),
-                              )),
-                              SizedBox(
-                                width: size.width * numD04,
-                              ),
-                              Expanded(
-                                  child: SizedBox(
-                                height: size.width * numD12,
-                                child: commonElevatedButton(
-                                    stayLoggedInText,
-                                    size,
-                                    commonButtonTextStyle(size),
-                                    commonButtonStyle(size, colorThemePink),
-                                    () async {
-                                  Navigator.pop(context);
-                                }),
-                              )),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ));
-        });
-  }
-
-  /// Api Section
-  callNotificationList() {
-    NetworkClass("$notificationListAPI?limit=10&offset=0", this,
-            reqNotificationListAPI)
-        .callRequestServiceHeader(false, 'get', null);
-  }
-
-  /// remove Device
-  void callRemoveDeviceApi() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    String deviceId = "";
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      debugPrint('Running on ${androidInfo.id}');
-      deviceId = androidInfo.id;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      debugPrint('Running on ${iosInfo.identifierForVendor}');
-      deviceId = iosInfo.identifierForVendor ?? "";
-    }
-    Map<String, String> map = {
-      "device_id": deviceId,
-    };
-    NetworkClass.fromNetworkClass(removeDeviceUrl, this, removeDeviceReq, map)
-        .callRequestServiceHeader(true, 'post', null);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case reqNotificationListAPI:
-          debugPrint("Error response===> ${jsonDecode(response)}");
-          break;
-
-        /// Remove Device Api
-        case removeDeviceReq:
-          var data = jsonDecode(response);
-          debugPrint("removeDeviceReq-Error: $data");
-          if (data["errors"] != null) {
-            SnackBar(
-              content:
-                  Text(data["errors"]["msg"].toString().replaceAll("_", " ")),
-            );
-          } else {
-            SnackBar(
-              content: Text(data["errors"].toString()),
-            );
-          }
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint('exception catch====> $e');
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) async {
-    try {
-      switch (requestCode) {
-        case reqNotificationListAPI:
-          debugPrint("success response===> ${jsonDecode(response)}");
-
-          var data = jsonDecode(response);
-          var dataList = data['readCount'];
-          debugPrint("dataList:::: $dataList");
-          notificationCount = data['unreadCount'] ?? 0;
-          alertCount = data['hopperAlertCount'] ?? 0;
-
-          if (mounted) {
-            setState(() {});
-          }
-          break;
-
-        case removeDeviceReq:
-          var data = jsonDecode(response);
-          debugPrint("removeDeviceReq-Success: $data");
-          rememberMe = false;
-          debugPrint("rememberMe: $rememberMe");
-          sharedPreferences!.clear();
-          googleSignIn.signOut();
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false);
-          await FirebaseAnalytics.instance.logEvent(
-            name: 'device_token_removed',
-            parameters: {
-              'message': 'Device token removed successfully',
-              'timestamp': DateTime.now().toIso8601String(),
-            },
-          );
-          break;
-
-        /// Remove Device Api
-        // case removeDeviceReq:
-        //   var data = jsonDecode(response);
-        //   debugPrint("removeDeviceReq-Success: $data");
-        //   // NEVER logout automatically - removing device token should not logout user
-        //   // Just show success message - user stays logged in
-        //   debugPrint(
-        //       "Device token removed successfully, but keeping user logged in");
-        //   showSnackBar("Success", "Device removed successfully", Colors.green);
-
-        // await FirebaseAnalytics.instance.logEvent(
-        //   name: 'device_token_removed',
-        //   parameters: {
-        //     'message': 'Device token removed successfully',
-        //     'timestamp': DateTime.now().toIso8601String(),
-        //   },
-        // );
-
-        //   // User stays logged in - no navigation to login screen
-        //   break;
-      }
-    } on Exception catch (e) {
-      debugPrint('exception catch====> $e');
-
-      await FirebaseAnalytics.instance.logEvent(
-        name: 'api_response_exception auto logout',
-        parameters: {
-          'error': e.toString(),
-          'timestamp': DateTime.now().toIso8601String(),
-        },
-      );
-    }
   }
 
   void _showCurrencyBottomSheet(BuildContext context) {

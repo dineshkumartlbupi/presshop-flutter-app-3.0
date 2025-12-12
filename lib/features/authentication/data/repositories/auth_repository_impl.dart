@@ -312,4 +312,34 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(NetworkFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      await localDataSource.clearCache();
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> checkOnboardingStatus() async {
+    try {
+      final result = await localDataSource.getOnboardingSeen();
+      return Right(result);
+    } catch (e) {
+      return Left(CacheFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> setOnboardingSeen() async {
+    try {
+      await localDataSource.setOnboardingSeen();
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure(message: e.toString()));
+    }
+  }
 }

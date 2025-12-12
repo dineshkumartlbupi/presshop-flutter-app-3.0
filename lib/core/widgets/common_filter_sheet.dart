@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 
 class FilterModel {
+  
   String name = "";
   String icon = "";
   bool isSelected = false;
   String? fromDate;
   String? toDate;
+  String ?id;
 
   FilterModel({
     required this.name,
     required this.icon,
     required this.isSelected,
     this.fromDate,
-    this.toDate,
+    this.toDate, 
+   this.id,
   });
 }
 

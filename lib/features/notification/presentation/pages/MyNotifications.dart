@@ -4,9 +4,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
-import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
 import 'package:presshop/features/notification/presentation/pages/InlineFlickPlayer.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -15,8 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import '../../task_details_new_screen/task_details_new_screen.dart';
 import '../ManageTaskScreen.dart';
@@ -349,11 +344,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
             final uri = Uri.parse(state.studentBeansActivationUrl!);
             if (await canLaunchUrl(uri)) {
                await launchUrl(uri, mode: LaunchMode.externalApplication);
-               
-               // Update preferneces as done in legacy code
-                final sp = await SharedPreferences.getInstance();
-                sp.setBool(sourceDataIsClickKey, true);
-                sp.setBool(sourceDataIsOpenedKey, true);
+               context.read<NotificationBloc>().add(MarkStudentBeansVisitedEvent());
             }
           }
         },

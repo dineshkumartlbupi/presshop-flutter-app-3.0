@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/splash/data/repositories/force_update_repository.dart';
 // import 'package:flutter_foreground_service/flutter_foreground_service.dart';
@@ -94,8 +96,10 @@ Future<void> initializeAppsFlyer() async {
   debugPrint("AppsFlyer SDK initialized successfully");
 }
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await di.init();
   facebookAppEvents.logEvent(
     name: "app_open",

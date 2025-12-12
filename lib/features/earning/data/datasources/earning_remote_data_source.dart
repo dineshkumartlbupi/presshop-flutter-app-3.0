@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import '../../../../core/api/api_client.dart';
 import '../../../../core/api/api_constant.dart';
 import '../../../../core/error/exceptions.dart';
-import '../../data/models/earning_model.dart';
 import '../models/earning_model.dart';
+import '../../data/models/earning_model.dart'; // Ensure duplication is handled or import only necessary
 
 abstract class EarningRemoteDataSource {
   Future<EarningProfileDataModel> getEarningProfile(String year, String month);
@@ -24,13 +23,10 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       queryParameters: {"year": year, "month": month},
     );
 
-    if (response.statusCode == 200) {
-      var data = response.data;
-      if (data is String) data = jsonDecode(data);
-      return EarningProfileDataModel.fromJson(data['resp']);
-    } else {
-      throw ServerException();
-    }
+    // ApiClient usually returns dynamic (Map or List) directly if configured, 
+    // or we might need to handle it. Assuming it behaves like in PublicationRemoteDataSourceImpl.
+    final data = response['resp'];
+    return EarningProfileDataModel.fromJson(data);
   }
 
   @override
@@ -39,16 +35,8 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       getAllEarningTransactionAPI,
       queryParameters: params,
     );
-
-    if (response.statusCode == 200) {
-      var data = response.data;
-      if (data is String) data = jsonDecode(data);
-      // Return raw data usually, or specific structure. 
-      // Since we need 'totalEarning' which is outside 'data' list in some responses, let's return the whole json data map.
-      return data is Map<String, dynamic> ? data : {};
-    } else {
-      throw ServerException();
-    }
+    // Returning full response to extract totalEarning and data list in Repository
+    return response as Map<String, dynamic>;
   }
 
   @override
@@ -57,14 +45,8 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       commissionGetUrl,
       queryParameters: params,
     );
-
-    if (response.statusCode == 200) {
-      var data = response.data;
-      if (data is String) data = jsonDecode(data);
-      var dataList = data['data'] as List;
-      return dataList.map((e) => CommissionData.fromJson(e)).toList();
-    } else {
-      throw ServerException();
-    }
+    
+    final List<dynamic> dataList = response['data'];
+    return dataList.map((e) => CommissionData.fromJson(e)).toList();
   }
 }

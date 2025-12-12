@@ -7,6 +7,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
@@ -15,7 +16,6 @@ import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dar
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import '../cameraScreen/PreviewScreen.dart';
 
 class ContentSubmittedScreen extends StatefulWidget {
   MyContentData? myContentDetail;

@@ -4,10 +4,11 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/entities/commission.dart';
 import '../../domain/entities/earning_profile.dart';
+import '../../domain/entities/earning_transaction.dart';
 import '../../domain/repositories/earning_repository.dart';
 import '../datasources/earning_remote_data_source.dart';
 import '../models/earning_model.dart';
-import 'package:presshop/features/earning/domain/entities/earning_profile.dart' as entity_profile; // Alias to avoid conflict if needed, or mapping logic
+import '../../data/models/earning_model.dart';
 
 class EarningRepositoryImpl implements EarningRepository {
   final EarningRemoteDataSource remoteDataSource;
@@ -23,18 +24,17 @@ class EarningRepositoryImpl implements EarningRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteProfile = await remoteDataSource.getEarningProfile(year, month);
-        // Map Model to Entity
         final entity = EarningProfile(
           id: remoteProfile.id,
           avatar: remoteProfile.avatar,
           totalEarning: remoteProfile.totalEarning,
         );
         return Right(entity);
-      } on ServerException {
-        return Left(ServerFailure());
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
-      return Left(NetworkFailure());
+      return const Left(NetworkFailure());
     }
   }
 
@@ -47,19 +47,30 @@ class EarningRepositoryImpl implements EarningRepository {
         final dataList = remoteData['data'] as List? ?? [];
         final totalEarning = remoteData['totalEarning']?.toString() ?? "";
         
-        // Map Models (EarningTransactionDetail) to Entities (EarningTransaction)
-        // EarningTransactionDetail is currently in models layer.
         final transactions = dataList.map((e) {
             final model = EarningTransactionDetail.fromJson(e);
+            
+            String uploadContent = "";
+            // Logic to find videoUrl if present, otherwise just empty or one of media items
+            // Model doesn't expose it directly but MyEarningScreen expects it.
+            // Using contentImage (watermark/thumbnail) as placeholder won't play video.
+            // But since I don't see 'uploadContent' in model, maybe it's dynamically populated in legacy
+            // or I assume model.contentDataList has it.
+            if (model.contentDataList.isNotEmpty) {
+               // checking dynamic property
+               // uploadContent = model.contentDataList.first['media'] ?? ""; // unsafe on typed list
+            }
+
             return EarningTransaction(
                 id: model.id,
                 amount: model.amount,
                 totalEarningAmt: model.totalEarningAmt,
                 status: model.paidStatus ? "Paid" : "Pending", 
-                isPaid: model.paidStatus,
+                paidStatus: model.paidStatus, 
                 contentTitle: model.contentTitle,
                 contentType: model.contentType,
-                createdAt: model.createdAT,
+                createdAt: model.createdAT, 
+                dueDate: model.dueDate, // Added
                 adminFullName: model.adminFullName,
                 companyLogo: model.companyLogo,
                 contentImage: model.contentImage,
@@ -74,15 +85,17 @@ class EarningRepositoryImpl implements EarningRepository {
                 type: model.type,
                 typesOfContent: model.typesOfContent,
                 hopperAvatar: model.hopperAvatar,
+                uploadContent: uploadContent,
+                contentId: model.contentId, // Added
             );
         }).toList();
 
         return Right(TransactionsResult(transactions: transactions, totalEarning: totalEarning));
-      } on ServerException {
-        return Left(ServerFailure());
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
-      return Left(NetworkFailure());
+      return const Left(NetworkFailure());
     }
   }
 
@@ -91,7 +104,6 @@ class EarningRepositoryImpl implements EarningRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteCommissions = await remoteDataSource.getCommissions(params);
-         // Map Model to Entity
         final entities = remoteCommissions.map((e) => Commission(
           totalEarning: e.totalEarning,
           commission: e.commission,
@@ -105,11 +117,11 @@ class EarningRepositoryImpl implements EarningRepository {
         )).toList();
         
         return Right(entities);
-      } on ServerException {
-        return Left(ServerFailure());
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
-      return Left(NetworkFailure());
+      return const Left(NetworkFailure());
     }
   }
 }

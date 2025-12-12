@@ -23,10 +23,12 @@ class NotificationRepositoryImpl implements NotificationRepository {
       }
       
       int unreadCount = remoteData['unreadCount'] ?? 0;
+      int alertCount = remoteData['hopperAlertCount'] ?? 0;
       
       return Right(NotificationsResult(
         notifications: notifications,
         unreadCount: unreadCount,
+        alertCount: alertCount,
       ));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -89,6 +91,16 @@ class NotificationRepositoryImpl implements NotificationRepository {
     try {
       final url = await remoteDataSource.activateStudentBeans();
       return Right(url);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> markStudentBeansVisited() async {
+    try {
+      await remoteDataSource.markStudentBeansVisited();
+      return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

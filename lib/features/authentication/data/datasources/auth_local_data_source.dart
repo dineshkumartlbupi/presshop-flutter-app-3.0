@@ -9,6 +9,8 @@ abstract class AuthLocalDataSource {
   Future<void> clearCache();
   Future<bool> getRememberMe();
   Future<void> setRememberMe(bool value);
+  Future<bool> getOnboardingSeen();
+  Future<void> setOnboardingSeen();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -59,5 +61,15 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> setRememberMe(bool value) async {
     await sharedPreferences.setBool(rememberKey, value);
+  }
+
+  @override
+  Future<bool> getOnboardingSeen() async {
+    return sharedPreferences.getBool("onboarding_seen") ?? false;
+  }
+
+  @override
+  Future<void> setOnboardingSeen() async {
+    await sharedPreferences.setBool("onboarding_seen", true);
   }
 }

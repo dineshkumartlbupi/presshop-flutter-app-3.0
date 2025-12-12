@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
 
 import 'package:presshop/main.dart';
@@ -10,9 +12,13 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
-import '../myEarning/earningDataModel.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/core/di/injection_container.dart' as di;
+import '../bloc/publication_bloc.dart';
+import '../bloc/publication_event.dart';
+import '../bloc/publication_state.dart';
+import '../../domain/entities/publication_earning_stats.dart';
+import '../../domain/entities/media_house.dart';
 
 class PublicationListScreen extends StatefulWidget {
   String contentId = "";
@@ -29,8 +35,7 @@ class PublicationListScreen extends StatefulWidget {
   State<PublicationListScreen> createState() => _PublicationListScreenState();
 }
 
-class _PublicationListScreenState extends State<PublicationListScreen>
-    implements NetworkResponse {
+class _PublicationListScreenState extends State<PublicationListScreen> {
   late Size size;
   final currencyFormat = NumberFormat("#,##0.00", "en_US");
 
@@ -43,17 +48,12 @@ class _PublicationListScreenState extends State<PublicationListScreen>
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
   List<EarningTransactionDetail> publicationTransactionList = [];
-  EarningProfileDataModel? earningData;
+  PublicationEarningStats? earningData;
 
   @override
   void initState() {
     initializeFilter();
-
     publicationCount = widget.publicationCount;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      callGEtEarningDataAPI();
-      callMediaHouseList();
-    });
     super.initState();
   }
 
@@ -87,8 +87,43 @@ class _PublicationListScreenState extends State<PublicationListScreen>
           )
         ],
       ),
-      body: earningData != null
-          ? ListView(
+      body: BlocProvider(
+        create: (context) => di.sl<PublicationBloc>()
+          ..add(LoadPublicationInitialData(
+            contentId: widget.contentId,
+            contentType: widget.contentType,
+          )),
+        child: BlocConsumer<PublicationBloc, PublicationState>(
+          listener: (context, state) {
+             if (state is PublicationLoaded) {
+               // Update local variables if needed for UI consistency with legacy code
+                earningData = state.stats;
+                publicationTransactionList = state.transactionsResult.transactions;
+                publicationCount = state.transactionsResult.publicationCount;
+                totalPublicationAmount = state.transactionsResult.totalAmount;
+                
+                // Initialize filters if empty
+                if (filterList.isEmpty) {
+                   filterList = state.mediaHouses.map((e) => FilterModel(
+                     name: e.name,
+                     icon: e.icon,
+                     id: e.id, // Ensure FilterModel has id field map
+                     isSelected: false
+                   )).toList();
+                }
+             } else if (state is PublicationError) {
+               showSnackBar("Error", state.message, Colors.red);
+             }
+          },
+          builder: (context, state) {
+             if (state is PublicationLoading) {
+               return const Center(child: CircularProgressIndicator());
+             }
+             if (earningData == null && state is! PublicationLoaded) {
+                 return Container(); // Or loading/empty
+             }
+             
+             return ListView(
               padding: EdgeInsets.only(
                 left: size.width * numD06,
                 right: size.width * numD06,
@@ -268,7 +303,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                                 element.isSelected = false);
                                             sortList[4].toDate = toDate;
                                             sortList[4].isSelected = true;
-                                            callGetAllTransactionDetail();
+                                            _applyFilter(context);
                                           } else {
                                             showSnackBar(
                                                 "Date Error",
@@ -349,8 +384,10 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                   height: size.width * numD04,
                 ),
               ],
-            )
-          : Container(),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -563,8 +600,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                             pageType: PageType.CONTENT,
                                             type: "received",
                                             transactionData:
-                                                publicationTransactionList[
-                                                    index],
+                                                publicationTransactionList[index],
                                           )));
                             },
                             child: Row(
@@ -934,7 +970,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                             toDate = "";
                             sortList.clear();
                             initializeFilter();
-                            callGetAllTransactionDetail();
+                            _applyFilter(context);
                             stateSetter(() {});
                             setState(() {});
                           },
@@ -1004,7 +1040,7 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
-                        callGetAllTransactionDetail();
+                        _applyFilter(context);
                       }),
                     ),
 
@@ -1273,131 +1309,39 @@ class _PublicationListScreenState extends State<PublicationListScreen>
   }
 */
 
-  /// API Section
-  callGEtEarningDataAPI() {
-    Map<String, String> map = {'type': 'publication'};
-    NetworkClass(getEarningDataAPI, this, reqGetEarningDataAPI)
-        .callRequestServiceHeader(true, 'get', map);
-  }
 
-  callGetAllTransactionDetail() {
-    Map<String, dynamic> map = {
-      "content_id": widget.contentId,
-/*      "limit": limit.toString(),
-      "offset": offset.toString()*/
-    };
-    int pos = sortList.indexWhere((element) => element.isSelected);
+  void _applyFilter(BuildContext context) {
+      // Logic to collect params and dispatch event
+      Map<String, dynamic> map = {
+        "content_id": widget.contentId,
+      };
+      
+      int pos = sortList.indexWhere((element) => element.isSelected);
 
-    if (pos != -1) {
-      if (sortList[pos].fromDate != null) {
-        map["startdate"] = sortList[pos].fromDate!.trim();
-        map["endDate"] = sortList[pos].toDate!.trim();
-      } else if (sortList[pos].name == 'View first payment received') {
-        map["firstpaymentrecived"] = 'true';
-      } else if (sortList[pos].name == 'View last payment received') {
-        map["firstpaymentrecived"] = 'false';
-      } else if (sortList[pos].name == 'View highest payment received') {
-        map["highpaymentrecived"] = 'true';
-      } else if (sortList[pos].name == 'View lowest payment received') {
-        map["highpaymentrecived"] = 'false';
+      if (pos != -1) {
+        if (sortList[pos].fromDate != null) {
+          map["startdate"] = sortList[pos].fromDate!.trim();
+          map["endDate"] = sortList[pos].toDate!.trim();
+        } else if (sortList[pos].name == 'View first payment received') {
+          map["firstpaymentrecived"] = 'true';
+        } else if (sortList[pos].name == 'View last payment received') {
+          map["firstpaymentrecived"] = 'false';
+        } else if (sortList[pos].name == 'View highest payment received') {
+          map["highpaymentrecived"] = 'true';
+        } else if (sortList[pos].name == 'View lowest payment received') {
+          map["highpaymentrecived"] = 'false';
+        }
       }
-    }
 
-    /// Filter
-    for (var element in filterList) {
-      if (element.isSelected) {
-        map['publication'] = element.id ?? "";
+      /// Filter
+      // Note: filterList should now be populated from MediaHouses
+      for (var element in filterList) {
+        if (element.isSelected) {
+          map['publication'] = element.id ?? "";
+        }
       }
-    }
-
-    debugPrint('map value ==> $map');
-    NetworkClass(
-            getPublicationTransactionAPI, this, reqGetPublicationTransactionReq)
-        .callRequestServiceHeader(true, 'get', map);
-  }
-
-  /// Media House
-  callMediaHouseList() {
-    NetworkClass(getMediaHouseDetailAPI, this, reqGetMediaHouseDetailAPI)
-        .callRequestServiceHeader(true, 'get', {});
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case reqGetEarningDataAPI:
-          debugPrint(
-              "reqGetEarningDataAPI_ErrorResponse==> ${jsonDecode(response)}");
-          break;
-        case reqGetPublicationTransactionReq:
-          debugPrint(
-              "reqGetPublicationTransactionReq_ErrorResponse==> ${jsonDecode(response)}");
-          break;
-
-        case reqGetMediaHouseDetailAPI:
-          debugPrint("Error response===> ${jsonDecode(response)}");
-      }
-    } on Exception catch (e) {
-      debugPrint("Exception catch======> $e");
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case reqGetEarningDataAPI:
-          debugPrint(
-              "reqGetEarningDataAPI_SuccessResponse==> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-          var dataList = data['resp'];
-          earningData = EarningProfileDataModel.fromJson(dataList);
-          callGetAllTransactionDetail();
-          setState(() {});
-          // transactionShortByDate();
-          break;
-
-        case reqGetPublicationTransactionReq:
-          debugPrint(
-              "reqGetPublicationTransactionReq_successResponse==> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-
-          var dataList = data['data'] as List;
-          publicationCount = data['countofmediahouse'].toString();
-          totalPublicationAmount = data['amount'].toString();
-          publicationTransactionList = dataList
-              .map((e) => EarningTransactionDetail.fromJson(e))
-              .toList();
-          if (earningData != null) {
-            for (var item in publicationTransactionList) {
-              item.hopperAvatar = earningData?.avatar ?? "";
-            }
-          }
-          setState(() {});
-          break;
-        case reqGetMediaHouseDetailAPI:
-          debugPrint("success response===> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-          var dataList = data['response'] as List;
-          filterList.clear();
-          var mediaHouseDataList =
-              dataList.map((e) => PublicationDataModel.fromJson(e)).toList();
-          for (var element in mediaHouseDataList) {
-            filterList.add(FilterModel(
-              name: element.companyName.isNotEmpty
-                  ? element.companyName
-                  : element.publicationName,
-              icon: element.companyProfile,
-              id: element.id,
-              isSelected: false,
-            ));
-          }
-          setState(() {});
-      }
-    } on Exception catch (e) {
-      debugPrint("Exception catch======> $e");
-    }
+      
+      context.read<PublicationBloc>().add(FilterPublicationTransactions(map));
   }
 }
 

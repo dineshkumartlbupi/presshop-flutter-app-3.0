@@ -15,6 +15,10 @@ class SplashAuthenticated extends SplashState {}
 
 class SplashUnauthenticated extends SplashState {}
 
+class SplashForceUpdate extends SplashState {}
+
+class SplashNavigateToOnboarding extends SplashState {}
+
 class SplashError extends SplashState {
   final String message;
   const SplashError({required this.message});
