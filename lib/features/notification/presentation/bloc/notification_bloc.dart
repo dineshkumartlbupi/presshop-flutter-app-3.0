@@ -8,6 +8,7 @@ import 'package:presshop/features/notification/domain/usecases/mark_notification
 import 'package:presshop/features/notification/domain/usecases/clear_all_notifications.dart';
 import 'package:presshop/features/notification/domain/usecases/check_student_beans.dart';
 import 'package:presshop/features/notification/domain/usecases/activate_student_beans.dart';
+import 'package:presshop/features/notification/domain/usecases/mark_student_beans_visited.dart';
 
 part 'notification_event.dart';
 part 'notification_state.dart';
@@ -18,6 +19,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final ClearAllNotifications clearAllNotifications;
   final CheckStudentBeans checkStudentBeans;
   final ActivateStudentBeans activateStudentBeans;
+  final MarkStudentBeansVisited markStudentBeansVisited;
 
   NotificationBloc({
     required this.getNotifications,
@@ -25,12 +27,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     required this.clearAllNotifications,
     required this.checkStudentBeans,
     required this.activateStudentBeans,
+    required this.markStudentBeansVisited,
   }) : super(const NotificationState()) {
     on<FetchNotificationsEvent>(_onFetchNotifications);
     on<MarkNotificationsAsReadEvent>(_onMarkNotificationsAsRead);
     on<ClearAllNotificationsEvent>(_onClearAllNotifications);
     on<CheckStudentBeansEvent>(_onCheckStudentBeans);
     on<StudentBeansActivationEvent>(_onStudentBeansActivation);
+    on<MarkStudentBeansVisitedEvent>(_onMarkStudentBeansVisited);
   }
 
   Future<void> _onFetchNotifications(
@@ -106,6 +110,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     result.fold(
       (failure) => debugPrint("Error activating student beans: ${failure.message}"),
       (url) => emit(state.copyWith(studentBeansActivationUrl: url)),
+    );
+  }
+
+  Future<void> _onMarkStudentBeansVisited(MarkStudentBeansVisitedEvent event,
+      Emitter<NotificationState> emit) async {
+    final result = await markStudentBeansVisited();
+    result.fold(
+      (failure) => debugPrint("Error marking student beans as visited: ${failure.message}"),
+      (_) => null, // Success, no state change needed strictly, or we could reset `shouldShowStudentBeansDialog`
     );
   }
 }

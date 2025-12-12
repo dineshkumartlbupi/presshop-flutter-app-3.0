@@ -22,10 +22,12 @@ import 'package:presshop/features/notification/domain/usecases/mark_notification
 import 'package:presshop/features/notification/domain/usecases/clear_all_notifications.dart';
 import 'package:presshop/features/notification/domain/usecases/check_student_beans.dart';
 import 'package:presshop/features/notification/domain/usecases/activate_student_beans.dart';
+import 'package:presshop/features/notification/domain/usecases/mark_student_beans_visited.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_datasource_impl.dart';
 import 'package:presshop/features/map/data/repositories/map_repository_impl.dart';
+import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 import 'package:presshop/features/map/domain/usecases/get_current_location.dart';
 import 'package:presshop/features/map/domain/usecases/get_incidents.dart';
@@ -61,6 +63,7 @@ import 'package:presshop/features/task/domain/usecases/get_task_detail.dart';
 import 'package:presshop/features/authentication/domain/usecases/login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/social_login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/register_user.dart';
+import 'package:presshop/features/authentication/domain/usecases/logout_user.dart';
 import 'package:presshop/features/leaderboard/presentation/bloc/leaderboard_bloc.dart';
 import 'package:presshop/features/leaderboard/domain/usecases/get_leaderboard.dart';
 import 'package:presshop/features/leaderboard/domain/repositories/leaderboard_repository.dart';
@@ -93,10 +96,10 @@ import 'package:presshop/features/dashboard/data/datasources/dashboard_remote_da
 import 'package:presshop/features/dashboard/domain/usecases/get_active_admins.dart';
 import 'package:presshop/features/dashboard/domain/usecases/update_location.dart';
 import 'package:presshop/features/dashboard/domain/usecases/add_device.dart';
+import 'package:presshop/features/dashboard/domain/usecases/remove_device.dart';
 import 'package:presshop/features/dashboard/domain/usecases/get_dashboard_task_detail.dart';
 import 'package:presshop/features/dashboard/domain/usecases/get_room_id.dart';
 import 'package:presshop/features/dashboard/domain/usecases/check_app_version.dart';
-import 'package:presshop/features/dashboard/domain/usecases/activate_student_beans.dart' hide ActivateStudentBeans;
 import 'package:presshop/features/authentication/domain/usecases/check_username.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_email.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_phone.dart';
@@ -135,6 +138,24 @@ import 'package:presshop/features/authentication/data/repositories/auth_reposito
 import 'package:presshop/features/authentication/data/datasources/auth_remote_data_source.dart';
 import 'package:presshop/features/authentication/data/datasources/auth_local_data_source.dart';
 
+import 'package:presshop/features/authentication/domain/usecases/check_onboarding_status.dart';
+import 'package:presshop/features/publication/presentation/bloc/publication_bloc.dart';
+import 'package:presshop/features/publication/domain/usecases/get_publication_earning_stats.dart';
+import 'package:presshop/features/publication/domain/usecases/get_media_houses.dart';
+import 'package:presshop/features/publication/domain/usecases/get_publication_transactions.dart';
+import 'package:presshop/features/publication/domain/repositories/publication_repository.dart';
+import 'package:presshop/features/publication/data/repositories/publication_repository_impl.dart';
+import 'package:presshop/features/publication/data/datasources/publication_remote_data_source.dart';
+import 'package:presshop/features/authentication/domain/usecases/set_onboarding_seen.dart';
+import 'package:presshop/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+
+import 'package:presshop/features/publish/presentation/bloc/publish_bloc.dart';
+import 'package:presshop/features/publish/domain/usecases/get_content_categories.dart';
+import 'package:presshop/features/publish/domain/usecases/get_charities.dart';
+import 'package:presshop/features/publish/domain/usecases/get_share_exclusive_price.dart';
+import 'package:presshop/features/publish/domain/repositories/publish_repository.dart';
+import 'package:presshop/features/publish/data/repositories/publish_repository_impl.dart';
+import 'package:presshop/features/publish/data/datasources/publish_remote_data_source.dart';
 
 final sl = GetIt.instance; // sl = Service Locator
 
@@ -175,6 +196,19 @@ Future<void> init() async {
   sl.registerFactory(() => SplashBloc(
       checkAuthStatus: sl(),
       getProfile: sl(),
+      checkAppVersion: sl(),
+      checkOnboardingStatus: sl(),
+  ));
+  sl.registerFactory(() => OnboardingBloc(setOnboardingSeen: sl()));
+  sl.registerFactory(() => PublicationBloc(
+    getPublicationEarningStats: sl(),
+    getMediaHouses: sl(),
+    getPublicationTransactions: sl(),
+  ));
+  sl.registerFactory(() => PublishBloc(
+    getContentCategories: sl(),
+    getCharities: sl(),
+    getShareExclusivePrice: sl(),
   ));
   sl.registerFactory(() => VerificationBloc(
     verifyOtp: sl(),
@@ -250,6 +284,7 @@ Future<void> init() async {
     clearAllNotifications: sl(),
     checkStudentBeans: sl(),
     activateStudentBeans: sl(),
+    markStudentBeansVisited: sl(),
   ));
   sl.registerFactory(() => EarningBloc(
     getEarningProfile: sl(),
@@ -274,6 +309,12 @@ Future<void> init() async {
     markerService: sl(),
   ));
 
+  sl.registerFactory(() => MenuBloc(
+    getNotifications: sl(),
+    removeDevice: sl(),
+    logoutUser: sl(),
+  ));
+
   // Use cases
   sl.registerLazySingleton(() => LoginUser(sl()));
   sl.registerLazySingleton(() => SocialLoginUser(sl()));
@@ -283,11 +324,15 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetProfile(sl()));
   sl.registerLazySingleton(() => VerifyOtp(sl()));
   sl.registerLazySingleton(() => SocialRegisterUser(sl()));
+  sl.registerLazySingleton(() => LogoutUser(sl()));
+  sl.registerLazySingleton(() => CheckOnboardingStatus(sl()));
+  sl.registerLazySingleton(() => SetOnboardingSeen(sl()));
   
   // Dashboard Use Cases
   sl.registerLazySingleton(() => GetActiveAdmins(sl()));
   sl.registerLazySingleton(() => UpdateLocation(sl()));
   sl.registerLazySingleton(() => AddDevice(sl()));
+  sl.registerLazySingleton(() => RemoveDevice(sl()));
   sl.registerLazySingleton(() => GetDashboardTaskDetail(sl()));
   sl.registerLazySingleton(() => GetRoomId(sl()));
   sl.registerLazySingleton(() => CheckAppVersion(sl()));
@@ -341,6 +386,17 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ClearAllNotifications(sl()));
   sl.registerLazySingleton(() => CheckStudentBeans(sl()));
   sl.registerLazySingleton(() => ActivateStudentBeans(sl()));
+  sl.registerLazySingleton(() => MarkStudentBeansVisited(sl()));
+
+  // Publication Use Cases
+  sl.registerLazySingleton(() => GetPublicationEarningStats(sl()));
+  sl.registerLazySingleton(() => GetMediaHouses(sl()));
+  sl.registerLazySingleton(() => GetPublicationTransactions(sl()));
+
+  // Publish Use Cases
+  sl.registerLazySingleton(() => GetContentCategories(sl()));
+  sl.registerLazySingleton(() => GetCharities(sl()));
+  sl.registerLazySingleton(() => GetShareExclusivePrice(sl()));
 
   // Map Use Cases
   sl.registerLazySingleton(() => GetCurrentLocation(sl()));
@@ -420,6 +476,19 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerLazySingleton<PublicationRepository>(
+    () => PublicationRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<PublishRepository>(
+    () => PublishRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
   sl.registerLazySingleton<MapRepository>(
     () => MapRepositoryImpl(remoteDataSource: sl()),
   );
@@ -476,6 +545,13 @@ Future<void> init() async {
     () => NotificationRemoteDataSourceImpl(dio: sl(), sharedPreferences: sl()),
   );
 
+  sl.registerLazySingleton<PublicationRemoteDataSource>(
+    () => PublicationRemoteDataSourceImpl( sl()),
+  );
+
+  sl.registerLazySingleton<PublishRemoteDataSource>(
+    () => PublishRemoteDataSourceImpl(apiClient: sl()),
+  );
   sl.registerLazySingleton<MapRemoteDataSource>(
     () => MapRemoteDataSourceImpl(dio: sl(), socketService: sl()),
   );

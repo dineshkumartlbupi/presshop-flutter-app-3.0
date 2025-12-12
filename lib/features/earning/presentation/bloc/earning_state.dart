@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/earning_model.dart';
+import '../../domain/entities/commission.dart';
+import '../../domain/entities/earning_profile.dart';
 import '../../domain/entities/earning_transaction.dart';
-import '../../../../core/core_export.dart';
 
 enum EarningStatus { initial, loading, success, failure, empty }
 
@@ -10,9 +10,9 @@ class EarningState extends Equatable {
   final EarningStatus transactionStatus;
   final EarningStatus commissionStatus;
   
-  final EarningProfileDataModel? earningData;
+  final EarningProfile? earningData;
   final List<EarningTransaction> transactions;
-  final List<CommissionData> commissions;
+  final List<Commission> commissions;
   
   final bool hasReachedMaxTransactions;
   final bool hasReachedMaxCommissions;
@@ -44,9 +44,9 @@ class EarningState extends Equatable {
       EarningStatus? status,
       EarningStatus? transactionStatus,
       EarningStatus? commissionStatus,
-      EarningProfileDataModel? earningData,
+      EarningProfile? earningData,
       List<EarningTransaction>? transactions,
-      List<CommissionData>? commissions,
+      List<Commission>? commissions,
       bool? hasReachedMaxTransactions,
       bool? hasReachedMaxCommissions,
       String? errorMessage,

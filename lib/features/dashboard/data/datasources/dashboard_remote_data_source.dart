@@ -14,6 +14,7 @@ abstract class DashboardRemoteDataSource {
   Future<Map<String, dynamic>> getRoomId();
   Future<Map<String, dynamic>> checkAppVersion();
   Future<Map<String, dynamic>> activateStudentBeans();
+  Future<void> removeDevice(Map<String, dynamic> params);
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -134,6 +135,18 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         }
         return data;
       } else {
+        throw ServerFailure();
+      }
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
+
+  @override
+  Future<void> removeDevice(Map<String, dynamic> params) async {
+     try {
+      final response = await apiClient.post(removeDeviceUrl, data: params);
+      if (response.statusCode != 200) {
         throw ServerFailure();
       }
     } catch (e) {

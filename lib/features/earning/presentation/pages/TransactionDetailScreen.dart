@@ -17,8 +17,9 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import '../../domain/entities/earning_transaction.dart';
-import '../menuScreen/PublicationListScreen.dart';
-// import 'earningDataModel.dart'; // Removing this if it conflicts or is unused after change, but might be needed for other things. Keeping safe, just adding new import.
+import '../../../publication/presentation/pages/publication_list_screen.dart';
+import '../../data/models/earning_model.dart';
+import '../../../../features/feed/presentation/pages/feedDataModel.dart';
 
 enum PageType { CONTENT, TASK }
 
@@ -261,7 +262,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               top: size.width * numD02,
                               child: Column(
                                 children: getMediaCount2(
-                                    widget.transactionData!.contentDataList,
+                                    widget.transactionData!.contentDataList.cast<ContentDataModel>().toList(),
                                     size),
                               ),
                             ),
@@ -1124,7 +1125,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 top: size.width * numD02,
                                 child: Column(
                                   children: getMediaCount2(
-                                      widget.transactionData!.contentDataList,
+                                      widget.transactionData!.contentDataList.cast<ContentDataModel>().toList(),
                                       size),
                                 ),
                               ),

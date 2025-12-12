@@ -112,4 +112,18 @@ class DashboardRepositoryImpl implements DashboardRepository {
       return Left(NetworkFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> removeDevice(Map<String, dynamic> params) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.removeDevice(params);
+        return const Right(null);
+      } on ServerFailure {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(NetworkFailure());
+    }
+  }
 }

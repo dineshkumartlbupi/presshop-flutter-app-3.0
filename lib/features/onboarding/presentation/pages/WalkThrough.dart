@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart' hide Navigator;
+import 'package:presshop/core/di/injection_container.dart' as di;
+import '../bloc/onboarding_bloc.dart';
+import '../bloc/onboarding_event.dart';
+import '../bloc/onboarding_state.dart';
 
 class Walkthrough extends StatefulWidget {
   const Walkthrough({super.key});
@@ -76,176 +81,178 @@ class _WalkthroughState extends State<Walkthrough> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: SafeArea(
-        child: PageView.builder(
-          controller: controller,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ElevatedButton(
-                  //   onPressed: () async {
-                  //     await WakelockPlus.enable();
-                  //     await Future.delayed(Duration(seconds: 15));
-                  //     await LocalNotificationService().showTestNotification();
-                  //     await WakelockPlus.disable();
-                  //   },
-                  //   child: Text("Test Wakelock"),
-                  // ),
-                  SizedBox(
-                    height: size.width * numD06,
-                  ),
-                  index % 2 == 0
-                      ? Expanded(
-                          child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD1),
-                              child: Image.asset(
-                                walkthroughList[index].image,
-                                fit: BoxFit.cover,
-                                width: size.width,
-                              )),
-                        )
-                      : Container(),
-                  SizedBox(height: index % 2 == 0 ? size.width * numD04 : 0),
-                  Container(
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                      image: AssetImage(
-                          "assets/commonImages/walkTitleBackGround.png"),
-                      fit: BoxFit.fitWidth,
-                    )),
-                    child: Text(
-                      walkthroughList[index].title1,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "AirbnbCereal_W_Bd",
-                          fontSize: size.width * numD07),
-                    ),
-                  ),
-                  Text(
-                    walkthroughList[index].title2,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "AirbnbCereal_W_Bd",
-                        fontWeight: FontWeight.w600,
-                        fontSize: size.width * numD07),
-                  ),
-                  Text(walkthroughList[index].description,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'AirbnbCereal_W_Bk',
-                          fontSize: size.width * numD035)),
-                  SizedBox(height: index % 2 == 0 ? 0 : size.width * numD04),
-                  index % 2 == 0
-                      ? Container()
-                      : Expanded(
-                          child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD1),
-                              child: Image.asset(
-                                walkthroughList[index].image,
-                                fit: BoxFit.cover,
-                                width: size.width,
-                              )),
+    return BlocProvider(
+      create: (context) => di.sl<OnboardingBloc>(),
+      child: BlocListener<OnboardingBloc, OnboardingState>(
+        listener: (context, state) {
+          if (state is OnboardingSuccess) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false);
+          } else if (state is OnboardingError) {
+             // Fallback to login anyway or show error?
+             // Usually just log and proceed
+             Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false);
+          }
+        },
+        child: Builder(builder: (context) {
+          return Scaffold(
+            body: SafeArea(
+              child: PageView.builder(
+                controller: controller,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD06),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: size.width * numD06,
                         ),
-                  SizedBox(height: size.width * numD04),
-                  Row(
-                    children: [
-                      index == 0
-                          ? InkWell(
-                              onTap: () {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginScreen()),
-                                    (route) => false);
-                              },
-                              splashColor: Colors.grey.shade300,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD02,
-                                    vertical: size.width * numD03),
-                                child: Text(
-                                  skipText,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontFamily: 'AirbnbCereal_W_Md',
-                                      fontSize: size.width * numD03),
-                                ),
-                              ))
-                          : Container(),
-                      const Spacer(),
-                      walkthroughList[index].showButton
-                          ? ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginScreen()),
-                                    (route) => false);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: size.width * numD012,
-                                      horizontal: size.width * numD04),
-                                  backgroundColor: colorThemePink,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD05))),
-                              child: Text(
-                                walkthroughList[index].buttonText,
-                                style: TextStyle(
-                                    fontSize: size.width * numD035,
-                                    color: Colors.white,
-                                    fontFamily: 'AirbnbCereal_W_Md',
-                                    fontWeight: FontWeight.w700),
-                              ))
-                          : Container(),
-                      const Spacer(),
-                      InkWell(
-                          onTap: () {
-                            if (index == (walkthroughList.length - 1)) {
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const LoginScreen()),
-                                  (route) => false);
-                            } else {
-                              controller.animateToPage(index + 1,
-                                  duration: const Duration(milliseconds: 100),
-                                  curve: Curves.linear);
-                            }
-                          },
-                          splashColor: Colors.grey.shade300,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD02,
-                                vertical: size.width * numD03),
-                            child: Text(
-                              nextText,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD03,
-                                  fontWeight: FontWeight.normal),
-                            ),
+                        index % 2 == 0
+                            ? Expanded(
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD1),
+                                    child: Image.asset(
+                                      walkthroughList[index].image,
+                                      fit: BoxFit.cover,
+                                      width: size.width,
+                                    )),
+                              )
+                            : Container(),
+                        SizedBox(
+                            height: index % 2 == 0 ? size.width * numD04 : 0),
+                        Container(
+                          decoration: const BoxDecoration(
+                              image: DecorationImage(
+                            image: AssetImage(
+                                "assets/commonImages/walkTitleBackGround.png"),
+                            fit: BoxFit.fitWidth,
                           )),
-                    ],
-                  ),
-                  SizedBox(
-                    height: size.width * numD03,
-                  ),
-                ],
+                          child: Text(
+                            walkthroughList[index].title1,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "AirbnbCereal_W_Bd",
+                                fontSize: size.width * numD07),
+                          ),
+                        ),
+                        Text(
+                          walkthroughList[index].title2,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "AirbnbCereal_W_Bd",
+                              fontWeight: FontWeight.w600,
+                              fontSize: size.width * numD07),
+                        ),
+                        Text(walkthroughList[index].description,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'AirbnbCereal_W_Bk',
+                                fontSize: size.width * numD035)),
+                        SizedBox(
+                            height: index % 2 == 0 ? 0 : size.width * numD04),
+                        index % 2 == 0
+                            ? Container()
+                            : Expanded(
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD1),
+                                    child: Image.asset(
+                                      walkthroughList[index].image,
+                                      fit: BoxFit.cover,
+                                      width: size.width,
+                                    )),
+                              ),
+                        SizedBox(height: size.width * numD04),
+                        Row(
+                          children: [
+                            index == 0
+                                ? InkWell(
+                                    onTap: () {
+                                      context.read<OnboardingBloc>().add(CompleteOnboarding());
+                                    },
+                                    splashColor: Colors.grey.shade300,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * numD02,
+                                          vertical: size.width * numD03),
+                                      child: Text(
+                                        skipText,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: 'AirbnbCereal_W_Md',
+                                            fontSize: size.width * numD03),
+                                      ),
+                                    ))
+                                : Container(),
+                            const Spacer(),
+                            walkthroughList[index].showButton
+                                ? ElevatedButton(
+                                    onPressed: () {
+                                      context.read<OnboardingBloc>().add(CompleteOnboarding());
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: size.width * numD012,
+                                            horizontal: size.width * numD04),
+                                        backgroundColor: colorThemePink,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD05))),
+                                    child: Text(
+                                      walkthroughList[index].buttonText,
+                                      style: TextStyle(
+                                          fontSize: size.width * numD035,
+                                          color: Colors.white,
+                                          fontFamily: 'AirbnbCereal_W_Md',
+                                          fontWeight: FontWeight.w700),
+                                    ))
+                                : Container(),
+                            const Spacer(),
+                            InkWell(
+                                onTap: () {
+                                  if (index == (walkthroughList.length - 1)) {
+                                    context.read<OnboardingBloc>().add(CompleteOnboarding());
+                                  } else {
+                                    controller.animateToPage(index + 1,
+                                        duration: const Duration(milliseconds: 100),
+                                        curve: Curves.linear);
+                                  }
+                                },
+                                splashColor: Colors.grey.shade300,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD02,
+                                      vertical: size.width * numD03),
+                                  child: Text(
+                                    nextText,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: size.width * numD03,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.width * numD03,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                itemCount: walkthroughList.length,
               ),
-            );
-          },
-          itemCount: walkthroughList.length,
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

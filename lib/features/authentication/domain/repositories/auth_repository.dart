@@ -21,4 +21,7 @@ abstract class AuthRepository {
   Future<Either<Failure, bool>> forgotPassword(String email);
   Future<Either<Failure, bool>> verifyForgotPasswordOtp(String email, String otp);
   Future<Either<Failure, bool>> resetPassword(String email, String password);
+  Future<Either<Failure, void>> logout();
+  Future<Either<Failure, bool>> checkOnboardingStatus();
+  Future<Either<Failure, void>> setOnboardingSeen();
 }

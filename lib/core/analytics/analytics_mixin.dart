@@ -1,29 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
 
-/// Analytics Mixin for automatic page tracking
-///
-/// This mixin can be added to any StatefulWidget to automatically track
-/// page visits when the widget is initialized and disposed.
-///
-/// Usage:
-/// ```dart
-/// class MyScreen extends StatefulWidget {
-///   @override
-///   _MyScreenState createState() => _MyScreenState();
-/// }
-///
-/// class _MyScreenState extends State<MyScreen> with AnalyticsPageMixin {
-///   @override
-///   String get pageName => PageNames.myScreen; // Required
-///
-///   @override
-///   String? get pageClass => 'MyScreen'; // Optional
-///
-///   @override
-///   Map<String, Object>? get pageParameters => {'user_id': '123'}; // Optional
-/// }
-/// ```
 mixin AnalyticsPageMixin<T extends StatefulWidget> on State<T> {
   /// Override this to provide the page name
   String get pageName;

@@ -11,6 +11,7 @@ abstract class NotificationRemoteDataSource {
   Future<void> clearAllNotifications();
   Future<Map<String, dynamic>> checkStudentBeans();
   Future<String> activateStudentBeans();
+  Future<void> markStudentBeansVisited();
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -108,6 +109,16 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       }
     } catch (e) {
       throw Exception("Error activating student beans: $e");
+    }
+  }
+
+  @override
+  Future<void> markStudentBeansVisited() async {
+    try {
+      await sharedPreferences.setBool(sourceDataIsClickKey, true);
+      await sharedPreferences.setBool(sourceDataIsOpenedKey, true);
+    } catch (e) {
+      throw Exception("Error marking student beans as visited: $e");
     }
   }
 }

@@ -11,7 +11,6 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import '../myEarning/MyEarningScreen.dart';
 
 class ReferScreen extends StatefulWidget {
   const ReferScreen({super.key});

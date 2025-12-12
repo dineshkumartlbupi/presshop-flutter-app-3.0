@@ -23,7 +23,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
-import '../../../../utils/AnalyticsHelper.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/api/network_class.dart';

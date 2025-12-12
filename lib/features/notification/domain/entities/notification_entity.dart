@@ -59,11 +59,16 @@ class NotificationEntity extends Equatable {
 class NotificationsResult extends Equatable {
   final List<NotificationEntity> notifications;
   final int unreadCount;
+  final int alertCount;
   
-  const NotificationsResult({required this.notifications, required this.unreadCount});
+  const NotificationsResult({
+    required this.notifications, 
+    required this.unreadCount,
+    this.alertCount = 0,
+  });
   
   @override
-  List<Object?> get props => [notifications, unreadCount];
+  List<Object?> get props => [notifications, unreadCount, alertCount];
 }
 
 class StudentBeansInfo extends Equatable {

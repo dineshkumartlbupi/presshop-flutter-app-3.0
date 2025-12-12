@@ -18,7 +18,8 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
   final Dio dio;
   final SocketService socketService;
   // Using the key found in existing code. Ideally should be in secure config.
-  final String googleApiKey = 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI'; 
+  // Key is loaded from env via api_constant
+  String get googleApiKey => googleMapAPiKey; 
 
   final _incidentStreamController = StreamController<IncidentModel>.broadcast();
 

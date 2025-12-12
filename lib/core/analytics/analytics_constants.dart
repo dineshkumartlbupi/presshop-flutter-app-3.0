@@ -1,12 +1,3 @@
-/// Page Names Constants for Firebase Analytics
-///
-/// This file contains all the page/screen names used throughout the Presshop app
-/// to ensure consistency in analytics tracking.
-///
-/// Usage:
-/// ```dart
-/// AnalyticsHelper.trackPageVisit(PageNames.dashboard);
-/// ```
 class PageNames {
   // Authentication Pages
   static const String splash = 'splash_screen';

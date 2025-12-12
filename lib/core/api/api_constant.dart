@@ -1,7 +1,9 @@
 import 'dart:io';
 
-const googleMapAPiKey = "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
-const appleMapAPiKey = "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String get googleMapAPiKey => dotenv.get('GOOGLE_MAP_API_KEY', fallback: "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI");
+String get appleMapAPiKey => dotenv.get('APPLE_MAP_API_KEY', fallback: "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw");
 
 //--------production urls----------------
 

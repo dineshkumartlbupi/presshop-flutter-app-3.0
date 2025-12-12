@@ -24,3 +24,5 @@ class ClearAllNotificationsEvent extends NotificationEvent {}
 class CheckStudentBeansEvent extends NotificationEvent {}
 
 class StudentBeansActivationEvent extends NotificationEvent {}
+
+class MarkStudentBeansVisitedEvent extends NotificationEvent {}

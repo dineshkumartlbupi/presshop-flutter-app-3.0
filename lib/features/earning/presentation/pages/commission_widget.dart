@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/earning/presentation/pages/earningDataModel.dart';
+import '../../domain/entities/commission.dart';
 
 import 'package:presshop/main.dart';
 
 class CommissionWidget extends StatelessWidget {
-  final CommissionData commissionData;
+  final Commission commissionData;
   late Size size;
 
   CommissionWidget({

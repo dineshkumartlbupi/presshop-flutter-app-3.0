@@ -8,4 +8,5 @@ abstract class NotificationRepository {
   Future<Either<Failure, void>> clearAllNotifications();
   Future<Either<Failure, StudentBeansInfo>> checkStudentBeans();
   Future<Either<Failure, String>> activateStudentBeans();
+  Future<Either<Failure, void>> markStudentBeansVisited();
 }

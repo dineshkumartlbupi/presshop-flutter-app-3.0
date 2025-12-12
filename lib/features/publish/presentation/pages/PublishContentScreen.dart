@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -31,7 +32,14 @@ import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 
 import 'package:presshop/core/api/network_class.dart';
-import '../cameraScreen/PreviewScreen.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/charity_model.dart';
+import '../../domain/entities/content_category.dart';
+import '../../domain/entities/charity.dart';
+import '../bloc/publish_bloc.dart';
+import '../bloc/publish_event.dart';
+import '../bloc/publish_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'AudioRecorderScreen.dart';
 
 class PublishContentScreen extends StatefulWidget {
@@ -60,8 +68,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
   PlayerController controller = PlayerController(); // Initialise
   List<HashTagData> hashtagList = [];
   List<HashTagData> selectedHashtagList = [];
-  List<CategoryDataModel> categoryList = [];
-  List<AllCharityModel> allCharityList = [];
+  List<ContentCategory> categoryList = [];
+  List<Charity> allCharityList = [];
   late AnimationController? _controller;
 
   String selectedSellType = sharedText;
@@ -75,7 +83,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       audioDuration = "",
       sharedPrice = "",
       exclusivePrice = "";
-  CategoryDataModel? selectedCategory;
+  ContentCategory? selectedCategory;
   bool audioPlaying = false,
       draftSelected = false,
       _checkCharityBoxVal = false,
@@ -171,8 +179,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
         categoryList[newCategoryIndex].selected = true;
       }
     }
-    if (widget.myContentData != null) {
-      selectedCategory = widget.myContentData!.categoryData;
+    if (widget.myContentData != null && widget.myContentData!.categoryData != null) {
+      var cat = widget.myContentData!.categoryData!;
+      selectedCategory = ContentCategory(
+          id: cat.id,
+          name: cat.name,
+          type: cat.type,
+          percentage: cat.percentage,
+          selected: cat.selected);
     }
     setState(() {});
   }
@@ -229,11 +243,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
     //   callGetShareExclusivePrice();
     // });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      categoryApi();
-      callCharityListApi();
-      callGetShareExclusivePrice();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   categoryApi();
+    //   callCharityListApi();
+    //   callGetShareExclusivePrice();
+    // });
 
     /// this function fills all the existing data in the draft
     fillExistingDataFunc();
@@ -263,7 +277,46 @@ class PublishContentScreenState extends State<PublishContentScreen>
       debugPrint('publishData:::::::::${widget.publishData!.mediaList.length}');
     }
 
-    return Scaffold(
+    return BlocProvider(
+      create: (_) => sl<PublishBloc>()
+        ..add(LoadPublishDataEvent())
+        ..add(const FetchCharitiesEvent()),
+      child: BlocConsumer<PublishBloc, PublishState>(
+        listener: (context, state) {
+          if (state.status == PublishStatus.failure) {
+            showSnackBar("Error", state.errorMessage, Colors.red);
+          }
+          if (state.status == PublishStatus.loaded || state.categories.isNotEmpty) {
+             categoryList = state.categories;
+             if (state.selectedCategory != null) {
+                selectedCategory = state.selectedCategory;
+                // If initializing or selecting
+             } else if (categoryList.isNotEmpty && selectedCategory == null) {
+                selectedCategory = categoryList.first;
+                // Trigger selection in bloc if needed, or rely on bloc's initial selection
+             }
+
+             if (state.charities.isNotEmpty) {
+                allCharityList = state.charities;
+             }
+             if (state.prices.isNotEmpty) {
+               sharedPrice = state.prices['shared'] ?? sharedPrice;
+               exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
+               // If selected category is Shared or Exclusive, update controller?
+               // The UI uses 'sharedPrice' and 'exclusivePrice' variables in Text widgets, valid.
+             }
+          }
+        },
+        builder: (context, state) {
+             // Fallback to ensure UI has data if listener didn't cover (e.g. initial build after reload)
+             if (state.categories.isNotEmpty) categoryList = state.categories; 
+             if (state.charities.isNotEmpty) allCharityList = state.charities;
+             // Ensure selectedCategory is not null if list is not empty
+             if (selectedCategory == null && categoryList.isNotEmpty) {
+                selectedCategory = categoryList.first;
+             }
+
+          return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonAppBar(
         elevation: 0,
@@ -2409,6 +2462,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
               ),
             ),*/
     );
+    },
+   ),
+  );
   }
 
   /// show-category-bottom-sheet
@@ -2458,24 +2514,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       String selectedCat = selectedCategory!.name;
                       return InkWell(
                         onTap: () {
-                          int selPos = categoryList
-                              .indexWhere((element) => element.selected);
-
-                          if (selPos >= 0) {
-                            categoryList[selPos].selected = false;
+                          context.read<PublishBloc>().add(SelectCategoryEvent(categoryList[index].id));
+                          
+                          if (categoryList[index].name == "Shared" ||
+                              categoryList[index].name == "Exclusive") {
+                            selectedSellType = categoryList[index].name;
                           }
-
-                          categoryList[index].selected = true;
-
-                          if (categoryList[index].selected) {
-                            if (categoryList[index].name == "Shared" ||
-                                categoryList[index].name == "Exclusive") {
-                              selectedSellType = categoryList[index].name;
-                            }
-                          }
-                          selectedCategory = categoryList[index];
-                          setState(() {});
-
                           Navigator.pop(context);
                         },
                         child: Chip(
@@ -2599,10 +2643,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       splashColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () {
-                                        for (var item in allCharityList) {
-                                          item.isSelectCharity = false;
-                                        }
-                                        item.isSelectCharity = true;
+                                        context.read<PublishBloc>().add(SelectCharityEvent(item.id));
                                         _checkCharityBoxVal = true;
                                         organisationNumber =
                                             item.organisationNumber;
@@ -2796,7 +2837,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
       priceController.text = widget.myContentData!.amount.isNotEmpty
           ? "$currencySymbol${widget.myContentData!.amount}"
           : '';
-      selectedCategory = widget.myContentData!.categoryData;
+      if (widget.myContentData!.categoryData != null) {
+        var cat = widget.myContentData!.categoryData!;
+        selectedCategory = ContentCategory(
+            id: cat.id,
+            name: cat.name,
+            type: cat.type,
+            percentage: cat.percentage,
+            selected: cat.selected);
+      }
       selectedSellType =
           widget.myContentData!.exclusive ? exclusiveText : sharedText;
     } else {
@@ -3132,13 +3181,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
             var list = map["categories"] as List;
 
             categoryList =
-                list.map((e) => CategoryDataModel.fromJson(e)).toList();
+                list.map((e) => CategoryModel.fromJson(e)).toList();
 
             if (categoryList.isNotEmpty) {
               dropDownValue = categoryList.first.name;
               selectedCategory = categoryList.first;
-              selectedCategory!.selected = true;
-              categoryList.first.selected = true;
+              // selectedCategory!.selected = true;
+              // categoryList.first.selected = true;
             }
 
             /// if coming from drafts then select the previous selected category
@@ -3284,7 +3333,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           var data = jsonDecode(response);
           var dataModel = data['data'] as List;
           allCharityList =
-              dataModel.map((e) => AllCharityModel.fromJson(e)).toList();
+              dataModel.map((e) => CharityModel.fromJson(e)).toList();
           setState(() {});
 
           break;
@@ -3319,6 +3368,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 }
 
+/*
 class AllCharityModel {
   String id = "";
   String organisationNumber = "";
@@ -3346,3 +3396,4 @@ class AllCharityModel {
         isSelectCharity: false);
   }
 }
+*/

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -11,8 +12,6 @@ import 'package:presshop/features/rating/presentation/pages/ratingReviewsDataMod
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import '../menuScreen/PublicationListScreen.dart';
-import '../publishContentScreen/TutorialsScreen.dart';
 
 class RatingReviewScreen extends StatefulWidget {
   const RatingReviewScreen({super.key});
