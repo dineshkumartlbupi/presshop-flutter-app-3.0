@@ -150,7 +150,6 @@ import 'package:presshop/features/publication/data/datasources/publication_remot
 import 'package:presshop/features/authentication/domain/usecases/set_onboarding_seen.dart';
 import 'package:presshop/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 
-import 'package:presshop/features/publish/presentation/bloc/publish_bloc.dart';
 import 'package:presshop/features/publish/domain/usecases/get_content_categories.dart';
 import 'package:presshop/features/publish/domain/usecases/get_charities.dart';
 import 'package:presshop/features/publish/domain/usecases/get_share_exclusive_price.dart';
@@ -171,8 +170,62 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => ApiClient(sl(), sl()));
 
+  //! Data Sources - Register first
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+  sl.registerLazySingleton<DashboardRemoteDataSource>(
+    () => DashboardRemoteDataSourceImpl(apiClient: sl()),
+  );
+
+  //! Repositories - Register second
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+  
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  //! Use Cases - Register third (before BLoCs)
+  sl.registerLazySingleton(() => LoginUser(sl()));
+  sl.registerLazySingleton(() => SocialLoginUser(sl()));
+  sl.registerLazySingleton(() => RegisterUser(sl()));
+  sl.registerLazySingleton(() => SendOtp(sl()));
+  sl.registerLazySingleton(() => VerifyOtp(sl()));
+  sl.registerLazySingleton(() => SocialRegisterUser(sl()));
+  sl.registerLazySingleton(() => LogoutUser(sl()));
+  sl.registerLazySingleton(() => SetOnboardingSeen(sl()));
+  sl.registerLazySingleton(() => ForgotPassword(sl()));
+  sl.registerLazySingleton(() => VerifyForgotPasswordOtp(sl()));
+  sl.registerLazySingleton(() => ResetPassword(sl()));
+  
+  // Use cases needed by SplashBloc
+  sl.registerLazySingleton(() => CheckAuthStatus(sl()));
+  sl.registerLazySingleton(() => GetProfile(sl()));
+  sl.registerLazySingleton(() => CheckAppVersion(sl()));
+  sl.registerLazySingleton(() => CheckOnboardingStatus(sl()));
+  
+  // Use cases needed by SignUpBloc
+  sl.registerLazySingleton(() => CheckUserName(sl()));
+  sl.registerLazySingleton(() => CheckEmail(sl()));
+  sl.registerLazySingleton(() => CheckPhone(sl()));
+  sl.registerLazySingleton(() => GetAvatars(sl()));
+  sl.registerLazySingleton(() => VerifyReferralCode(sl()));
+  sl.registerLazySingleton(() => SocialExists(sl()));
+
   //! Features - Authentication
-  // Blocs
+  // Blocs - Register last
   sl.registerFactory(() => AuthBloc(
         loginUser: sl(),
         socialLoginUser: sl(),
@@ -180,9 +233,6 @@ Future<void> init() async {
         verifyForgotPasswordOtp: sl(),
         resetPassword: sl(),
       ));
-  sl.registerLazySingleton(() => ForgotPassword(sl()));
-  sl.registerLazySingleton(() => VerifyForgotPasswordOtp(sl()));
-  sl.registerLazySingleton(() => ResetPassword(sl()));
   sl.registerFactory(() => SignUpBloc(
     registerUser: sl(),
     sendOtp: sl(),
@@ -194,6 +244,7 @@ Future<void> init() async {
     socialExists: sl(),
     socialRegisterUser: sl(),
   ));
+  
   sl.registerFactory(() => SplashBloc(
       checkAuthStatus: sl(),
       getProfile: sl(),
@@ -272,7 +323,6 @@ Future<void> init() async {
   ));
 
   sl.registerFactory(() => ChatbotBloc());
-  sl.registerFactory(() => ChatbotBloc());
   sl.registerFactory(() => TaskBloc(
     getAllTasks: sl(),
     getLocalTasks: sl(),
@@ -317,17 +367,9 @@ Future<void> init() async {
   ));
 
   // Use cases
-  sl.registerLazySingleton(() => LoginUser(sl()));
-  sl.registerLazySingleton(() => SocialLoginUser(sl()));
-  sl.registerLazySingleton(() => RegisterUser(sl()));
-  sl.registerLazySingleton(() => SendOtp(sl()));
-  sl.registerLazySingleton(() => CheckAuthStatus(sl()));
-  sl.registerLazySingleton(() => GetProfile(sl()));
-  sl.registerLazySingleton(() => VerifyOtp(sl()));
-  sl.registerLazySingleton(() => SocialRegisterUser(sl()));
-  sl.registerLazySingleton(() => LogoutUser(sl()));
-  sl.registerLazySingleton(() => CheckOnboardingStatus(sl()));
-  sl.registerLazySingleton(() => SetOnboardingSeen(sl()));
+  // LoginUser, SocialLoginUser, RegisterUser, SendOtp, VerifyOtp, SocialRegisterUser, 
+  // LogoutUser, SetOnboardingSeen, ForgotPassword, VerifyForgotPasswordOtp, ResetPassword,
+  // CheckAuthStatus, GetProfile, CheckOnboardingStatus, CheckAppVersion already registered at the top
   
   // Dashboard Use Cases
   sl.registerLazySingleton(() => GetActiveAdmins(sl()));
@@ -336,14 +378,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RemoveDevice(sl()));
   sl.registerLazySingleton(() => GetDashboardTaskDetail(sl()));
   sl.registerLazySingleton(() => GetRoomId(sl()));
-  sl.registerLazySingleton(() => CheckAppVersion(sl()));
   sl.registerLazySingleton(() => ActivateStudentBeans(sl()));
-  sl.registerLazySingleton(() => CheckUserName(sl()));
-  sl.registerLazySingleton(() => CheckEmail(sl()));
-  sl.registerLazySingleton(() => CheckPhone(sl()));
-  sl.registerLazySingleton(() => GetAvatars(sl()));
-  sl.registerLazySingleton(() => VerifyReferralCode(sl()));
-  sl.registerLazySingleton(() => SocialExists(sl()));
+  // CheckUserName, CheckEmail, CheckPhone, GetAvatars, VerifyReferralCode, SocialExists already registered at the top
   sl.registerLazySingleton(() => GetProfileData(sl()));
   sl.registerLazySingleton(() => UpdateProfileData(sl()));
   sl.registerLazySingleton(() => UploadProfileImage(sl()));
@@ -408,21 +444,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetPlaceDetails(sl()));
 
   // Repository
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      remoteDataSource: sl(),
-      localDataSource: sl(),
-      networkInfo: sl(),
-    ),
-  );
+  // AuthRepository and DashboardRepository already registered at the top
   
-  sl.registerLazySingleton<DashboardRepository>(
-    () => DashboardRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
-    ),
-  );
-
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(
       remoteDataSource: sl(),
@@ -495,12 +518,7 @@ Future<void> init() async {
   );
 
   // Data sources
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(sl()),
-  );
-  sl.registerLazySingleton<DashboardRemoteDataSource>(
-    () => DashboardRemoteDataSourceImpl(apiClient: sl()),
-  );
+  // AuthRemoteDataSource, AuthLocalDataSource, and DashboardRemoteDataSource already registered at the top
 
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(sl()),
@@ -559,8 +577,5 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => MarkerService());
   sl.registerLazySingleton(() => SocketService());
-
-  sl.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
-  );
+  // AuthLocalDataSource already registered at the top
 }
