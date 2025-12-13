@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:presshop/core/error/failures.dart';
 import '../entities/admin_detail.dart';
-import '../entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
 abstract class DashboardRepository {
   Future<Either<Failure, List<AdminDetail>>> getActiveAdmins();

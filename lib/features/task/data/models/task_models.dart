@@ -176,4 +176,43 @@ class TaskDetailModel extends TaskDetail {
       longitude: longitude
     );
   }
+
+  factory TaskDetailModel.fromEntity(TaskDetail entity) {
+    return TaskDetailModel(
+      id: entity.id,
+      isNeedPhoto: entity.isNeedPhoto,
+      isNeedVideo: entity.isNeedVideo,
+      isNeedInterview: entity.isNeedInterview,
+      mode: entity.mode,
+      type: entity.type,
+      status: entity.status,
+      paidStatus: entity.paidStatus,
+      deadLine: entity.deadLine,
+      mediaHouseId: entity.mediaHouseId,
+      mediaHouseImage: entity.mediaHouseImage,
+      mediaHouseName: entity.mediaHouseName,
+      companyName: entity.companyName,
+      title: entity.title,
+      description: entity.description,
+      acceptedBy: entity.acceptedBy,
+      specialReq: entity.specialReq,
+      location: entity.location,
+      photoPrice: entity.photoPrice,
+      videoPrice: entity.videoPrice,
+      interviewPrice: entity.interviewPrice,
+      receivedAmount: entity.receivedAmount,
+      latitude: entity.latitude,
+      longitude: entity.longitude,
+      role: entity.role,
+      categoryId: entity.categoryId,
+      userId: entity.userId,
+      createdAt: entity.createdAt,
+      discountPercent: entity.discountPercent,
+      miles: entity.miles,
+      byFeet: entity.byFeet,
+      byCar: entity.byCar,
+      mediaList: entity.mediaList,
+      broadcastLocation: entity.broadcastLocation,
+    );
+  }
 }

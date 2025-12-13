@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +13,7 @@ import 'package:presshop/features/content/presentation/bloc/content_state.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/content/presentation/pages/my_content_detail_screen.dart';
+import 'package:presshop/main.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/widgets/common_filter_sheet.dart';
@@ -409,13 +411,7 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
       },
     );
   }
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+      
 
   Widget _buildContentWidget(ContentItem item) {
     return Container(
@@ -693,6 +689,7 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
   }
 
   Widget _showImage(String type, String url) {
+   
     return type == "audio"
         ? Container(
             height: size.width * numD30,

@@ -1,25 +1,20 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/map/domain/entities/incident_entity.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/presentation/pages/widgets/custom_app_bar.dart';
 import 'package:presshop/features/map/presentation/pages/widgets/custom_info_window.dart';
-import 'package:presshop/features/map/presentation/pages/widgets/danger_zone_info_window.dart';
 import 'package:presshop/features/map/presentation/pages/widgets/serarch_filter_widget.dart';
 import 'package:presshop/features/map/presentation/pages/widgets/side_action_panal.dart';
 import '../widgets/alert_button_map.dart';
 import '../widgets/alert_panel.dart';
 import '../widgets/burst_animation.dart';
 import '../widgets/content_marker_popup.dart';
-import '../widgets/get_direction_card.dart';
+import 'package:presshop/features/map/domain/entities/geo_point.dart';
 import 'news_details_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
@@ -132,12 +127,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     }
 
     if (state.selectedPolygonId != null) {
-      // ... same logic for polygon
-       // For now, assuming polygon logic is rare or specific
     }
     
-    // Route info logic
-    // if (state.routeMidpoint != null) ...
   }
   
   Future<void> _goToCurrentLocation(MapState state) async {
@@ -244,20 +235,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         _addBurst(pos, _pendingAlertType!);
                         context.read<MapBloc>().add(MapReportIncident(
                           _pendingAlertType!, 
-                          // Create GeoPoint map entity
-                           // GeoPoint from domain
-                           // but map_bloc imports GeoPoint from domain
-                           // I need to import GeoPoint
-                           // Fixed imports above
-                           // ...
-                           // Using raw map logic for now
-                           // actually MapReportIncident takes arguments
-                           // ...
-                           // Wait, GeoPoint is in domain.
-                           // I need to make sure I pass GeoPoint
-                           // ...
+                          GeoPoint(pos.latitude, pos.longitude),
                         ));
-                        // wait, I need to construct GeoPoint
                          
                      } else {
                         context.read<MapBloc>().add(MapMarkerSelected(null)); // Clear selection

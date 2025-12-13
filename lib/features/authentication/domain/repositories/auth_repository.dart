@@ -11,7 +11,7 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> getProfile();
   Future<Either<Failure, bool>> checkAuthStatus();
   Future<Either<Failure, bool>> verifyOtp(Map<String, dynamic> data);
-  Future<Either<Failure, void>> socialRegister(Map<String, dynamic> params);
+  Future<Either<Failure, User>> socialRegister(Map<String, dynamic> params);
   Future<Either<Failure, bool>> checkUserName(String userName);
   Future<Either<Failure, bool>> checkEmail(String email);
   Future<Either<Failure, bool>> checkPhone(String phone);

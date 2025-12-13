@@ -5,12 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_event.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_state.dart';
 import '../../domain/entities/earning_transaction.dart';
-import '../../domain/entities/commission.dart';
 
 import 'TransactionDetailScreen.dart';
 import 'commission_widget.dart';
@@ -18,7 +18,6 @@ import 'package:presshop/main.dart';
 
 import '../../../../features/account_settings/presentation/pages/contact_us_screen.dart';
 import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
-import '../../../../features/faq/presentation/pages/faq_screen.dart';
 import '../../../../core/widgets/video_player_screen.dart';
 
 class MyEarningScreen extends StatefulWidget {

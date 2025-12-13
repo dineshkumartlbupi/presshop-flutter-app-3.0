@@ -1,4 +1,4 @@
-import '../../domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:presshop/core/core_export.dart'; // For numberFormatting if used
 

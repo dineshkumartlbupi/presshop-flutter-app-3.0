@@ -12,19 +12,17 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/utils/dashboard_interface.dart';
 import 'package:presshop/core/api/network_response.dart';
 
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
-import 'package:presshop/features/content/presentation/pages/my_content_page.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
@@ -170,13 +168,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
           categoryList.indexWhere((element) => element.selected);
 
       if (selectedIndex != -1) {
-        categoryList[selectedIndex].selected = false;
+        // categoryList[selectedIndex].selected = false;
+        categoryList[selectedIndex] = categoryList[selectedIndex].copyWith(selected: false);
       }
 
       final newCategoryIndex =
           categoryList.indexWhere((element) => element.id == newCategoryId);
       if (newCategoryIndex != -1) {
-        categoryList[newCategoryIndex].selected = true;
+        // categoryList[newCategoryIndex].selected = true;
+        categoryList[newCategoryIndex] = categoryList[newCategoryIndex].copyWith(selected: true);
       }
     }
     if (widget.myContentData != null && widget.myContentData!.categoryData != null) {

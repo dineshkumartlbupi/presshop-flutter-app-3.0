@@ -18,13 +18,14 @@ import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:presshop/features/camera/data/models/camera_model.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
-import 'package:presshop/features/earning/presentation/pages/earningDataModel.dart';
 import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -40,7 +41,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
+import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart' hide videoText, interviewText, photoText;
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
@@ -551,7 +552,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         context)
                                                                     .push(MaterialPageRoute(
                                                                         builder: (context) => MyEarningScreen(
-                                                                              openDashboard: false,
+                                                                              openDashboard: false, initialTapPosition: 2,
                                                                             )));
                                                               }),
                                                             )
@@ -2015,7 +2016,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           context)
                                                                       .push(MaterialPageRoute(
                                                                           builder: (context) => MyEarningScreen(
-                                                                                openDashboard: false,
+                                                                                openDashboard: false, initialTapPosition: 2,
+                                                                                
                                                                               )));
                                                                 }),
                                                               ),
@@ -5243,7 +5245,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             commonButtonStyle(size, colorThemePink), () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MyEarningScreen(
-                                    openDashboard: false,
+                                    openDashboard: false, initialTapPosition: 2,
                                   )));
                         }),
                       ),
@@ -7388,7 +7390,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 builder: (context) => TransactionDetailScreen(
                       type: "received",
                       pageType: PageType.CONTENT,
-                      transactionData: earningTransactionDataList[0],
+                      transactionData: earningTransactionDataList[0].toEntity(),
                       shouldShowPublication: true,
                     )));
         break;

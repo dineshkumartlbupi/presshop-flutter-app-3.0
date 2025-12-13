@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
 import '../../domain/entities/admin_detail.dart';
-import '../../domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../datasources/dashboard_remote_data_source.dart';
 
@@ -22,7 +22,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         final remoteActiveAdmins = await remoteDataSource.getActiveAdmins();
         return Right(remoteActiveAdmins);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -36,7 +36,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         await remoteDataSource.updateLocation(params);
         return const Right(null);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -50,7 +50,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         await remoteDataSource.addDevice(params);
         return const Right(null);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -64,7 +64,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         final taskDetail = await remoteDataSource.getTaskDetail(id);
         return Right(taskDetail);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -78,7 +78,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         final roomIdData = await remoteDataSource.getRoomId();
         return Right(roomIdData);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -92,7 +92,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         final versionData = await remoteDataSource.checkAppVersion();
         return Right(versionData);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -106,7 +106,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         final data = await remoteDataSource.activateStudentBeans();
         return Right(data);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -120,7 +120,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         await remoteDataSource.removeDevice(params);
         return const Right(null);
       } on ServerFailure {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());

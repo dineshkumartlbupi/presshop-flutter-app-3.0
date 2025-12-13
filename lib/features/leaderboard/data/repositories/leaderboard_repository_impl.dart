@@ -15,7 +15,7 @@ class LeaderboardRepositoryImpl implements LeaderboardRepository {
       final remoteData = await remoteDataSource.getLeaderboardData(countryCode);
       return Right(remoteData);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure( message:e.toString()));
     }
   }
 }

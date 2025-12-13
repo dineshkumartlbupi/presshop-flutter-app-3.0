@@ -1015,7 +1015,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftChatWidget(QueryDocumentSnapshot<Object?> document) {
+  Widget leftChatWidget(DocumentSnapshot<Object?> document) {
     return Padding(
       padding: EdgeInsets.only(right: size.width * numD20),
       child: Row(
@@ -1098,7 +1098,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget rightChatWidget(QueryDocumentSnapshot<Object?> document) {
+  Widget rightChatWidget(DocumentSnapshot<Object?> document) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1212,7 +1212,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   ///Message widgets-->
   Widget messageWidget(
-      QueryDocumentSnapshot<Object?> document, String type, size) {
+      DocumentSnapshot<Object?> document, String type, size) {
     //callCustomNotificationApi(document.get('messageType') == 'text' ?document.get("message").toString():document.get('messageType'));
     return Slidable(
       key: ValueKey(
@@ -2400,7 +2400,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     });
   }
 
-  Widget rightVideoChatWidget(QueryDocumentSnapshot<Object?> document) {
+  Widget rightVideoChatWidget(DocumentSnapshot<Object?> document) {
     return Container(
       margin: EdgeInsets.only(left: size.width * numD20),
       child: Row(
@@ -2570,7 +2570,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftVideoChatWidget(QueryDocumentSnapshot<Object?> document) {
+  Widget leftVideoChatWidget(DocumentSnapshot<Object?> document) {
     return Container(
       margin: EdgeInsets.only(right: size.width * numD20),
       child: Row(
@@ -2682,7 +2682,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget rightImageChatWidget(QueryDocumentSnapshot<Object?> document) {
+  Widget rightImageChatWidget(DocumentSnapshot<Object?> document) {
     return Container(
       margin: EdgeInsets.only(left: size.width * numD20),
       child: Row(
@@ -2844,7 +2844,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  Widget leftImageChatWidget(QueryDocumentSnapshot<Object?> document) {
+  Widget leftImageChatWidget(DocumentSnapshot<Object?> document) {
     debugPrint("image::::::${document.get('message').toString()}");
     return Container(
       margin: EdgeInsets.only(right: size.width * numD20),

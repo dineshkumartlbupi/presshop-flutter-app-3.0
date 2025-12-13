@@ -164,7 +164,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
           type: currentFeed.type,
           isDraft: currentFeed.isDraft,
           userId: currentFeed.userId,
-          saleStatus: currentFeed.saleStatus,
+          saleStatus: currentFeed.saleStatus, 
+          paidStatus: currentFeed.paidStatus,
       );
       
       emit(state.copyWith(feeds: updatedFeeds)); // Optimistic update

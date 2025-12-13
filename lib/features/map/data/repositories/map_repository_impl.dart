@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:presshop/core/error/exception.dart';
 import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
 import 'package:presshop/features/map/domain/entities/geo_point.dart';
 import 'package:presshop/features/map/domain/entities/incident_entity.dart';
@@ -52,9 +52,9 @@ class MapRepositoryImpl implements MapRepository {
       final incidents = await remoteDataSource.getIncidents();
       return Right(incidents);
     } on ServerException {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: ''));
     } catch (e) {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: ''));
     }
   }
 
@@ -64,7 +64,7 @@ class MapRepositoryImpl implements MapRepository {
       final incident = await remoteDataSource.reportIncident(alertType, position);
       return Right(incident);
     } catch (e) {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -74,7 +74,7 @@ class MapRepositoryImpl implements MapRepository {
       final routeInfo = await remoteDataSource.getRoute(start, end);
       return Right(routeInfo);
     } catch (e) {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -84,7 +84,7 @@ class MapRepositoryImpl implements MapRepository {
       final suggestions = await remoteDataSource.searchPlaces(query);
       return Right(suggestions);
     } catch (e) {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -94,7 +94,7 @@ class MapRepositoryImpl implements MapRepository {
       final location = await remoteDataSource.getPlaceDetails(placeId);
       return Right(location);
     } catch (e) {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -104,7 +104,7 @@ class MapRepositoryImpl implements MapRepository {
       final address = await remoteDataSource.getAddressFromCoordinates(position);
       return Right(address);
     } catch (e) {
-      return Left(ServerFailure());
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -116,8 +116,6 @@ class MapRepositoryImpl implements MapRepository {
 
 class LocationFailure extends Failure {
   final String message;
-  LocationFailure(this.message);
+  LocationFailure(this.message) : super(message: message);
   
-  @override
-  List<Object?> get props => [message];
 }

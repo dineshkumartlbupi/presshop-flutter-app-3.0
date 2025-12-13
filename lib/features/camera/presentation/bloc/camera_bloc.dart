@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
-import 'package:file_picker/file_picker.dart'; // import
+import 'package:file_picker/file_picker.dart'; 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:native_exif/native_exif.dart';
@@ -12,7 +12,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:presshop/core/services/location_service.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
-import 'package:presshop/main.dart'; // For cameras, sharedPreferences
+import 'package:presshop/main.dart'; 
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
@@ -20,7 +20,7 @@ import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:presshop/core/core_export.dart'; // For keys
+import 'package:presshop/core/core_export.dart'; 
 
 import 'camera_event.dart';
 import 'camera_state.dart';
@@ -64,7 +64,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     return super.close();
   }
 
-  // ... (previous methods kept implicitly, I will rewrite whole file for safety)
 
   Future<void> _onInitialize(
       CameraInitializeEvent event, Emitter<CameraState> emit) async {
@@ -72,10 +71,12 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     
     // Init Location
     try {
-        final loc = await _locationService.getCurrentLocation(navigatorKey.currentContext, shouldShowSettingPopup: false);
-        if (loc != null) {
-          _latitude = loc.latitude ?? 0;
-          _longitude = loc.longitude ?? 0;
+        if (navigatorKey.currentContext != null) {
+            final loc = await _locationService.getCurrentLocation(navigatorKey.currentContext!, shouldShowSettingPopup: false);
+            if (loc != null) {
+              _latitude = loc.latitude ?? 0;
+              _longitude = loc.longitude ?? 0;
+            }
         }
     } catch(e) {
       debugPrint("Location error in Bloc: $e");

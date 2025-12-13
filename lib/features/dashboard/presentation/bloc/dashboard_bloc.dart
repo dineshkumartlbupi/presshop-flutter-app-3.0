@@ -8,8 +8,8 @@ import '../../domain/usecases/update_location.dart';
 import '../../domain/usecases/check_app_version.dart';
 import '../../domain/usecases/activate_student_beans.dart';
 import '../../../authentication/domain/usecases/get_profile.dart';
-import 'dashboard_event.dart';
-import 'dashboard_state.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final GetActiveAdmins getActiveAdmins;

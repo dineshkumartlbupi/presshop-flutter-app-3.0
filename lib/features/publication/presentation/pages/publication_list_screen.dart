@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:presshop/features/earning/presentation/pages/TransactionDetailSc
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
@@ -18,7 +16,7 @@ import '../bloc/publication_bloc.dart';
 import '../bloc/publication_event.dart';
 import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
-import '../../domain/entities/media_house.dart';
+import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 
 class PublicationListScreen extends StatefulWidget {
   String contentId = "";
@@ -47,7 +45,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
-  List<EarningTransactionDetail> publicationTransactionList = [];
+  List<EarningTransaction> publicationTransactionList = [];
   PublicationEarningStats? earningData;
 
   @override
@@ -60,40 +58,41 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          publicationsListText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              showBottomSheet(size);
+    return BlocProvider(
+      create: (context) => di.sl<PublicationBloc>()
+        ..add(LoadPublicationInitialData(
+          contentId: widget.contentId,
+          contentType: widget.contentType,
+        )),
+      child: Builder(builder: (context) {
+        return Scaffold(
+          appBar: CommonAppBar(
+            elevation: 0,
+            hideLeading: false,
+            title: Text(
+              publicationsListText,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width * appBarHeadingFontSize),
+            ),
+            centerTitle: false,
+            titleSpacing: 0,
+            size: size,
+            showActions: true,
+            leadingFxn: () {
+              Navigator.pop(context);
             },
-            child: commonFilterIcon(size),
-          )
-        ],
-      ),
-      body: BlocProvider(
-        create: (context) => di.sl<PublicationBloc>()
-          ..add(LoadPublicationInitialData(
-            contentId: widget.contentId,
-            contentType: widget.contentType,
-          )),
-        child: BlocConsumer<PublicationBloc, PublicationState>(
+            actionWidget: [
+              InkWell(
+                onTap: () {
+                  showBottomSheet(context, size);
+                },
+                child: commonFilterIcon(size),
+              )
+            ],
+          ),
+          body: BlocConsumer<PublicationBloc, PublicationState>(
           listener: (context, state) {
              if (state is PublicationLoaded) {
                // Update local variables if needed for UI consistency with legacy code
@@ -387,7 +386,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             );
           },
         ),
-      ),
+        );
+      }),
     );
   }
 
@@ -915,7 +915,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
     ]);
   }
 
-  Future<void> showBottomSheet(Size size) async {
+  Future<void> showBottomSheet(BuildContext context, Size size) async {
+    final bloc = context.read<PublicationBloc>();
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -927,7 +928,9 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return BlocProvider.value(
+             value: bloc,
+             child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * numD06,
@@ -1051,7 +1054,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                 ),
               ),
             );
-          });
+          }),
+          );
         });
   }
 

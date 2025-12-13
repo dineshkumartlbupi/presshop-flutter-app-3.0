@@ -13,6 +13,14 @@ import 'package:mime/mime.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/services/location_service.dart';
 import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
+import 'package:presshop/features/camera/data/models/camera_model.dart';
+import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:video_player/video_player.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
+import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast_chat/MediaPreviewScreen.dart';
 
 import 'package:presshop/main.dart';
@@ -21,21 +29,13 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import '../../utils/commonEnums.dart';
 import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
-import '../cameraScreen/PreviewScreen.dart';
-import '../chatScreens/FullVideoView.dart';
+import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart' hide photoText, videoText, interviewText;
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
-import '../myEarning/MyEarningScreen.dart';
-import '../myEarning/TransactionDetailScreen.dart';
-import '../myEarning/earningDataModel.dart';
-import 'package:video_player/video_player.dart';
 import 'package:location/location.dart' as lc;
 
 class BroadCastChatTaskScreen extends StatefulWidget {
@@ -958,7 +958,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     MyEarningScreen(
-                                                      openDashboard: false,
+                                                      openDashboard: false, initialTapPosition: 0,
                                                     )));
                                       }),
                                     ),
@@ -1947,7 +1947,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                     commonButtonStyle(size, colorThemePink), () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => MyEarningScreen(
-                            openDashboard: false,
+                            openDashboard: false, initialTapPosition: 0,
                           )));
                 }),
               )
@@ -2665,7 +2665,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               commonButtonStyle(size, colorThemePink), () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => MyEarningScreen(
-                                      openDashboard: false,
+                                      openDashboard: false, initialTapPosition: 2,
                                     )));
                           }),
                         ),
@@ -3368,7 +3368,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                 builder: (context) => TransactionDetailScreen(
                       pageType: PageType.CONTENT,
                       type: "received",
-                      transactionData: earningTransactionDataList[0],
+                      transactionData: earningTransactionDataList[0].toEntity(),
                     )));
         break;
 
@@ -3384,8 +3384,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
           MaterialPageRoute(
             builder: (context) => TransactionDetailScreen(
               pageType: PageType.TASK,
-              type: "received",
-              transactionData: earningTransactionDataList[0],
+              type:"received",
+              transactionData: earningTransactionDataList[0].toEntity(),
             ),
           ),
         );

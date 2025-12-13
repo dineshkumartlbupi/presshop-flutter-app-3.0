@@ -31,7 +31,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
         alertCount: alertCount,
       ));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(message:  e.toString()));
     }
   }
 
@@ -41,7 +41,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       await remoteDataSource.markNotificationsAsRead();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(message:  e.toString()));
     }
   }
 
@@ -51,7 +51,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       await remoteDataSource.clearAllNotifications();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(message:  e.toString()));
     }
   }
 
@@ -82,7 +82,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       }
       return const Right(StudentBeansInfo(shouldShow: false));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(message:  e.toString()));
     }
   }
 
@@ -92,7 +92,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       final url = await remoteDataSource.activateStudentBeans();
       return Right(url);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(message:  e.toString()));
     }
   }
 
@@ -102,7 +102,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       await remoteDataSource.markStudentBeansVisited();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(message:  e.toString()));
     }
   }
 }

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:presshop/core/api/api_constant.dart';
-import 'package:presshop/core/error/exception.dart';
+import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
 import 'package:presshop/features/map/data/models/incident_model.dart';
@@ -71,10 +71,10 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
         final List<dynamic> data = response.data is String ? jsonDecode(response.data) : response.data;
         return data.map((json) => IncidentModel.fromJson(json)).toList();
       } else {
-        throw ServerException();
+        throw ServerException("Failed to fetch incidents");
       }
     } catch (e) {
-       throw ServerException();
+       throw ServerException(e.toString());
     }
   }
 
@@ -114,10 +114,10 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
       if (data['status'] == 'OK') {
         return RouteInfoModel.fromJson(data);
       } else {
-        throw ServerException();
+        throw ServerException("Failed to get route");
       }
     } else {
-      throw ServerException();
+      throw ServerException("Failed to get route");
     }
   }
 
@@ -136,7 +136,7 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
       }
       return [];
     } else {
-      throw ServerException();
+      throw ServerException("Failed to search places");
     }
   }
 
@@ -152,9 +152,9 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
         final location = data['result']['geometry']['location'];
         return GeoPoint(location['lat'], location['lng']);
       }
-      throw ServerException();
+      throw ServerException("Place not found");
     } else {
-      throw ServerException();
+      throw ServerException("Failed to get place details");
     }
   }
 

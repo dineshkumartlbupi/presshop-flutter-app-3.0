@@ -33,7 +33,7 @@ class NotificationModel extends NotificationEntity {
             amount: detailModel.amount,
             totalEarningAmt: detailModel.totalEarningAmt,
             status: detailModel.paidStatus.toString(), // Convert bool to string if needed, or mapped field
-            isPaid: detailModel.paidStatus,
+            paidStatus: detailModel.paidStatus,
             contentTitle: detailModel.contentTitle,
             contentType: detailModel.contentType,
             createdAt: detailModel.createdAT,
@@ -50,7 +50,8 @@ class NotificationModel extends NotificationEntity {
             contentDataList: detailModel.contentDataList,
             type: detailModel.type,
             typesOfContent: detailModel.typesOfContent,
-            hopperAvatar: detailModel.hopperAvatar
+            hopperAvatar: detailModel.hopperAvatar, 
+            dueDate:detailModel.dueDate
          );
        } catch (e) {
          print("Error mapping transaction detail: $e");

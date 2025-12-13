@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/get_content_categories.dart';
 import '../../domain/usecases/get_charities.dart';
 import '../../domain/usecases/get_share_exclusive_price.dart';
+import '../../domain/usecases/submit_content.dart';
 import '../../../../core/usecases/usecase.dart';
 import 'publish_event.dart';
 import 'publish_state.dart';
@@ -10,17 +11,20 @@ class PublishBloc extends Bloc<PublishEvent, PublishState> {
   final GetContentCategories getContentCategories;
   final GetCharities getCharities;
   final GetShareExclusivePrice getShareExclusivePrice;
+  final SubmitContent submitContent;
 
   PublishBloc({
     required this.getContentCategories,
     required this.getCharities,
     required this.getShareExclusivePrice,
+    required this.submitContent,
   }) : super(const PublishState()) {
     on<LoadPublishDataEvent>(_onLoadPublishData);
     on<SelectCategoryEvent>(_onSelectCategory);
     on<FetchCharitiesEvent>(_onFetchCharities);
     on<ToggleCharityEvent>(_onToggleCharity);
     on<SelectCharityEvent>(_onSelectCharity);
+    on<SubmitContentEvent>(_onSubmitContent);
   }
 
   Future<void> _onLoadPublishData(LoadPublishDataEvent event, Emitter<PublishState> emit) async {
@@ -89,5 +93,14 @@ class PublishBloc extends Bloc<PublishEvent, PublishState> {
         return c.copyWith(isSelectCharity: c.id == event.charityId);
       }).toList();
       emit(state.copyWith(charities: updatedCharities, isCharitySelected: true));
+  }
+
+  Future<void> _onSubmitContent(SubmitContentEvent event, Emitter<PublishState> emit) async {
+      emit(state.copyWith(status: PublishStatus.submitting));
+      final result = await submitContent(SubmitContentParams(params: event.params, filePaths: event.filePaths));
+      result.fold(
+          (failure) => emit(state.copyWith(status: PublishStatus.failure, errorMessage: failure.message)),
+          (_) => emit(state.copyWith(status: PublishStatus.success))
+      );
   }
 }

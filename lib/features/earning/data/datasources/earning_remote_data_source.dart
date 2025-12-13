@@ -1,9 +1,7 @@
-import 'dart:convert';
-import '../../../../core/api/api_client.dart';
-import '../../../../core/api/api_constant.dart';
-import '../../../../core/error/exceptions.dart';
-import '../models/earning_model.dart';
-import '../../data/models/earning_model.dart'; // Ensure duplication is handled or import only necessary
+
+import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/constants/api_constant.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
 
 abstract class EarningRemoteDataSource {
   Future<EarningProfileDataModel> getEarningProfile(String year, String month);
@@ -25,7 +23,7 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
 
     // ApiClient usually returns dynamic (Map or List) directly if configured, 
     // or we might need to handle it. Assuming it behaves like in PublicationRemoteDataSourceImpl.
-    final data = response['resp'];
+    final data = response.data;
     return EarningProfileDataModel.fromJson(data);
   }
 
@@ -46,7 +44,7 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       queryParameters: params,
     );
     
-    final List<dynamic> dataList = response['data'];
+    final List<dynamic> dataList = response.data;
     return dataList.map((e) => CommissionData.fromJson(e)).toList();
   }
 }

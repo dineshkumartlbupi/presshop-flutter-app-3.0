@@ -30,6 +30,10 @@ class AccountDeleted extends AccountSettingsState {
   List<Object> get props => [message];
 }
 
+class PasswordChangedSuccess extends AccountSettingsState {
+  const PasswordChangedSuccess();
+}
+
 class AccountSettingsError extends AccountSettingsState {
   final String message;
 
