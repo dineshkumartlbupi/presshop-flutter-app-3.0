@@ -8,6 +8,10 @@ abstract class Failure extends Equatable {
   List<Object> get props => [message];
 }
 
+class UsernameAlreadyExistsFailure extends Failure {
+  UsernameAlreadyExistsFailure({required String message}) : super(message: message);
+}
+
 // General Failures
 class ServerFailure extends Failure {
   const ServerFailure({required super.message});

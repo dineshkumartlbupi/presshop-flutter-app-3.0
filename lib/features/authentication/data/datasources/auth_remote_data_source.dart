@@ -138,7 +138,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
        if (response.statusCode == 200) {
           final resData = response.data;
-          if (resData['code'] == 200) {
+          if (resData['status'] == 200) {
              return true; 
           } else {
              throw ServerFailure(message: resData['message'] ?? 'Sending OTP failed');
@@ -249,11 +249,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.get(getAvatarsUrl);
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['code'] == 200) {
-          final List list = data['avatars'];
-          return list.map((e) => AvatarModel.fromJson(e)).toList();
-        }
-        return [];
+        // API returns: {"base_url": "...", "response": [...]}
+        final String baseUrl = data['base_url'] ?? '';
+        final List list = data['response'] ?? [];
+        return list.map((e) => AvatarModel.fromJson(e, baseUrl: baseUrl)).toList();
       }
       return [];
     } catch (e) {

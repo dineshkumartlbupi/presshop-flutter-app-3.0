@@ -34,6 +34,8 @@ import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
+import '../bloc/signup_bloc.dart';
+import '../bloc/signup_event.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -460,12 +462,18 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      SignUpScreen(
-                                                        socialLogin: false,
-                                                        socialId: "",
-                                                        name: "",
-                                                        email: "",
-                                                        phoneNumber: '',
+                                                      MultiBlocProvider(
+                                                        providers: [
+                                                          BlocProvider(create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent())),
+                                                          BlocProvider(create: (context) => sl<AuthBloc>()),
+                                                        ],
+                                                        child: SignUpScreen(
+                                                          socialLogin: false,
+                                                          socialId: "",
+                                                          name: "",
+                                                          email: "",
+                                                          phoneNumber: '',
+                                                        ),
                                                       )));
                                         },
                                         child: Text(clickHereToJoinText,

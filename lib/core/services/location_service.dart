@@ -63,9 +63,9 @@ class LocationService implements NetworkResponse {
     };
 
     debugPrint('map: $params');
-    NetworkClass.fromNetworkClass(
-            updateLocation, this, updateLocationRequest, params)
-        .callRequestServiceHeader(false, "post", null);
+    // NetworkClass.fromNetworkClass(
+    //         updateLocation, this, updateLocationRequest, params)
+    //     .callRequestServiceHeader(false, "post", null);
   }
 
   Future<LocationData?> getCurrentLocation(BuildContext context,
