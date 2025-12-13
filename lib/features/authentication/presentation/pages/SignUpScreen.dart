@@ -141,6 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   String socialProfileImage = "";
   String socialType = "";
   final ValueNotifier<bool> _avatarsNotifier = ValueNotifier(false);
+  late SignUpBloc _signUpBloc;
 
   @override
   void initState() {
@@ -170,6 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    _signUpBloc = context.read<SignUpBloc>();
 
     final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
         .chain(CurveTween(curve: Curves.elasticIn))
@@ -180,86 +182,85 @@ class _SignUpScreenState extends State<SignUpScreen>
         }
       });
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent())),
-        BlocProvider(create: (context) => sl<AuthBloc>()),
-      ],
-      child: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-           if (state is AuthAuthenticated) {
-             Navigator.of(context).pushAndRemoveUntil(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+         if (state is AuthAuthenticated) {
+           Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => Dashboard(
+                        initialPosition: (state.user.source != null &&
+                                state.user.source!.containsKey('bank_detail_missing') &&
+                                state.user.source!['bank_detail_missing'] == true)
+                            ? 2
+                            : 0,
+                      )),
+              (route) => false);
+         } else if (state is AuthSocialSignUpRequired) {
+           setState(() {
+             widget.socialLogin = true;
+             widget.socialId = state.socialId;
+             widget.name = state.name;
+             widget.email = state.email;
+             
+             List<String> nameParts = state.name.split(' ');
+             if (nameParts.isNotEmpty) firstNameController.text = nameParts[0];
+             if (nameParts.length > 1) lastNameController.text = nameParts.sublist(1).join(" ");
+             emailController.text = state.email;
+           });
+         } else if (state is AuthError) {
+           commonErrorDialogDialog(
+              MediaQuery.of(context).size, state.message, "", () {
+            Navigator.pop(context);
+           });
+         }
+      },
+      child: BlocConsumer<SignUpBloc, SignUpState>(
+      listener: (context, state) {
+        if (state is SignUpError) {
+           commonErrorDialogDialog(
+              MediaQuery.of(context).size, state.message, "", () {
+            Navigator.pop(context);
+          });
+        } else if (state is SignUpOtpSent) {
+               Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => VerifyAccountScreen(
+                      sociallogin: widget.socialLogin,
+                      imagePath: userImagePath,
+                      params: Map<String, String>.from(state.data),
+                      countryCode: selectedCountryCodePicker,
+                      mobileNumberValue: phoneController.text.trim(),
+                      emailAddressValue: emailController.text.trim(),
+                    )));
+        } else if (state is SignUpSuccess) {
+               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => Dashboard(
-                          initialPosition: (state.user.source != null &&
-                                  state.user.source!.containsKey('bank_detail_missing') &&
-                                  state.user.source!['bank_detail_missing'] == true)
-                              ? 2
-                              : 0,
+                          initialPosition: 2,
                         )),
                 (route) => false);
-           } else if (state is AuthSocialSignUpRequired) {
-             setState(() {
-               widget.socialLogin = true;
-               widget.socialId = state.socialId;
-               widget.name = state.name;
-               widget.email = state.email;
-               
-               List<String> nameParts = state.name.split(' ');
-               if (nameParts.isNotEmpty) firstNameController.text = nameParts[0];
-               if (nameParts.length > 1) lastNameController.text = nameParts.sublist(1).join(" ");
-               emailController.text = state.email;
-             });
-           } else if (state is AuthError) {
-             commonErrorDialogDialog(
-                MediaQuery.of(context).size, state.message, "", () {
-              Navigator.pop(context);
-             });
+        } else if (state is AvatarsLoaded) {
+           avatarList = state.avatars.map((e) => AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar})).toList();
+           // Extract base URL from the first avatar (all avatars have the same base URL)
+           if (state.avatars.isNotEmpty && state.avatars.first.baseUrl != null) {
+             avatarBaseUrl = state.avatars.first.baseUrl!;
            }
-        },
-        child: BlocConsumer<SignUpBloc, SignUpState>(
-        listener: (context, state) {
-          if (state is SignUpError) {
-             commonErrorDialogDialog(
-                MediaQuery.of(context).size, state.message, "", () {
-              Navigator.pop(context);
-            });
-          } else if (state is SignUpOtpSent) {
-                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VerifyAccountScreen(
-                        sociallogin: widget.socialLogin,
-                        imagePath: userImagePath,
-                        params: Map<String, String>.from(state.data),
-                        countryCode: selectedCountryCodePicker,
-                        mobileNumberValue: phoneController.text.trim(),
-                        emailAddressValue: emailController.text.trim(),
-                      )));
-          } else if (state is SignUpSuccess) {
-                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(
-                            initialPosition: 2,
-                          )),
-                  (route) => false);
-          } else if (state is AvatarsLoaded) {
-             avatarList = state.avatars.map((e) => AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar})).toList();
-             _avatarsNotifier.value = !_avatarsNotifier.value;
-          } else if (state is UserNameCheckResult) {
-             userNameAlreadyExists = !state.isAvailable;
-             setState((){});
-          } else if (state is EmailCheckResult) {
-             emailAlreadyExists = !state.isAvailable;
-             setState((){});
-          } else if (state is PhoneCheckResult) {
-             phoneAlreadyExists = !state.isAvailable;
-             setState((){});
-          } else if (state is ReferralCodeVerified) {
-             isRefferalCodeValid = true;
-             setState((){});
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
+           _avatarsNotifier.value = !_avatarsNotifier.value;
+        } else if (state is UserNameCheckResult) {
+           userNameAlreadyExists = !state.isAvailable;
+           setState((){});
+        } else if (state is EmailCheckResult) {
+           emailAlreadyExists = !state.isAvailable;
+           setState((){});
+        } else if (state is PhoneCheckResult) {
+           phoneAlreadyExists = !state.isAvailable;
+           setState((){});
+        } else if (state is ReferralCodeVerified) {
+           isRefferalCodeValid = true;
+           setState((){});
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
         hideLeading: false,
@@ -1146,9 +1147,8 @@ class _SignUpScreenState extends State<SignUpScreen>
           ),
         ),
       ),
-          );
-        },
-      ),
+        );
+      },
     ));
   }
 
@@ -1795,23 +1795,23 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   ///ApisSection------------
   void checkUserNameApi() {
-    context.read<SignUpBloc>().add(CheckUserNameEvent(userNameController.text.trim()));
+    _signUpBloc.add(CheckUserNameEvent(userNameController.text.trim()));
   }
 
   void checkEmailApi() {
-    context.read<SignUpBloc>().add(CheckEmailEvent(emailController.text.trim()));
+    _signUpBloc.add(CheckEmailEvent(emailController.text.trim()));
   }
 
   void checkPhoneApi() {
-    context.read<SignUpBloc>().add(CheckPhoneEvent(selectedCountryCodePicker + phoneController.text.trim()));
+    _signUpBloc.add(CheckPhoneEvent(selectedCountryCodePicker + phoneController.text.trim()));
   }
 
   void getAvatarsApi() {
-    context.read<SignUpBloc>().add(FetchAvatarsEvent());
+    _signUpBloc.add(FetchAvatarsEvent());
   }
 
   void verifyReferredCode() {
-    context.read<SignUpBloc>().add(VerifyReferralCodeEvent(referralCodeController.text.trim()));
+    _signUpBloc.add(VerifyReferralCodeEvent(referralCodeController.text.trim()));
   }
 
   void sendOtpApi() {
@@ -1838,7 +1838,7 @@ class _SignUpScreenState extends State<SignUpScreen>
        params[cityKey] = cityNameController.text.trim();
        params["password"] = passwordController.text.trim();
        
-      context.read<SignUpBloc>().add(SignUpSubmitted(data: params));
+      _signUpBloc.add(SignUpSubmitted(data: params));
   }
 
 
