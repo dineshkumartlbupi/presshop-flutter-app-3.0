@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import '../../../../core/api/api_client.dart';
+import 'package:presshop/core/error/exceptions.dart';
 
 abstract class FeedRemoteDataSource {
   Future<Map<String, dynamic>> getFeeds(Map<String, dynamic> params);

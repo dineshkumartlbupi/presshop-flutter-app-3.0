@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/features/feed/presentation/pages/feedDataModel.dart';
+import '../../domain/entities/earning_transaction.dart';
 
-import '../menuScreen/feedScreen/feedDataModel.dart';
 
 class EarningProfileDataModel {
   String id = '';
@@ -163,6 +164,36 @@ class EarningTransactionDetail {
       this.hopperBankName = "",
       this.hopperBankLogo = "",
       this.contentImage = ""});
+
+  EarningTransaction toEntity() {
+    return EarningTransaction(
+      id: id,
+      amount: amount,
+      totalEarningAmt: totalEarningAmt,
+      status: paidStatus ? "Paid" : "Pending",
+      paidStatus: paidStatus,
+      contentTitle: contentTitle,
+      contentType: contentType,
+      createdAt: createdAT,
+      dueDate: dueDate,
+      adminFullName: adminFullName,
+      companyLogo: companyLogo,
+      contentImage: contentImage,
+      payableT0Hopper: payableT0Hopper,
+      payableCommission: payableCommission,
+      stripefee: stripefee,
+      hopperBankLogo: hopperBankLogo,
+      hopperBankName: hopperBankName,
+      userFirstName: userFirstName,
+      userLastName: userLastName,
+      contentDataList: contentDataList,
+      type: type,
+      typesOfContent: typesOfContent,
+      hopperAvatar: hopperAvatar,
+      uploadContent: "",
+      contentId: contentId,
+    );
+  }
 
   factory EarningTransactionDetail.fromJson(Map<String, dynamic> json) {
     List<BankDataModel> bankData = [];

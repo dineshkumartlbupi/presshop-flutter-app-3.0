@@ -1381,7 +1381,7 @@ List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
 }
 
 List<Widget> getMediaCount2(
-    List<ContentDataModel> contentMediaList, Size size) {
+    List<dynamic> contentMediaList, Size size) {
   final imageCount =
       contentMediaList.where((item) => item.mediaType == "image").length;
   final videoCount =

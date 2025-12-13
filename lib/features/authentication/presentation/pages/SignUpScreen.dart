@@ -17,6 +17,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/signup_bloc.dart';
 import '../bloc/signup_event.dart';
 import '../bloc/signup_state.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../../domain/entities/avatar.dart';
 
@@ -177,9 +180,44 @@ class _SignUpScreenState extends State<SignUpScreen>
         }
       });
 
-    return BlocProvider(
-      create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent()),
-      child: BlocConsumer<SignUpBloc, SignUpState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent())),
+        BlocProvider(create: (context) => sl<AuthBloc>()),
+      ],
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+           if (state is AuthAuthenticated) {
+             Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => Dashboard(
+                          initialPosition: (state.user.source != null &&
+                                  state.user.source!.containsKey('bank_detail_missing') &&
+                                  state.user.source!['bank_detail_missing'] == true)
+                              ? 2
+                              : 0,
+                        )),
+                (route) => false);
+           } else if (state is AuthSocialSignUpRequired) {
+             setState(() {
+               widget.socialLogin = true;
+               widget.socialId = state.socialId;
+               widget.name = state.name;
+               widget.email = state.email;
+               
+               List<String> nameParts = state.name.split(' ');
+               if (nameParts.isNotEmpty) firstNameController.text = nameParts[0];
+               if (nameParts.length > 1) lastNameController.text = nameParts.sublist(1).join(" ");
+               emailController.text = state.email;
+             });
+           } else if (state is AuthError) {
+             commonErrorDialogDialog(
+                MediaQuery.of(context).size, state.message, "", () {
+              Navigator.pop(context);
+             });
+           }
+        },
+        child: BlocConsumer<SignUpBloc, SignUpState>(
         listener: (context, state) {
           if (state is SignUpError) {
              commonErrorDialogDialog(
@@ -1111,7 +1149,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           );
         },
       ),
-    );
+    ));
   }
 
   Future<void> googleLogin() async {
@@ -1133,7 +1171,13 @@ class _SignUpScreenState extends State<SignUpScreen>
       } else {
         socialProfileImage = "";
       }
-      socialExistsApi();
+      context.read<AuthBloc>().add(SocialLoginRequested(
+            socialType: "google",
+            socialId: socialId,
+            email: socialEmail,
+            name: socialName,
+            photoUrl: socialProfileImage,
+          ));
       debugPrint("userObj ::${_userObj.toString()}");
       debugPrint("social email ::${_userObj.email.toString()}");
       debugPrint("social displayName ::${_userObj.displayName.toString()}");
@@ -1797,182 +1841,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       context.read<SignUpBloc>().add(SignUpSubmitted(data: params));
   }
 
-  void socialExistsApi() {
-      Map<String, dynamic> params = {
-        "social_id": socialId,
-        "social_type": Platform.isIOS ? "apple" : "google"
-      };
-          params[userNameKey] = userNameController.text.trim().toLowerCase();
-          params[countryKey] = countryNameController.text.trim();
-          params[cityKey] = cityNameController.text.trim();
-          params[apartmentKey] = apartmentAndHouseNameController.text.trim();
 
-          if (!widget.socialLogin) {
-            params[passwordKey] = passwordController.text.trim();
-          } else {
-            params["social_id"] = widget.socialId;
-            params["social_type"] = Platform.isIOS ? "apple" : "google";
-          }
-
-          sharedPreferences!
-              .setString(firstNameKey, firstNameController.text.trim());
-          sharedPreferences!
-              .setString(lastNameKey, lastNameController.text.trim());
-          sharedPreferences!.setString(
-              userNameKey, userNameController.text.trim().toLowerCase());
-          sharedPreferences!.setString(emailKey, emailController.text.trim());
-          sharedPreferences!.setString(phoneKey, phoneController.text.trim());
-          sharedPreferences!
-              .setString(countryKey, countryNameController.text.trim());
-          sharedPreferences!.setString(cityKey, cityNameController.text.trim());
-          sharedPreferences!.setString(dobKey, selectedDates1.trim());
-          sharedPreferences!
-              .setString(postCodeKey, postalCodeController.text.trim());
-
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => VerifyAccountScreen(
-                    countryCode: selectedCountryCodePicker,
-                    emailAddressValue: emailController.text.trim(),
-                    mobileNumberValue: phoneController.text.trim(),
-                    params: params,
-                    imagePath: userImagePath,
-                    sociallogin: widget.socialLogin,
-                  )));
-
-          break;
-  
-        case socialExistUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("SocialExistResponse: $response");
-
-          if (map["code"] == 200) {
-            if (map["token"] != null) {
-              debugPrint("inside this::::::");
-              //  rememberMe = true;
-              //   sharedPreferences!.setBool(rememberKey, true);
-              sharedPreferences!.setString(tokenKey, map[tokenKey]);
-              sharedPreferences!
-                  .setString(refreshtokenKey, map[refreshtokenKey]);
-
-              sharedPreferences!
-                  .setString(hopperIdKey, map["user"][hopperIdKey]);
-              sharedPreferences!
-                  .setString(firstNameKey, map["user"][firstNameKey]);
-              sharedPreferences!
-                  .setString(lastNameKey, map["user"][lastNameKey]);
-              sharedPreferences!
-                  .setString(userNameKey, map["user"][userNameKey]);
-              sharedPreferences!.setString(emailKey, map["user"][emailKey]);
-              sharedPreferences!.setString(phoneKey, map["user"][phoneKey]);
-              sharedPreferences!
-                  .setString(countryCodeKey, map["user"][countryCodeKey]);
-              sharedPreferences!.setString(addressKey, map["user"][addressKey]);
-              sharedPreferences!.setString(
-                  currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
-              sharedPreferences!
-                  .setString(latitudeKey, map["user"][latitudeKey].toString());
-              sharedPreferences!.setString(
-                  longitudeKey, map["user"][longitudeKey].toString());
-              if (map["user"][avatarIdKey] != null) {
-                sharedPreferences!.setString(
-                    avatarIdKey, map["user"][avatarIdKey]["_id"].toString());
-                sharedPreferences!
-                    .setString(avatarKey, map["user"][avatarIdKey][avatarKey]);
-              }
-
-              sharedPreferences!.setBool(receiveTaskNotificationKey,
-                  map["user"][receiveTaskNotificationKey]);
-              sharedPreferences!
-                  .setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
-
-              if (map["user"][profileImageKey] != null) {
-                sharedPreferences!
-                    .setString(profileImageKey, map["user"][profileImageKey]);
-              }
-
-              if (map["user"]["doc_to_become_pro"] != null) {
-                debugPrint("InsideDoc");
-                if (map["user"]["doc_to_become_pro"]["govt_id"] != null) {
-                  debugPrint("InsideGov");
-                  sharedPreferences!.setString(
-                      file1Key, map["user"]["doc_to_become_pro"]["govt_id"]);
-                  sharedPreferences!.setBool(skipDocumentsKey, true);
-                }
-                if (map["user"]["doc_to_become_pro"]
-                        ["comp_incorporation_cert"] !=
-                    null) {
-                  sharedPreferences!.setString(
-                      file2Key,
-                      map["user"]["doc_to_become_pro"]
-                          ["comp_incorporation_cert"]);
-                  sharedPreferences!.setBool(skipDocumentsKey, true);
-                }
-
-                if (map["user"]["doc_to_become_pro"]["photography_licence"] !=
-                    null) {
-                  sharedPreferences!.setString(file3Key,
-                      map["user"]["doc_to_become_pro"]["photography_licence"]);
-                  sharedPreferences!.setBool(skipDocumentsKey, true);
-                }
-              }
-
-              if (map["user"]["bank_detail"] != null) {
-                var bankList = map["user"]["bank_detail"] as List;
-                debugPrint("bankList:::::${bankList.length}");
-                if (sharedPreferences!.getBool(skipDocumentsKey) != null) {
-                  bool skipDoc = sharedPreferences!.getBool(skipDocumentsKey)!;
-                  if (skipDoc) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
-                  } else {
-                    onBoardingCompleteDialog(
-                        size: MediaQuery.of(context).size,
-                        func: () {
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => UploadDocumentsScreen(
-                                        menuScreen: false,
-                                        hideLeading: true,
-                                      )),
-                              (route) => false);
-                        });
-                  }
-                } else {
-                  onBoardingCompleteDialog(
-                      size: MediaQuery.of(context).size,
-                      func: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const UploadDocumentsScreen(
-                                      menuScreen: false,
-                                      hideLeading: true,
-                                    )),
-                            (route) => false);
-                      });
-                }
-              }
-            } else {
-              firstNameController.text = socialName.split(" ").first;
-              lastNameController.text = socialName.split(" ").last;
-              emailController.text = socialEmail;
-              scrollController.animateTo(
-                // scrollController.position.maxScrollExtent,
-                scrollController.position.minScrollExtent,
-                duration: const Duration(seconds: 2),
-                curve: Curves.fastOutSlowIn,
-              );
-            }
-          }
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
 }
 
 class AvatarsData {

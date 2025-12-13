@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
-import 'package:app_version_update/app_version_update.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -10,18 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/dashboard/presentation/utils/dashboard_interface.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/version_checker.dart';
 import 'package:presshop/core/widgets/error/location_error_screen.dart';
 
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/content/presentation/pages/my_content_page.dart';
-import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
 import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
 import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,20 +22,15 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import '../../../../utils/commonEnums.dart';
-import '../../../../utils/location_service.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 
-import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/dashboard_bloc.dart';
-import '../bloc/dashboard_event.dart';
-import '../bloc/dashboard_state.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import '../../../dashboard/domain/entities/admin_detail.dart' as entity_admin;
-import '../../../dashboard/domain/entities/task_detail.dart' as entity_task;
 
 
 class Dashboard extends StatefulWidget {
@@ -91,6 +79,8 @@ class DashboardState extends State<Dashboard>
   static DashBoardInterface? dashBoardInterface;
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
+
+  final player = AudioPlayer();
 
   String? savedSourceDataHeading = "";
   String? savedSourceDataDescription = "";
@@ -555,7 +545,7 @@ class DashboardState extends State<Dashboard>
     var size = MediaQuery.of(context).size;
     return BlocProvider.value(
       value: _dashboardBloc,
-      child: BlocListener<DashboardBloc, DashboardState>(
+      child: BlocListener<DashboardBloc, dynamic>(
         listener: (context, state) {
           if (state is DashboardActiveAdminsLoaded) {
             setState(() {
@@ -579,24 +569,24 @@ class DashboardState extends State<Dashboard>
               }
             });
           } else if (state is DashboardRoomIdLoaded) {
-            var data = state.roomData;
+            var data = (state as DashboardRoomIdLoaded).roomData;
             if (data["details"] != null) {
               var roomId = data["details"]["room_id"] ?? "";
               sharedPreferences!.setString(adminRoomIdKey, roomId);
               debugPrint("Room Id : $roomId");
             }
           } else if (state is DashboardAppVersionChecked) {
-             var map = state.versionData;
+             var map = (state as DashboardAppVersionChecked).versionData;
              if (map["code"] == 200) {
                  var versionData = map["data"];
                  sharedPreferences!.setInt(videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
                  bool shouldUpdate = Platform.isAndroid ? versionData['aOSshouldForceUpdate'] : versionData['iOSshouldForceUpdate'];
-                 if (shouldUpdate) forceUpdateCheck1();
+                 if (shouldUpdate) forceUpdateCheck();
              } else {
                  showSnackBar(map["message"], "error", Colors.red);
              }
           } else if (state is DashboardTaskDetailLoaded) {
-             var task = state.taskDetail;
+             var task = (state as DashboardTaskDetailLoaded).taskDetail;
               var broadCastedData = TaskDetailModel(
                  id: task.id,
                  deadLine: task.deadLine,
@@ -647,7 +637,7 @@ class DashboardState extends State<Dashboard>
                },
              );
           } else if (state is StudentBeansActivated) {
-             var map = state.data;
+             var map = (state as StudentBeansActivated).data;
               var studentBeansResponseUrl = map["url"];
               
               if (studentBeansResponseUrl != null && studentBeansResponseUrl.isNotEmpty) {
@@ -660,7 +650,7 @@ class DashboardState extends State<Dashboard>
                 _studentBeansCompleter!.complete(studentBeansResponseUrl);
               }
           } else if (state is DashboardMyProfileLoaded) {
-             var user = state.user;
+             var user = (state as DashboardMyProfileLoaded).user;
              var mapSource = user.source; 
 
             if (user.avatar != null && user.avatar!.isNotEmpty) {
@@ -686,7 +676,7 @@ class DashboardState extends State<Dashboard>
             setState(() {});
           } else if (state is DashboardTabChanged) {
              setState(() {
-                currentIndex = state.index;
+                currentIndex = (state as DashboardTabChanged).index;
              });
           } else if (state is DashboardError) {
              // Optional
@@ -786,7 +776,7 @@ class DashboardState extends State<Dashboard>
           ],
         ),
       ),
-    );
+    )));
   }
 
   /// FireBase Notification Initialize

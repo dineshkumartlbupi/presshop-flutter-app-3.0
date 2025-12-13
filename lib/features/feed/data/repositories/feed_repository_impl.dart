@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/exceptions.dart';
+import 'package:presshop/core/api/network_info.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/network/network_info.dart';
+import 'package:presshop/core/error/exceptions.dart';
 import '../../domain/entities/feed.dart';
 import '../../domain/repositories/feed_repository.dart';
 import '../datasources/feed_remote_data_source.dart';
@@ -29,7 +29,7 @@ class FeedRepositoryImpl implements FeedRepository {
            return Left(ServerFailure(message: remoteData['message'] ?? "Unknown Error"));
         }
       } on ServerException {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());
@@ -51,7 +51,7 @@ class FeedRepositoryImpl implements FeedRepository {
         final success = await remoteDataSource.toggleInteraction(params);
         return Right(success);
       } on ServerException {
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: ''));
       }
     } else {
       return Left(NetworkFailure());

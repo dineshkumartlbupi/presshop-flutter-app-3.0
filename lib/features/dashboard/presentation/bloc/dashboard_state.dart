@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/admin_detail.dart';
-import '../../domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import '../../../authentication/domain/entities/user.dart';
 
 abstract class DashboardState extends Equatable {

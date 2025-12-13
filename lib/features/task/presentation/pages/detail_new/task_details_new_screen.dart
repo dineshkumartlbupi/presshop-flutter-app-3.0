@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/services/location_service.dart';
+import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,18 +14,10 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/api/network_response.dart';
-import '../broadCastChatTaskScreen/broadCastChatTaskScreen.dart';
-import '../chatScreens/FullVideoView.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
-import 'package:presshop/core/di/injection_container.dart' as di;
 
 class TaskDetailNewScreen extends StatefulWidget {
   String taskStatus = "";
@@ -41,8 +34,12 @@ class TaskDetailNewScreen extends StatefulWidget {
   State<TaskDetailNewScreen> createState() => _TaskDetailNewScreenState();
 }
 
-class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
+class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
+    implements NetworkResponse {
+  TaskDetailModel? taskDetail;
+  String roomId = "";
   bool isExtraTime = false;
+  bool isOwner = false;
   BitmapDescriptor? mapIcon;
   List<Marker> marker = [];
   bool shouldRestartAnimation = false;
@@ -66,21 +63,17 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
   void initState() {
     getAllIcons();
     getCurrentLocation();
+    WidgetsBinding.instance
+        .addPostFrameCallback((timeStamp) => taskDetailApi());
     super.initState();
+
+    print("issdf Owner id==$isOwner");
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return BlocProvider(
-      create: (context) => di.sl<TaskBloc>()..add(FetchTaskDetailEvent(widget.taskId)),
-      child: BlocBuilder<TaskBloc, TaskState>(
-      builder: (context, state) {
-        var taskDetail = state.taskDetail;
-        bool isOwner = state.isTaskAccepted;
-        String roomId = state.roomId;
-        
-        return Scaffold(
+    return Scaffold(
       appBar: CommonAppBar(
         elevation: 0,
         hideLeading: false,
@@ -258,7 +251,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                       Text(
                                         isExtraTime
                                             ? "Extra time added"
-                                            : isTimeOver(taskDetail!)
+                                            : isTimeOver()
                                                 ? "Time over"
                                                 : "Time remaining",
                                         style: commonTextStyle(
@@ -281,13 +274,12 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                                 WidgetsBinding.instance
                                                     .addPostFrameCallback((_) {
                                                   setState(() {
-                                                    isExtraTime = isTimeOver(taskDetail!)
+                                                    isExtraTime = isTimeOver()
                                                         ? false
                                                         : true;
                                                   });
-                                                  if (!isTimeOver(taskDetail!)) {
-                                                    taskDetail!.deadLine =
-                                                        taskDetail!.deadLine
+                                                  if (!isTimeOver()) {
+                                                    taskDetail!.deadLine
                                                             .add(Duration(
                                                                 hours: 3));
                                                   }
@@ -938,13 +930,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                                 taskDetail: taskDetail!,
                                                 roomId: roomId,
                                               )))
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              BroadCastChatTaskScreen(
-                                                taskDetail: taskDetail!,
-                                                roomId: roomId,
-                                              )))
-                                      .then((value) => context.read<TaskBloc>().add(FetchTaskDetailEvent(widget.taskId)));
+                                      .then((value) => taskDetailApi());
                                 },
                                 child: AnimatedButtonWidget(
                                   shouldRestartAnimation:
@@ -961,7 +947,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                                 )))
                                         .then((value) {
                                       shouldRestartAnimation = true;
-                                      context.read<TaskBloc>().add(FetchTaskDetailEvent(widget.taskId));
+                                      taskDetailApi();
                                     });
                                   },
                                 ),
@@ -1051,12 +1037,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     ]),
               ),
             )
-            )
           : showLoader(),
-     );
-    },
-   ),
-  );
+    );
   }
 
   /// Initialize Map icon
@@ -1120,11 +1102,70 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
     }
   }
 
-  bool isTimeOver(TaskDetailModel taskDetail) {
-    var extraTime = taskDetail.deadLine.add(Duration(hours: 3));
+  bool isTimeOver() {
+    var extraTime = taskDetail!.deadLine.add(Duration(hours: 3));
     if (extraTime.difference(DateTime.now()).inSeconds < 0) {
       return true;
     }
     return false;
+  }
+
+  void taskDetailApi() {
+    NetworkClass("$taskDetailUrl${widget.taskId}", this, taskDetailUrlRequest)
+        .callRequestServiceHeader(false, "get", null);
+  }
+
+  @override
+  void onError({required int requestCode, required String response}) {
+    try {
+      switch (requestCode) {
+        case taskDetailUrlRequest:
+          {
+            var data = jsonDecode(response);
+            debugPrint("taskDetailUrlRequest Error : $data");
+            break;
+          }
+      }
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
+  @override
+  void onResponse({required int requestCode, required String response}) {
+    try {
+      switch (requestCode) {
+        case taskDetailUrlRequest:
+          {
+            var data = jsonDecode(response);
+            debugPrint("taskDetailUrlRequest Success : $data");
+            taskDetail = TaskDetailModel.fromJson(data["task"] ?? {});
+            debugPrint("taskDetail id::: ${taskDetail!.id}");
+            //_updateGoogleMap(LatLng(taskDetail!.latitude, taskDetail!.longitude));
+            if (data["resp"] != null) {
+              roomId = (data["resp"]["room_id"] ?? "").toString();
+              debugPrint("Room Id task Manager : $roomId");
+            }
+            SharedPreferences.getInstance().then((input) {
+              var myId = input.getString(hopperIdKey) ?? "";
+              debugPrint("My Id : $myId");
+              debugPrint("Task Owner Id : ${taskDetail!.userId}");
+              debugPrint("Accepted By List : ${taskDetail!.acceptedBy}");
+
+              if (taskDetail!.acceptedBy.contains(myId)) {
+                isOwner = true;
+              } else {
+                isOwner = false;
+              }
+              if (mounted) {
+                setState(() {});
+              }
+            });
+            break;
+          }
+      }
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
   }
 }

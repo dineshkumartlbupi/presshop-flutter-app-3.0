@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'package:presshop/core/constants/api_constant.dart' as ApiConstants;
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/core/core_export.dart';
-import '../models/admin_detail_model.dart';
-import '../models/task_detail_model.dart';
+import 'package:presshop/core/core_export.dart' hide AdminDetailModel;
 import 'package:presshop/core/api/api_client.dart';
+import '../models/admin_detail_model.dart';
+
 
 abstract class DashboardRemoteDataSource {
   Future<List<AdminDetailModel>> getActiveAdmins();
@@ -38,22 +38,22 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
             .map((e) => AdminDetailModel.fromJson(e))
             .toList();
       } else {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
   @override
   Future<void> updateLocation(Map<String, dynamic> params) async {
      try {
-      final response = await apiClient.post(updateLocation, data: params);
+      final response = await apiClient.post(ApiConstants.updateLocation, data: params);
       if (response.statusCode != 200) {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
@@ -62,10 +62,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
      try {
       final response = await apiClient.post(addDeviceUrl, data: params);
       if (response.statusCode != 200) {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
@@ -81,10 +81,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         }
         return TaskDetailModel.fromJson(data['task']);
       } else {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
@@ -99,10 +99,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         }
         return data;
       } else {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
@@ -117,10 +117,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         }
         return data;
       } else {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
@@ -135,10 +135,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         }
         return data;
       } else {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 
@@ -147,10 +147,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
      try {
       final response = await apiClient.post(removeDeviceUrl, data: params);
       if (response.statusCode != 200) {
-        throw ServerFailure();
+        throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure();
+      throw ServerFailure(message: '');
     }
   }
 }

@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
-import '../cameraScreen/AudioWaveFormWidgetScreen.dart';
+import 'package:presshop/features/camera/data/models/camera_model.dart';
+import 'package:presshop/features/camera/presentation/pages/AudioWaveFormWidgetScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
-import '../cameraScreen/PreviewScreen.dart';
 import 'package:path/path.dart' as path;
+import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 
 class ManageTaskPreviewScreen extends StatefulWidget {
   final List<CameraData> cameraListData;

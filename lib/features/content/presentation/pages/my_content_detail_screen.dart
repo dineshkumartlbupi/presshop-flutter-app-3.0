@@ -1,11 +1,45 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:developer';
+
+import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:dio/dio.dart';
+import 'package:dots_indicator/dots_indicator.dart';
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:video_player/video_player.dart';
+import 'package:presshop/core/api/network_class.dart';
+import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/core/constants/api_constant.dart';
+import 'package:presshop/core/constants/app_assets.dart';
+import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/string_constants.dart';
+import 'package:presshop/core/theme/app_colors.dart';
+import 'package:presshop/core/utils/date_time_utils.dart';
+import 'package:presshop/core/utils/extensions.dart';
+import 'package:presshop/core/widgets/animated_button.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/features/content/presentation/widgets/manage_content_widget.dart';
+import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
+import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
+import 'package:presshop/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import '../bloc/content_bloc.dart';
 import '../bloc/content_event.dart';
 import '../bloc/content_state.dart';
 import '../../domain/entities/content_item.dart';
 import '../../domain/entities/content_media.dart';
 import '../../../../core/di/injection_container.dart';
-import '../../task/presentation/pages/manage_task_screen.dart';
 import '../../data/models/my_content_data_model.dart';
 import '../../domain/mappers/content_item_mapper.dart';
 
@@ -33,7 +67,7 @@ class MyContentDetailScreen extends StatefulWidget {
   }
 }
 
-class MyContentDetailScreenState extends State<MyContentDetailScreen> {
+class MyContentDetailScreenState extends State<MyContentDetailScreen> implements NetworkResponse {
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
   ContentItem? contentItem;
@@ -157,7 +191,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
             setState(() {
               contentItem = state.content;
               isLoading = false;
+              getMediaOfferApi();
+              initialController();
               _checkOwnershipAndStartTimer();
+              callGetAllTransactionDetail();
             });
           } else if (state is ContentError) {
             setState(() {
@@ -1196,6 +1233,32 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     );
   }
 
+  List<Widget> getMediaCount(List<ContentMedia> mediaList, Size size) {
+    if (mediaList.isEmpty) return [];
+    return [
+      Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: size.width * numD015,
+          vertical: size.width * 0.005,
+        ),
+        decoration: BoxDecoration(
+            color: colorLightGreen.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(size.width * numD015)),
+        child: Center(
+          child: Text(
+            "${mediaList.length} ",
+            textAlign: TextAlign.center,
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD038,
+                color: Colors.white,
+                fontWeight: FontWeight.w600),
+          ),
+        ),
+      )
+    ];
+  }
+
   openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
@@ -1266,17 +1329,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   }
 
   void initialController() {
-    if (myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
-        "audio") {
+    if (contentItem?.mediaList[_currentMediaIndex].mediaType == "audio") {
       var url = contentImageUrl +
-          myContentData!.contentMediaList[_currentMediaIndex].media;
+          (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
       initWaveData(url);
-    } else if (myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
-        "video") {
+    } else if (contentItem?.mediaList[_currentMediaIndex].mediaType == "video") {
       var url = contentImageUrl +
-          myContentData!.contentMediaList[_currentMediaIndex].media;
+         (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
           Uri.parse(url),
@@ -1288,11 +1349,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   ///--------Apis Section------------
 
-  void myContentDetailApi() {
-    NetworkClass("$myContentDetailUrl${widget.contentId}", this,
-            myContentDetailUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
-  }
 
   /// Get content Media House Offer
   void getMediaOfferApi() {
@@ -1307,8 +1363,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   callGetAllTransactionDetail() {
     Map<String, String> map = {
-      //"content_id":widget.contentId,
-      "content_id": myContentData!.id,
+      "content_id": contentItem?.id ?? widget.contentId,
       "limit": '10',
       "offset": '0'
     };
@@ -1323,15 +1378,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     try {
       switch (requestCode) {
         /// Get Content detail
-        case myContentDetailUrlRequest:
-          var data = jsonDecode(response);
-          debugPrint("myContentError: $response");
-          if (data["errors"] != null) {
-            showSnackBar("Error", data["errors"]["msg"].toString(), Colors.red);
-          } else {
-            showSnackBar("Error", data.toString(), Colors.red);
-          }
-          break;
+
 
         /// Get content Media House Offer
         case getContentMediaHouseOfferReq:
@@ -1357,27 +1404,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
-        case myContentDetailUrlRequest:
-          var map = jsonDecode(response);
-          log("myContentDetailResponse: $response");
-          if (map["code"] == 200) {
-            if (map["contentDetail"] != null) {
-              myContentData = MyContentData.fromJson(map["contentDetail"]);
-              isLoading = true;
-              setState(() {});
-              getMediaOfferApi();
-              initialController();
-              _checkOwnershipAndStartTimer();
-              Future.delayed(const Duration(microseconds: 500), () {
-                callGetAllTransactionDetail();
-              });
-            }
 
-            if (map['chat'] != null) {
-              chatList = map['chat'] as List;
-            }
-          }
-          break;
 
         /// Get content Media House Offer
         case getContentMediaHouseOfferReq:

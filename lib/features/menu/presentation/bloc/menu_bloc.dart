@@ -29,7 +29,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     MenuLoadCounts event,
     Emitter<MenuState> emit,
   ) async {
-    final result = await getNotifications(NoParams());
+    final result = await getNotifications();
     result.fold(
       (failure) => emit(state.copyWith(status: MenuStatus.failure)),
       (notificationsResult) {

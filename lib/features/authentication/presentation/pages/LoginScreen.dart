@@ -20,6 +20,7 @@ import 'SignUpScreen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -514,7 +515,6 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
       debugPrint('deviceId::::::: $deviceId');
     }
     sharedPreferences?.setString(deviceIdKey, deviceId);
-    callAppInstallFirstTimeOrNotApi();
   }
 
   Future<void> googleLogin(BuildContext context) async {
@@ -688,160 +688,23 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
     }
   }
 
-  callAppInstallFirstTimeOrNotApi() {
-    NetworkClass(checkAppInstallFirstTimeIrNotUrl + deviceId, null,
-            checkAppInstallFirstTimeIrNotReq)
-        .callRequestServiceHeader(false, "get", null);
-  }
-
-  void createStripeAccountApi() {
-    Map<String, String> map = {
-      "email": sharedPreferences!.getString(emailKey).toString(),
-      "first_name": sharedPreferences!.getString(firstNameKey).toString(),
-      "last_name": sharedPreferences!.getString(lastNameKey).toString(),
-      "country": sharedPreferences!.getString(countryKey).toString(),
-      "phone": sharedPreferences!.getString(phoneKey).toString(),
-      "post_code": sharedPreferences!.getString(postCodeKey).toString(),
-      "city": sharedPreferences!.getString(cityKey).toString(),
-      "dob": sharedPreferences!.getString(dobKey).toString(),
-    };
-    debugPrint("stripe map:::::$map");
-    NetworkClass.fromNetworkClass(
-            createStripeAccount, null, reqCreateStipeAccount, map)
-        .callRequestServiceHeader(true, "post", null);
-  }
-
-              debugPrint("inside this::::::");
-              rememberMe = true;
-              sharedPreferences!.setBool(rememberKey, true);
-              sharedPreferences!.setString(tokenKey, map[tokenKey]);
-              sharedPreferences!
-                  .setString(refreshtokenKey, map[refreshtokenKey]);
-
-              sharedPreferences!
-                  .setString(hopperIdKey, map["user"][hopperIdKey]);
-              sharedPreferences!
-                  .setString(referralCode, map["user"][referralCode]);
-              sharedPreferences!.setString(
-                  currencySymbolKey, map['user'][currencySymbolKey]['symbol']);
-
-              sharedPreferences!.setString(
-                  totalHopperArmy, map['user'][totalHopperArmy].toString());
-              sharedPreferences!
-                  .setString(firstNameKey, map["user"][firstNameKey]);
-              sharedPreferences!
-                  .setString(lastNameKey, map["user"][lastNameKey]);
-              sharedPreferences!
-                  .setString(userNameKey, map["user"][userNameKey]);
-              sharedPreferences!.setString(emailKey, map["user"][emailKey]);
-              sharedPreferences!
-                  .setString(countryCodeKey, map["user"][countryCodeKey]);
-              sharedPreferences!
-                  .setString(phoneKey, map["user"][phoneKey].toString());
-              debugPrint("phoneNumber======> ${map["user"][phoneKey]}");
-              sharedPreferences!.setString(addressKey, map["user"][addressKey]);
-              sharedPreferences!
-                  .setString(latitudeKey, map["user"][latitudeKey].toString());
-              sharedPreferences!.setString(
-                  longitudeKey, map["user"][longitudeKey].toString());
-              if (map["user"][avatarIdKey] != null) {
-                sharedPreferences!.setString(
-                    avatarIdKey, map["user"][avatarIdKey]["_id"].toString());
-                sharedPreferences!
-                    .setString(avatarKey, map["user"][avatarIdKey][avatarKey]);
-              }
-
-              sharedPreferences!.setBool(receiveTaskNotificationKey,
-                  map["user"][receiveTaskNotificationKey]);
-              sharedPreferences!
-                  .setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
-
-              if (map["user"][profileImageKey] != null) {
-                sharedPreferences!
-                    .setString(profileImageKey, map["user"][profileImageKey]);
-              }
-              currencySymbol =
-                  sharedPreferences!.getString(currencySymbolKey) ?? "£";
-              if (map["user"]["doc_to_become_pro"] != null) {
-                debugPrint("InsideDoc");
-                if (map["user"]["doc_to_become_pro"]["govt_id"] != null) {
-                  debugPrint("InsideGov");
-
-                  sharedPreferences!.setString(
-                      file1Key, map["user"]["doc_to_become_pro"]["govt_id"]);
-                  sharedPreferences!.setBool(skipDocumentsKey, true);
-                }
-                if (map["user"]["doc_to_become_pro"]
-                        ["comp_incorporation_cert"] !=
-                    null) {
-                  sharedPreferences!.setString(
-                      file2Key,
-                      map["user"]["doc_to_become_pro"]
-                          ["comp_incorporation_cert"]);
-                  sharedPreferences!.setBool(skipDocumentsKey, true);
-                }
-
-                if (map["user"]["doc_to_become_pro"]["photography_licence"] !=
-                    null) {
-                  sharedPreferences!.setString(file3Key,
-                      map["user"]["doc_to_become_pro"]["photography_licence"]);
-                  sharedPreferences!.setBool(skipDocumentsKey, true);
-                }
-              }
-
-              if (map["user"]["bank_detail"] != null) {
-                var bankList = map["user"]["bank_detail"] as List;
-                debugPrint("bankList:::::${bankList.length}");
-
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                            )),
-                    (route) => false);
-              }
-            } else {
-              Navigator.of(navigatorKey.currentState!.context).push(
-                MaterialPageRoute(
-                  builder: (context) => SocialSignUp(
-                    socialLogin: true,
-                    socialId: socialId,
-                    name: socialName,
-                    email: socialEmail,
-                    phoneNumber: "",
-                    socialType: socialType,
-                  ),
-                ),
-              );
-            }
-          }
-          break;
-        case reqCreateStipeAccount:
-          debugPrint("reqCreateStipeAccount success::::::$response");
-          var data = jsonDecode(response);
-
-          Navigator.of(context).push(MaterialPageRoute(
-              builder = (context) => CommonWebView(
-                    webUrl: data['message']['url'] ?? "",
-                    title: "PressHop",
-                    accountId: data['account_id']['id'] ?? "",
-                    type: "",
-                  )));
-          break;
-
-        case checkAppInstallFirstTimeIrNotReq:
-          debugPrint(
-              "checkAppInstallFirstTimeIrNotReq success:::::: $response");
-          var data = jsonDecode(response);
-          isAppInstall = data['data'].toString();
-          debugPrint("isAppInstall:::::: $isAppInstall");
-          setState(() {});
-
-          break;
+  void _handleLoginSuccess(Map<String, dynamic> source) {
+      if (source.containsKey('bank_detail_missing') && source['bank_detail_missing'] == true) {
+          // Handle logic if needed, or simply navigate
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                      initialPosition: 2,
+                    )),
+            (route) => false);
+      } else {
+         Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                      initialPosition: 0, 
+                    )),
+            (route) => false);
       }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
   }
 
   @override

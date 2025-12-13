@@ -37,7 +37,7 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
   @override
   Future<List<MediaHouseModel>> getMediaHouses() async {
     final response = await apiClient.get(getMediaHouseDetailAPI);
-    final List<dynamic> dataList = response.redirects;
+    final List<dynamic> dataList = response.data['data'];
     return dataList.map((e) => MediaHouseModel.fromJson(e)).toList();
   }
 
@@ -45,9 +45,9 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
   Future<PublicationTransactionsResult> getPublicationTransactions(Map<String, dynamic> params) async {
      final response = await apiClient.get(getPublicationTransactionAPI, queryParameters: params);
      
-     final List<dynamic> dataList = response['data'];
-     final String publicationCount = response['countofmediahouse'].toString();
-     final String totalAmount = response['amount'].toString();
+     final List<dynamic> dataList = response.data['data'];
+     final String publicationCount = response.data['countofmediahouse'].toString();
+     final String totalAmount = response.data['amount'].toString();
      
      final List<EarningTransaction> transactions = dataList
          .map((e) => EarningTransactionDetail.fromJson(e)) // This returns Model
@@ -86,7 +86,7 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
       typesOfContent: model.typesOfContent,
       hopperAvatar: model.hopperAvatar,
        paidStatus: model.paidStatus,
-       dueDate: ''
+       dueDate: model.dueDate
     );
   }
 }

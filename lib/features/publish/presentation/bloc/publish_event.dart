@@ -44,8 +44,9 @@ class SelectCharityEvent extends PublishEvent {
 
 class SubmitContentEvent extends PublishEvent {
   final Map<String, dynamic> params;
-  const SubmitContentEvent(this.params);
+  final List<String> filePaths;
+  const SubmitContentEvent(this.params, this.filePaths);
 
   @override
-  List<Object> get props => [params];
+  List<Object> get props => [params, filePaths];
 }

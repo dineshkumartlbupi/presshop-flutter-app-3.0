@@ -105,4 +105,18 @@ class PublishRepositoryImpl implements PublishRepository {
       return const Left(NetworkFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> submitContent(Map<String, dynamic> params, List<String> filePaths) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.submitContent(params, filePaths);
+        return const Right(null);
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
 }

@@ -595,5 +595,4 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 }
 
-mixin PasswordChangedSuccess {
-}
+

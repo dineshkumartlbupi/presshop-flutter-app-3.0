@@ -1,4 +1,3 @@
-import '../../../../utils/common.dart';
 import '../../domain/entities/feed.dart';
 
 class FeedModel extends Feed {
@@ -26,6 +25,7 @@ class FeedModel extends Feed {
     required super.isDraft,
     required super.userId,
     required super.saleStatus,
+    required super.paidStatus,
   });
 
   factory FeedModel.fromJson(Map<String, dynamic> json) {
@@ -60,6 +60,7 @@ class FeedModel extends Feed {
       isDraft: json['is_draft'] ?? false,
       userId: json['user_id'] ?? "",
       saleStatus: json['sale_status'] ?? "",
+      paidStatus: json['paid_status'] ?? "",
     );
   }
 }

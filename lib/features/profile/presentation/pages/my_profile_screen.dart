@@ -9,21 +9,21 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
+import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:presshop/main.dart';
-import '../../utils/AnalyticsConstants.dart';
-import '../../utils/AnalyticsMixin.dart';
-import '../../utils/CommonAppBar.dart';
-import '../../utils/networkOperations/NetworkClass.dart';
-import '../authentication/SignUpScreen.dart';
-import '../dashboard/Dashboard.dart';
 
 class MyProfile extends StatefulWidget {
   bool editProfileScreen;

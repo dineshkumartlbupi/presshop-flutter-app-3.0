@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +6,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart'
-    hide Navigator, debugPrint;
+import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
@@ -397,7 +393,7 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
         name: "My earnings",
         icon: "${iconsPath}ic_earning.png",
         classWidget: MyEarningScreen(
-          openDashboard: false,
+          openDashboard: false, initialTapPosition:0,
         )));
 
     menuList.add(MenuData(

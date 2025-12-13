@@ -22,7 +22,8 @@ class MapState extends Equatable {
   
   final bool showAlertPanel;
   final bool showGetDirectionCard;
-  
+  final String? selectedPolygonId;
+
   final String? selectedAlertType;
   final String? selectedDistance;
   final String? selectedCategory;
@@ -46,6 +47,7 @@ class MapState extends Equatable {
     this.initialCamera,
     this.showAlertPanel = false,
     this.showGetDirectionCard = false,
+    this.selectedPolygonId,
     this.selectedAlertType,
     this.selectedDistance,
     this.selectedCategory,
@@ -70,6 +72,7 @@ class MapState extends Equatable {
     CameraPosition? initialCamera,
     bool? showAlertPanel,
     bool? showGetDirectionCard,
+    String? selectedPolygonId,
     String? selectedAlertType,
     String? selectedDistance,
     String? selectedCategory,
@@ -91,6 +94,7 @@ class MapState extends Equatable {
       initialCamera: initialCamera ?? this.initialCamera,
       showAlertPanel: showAlertPanel ?? this.showAlertPanel,
       showGetDirectionCard: showGetDirectionCard ?? this.showGetDirectionCard,
+      selectedPolygonId: selectedPolygonId ?? this.selectedPolygonId,
       selectedAlertType: selectedAlertType ?? this.selectedAlertType,
       selectedDistance: selectedDistance ?? this.selectedDistance,
       selectedCategory: selectedCategory ?? this.selectedCategory,
@@ -115,6 +119,7 @@ class MapState extends Equatable {
         initialCamera,
         showAlertPanel,
         showGetDirectionCard,
+        selectedPolygonId,
         selectedAlertType,
         selectedDistance,
         selectedCategory,

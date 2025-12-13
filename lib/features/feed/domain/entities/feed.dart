@@ -24,6 +24,7 @@ class Feed extends Equatable {
   final bool isDraft;
   final String userId;
   final String saleStatus;
+  final String paidStatus;
 
   const Feed({
     required this.id,
@@ -49,6 +50,7 @@ class Feed extends Equatable {
     required this.isDraft,
     required this.userId,
     required this.saleStatus,
+    required this.paidStatus,
   });
 
   @override
@@ -68,7 +70,9 @@ class Feed extends Equatable {
         isLiked,
         isEmoji,
         isClap,
+        isClap,
         contentList,
+        paidStatus,
       ];
 }
 

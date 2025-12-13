@@ -814,7 +814,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        MyEarningScreen(openDashboard: false)));
+                                        MyEarningScreen(openDashboard: false, initialTapPosition: 0,)));
                               },
                               child: Text(
                                 viewYourEarnings,

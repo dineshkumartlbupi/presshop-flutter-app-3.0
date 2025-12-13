@@ -11,7 +11,7 @@ import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 part 'chatbot_event.dart';
 part 'chatbot_state.dart';
 
-class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkResponse {
+class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
   late DialogFlowtter dialogFlowtter;
   int failCount = 0;
   List<ChatModel> chatList = [];
@@ -27,7 +27,7 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkRes
 
   Future<void> _onInitChatbot(InitChatbotEvent event, Emitter<ChatbotState> emit) async {
     try {
-      dialogFlowtter = DialogFlowtter();
+      dialogFlowtter = await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
       add(FetchMessagesEvent());
     } catch (e) {
       emit(ChatbotError("Failed to initialize chatbot: $e"));
@@ -37,9 +37,8 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkRes
   Future<void> _onFetchMessages(FetchMessagesEvent event, Emitter<ChatbotState> emit) async {
     emit(ChatbotLoading());
     try {
-         NetworkClass(getMessageApiUrl, this, getMessageApiReq)
+         NetworkClass(getMessageApiUrl, ChatbotNetworkHandler(this), getMessageApiReq)
           .callRequestServiceHeader(false, "get", null);
-          // Note: Response handled in onResponse
     } catch (e) {
       emit(ChatbotError(e.toString()));
     }
@@ -118,7 +117,6 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkRes
       if (event.request) {
           add(AddLocalMessageEvent(message: "Loved our chat! Now handing you over to a real person for extra support.", isHumanAssistanceRequested: true));
           chatList.removeAt(event.index);
-           // emit(ChatbotLoaded(chatList: List.from(chatList))); // handled by AddLocalMessageEvent
       } else {
           chatList.removeAt(event.index);
           chatList.add(ChatModel(
@@ -138,16 +136,20 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkRes
         "is_user": isUser,
       };
       NetworkClass.fromNetworkClass(
-              addMessageApiUrl, this, addMessageApiReq, map)
+              addMessageApiUrl, ChatbotNetworkHandler(this), addMessageApiReq, map)
           .callRequestServiceHeader(false, "post", null);
     } on Exception catch (exception) {
       debugPrint(exception.toString());
     }
   }
+}
+
+class ChatbotNetworkHandler implements NetworkResponse {
+  final ChatbotBloc bloc;
+  ChatbotNetworkHandler(this.bloc);
 
   @override
   void onError({Key? key, required int requestCode, required String response}) {
-     // Handle internal error if needed, but usually we emit states
      debugPrint("Error: $requestCode $response");
   }
 
@@ -156,7 +158,13 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkRes
     if (requestCode == getMessageApiReq) {
        try {
           var data = jsonDecode(response);
-          List<ChatModel> fetchedList = list.map((e) => ChatModel.fromJson(e)).toList();
+          List<ChatModel> fetchedList = [];
+          if (data is List) {
+             fetchedList = data.map((e) => ChatModel.fromJson(e)).toList();
+          } else if (data is Map && data.containsKey('data')) {
+             fetchedList = (data['data'] as List).map((e) => ChatModel.fromJson(e)).toList();
+          }
+          
           if (fetchedList.isEmpty) {
             fetchedList.add(ChatModel(
                 message:
@@ -166,10 +174,9 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> implements NetworkRes
                 time: DateTime.now().toString()));
           }
            
-           add(MessagesReceivedEvent(fetchedList));
+          bloc.add(MessagesReceivedEvent(fetchedList));
 
        } catch (e) {
-          // emit(ChatbotError("Failed to parse messages")); // Cannot emit here safely without wrapping
           debugPrint("Failed to parse messages: $e");
        }
     }

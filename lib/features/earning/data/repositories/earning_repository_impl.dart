@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:presshop/core/api/network_info.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/network/network_info.dart';
 import '../../domain/entities/commission.dart';
 import '../../domain/entities/earning_profile.dart';
 import '../../domain/entities/earning_transaction.dart';

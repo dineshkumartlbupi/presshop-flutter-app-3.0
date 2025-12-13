@@ -23,7 +23,6 @@ import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import '../../myEarning/MyEarningScreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../bloc/feed_bloc.dart';
@@ -218,13 +217,13 @@ class FeedScreenState extends State<FeedScreen> {
                                     _currentMediaIndex = value;
                                   },
                                   itemCount: state.feeds[index]
-                                      .contentDataList
+                                      .contentList
                                       .length,
                                   itemBuilder: (context, idx) {
                                     var item = state.feeds[index]
-                                        .contentDataList[idx];
+                                        .contentList[idx];
                                     var flickManager =
-                                        initialController(index, idx);
+                                        initialController(state.feeds[index], idx);
                                     return VisibilityDetector(
                                       key:
                                           Key("${state.feeds[index].id}_$idx"),
@@ -243,22 +242,22 @@ class FeedScreenState extends State<FeedScreen> {
                                             size.width * numD04),
                                         child: InkWell(
                                           onTap: () {
-                                            if (item.mediaUrlType == "pdf" ||
-                                                item.mediaUrlType == "doc") {
+                                            if (item.mediaType == "pdf" ||
+                                                item.mediaType == "doc") {
                                               openUrl(
                                                   contentImageUrl + item.mediaUrl);
                                             }
                                           },
                                           child: Stack(
                                             children: [
-                                              item.mediaUrlType == "audio"
+                                              item.mediaType == "audio"
                                                   ? playAudioWidget(size)
-                                                  : item.mediaUrlType == "video"
+                                                  : item.mediaType == "video"
                                                       ? videoWidget(
                                                           Key(
                                                               "${state.feeds[index].id}_$idx"),
                                                           flickManager)
-                                                      : item.mediaUrlType == "pdf"
+                                                      : item.mediaType == "pdf"
                                                           ? Padding(
                                                               padding: EdgeInsets
                                                                   .all(size
@@ -276,7 +275,7 @@ class FeedScreenState extends State<FeedScreen> {
                                                                     size.width,
                                                               ),
                                                             )
-                                                          : item.mediaUrlType ==
+                                                          : item.mediaType ==
                                                                   "doc"
                                                               ? Padding(
                                                                   padding: EdgeInsets
@@ -296,7 +295,7 @@ class FeedScreenState extends State<FeedScreen> {
                                                                   ),
                                                                 )
                                                               : Image.network(
-                                                                  item.mediaUrlType ==
+                                                                  item.mediaType ==
                                                                           "video"
                                                                       ? "$contentImageUrl${item.thumbnail}"
                                                                       : "$contentImageUrl${item.mediaUrl}",
@@ -312,7 +311,7 @@ class FeedScreenState extends State<FeedScreen> {
                                                 child: Column(
                                                   children: getMediaCount2(
                                                       state.feeds[index]
-                                                          .contentDataList,
+                                                          .contentList,
                                                       size),
                                                 ),
                                               ),
@@ -321,7 +320,7 @@ class FeedScreenState extends State<FeedScreen> {
                                               bottom: size.width * numD02,
                                               child: Visibility(
                                                 visible: state.feeds[index]
-                                                        .contentDataList
+                                                        .contentList
                                                         .length >
                                                     1,
                                                 child: Text(
@@ -370,7 +369,7 @@ class FeedScreenState extends State<FeedScreen> {
                                     alignment: Alignment.bottomCenter,
                                     child: DotsIndicator(
                                       dotsCount: state.feeds[index]
-                                          .contentDataList
+                                          .contentList
                                           .length,
                                       position: _currentMediaIndex,
                                       decorator: const DotsDecorator(
@@ -1160,7 +1159,6 @@ class FeedScreenState extends State<FeedScreen> {
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
-                        _offset = 0;
                         callFilterListAPI();
                       }),
                     ),
@@ -1497,24 +1495,17 @@ class FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  FlickManager? initialController(feedIndex, currentMediaIndex) {
-    FlickManager flickManager;
-    if (state.feeds[feedIndex].contentDataList[currentMediaIndex].mediaType ==
-        "audio") {
-      initWaveData(contentImageUrl +
-          state.feeds[feedIndex].contentDataList[currentMediaIndex].media);
-    } else if (state.feeds[feedIndex]
-            .contentDataList[currentMediaIndex]
-            .mediaType ==
-        "video") {
-      debugPrint(
-          "videoLink=====> ${state.feeds[feedIndex].contentDataList[currentMediaIndex].media}");
+  FlickManager? initialController(Feed feed, int currentMediaIndex) {
+    FlickManager? flickManager;
+    var content = feed.contentList[currentMediaIndex];
+    
+    if (content.mediaType == "audio") {
+      initWaveData(contentImageUrl + content.mediaUrl);
+    } else if (content.mediaType == "video") {
+      debugPrint("videoLink=====> ${content.mediaUrl}");
       flickManager = FlickManager(
-        videoPlayerController: /*VideoPlayerController.network(contentImageUrl +
-            state.feeds[feedIndex].contentDataList[currentMediaIndex].media),*/
-            VideoPlayerController.networkUrl(
-          Uri.parse(contentImageUrl +
-              state.feeds[feedIndex].contentDataList[currentMediaIndex].media),
+        videoPlayerController: VideoPlayerController.networkUrl(
+          Uri.parse(contentImageUrl + content.mediaUrl),
         ),
         autoPlay: false,
       );
@@ -1523,7 +1514,7 @@ class FeedScreenState extends State<FeedScreen> {
   }
 
   /// Filter List API
-  applyFilters() {
+  void callFilterListAPI() {
     Map<String, dynamic> map = {"limit": "10", "offset": "0"};
 
     int pos = sortList.indexWhere((element) => element.isSelected);

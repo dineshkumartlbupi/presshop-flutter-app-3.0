@@ -3,6 +3,7 @@ import 'package:presshop/core/api/api_client.dart';
 import '../models/category_model.dart';
 import '../models/charity_model.dart';
 import '../models/tutorial_model.dart';
+import 'package:dio/dio.dart';
 
 abstract class PublishRemoteDataSource {
   Future<List<CategoryModel>> getContentCategories();
@@ -11,6 +12,7 @@ abstract class PublishRemoteDataSource {
   Future<List<TutorialModel>> getTutorials(String category, int offset, int limit);
   Future<void> addViewCount(String tutorialId);
   Future<Map<String, String>> getShareExclusivePrice();
+  Future<void> submitContent(Map<String, dynamic> params, List<String> filePaths);
 }
 
 class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
@@ -87,5 +89,22 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       "shared": data['shared']?.toString() ?? "",
       "exclusive": data['exclusive']?.toString() ?? "",
     };
+  }
+
+  @override
+  Future<void> submitContent(Map<String, dynamic> params, List<String> filePaths) async {
+    final formData = FormData.fromMap(params);
+    
+    for (var path in filePaths) {
+      if (path.isNotEmpty) {
+          String fileName = path.split('/').last;
+          formData.files.add(MapEntry(
+            'content', 
+             await MultipartFile.fromFile(path, filename: fileName),
+          ));
+      }
+    }
+    
+    await apiClient.multipartPost(addContentUrl, formData: formData);
   }
 }

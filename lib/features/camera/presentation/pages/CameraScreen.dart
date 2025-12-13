@@ -69,6 +69,7 @@ class CameraScreenState extends State<CameraScreen>
   double _currentExposureOffset = 0.0;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
+  double _currentZoom = 1.0;
   
   CameraBloc? _bloc;
 
@@ -98,6 +99,18 @@ class CameraScreenState extends State<CameraScreen>
     WidgetsBinding.instance.removeObserver(this);
     _exposureModeControlRowAnimationController.dispose();
     super.dispose();
+  }
+
+  void resumeCamera() {
+    if (_bloc != null && !_bloc!.isClosed) {
+      _bloc!.add(CameraLifecycleEvent(AppLifecycleState.resumed));
+    }
+  }
+
+  void closeCamera() {
+    if (_bloc != null && !_bloc!.isClosed) {
+      _bloc!.add(CameraLifecycleEvent(AppLifecycleState.paused));
+    }
   }
 
   @override

@@ -1,28 +1,22 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:presshop/main.dart'; // For currencySymbol
-import 'package:dio/dio.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/main.dart'; // For currencySymbol
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
 class MyTaskScreen extends StatefulWidget {
   bool hideLeading = false;
@@ -66,12 +60,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
   final int allTaskLimit = 10;
 
   bool _showData = false;
-  String myId = "";
 
-  int _allTaskOffset = 0;
-  int _localTaskOffset = 0;
   bool _isLocalLoading = false;
-  final int allTaskLimit = 10;
 
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
@@ -107,6 +97,15 @@ class MyTaskScreenState extends State<MyTaskScreen>
     });
   }
 
+  @override
+  void dispose() {
+    _blinkingController.dispose();
+    _tabController.dispose();
+    _refreshController.dispose();
+    listController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -124,21 +123,23 @@ class MyTaskScreenState extends State<MyTaskScreen>
         listener: (context, state) {
            if(state.taskDetail != null) {
               // Handle broadcast dialog
-              broadcastDialog(
-                size: size,
-                taskDetail: state.taskDetail!,
-                onTapView: () {
-                  if (widget.broadCastId != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                broadcastDialog(
+                  size: size,
+                  taskDetail: state.taskDetail!,
+                  onTapView: () {
+                    if (widget.broadCastId != null) {
+                      Navigator.pop(context);
+                    }
                     Navigator.pop(context);
-                  }
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => BroadCastScreen(
-                            taskId: state.taskDetail!.id,
-                            mediaHouseId: state.taskDetail!.mediaHouseId,
-                          )));
-                },
-              );
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BroadCastScreen(
+                              taskId: state.taskDetail!.id,
+                              mediaHouseId: state.taskDetail!.mediaHouseId,
+                            )));
+                  },
+                );
+              });
            }
            
            if(state.allTasksStatus == TaskStatus.success || state.localTasksStatus == TaskStatus.success) {
@@ -177,7 +178,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                 actionWidget: [
                   InkWell(
                     onTap: () {
-                      showBottomSheet(size, context.read<TaskBloc>());
+                      showBottomSheet(size);
                     },
                     child: commonFilterIcon(size),
                   ),
@@ -202,42 +203,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   )
                 ],
               ),
-              body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: size.width * numD04),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-              child: TabBar(
-                controller: _tabController,
-                physics: const NeverScrollableScrollPhysics(),
-                labelColor: Colors.white,
-                dividerColor: colorThemePink,
-                unselectedLabelColor: Colors.black,
-                indicator: BoxDecoration(
-                  color: colorThemePink,
-                  borderRadius: BorderRadius.circular(size.width * numD02),
-                ),
-                labelStyle: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * numD038,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                tabs: [
-                  Tab(
-                    text: "All Tasks",
-                  ),
-                  Tab(
-                    text: "Local Tasks", // as
-                  ),
-                ],
-              ),
-            ),
-            const Divider(
-              color: Color(0xFFD8D8D8),
-              thickness: 1.5,
-            ),
       body: SafeArea(
         child: Column(
           children: [
@@ -298,11 +263,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
           ],
         ),
       ),
+            );
+          }
+        ),
+      ),
     );
-   }
-  ),
- ),
-);
   }
 
   void initializeFilter() {
@@ -1415,4 +1380,4 @@ class MyTaskScreenState extends State<MyTaskScreen>
     }
     return params;
   }
-
+}

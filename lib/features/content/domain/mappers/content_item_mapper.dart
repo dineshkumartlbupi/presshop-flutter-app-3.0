@@ -25,12 +25,11 @@ extension ContentItemMapper on ContentItem {
       audioDescription: "",
       
       contentMediaList: mediaList.map((m) => ContentMediaData(
-        media: m.mediaUrl,
-        mediaType: m.mediaType,
-        thumbNail: m.thumbnailUrl ?? "",
-        waterMark: m.watermarkUrl ?? "",
-        mimeType: m.mimeType ?? "",
-        fileName: m.fileName ?? ""
+        "", // id
+        m.mediaUrl,
+        m.mediaType,
+        m.thumbnailUrl ?? "",
+        m.watermarkUrl ?? ""
       )).toList(), 
 
       hashTagList: [],

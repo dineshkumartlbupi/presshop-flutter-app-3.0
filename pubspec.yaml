@@ -51,8 +51,9 @@ dependencies:
   cached_network_image: ^3.3.1
   internet_connection_checker: ^1.0.0+1
   flick_video_player: ^0.9.0
+  video_player: ^2.8.0
   firebase_messaging: ^15.2.2
-  # device_info_plus: ^12.1.0
+  device_info_plus: ^12.1.0
   firebase_analytics: ^11.4.4
   mime: ^2.0.0
   dots_indicator: ^3.0.0

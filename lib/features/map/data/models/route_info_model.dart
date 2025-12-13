@@ -30,7 +30,7 @@ class RouteInfoModel extends RouteInfoEntity {
     final durationSeconds = leg['duration']['value'] as int;
 
     final encodedPolyline = route['overview_polyline']['points'];
-    final resultPoints = PolylinePoints().decodePolyline(encodedPolyline);
+    final resultPoints = PolylinePoints.decodePolyline(encodedPolyline);
     final points = resultPoints
         .map((p) => GeoPoint(p.latitude, p.longitude))
         .toList();

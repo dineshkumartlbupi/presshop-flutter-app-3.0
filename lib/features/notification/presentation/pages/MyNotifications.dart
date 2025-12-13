@@ -13,19 +13,19 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import '../../task_details_new_screen/task_details_new_screen.dart';
-import '../ManageTaskScreen.dart';
-import '../MyContentDetailScreen.dart';
-import '../MyTaskScreen.dart';
-import 'package:presshop/features/notification/domain/entities/notification_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
+import 'package:presshop/features/content/presentation/pages/my_content_detail_screen.dart';
+import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
+import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
+import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
+import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 
 class MyNotificationScreen extends StatefulWidget {
-  int count = 0;
+  final int count;
 
-  MyNotificationScreen({super.key, required this.count});
+  const MyNotificationScreen({super.key, required this.count});
 
   @override
   State<MyNotificationScreen> createState() => _MyNotificationScreenState();
@@ -332,7 +332,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
         listener: (context, state) async {
           if (state.status == NotificationStatus.failure &&
               state.errorMessage.isNotEmpty) {
-            showSnackBar(state.errorMessage, context: context);
+            showSnackBar("Error", state.errorMessage, Colors.red);
           }
           if (state.shouldShowStudentBeansDialog) {
             _showForceUpdateDialog(size,

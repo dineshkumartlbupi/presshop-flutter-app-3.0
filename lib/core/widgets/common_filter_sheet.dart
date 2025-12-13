@@ -8,7 +8,8 @@ class FilterModel {
   bool isSelected = false;
   String? fromDate;
   String? toDate;
-  String ?id;
+  String? id;
+  String? value;
 
   FilterModel({
     required this.name,
@@ -16,7 +17,8 @@ class FilterModel {
     required this.isSelected,
     this.fromDate,
     this.toDate, 
-   this.id,
+    this.id,
+    this.value,
   });
 }
 
