@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/network_info.dart';
+import 'package:presshop/features/publish/domain/usecases/submit_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -205,11 +206,11 @@ Future<void> init() async {
     getMediaHouses: sl(),
     getPublicationTransactions: sl(),
   ));
-  sl.registerFactory(() => PublishBloc(
-    getContentCategories: sl(),
-    getCharities: sl(),
-    getShareExclusivePrice: sl(),
-  ));
+  // sl.registerFactory(() => PublishBloc(
+  //   getContentCategories: sl(),
+  //   getCharities: sl(),
+  //   getShareExclusivePrice: sl(), submitContent:SubmitContent(),
+  // ));
   sl.registerFactory(() => VerificationBloc(
     verifyOtp: sl(),
     registerUser: sl(),
