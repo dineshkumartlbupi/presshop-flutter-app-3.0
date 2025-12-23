@@ -10,9 +10,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/feed/presentation/pages/feedDataModel.dart';
-import 'package:presshop/core/core_export.dart'; 
+import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
-
 
 Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
 
@@ -1380,8 +1379,7 @@ List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
   return widgetList;
 }
 
-List<Widget> getMediaCount2(
-    List<dynamic> contentMediaList, Size size) {
+List<Widget> getMediaCount2(List<dynamic> contentMediaList, Size size) {
   final imageCount =
       contentMediaList.where((item) => item.mediaType == "image").length;
   final videoCount =

@@ -49,7 +49,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) async {
     emit(SignUpLoading());
-    final result = await socialRegisterUser(SocialRegisterParams(data: event.data));
+    final result =
+        await socialRegisterUser(SocialRegisterParams(data: event.data));
     result.fold(
       (failure) => emit(SignUpError(message: failure.message)),
       (user) => emit(SignUpSuccess(user: user)),
@@ -97,6 +98,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) async {
     final result = await checkPhone(event.phone);
+    print("Phone check result: $result");
     result.fold(
       (failure) => emit(SignUpError(message: failure.message)),
       (isAvailable) => emit(PhoneCheckResult(isAvailable)),

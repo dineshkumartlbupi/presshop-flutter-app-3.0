@@ -108,7 +108,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
               Navigator.pop(context);
             });
           } else if (state is AuthAuthenticated) {
-            _handleLoginSuccess(state.user.source!);
+            _handleLoginSuccess(state.user.source ?? {});
           } else if (state is AuthSocialSignUpRequired) {
             Navigator.of(navigatorKey.currentState!.context).push(
               MaterialPageRoute(
@@ -464,8 +464,14 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                                   builder: (context) =>
                                                       MultiBlocProvider(
                                                         providers: [
-                                                          BlocProvider(create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent())),
-                                                          BlocProvider(create: (context) => sl<AuthBloc>()),
+                                                          BlocProvider(
+                                                              create: (context) => sl<
+                                                                  SignUpBloc>()
+                                                                ..add(
+                                                                    FetchAvatarsEvent())),
+                                                          BlocProvider(
+                                                              create: (context) =>
+                                                                  sl<AuthBloc>()),
                                                         ],
                                                         child: SignUpScreen(
                                                           socialLogin: false,
@@ -526,44 +532,75 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
   }
 
   Future<void> googleLogin(BuildContext context) async {
-    googleSignIn.signIn().then((userData) {
-      if (userData == null) {
-        debugPrint("Google Sign-In cancelled by user");
+    try {
+      // Always start clean
+      await googleSignIn.signOut();
+
+      // STEP 1: Google Sign-In UI
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        debugPrint("❌ Google Sign-In cancelled by user");
         return;
       }
-      _isLoggedIn = true;
-      _userObj = userData;
 
-      socialId = _userObj.id;
-      socialType = "google";
+      // STEP 2: Get Google auth tokens
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-      if (_userObj.email.isNotEmpty) {
-        socialEmail = _userObj.email;
-      }
-      if (_userObj.displayName != null) {
-        socialName = _userObj.displayName!;
-      }
-      if (_userObj.photoUrl != null) {
-        socialProfileImage = _userObj.photoUrl!;
-      } else {
-        socialProfileImage = "";
+      if (googleAuth.idToken == null || googleAuth.accessToken == null) {
+        throw Exception("Google auth tokens are null");
       }
 
-      socialType = "google";
-      context.read<AuthBloc>().add(SocialLoginRequested(
-            socialType: "google",
-            socialId: socialId,
-            email: socialEmail,
-            name: socialName,
-            photoUrl: socialProfileImage,
-          ));
-      debugPrint("userObj ::${_userObj.toString()}");
-      debugPrint("social email ::${_userObj.email.toString()}");
-      debugPrint("social displayName ::${_userObj.displayName.toString()}");
-      debugPrint("social photoUrl ::${_userObj.photoUrl.toString()}");
-    }).catchError((e) {
-      debugPrint("error encountered ::: ${e.toString()}");
-    });
+      // STEP 3: Create Firebase credential
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
+      );
+
+      // STEP 4: Firebase sign-in (THIS WAS MISSING ❌)
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final User? user = userCredential.user;
+
+      if (user == null) {
+        throw Exception("Firebase user is null after Google login");
+      }
+
+      // STEP 5: Prepare social data
+      final String socialId = user.uid;
+      final String socialEmail = user.email ?? googleUser.email;
+      final String socialName =
+          user.displayName ?? googleUser.displayName ?? "";
+      final String socialProfileImage = user.photoURL ?? "";
+
+      debugPrint("✅ Google Firebase UID: $socialId");
+      debugPrint("Email: $socialEmail");
+      debugPrint("Name: $socialName");
+
+      // STEP 6: Call your backend via BLoC
+      if (!mounted) return;
+
+      context.read<AuthBloc>().add(
+            SocialLoginRequested(
+              socialType: "google",
+              socialId: socialId,
+              email: socialEmail,
+              name: socialName,
+              photoUrl: socialProfileImage,
+            ),
+          );
+    } catch (e, s) {
+      debugPrint("❌ Google Login Error: $e");
+      debugPrintStack(stackTrace: s);
+
+      showSnackBar(
+        "Google Sign-In Failed",
+        "Please try again or use another login method.",
+        Colors.red,
+      );
+    }
   }
 
   Future<void> appleLogin(BuildContext context) async {
@@ -697,22 +734,23 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
   }
 
   void _handleLoginSuccess(Map<String, dynamic> source) {
-      if (source.containsKey('bank_detail_missing') && source['bank_detail_missing'] == true) {
-          // Handle logic if needed, or simply navigate
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (context) => Dashboard(
-                      initialPosition: 2,
-                    )),
-            (route) => false);
-      } else {
-         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (context) => Dashboard(
-                      initialPosition: 0, 
-                    )),
-            (route) => false);
-      }
+    if (source.containsKey('bank_detail_missing') &&
+        source['bank_detail_missing'] == true) {
+      // Handle logic if needed, or simply navigate
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => Dashboard(
+                    initialPosition: 2,
+                  )),
+          (route) => false);
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => Dashboard(
+                    initialPosition: 0,
+                  )),
+          (route) => false);
+    }
   }
 
   @override

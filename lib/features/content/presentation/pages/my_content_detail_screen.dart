@@ -15,7 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/api/network_response.dart';
-import 'package:presshop/core/constants/api_constant.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/constants/string_constants.dart';
@@ -43,7 +43,6 @@ import '../../../../core/di/injection_container.dart';
 import '../../data/models/my_content_data_model.dart';
 import '../../domain/mappers/content_item_mapper.dart';
 
-
 class MyContentDetailScreen extends StatefulWidget {
   String hopperID = "";
   final String contentId;
@@ -67,7 +66,8 @@ class MyContentDetailScreen extends StatefulWidget {
   }
 }
 
-class MyContentDetailScreenState extends State<MyContentDetailScreen> implements NetworkResponse {
+class MyContentDetailScreenState extends State<MyContentDetailScreen>
+    implements NetworkResponse {
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
   ContentItem? contentItem;
@@ -103,19 +103,19 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String currentUserId = prefs.getString("_id") ?? "";
 
-    // contentItem doesn't have userId directly if it's not added to entity? 
+    // contentItem doesn't have userId directly if it's not added to entity?
     // Copied from MyDraftScreen, ContentItem might not have userId.
-    // Check ContentItem definition. 
+    // Check ContentItem definition.
     // It has `mediaHouseName`, `categoryId`... but `userId` is missing from my update?
     // MyContentData had `userId`.
-    // I need to add userId to ContentItem if specific logic depends on it. 
+    // I need to add userId to ContentItem if specific logic depends on it.
     // For now, let's assume it's NOT checking properly or I need to fix ContentItem later.
     // Proceeding with placeholder.
-    
-    // isOwner = currentUserId == widget.hopperID; 
-    // Use widget.hopperID if logic allows, or fetch from contentItem. 
+
+    // isOwner = currentUserId == widget.hopperID;
+    // Use widget.hopperID if logic allows, or fetch from contentItem.
     // Original code: isOwner = currentUserId == widget.hopperID;
-    
+
     if (contentItem != null) {
       isOwner = currentUserId == (contentItem!.userId ?? widget.hopperID);
     } else {
@@ -133,7 +133,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
     DateTime endTime = createdTime.add(const Duration(hours: 24));
 
     if (DateTime.now().isAfter(endTime)) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           showTimer = false;
           _timeLeft = "00:00:00";
@@ -145,7 +145,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
     showTimer = true;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if(!mounted) return;
+      if (!mounted) return;
       Duration difference = endTime.difference(DateTime.now());
       if (difference.isNegative) {
         _timer?.cancel();
@@ -200,7 +200,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
             setState(() {
               isLoading = false;
             });
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: Scaffold(
@@ -227,7 +228,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                   onTap: () {
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                            builder: (context) => Dashboard(initialPosition: 2)),
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)),
                         (route) => false);
                   },
                   child: Image.asset(
@@ -246,7 +248,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
               child: isLoading
                   ? showLoader()
                   : (contentItem != null
-
                       ? SingleChildScrollView(
                           child: Container(
                             margin: EdgeInsets.only(top: size.width * numD02),
@@ -257,12 +258,14 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: size.width * numD04,
-                                    vertical: (contentItem!.isExclusive ?? false)
-                                        ? size.width * numD01
-                                        : 0,
+                                    vertical:
+                                        (contentItem!.isExclusive ?? false)
+                                            ? size.width * numD01
+                                            : 0,
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       headerWidget(),
 
@@ -294,7 +297,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                                           Text(manageContentText.toUpperCase(),
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize: size.width * numD035,
+                                                  fontSize:
+                                                      size.width * numD035,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w700)),
                                         if (isOwner)
@@ -316,10 +320,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                                       SizedBox(
                                         height: size.width * numD02,
                                       ),
-                                      if (isOwner) const Divider(color: colorGrey1),
+                                      if (isOwner)
+                                        const Divider(color: colorGrey1),
 
-
-                                    Column(
+                                      Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             SizedBox(
@@ -334,19 +338,29 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                                                 onPressed: () {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ManageTaskScreen(
-                                                                  roomId: contentItem!.id,
-                                                                  contentId: contentItem!.id,
-                                                                  type: 'content',
-                                                                  mediaHouseDetail: null,
-                                                                  contentMedia: showMediaWidget(),
-                                                                  contentHeader: headerWidget(),
-                                                                  myContentData: contentItem!.toMyContentData()
-                                                              )))
+                                                          builder: (context) => ManageTaskScreen(
+                                                              roomId:
+                                                                  contentItem!
+                                                                      .id,
+                                                              contentId:
+                                                                  contentItem!
+                                                                      .id,
+                                                              type: 'content',
+                                                              mediaHouseDetail:
+                                                                  null,
+                                                              contentMedia:
+                                                                  showMediaWidget(),
+                                                              contentHeader:
+                                                                  headerWidget(),
+                                                              myContentData:
+                                                                  contentItem!
+                                                                      .toMyContentData())))
                                                       .then((value) {
-                                                    shouldRestartAnimation = true;
-                                                    _contentBloc.add(FetchContentDetailEvent(widget.contentId));
+                                                    shouldRestartAnimation =
+                                                        true;
+                                                    _contentBloc.add(
+                                                        FetchContentDetailEvent(
+                                                            widget.contentId));
                                                   });
                                                 },
                                               ),
@@ -355,14 +369,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                                             ),
                                             Padding(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: size.width * numD02),
+                                                  horizontal:
+                                                      size.width * numD02),
                                               child: RichText(
                                                   textAlign: TextAlign.justify,
                                                   text: TextSpan(
                                                       style: commonTextStyle(
                                                           size: size,
-                                                          fontSize:
-                                                              size.width * numD03,
+                                                          fontSize: size.width *
+                                                              numD03,
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.w400),
@@ -371,7 +386,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                                                           text: "Click",
                                                         ),
                                                         TextSpan(
-                                                            text: " Manage Content",
+                                                            text:
+                                                                " Manage Content",
                                                             style: commonTextStyle(
                                                                 size: size,
                                                                 fontSize:
@@ -399,8 +415,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                             ),
                           ),
                         )
-                      : Container())
-                  ),
+                      : Container())),
         ),
       ),
     );
@@ -476,10 +491,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                         right: size.width * numD02,
                         top: size.width * numD02,
                         child: Column(
-                          children: getMediaCount(
-                              contentItem!.mediaList, size), // Assuming getMediaCount can handle List<ContentMedia> or dynamic
-                              // If getMediaCount expects strict type, I might need to update it too or cast.
-                              // Check getMediaCount definition in next step if it errors.
+                          children: getMediaCount(contentItem!.mediaList,
+                              size), // Assuming getMediaCount can handle List<ContentMedia> or dynamic
+                          // If getMediaCount expects strict type, I might need to update it too or cast.
+                          // Check getMediaCount definition in next step if it errors.
                         ),
                       ),
                       item.mediaType == "image"
@@ -544,7 +559,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
         Row(
           children: [
             Text(
-              (contentItem!.isExclusive ?? false) ? "" : multipleText.toUpperCase(),
+              (contentItem!.isExclusive ?? false)
+                  ? ""
+                  : multipleText.toUpperCase(),
               style: commonTextStyle(
                   size: size,
                   fontSize: size.width * numD033,
@@ -564,7 +581,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                   width: size.width * numD02,
                 ),
                 Text(
-                  (contentItem!.isExclusive ?? false) ? exclusiveText : sharedText,
+                  (contentItem!.isExclusive ?? false)
+                      ? exclusiveText
+                      : sharedText,
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD035,
@@ -640,7 +659,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                               color: widget.offerCount == 0
                                   ? Colors.grey
                                   : colorThemePink,
-                                  size: size.width * numD042),
+                              size: size.width * numD042),
                           SizedBox(width: size.width * numD018),
                           Text(
                             '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${offerText}s' : offerText}',
@@ -685,48 +704,47 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
                   ),
 
                   /// Time Date
-                  if(contentItem!.createdAt != null)
-                  Row(
-                    children: [
-                      Image.asset(
-                        "${iconsPath}ic_clock.png",
-                        height: size.width * numD04,
-                        color: colorTextFieldIcon,
-                      ),
-                      SizedBox(
-                        width: size.width * numD012,
-                      ),
-                      Text(
-                        DateFormat('hh:mm a')
-                            .format(contentItem!.createdAt!),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      SizedBox(
-                        width: size.width * numD02,
-                      ),
-                      Image.asset(
-                        "${iconsPath}ic_yearly_calendar.png",
-                        height: size.width * numD04,
-                        color: colorTextFieldIcon,
-                      ),
-                      SizedBox(
-                        width: size.width * numD018,
-                      ),
-                      Text(
-                        DateFormat("dd MMM yyyy")
-                            .format(contentItem!.createdAt!),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
-                            fontWeight: FontWeight.normal),
-                      ),
-                    ],
-                  ),
+                  if (contentItem!.createdAt != null)
+                    Row(
+                      children: [
+                        Image.asset(
+                          "${iconsPath}ic_clock.png",
+                          height: size.width * numD04,
+                          color: colorTextFieldIcon,
+                        ),
+                        SizedBox(
+                          width: size.width * numD012,
+                        ),
+                        Text(
+                          DateFormat('hh:mm a').format(contentItem!.createdAt!),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD028,
+                              color: colorHint,
+                              fontWeight: FontWeight.normal),
+                        ),
+                        SizedBox(
+                          width: size.width * numD02,
+                        ),
+                        Image.asset(
+                          "${iconsPath}ic_yearly_calendar.png",
+                          height: size.width * numD04,
+                          color: colorTextFieldIcon,
+                        ),
+                        SizedBox(
+                          width: size.width * numD018,
+                        ),
+                        Text(
+                          DateFormat("dd MMM yyyy")
+                              .format(contentItem!.createdAt!),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD028,
+                              color: colorHint,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
                   SizedBox(
                     height: size.width * numD02,
                   ),
@@ -1335,9 +1353,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
       initWaveData(url);
-    } else if (contentItem?.mediaList[_currentMediaIndex].mediaType == "video") {
+    } else if (contentItem?.mediaList[_currentMediaIndex].mediaType ==
+        "video") {
       var url = contentImageUrl +
-         (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
+          (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
           Uri.parse(url),
@@ -1348,7 +1367,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
   }
 
   ///--------Apis Section------------
-
 
   /// Get content Media House Offer
   void getMediaOfferApi() {
@@ -1379,7 +1397,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
       switch (requestCode) {
         /// Get Content detail
 
-
         /// Get content Media House Offer
         case getContentMediaHouseOfferReq:
           var data = jsonDecode(response);
@@ -1404,8 +1421,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> implements
   void onResponse({required int requestCode, required String response}) {
     try {
       switch (requestCode) {
-
-
         /// Get content Media House Offer
         case getContentMediaHouseOfferReq:
           var data = jsonDecode(response);

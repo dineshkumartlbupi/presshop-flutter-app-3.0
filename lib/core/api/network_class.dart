@@ -8,7 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
-import 'package:presshop/core/constants/api_constant.dart';
+import 'package:presshop/core/api/api_constant.dart';
+
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/token_refresh_manager.dart';
 
@@ -348,8 +349,7 @@ class NetworkClass {
 
         // accessHeaderKey
 
-        String tokenforAccess =
-            refreshHeaderToken == "" ? token : "";
+        String tokenforAccess = refreshHeaderToken == "" ? token : "";
 
         print("tokenAccess123 $tokenforAccess");
         request.headers.addAll({
@@ -1075,7 +1075,8 @@ class _PendingRequest {
   final VoidCallback? onCancel;
 
   _PendingRequest({
-    required this.retryFunction, this.onCancel,
+    required this.retryFunction,
+    this.onCancel,
   });
 
   void retry() {

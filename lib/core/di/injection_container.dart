@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/network_info.dart';
 import 'package:presshop/features/publish/domain/usecases/submit_content.dart';
@@ -8,8 +9,11 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/verification_bloc.dart'; // Import
-import 'package:presshop/features/profile/domain/usecases/check_username.dart' as profile_check;
-import 'package:presshop/features/profile/domain/usecases/get_avatars.dart' as profile_avatars;
+import 'package:presshop/features/profile/domain/usecases/check_username.dart'
+    as profile_check;
+import 'package:presshop/features/profile/domain/usecases/get_avatars.dart'
+    as profile_avatars;
+import 'package:presshop/features/authentication/data/repositories/term_repository.dart';
 
 import 'package:presshop/features/splash/presentation/bloc/splash_bloc.dart';
 import 'package:presshop/features/chatbot/presentation/bloc/chatbot_bloc.dart';
@@ -90,7 +94,6 @@ import 'package:presshop/features/authentication/domain/usecases/reset_password.
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 // ... existing imports ...
 
-
 import 'package:presshop/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:presshop/features/dashboard/data/repositories/dashboard_repository_impl.dart';
 import 'package:presshop/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
@@ -101,6 +104,8 @@ import 'package:presshop/features/dashboard/domain/usecases/remove_device.dart';
 import 'package:presshop/features/dashboard/domain/usecases/get_dashboard_task_detail.dart';
 import 'package:presshop/features/dashboard/domain/usecases/get_room_id.dart';
 import 'package:presshop/features/dashboard/domain/usecases/check_app_version.dart';
+import 'package:presshop/features/dashboard/domain/usecases/activate_student_beans.dart'
+    as dashboard_beans;
 import 'package:presshop/features/authentication/domain/usecases/check_username.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_email.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_phone.dart';
@@ -164,18 +169,19 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => Dio());
+  sl.registerLazySingleton(() => const FlutterSecureStorage());
   sl.registerLazySingleton(() => InternetConnectionChecker());
 
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-  sl.registerLazySingleton(() => ApiClient(sl(), sl()));
+  sl.registerLazySingleton(() => ApiClient(sl(), sl(), sl()));
 
   //! Data Sources - Register first
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
+    () => AuthLocalDataSourceImpl(sharedPreferences: sl(), secureStorage: sl()),
   );
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => DashboardRemoteDataSourceImpl(apiClient: sl()),
@@ -189,7 +195,11 @@ Future<void> init() async {
       networkInfo: sl(),
     ),
   );
-  
+
+  sl.registerLazySingleton<TermsRepository>(
+    () => TermsRepository(sl()),
+  );
+
   sl.registerLazySingleton<DashboardRepository>(
     () => DashboardRepositoryImpl(
       remoteDataSource: sl(),
@@ -209,13 +219,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ForgotPassword(sl()));
   sl.registerLazySingleton(() => VerifyForgotPasswordOtp(sl()));
   sl.registerLazySingleton(() => ResetPassword(sl()));
-  
+
   // Use cases needed by SplashBloc
   sl.registerLazySingleton(() => CheckAuthStatus(sl()));
   sl.registerLazySingleton(() => GetProfile(sl()));
   sl.registerLazySingleton(() => CheckAppVersion(sl()));
   sl.registerLazySingleton(() => CheckOnboardingStatus(sl()));
-  
+
   // Use cases needed by SignUpBloc
   sl.registerLazySingleton(() => CheckUserName(sl()));
   sl.registerLazySingleton(() => CheckEmail(sl()));
@@ -234,143 +244,140 @@ Future<void> init() async {
         resetPassword: sl(),
       ));
   sl.registerFactory(() => SignUpBloc(
-    registerUser: sl(),
-    sendOtp: sl(),
-    checkUserName: sl(),
-    checkEmail: sl(),
-    checkPhone: sl(),
-    getAvatars: sl(),
-    verifyReferralCode: sl(),
-    socialExists: sl(),
-    socialRegisterUser: sl(),
-  ));
-  
+        registerUser: sl(),
+        sendOtp: sl(),
+        checkUserName: sl(),
+        checkEmail: sl(),
+        checkPhone: sl(),
+        getAvatars: sl(),
+        verifyReferralCode: sl(),
+        socialExists: sl(),
+        socialRegisterUser: sl(),
+      ));
+
   sl.registerFactory(() => SplashBloc(
-      checkAuthStatus: sl(),
-      getProfile: sl(),
-      checkAppVersion: sl(),
-      checkOnboardingStatus: sl(),
-  ));
+        checkAuthStatus: sl(),
+        getProfile: sl(),
+        checkAppVersion: sl(),
+        checkOnboardingStatus: sl(),
+      ));
   sl.registerFactory(() => OnboardingBloc(setOnboardingSeen: sl()));
   sl.registerFactory(() => PublicationBloc(
-    getPublicationEarningStats: sl(),
-    getMediaHouses: sl(),
-    getPublicationTransactions: sl(),
-  ));
+        getPublicationEarningStats: sl(),
+        getMediaHouses: sl(),
+        getPublicationTransactions: sl(),
+      ));
   // sl.registerFactory(() => PublishBloc(
   //   getContentCategories: sl(),
   //   getCharities: sl(),
   //   getShareExclusivePrice: sl(), submitContent:SubmitContent(),
   // ));
   sl.registerFactory(() => VerificationBloc(
-    verifyOtp: sl(),
-    registerUser: sl(),
-    socialRegisterUser: sl(),
-    sendOtp: sl(),
-  ));
+        verifyOtp: sl(),
+        registerUser: sl(),
+        socialRegisterUser: sl(),
+        sendOtp: sl(),
+      ));
 
   sl.registerFactory(() => DashboardBloc(
-    getActiveAdmins: sl(),
-    updateLocation: sl(),
-    addDevice: sl(),
-    getDashboardTaskDetail: sl(),
-    getRoomId: sl(),
-    checkAppVersion: sl(),
-    activateStudentBeans: sl(),
-    getProfile: sl(),
-  ));
+        getActiveAdmins: sl(),
+        updateLocation: sl(),
+        addDevice: sl(),
+        getDashboardTaskDetail: sl(),
+        getRoomId: sl(),
+        checkAppVersion: sl(),
+        activateStudentBeans: sl(),
+        getProfile: sl(),
+      ));
 
   sl.registerFactory(() => ProfileBloc(
-    getProfileData: sl(),
-    updateProfileData: sl(),
-    uploadProfileImage: sl(),
-    changePassword: sl(),
-    checkUserName: sl(),
-    getAvatars: sl(),
-    checkEmail: sl(),
-    checkPhone: sl(),
-  ));
-
-  
+        getProfileData: sl(),
+        updateProfileData: sl(),
+        uploadProfileImage: sl(),
+        changePassword: sl(),
+        checkUserName: sl(),
+        getAvatars: sl(),
+        checkEmail: sl(),
+        checkPhone: sl(),
+      ));
 
   sl.registerFactory(() => ContentBloc(
-    getMyContent: sl(),
-    publishContent: sl(),
-    saveDraft: sl(),
-    uploadMedia: sl(),
-    deleteContent: sl(),
-    searchHashtags: sl(),
-
-    getTrendingHashtags: sl(),
-    getContentDetail: sl(),
-  ));
+        getMyContent: sl(),
+        publishContent: sl(),
+        saveDraft: sl(),
+        uploadMedia: sl(),
+        deleteContent: sl(),
+        searchHashtags: sl(),
+        getTrendingHashtags: sl(),
+        getContentDetail: sl(),
+      ));
 
   sl.registerFactory(() => AccountSettingsBloc(
-    deleteAccount: sl(),
-    changePassword: sl(),
-    getAdminContactInfo: sl(),
-  ));
+        deleteAccount: sl(),
+        changePassword: sl(),
+        getAdminContactInfo: sl(),
+      ));
 
   sl.registerFactory(() => LeaderboardBloc(
-    getLeaderboardData: sl(),
-  ));
+        getLeaderboardData: sl(),
+      ));
 
   sl.registerFactory(() => BankBloc(
-    getBanks: sl(),
-    deleteBank: sl(),
-    setDefaultBank: sl(),
-    getStripeOnboardingUrl: sl(),
-  ));
+        getBanks: sl(),
+        deleteBank: sl(),
+        setDefaultBank: sl(),
+        getStripeOnboardingUrl: sl(),
+      ));
 
   sl.registerFactory(() => ChatbotBloc());
   sl.registerFactory(() => TaskBloc(
-    getAllTasks: sl(),
-    getLocalTasks: sl(),
-    getTaskDetail: sl(),
-    sharedPreferences: sl(),
-  ));
+        getAllTasks: sl(),
+        getLocalTasks: sl(),
+        getTaskDetail: sl(),
+        sharedPreferences: sl(),
+      ));
   sl.registerFactory(() => NotificationBloc(
-    getNotifications: sl(),
-    markNotificationsAsRead: sl(),
-    clearAllNotifications: sl(),
-    checkStudentBeans: sl(),
-    activateStudentBeans: sl(),
-    markStudentBeansVisited: sl(),
-  ));
+        getNotifications: sl(),
+        markNotificationsAsRead: sl(),
+        clearAllNotifications: sl(),
+        checkStudentBeans: sl(),
+        activateStudentBeans: sl(),
+        markStudentBeansVisited: sl(),
+      ));
   sl.registerFactory(() => EarningBloc(
-    getEarningProfile: sl(),
-    getTransactions: sl(),
-    getCommissions: sl(),
-  ));
+        getEarningProfile: sl(),
+        getTransactions: sl(),
+        getCommissions: sl(),
+      ));
   sl.registerFactory(() => AlertBloc());
   sl.registerFactory(() => CameraBloc());
   sl.registerFactory(() => ChatBloc());
   sl.registerFactory(() => FeedBloc(
-    getFeeds: sl(),
-    toggleFeedInteraction: sl(),
-  ));
+        getFeeds: sl(),
+        toggleFeedInteraction: sl(),
+      ));
   sl.registerFactory(() => MapBloc(
-    getCurrentLocation: sl(),
-    getIncidents: sl(),
-    reportIncident: sl(),
-    getRoute: sl(),
-    searchPlaces: sl(),
-    getPlaceDetails: sl(),
-    repository: sl(),
-    markerService: sl(),
-  ));
+        getCurrentLocation: sl(),
+        getIncidents: sl(),
+        reportIncident: sl(),
+        getRoute: sl(),
+        searchPlaces: sl(),
+        getPlaceDetails: sl(),
+        repository: sl(),
+        markerService: sl(),
+      ));
 
   sl.registerFactory(() => MenuBloc(
-    getNotifications: sl(),
-    removeDevice: sl(),
-    logoutUser: sl(),
-  ));
+        getNotifications: sl(),
+        removeDevice: sl(),
+        logoutUser: sl(),
+      ));
 
   // Use cases
-  // LoginUser, SocialLoginUser, RegisterUser, SendOtp, VerifyOtp, SocialRegisterUser, 
+  // LoginUser, SocialLoginUser, RegisterUser, SendOtp, VerifyOtp, SocialRegisterUser,
   // LogoutUser, SetOnboardingSeen, ForgotPassword, VerifyForgotPasswordOtp, ResetPassword,
   // CheckAuthStatus, GetProfile, CheckOnboardingStatus, CheckAppVersion already registered at the top
-  
+
   // Dashboard Use Cases
   sl.registerLazySingleton(() => GetActiveAdmins(sl()));
   sl.registerLazySingleton(() => UpdateLocation(sl()));
@@ -378,7 +385,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RemoveDevice(sl()));
   sl.registerLazySingleton(() => GetDashboardTaskDetail(sl()));
   sl.registerLazySingleton(() => GetRoomId(sl()));
-  sl.registerLazySingleton(() => ActivateStudentBeans(sl()));
+  sl.registerLazySingleton(() => dashboard_beans.ActivateStudentBeans(sl()));
   // CheckUserName, CheckEmail, CheckPhone, GetAvatars, VerifyReferralCode, SocialExists already registered at the top
   sl.registerLazySingleton(() => GetProfileData(sl()));
   sl.registerLazySingleton(() => UpdateProfileData(sl()));
@@ -395,10 +402,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetTrendingHashtags(sl()));
   sl.registerLazySingleton(() => GetContentDetail(sl()));
 
-
   // Account Settings Use Cases
   sl.registerLazySingleton(() => DeleteAccount(sl()));
-  
+
   // Leaderboard Use Cases
   sl.registerLazySingleton(() => GetLeaderboardData(sl()));
 
@@ -407,12 +413,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteBank(sl()));
   sl.registerLazySingleton(() => SetDefaultBank(sl()));
   sl.registerLazySingleton(() => GetStripeOnboardingUrl(sl()));
-  
+
   // Earning Use Cases
   sl.registerLazySingleton(() => GetEarningProfile(sl()));
   sl.registerLazySingleton(() => GetTransactions(sl()));
   sl.registerLazySingleton(() => GetCommissions(sl()));
-  
+
   // Feed Use Cases
   sl.registerLazySingleton(() => GetFeeds(sl()));
   sl.registerLazySingleton(() => ToggleFeedInteraction(sl()));
@@ -445,7 +451,7 @@ Future<void> init() async {
 
   // Repository
   // AuthRepository and DashboardRepository already registered at the top
-  
+
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(
       remoteDataSource: sl(),
@@ -565,7 +571,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<PublicationRemoteDataSource>(
-    () => PublicationRemoteDataSourceImpl( sl()),
+    () => PublicationRemoteDataSourceImpl(sl()),
   );
 
   sl.registerLazySingleton<PublishRemoteDataSource>(

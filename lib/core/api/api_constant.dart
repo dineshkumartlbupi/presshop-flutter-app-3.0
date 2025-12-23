@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-String get googleMapAPiKey => dotenv.get('GOOGLE_MAP_API_KEY', fallback: "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI");
-String get appleMapAPiKey => dotenv.get('APPLE_MAP_API_KEY', fallback: "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw");
+String get googleMapAPiKey => dotenv.get('GOOGLE_MAP_API_KEY',
+    fallback: "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI");
+String get appleMapAPiKey => dotenv.get('APPLE_MAP_API_KEY',
+    fallback: "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw");
 
 //--------production urls----------------
 
@@ -39,11 +41,9 @@ String get appleMapAPiKey => dotenv.get('APPLE_MAP_API_KEY', fallback: "AIzaSyA0
 
 //===========url-endpoint============
 
-
-
 //--------production urls----------------
 
-const baseUrl = "https://dev-api.presshop.news:5019/";
+const baseUrl = "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
 const adminBaseUrl = "https://dev-api.presshop.news:5020/";
 
 const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
@@ -62,13 +62,12 @@ const taskMediaUrl = "https://dev-cdn.presshop.news/public/uploadContent/";
 const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 const adminProfileUrl = "${mediaBaseUrl}adminImages/";
 const socketUrl = "https://dev-api.presshop.news:3005";
+const termConditionUrl = "users/getCMSForHopper";
 
-
-
-const checkUserNameUrl = "users/checkIfUserNameExist/";
+const checkUserNameUrl = "admin/checkIfUserNameExist/:username";
 const checkUserNameUrlRequest = 1;
 
-const getAvatarsUrl = "users/getAvatars";
+const getAvatarsUrl = "https://dev-api.presshop.news:5020/users/getAvatars";
 const getAvatarsUrlRequest = 2;
 
 final String appUrl = Platform.isAndroid
@@ -93,10 +92,10 @@ const myProfileUrlRequest = 7;
 const addBankUrl = "hopper/addUserBankDetails";
 const addBankUrlRequest = 8;
 
-const checkEmailUrl = "users/checkIfEmailExist/";
+const checkEmailUrl = "admin/checkIfEmailExist/:email";
 const checkEmailUrlRequest = 9;
 
-const checkPhoneUrl = "users/checkIfPhoneExist/";
+const checkPhoneUrl = "admin/checkIfPhoneExist/:phone";
 const checkPhoneUrlRequest = 10;
 
 const loginUrl = "auth/login";

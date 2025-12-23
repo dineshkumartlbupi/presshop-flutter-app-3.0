@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:presshop/core/constants/api_constant.dart';
+import 'package:presshop/core/api/api_constant.dart';
+
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/main.dart';
 
@@ -80,8 +81,7 @@ class TokenRefreshManager {
       //         headerDeviceIdKey: deviceID
       //       });
 
-      String tokenforAccess =
-          refreshTokenValue == "" ? token : "";
+      String tokenforAccess = refreshTokenValue == "" ? token : "";
 
       print("Token Access12345 $tokenforAccess");
 

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
 import '../../domain/entities/user.dart';
@@ -24,17 +25,18 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.login(username, password);
         await localDataSource.cacheToken(remoteUser.token ?? ""); // Cache token
-        await localDataSource.setRememberMe(true); // Auto remember on explicit login? Or UI checkbox?
-        // UI handles remember me separately usually. 
+        await localDataSource.setRememberMe(
+            true); // Auto remember on explicit login? Or UI checkbox?
+        // UI handles remember me separately usually.
         // But for getProfile sake, we need to cache fields.
-        
+
         await _cacheUserDetails(remoteUser);
 
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure); // If datasource throws specific failure
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
       return const Left(NetworkFailure());
@@ -42,26 +44,32 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   Future<void> _cacheUserDetails(User user) async {
-      await localDataSource.cacheUser({
-        'currency_symbol': user.currencySymbol,
-        'referral_code': user.referralCode,
-        'total_hopper_army': user.totalHopperArmy,
-        'avatar_id': user.avatarId,
-        'avatar': user.avatar,
-        // Map other fields as needed by AuthLocalDataSourceImpl
-      });
+    await localDataSource.cacheUser({
+      'currency_symbol': user.currencySymbol,
+      'referral_code': user.referralCode,
+      'total_hopper_army': user.totalHopperArmy,
+      'avatar_id': user.avatarId,
+      'avatar': user.avatar,
+      '_id': user.id,
+      // Map other fields as needed by AuthLocalDataSourceImpl
+    });
   }
 
   @override
-  Future<Either<Failure, User>> socialLogin(String socialType, String socialId, String email, String name, String photoUrl) async {
+  Future<Either<Failure, User>> socialLogin(String socialType, String socialId,
+      String email, String name, String photoUrl) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteUser = await remoteDataSource.socialLogin(socialType, socialId, email, name, photoUrl);
+        final remoteUser = await remoteDataSource.socialLogin(
+            socialType, socialId, email, name, photoUrl);
+        await localDataSource.cacheToken(remoteUser.token ?? "");
+        await localDataSource.setRememberMe(true);
+        await _cacheUserDetails(remoteUser);
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure);
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
       return const Left(NetworkFailure());
@@ -73,11 +81,14 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.register(data);
+        await localDataSource.cacheToken(remoteUser.token ?? "");
+        await localDataSource.setRememberMe(true);
+        await _cacheUserDetails(remoteUser);
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure);
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
       return const Left(NetworkFailure());
@@ -86,16 +97,30 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, bool>> sendOtp(Map<String, dynamic> data) async {
+    debugPrint("📌 sendOtp() called");
+    debugPrint("📦 Request Data: $data");
+
     if (await networkInfo.isConnected) {
+      debugPrint("🌐 Internet Connected");
+
       try {
+        debugPrint("➡️ Calling remoteDataSource.sendOtp");
+
         final result = await remoteDataSource.sendOtp(data);
+
+        debugPrint("✅ API Success Response: $result");
+
         return Right(result);
       } on Failure catch (failure) {
+        debugPrint("❌ Failure Caught: ${failure.message}");
         return Left(failure);
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e, stack) {
+        debugPrint("🔥 Exception: $e");
+        debugPrint("📍 StackTrace: $stack");
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
+      debugPrint("🚫 No Internet Connection");
       return const Left(NetworkFailure());
     }
   }
@@ -104,36 +129,43 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> getProfile() async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteUser = await remoteDataSource.getProfile();
+        final userId = await localDataSource.getUserId();
+        if (userId == null) {
+          // If no user ID, we can't fetch profile.
+          // This might happen if cache was cleared or never set properly.
+          // For now, let's treat it as a failure so SplashBloc redirects to login.
+          return const Left(CacheFailure(message: "User ID not found"));
+        }
+        final remoteUser = await remoteDataSource.getProfile(userId);
         // optionally update cache
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure);
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
-       return const Left(NetworkFailure());
-       // Or return cached user if available
+      return const Left(NetworkFailure());
+      // Or return cached user if available
     }
   }
 
   @override
   Future<Either<Failure, bool>> checkAuthStatus() async {
     try {
-       // Logic: Check if token exists and rememberMe is true.
-       // Ideally we should also validate the token with backend, but getProfile does that.
-       // Here we just check local state for Splash speed
-       final rememberMe = await localDataSource.getRememberMe();
-       final token = await localDataSource.getToken();
+      // Logic: Check if token exists and rememberMe is true.
+      // Ideally we should also validate the token with backend, but getProfile does that.
+      // Here we just check local state for Splash speed
+      final rememberMe = await localDataSource.getRememberMe();
+      final token = await localDataSource.getToken();
 
-       if (rememberMe && token != null && token.isNotEmpty) {
-         return const Right(true);
-       } else {
-         return const Right(false);
-       }
+      if (rememberMe && token != null && token.isNotEmpty) {
+        return const Right(true);
+      } else {
+        return const Right(false);
+      }
     } catch (e) {
-       return Left(CacheFailure(message: e.toString()));
+      return Left(CacheFailure(message: e.toString()));
     }
   }
 
@@ -145,8 +177,8 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(result);
       } on Failure catch (failure) {
         return Left(failure);
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
       return const Left(NetworkFailure());
@@ -154,18 +186,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> socialRegister(Map<String, dynamic> data) async {
+  Future<Either<Failure, User>> socialRegister(
+      Map<String, dynamic> data) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.socialRegister(data);
         await localDataSource.cacheToken(remoteUser.token ?? "");
-         await localDataSource.setRememberMe(true);
+        await localDataSource.setRememberMe(true);
         await _cacheUserDetails(remoteUser);
         return Right(remoteUser);
       } on Failure catch (failure) {
         return Left(failure);
-      } catch(e) {
-         return Left(ServerFailure(message: e.toString()));
+      } catch (e) {
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
       return const Left(NetworkFailure());
@@ -237,7 +270,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> verifyReferralCode(String code) async {
+  Future<Either<Failure, Map<String, dynamic>>> verifyReferralCode(
+      String code) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.verifyReferralCode(code);
@@ -253,39 +287,35 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> socialExists(Map<String, dynamic> params) async {
-     try {
+  Future<Either<Failure, bool>> socialExists(
+      Map<String, dynamic> params) async {
+    try {
       final response = await remoteDataSource.socialExists(params);
       if (response) {
-         return const Right(true);
+        return const Right(true);
       }
-       return const Right(false);
+      return const Right(false);
     } catch (e) {
-       return const Right(false);
+      return const Right(false);
     }
   }
 
   @override
   Future<Either<Failure, bool>> forgotPassword(String email) async {
     if (await networkInfo.isConnected) {
-      try {
-        final result = await remoteDataSource.forgotPassword(email);
-        return Right(result);
-      } on Failure catch (failure) {
-        return Left(failure);
-      } catch (e) {
-        return Left(ServerFailure(message: e.toString()));
-      }
+      return await remoteDataSource.forgotPassword(email);
     } else {
       return const Left(NetworkFailure());
     }
   }
 
   @override
-  Future<Either<Failure, bool>> verifyForgotPasswordOtp(String email, String otp) async {
+  Future<Either<Failure, bool>> verifyForgotPasswordOtp(
+      String email, String otp) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.verifyForgotPasswordOtp(email, otp);
+        final result =
+            await remoteDataSource.verifyForgotPasswordOtp(email, otp);
         return Right(result);
       } on Failure catch (failure) {
         return Left(failure);
@@ -298,7 +328,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> resetPassword(String email, String password) async {
+  Future<Either<Failure, bool>> resetPassword(
+      String email, String password) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.resetPassword(email, password);

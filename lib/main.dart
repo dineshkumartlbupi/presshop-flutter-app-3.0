@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,13 +40,13 @@ List<MediaData> contentMediaList = [];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // 1. Load environment variables
   await AppInitializationService.loadEnvironment();
-  
+
   // 2. Initialize dependency injection
   await AppInitializationService.initializeDI();
-  
+
   // 3. Log app open event
   AppInitializationService.logAppOpenEvent();
 
@@ -64,20 +64,24 @@ void main() async {
 
   // 8. Initialize SharedPreferences and setup app
   await AppInitializationService.initializeSharedPreferences(deviceInfo);
-  
+
   // 9. Setup error handlers
   AppInitializationService.setupErrorHandlers();
-  
+
   // 10. Initialize AppsFlyer if needed
-  await AppInitializationService.initializeAppsFlyerIfNeeded();
-  
+  // await AppInitializationService.initializeAppsFlyerIfNeeded();
+
   // 11. Set Crashlytics identity
-  AppInitializationService.setCrashlyticsIdentity();
-  
+  // AppInitializationService.setCrashlyticsIdentity();
+
   // 12. Setup audio player
   AppInitializationService.setupAudioPlayer();
 
   // 13. Run the app
+  final storage = const FlutterSecureStorage();
+  String? token = await storage.read(key: "token");
+  debugPrint("🔍 CHECKING TOKEN: $token");
+
   runApp(const MyApp());
 }
 

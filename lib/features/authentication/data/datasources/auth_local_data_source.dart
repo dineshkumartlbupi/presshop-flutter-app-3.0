@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/utils/shared_preferences.dart'; // Using existing keys
 
@@ -11,45 +12,58 @@ abstract class AuthLocalDataSource {
   Future<void> setRememberMe(bool value);
   Future<bool> getOnboardingSeen();
   Future<void> setOnboardingSeen();
+  Future<String?> getUserId();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final SharedPreferences sharedPreferences;
+  final FlutterSecureStorage secureStorage;
 
-  AuthLocalDataSourceImpl({required this.sharedPreferences});
+  AuthLocalDataSourceImpl({
+    required this.sharedPreferences,
+    required this.secureStorage,
+  });
 
   @override
   Future<void> cacheToken(String token) async {
-    await sharedPreferences.setString(tokenKey, token);
+    await secureStorage.write(key: tokenKey, value: token);
   }
 
   @override
   Future<String?> getToken() async {
-    return sharedPreferences.getString(tokenKey);
+    return await secureStorage.read(key: tokenKey);
   }
 
   @override
   Future<void> cacheUser(Map<String, dynamic> user) async {
-    if (user.containsKey('currency_symbol') && user['currency_symbol'] != null) {
-      await sharedPreferences.setString(currencySymbolKey, user['currency_symbol']);
+    if (user.containsKey('currency_symbol') &&
+        user['currency_symbol'] != null) {
+      await sharedPreferences.setString(
+          currencySymbolKey, user['currency_symbol']);
     }
     if (user.containsKey('referral_code') && user['referral_code'] != null) {
       await sharedPreferences.setString(referralCode, user['referral_code']);
     }
-    if (user.containsKey('total_hopper_army') && user['total_hopper_army'] != null) {
-      await sharedPreferences.setString(totalHopperArmy, user['total_hopper_army']);
+    if (user.containsKey('total_hopper_army') &&
+        user['total_hopper_army'] != null) {
+      await sharedPreferences.setString(
+          totalHopperArmy, user['total_hopper_army']);
     }
     // Add logic for other fields if necessary
+    if (user.containsKey('_id') && user['_id'] != null) {
+      await sharedPreferences.setString(hopperIdKey, user['_id']);
+    }
   }
 
   @override
   Future<Map<String, dynamic>?> getUser() async {
     // Return minimal user info if needed
-    return null; 
+    return null;
   }
 
   @override
   Future<void> clearCache() async {
+    await secureStorage.delete(key: tokenKey);
     await sharedPreferences.clear();
   }
 
@@ -71,5 +85,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> setOnboardingSeen() async {
     await sharedPreferences.setBool("onboarding_seen", true);
+  }
+
+  @override
+  Future<String?> getUserId() async {
+    return sharedPreferences.getString(hopperIdKey);
   }
 }

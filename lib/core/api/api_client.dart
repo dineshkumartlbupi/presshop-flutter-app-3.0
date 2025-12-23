@@ -1,87 +1,176 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:presshop/core/core_export.dart'; // Ensure this path is correct
+
+import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 
 class ApiClient {
   final Dio _dio;
   final SharedPreferences _sharedPreferences;
+  final FlutterSecureStorage _secureStorage;
 
-  ApiClient(this._dio, this._sharedPreferences) {
+  ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {
     _dio.options.baseUrl = baseUrl;
-    _dio.options.connectTimeout = const Duration(minutes: 1);
-    _dio.options.receiveTimeout = const Duration(minutes: 1);
-    
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: _onRequest,
-      onError: _onError,
-    ));
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      requestHeader: true,
-      responseHeader: true,
-      error: true,
-    ));
+    _dio.options.connectTimeout = const Duration(minutes: 2);
+    _dio.options.receiveTimeout = const Duration(minutes: 2);
+
+    /// Attach interceptors
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: _onRequest,
+        onError: _onError,
+      ),
+    );
+
+    /// Pretty logger (DEBUG ONLY)
+    if (kDebugMode) {
+      _dio.interceptors.add(PrettyDioLogger());
+    }
   }
 
-  void _onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final token = _sharedPreferences.getString(tokenKey);
+  Future<void> _onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final token = await _secureStorage.read(key: tokenKey);
     final deviceId = _sharedPreferences.getString(deviceIdKey) ?? "";
 
     if (token != null && token.isNotEmpty) {
-      // Assuming headerKey is "Authorization" or custom key from CommonSharedPrefrence
-      // If headerKey value is "Authorization", we might need to prepend "Bearer "
-      // Checking CommonSharedPrefrence.dart, headerKey = "Authorization"
-      // NetworkClass didn't seem to prepend Bearer, it just sent the token.
-      // I will verify existing NetworkClass behavior.
-      // In NetworkClass: headerToken = sharedPreferences!.getString(tokenKey)!; request.headers[headerKey] = headerToken;
-      // So no "Bearer " prefix.
-      options.headers[headerKey] = token; 
+      /// Using same behavior as your existing NetworkClass
+      options.headers[headerKey] = token;
     }
 
     options.headers[headerDeviceIdKey] = deviceId;
-    options.headers[headerDeviceTypeKey] = "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
+    options.headers[headerDeviceTypeKey] =
+        "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
 
     handler.next(options);
   }
 
-  Future<void> _onError(DioException err, ErrorInterceptorHandler handler) async {
-    // Basic 401 handling - for now, just pass through. 
-    // Implementing robust refresh token logic within interceptor requires 
-    // a separate Dio instance or careful locking to avoid loops.
-    // For this step, I'll rely on the caller or a separate AuthRepository logic for refresh 
-    // if simple interceptor retry isn't enough, but I will add a placeholder.
-    
+  Future<void> _onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401) {
-       // TODO: Implement Token Refresh Logic similar to NetworkClass
+      /// TODO: Token refresh logic if needed
     }
-    
     handler.next(err);
   }
 
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return _dio.get(path, queryParameters: queryParameters);
   }
 
-  Future<Response> post(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> post(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return _dio.post(path, data: data, queryParameters: queryParameters);
   }
 
-  Future<Response> put(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> put(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return _dio.put(path, data: data, queryParameters: queryParameters);
   }
 
-  Future<Response> patch(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> patch(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return _dio.patch(path, data: data, queryParameters: queryParameters);
   }
 
-  Future<Response> delete(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> delete(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return _dio.delete(path, data: data, queryParameters: queryParameters);
   }
 
-  Future<Response> multipartPost(String path, {required FormData formData, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> multipartPost(
+    String path, {
+    required FormData formData,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return _dio.post(path, data: formData, queryParameters: queryParameters);
+  }
+}
+
+class PrettyDioLogger extends Interceptor {
+  @override
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) {
+    debugPrint(
+      '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+➡️ API REQUEST
+METHOD : ${options.method}
+URL    : ${options.baseUrl}${options.path}
+HEADERS: ${_maskHeaders(options.headers)}
+QUERY  : ${options.queryParameters}
+BODY   : ${options.data}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+''',
+    );
+    super.onRequest(options, handler);
+  }
+
+  @override
+  void onResponse(
+    Response response,
+    ResponseInterceptorHandler handler,
+  ) {
+    debugPrint(
+      '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ API RESPONSE
+STATUS : ${response.statusCode}
+URL    : ${response.requestOptions.baseUrl}${response.requestOptions.path}
+DATA   : ${response.data}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+''',
+    );
+    super.onResponse(response, handler);
+  }
+
+  @override
+  void onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) {
+    debugPrint(
+      '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ API ERROR
+STATUS : ${err.response?.statusCode}
+URL    : ${err.requestOptions.baseUrl}${err.requestOptions.path}
+ERROR  : ${err.message}
+DATA   : ${err.response?.data}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+''',
+    );
+    super.onError(err, handler);
+  }
+
+  /// Mask sensitive headers
+  Map<String, dynamic> _maskHeaders(Map<String, dynamic> headers) {
+    final masked = Map<String, dynamic>.from(headers);
+    if (masked.containsKey(headerKey)) {
+      masked[headerKey] = "****TOKEN****";
+    }
+    return masked;
   }
 }

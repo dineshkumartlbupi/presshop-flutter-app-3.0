@@ -105,6 +105,8 @@ dependencies:
   get_it: ^7.6.0
   dartz: ^0.10.1
   flutter_dotenv: ^6.0.0
+  connectivity_plus: ^7.0.0
+  flutter_secure_storage: ^10.0.0
   # flutter_foreground_service: ^0.4.1
   # image_cropper: any
 

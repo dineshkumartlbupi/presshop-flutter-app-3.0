@@ -1817,7 +1817,8 @@ class MyProfileState extends State<MyProfile>
   }
 
   void myProfileApi() {
-    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+    String userId = sharedPreferences!.getString(hopperIdKey) ?? "";
+    NetworkClass("$myProfileUrl?userId=$userId", this, myProfileUrlRequest)
         .callRequestServiceHeader(false, "get", null);
   }
 

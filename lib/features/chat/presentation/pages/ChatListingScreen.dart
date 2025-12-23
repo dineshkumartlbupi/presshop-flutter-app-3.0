@@ -13,6 +13,8 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
+const int getAdminListReq = 1;
+
 class ChatListingScreen extends StatefulWidget {
   bool hideLeading = false;
 

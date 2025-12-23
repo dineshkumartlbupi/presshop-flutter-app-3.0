@@ -5,7 +5,6 @@ import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/main.dart';
 
-
 const double kToolbarHeightIpad = 80.0; // Define the iPad toolbar height
 
 class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -52,7 +51,7 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
 class CommonAppBarState extends State<CommonAppBar> {
   @override
   Widget build(BuildContext context) {
-    debugPrint("LeadingLeftSpace: ${widget.leadingLeftSPace}");
+    //debugPrint("LeadingLeftSpace: ${widget.leadingLeftSPace}");
     return isIpad
         ? AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(

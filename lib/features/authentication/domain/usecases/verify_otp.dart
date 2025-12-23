@@ -30,7 +30,7 @@ class VerifyOtpParams extends Equatable {
     return {
       "phone": phone,
       "email": email,
-      "phone_otp": otp,
+      "otp": otp,
     };
   }
 
