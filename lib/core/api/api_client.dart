@@ -32,6 +32,8 @@ class ApiClient {
     }
   }
 
+  SharedPreferences get sharedPreferences => _sharedPreferences;
+
   Future<void> _onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final token = await _secureStorage.read(key: tokenKey);
@@ -70,8 +72,10 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) async {
-    return _dio.post(path, data: data, queryParameters: queryParameters);
+    return _dio.post(path,
+        data: data, queryParameters: queryParameters, options: options);
   }
 
   Future<Response> put(
@@ -102,8 +106,10 @@ class ApiClient {
     String path, {
     required FormData formData,
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) async {
-    return _dio.post(path, data: formData, queryParameters: queryParameters);
+    return _dio.post(path,
+        data: formData, queryParameters: queryParameters, options: options);
   }
 }
 
@@ -169,7 +175,9 @@ DATA   : ${err.response?.data}
   Map<String, dynamic> _maskHeaders(Map<String, dynamic> headers) {
     final masked = Map<String, dynamic>.from(headers);
     if (masked.containsKey(headerKey)) {
+      debugPrint("Token coming in headers: ${masked[headerKey]}");
       masked[headerKey] = "****TOKEN****";
+      print("Token masked final: ${masked[headerKey]}");
     }
     return masked;
   }

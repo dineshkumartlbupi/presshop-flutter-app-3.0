@@ -30,7 +30,6 @@ import '../bloc/feed_event.dart';
 import '../bloc/feed_state.dart';
 import '../../domain/entities/feed.dart';
 
-
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
 
@@ -56,7 +55,8 @@ class FeedScreenState extends State<FeedScreen> {
   late FeedBloc _feedBloc;
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -174,148 +174,147 @@ class FeedScreenState extends State<FeedScreen> {
       //   ],
       // ),
       body: SafeArea(
-        child: BlocConsumer<FeedBloc, FeedState>(
-          listener: (context, state) {
-            if (state.status == FeedStatus.failure) {
-              _refreshController.refreshFailed();
-               // showSnackBar(state.errorMessage); // Assuming showSnackBar exists
-            } else if (state.status == FeedStatus.success) {
-               _refreshController.refreshCompleted();
-               if (state.hasReachedMax) {
+        child: BlocProvider.value(
+          value: _feedBloc,
+          child: BlocConsumer<FeedBloc, FeedState>(
+            listener: (context, state) {
+              if (state.status == FeedStatus.failure) {
+                _refreshController.refreshFailed();
+                // showSnackBar(state.errorMessage); // Assuming showSnackBar exists
+              } else if (state.status == FeedStatus.success) {
+                _refreshController.refreshCompleted();
+                if (state.hasReachedMax) {
                   _refreshController.loadNoData();
-               } else {
+                } else {
                   _refreshController.loadComplete();
-               }
-            }
-          },
-          builder: (context, state) {
-            if (state.status == FeedStatus.initial || (state.status == FeedStatus.loading && state.feeds.isEmpty)) {
-               return showLoader();
-            }
-            
-            return SmartRefresher(
-              controller: _refreshController,
-              enablePullDown: true,
-              enablePullUp: !state.hasReachedMax,
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              footer: const CustomFooter(builder: commonRefresherFooter),
-              child: ListView.separated(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD04),
-                      itemBuilder: (context, index) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: size.width * numD50,
-                              child: PageView.builder(
-                                  controller: pageController,
-                                  scrollDirection: Axis.horizontal,
-                                  onPageChanged: (value) {
-                                    _currentMediaIndex = value;
-                                  },
-                                  itemCount: state.feeds[index]
-                                      .contentList
-                                      .length,
-                                  itemBuilder: (context, idx) {
-                                    var item = state.feeds[index]
-                                        .contentList[idx];
-                                    var flickManager =
-                                        initialController(state.feeds[index], idx);
-                                    return VisibilityDetector(
-                                      key:
-                                          Key("${state.feeds[index].id}_$idx"),
-                                      onVisibilityChanged: (visibility) {
-                                        if (visibility.visibleFraction < 0.6) {
-                                          flickManager?.flickControlManager
-                                              ?.autoPause();
-                                        } else if (visibility.visibleFraction ==
-                                            1) {
-                                          flickManager?.flickControlManager
-                                              ?.autoResume();
-                                        }
-                                      },
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * numD04),
-                                        child: InkWell(
-                                          onTap: () {
-                                            if (item.mediaType == "pdf" ||
-                                                item.mediaType == "doc") {
-                                              openUrl(
-                                                  contentImageUrl + item.mediaUrl);
-                                            }
-                                          },
-                                          child: Stack(
-                                            children: [
-                                              item.mediaType == "audio"
-                                                  ? playAudioWidget(size)
-                                                  : item.mediaType == "video"
-                                                      ? videoWidget(
-                                                          Key(
-                                                              "${state.feeds[index].id}_$idx"),
-                                                          flickManager)
-                                                      : item.mediaType == "pdf"
-                                                          ? Padding(
-                                                              padding: EdgeInsets
-                                                                  .all(size
-                                                                          .width *
-                                                                      numD04),
-                                                              child:
-                                                                  Image.asset(
-                                                                "${dummyImagePath}pngImage.png",
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                                height:
+                }
+              }
+            },
+            builder: (context, state) {
+              if (state.status == FeedStatus.initial ||
+                  (state.status == FeedStatus.loading && state.feeds.isEmpty)) {
+                return showLoader();
+              }
+
+              return SmartRefresher(
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: !state.hasReachedMax,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                footer: const CustomFooter(builder: commonRefresherFooter),
+                child: ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD04,
+                        vertical: size.width * numD04),
+                    itemBuilder: (context, index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: size.width * numD50,
+                            child: PageView.builder(
+                                controller: pageController,
+                                scrollDirection: Axis.horizontal,
+                                onPageChanged: (value) {
+                                  _currentMediaIndex = value;
+                                },
+                                itemCount:
+                                    state.feeds[index].contentList.length,
+                                itemBuilder: (context, idx) {
+                                  var item =
+                                      state.feeds[index].contentList[idx];
+                                  var flickManager = initialController(
+                                      state.feeds[index], idx);
+                                  return VisibilityDetector(
+                                    key: Key("${state.feeds[index].id}_$idx"),
+                                    onVisibilityChanged: (visibility) {
+                                      if (visibility.visibleFraction < 0.6) {
+                                        flickManager?.flickControlManager
+                                            ?.autoPause();
+                                      } else if (visibility.visibleFraction ==
+                                          1) {
+                                        flickManager?.flickControlManager
+                                            ?.autoResume();
+                                      }
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04),
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (item.mediaType == "pdf" ||
+                                              item.mediaType == "doc") {
+                                            openUrl(contentImageUrl +
+                                                item.mediaUrl);
+                                          }
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            item.mediaType == "audio"
+                                                ? playAudioWidget(size)
+                                                : item.mediaType == "video"
+                                                    ? videoWidget(
+                                                        Key(
+                                                            "${state.feeds[index].id}_$idx"),
+                                                        flickManager)
+                                                    : item.mediaType == "pdf"
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
                                                                     size.width *
-                                                                        numD35,
-                                                                width:
-                                                                    size.width,
-                                                              ),
-                                                            )
-                                                          : item.mediaType ==
-                                                                  "doc"
-                                                              ? Padding(
-                                                                  padding: EdgeInsets
-                                                                      .all(size
-                                                                              .width *
-                                                                          numD04),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    "${dummyImagePath}doc_black_icon.png",
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    height: size
+                                                                        numD04),
+                                                            child: Image.asset(
+                                                              "${dummyImagePath}pngImage.png",
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              height:
+                                                                  size.width *
+                                                                      numD35,
+                                                              width: size.width,
+                                                            ),
+                                                          )
+                                                        : item.mediaType ==
+                                                                "doc"
+                                                            ? Padding(
+                                                                padding: EdgeInsets
+                                                                    .all(size
                                                                             .width *
-                                                                        numD35,
-                                                                    width: size
-                                                                        .width,
-                                                                  ),
-                                                                )
-                                                              : Image.network(
-                                                                  item.mediaType ==
-                                                                          "video"
-                                                                      ? "$contentImageUrl${item.thumbnail}"
-                                                                      : "$contentImageUrl${item.mediaUrl}",
+                                                                        numD04),
+                                                                child:
+                                                                    Image.asset(
+                                                                  "${dummyImagePath}doc_black_icon.png",
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  height: size
+                                                                          .width *
+                                                                      numD35,
                                                                   width: size
                                                                       .width,
-                                                                  fit: BoxFit
-                                                                      .cover,
                                                                 ),
-                                              //  state.feeds[index].contentList
-                                              Positioned(
-                                                right: size.width * numD02,
-                                                top: size.width * numD02,
-                                                child: Column(
-                                                  children: getMediaCount2(
-                                                      state.feeds[index]
-                                                          .contentList,
-                                                      size),
-                                                ),
+                                                              )
+                                                            : Image.network(
+                                                                item.mediaType ==
+                                                                        "video"
+                                                                    ? "$contentImageUrl${item.thumbnail}"
+                                                                    : "$contentImageUrl${item.mediaUrl}",
+                                                                width:
+                                                                    size.width,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                            //  state.feeds[index].contentList
+                                            Positioned(
+                                              right: size.width * numD02,
+                                              top: size.width * numD02,
+                                              child: Column(
+                                                children: getMediaCount2(
+                                                    state.feeds[index]
+                                                        .contentList,
+                                                    size),
                                               ),
-                                              /*     Positioned(
+                                            ),
+                                            /*     Positioned(
                                               right: size.width * numD02,
                                               bottom: size.width * numD02,
                                               child: Visibility(
@@ -335,409 +334,395 @@ class FeedScreenState extends State<FeedScreen> {
                                                 ),
                                               ),
                                             ),*/
-                                              // state.feeds[index].viewCount > 2
-                                              //     ? Positioned(
-                                              //         bottom: size.width * numD02,
-                                              //         left: size.width * numD02,
-                                              //         child: Container(
-                                              //           padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
-                                              //           decoration: BoxDecoration(
-                                              //               color: colorThemePink,
-                                              //               borderRadius: BorderRadius.circular(size.width * numD04),
-                                              //             border: Border.all(color: Colors.white)
-                                              //           ),
-                                              //           child: Text(
-                                              //             mostViewedText,
-                                              //             overflow: TextOverflow.ellipsis,
-                                              //             style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
-                                              //           ),
-                                              //         ),
-                                              //       )
-                                              //     : Container(),
-                                            ],
-                                          ),
+                                            // state.feeds[index].viewCount > 2
+                                            //     ? Positioned(
+                                            //         bottom: size.width * numD02,
+                                            //         left: size.width * numD02,
+                                            //         child: Container(
+                                            //           padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
+                                            //           decoration: BoxDecoration(
+                                            //               color: colorThemePink,
+                                            //               borderRadius: BorderRadius.circular(size.width * numD04),
+                                            //             border: Border.all(color: Colors.white)
+                                            //           ),
+                                            //           child: Text(
+                                            //             mostViewedText,
+                                            //             overflow: TextOverflow.ellipsis,
+                                            //             style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     : Container(),
+                                          ],
                                         ),
                                       ),
-                                    );
-                                  }),
-                            ),
-                            SizedBox(
-                              height: size.width * numD02,
-                            ),
-                            state.feeds[index].contentList.length > 1
-                                ? Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: DotsIndicator(
-                                      dotsCount: state.feeds[index]
-                                          .contentList
-                                          .length,
-                                      position: _currentMediaIndex,
-                                      decorator: const DotsDecorator(
-                                        color: Colors.grey, // Inactive color
-                                        activeColor: Colors.redAccent,
-                                      ),
                                     ),
-                                  )
-                                : Container(),
-                            SizedBox(
-                              height: size.width * numD02,
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  width: size.width * numD09,
-                                  height: size.width * numD09,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 1, vertical: 1),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.grey.shade200,
-                                            spreadRadius: 3)
-                                      ]),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD06),
-                                      child: Image.network(
-                                        state.feeds[index].feedImage,
-                                        height: size.width * numD06,
-                                        fit: BoxFit.fill,
-                                      )),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD02,
-                                ),
-                                Text(
-                                  state.feeds[index]
-                                      .categoryName
-                                      .toUpperCase(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD033,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                const Spacer(),
-                                Image.asset(
-                                  "${iconsPath}ic_newspaper.png",
-                                  height: size.width * numD035,
-                                ),
-                                SizedBox(
-                                  width: size.width * numD02,
-                                ),
-                                Text(
-                                  state.feeds[index].status.toUpperCase(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD033,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: size.width * numD02,
-                            ),
-                            Text(
-                              state.feeds[index].heading.toCapitalized(),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD04,
-                                  color: Colors.black,
-                                  lineHeight: 1.5,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: size.width * numD02,
-                            ),
-                            ExpandableText(
-                              text: state.feeds[index]
-                                  .description
-                                  .toCapitalizeText(),
-                            ),
-                            // Text(
-                            //   state.feeds[index].description,
-                            //   maxLines: 4,
-                            //   textAlign: TextAlign.justify,
-                            //   style: commonTextStyle(
-                            //       size: size,
-                            //       fontSize: size.width * numD03,
-                            //       color: Colors.black,
-                            //       lineHeight: 2,
-                            //       fontWeight: FontWeight.normal),
-                            // ),
-                            SizedBox(
-                              height: size.width * numD02,
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                "${iconsPath}dollar1.png",
-                                                color: state.feeds[index]
-                                                            .viewCount ==
-                                                        0
-                                                    ? Colors.grey
-                                                    : colorThemePink,
-                                                height: size.width * numD04,
-                                                width: size.width * numD04,
-                                              ),
-                                              SizedBox(
-                                                width: size.width * numD014,
-                                              ),
-                                              Text(
-                                                '${state.feeds[index].offerCount.toString()} ${soldText.toLowerCase()}',
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize:
-                                                        size.width * numD029,
-                                                    color: colorThemePink,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD02,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                "${iconsPath}ic_view.png",
-                                                color: state.feeds[index]
-                                                            .viewCount ==
-                                                        0
-                                                    ? Colors.grey
-                                                    : colorThemePink,
-                                                height: size.width * numD05,
-                                                width: size.width * numD05,
-                                              ),
-                                              SizedBox(
-                                                width: size.width * numD012,
-                                              ),
-                                              Text(
-                                                '${state.feeds[index].viewCount.toString()} ${state.feeds[index].viewCount > 1 ? '${viewsText}s' : viewsText}',
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize:
-                                                        size.width * numD029,
-                                                    color: colorThemePink,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD02,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_clock.png",
-                                            height: size.width * numD04,
-                                            color: colorTextFieldIcon,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD02,
-                                          ),
-                                          Text(
-                                            dateTimeFormatter(
-                                                dateTime: state.feeds[index]
-                                                    .createdAt,
-                                                format: "hh:mm a"),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD028,
-                                                color: colorHint,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD02,
-                                          ),
-                                          Image.asset(
-                                            "${iconsPath}ic_yearly_calendar.png",
-                                            height: size.width * numD04,
-                                            color: colorTextFieldIcon,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD018,
-                                          ),
-                                          Text(
-                                            dateTimeFormatter(
-                                                dateTime: state.feeds[index]
-                                                    .createdAt,
-                                                format: "dd MMM yyyy"),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD028,
-                                                color: colorHint,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD03,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_location.png",
-                                            height: size.width * numD045,
-                                            color: colorTextFieldIcon,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD02,
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              state.feeds[index].location,
-                                              overflow: TextOverflow.ellipsis,
+                                  );
+                                }),
+                          ),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
+                          state.feeds[index].contentList.length > 1
+                              ? Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: DotsIndicator(
+                                    dotsCount:
+                                        state.feeds[index].contentList.length,
+                                    position: _currentMediaIndex,
+                                    decorator: const DotsDecorator(
+                                      color: Colors.grey, // Inactive color
+                                      activeColor: Colors.redAccent,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: size.width * numD09,
+                                height: size.width * numD09,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 1, vertical: 1),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.shade200,
+                                          spreadRadius: 3)
+                                    ]),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD06),
+                                    child: Image.network(
+                                      state.feeds[index].feedImage,
+                                      height: size.width * numD06,
+                                      fit: BoxFit.fill,
+                                    )),
+                              ),
+                              SizedBox(
+                                width: size.width * numD02,
+                              ),
+                              Text(
+                                state.feeds[index].categoryName.toUpperCase(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD033,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              const Spacer(),
+                              Image.asset(
+                                "${iconsPath}ic_newspaper.png",
+                                height: size.width * numD035,
+                              ),
+                              SizedBox(
+                                width: size.width * numD02,
+                              ),
+                              Text(
+                                state.feeds[index].status.toUpperCase(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD033,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
+                          Text(
+                            state.feeds[index].heading.toCapitalized(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD04,
+                                color: Colors.black,
+                                lineHeight: 1.5,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
+                          ExpandableText(
+                            text: state.feeds[index].description
+                                .toCapitalizeText(),
+                          ),
+                          // Text(
+                          //   state.feeds[index].description,
+                          //   maxLines: 4,
+                          //   textAlign: TextAlign.justify,
+                          //   style: commonTextStyle(
+                          //       size: size,
+                          //       fontSize: size.width * numD03,
+                          //       color: Colors.black,
+                          //       lineHeight: 2,
+                          //       fontWeight: FontWeight.normal),
+                          // ),
+                          SizedBox(
+                            height: size.width * numD02,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset(
+                                              "${iconsPath}dollar1.png",
+                                              color: state.feeds[index]
+                                                          .viewCount ==
+                                                      0
+                                                  ? Colors.grey
+                                                  : colorThemePink,
+                                              height: size.width * numD04,
+                                              width: size.width * numD04,
+                                            ),
+                                            SizedBox(
+                                              width: size.width * numD014,
+                                            ),
+                                            Text(
+                                              '${state.feeds[index].offerCount.toString()} ${soldText.toLowerCase()}',
                                               style: commonTextStyle(
                                                   size: size,
                                                   fontSize:
-                                                      size.width * numD028,
-                                                  color: colorHint,
+                                                      size.width * numD029,
+                                                  color: colorThemePink,
                                                   fontWeight:
                                                       FontWeight.normal),
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD03,
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            left: size.width * numD002),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD02,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            Padding(
+                                            Image.asset(
+                                              "${iconsPath}ic_view.png",
+                                              color: state.feeds[index]
+                                                          .viewCount ==
+                                                      0
+                                                  ? Colors.grey
+                                                  : colorThemePink,
+                                              height: size.width * numD05,
+                                              width: size.width * numD05,
+                                            ),
+                                            SizedBox(
+                                              width: size.width * numD012,
+                                            ),
+                                            Text(
+                                              '${state.feeds[index].viewCount.toString()} ${state.feeds[index].viewCount > 1 ? '${viewsText}s' : viewsText}',
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD029,
+                                                  color: colorThemePink,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD02,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_clock.png",
+                                          height: size.width * numD04,
+                                          color: colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD02,
+                                        ),
+                                        Text(
+                                          dateTimeFormatter(
+                                              dateTime:
+                                                  state.feeds[index].createdAt,
+                                              format: "hh:mm a"),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD028,
+                                              color: colorHint,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD02,
+                                        ),
+                                        Image.asset(
+                                          "${iconsPath}ic_yearly_calendar.png",
+                                          height: size.width * numD04,
+                                          color: colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD018,
+                                        ),
+                                        Text(
+                                          dateTimeFormatter(
+                                              dateTime:
+                                                  state.feeds[index].createdAt,
+                                              format: "dd MMM yyyy"),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD028,
+                                              color: colorHint,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD03,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          "${iconsPath}ic_location.png",
+                                          height: size.width * numD045,
+                                          color: colorTextFieldIcon,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * numD02,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            state.feeds[index].location,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD028,
+                                                color: colorHint,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD03,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: size.width * numD002),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                right: size.width * numD01,
+                                                top: size.width * numD005),
+                                            child: InkWell(
+                                              splashColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              onTap: () {
+                                                _feedBloc.add(
+                                                    ToggleFavouriteFeed(
+                                                        id: state
+                                                            .feeds[index].id,
+                                                        isFavourite: !state
+                                                            .feeds[index]
+                                                            .isFavourite));
+                                              },
+                                              child: state
+                                                      .feeds[index].isFavourite
+                                                  ? Image.asset(
+                                                      "${iconsPath}heart_icon.png",
+                                                      color: colorThemePink,
+                                                      height:
+                                                          size.width * numD0575,
+                                                    )
+                                                  : Image.asset(
+                                                      "${iconsPath}heart_icon.png",
+                                                      height:
+                                                          size.width * numD0575,
+                                                    ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD1,
+                                            child: Padding(
                                               padding: EdgeInsets.only(
-                                                  right: size.width * numD01,
-                                                  top: size.width * numD005),
+                                                  bottom: size.width * numD002),
                                               child: InkWell(
                                                 splashColor: Colors.transparent,
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () {
-                                                  _feedBloc.add(ToggleFavouriteFeed(
+                                                  _feedBloc.add(ToggleLikeFeed(
                                                       id: state.feeds[index].id,
-                                                      isFavourite: !state
+                                                      isLiked: !state
                                                           .feeds[index]
-                                                          .isFavourite));
+                                                          .isLiked));
                                                 },
-                                                child: state.feeds[index]
-                                                        .isFavourite
-                                                    ? Image.asset(
-                                                        "${iconsPath}heart_icon.png",
-                                                        color: colorThemePink,
-                                                        height: size.width *
-                                                            numD0575,
-                                                      )
-                                                    : Image.asset(
-                                                        "${iconsPath}heart_icon.png",
-                                                        height: size.width *
-                                                            numD0575,
-                                                      ),
+                                                child:
+                                                    state.feeds[index].isLiked
+                                                        ? Image.asset(
+                                                            "${iconsPath}like_icon_fill.png",
+                                                            height: size.width *
+                                                                numD057,
+                                                          )
+                                                        : Image.asset(
+                                                            "${iconsPath}like_grey.png",
+                                                            height: size.width *
+                                                                numD057,
+                                                          ),
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: size.width * numD1,
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom:
-                                                        size.width * numD002),
-                                                child: InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () {
-                                                    _feedBloc.add(
-                                                        ToggleLikeFeed(
-                                                            id: state
-                                                                .feeds[index]
-                                                                .id,
-                                                            isLiked: !state
-                                                                .feeds[index]
-                                                                .isLiked));
-                                                  },
-                                                  child: state
-                                                          .feeds[index].isLiked
-                                                      ? Image.asset(
-                                                          "${iconsPath}like_icon_fill.png",
-                                                          height: size.width *
-                                                              numD057,
-                                                        )
-                                                      : Image.asset(
-                                                          "${iconsPath}like_grey.png",
-                                                          height: size.width *
-                                                              numD057,
-                                                        ),
-                                                ),
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD1,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: size.width * numD003),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () {
+                                                  _feedBloc.add(ToggleEmojiFeed(
+                                                      id: state.feeds[index].id,
+                                                      isEmoji: !state
+                                                          .feeds[index]
+                                                          .isEmoji));
+                                                },
+                                                //splashRadius: size.width * numD05,
+                                                child:
+                                                    state.feeds[index].isEmoji
+                                                        ? Image.asset(
+                                                            "${iconsPath}sad.png",
+                                                            height: size.width *
+                                                                numD058,
+                                                          )
+                                                        : Image.asset(
+                                                            "${iconsPath}ic_grey_sad_emoji.png",
+                                                            height: size.width *
+                                                                numD058,
+                                                          ),
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: size.width * numD1,
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: size.width * numD003),
-                                                child: InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () {
-                                                    _feedBloc.add(
-                                                        ToggleEmojiFeed(
-                                                            id: state
-                                                                .feeds[index]
-                                                                .id,
-                                                            isEmoji: !state
-                                                                .feeds[index]
-                                                                .isEmoji));
-                                                  },
-                                                  //splashRadius: size.width * numD05,
-                                                  child: state
-                                                          .feeds[index].isEmoji
-                                                      ? Image.asset(
-                                                          "${iconsPath}sad.png",
-                                                          height: size.width *
-                                                              numD058,
-                                                        )
-                                                      : Image.asset(
-                                                          "${iconsPath}ic_grey_sad_emoji.png",
-                                                          height: size.width *
-                                                              numD058,
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            /* SizedBox(
+                                          ),
+                                          /* SizedBox(
                                                   width: size.width * numD1,
                                                   child: InkWell(
                                                     onTap: () {
@@ -785,88 +770,89 @@ class FeedScreenState extends State<FeedScreen> {
                                                           ),
                                                   ),
                                                 ),*/
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        height: size.width * numD02,
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD02,
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: size.width * numD075,
-                                ),
-                                Container(
-                                  width: size.width * numD30,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: size.width * numD012),
-                                  decoration: BoxDecoration(
-                                      color: state.feeds[index].paidStatus ==
-                                              unPaidText
-                                          ? colorThemePink
-                                          : colorLightGrey,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD03)),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        state.feeds[index].saleStatus == "sold"
-                                            ? "Sold"
-                                            : "Sold",
-                                        // state.feeds[index].saleStatus,
+                              ),
+                              SizedBox(
+                                width: size.width * numD075,
+                              ),
+                              Container(
+                                width: size.width * numD30,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: size.width * numD012),
+                                decoration: BoxDecoration(
+                                    color: state.feeds[index].paidStatus ==
+                                            unPaidText
+                                        ? colorThemePink
+                                        : colorLightGrey,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03)),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      state.feeds[index].saleStatus == "sold"
+                                          ? "Sold"
+                                          : "Sold",
+                                      // state.feeds[index].saleStatus,
+
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color:
+                                              state.feeds[index].paidStatus ==
+                                                      "paid"
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    FittedBox(
+                                      child: Text(
+                                        // "$currencySymbol${amountFormat(state.feeds[index].displayPrice)}",
+                                        "$currencySymbol${amountFormat(state.feeds[index].displayPrice)}",
+
+                                        // "${state.feeds[index].displayCurrency} ${amountFormat(state.feeds[index].displayPrice)}",
 
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
-                                            color: state.feeds[index]
-                                                        .paidStatus ==
-                                                    "paid"
-                                                ? Colors.black
-                                                : Colors.white,
-                                            fontWeight: FontWeight.normal),
+                                            fontSize: size.width * numD055,
+                                            color:
+                                                state.feeds[index].paidStatus ==
+                                                        "paid"
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      FittedBox(
-                                        child: Text(
-                                          // "$currencySymbol${amountFormat(state.feeds[index].displayPrice)}",
-                                          "$currencySymbol${amountFormat(state.feeds[index].displayPrice)}",
-
-                                          // "${state.feeds[index].displayCurrency} ${amountFormat(state.feeds[index].displayPrice)}",
-
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD055,
-                                              color: state.feeds[index]
-                                                          .paidStatus ==
-                                                      "paid"
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: size.width * numD04),
-                          child: const Divider(
-                            color: colorTextFieldIcon,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                        );
-                      },
-                      itemCount: state.feeds.length),
-            );
-          },
+                        ],
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: size.width * numD04),
+                        child: const Divider(
+                          color: colorTextFieldIcon,
+                        ),
+                      );
+                    },
+                    itemCount: state.feeds.length),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -1430,7 +1416,7 @@ class FeedScreenState extends State<FeedScreen> {
                                       "Please select to date above from date",
                                       Colors.red);
                                 }
-                                                            }
+                              }
                               stateSetter(() {});
                               setState(() {});
                             },
@@ -1498,7 +1484,7 @@ class FeedScreenState extends State<FeedScreen> {
   FlickManager? initialController(Feed feed, int currentMediaIndex) {
     FlickManager? flickManager;
     var content = feed.contentList[currentMediaIndex];
-    
+
     if (content.mediaType == "audio") {
       initWaveData(contentImageUrl + content.mediaUrl);
     } else if (content.mediaType == "video") {
@@ -1556,10 +1542,4 @@ class FeedScreenState extends State<FeedScreen> {
       throw 'Could not launch url';
     }
   }
-
-
-
-
-
-
 }

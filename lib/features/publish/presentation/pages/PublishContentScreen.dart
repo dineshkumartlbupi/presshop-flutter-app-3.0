@@ -169,17 +169,20 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
       if (selectedIndex != -1) {
         // categoryList[selectedIndex].selected = false;
-        categoryList[selectedIndex] = categoryList[selectedIndex].copyWith(selected: false);
+        categoryList[selectedIndex] =
+            categoryList[selectedIndex].copyWith(selected: false);
       }
 
       final newCategoryIndex =
           categoryList.indexWhere((element) => element.id == newCategoryId);
       if (newCategoryIndex != -1) {
         // categoryList[newCategoryIndex].selected = true;
-        categoryList[newCategoryIndex] = categoryList[newCategoryIndex].copyWith(selected: true);
+        categoryList[newCategoryIndex] =
+            categoryList[newCategoryIndex].copyWith(selected: true);
       }
     }
-    if (widget.myContentData != null && widget.myContentData!.categoryData != null) {
+    if (widget.myContentData != null &&
+        widget.myContentData!.categoryData != null) {
       var cat = widget.myContentData!.categoryData!;
       selectedCategory = ContentCategory(
           id: cat.id,
@@ -286,352 +289,388 @@ class PublishContentScreenState extends State<PublishContentScreen>
           if (state.status == PublishStatus.failure) {
             showSnackBar("Error", state.errorMessage, Colors.red);
           }
-          if (state.status == PublishStatus.loaded || state.categories.isNotEmpty) {
-             categoryList = state.categories;
-             if (state.selectedCategory != null) {
-                selectedCategory = state.selectedCategory;
-                // If initializing or selecting
-             } else if (categoryList.isNotEmpty && selectedCategory == null) {
-                selectedCategory = categoryList.first;
-                // Trigger selection in bloc if needed, or rely on bloc's initial selection
-             }
+          if (state.status == PublishStatus.loaded ||
+              state.categories.isNotEmpty) {
+            categoryList = state.categories;
+            if (state.selectedCategory != null) {
+              selectedCategory = state.selectedCategory;
+              // If initializing or selecting
+            } else if (categoryList.isNotEmpty && selectedCategory == null) {
+              selectedCategory = categoryList.first;
+              // Trigger selection in bloc if needed, or rely on bloc's initial selection
+            }
 
-             if (state.charities.isNotEmpty) {
-                allCharityList = state.charities;
-             }
-             if (state.prices.isNotEmpty) {
-               sharedPrice = state.prices['shared'] ?? sharedPrice;
-               exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
-               // If selected category is Shared or Exclusive, update controller?
-               // The UI uses 'sharedPrice' and 'exclusivePrice' variables in Text widgets, valid.
-             }
+            if (state.charities.isNotEmpty) {
+              allCharityList = state.charities;
+            }
+            if (state.prices.isNotEmpty) {
+              sharedPrice = state.prices['shared'] ?? sharedPrice;
+              exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
+              // If selected category is Shared or Exclusive, update controller?
+              // The UI uses 'sharedPrice' and 'exclusivePrice' variables in Text widgets, valid.
+            }
           }
         },
         builder: (context, state) {
-             // Fallback to ensure UI has data if listener didn't cover (e.g. initial build after reload)
-             if (state.categories.isNotEmpty) categoryList = state.categories; 
-             if (state.charities.isNotEmpty) allCharityList = state.charities;
-             // Ensure selectedCategory is not null if list is not empty
-             if (selectedCategory == null && categoryList.isNotEmpty) {
-                selectedCategory = categoryList.first;
-             }
+          // Fallback to ensure UI has data if listener didn't cover (e.g. initial build after reload)
+          if (state.categories.isNotEmpty) categoryList = state.categories;
+          if (state.charities.isNotEmpty) allCharityList = state.charities;
+          // Ensure selectedCategory is not null if list is not empty
+          if (selectedCategory == null && categoryList.isNotEmpty) {
+            selectedCategory = categoryList.first;
+          }
 
           return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          //   publishContentText,
-          "Submit content",
-          style: commonTextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize,
-              size: size),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
-            },
-            child: Image.asset(
-              "${commonImagePath}ic_black_rabbit.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+            backgroundColor: Colors.white,
+            appBar: CommonAppBar(
+              elevation: 0,
+              hideLeading: false,
+              title: Text(
+                //   publishContentText,
+                "Submit content",
+                style: commonTextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width * appBarHeadingFontSize,
+                    size: size),
+              ),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: true,
+              leadingFxn: () {
+                Navigator.pop(context);
+              },
+              actionWidget: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)));
+                  },
+                  child: Image.asset(
+                    "${commonImagePath}ic_black_rabbit.png",
+                    height: size.width * numD07,
+                    width: size.width * numD07,
+                  ),
+                ),
+                SizedBox(
+                  width: size.width * numD04,
+                )
+              ],
             ),
-          ),
-          SizedBox(
-            width: size.width * numD04,
-          )
-        ],
-      ),
 
-      /// body
-      body: SafeArea(
-        child: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: size.width * numD06,
-                ),
-                widget.publishData != null
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
-                        child: SizedBox(
-                            height: size.width * numD35,
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD06),
-                                    child: Stack(
-                                      children: [
-                                        Visibility(
-                                          visible: widget.publishData!.mimeType
-                                              .contains("doc"),
-                                          child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
-                                            ),
-                                            child: Image.asset(
-                                              "${dummyImagePath}doc_black_icon.png",
-                                              width: size.width * numD30,
-                                              height: size.width * numD35,
-                                            ),
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget.publishData!.mimeType
-                                              .contains("pdf"),
-                                          child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
-                                            ),
-                                            child: Image.asset(
-                                              "${dummyImagePath}pngImage.png",
-                                              width: size.width * numD30,
-                                              height: size.width * numD35,
-                                            ),
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget.publishData!.mediaList
-                                                  .first.mimeType ==
-                                              "audio",
-                                          child: Container(
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              color: colorThemePink,
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
-                                            ),
-                                            child: Icon(
-                                              Icons.play_arrow_rounded,
-                                              size: size.width * numD18,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget.publishData!.mediaList
-                                                  .first.mimeType ==
-                                              "video",
-                                          child: Image.file(
-                                            File(widget.publishData!.mediaList
-                                                .first.thumbnail),
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget.publishData!.mediaList
-                                                  .first.mimeType ==
-                                              "image",
-                                          child: Image.file(
-                                            File(widget.publishData!.mediaList
-                                                .first.mediaPath),
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-
-                                        ///Watermark and Content count display UI
-                                        Stack(
-                                          alignment: Alignment.topRight,
-                                          children: [
-                                            Container(
-                                                color: Colors.black
-                                                    .withOpacity(0.3),
-                                                width: size.width * numD30,
-                                                height: size.width * numD35,
-                                                child: Image.asset(
-                                                  "${commonImagePath}watermark1.png",
+            /// body
+            body: SafeArea(
+              child: Form(
+                key: formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: size.width * numD06,
+                      ),
+                      widget.publishData != null
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD04),
+                              child: SizedBox(
+                                  height: size.width * numD35,
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD06),
+                                          child: Stack(
+                                            children: [
+                                              Visibility(
+                                                visible: widget
+                                                    .publishData!.mimeType
+                                                    .contains("doc"),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD01),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: colorGreyNew),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD06),
+                                                  ),
+                                                  child: Image.asset(
+                                                    "${dummyImagePath}doc_black_icon.png",
+                                                    width: size.width * numD30,
+                                                    height: size.width * numD35,
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                    .publishData!.mimeType
+                                                    .contains("pdf"),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD01),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: colorGreyNew),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD06),
+                                                  ),
+                                                  child: Image.asset(
+                                                    "${dummyImagePath}pngImage.png",
+                                                    width: size.width * numD30,
+                                                    height: size.width * numD35,
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .publishData!
+                                                        .mediaList
+                                                        .first
+                                                        .mimeType ==
+                                                    "audio",
+                                                child: Container(
+                                                  width: size.width * numD30,
+                                                  height: size.width * numD35,
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD01),
+                                                  decoration: BoxDecoration(
+                                                    color: colorThemePink,
+                                                    border: Border.all(
+                                                        color: colorGreyNew),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD06),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.play_arrow_rounded,
+                                                    size: size.width * numD18,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .publishData!
+                                                        .mediaList
+                                                        .first
+                                                        .mimeType ==
+                                                    "video",
+                                                child: Image.file(
+                                                  File(widget
+                                                      .publishData!
+                                                      .mediaList
+                                                      .first
+                                                      .thumbnail),
                                                   width: size.width * numD30,
                                                   height: size.width * numD35,
                                                   fit: BoxFit.cover,
-                                                )),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  top: size.width * numD03,
-                                                  bottom: size.width * numD02,
-                                                  right: size.width * numD03),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 4, horizontal: 6),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.black
-                                                      .withOpacity(0.4),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width *
-                                                              numD013)),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .publishData!
+                                                        .mediaList
+                                                        .first
+                                                        .mimeType ==
+                                                    "image",
+                                                child: Image.file(
+                                                  File(widget
+                                                      .publishData!
+                                                      .mediaList
+                                                      .first
+                                                      .mediaPath),
+                                                  width: size.width * numD30,
+                                                  height: size.width * numD35,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+
+                                              ///Watermark and Content count display UI
+                                              Stack(
+                                                alignment: Alignment.topRight,
                                                 children: [
-                                                  Text(
-                                                      (imageCount +
-                                                              videoCount +
-                                                              audioCount)
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w600)),
-                                                  // if (imageCount > 0) ...[
-                                                  //   Container(
-                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
-                                                  //     child: Row(
-                                                  //       children: [
-                                                  //         Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
-                                                  //         SizedBox(
-                                                  //           width: size.width * numD005,
-                                                  //         ),
-                                                  //         Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (videoCount > 0) ...[
-                                                  //   Container(
-                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
-                                                  //     child: Row(
-                                                  //       children: [
-                                                  //         Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //         SizedBox(
-                                                  //           width: size.width * numD005,
-                                                  //         ),
-                                                  //         Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (audioCount > 0) ...[
-                                                  //   Container(
-                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
-                                                  //     child: Row(
-                                                  //       children: [
-                                                  //         Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //         SizedBox(
-                                                  //           width: size.width * numD005,
-                                                  //         ),
-                                                  //         /*Icon(Icons.mic_none,
-                                                  //             color:Colors.white,
-                                                  //             size:size.width * numD037),*/
-                                                  //
-                                                  //         Image.asset(
-                                                  //           "${iconsPath}ic_mic.png",
-                                                  //           color: Colors.white.withOpacity(0.8),
-                                                  //           height: size.width * numD03,
-                                                  //           width: size.width * numD036,
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (docCount > 0) ...[
-                                                  //   Container(
-                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
-                                                  //     child: Row(
-                                                  //       children: [
-                                                  //         Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //         SizedBox(
-                                                  //           width: size.width * numD005,
-                                                  //         ),
-                                                  //         Image.asset(
-                                                  //           "${iconsPath}doc_icon.png",
-                                                  //           color: Colors.red,
-                                                  //           height: size.width * numD03,
-                                                  //           width: size.width * numD022,
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (pdfCount > 0) ...[
-                                                  //   Container(
-                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
-                                                  //     child: Row(
-                                                  //       children: [
-                                                  //         Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //         SizedBox(
-                                                  //           width: size.width * numD005,
-                                                  //         ),
-                                                  //         Image.asset(
-                                                  //           "${iconsPath}doc_icon.png",
-                                                  //           color: Colors.red,
-                                                  //           height: size.width * numD03,
-                                                  //           width: size.width * numD022,
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
+                                                  Container(
+                                                      color: Colors.black
+                                                          .withOpacity(0.3),
+                                                      width:
+                                                          size.width * numD30,
+                                                      height:
+                                                          size.width * numD35,
+                                                      child: Image.asset(
+                                                        "${commonImagePath}watermark1.png",
+                                                        width:
+                                                            size.width * numD30,
+                                                        height:
+                                                            size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      )),
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top:
+                                                            size.width * numD03,
+                                                        bottom:
+                                                            size.width * numD02,
+                                                        right: size.width *
+                                                            numD03),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4,
+                                                            horizontal: 6),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.4),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(size
+                                                                        .width *
+                                                                    numD013)),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                            (imageCount +
+                                                                    videoCount +
+                                                                    audioCount)
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                    size.width *
+                                                                        numD03,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
+                                                        // if (imageCount > 0) ...[
+                                                        //   Container(
+                                                        //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                        //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                        //     child: Row(
+                                                        //       children: [
+                                                        //         Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                        //         SizedBox(
+                                                        //           width: size.width * numD005,
+                                                        //         ),
+                                                        //         Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (videoCount > 0) ...[
+                                                        //   Container(
+                                                        //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                        //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                        //     child: Row(
+                                                        //       children: [
+                                                        //         Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //         SizedBox(
+                                                        //           width: size.width * numD005,
+                                                        //         ),
+                                                        //         Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (audioCount > 0) ...[
+                                                        //   Container(
+                                                        //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                        //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                        //     child: Row(
+                                                        //       children: [
+                                                        //         Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //         SizedBox(
+                                                        //           width: size.width * numD005,
+                                                        //         ),
+                                                        //         /*Icon(Icons.mic_none,
+                                                        //             color:Colors.white,
+                                                        //             size:size.width * numD037),*/
+                                                        //
+                                                        //         Image.asset(
+                                                        //           "${iconsPath}ic_mic.png",
+                                                        //           color: Colors.white.withOpacity(0.8),
+                                                        //           height: size.width * numD03,
+                                                        //           width: size.width * numD036,
+                                                        //         ),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (docCount > 0) ...[
+                                                        //   Container(
+                                                        //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                        //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                        //     child: Row(
+                                                        //       children: [
+                                                        //         Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //         SizedBox(
+                                                        //           width: size.width * numD005,
+                                                        //         ),
+                                                        //         Image.asset(
+                                                        //           "${iconsPath}doc_icon.png",
+                                                        //           color: Colors.red,
+                                                        //           height: size.width * numD03,
+                                                        //           width: size.width * numD022,
+                                                        //         ),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (pdfCount > 0) ...[
+                                                        //   Container(
+                                                        //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                        //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                        //     child: Row(
+                                                        //       children: [
+                                                        //         Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //         SizedBox(
+                                                        //           width: size.width * numD005,
+                                                        //         ),
+                                                        //         Image.asset(
+                                                        //           "${iconsPath}doc_icon.png",
+                                                        //           color: Colors.red,
+                                                        //           height: size.width * numD03,
+                                                        //           width: size.width * numD022,
+                                                        //         ),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
 
-                                        /*   widget.hideDraft && widget.myContentData != null
+                                              /*   widget.hideDraft && widget.myContentData != null
                                       ? Positioned(
                                           right: size.width * numD02,
                                           top: size.width * numD02,
@@ -721,361 +760,401 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                               )),
                                         )
                                       : const SizedBox.shrink(),*/
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD03,
-                                ),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: size.height,
-                                    child: TextFormField(
-                                      controller: descriptionController,
-                                      maxLines: 100,
-                                      keyboardType: TextInputType.multiline,
-                                      cursorColor: Colors.black,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
-                                      decoration: InputDecoration(
-                                        hintText: publishContentHintText,
-                                        hintStyle: TextStyle(
-                                            color: colorHint,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: size.width * numD03),
-                                        disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      // validator: checkRequiredValidator,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
-                        child: SizedBox(
-                            height: size.width * numD35,
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    debugPrint("tapped here ");
-                                    List<MediaData> mediaListData = [];
-                                    debugPrint(
-                                        "Media: ${widget.myContentData?.longitude} , ${widget.myContentData?.latitude}");
-                                    widget.myContentData?.contentMediaList
-                                        .forEach((item) {
-                                      mediaListData.add(MediaData(
-                                          mimeType: item.mediaType,
-                                          latitude:
-                                              widget.myContentData?.latitude ??
-                                                  "",
-                                          longitude:
-                                              widget.myContentData?.longitude ??
-                                                  "",
-                                          location:
-                                              widget.myContentData?.location ??
-                                                  "",
-                                          dateTime: timestampController.text,
-                                          mediaPath: item.media,
-                                          thumbnail: item.thumbNail));
-                                    });
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => PreviewScreen(
-                                                pickAgain: false,
-                                                cameraListData: [],
-                                                cameraData: null,
-                                                mediaList: mediaListData,
-                                                type: "draft",
-                                                myContentData:
-                                                    widget.myContentData)));
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD06),
-                                    child: Stack(
-                                      children: [
-                                        Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "doc",
-                                          child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
+                                      SizedBox(
+                                        width: size.width * numD03,
+                                      ),
+                                      Expanded(
+                                        child: SizedBox(
+                                          height: size.height,
+                                          child: TextFormField(
+                                            controller: descriptionController,
+                                            maxLines: 100,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            cursorColor: Colors.black,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                            decoration: InputDecoration(
+                                              hintText: publishContentHintText,
+                                              hintStyle: TextStyle(
+                                                  color: colorHint,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize:
+                                                      size.width * numD03),
+                                              disabledBorder:
+                                                  OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD04),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                              width: 1,
+                                                              color: Colors
+                                                                  .black)),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width * numD04),
+                                                  borderSide: const BorderSide(
+                                                      width: 1,
+                                                      color: Colors.black)),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width * numD04),
+                                                  borderSide: const BorderSide(
+                                                      width: 1,
+                                                      color: Colors.black)),
+                                              errorBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width * numD04),
+                                                  borderSide: const BorderSide(
+                                                      width: 1,
+                                                      color: Colors.black)),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD04),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                              width: 1,
+                                                              color: Colors
+                                                                  .black)),
                                             ),
-                                            child: Image.asset(
-                                              "${dummyImagePath}doc_black_icon.png",
-                                              width: size.width * numD30,
-                                              height: size.width * numD35,
-                                            ),
+                                            // validator: checkRequiredValidator,
                                           ),
                                         ),
-                                        Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "pdf",
-                                          child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
-                                            ),
-                                            child: Image.asset(
-                                              "${dummyImagePath}pngImage.png",
-                                              width: size.width * numD30,
-                                              height: size.width * numD35,
-                                            ),
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "audio",
-                                          child: Container(
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              color: colorThemePink,
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
-                                            ),
-                                            child: Icon(
-                                              Icons.play_arrow_rounded,
-                                              size: size.width * numD18,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .thumbNail ==
-                                              "video",
-                                          child: Image.network(
-                                            contentImageUrl +
-                                                widget
-                                                    .myContentData!
-                                                    .contentMediaList
-                                                    .first
-                                                    .thumbNail,
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "image",
-                                          child: Image.network(
-                                            contentImageUrl +
-                                                widget
-                                                    .myContentData!
-                                                    .contentMediaList
-                                                    .first
-                                                    .media,
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-
-                                        ///Watermark and Content count display UI
-                                        Stack(
-                                          alignment: Alignment.topRight,
-                                          children: [
-                                            Container(
-                                                color: Colors.black
-                                                    .withOpacity(0.3),
-                                                width: size.width * numD30,
-                                                height: size.width * numD35,
-                                                child: Image.asset(
-                                                  "${commonImagePath}watermark1.png",
+                                      )
+                                    ],
+                                  )),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * numD04),
+                              child: SizedBox(
+                                  height: size.width * numD35,
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          debugPrint("tapped here ");
+                                          List<MediaData> mediaListData = [];
+                                          debugPrint(
+                                              "Media: ${widget.myContentData?.longitude} , ${widget.myContentData?.latitude}");
+                                          widget.myContentData?.contentMediaList
+                                              .forEach((item) {
+                                            mediaListData.add(MediaData(
+                                                mimeType: item.mediaType,
+                                                latitude: widget.myContentData
+                                                        ?.latitude ??
+                                                    "",
+                                                longitude: widget.myContentData
+                                                        ?.longitude ??
+                                                    "",
+                                                location: widget.myContentData
+                                                        ?.location ??
+                                                    "",
+                                                dateTime:
+                                                    timestampController.text,
+                                                mediaPath: item.media,
+                                                thumbnail: item.thumbNail));
+                                          });
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PreviewScreen(
+                                                          pickAgain: false,
+                                                          cameraListData: [],
+                                                          cameraData: null,
+                                                          mediaList:
+                                                              mediaListData,
+                                                          type: "draft",
+                                                          myContentData: widget
+                                                              .myContentData)));
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD06),
+                                          child: Stack(
+                                            children: [
+                                              Visibility(
+                                                visible: widget
+                                                        .myContentData!
+                                                        .contentMediaList
+                                                        .first
+                                                        .mediaType ==
+                                                    "doc",
+                                                child: Container(
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD01),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: colorGreyNew),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD06),
+                                                  ),
+                                                  child: Image.asset(
+                                                    "${dummyImagePath}doc_black_icon.png",
+                                                    width: size.width * numD30,
+                                                    height: size.width * numD35,
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .myContentData!
+                                                        .contentMediaList
+                                                        .first
+                                                        .mediaType ==
+                                                    "pdf",
+                                                child: Container(
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD01),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: colorGreyNew),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD06),
+                                                  ),
+                                                  child: Image.asset(
+                                                    "${dummyImagePath}pngImage.png",
+                                                    width: size.width * numD30,
+                                                    height: size.width * numD35,
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .myContentData!
+                                                        .contentMediaList
+                                                        .first
+                                                        .mediaType ==
+                                                    "audio",
+                                                child: Container(
+                                                  width: size.width * numD30,
+                                                  height: size.width * numD35,
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD01),
+                                                  decoration: BoxDecoration(
+                                                    color: colorThemePink,
+                                                    border: Border.all(
+                                                        color: colorGreyNew),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD06),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.play_arrow_rounded,
+                                                    size: size.width * numD18,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .myContentData!
+                                                        .contentMediaList
+                                                        .first
+                                                        .thumbNail ==
+                                                    "video",
+                                                child: Image.network(
+                                                  contentImageUrl +
+                                                      widget
+                                                          .myContentData!
+                                                          .contentMediaList
+                                                          .first
+                                                          .thumbNail,
                                                   width: size.width * numD30,
                                                   height: size.width * numD35,
                                                   fit: BoxFit.cover,
-                                                )),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  top: size.width * numD03,
-                                                  bottom: size.width * numD02,
-                                                  right: size.width * numD03),
-                                              // padding: EdgeInsets.only(left: size.width * numD02, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 4, horizontal: 6),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.black
-                                                      .withOpacity(0.4),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width *
-                                                              numD013)),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: widget
+                                                        .myContentData!
+                                                        .contentMediaList
+                                                        .first
+                                                        .mediaType ==
+                                                    "image",
+                                                child: Image.network(
+                                                  contentImageUrl +
+                                                      widget
+                                                          .myContentData!
+                                                          .contentMediaList
+                                                          .first
+                                                          .media,
+                                                  width: size.width * numD30,
+                                                  height: size.width * numD35,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+
+                                              ///Watermark and Content count display UI
+                                              Stack(
+                                                alignment: Alignment.topRight,
                                                 children: [
-                                                  Text(
-                                                      (imageCount +
-                                                              videoCount +
-                                                              audioCount)
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w600)),
-                                                  // if (imageCount > 0) ...[
-                                                  //   Row(
-                                                  //     children: [
-                                                  //       Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
-                                                  //       SizedBox(
-                                                  //         width: size.width * numD005,
-                                                  //       ),
-                                                  //       Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
-                                                  //     ],
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (videoCount > 0) ...[
-                                                  //   Row(
-                                                  //     children: [
-                                                  //       Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //       SizedBox(
-                                                  //         width: size.width * numD005,
-                                                  //       ),
-                                                  //       Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
-                                                  //     ],
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (audioCount > 0) ...[
-                                                  //   Row(
-                                                  //     children: [
-                                                  //       Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //       SizedBox(
-                                                  //         width: size.width * numD005,
-                                                  //       ),
-                                                  //       Image.asset(
-                                                  //         "${iconsPath}ic_mic.png",
-                                                  //         color: Colors.white.withOpacity(0.8),
-                                                  //         height: size.width * numD03,
-                                                  //         width: size.width * numD022,
-                                                  //       ),
-                                                  //     ],
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (docCount > 0) ...[
-                                                  //   Row(
-                                                  //     children: [
-                                                  //       Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //       SizedBox(
-                                                  //         width: size.width * numD005,
-                                                  //       ),
-                                                  //       Image.asset(
-                                                  //         "${iconsPath}doc_icon.png",
-                                                  //         color: Colors.red,
-                                                  //         height: size.width * numD03,
-                                                  //         width: size.width * numD022,
-                                                  //       ),
-                                                  //     ],
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
-                                                  // if (pdfCount > 0) ...[
-                                                  //   Row(
-                                                  //     children: [
-                                                  //       Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
-                                                  //       SizedBox(
-                                                  //         width: size.width * numD005,
-                                                  //       ),
-                                                  //       Image.asset(
-                                                  //         "${iconsPath}doc_icon.png",
-                                                  //         color: Colors.red,
-                                                  //         height: size.width * numD03,
-                                                  //         width: size.width * numD022,
-                                                  //       ),
-                                                  //     ],
-                                                  //   ),
-                                                  //   SizedBox(
-                                                  //     height: size.width * numD005,
-                                                  //   ),
-                                                  // ],
+                                                  Container(
+                                                      color: Colors.black
+                                                          .withOpacity(0.3),
+                                                      width:
+                                                          size.width * numD30,
+                                                      height:
+                                                          size.width * numD35,
+                                                      child: Image.asset(
+                                                        "${commonImagePath}watermark1.png",
+                                                        width:
+                                                            size.width * numD30,
+                                                        height:
+                                                            size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      )),
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top:
+                                                            size.width * numD03,
+                                                        bottom:
+                                                            size.width * numD02,
+                                                        right: size.width *
+                                                            numD03),
+                                                    // padding: EdgeInsets.only(left: size.width * numD02, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4,
+                                                            horizontal: 6),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.4),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(size
+                                                                        .width *
+                                                                    numD013)),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                            (imageCount +
+                                                                    videoCount +
+                                                                    audioCount)
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                    size.width *
+                                                                        numD03,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
+                                                        // if (imageCount > 0) ...[
+                                                        //   Row(
+                                                        //     children: [
+                                                        //       Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                        //       SizedBox(
+                                                        //         width: size.width * numD005,
+                                                        //       ),
+                                                        //       Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
+                                                        //     ],
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (videoCount > 0) ...[
+                                                        //   Row(
+                                                        //     children: [
+                                                        //       Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //       SizedBox(
+                                                        //         width: size.width * numD005,
+                                                        //       ),
+                                                        //       Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
+                                                        //     ],
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (audioCount > 0) ...[
+                                                        //   Row(
+                                                        //     children: [
+                                                        //       Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //       SizedBox(
+                                                        //         width: size.width * numD005,
+                                                        //       ),
+                                                        //       Image.asset(
+                                                        //         "${iconsPath}ic_mic.png",
+                                                        //         color: Colors.white.withOpacity(0.8),
+                                                        //         height: size.width * numD03,
+                                                        //         width: size.width * numD022,
+                                                        //       ),
+                                                        //     ],
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (docCount > 0) ...[
+                                                        //   Row(
+                                                        //     children: [
+                                                        //       Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //       SizedBox(
+                                                        //         width: size.width * numD005,
+                                                        //       ),
+                                                        //       Image.asset(
+                                                        //         "${iconsPath}doc_icon.png",
+                                                        //         color: Colors.red,
+                                                        //         height: size.width * numD03,
+                                                        //         width: size.width * numD022,
+                                                        //       ),
+                                                        //     ],
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                        // if (pdfCount > 0) ...[
+                                                        //   Row(
+                                                        //     children: [
+                                                        //       Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                        //       SizedBox(
+                                                        //         width: size.width * numD005,
+                                                        //       ),
+                                                        //       Image.asset(
+                                                        //         "${iconsPath}doc_icon.png",
+                                                        //         color: Colors.red,
+                                                        //         height: size.width * numD03,
+                                                        //         width: size.width * numD022,
+                                                        //       ),
+                                                        //     ],
+                                                        //   ),
+                                                        //   SizedBox(
+                                                        //     height: size.width * numD005,
+                                                        //   ),
+                                                        // ],
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
 
-                                        /*   widget.hideDraft && widget.myContentData != null
+                                              /*   widget.hideDraft && widget.myContentData != null
                                       ? Positioned(
                                           right: size.width * numD02,
                                           top: size.width * numD02,
@@ -1165,621 +1244,655 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                               )),
                                         )
                                       : const SizedBox.shrink(),*/
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD03,
-                                ),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: size.height,
-                                    child: TextFormField(
-                                      controller: descriptionController,
-                                      maxLines: 100,
-                                      keyboardType: TextInputType.multiline,
-                                      cursorColor: Colors.black,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
-                                      decoration: InputDecoration(
-                                        hintText: publishContentHintText,
-                                        hintStyle: TextStyle(
-                                            color: colorHint,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: size.width * numD03),
-                                        disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                      ),
-                                      // validator: checkRequiredValidator,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )),
-                      ),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                const Divider(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
-                SizedBox(
-                  height: size.width * numD025,
-                ),
-
-                /// Speak
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: size.width * numD32,
-                        child: Text(
-                          speakText.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-
-                      /// audio
-                      Expanded(
-                          child: InkWell(
-                        onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AudioRecorderScreen()))
-                              .then((value) {
-                            if (value != null) {
-                              audioPath = value[0].toString();
-                              audioDuration = value[1].toString();
-                              setState(() {});
-                              debugPrint("AudioPath:$audioPath");
-                              debugPrint("audioDuration:$audioDuration");
-                              initWaveData();
-                            }
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: size.width * numD03,
-                              horizontal: size.width * numD05),
-                          decoration: BoxDecoration(
-                              color: colorLightGrey,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD06)),
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: audioPath.isNotEmpty
-                                    ? () {
-                                        debugPrint('audio::::::$audioPath');
-                                        if (audioPlaying) {
-                                          pauseSound();
-                                        } else {
-                                          playSound();
-                                        }
-                                        audioPlaying = !audioPlaying;
-                                        setState(() {});
-                                      }
-                                    : null,
-                                child: SizedBox(
-                                  height: size.width * numD06,
-                                  child: audioPath.isEmpty
-                                      ? Image.asset(
-                                          "${iconsPath}ic_mic.png",
-                                          width: size.width * numD04,
-                                          height: size.width * numD04,
-                                        )
-                                      : Icon(
-                                          audioPlaying
-                                              ? Icons.pause_circle
-                                              : Icons.play_circle,
-                                          color: Colors.black,
-                                          size: size.width * numD06,
-                                        ),
-                                ),
-                              ),
-                              audioPath.isNotEmpty
-                                  ? Expanded(
-                                      child: AudioFileWaveforms(
-                                        size: Size(
-                                            size.width, size.width * numD04),
-                                        playerController: controller,
-                                        enableSeekGesture: false,
-                                        animationCurve: Curves.bounceIn,
-                                        waveformType: WaveformType.long,
-                                        continuousWaveform: true,
-                                        playerWaveStyle: PlayerWaveStyle(
-                                          fixedWaveColor: Colors.black,
-                                          liveWaveColor: colorThemePink,
-                                          spacing: 6,
-                                          liveWaveGradient: ui.Gradient.linear(
-                                            const Offset(70, 50),
-                                            Offset(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    2,
-                                                0),
-                                            [Colors.green, Colors.white70],
+                                            ],
                                           ),
-                                          fixedWaveGradient: ui.Gradient.linear(
-                                            const Offset(70, 50),
-                                            Offset(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    2,
-                                                0),
-                                            [Colors.green, Colors.white70],
-                                          ),
-                                          seekLineColor: colorThemePink,
-                                          seekLineThickness: 2,
-                                          showSeekLine: true,
-                                          showBottom: true,
                                         ),
                                       ),
-                                    )
-                                  : Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD02),
-                                      child: Text(
-                                        "00:00",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
+                                      SizedBox(
+                                        width: size.width * numD03,
                                       ),
-                                    ),
-                            ],
-                          ),
-                        ),
-                      ))
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD025,
-                ),
-                const Divider(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
-                SizedBox(
-                  height: size.width * numD022,
-                ),
-
-                /// Location
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: Row(
-                    children: [
+                                      Expanded(
+                                        child: SizedBox(
+                                          height: size.height,
+                                          child: TextFormField(
+                                            controller: descriptionController,
+                                            maxLines: 100,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            cursorColor: Colors.black,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                            decoration: InputDecoration(
+                                              hintText: publishContentHintText,
+                                              hintStyle: TextStyle(
+                                                  color: colorHint,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize:
+                                                      size.width * numD03),
+                                              disabledBorder:
+                                                  OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD04),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                              width: 1,
+                                                              color: Colors
+                                                                  .black)),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width * numD04),
+                                                  borderSide: const BorderSide(
+                                                      width: 1,
+                                                      color: Colors.black)),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width * numD04),
+                                                  borderSide: const BorderSide(
+                                                      width: 1,
+                                                      color: Colors.black)),
+                                              errorBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          size.width * numD04),
+                                                  borderSide: const BorderSide(
+                                                      width: 1,
+                                                      color: Colors.black)),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width *
+                                                                  numD04),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                              width: 1,
+                                                              color: Colors
+                                                                  .black)),
+                                            ),
+                                            // validator: checkRequiredValidator,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  )),
+                            ),
                       SizedBox(
-                        width: size.width * numD32,
-                        child: Text(
-                          locationText.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        height: size.width * numD02,
                       ),
-                      Expanded(
-                          child: TextFormField(
-                        controller: locationController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        readOnly: true,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD028,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal),
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: colorLightGrey,
-                            hintText: "",
-                            hintStyle: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: colorHint,
-                                fontWeight: FontWeight.normal),
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                  left: size.width * numD04,
-                                  right: size.width * numD02),
-                              child: const ImageIcon(
-                                  AssetImage("${iconsPath}ic_location.png")),
-                            ),
-                            prefixIconConstraints: BoxConstraints(
-                              maxHeight: size.width * numD05,
-                            ),
-                            prefixIconColor: colorTextFieldIcon,
-                            disabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            contentPadding:
-                                EdgeInsets.only(left: size.width * numD06)),
-                        //  validator: checkRequiredValidator,
-                      ))
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                const Divider(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
-                SizedBox(
-                  height: size.width * numD025,
-                ),
-
-                /// Time Stamp
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: Row(
-                    children: [
+                      const Divider(
+                        color: colorLightGrey,
+                        thickness: 1,
+                      ),
                       SizedBox(
-                        width: size.width * numD32,
-                        child: Text(
-                          timestampText.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        height: size.width * numD025,
                       ),
-                      Expanded(
-                          child: TextFormField(
-                        readOnly: true,
-                        controller: timestampController,
-                        style: commonTextStyle(
-                            fontSize: size.width * numD028,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            size: size),
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: colorLightGrey,
-                            hintText: "Grenfell Tower, London",
-                            hintStyle: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: colorHint,
-                                fontWeight: FontWeight.normal),
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                  left: size.width * numD04,
-                                  right: size.width * numD02),
-                              child: const ImageIcon(
-                                  AssetImage("${iconsPath}ic_clock.png")),
-                            ),
-                            prefixIconConstraints: BoxConstraints(
-                              maxHeight: size.width * numD04,
-                            ),
-                            prefixIconColor: colorTextFieldIcon,
-                            disabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                )),
-                            contentPadding:
-                                EdgeInsets.only(left: size.width * numD06)),
-                        //  validator: checkRequiredValidator,
-                      ))
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                const Divider(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
 
-                /// hash Tags
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: size.width * numD32,
-                        margin: EdgeInsets.only(top: size.width * numD04),
-                        child: Text(
-                          "${hashtagText.toUpperCase()}S",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      /// Speak
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        child: Row(
                           children: [
-                            Wrap(
-                              children: List.generate(
-                                  selectedHashtagList.length, (index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      right: index <
-                                              (selectedHashtagList.length - 1)
-                                          ? size.width * numD02
-                                          : 0),
-                                  child: Chip(
-                                    label: Text(
-                                      "#${selectedHashtagList[index].name}",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    backgroundColor: colorLightGrey,
-                                    deleteIcon: Icon(
-                                      Icons.close,
-                                      color: Colors.black,
-                                      size: size.width * numD045,
-                                    ),
-                                    onDeleted: () {
-                                      selectedHashtagList.removeAt(index);
-                                      hashtagController.text =
-                                          selectedHashtagList.isNotEmpty
-                                              ? "Add more"
-                                              : "Add hashtags";
-                                      setState(() {});
-                                    },
-                                  ),
-                                );
-                              }),
-                            ),
                             SizedBox(
-                              height: size.width * numD02,
+                              width: size.width * numD32,
+                              child: Text(
+                                speakText.toUpperCase(),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                            TextFormField(
-                              controller: hashtagController,
-                              readOnly: true,
-                              autofocus: false,
+
+                            /// audio
+                            Expanded(
+                                child: InkWell(
                               onTap: () {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (context) =>
-                                            HashTagSearchScreen(
-                                              country: widget.publishData !=
-                                                      null
-                                                  ? widget.publishData!.country
-                                                  : '',
-                                              tagData: hashtagList,
-                                              countryTagId:
-                                                  hashtagList.isNotEmpty
-                                                      ? hashtagList.first.id
-                                                      : "",
-                                            )))
+                                            const AudioRecorderScreen()))
                                     .then((value) {
                                   if (value != null) {
-                                    // hashtagList.clear();
-                                    //  hashtagList.addAll(value as List<HashTagData>);
-                                    selectedHashtagList
-                                        .addAll(value as List<HashTagData>);
-                                    hashtagController.text =
-                                        selectedHashtagList.isNotEmpty
-                                            ? "Add more"
-                                            : "Add hashtags";
+                                    audioPath = value[0].toString();
+                                    audioDuration = value[1].toString();
                                     setState(() {});
+                                    debugPrint("AudioPath:$audioPath");
+                                    debugPrint("audioDuration:$audioDuration");
+                                    initWaveData();
                                   }
                                 });
                               },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: size.width * numD03,
+                                    horizontal: size.width * numD05),
+                                decoration: BoxDecoration(
+                                    color: colorLightGrey,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD06)),
+                                child: Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: audioPath.isNotEmpty
+                                          ? () {
+                                              debugPrint(
+                                                  'audio::::::$audioPath');
+                                              if (audioPlaying) {
+                                                pauseSound();
+                                              } else {
+                                                playSound();
+                                              }
+                                              audioPlaying = !audioPlaying;
+                                              setState(() {});
+                                            }
+                                          : null,
+                                      child: SizedBox(
+                                        height: size.width * numD06,
+                                        child: audioPath.isEmpty
+                                            ? Image.asset(
+                                                "${iconsPath}ic_mic.png",
+                                                width: size.width * numD04,
+                                                height: size.width * numD04,
+                                              )
+                                            : Icon(
+                                                audioPlaying
+                                                    ? Icons.pause_circle
+                                                    : Icons.play_circle,
+                                                color: Colors.black,
+                                                size: size.width * numD06,
+                                              ),
+                                      ),
+                                    ),
+                                    audioPath.isNotEmpty
+                                        ? Expanded(
+                                            child: AudioFileWaveforms(
+                                              size: Size(size.width,
+                                                  size.width * numD04),
+                                              playerController: controller,
+                                              enableSeekGesture: false,
+                                              animationCurve: Curves.bounceIn,
+                                              waveformType: WaveformType.long,
+                                              continuousWaveform: true,
+                                              playerWaveStyle: PlayerWaveStyle(
+                                                fixedWaveColor: Colors.black,
+                                                liveWaveColor: colorThemePink,
+                                                spacing: 6,
+                                                liveWaveGradient:
+                                                    ui.Gradient.linear(
+                                                  const Offset(70, 50),
+                                                  Offset(
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2,
+                                                      0),
+                                                  [
+                                                    Colors.green,
+                                                    Colors.white70
+                                                  ],
+                                                ),
+                                                fixedWaveGradient:
+                                                    ui.Gradient.linear(
+                                                  const Offset(70, 50),
+                                                  Offset(
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2,
+                                                      0),
+                                                  [
+                                                    Colors.green,
+                                                    Colors.white70
+                                                  ],
+                                                ),
+                                                seekLineColor: colorThemePink,
+                                                seekLineThickness: 2,
+                                                showSeekLine: true,
+                                                showBottom: true,
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    size.width * numD02),
+                                            child: Text(
+                                              "00:00",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width * numD03,
+                                                  color: Colors.black,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            ))
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.width * numD025,
+                      ),
+                      const Divider(
+                        color: colorLightGrey,
+                        thickness: 1,
+                      ),
+                      SizedBox(
+                        height: size.width * numD022,
+                      ),
+
+                      /// Location
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: size.width * numD32,
+                              child: Text(
+                                locationText.toUpperCase(),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                                child: TextFormField(
+                              controller: locationController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              readOnly: true,
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD03,
+                                  fontSize: size.width * numD028,
                                   color: Colors.black,
                                   fontWeight: FontWeight.normal),
                               decoration: InputDecoration(
-                                  hintText: "Add hashtags",
+                                  filled: true,
+                                  fillColor: colorLightGrey,
+                                  hintText: "",
                                   hintStyle: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD03,
                                       color: colorHint,
                                       fontWeight: FontWeight.normal),
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * numD04,
+                                        right: size.width * numD02),
+                                    child: const ImageIcon(AssetImage(
+                                        "${iconsPath}ic_location.png")),
+                                  ),
+                                  prefixIconConstraints: BoxConstraints(
+                                    maxHeight: size.width * numD05,
+                                  ),
+                                  prefixIconColor: colorTextFieldIcon,
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD08),
                                       borderSide: const BorderSide(
-                                          width: 1,
-                                          color: colorGoogleButtonBorder)),
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD08),
                                       borderSide: const BorderSide(
-                                          width: 1,
-                                          color: colorGoogleButtonBorder)),
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD08),
                                       borderSide: const BorderSide(
-                                          width: 1,
-                                          color: colorGoogleButtonBorder)),
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
                                   errorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(size.width * numD08),
-                                      borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
-                                  focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
-                                  contentPadding: EdgeInsets.only(left: size.width * numD06)),
-                              /* validator: (value) {
-                                if (hashtagList.isEmpty) {
-                                  return requiredText;
-                                }
-                                return null;
-                              },*/
-                            )
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  contentPadding: EdgeInsets.only(
+                                      left: size.width * numD06)),
+                              //  validator: checkRequiredValidator,
+                            ))
                           ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                const Divider(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: Row(
-                    children: [
-                      Text(
-                        categoryText.toUpperCase(),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
                       ),
-                      const Spacer(),
-                      selectedCategory != null
-                          ? InkWell(
-                              onTap: () {
-                                int selectedPos = categoryList
-                                    .indexWhere((element) => element.selected);
-                                if (selectedPos > 0) {
-                                  categoryList.swap(0, selectedPos);
-                                }
-                                //  showCategoryDialogBox(context, size);
-                                showCategoryBottomSheet(size);
-                              },
-                              child: Row(
+                      SizedBox(
+                        height: size.width * numD02,
+                      ),
+                      const Divider(
+                        color: colorLightGrey,
+                        thickness: 1,
+                      ),
+                      SizedBox(
+                        height: size.width * numD025,
+                      ),
+
+                      /// Time Stamp
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: size.width * numD32,
+                              child: Text(
+                                timestampText.toUpperCase(),
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                                child: TextFormField(
+                              readOnly: true,
+                              controller: timestampController,
+                              style: commonTextStyle(
+                                  fontSize: size.width * numD028,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  size: size),
+                              decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: colorLightGrey,
+                                  hintText: "Grenfell Tower, London",
+                                  hintStyle: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD03,
+                                      color: colorHint,
+                                      fontWeight: FontWeight.normal),
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * numD04,
+                                        right: size.width * numD02),
+                                    child: const ImageIcon(
+                                        AssetImage("${iconsPath}ic_clock.png")),
+                                  ),
+                                  prefixIconConstraints: BoxConstraints(
+                                    maxHeight: size.width * numD04,
+                                  ),
+                                  prefixIconColor: colorTextFieldIcon,
+                                  disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD08),
+                                      borderSide: const BorderSide(
+                                        width: 0,
+                                        style: BorderStyle.none,
+                                      )),
+                                  contentPadding: EdgeInsets.only(
+                                      left: size.width * numD06)),
+                              //  validator: checkRequiredValidator,
+                            ))
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.width * numD02,
+                      ),
+                      const Divider(
+                        color: colorLightGrey,
+                        thickness: 1,
+                      ),
+
+                      /// hash Tags
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: size.width * numD32,
+                              margin: EdgeInsets.only(top: size.width * numD04),
+                              child: Text(
+                                "${hashtagText.toUpperCase()}S",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    selectedCategory!.name.toCapitalized(),
+                                  Wrap(
+                                    children: List.generate(
+                                        selectedHashtagList.length, (index) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            right: index <
+                                                    (selectedHashtagList
+                                                            .length -
+                                                        1)
+                                                ? size.width * numD02
+                                                : 0),
+                                        child: Chip(
+                                          label: Text(
+                                            "#${selectedHashtagList[index].name}",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          backgroundColor: colorLightGrey,
+                                          deleteIcon: Icon(
+                                            Icons.close,
+                                            color: Colors.black,
+                                            size: size.width * numD045,
+                                          ),
+                                          onDeleted: () {
+                                            selectedHashtagList.removeAt(index);
+                                            hashtagController.text =
+                                                selectedHashtagList.isNotEmpty
+                                                    ? "Add more"
+                                                    : "Add hashtags";
+                                            setState(() {});
+                                          },
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                  SizedBox(
+                                    height: size.width * numD02,
+                                  ),
+                                  TextFormField(
+                                    controller: hashtagController,
+                                    readOnly: true,
+                                    autofocus: false,
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HashTagSearchScreen(
+                                                    country:
+                                                        widget.publishData !=
+                                                                null
+                                                            ? widget
+                                                                .publishData!
+                                                                .country
+                                                            : '',
+                                                    tagData: hashtagList,
+                                                    countryTagId: hashtagList
+                                                            .isNotEmpty
+                                                        ? hashtagList.first.id
+                                                        : "",
+                                                  )))
+                                          .then((value) {
+                                        if (value != null) {
+                                          // hashtagList.clear();
+                                          //  hashtagList.addAll(value as List<HashTagData>);
+                                          selectedHashtagList.addAll(
+                                              value as List<HashTagData>);
+                                          hashtagController.text =
+                                              selectedHashtagList.isNotEmpty
+                                                  ? "Add more"
+                                                  : "Add hashtags";
+                                          setState(() {});
+                                        }
+                                      });
+                                    },
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize: size.width * numD03,
                                         color: Colors.black,
                                         fontWeight: FontWeight.normal),
-                                  ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: Colors.black,
-                                    size: size.width * numD06,
+                                    decoration: InputDecoration(
+                                        hintText: "Add hashtags",
+                                        hintStyle: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD03,
+                                            color: colorHint,
+                                            fontWeight: FontWeight.normal),
+                                        disabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD08),
+                                            borderSide: const BorderSide(
+                                                width: 1,
+                                                color:
+                                                    colorGoogleButtonBorder)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD08),
+                                            borderSide: const BorderSide(
+                                                width: 1,
+                                                color:
+                                                    colorGoogleButtonBorder)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD08),
+                                            borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                        contentPadding: EdgeInsets.only(left: size.width * numD06)),
+                                    /* validator: (value) {
+                                if (hashtagList.isEmpty) {
+                                  return requiredText;
+                                }
+                                return null;
+                              },*/
                                   )
                                 ],
                               ),
                             )
-                          : Container(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.width * numD02,
+                      ),
+                      const Divider(
+                        color: colorLightGrey,
+                        thickness: 1,
+                      ),
+                      SizedBox(
+                        height: size.width * numD02,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        child: Row(
+                          children: [
+                            Text(
+                              categoryText.toUpperCase(),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD035,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            selectedCategory != null
+                                ? InkWell(
+                                    onTap: () {
+                                      int selectedPos = categoryList.indexWhere(
+                                          (element) => element.selected);
+                                      if (selectedPos > 0) {
+                                        categoryList.swap(0, selectedPos);
+                                      }
+                                      //  showCategoryDialogBox(context, size);
+                                      showCategoryBottomSheet(size);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          selectedCategory!.name
+                                              .toCapitalized(),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD03,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: Colors.black,
+                                          size: size.width * numD06,
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
 
-                      /*selectedCategory != null
+                            /*selectedCategory != null
                           ? DropdownButton<CategoryData>(
                               underline: Container(),
                               value: selectedCategory,
@@ -1807,549 +1920,575 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               ),
                             )
                           : Container()*/
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD02,
-                ),
-                const Divider(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
-                SizedBox(
-                  height: size.width * numD04,
-                ),
-                Text(
-                  chooseHowSellText.toUpperCase(),
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD04,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: size.width * numD06,
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            selectedSellType = sharedText;
-                            setState(() {});
-                          },
-                          child: Container(
-                            height: size.width * numD40,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: selectedSellType == sharedText
-                                        ? Colors.white
-                                        : Colors.black,
-                                    width: 1.5),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04)),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Container(
-                                      color: selectedSellType == sharedText
-                                          ? colorThemePink
-                                          : Colors.white,
-                                      alignment: Alignment.topCenter,
-                                    ),
-                                  ),
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.center,
-                                        width: size.width * numD35,
-                                        height: size.width * numD08,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD017),
-                                        decoration: BoxDecoration(
-                                          color: selectedSellType == sharedText
-                                              ? Colors.black
-                                              : Colors.white,
-                                        ),
-                                        child: Text(
-                                          recommendedPriceText,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: size.width * numD026,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD04,
-                                      ),
-                                      Image.asset(
-                                        "${iconsPath}ic_share.png",
-                                        height: size.width * numD07,
-                                      )
-                                    ],
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          sharedText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD04,
-                                              color:
-                                                  selectedSellType == sharedText
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          height: size.width * numD01,
-                                        ),
-                                        Container(
-                                          alignment: Alignment.center,
-                                          width: size.width * numD35,
-                                          height: size.width * numD08,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: size.width * numD017),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                selectedSellType == sharedText
-                                                    ? Colors.black
-                                                    : Colors.white,
-                                          ),
-                                          child: Text(
-                                            sharedPrice,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: size.width * numD03,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
                       ),
                       SizedBox(
-                        width: size.width * numD12,
+                        height: size.width * numD02,
                       ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            selectedSellType = exclusiveText;
-                            setState(() {});
-                          },
-                          child: Container(
-                            height: size.width * numD40,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: selectedSellType == exclusiveText
-                                        ? Colors.white
-                                        : Colors.black,
-                                    width: 1.5),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04)),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Container(
-                                      color: selectedSellType == exclusiveText
-                                          ? colorThemePink
-                                          : Colors.white,
-                                      alignment: Alignment.topCenter,
-                                    ),
-                                  ),
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.center,
-                                        width: size.width * numD35,
-                                        height: size.width * numD08,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD017),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              selectedSellType == exclusiveText
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                        ),
-                                        child: Text(
-                                          recommendedPriceText,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: size.width * numD026,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD04,
-                                      ),
-                                      Image.asset(
-                                        "${iconsPath}ic_exclusive.png",
-                                        height: size.width * numD07,
-                                      )
-                                    ],
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          exclusiveText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD04,
-                                              color: selectedSellType ==
-                                                      exclusiveText
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          height: size.width * numD01,
-                                        ),
-                                        Container(
-                                          alignment: Alignment.center,
-                                          width: size.width * numD35,
-                                          height: size.width * numD08,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: size.width * numD017),
-                                          decoration: BoxDecoration(
-                                            color: selectedSellType ==
-                                                    exclusiveText
-                                                ? Colors.black
-                                                : Colors.white,
-                                          ),
-                                          child: Text(
-                                            exclusivePrice,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: size.width * numD03,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      const Divider(
+                        color: colorLightGrey,
+                        thickness: 1,
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD06,
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
-                  child: Text(
-                    selectedSellType == exclusiveText
-                        ? publishContentSellNote2Text
-                        : publishContentSellNote1Text,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD03,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal),
-                    textAlign: TextAlign.justify,
-                  ),
-                ),
-                SizedBox(
-                  height: size.width * numD06,
-                ),
-                Text(
-                  enterYourPriceText.toUpperCase(),
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: size.width * numD038,
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD09),
-                  child: TextFormField(
-                    controller: priceController,
-                    textAlign: TextAlign.center,
-                    cursorColor: Colors.black,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        signed: true, decimal: false),
-                    inputFormatters: [
-                      // CurrencyTextInputFormatter(NumberFormat.compactCurrency(
-                      //   decimalDigits: 0,
-                      //   symbol: currencySymbol,
-                      // )),
-                      CurrencyTextInputFormatter(NumberFormat.currency(
-                          decimalDigits: 0, symbol: currencySymbol))
-                    ],
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD06,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal),
-                    decoration: InputDecoration(
-                      hintText: "${currencySymbol}0",
-                      hintStyle: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD06,
-                          color: colorHint,
-                          fontWeight: FontWeight.normal),
-                      prefixIconColor: colorTextFieldIcon,
-                      disabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      focusedErrorBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                    ),
-                    //validator: checkRequiredValidator,
-                  ),
-                ),
-
-                InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    chooseCharityBottomSheet(context, size);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
                       SizedBox(
-                        height: size.width * numD13,
-                        width: size.width * numD08,
-                        child: Checkbox(
-                          activeColor: colorThemePink,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(size.width * numD013),
-                          ),
-                          side: WidgetStateBorderSide.resolveWith(
-                            (states) => BorderSide(
-                                width: 1.0,
-                                color: _checkCharityBoxVal
-                                    ? colorThemePink
-                                    : Colors.grey.withOpacity(.5)),
-                          ),
-                          value: _checkCharityBoxVal,
-                          onChanged: (val) {
-                            setState(() {
-                              _checkCharityBoxVal = val!;
-                              chooseCharityBottomSheet(context, size);
-                            });
-                          },
-                        ),
+                        height: size.width * numD04,
                       ),
                       Text(
-                        donateYourEarningsToCharityText,
+                        chooseHowSellText.toUpperCase(),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
-                            color: colorThemePink,
+                            fontSize: size.width * numD04,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  ),
-                ),
-
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD06),
-                  child: RichText(
-                      textAlign: TextAlign.justify,
-                      text: TextSpan(
+                      SizedBox(
+                        height: size.width * numD06,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  selectedSellType = sharedText;
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  height: size.width * numD40,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: selectedSellType == sharedText
+                                              ? Colors.white
+                                              : Colors.black,
+                                          width: 1.5),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          top: 0,
+                                          bottom: 0,
+                                          child: Container(
+                                            color:
+                                                selectedSellType == sharedText
+                                                    ? colorThemePink
+                                                    : Colors.white,
+                                            alignment: Alignment.topCenter,
+                                          ),
+                                        ),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.center,
+                                              width: size.width * numD35,
+                                              height: size.width * numD08,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical:
+                                                      size.width * numD017),
+                                              decoration: BoxDecoration(
+                                                color: selectedSellType ==
+                                                        sharedText
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                              ),
+                                              child: Text(
+                                                recommendedPriceText,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        size.width * numD026,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: size.width * numD04,
+                                            ),
+                                            Image.asset(
+                                              "${iconsPath}ic_share.png",
+                                              height: size.width * numD07,
+                                            )
+                                          ],
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                sharedText,
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD04,
+                                                    color: selectedSellType ==
+                                                            sharedText
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                height: size.width * numD01,
+                                              ),
+                                              Container(
+                                                alignment: Alignment.center,
+                                                width: size.width * numD35,
+                                                height: size.width * numD08,
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical:
+                                                        size.width * numD017),
+                                                decoration: BoxDecoration(
+                                                  color: selectedSellType ==
+                                                          sharedText
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                ),
+                                                child: Text(
+                                                  sharedPrice,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          size.width * numD03,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: size.width * numD12,
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  selectedSellType = exclusiveText;
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  height: size.width * numD40,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color:
+                                              selectedSellType == exclusiveText
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                          width: 1.5),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD04)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          top: 0,
+                                          bottom: 0,
+                                          child: Container(
+                                            color: selectedSellType ==
+                                                    exclusiveText
+                                                ? colorThemePink
+                                                : Colors.white,
+                                            alignment: Alignment.topCenter,
+                                          ),
+                                        ),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.center,
+                                              width: size.width * numD35,
+                                              height: size.width * numD08,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical:
+                                                      size.width * numD017),
+                                              decoration: BoxDecoration(
+                                                color: selectedSellType ==
+                                                        exclusiveText
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                              ),
+                                              child: Text(
+                                                recommendedPriceText,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        size.width * numD026,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: size.width * numD04,
+                                            ),
+                                            Image.asset(
+                                              "${iconsPath}ic_exclusive.png",
+                                              height: size.width * numD07,
+                                            )
+                                          ],
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                exclusiveText,
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD04,
+                                                    color: selectedSellType ==
+                                                            exclusiveText
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                height: size.width * numD01,
+                                              ),
+                                              Container(
+                                                alignment: Alignment.center,
+                                                width: size.width * numD35,
+                                                height: size.width * numD08,
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical:
+                                                        size.width * numD017),
+                                                decoration: BoxDecoration(
+                                                  color: selectedSellType ==
+                                                          exclusiveText
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                ),
+                                                child: Text(
+                                                  exclusivePrice,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          size.width * numD03,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.width * numD06,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        child: Text(
+                          selectedSellType == exclusiveText
+                              ? publishContentSellNote2Text
+                              : publishContentSellNote1Text,
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD03,
                               color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.justify,
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.width * numD06,
+                      ),
+                      Text(
+                        enterYourPriceText.toUpperCase(),
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: size.width * numD038,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD09),
+                        child: TextFormField(
+                          controller: priceController,
+                          textAlign: TextAlign.center,
+                          cursorColor: Colors.black,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              signed: true, decimal: false),
+                          inputFormatters: [
+                            // CurrencyTextInputFormatter(NumberFormat.compactCurrency(
+                            //   decimalDigits: 0,
+                            //   symbol: currencySymbol,
+                            // )),
+                            CurrencyTextInputFormatter(NumberFormat.currency(
+                                decimalDigits: 0, symbol: currencySymbol))
+                          ],
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD06,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          decoration: InputDecoration(
+                            hintText: "${currencySymbol}0",
+                            hintStyle: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD06,
+                                color: colorHint,
+                                fontWeight: FontWeight.normal),
+                            prefixIconColor: colorTextFieldIcon,
+                            disabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black)),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black)),
+                            errorBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black)),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black)),
+                          ),
+                          //validator: checkRequiredValidator,
+                        ),
+                      ),
+
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () {
+                          chooseCharityBottomSheet(context, size);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const TextSpan(
-                              text: "$publishContentFooter1Text ",
+                            SizedBox(
+                              height: size.width * numD13,
+                              width: size.width * numD08,
+                              child: Checkbox(
+                                activeColor: colorThemePink,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD013),
+                                ),
+                                side: WidgetStateBorderSide.resolveWith(
+                                  (states) => BorderSide(
+                                      width: 1.0,
+                                      color: _checkCharityBoxVal
+                                          ? colorThemePink
+                                          : Colors.grey.withOpacity(.5)),
+                                ),
+                                value: _checkCharityBoxVal,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _checkCharityBoxVal = val!;
+                                    chooseCharityBottomSheet(context, size);
+                                  });
+                                },
+                              ),
                             ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => FAQScreen(
-                                                  priceTipsSelected: true,
-                                                  type: '',
-                                                  index: 0,
-                                                )));
-                                  },
-                                  child: Text(priceTipsText.toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: " $publishContentFooter2Text ",
+                            Text(
+                              donateYourEarningsToCharityText,
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD035,
+                                  color: colorThemePink,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TutorialsScreen()));
-                                  },
-                                  child: Text(tutorialsText.toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: " $publishContentFooter3Text ",
-                            ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => FAQScreen(
-                                                  priceTipsSelected: false,
-                                                  type: 'faq',
-                                                  index: 0,
-                                                )));
-                                  },
-                                  child: Text("guidelines ".toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: publishContentFooter4Text,
-                            ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ContactUsScreen()));
-                                  },
-                                  child: Text(contactText.toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: publishContentFooter5Text,
-                            ),
-                          ])),
-                ),
-                SizedBox(
-                  height: size.width * numD06,
-                ),
+                          ],
+                        ),
+                      ),
 
-                /// save draft and sell buttons
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD06),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      /// save-draft-button
-                      !widget.hideDraft
-                          ? Expanded(
-                              child: SizedBox(
-                              height: size.width * numD15,
-                              child: commonElevatedButton(
-                                  "${saveText.toTitleCase()} ${draftText.toTitleCase()}",
-                                  size,
-                                  commonButtonTextStyle(size),
-                                  commonButtonStyle(size, Colors.black), () {
-                                draftSelected = true;
-                                isSelectLetsGo = false;
-                                isShowDraftLoader = true;
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
-                                callAddContentApi();
-                                showSnackBar("Draft",
-                                    "Draft successfully saved", Colors.green);
-                                Future.delayed(
-                                  const Duration(seconds: 2),
-                                  // This matches the SnackBar duration
-                                  () {
-                                    isShowDraftLoader = false;
-                                    Navigator.push(
-                                      navigatorKey.currentContext!,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              Dashboard(initialPosition: 2)),
-                                    );
-                                  },
-                                );
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD06),
+                        child: RichText(
+                            textAlign: TextAlign.justify,
+                            text: TextSpan(
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400),
+                                children: [
+                                  const TextSpan(
+                                    text: "$publishContentFooter1Text ",
+                                  ),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      FAQScreen(
+                                                        priceTipsSelected: true,
+                                                        type: '',
+                                                        index: 0,
+                                                      )));
+                                        },
+                                        child: Text(priceTipsText.toLowerCase(),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w500)),
+                                      )),
+                                  const TextSpan(
+                                    text: " $publishContentFooter2Text ",
+                                  ),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const TutorialsScreen()));
+                                        },
+                                        child: Text(tutorialsText.toLowerCase(),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w500)),
+                                      )),
+                                  const TextSpan(
+                                    text: " $publishContentFooter3Text ",
+                                  ),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      FAQScreen(
+                                                        priceTipsSelected:
+                                                            false,
+                                                        type: 'faq',
+                                                        index: 0,
+                                                      )));
+                                        },
+                                        child: Text("guidelines ".toLowerCase(),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w500)),
+                                      )),
+                                  const TextSpan(
+                                    text: publishContentFooter4Text,
+                                  ),
+                                  WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const ContactUsScreen()));
+                                        },
+                                        child: Text(contactText.toLowerCase(),
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD03,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w500)),
+                                      )),
+                                  const TextSpan(
+                                    text: publishContentFooter5Text,
+                                  ),
+                                ])),
+                      ),
+                      SizedBox(
+                        height: size.width * numD06,
+                      ),
 
-                                /* if (descriptionController.text.trim().isEmpty &&
+                      /// save draft and sell buttons
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD06),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            /// save-draft-button
+                            !widget.hideDraft
+                                ? Expanded(
+                                    child: SizedBox(
+                                    height: size.width * numD15,
+                                    child: commonElevatedButton(
+                                        "${saveText.toTitleCase()} ${draftText.toTitleCase()}",
+                                        size,
+                                        commonButtonTextStyle(size),
+                                        commonButtonStyle(size, Colors.black),
+                                        () {
+                                      draftSelected = true;
+                                      isSelectLetsGo = false;
+                                      isShowDraftLoader = true;
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      callAddContentApi();
+                                      showSnackBar(
+                                          "Draft",
+                                          "Draft successfully saved",
+                                          Colors.green);
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        // This matches the SnackBar duration
+                                        () {
+                                          isShowDraftLoader = false;
+                                          Navigator.push(
+                                            navigatorKey.currentContext!,
+                                            MaterialPageRoute(
+                                                builder: (context) => Dashboard(
+                                                    initialPosition: 2)),
+                                          );
+                                        },
+                                      );
+
+                                      /* if (descriptionController.text.trim().isEmpty &&
                                     audioPath.isEmpty) {
                                   showSnackBar(
                                       "Error",
@@ -2374,57 +2513,63 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 } else {
 
                                 }*/
+                                    }),
+                                  ))
+                                : Container(),
+                            SizedBox(
+                              width:
+                                  !widget.hideDraft ? size.width * numD04 : 0,
+                            ),
+
+                            /// Submit-button
+                            Expanded(
+                                child: SizedBox(
+                              height: size.width * numD15,
+                              child: commonElevatedButton(
+                                  "Submit",
+                                  size,
+                                  commonButtonTextStyle(size),
+                                  commonButtonStyle(size, colorThemePink),
+                                  () async {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                draftSelected = false;
+                                debugPrint("HideDraft-> ${widget.hideDraft}");
+                                if (descriptionController.text.trim().isEmpty &&
+                                    audioPath.isEmpty) {
+                                  showSnackBar(
+                                      "Description",
+                                      "Please type or record what you saw",
+                                      Colors.red);
+                                } else if (priceController.text
+                                        .trim()
+                                        .isEmpty ||
+                                    priceController.text == '0') {
+                                  showSnackBar("Price",
+                                      "Please enter your price", Colors.red);
+                                } else {
+                                  if (widget.hideDraft) {
+                                    updateDraftListAPI(
+                                        widget.myContentData!.id);
+                                  } else {
+                                    callCheckOnboardingCompleteOrNotApi();
+                                  }
+                                }
                               }),
-                            ))
-                          : Container(),
-                      SizedBox(
-                        width: !widget.hideDraft ? size.width * numD04 : 0,
+                            )),
+                          ],
+                        ),
                       ),
 
-                      /// Submit-button
-                      Expanded(
-                          child: SizedBox(
-                        height: size.width * numD15,
-                        child: commonElevatedButton(
-                            "Submit",
-                            size,
-                            commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink), () async {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          draftSelected = false;
-                          debugPrint("HideDraft-> ${widget.hideDraft}");
-                          if (descriptionController.text.trim().isEmpty &&
-                              audioPath.isEmpty) {
-                            showSnackBar(
-                                "Description",
-                                "Please type or record what you saw",
-                                Colors.red);
-                          } else if (priceController.text.trim().isEmpty ||
-                              priceController.text == '0') {
-                            showSnackBar(
-                                "Price", "Please enter your price", Colors.red);
-                          } else {
-                            if (widget.hideDraft) {
-                              updateDraftListAPI(widget.myContentData!.id);
-                            } else {
-                              callCheckOnboardingCompleteOrNotApi();
-                            }
-                          }
-                        }),
-                      )),
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
                     ],
                   ),
                 ),
-
-                SizedBox(
-                  height: size.width * numD04,
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-      /*if (_showCelebrationJson)
+            /*if (_showCelebrationJson)
             Positioned.fill(
               child: Align(
                 alignment: Alignment.center,
@@ -2461,10 +2606,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 ),
               ),
             ),*/
+          );
+        },
+      ),
     );
-    },
-   ),
-  );
   }
 
   /// show-category-bottom-sheet
@@ -2514,8 +2659,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       String selectedCat = selectedCategory!.name;
                       return InkWell(
                         onTap: () {
-                          context.read<PublishBloc>().add(SelectCategoryEvent(categoryList[index].id));
-                          
+                          context
+                              .read<PublishBloc>()
+                              .add(SelectCategoryEvent(categoryList[index].id));
+
                           if (categoryList[index].name == "Shared" ||
                               categoryList[index].name == "Exclusive") {
                             selectedSellType = categoryList[index].name;
@@ -2643,7 +2790,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       splashColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () {
-                                        context.read<PublishBloc>().add(SelectCharityEvent(item.id));
+                                        context
+                                            .read<PublishBloc>()
+                                            .add(SelectCharityEvent(item.id));
                                         _checkCharityBoxVal = true;
                                         organisationNumber =
                                             item.organisationNumber;
@@ -3165,14 +3314,23 @@ class PublishContentScreenState extends State<PublishContentScreen>
     try {
       switch (requestCode) {
         case getHashTagsUrlRequest:
-          var map = jsonDecode(response);
+          var decodedResponse = jsonDecode(response);
           log("GetHashTags: $response");
-          if (map["code"] == 200) {
-            var list = map["tags"] as List;
-            hashtagList = list.map((e) => HashTagData.fromJson(e)).toList();
+
+          // Check if the response is a Map (normal success case)
+          if (decodedResponse is Map<String, dynamic>) {
+            if (decodedResponse["code"] == 200) {
+              var list = decodedResponse["tags"] as List;
+              hashtagList = list.map((e) => HashTagData.fromJson(e)).toList();
+              setState(() {});
+            }
+          }
+          // Check if the response is a List (likely empty list [])
+          else if (decodedResponse is List) {
+            // Handle empty list case (no tags found)
+            hashtagList = [];
             setState(() {});
           }
-
           break;
         case categoryUrlRequest:
           var map = jsonDecode(response);
@@ -3180,8 +3338,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           if (map["code"] == 200) {
             var list = map["categories"] as List;
 
-            categoryList =
-                list.map((e) => CategoryModel.fromJson(e)).toList();
+            categoryList = list.map((e) => CategoryModel.fromJson(e)).toList();
 
             if (categoryList.isNotEmpty) {
               dropDownValue = categoryList.first.name;

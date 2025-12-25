@@ -52,7 +52,7 @@ class AppInitializationService {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    
+
     debugPrint("✅ System UI preferences set");
   }
 
@@ -62,11 +62,11 @@ class AppInitializationService {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      
+
       await localNotificationService.setup();
-      
+
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-      
+
       debugPrint("✅ Firebase initialized");
     } catch (e) {
       debugPrint("❌ Firebase initialization error: $e");
@@ -99,10 +99,11 @@ class AppInitializationService {
   }
 
   /// Initialize SharedPreferences and related services
-  static Future<void> initializeSharedPreferences(IosDeviceInfo? deviceInfo) async {
+  static Future<void> initializeSharedPreferences(
+      IosDeviceInfo? deviceInfo) async {
     try {
       sharedPreferences = await getSharedPreferences();
-      
+
       // Set iPad flag
       sharedPreferences!.setBool(
         "isIpad",
@@ -118,7 +119,7 @@ class AppInitializationService {
 
       // Set currency symbol
       currencySymbol = sharedPreferences!.getString(currencySymbolKey) ?? "£";
-      
+
       debugPrint("✅ SharedPreferences initialized");
     } catch (e) {
       debugPrint("❌ SharedPreferences initialization error: $e");
@@ -135,7 +136,7 @@ class AppInitializationService {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
-    
+
     debugPrint("✅ Error handlers configured");
   }
 
@@ -144,14 +145,14 @@ class AppInitializationService {
     try {
       final name = sharedPreferences?.getString(adminNameKey);
       final email = sharedPreferences?.getString(emailKey);
-      
+
       if (email != null) {
         FirebaseCrashlytics.instance.setUserIdentifier(email);
       }
       if (name != null) {
         FirebaseCrashlytics.instance.setCustomKey("name", name.toString());
       }
-      
+
       debugPrint("✅ Crashlytics identity set");
     } on Exception catch (e) {
       debugPrint("❌ Crashlytics identity error: $e");
@@ -179,7 +180,7 @@ class AppInitializationService {
         );
       }
     });
-    
+
     debugPrint("✅ Audio player configured");
   }
 

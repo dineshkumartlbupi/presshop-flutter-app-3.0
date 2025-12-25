@@ -16,6 +16,7 @@ import 'package:presshop/core/api/token_refresh_manager.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/api/network_response.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class NetworkClass {
   var dio = Dio();
@@ -88,15 +89,19 @@ class NetworkClass {
       String headerToken = "";
 
       var request = http.MultipartRequest(requestType, url);
-      if (sharedPreferences!.getString(tokenKey) != null) {
-        headerToken = sharedPreferences!.getString(tokenKey)!;
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(key: tokenKey);
+
+      if (token != null) {
+        headerToken = token;
         var deviceID = sharedPreferences!.getString(deviceIdKey)!;
         // Add headers
         request.headers.addAll({
           headerKey: headerToken,
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-          headerDeviceIdKey: deviceID
+          headerDeviceIdKey: deviceID,
+          "x-user-id": sharedPreferences!.getString(hopperIdKey) ?? ""
         });
       }
 
@@ -241,15 +246,19 @@ class NetworkClass {
           contentType: MediaType(mArray.first, mArray.last));
       request.files.add(pic);
 
-      if (sharedPreferences!.getString(tokenKey) != null) {
-        headerToken = sharedPreferences!.getString(tokenKey)!;
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(key: tokenKey);
+
+      if (token != null) {
+        headerToken = token;
         var deviceID = sharedPreferences!.getString(deviceIdKey)!;
         // Add headers
         request.headers.addAll({
           headerKey: headerToken,
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-          headerDeviceIdKey: deviceID
+          headerDeviceIdKey: deviceID,
+          "x-user-id": sharedPreferences!.getString(hopperIdKey) ?? ""
         });
       }
       debugPrint("token=====> $headerToken");
@@ -412,10 +421,18 @@ class NetworkClass {
 
       if (queryParameters != null) {
         debugPrint("Queryparams: $queryParameters");
-        uri = Uri.parse(baseUrl + endUrl)
-            .replace(queryParameters: queryParameters);
+        if (endUrl.startsWith("http")) {
+          uri = Uri.parse(endUrl).replace(queryParameters: queryParameters);
+        } else {
+          uri = Uri.parse(baseUrl + endUrl)
+              .replace(queryParameters: queryParameters);
+        }
       } else {
-        uri = Uri.parse(baseUrl + endUrl);
+        if (endUrl.startsWith("http")) {
+          uri = Uri.parse(endUrl);
+        } else {
+          uri = Uri.parse(baseUrl + endUrl);
+        }
       }
 
       debugPrint("RequestType: $requestType");
@@ -431,15 +448,19 @@ class NetworkClass {
       }
       String headerToken = "";
 
-      if (sharedPreferences!.getString(tokenKey) != null) {
-        headerToken = sharedPreferences!.getString(tokenKey)!;
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(key: tokenKey);
+
+      if (token != null) {
+        headerToken = token;
         var deviceID = sharedPreferences!.getString(deviceIdKey)!;
         // Add headers
         request.headers.addAll({
           headerKey: headerToken,
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-          headerDeviceIdKey: deviceID
+          headerDeviceIdKey: deviceID,
+          "x-user-id": sharedPreferences!.getString(hopperIdKey) ?? ""
         });
       }
 
@@ -529,6 +550,10 @@ class NetworkClass {
             requestCode: requestCode, response: response.body.toString());
       }
     } on SocketException catch (e) {
+      debugPrint('SocketException caught');
+      debugPrint('Message: ${e.message}');
+      debugPrint('Error Code: ${e.osError?.errorCode}');
+      debugPrint('OS Error: ${e.osError}');
       if (alertDialog != null && isShowing) {
         isShowing = false;
         Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
@@ -546,17 +571,23 @@ class NetworkClass {
 
     String headerToken = "";
 
-    if (sharedPreferences!.getString(tokenKey) != null) {
-      headerToken = sharedPreferences!.getString(tokenKey)!;
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: tokenKey);
+
+    if (token != null) {
+      headerToken = token;
       debugPrint("Token: $headerToken");
     }
 
     debugPrint("RowParams: ${jsonEncode(jsonBodyRow)}");
     var url = Uri.parse(baseUrl + endUrl);
     debugPrint("UrlIs: $url");
-    final response = await http.patch(url,
-        body: jsonEncode(jsonBodyRow),
-        headers: {headerKey: headerToken, "Content-Type": "application/json"});
+    final response =
+        await http.patch(url, body: jsonEncode(jsonBodyRow), headers: {
+      headerKey: headerToken,
+      "Content-Type": "application/json",
+      "x-user-id": sharedPreferences!.getString(hopperIdKey) ?? ""
+    });
 
     // Check for 401 Unauthorized - but skip if this is the refresh token API itself
     if (TokenRefreshManager.isUnauthorizedResponse(
@@ -655,15 +686,19 @@ class NetworkClass {
         }
       }
 
-      if (sharedPreferences!.getString(tokenKey) != null) {
-        headerToken = sharedPreferences!.getString(tokenKey)!;
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(key: tokenKey);
+
+      if (token != null) {
+        headerToken = token;
         var deviceID = sharedPreferences!.getString(deviceIdKey)!;
         // Add headers
         request.headers.addAll({
           headerKey: headerToken,
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-          headerDeviceIdKey: deviceID
+          headerDeviceIdKey: deviceID,
+          "x-user-id": sharedPreferences!.getString(hopperIdKey) ?? ""
         });
       }
 
@@ -738,15 +773,19 @@ class NetworkClass {
       }
     }
 
-    if (sharedPreferences!.getString(tokenKey) != null) {
-      var headerToken = sharedPreferences!.getString(tokenKey)!;
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: tokenKey);
+
+    if (token != null) {
+      var headerToken = token;
       var deviceID = sharedPreferences!.getString(deviceIdKey)!;
       dio.options.headers = {
         "Authorization": "Bearer $headerToken",
         //headerKey: headerToken,
         headerDeviceTypeKey:
             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-        headerDeviceIdKey: deviceID
+        headerDeviceIdKey: deviceID,
+        "x-user-id": sharedPreferences!.getString(hopperIdKey) ?? ""
       };
     }
     if (jsonBody != null && jsonBody!.isNotEmpty) {

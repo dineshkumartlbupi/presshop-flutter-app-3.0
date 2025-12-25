@@ -4,15 +4,18 @@ import '../models/category_model.dart';
 import '../models/charity_model.dart';
 import '../models/tutorial_model.dart';
 import 'package:dio/dio.dart';
+import '../../../../core/error/exceptions.dart';
 
 abstract class PublishRemoteDataSource {
   Future<List<CategoryModel>> getContentCategories();
   Future<List<CategoryModel>> getTutorialCategories();
   Future<List<CharityModel>> getCharities(int offset, int limit);
-  Future<List<TutorialModel>> getTutorials(String category, int offset, int limit);
+  Future<List<TutorialModel>> getTutorials(
+      String category, int offset, int limit);
   Future<void> addViewCount(String tutorialId);
   Future<Map<String, String>> getShareExclusivePrice();
-  Future<void> submitContent(Map<String, dynamic> params, List<String> filePaths);
+  Future<void> submitContent(
+      Map<String, dynamic> params, List<String> filePaths);
 }
 
 class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
@@ -23,13 +26,23 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   @override
   Future<List<CategoryModel>> getContentCategories() async {
     final response = await apiClient.get(categoryUrl);
+    if (response.data is List && (response.data as List).isEmpty) {
+      return [];
+    }
+    if (response.data is! Map<String, dynamic>) {
+      throw ServerException(response.data.toString());
+    }
     final data = response.data['categories'] as List;
     return data.map((e) => CategoryModel.fromJson(e)).toList();
   }
 
   @override
   Future<List<CategoryModel>> getTutorialCategories() async {
-    final response = await apiClient.get(getHopperCategory, queryParameters: {"type": "tutorial"});
+    final response = await apiClient
+        .get(getHopperCategory, queryParameters: {"type": "tutorial"});
+    if (response.data is! Map<String, dynamic>) {
+      throw ServerException(response.data.toString());
+    }
     final data = response.data['categories'] as List;
     return data.map((e) => CategoryModel.fromJson(e)).toList();
   }
@@ -40,13 +53,25 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       "offset": offset,
       "limit": limit,
     };
-    final response = await apiClient.get(allCharityUrl, queryParameters: params);
+    final response =
+        await apiClient.get(allCharityUrl, queryParameters: params);
+    if (response.data is! Map<String, dynamic>) {
+      throw ServerException(response.data.toString());
+    }
+
+    // Handle case where data is an empty Map instead of a List
+    if (response.data['data'] is Map &&
+        (response.data['data'] as Map).isEmpty) {
+      return [];
+    }
+
     final data = response.data['data'] as List;
     return data.map((e) => CharityModel.fromJson(e)).toList();
   }
 
   @override
-  Future<List<TutorialModel>> getTutorials(String category, int offset, int limit) async {
+  Future<List<TutorialModel>> getTutorials(
+      String category, int offset, int limit) async {
     final Map<String, dynamic> params = {
       "type": "videos",
       "offset": offset,
@@ -54,6 +79,9 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       "category": category,
     };
     final response = await apiClient.get(getAllCmsUrl, queryParameters: params);
+    if (response.data is! Map<String, dynamic>) {
+      throw ServerException(response.data.toString());
+    }
     final data = response.data['status'] as List;
     return data.map((e) => TutorialModel.fromJson(e)).toList();
   }
@@ -74,7 +102,7 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
     // But apiClient has sharedPreferences. I will assume I can access it or ignore if backend infers from token.
     // Actually, legacy code explicitily sends it. Let's try to send it if I can access it.
     // Spec: apiClient doesn't expose prefs. I'll omit for now, or use `NetworkClass` style if it fails.
-    
+
     await apiClient.post(addViewCountAPI, data: data);
   }
 
@@ -84,7 +112,17 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       "type": "price",
     };
     final response = await apiClient.get(getAllCmsUrl, queryParameters: params);
-    final data = response.data['status'];
+    if (response.data is! Map<String, dynamic>) {
+      throw ServerException(response.data.toString());
+    }
+
+    // Check if 'status' exists, if not try 'data', if neither or empty, handle gracefully
+    final data = response.data['status'] ?? response.data['data'];
+
+    if (data == null || (data is Map && data.isEmpty)) {
+      return {"shared": "", "exclusive": ""};
+    }
+
     return {
       "shared": data['shared']?.toString() ?? "",
       "exclusive": data['exclusive']?.toString() ?? "",
@@ -92,19 +130,20 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   }
 
   @override
-  Future<void> submitContent(Map<String, dynamic> params, List<String> filePaths) async {
+  Future<void> submitContent(
+      Map<String, dynamic> params, List<String> filePaths) async {
     final formData = FormData.fromMap(params);
-    
+
     for (var path in filePaths) {
       if (path.isNotEmpty) {
-          String fileName = path.split('/').last;
-          formData.files.add(MapEntry(
-            'content', 
-             await MultipartFile.fromFile(path, filename: fileName),
-          ));
+        String fileName = path.split('/').last;
+        formData.files.add(MapEntry(
+          'content',
+          await MultipartFile.fromFile(path, filename: fileName),
+        ));
       }
     }
-    
+
     await apiClient.multipartPost(addContentUrl, formData: formData);
   }
 }

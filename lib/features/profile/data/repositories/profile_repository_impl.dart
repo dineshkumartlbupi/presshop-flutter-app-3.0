@@ -5,13 +5,16 @@ import '../../domain/entities/profile_data.dart';
 import '../../domain/entities/avatar.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasources/profile_remote_data_source.dart';
+import 'package:presshop/features/authentication/data/datasources/auth_local_data_source.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource remoteDataSource;
+  final AuthLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
 
   ProfileRepositoryImpl({
     required this.remoteDataSource,
+    required this.localDataSource,
     required this.networkInfo,
   });
 
@@ -19,7 +22,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Either<Failure, ProfileData>> getProfile() async {
     if (await networkInfo.isConnected) {
       try {
-        final profile = await remoteDataSource.getProfile();
+        final userId = await localDataSource.getUserId();
+        if (userId == null) {
+          return const Left(CacheFailure(message: "User ID not found"));
+        }
+        final profile = await remoteDataSource.getProfile(userId);
         return Right(profile);
       } on Failure catch (failure) {
         return Left(failure);
@@ -32,7 +39,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, ProfileData>> updateProfile(Map<String, dynamic> data) async {
+  Future<Either<Failure, ProfileData>> updateProfile(
+      Map<String, dynamic> data) async {
     if (await networkInfo.isConnected) {
       try {
         final profile = await remoteDataSource.updateProfile(data);
@@ -64,7 +72,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, void>> changePassword(String oldPassword, String newPassword) async {
+  Future<Either<Failure, void>> changePassword(
+      String oldPassword, String newPassword) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.changePassword(oldPassword, newPassword);

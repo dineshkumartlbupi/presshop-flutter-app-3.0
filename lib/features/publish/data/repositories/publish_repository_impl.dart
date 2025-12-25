@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/exceptions.dart';
 import '../../../../core/api/network_info.dart';
 import '../../domain/entities/content_category.dart';
 import '../../domain/entities/charity.dart';
@@ -22,6 +23,8 @@ class PublishRepositoryImpl implements PublishRepository {
       try {
         final categories = await remoteDataSource.getContentCategories();
         return Right(categories);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
@@ -36,6 +39,8 @@ class PublishRepositoryImpl implements PublishRepository {
       try {
         final categories = await remoteDataSource.getTutorialCategories();
         return Right(categories);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
@@ -43,19 +48,22 @@ class PublishRepositoryImpl implements PublishRepository {
       return const Left(NetworkFailure());
     }
   }
-  
+
   // Helper for tutorials category if needed, but interface only has getCategories.
-  // I might need to distinguish. 
+  // I might need to distinguish.
   // Let's assume getCategories is for Content Submission (main feature).
   // If I need tutorial categories, I should add it to interface or use same if types align.
   // I will add `getTutorialCategories` to interface in next edit if needed.
 
   @override
-  Future<Either<Failure, List<Charity>>> getCharities(int offset, int limit) async {
+  Future<Either<Failure, List<Charity>>> getCharities(
+      int offset, int limit) async {
     if (await networkInfo.isConnected) {
       try {
         final charities = await remoteDataSource.getCharities(offset, limit);
         return Right(charities);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
@@ -65,11 +73,15 @@ class PublishRepositoryImpl implements PublishRepository {
   }
 
   @override
-  Future<Either<Failure, List<Tutorial>>> getTutorials(String category, int offset, int limit) async {
+  Future<Either<Failure, List<Tutorial>>> getTutorials(
+      String category, int offset, int limit) async {
     if (await networkInfo.isConnected) {
       try {
-        final tutorials = await remoteDataSource.getTutorials(category, offset, limit);
+        final tutorials =
+            await remoteDataSource.getTutorials(category, offset, limit);
         return Right(tutorials);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
@@ -84,6 +96,8 @@ class PublishRepositoryImpl implements PublishRepository {
       try {
         await remoteDataSource.addViewCount(tutorialId);
         return const Right(null);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
@@ -98,6 +112,8 @@ class PublishRepositoryImpl implements PublishRepository {
       try {
         final prices = await remoteDataSource.getShareExclusivePrice();
         return Right(prices);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }
@@ -107,11 +123,14 @@ class PublishRepositoryImpl implements PublishRepository {
   }
 
   @override
-  Future<Either<Failure, void>> submitContent(Map<String, dynamic> params, List<String> filePaths) async {
+  Future<Either<Failure, void>> submitContent(
+      Map<String, dynamic> params, List<String> filePaths) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.submitContent(params, filePaths);
         return const Right(null);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
       } catch (e) {
         return Left(ServerFailure(message: e.toString()));
       }

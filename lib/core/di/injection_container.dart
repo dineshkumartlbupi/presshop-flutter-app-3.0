@@ -161,6 +161,7 @@ import 'package:presshop/features/publish/domain/usecases/get_share_exclusive_pr
 import 'package:presshop/features/publish/domain/repositories/publish_repository.dart';
 import 'package:presshop/features/publish/data/repositories/publish_repository_impl.dart';
 import 'package:presshop/features/publish/data/datasources/publish_remote_data_source.dart';
+import 'package:presshop/features/publish/presentation/bloc/publish_bloc.dart';
 
 final sl = GetIt.instance; // sl = Service Locator
 
@@ -267,11 +268,12 @@ Future<void> init() async {
         getMediaHouses: sl(),
         getPublicationTransactions: sl(),
       ));
-  // sl.registerFactory(() => PublishBloc(
-  //   getContentCategories: sl(),
-  //   getCharities: sl(),
-  //   getShareExclusivePrice: sl(), submitContent:SubmitContent(),
-  // ));
+  sl.registerFactory(() => PublishBloc(
+        getContentCategories: sl(),
+        getCharities: sl(),
+        getShareExclusivePrice: sl(),
+        submitContent: sl(),
+      ));
   sl.registerFactory(() => VerificationBloc(
         verifyOtp: sl(),
         registerUser: sl(),
@@ -440,6 +442,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetContentCategories(sl()));
   sl.registerLazySingleton(() => GetCharities(sl()));
   sl.registerLazySingleton(() => GetShareExclusivePrice(sl()));
+  sl.registerLazySingleton(() => SubmitContent(sl()));
 
   // Map Use Cases
   sl.registerLazySingleton(() => GetCurrentLocation(sl()));
@@ -455,6 +458,7 @@ Future<void> init() async {
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(
       remoteDataSource: sl(),
+      localDataSource: sl(),
       networkInfo: sl(),
     ),
   );

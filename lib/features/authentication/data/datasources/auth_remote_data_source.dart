@@ -45,6 +45,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print("🔵 LOGIN RESPONSE DATA: ${data['data']}");
         if (data['code'] == 200 || data['success'] == true) {
           final userMap = data['data'];
           if (userMap != null) {

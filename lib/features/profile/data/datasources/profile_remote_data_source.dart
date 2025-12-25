@@ -6,8 +6,10 @@ import '../models/avatar_model.dart';
 
 import 'package:presshop/core/api/api_client.dart';
 
+import 'package:presshop/core/utils/shared_preferences.dart';
+
 abstract class ProfileRemoteDataSource {
-  Future<ProfileDataModel> getProfile();
+  Future<ProfileDataModel> getProfile(String userId);
   Future<ProfileDataModel> updateProfile(Map<String, dynamic> data);
   Future<String> uploadProfileImage(String imagePath);
   Future<void> changePassword(String oldPassword, String newPassword);
@@ -21,15 +23,22 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   ProfileRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<ProfileDataModel> getProfile() async {
+  Future<ProfileDataModel> getProfile(String userId) async {
+    print("🔍 DEBUG: getProfile called with userId: '$userId'");
     try {
-      final response = await apiClient.get(myProfileUrl);
+      final response = await apiClient.get(
+        myProfileUrl,
+        queryParameters: {"userId": userId},
+      );
+      print("🔍 DEBUG: API Response Status: ${response.statusCode}");
+      print("🔍 DEBUG: API Response Data: ${response.data}");
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['code'] == 200) {
+        if (data['code'] == 200 || data['success'] == true) {
           return ProfileDataModel.fromJson(data['userData'] ?? data['data']);
         }
-        throw ServerFailure(message: data['message'] ?? 'Failed to load profile');
+        throw ServerFailure(
+            message: data['message'] ?? 'Failed to load profile');
       }
       throw ServerFailure(message: 'Failed to load profile');
     } catch (e) {
@@ -46,22 +55,28 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         data.remove('_imagePath');
       }
 
+      String userId = apiClient.sharedPreferences.getString(hopperIdKey) ?? "";
+      Options options = Options(headers: {"x-user-id": userId});
       Response response;
+
       if (imagePath != null && imagePath.isNotEmpty) {
         FormData formData = FormData.fromMap(data);
         formData.files.add(MapEntry(
           "profile_image",
           await MultipartFile.fromFile(imagePath),
         ));
-        response = await apiClient.multipartPost(editProfileUrl, formData: formData);
+        response = await apiClient.multipartPost(editProfileUrl,
+            formData: formData, options: options);
       } else {
-        response = await apiClient.post(editProfileUrl, data: data);
+        response =
+            await apiClient.post(editProfileUrl, data: data, options: options);
       }
 
       if (response.statusCode == 200) {
         final resData = response.data;
         if (resData['code'] == 200) {
-          return ProfileDataModel.fromJson(resData['userData'] ?? resData['data']);
+          return ProfileDataModel.fromJson(
+              resData['userData'] ?? resData['data']);
         }
         throw ServerFailure(message: resData['message'] ?? 'Update failed');
       }
@@ -78,7 +93,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         "profile_image": await MultipartFile.fromFile(imagePath),
       });
 
-      final response = await apiClient.multipartPost(editProfileUrl, formData: formData);
+      String userId = apiClient.sharedPreferences.getString(hopperIdKey) ?? "";
+      Options options = Options(headers: {"x-user-id": userId});
+
+      final response = await apiClient.multipartPost(editProfileUrl,
+          formData: formData, options: options);
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['code'] == 200) {
@@ -109,7 +128,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         if (data['code'] == 200) {
           return;
         }
-        throw ServerFailure(message: data['message'] ?? 'Password change failed');
+        throw ServerFailure(
+            message: data['message'] ?? 'Password change failed');
       }
       throw ServerFailure(message: 'Password change failed');
     } catch (e) {

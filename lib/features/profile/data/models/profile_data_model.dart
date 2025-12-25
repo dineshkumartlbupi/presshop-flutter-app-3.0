@@ -30,16 +30,18 @@ class ProfileDataModel extends ProfileData {
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
     return ProfileDataModel(
       id: json['_id'] ?? '',
-      firstName: json['first_name'] ?? '',
-      lastName: json['last_name'] ?? '',
-      userName: json['username'] ?? '',
+      firstName: json['first_name'] ?? json['firstName'] ?? '',
+      lastName: json['last_name'] ?? json['lastName'] ?? '',
+      userName: json['username'] ?? json['user_name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? json['mobile_number'] ?? '',
-      profileImage: json['profile_image'] ?? json['avatar'],
+      profileImage: json['profile_image'] ??
+          (json['avatarData'] != null ? json['avatarData']['avatar'] : null) ??
+          json['avatar'],
       address: json['address'],
       city: json['city'],
       country: json['country'],
-      postalCode: json['postal_code'],
+      postalCode: json['postal_code'] ?? json['postCode'],
       latitude: json['latitude']?.toString(),
       longitude: json['longitude']?.toString(),
       dob: json['dob'],
@@ -49,10 +51,12 @@ class ProfileDataModel extends ProfileData {
           : json['preferred_currency_sign'],
       totalEarnings: json['totalEarnings']?.toString(),
       apartment: json['apartment'] ?? '',
-      countryCode: json['country_code'] ?? '',
-      avatarId: json["avatarId"] ?? (json["avatarData"] != null ? json["avatarData"]["_id"] : null),
+      countryCode: json['country_code'] ?? json['countryCode'] ?? '',
+      avatarId: json["avatarId"] ??
+          (json["avatarData"] != null ? json["avatarData"]["_id"] : null),
       sourceMap: json['source'],
-      joinedDate: changeDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy"),
+      joinedDate: changeDateFormat(
+          "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy"),
     );
   }
 

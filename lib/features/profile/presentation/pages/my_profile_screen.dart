@@ -41,7 +41,7 @@ class MyProfile extends StatefulWidget {
 class MyProfileState extends State<MyProfile>
     with AnalyticsPageMixin
     implements NetworkResponse {
-  late Size size;
+  Size size = Size.zero;
 
   var formKey = GlobalKey<FormState>();
   var scrollController = ScrollController();
@@ -256,6 +256,7 @@ class MyProfileState extends State<MyProfile>
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    debugPrint("Building MyProfileScreen with size: $size");
     return /*WillPopScope(
       onWillPop: () async {
         if (widget.editProfileScreen) {
@@ -616,7 +617,7 @@ class MyProfileState extends State<MyProfile>
                         ),*/
                               SizedBox(
                                 height: size.width * numD12,
-                                child: GooglePlaceAutoCompleteTextField(
+                                /*GooglePlaceAutoCompleteTextField(
                                   focusNode: apartmentFocusNode,
                                   textEditingController:
                                       apartmentAndHouseNameController,
@@ -724,7 +725,7 @@ class MyProfileState extends State<MyProfile>
                                                 ? prediction.description!.length
                                                 : 0));
                                   },
-                                ),
+                                ),*/
                               )
                             ],
                           ),
@@ -1818,8 +1819,12 @@ class MyProfileState extends State<MyProfile>
 
   void myProfileApi() {
     String userId = sharedPreferences!.getString(hopperIdKey) ?? "";
-    NetworkClass("$myProfileUrl?userId=$userId", this, myProfileUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
+    print("🔴 DEBUG: Fetching Profile for userId: '$userId'");
+    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
+        .callRequestServiceHeader(false, "get", {"userId": userId});
+    print("userId: $userId");
+    print("myProfileUrl: $myProfileUrl");
+    print("myProfileUrlRequest: $myProfileUrlRequest");
   }
 
   void editProfileApi() {
@@ -1860,11 +1865,22 @@ class MyProfileState extends State<MyProfile>
         case myProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("MyProfileError:$map");
+          isLoading = true;
+          setState(() {});
           break;
 
         case editProfileUrlRequest:
           var map = jsonDecode(response);
           debugPrint("EditProfileError:$map");
+          break;
+
+        case getAvatarsUrlRequest:
+          debugPrint("GetAvatarsError: $response");
+          break;
+
+        default:
+          debugPrint(
+              "Unhandled Error RequestCode: $requestCode Response: $response");
           break;
       }
     } on Exception catch (e) {
@@ -1929,43 +1945,64 @@ class MyProfileState extends State<MyProfile>
           debugPrint("MyProfileSuccess:$map");
           print("MyProfileSuccess11:$response");
 
-          if (map["code"] == 200) {
-            myProfileData = MyProfileData.fromJson(map["userData"]);
-            sharedPreferences!
-                .setString(firstNameKey, map["userData"][firstNameKey]);
-            sharedPreferences!
-                .setString(lastNameKey, map["userData"][lastNameKey]);
-            sharedPreferences!.setString(emailKey, map["userData"][emailKey]);
-            sharedPreferences!
-                .setString(countryCodeKey, map["userData"][countryCodeKey]);
-            sharedPreferences!
-                .setString(phoneKey, map["userData"][phoneKey].toString());
-            debugPrint("phoneNumber======> ${map["userData"][phoneKey]}");
-            sharedPreferences!
-                .setString(addressKey, map["userData"][addressKey]);
-            if (map["userData"][postCodeKey] != null) {
+          if (map["code"] == 200 || map["success"] == true) {
+            var userData = map["userData"] ?? map["data"];
+            myProfileData = MyProfileData.fromJson(userData);
+            if (userData[firstNameKey] != null && sharedPreferences != null) {
               sharedPreferences!
-                  .setString(addressKey, map["userData"][postCodeKey]);
+                  .setString(firstNameKey, userData[firstNameKey]);
+            }
+            if (userData[lastNameKey] != null && sharedPreferences != null) {
+              sharedPreferences!.setString(lastNameKey, userData[lastNameKey]);
+            }
+            if (userData[emailKey] != null && sharedPreferences != null) {
+              sharedPreferences!.setString(emailKey, userData[emailKey]);
+            }
+            if (userData[countryCodeKey] != null && sharedPreferences != null) {
+              sharedPreferences!
+                  .setString(countryCodeKey, userData[countryCodeKey]);
+            }
+            if (userData[phoneKey] != null && sharedPreferences != null) {
+              sharedPreferences!
+                  .setString(phoneKey, userData[phoneKey].toString());
+              debugPrint("phoneNumber======> ${userData[phoneKey]}");
+            }
+            if (userData[addressKey] != null && sharedPreferences != null) {
+              sharedPreferences!.setString(addressKey, userData[addressKey]);
+            }
+            if (userData[postCodeKey] != null && sharedPreferences != null) {
+              sharedPreferences!.setString(addressKey, userData[postCodeKey]);
             }
 
-            sharedPreferences!.setString(
-                latitudeKey, map["userData"][latitudeKey].toString());
-            sharedPreferences!.setString(
-                longitudeKey, map["userData"][longitudeKey].toString());
-            sharedPreferences!.setString(
-                avatarIdKey, map["userData"][avatarIdKey].toString());
-            sharedPreferences!.setString(
-                totalIncomeKey, map["userData"]["totalEarnings"].toString());
-
-            if (map["userData"]['avatarData'] != null) {
+            if (userData[latitudeKey] != null && sharedPreferences != null) {
+              sharedPreferences!
+                  .setString(latitudeKey, userData[latitudeKey].toString());
+            }
+            if (userData[longitudeKey] != null && sharedPreferences != null) {
+              sharedPreferences!
+                  .setString(longitudeKey, userData[longitudeKey].toString());
+            }
+            if (userData[avatarIdKey] != null && sharedPreferences != null) {
+              sharedPreferences!
+                  .setString(avatarIdKey, userData[avatarIdKey].toString());
+            }
+            if (userData["totalEarnings"] != null &&
+                sharedPreferences != null) {
               sharedPreferences!.setString(
-                  avatarKey, map["userData"]['avatarData'][avatarKey]);
+                  totalIncomeKey, userData["totalEarnings"].toString());
+            }
+
+            if (userData['avatarData'] != null &&
+                userData['avatarData'][avatarKey] != null &&
+                sharedPreferences != null) {
+              sharedPreferences!
+                  .setString(avatarKey, userData['avatarData'][avatarKey]);
             }
 
             // var sourceDataIsOpened = true;
             // var sourceDataType = "student_beans";
             // var sourceDataUrl = src?["url"] ?? "";
-            final src1 = map["userData"]["source"];
+            final src1 = userData["source"];
             print("source ===> $src1");
 
 // source fields
@@ -2001,6 +2038,10 @@ class MyProfileState extends State<MyProfile>
             isLoading = true;
             setProfileData();
             setState(() {});
+          } else {
+            isLoading = true;
+            setState(() {});
+            debugPrint("MyProfileError: ${map["message"]}");
           }
           break;
 
@@ -2034,8 +2075,8 @@ class MyProfileState extends State<MyProfile>
           break;
         case editProfileUrlRequest:
           var map = jsonDecode(response);
-          if (map["code"] == 200) {
-            widget.editProfileScreen = true;
+          if (map["code"] == 200 || map["success"] == true) {
+            widget.editProfileScreen = false;
             /* showSnackBar("Profile Updated!",
                 "Your profile has been updated successfully", colorOnlineGreen);*/
             debugPrint("heloooo::::${myProfileData!.avatarId}");
@@ -2258,26 +2299,27 @@ class MyProfileData {
   String totalIncome = "";
 
   MyProfileData.fromJson(json) {
-    firstName = json[firstNameKey];
-    lastName = json[lastNameKey];
-    userName = json[userNameKey];
-    countryCode = json[countryCodeKey];
-    phoneNumber = json[phoneKey].toString();
+    firstName = json[firstNameKey] ?? json['firstName'] ?? "";
+    lastName = json[lastNameKey] ?? json['lastName'] ?? "";
+    userName = json[userNameKey] ?? json['username'] ?? "";
+    countryCode = json[countryCodeKey] ?? json['countryCode'] ?? "";
+    phoneNumber = (json[phoneKey] ?? "").toString();
     debugPrint("MyPhone: $phoneNumber");
 
-    cityName = json[cityKey] ?? '';
-    countryName = json[countryKey] ?? '';
+    cityName = json[cityKey] ?? json['city'] ?? '';
+    countryName = json[countryKey] ?? json['country'] ?? '';
     apartment = json[apartmentKey] ?? '';
-    email = json[emailKey];
-    address = json[addressKey];
-    postCode = json[postCodeKey] ?? "";
-    latitude = json[latitudeKey].toString();
-    longitude = json[longitudeKey].toString();
+    email = json[emailKey] ?? "";
+    address = json[addressKey] ?? "";
+    postCode = json[postCodeKey] ?? json['postCode'] ?? "";
+    latitude = (json[latitudeKey] ?? "").toString();
+    longitude = (json[longitudeKey] ?? "").toString();
     totalIncome =
         json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
     avatarImage =
-        json["avatarData"] != null ? json["avatarData"]["avatar"] : "";
-    avatarId = json["avatarData"] != null ? json["avatarData"]["_id"] : "";
+        json["avatarData"] != null ? (json["avatarData"]["avatar"] ?? "") : "";
+    avatarId =
+        json["avatarData"] != null ? (json["avatarData"]["_id"] ?? "") : "";
     joinedDate = changeDateFormat(
         "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy");
     validDegree = json["doc_to_become_pro"] != null
