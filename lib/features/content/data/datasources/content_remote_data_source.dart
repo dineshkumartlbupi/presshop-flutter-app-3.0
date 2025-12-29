@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart';
 import '../models/content_item_model.dart';
@@ -6,10 +7,12 @@ import '../models/hashtag_model.dart';
 import 'package:presshop/core/api/api_client.dart';
 
 abstract class ContentRemoteDataSource {
-  Future<List<ContentItemModel>> getMyContent({int page = 1, int limit = 20, Map<String, dynamic> params = const {}});
+  Future<List<ContentItemModel>> getMyContent(
+      {int page = 1, int limit = 20, Map<String, dynamic> params = const {}});
   Future<ContentItemModel> publishContent(Map<String, dynamic> data);
   Future<ContentItemModel> saveDraft(Map<String, dynamic> data);
-  Future<ContentItemModel> updateContent(String contentId, Map<String, dynamic> data);
+  Future<ContentItemModel> updateContent(
+      String contentId, Map<String, dynamic> data);
   Future<void> deleteContent(String contentId);
   Future<List<String>> uploadMedia(List<String> filePaths);
   Future<List<HashtagModel>> searchHashtags(String query);
@@ -23,7 +26,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   ContentRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<List<ContentItemModel>> getMyContent({int page = 1, int limit = 20, Map<String, dynamic> params = const {}}) async {
+  Future<List<ContentItemModel>> getMyContent(
+      {int page = 1,
+      int limit = 20,
+      Map<String, dynamic> params = const {}}) async {
     try {
       final queryParams = {'page': page, 'limit': limit, ...params};
       final response = await apiClient.get(
@@ -31,13 +37,18 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         queryParameters: queryParams,
       );
 
+      debugPrint("DEBUG: getMyContent response: ${response.data}");
+
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['code'] == 200) {
           final List contentList = data['content'] ?? data['data'] ?? [];
+          debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
           return contentList.map((e) => ContentItemModel.fromJson(e)).toList();
         }
-        throw ServerFailure(message: data['message'] ?? 'Failed to load content');
+        debugPrint("DEBUG: getMyContent failed code: ${data['code']}");
+        throw ServerFailure(
+            message: data['message'] ?? 'Failed to load content');
       }
       throw ServerFailure(message: 'Failed to load content');
     } catch (e) {
@@ -63,7 +74,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             await MultipartFile.fromFile(mediaPaths[i]),
           ));
         }
-        response = await apiClient.multipartPost(uploadContentUrl, formData: formData);
+        response =
+            await apiClient.multipartPost(uploadContentUrl, formData: formData);
       } else {
         response = await apiClient.post(uploadContentUrl, data: data);
       }
@@ -71,7 +83,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final resData = response.data;
         if (resData['code'] == 200) {
-          return ContentItemModel.fromJson(resData['content'] ?? resData['data']);
+          return ContentItemModel.fromJson(
+              resData['content'] ?? resData['data']);
         }
         throw ServerFailure(message: resData['message'] ?? 'Publish failed');
       }
@@ -101,7 +114,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             await MultipartFile.fromFile(mediaPaths[i]),
           ));
         }
-        response = await apiClient.multipartPost(uploadContentUrl, formData: formData);
+        response =
+            await apiClient.multipartPost(uploadContentUrl, formData: formData);
       } else {
         response = await apiClient.post(uploadContentUrl, data: data);
       }
@@ -120,14 +134,17 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
-  Future<ContentItemModel> updateContent(String contentId, Map<String, dynamic> data) async {
+  Future<ContentItemModel> updateContent(
+      String contentId, Map<String, dynamic> data) async {
     try {
-      final response = await apiClient.put('$uploadContentUrl/$contentId', data: data);
+      final response =
+          await apiClient.put('$uploadContentUrl/$contentId', data: data);
 
       if (response.statusCode == 200) {
         final resData = response.data;
         if (resData['code'] == 200) {
-          return ContentItemModel.fromJson(resData['content'] ?? resData['data']);
+          return ContentItemModel.fromJson(
+              resData['content'] ?? resData['data']);
         }
         throw ServerFailure(message: resData['message'] ?? 'Update failed');
       }
@@ -166,7 +183,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         ));
       }
 
-      final response = await apiClient.multipartPost(uploadContentUrl, formData: formData);
+      final response =
+          await apiClient.multipartPost(uploadContentUrl, formData: formData);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -232,7 +250,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         if (data['code'] == 200) {
           return ContentItemModel.fromJson(data['content'] ?? data['data']);
         }
-        throw ServerFailure(message: data['message'] ?? 'Failed to load content');
+        throw ServerFailure(
+            message: data['message'] ?? 'Failed to load content');
       }
       throw ServerFailure(message: 'Failed to load content');
     } catch (e) {

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/api_client.dart';
 import '../models/category_model.dart';
@@ -26,14 +27,24 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   @override
   Future<List<CategoryModel>> getContentCategories() async {
     final response = await apiClient.get(categoryUrl);
-    if (response.data is List && (response.data as List).isEmpty) {
-      return [];
+    debugPrint("DEBUG: getContentCategories response: ${response.data}");
+
+    if (response.data is List) {
+      final data = response.data as List;
+      debugPrint(
+          "DEBUG: getContentCategories parsed list length: ${data.length}");
+      return data.map((e) => CategoryModel.fromJson(e)).toList();
+    } else if (response.data is Map<String, dynamic>) {
+      // Fallback for previous structure if needed
+      if (response.data['categories'] != null) {
+        final data = response.data['categories'] as List;
+        return data.map((e) => CategoryModel.fromJson(e)).toList();
+      }
     }
-    if (response.data is! Map<String, dynamic>) {
-      throw ServerException(response.data.toString());
-    }
-    final data = response.data['categories'] as List;
-    return data.map((e) => CategoryModel.fromJson(e)).toList();
+
+    debugPrint(
+        "DEBUG: getContentCategories response format unknown: ${response.data.runtimeType}");
+    throw ServerException(response.data.toString());
   }
 
   @override

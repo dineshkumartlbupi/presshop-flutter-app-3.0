@@ -294,21 +294,23 @@ class PublishContentScreenState extends State<PublishContentScreen>
             categoryList = state.categories;
             if (state.selectedCategory != null) {
               selectedCategory = state.selectedCategory;
-              // If initializing or selecting
             } else if (categoryList.isNotEmpty && selectedCategory == null) {
               selectedCategory = categoryList.first;
-              // Trigger selection in bloc if needed, or rely on bloc's initial selection
+              context
+                  .read<PublishBloc>()
+                  .add(SelectCategoryEvent(selectedCategory!.id));
             }
+            setState(() {});
+          }
 
-            if (state.charities.isNotEmpty) {
-              allCharityList = state.charities;
-            }
-            if (state.prices.isNotEmpty) {
-              sharedPrice = state.prices['shared'] ?? sharedPrice;
-              exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
-              // If selected category is Shared or Exclusive, update controller?
-              // The UI uses 'sharedPrice' and 'exclusivePrice' variables in Text widgets, valid.
-            }
+          if (state.charities.isNotEmpty) {
+            allCharityList = state.charities;
+          }
+          if (state.prices.isNotEmpty) {
+            sharedPrice = state.prices['shared'] ?? sharedPrice;
+            exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
+            // If selected category is Shared or Exclusive, update controller?
+            // The UI uses 'sharedPrice' and 'exclusivePrice' variables in Text widgets, valid.
           }
         },
         builder: (context, state) {
@@ -1868,7 +1870,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       if (selectedPos > 0) {
                                         categoryList.swap(0, selectedPos);
                                       }
-                                      //  showCategoryDialogBox(context, size);
+                                      //showCategoryDialogBox(context, size);
                                       showCategoryBottomSheet(size);
                                     },
                                     child: Row(
@@ -3071,7 +3073,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   /// add-content-api
-  void callAddContentApi() {
+  Future<bool> callAddContentApi() async {
+    debugPrint("DEBUG: callAddContentApi called");
     log("callAddContentApi called${DateTime.now()}");
     List<String> tagsIdList = [];
     List<File> filesPath = [];
@@ -3091,6 +3094,21 @@ class PublishContentScreenState extends State<PublishContentScreen>
     } else {
       for (var element in widget.publishData!.mediaList) {
         selectMediaList.add(element.mediaPath);
+      }
+    }
+
+    debugPrint(
+        "DEBUG: Checking category. List size: ${categoryList.length}, Selected: $selectedCategory");
+    if (selectedCategory == null) {
+      if (categoryList.isNotEmpty) {
+        selectedCategory = categoryList.first;
+        debugPrint(
+            "DEBUG: Auto-selected first category: ${selectedCategory?.name}");
+      } else {
+        debugPrint(
+            "DEBUG: Category list empty and none selected. Returning false.");
+        showSnackBar("Error", "Please select a category", Colors.red);
+        return false;
       }
     }
 
@@ -3185,7 +3203,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
     log("AddContent Params: $params");
     log("AddContent URL: $addContentUrl");
 
-    uploadMediaUsingDio(
+    return await uploadMediaUsingDio(
       addContentUrl,
       params,
       filesPath,
@@ -3199,6 +3217,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   void callCheckOnboardingCompleteOrNotApi() {
+    debugPrint("Checking onboarding status API called");
     NetworkClass(checkOnboardingCompleteOrNotUrl, this,
             checkOnboardingCompleteOrNotReq)
         .callRequestServiceHeader(true, "get", null);
@@ -3211,7 +3230,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   @override
-  void onError({required int requestCode, required String response}) {
+  void onError({required int requestCode, required String response}) async {
     try {
       switch (requestCode) {
         case getHashTagsUrlRequest:
@@ -3244,33 +3263,39 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
         case checkOnboardingCompleteOrNotReq:
           debugPrint("checkOnboardingCompleteOrNotReq error: $response");
+          debugPrint("Onboarding API Response: $response");
           var data = jsonDecode(response);
 
           var isBeta = data['is_beta'] ?? false;
 
           if (data['message'] == "not verified") {
-            callAddContentApi();
+            bool uploadSuccess = await callAddContentApi();
             // currently publish not required for publish content
             //if (data['message'] == "verified") {
-            widget.publishData?.mediaList.forEach((media) {
-              widget.myContentData?.contentMediaList.add(ContentMediaData(
-                  "",
-                  media.mediaPath,
-                  media.mimeType,
-                  media.thumbnail,
-                  media.thumbnail));
-            });
+            if (uploadSuccess) {
+              widget.publishData?.mediaList.forEach((media) {
+                widget.myContentData?.contentMediaList.add(ContentMediaData(
+                    "",
+                    media.mediaPath,
+                    media.mimeType,
+                    media.thumbnail,
+                    media.thumbnail));
+              });
 
-            Navigator.push(
-                navigatorKey.currentContext!,
-                MaterialPageRoute(
-                    builder: (context) => ContentSubmittedScreen(
-                          myContentDetail: widget.myContentData,
-                          publishData: widget.publishData,
-                          sellType: selectedSellType,
-                          price: priceController.text,
-                          isBeta: isBeta,
-                        )));
+              Navigator.push(
+                  navigatorKey.currentContext!,
+                  MaterialPageRoute(
+                      builder: (context) => ContentSubmittedScreen(
+                            myContentDetail: widget.myContentData,
+                            publishData: widget.publishData,
+                            sellType: selectedSellType,
+                            price: priceController.text,
+                            isBeta: isBeta,
+                          )));
+            } else {
+              showSnackBar("Error", "Content upload failed. Please try again.",
+                  Colors.red);
+            }
 
             // onBoardingCompleteDialog(
             //     size: MediaQuery.of(navigatorKey.currentContext!).size,
@@ -3310,7 +3335,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   @override
-  void onResponse({required int requestCode, required String response}) {
+  void onResponse({required int requestCode, required String response}) async {
     try {
       switch (requestCode) {
         case getHashTagsUrlRequest:
@@ -3446,28 +3471,38 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
           print("isBeta========>>>> $isBeta");
 
-          callAddContentApi();
+          debugPrint("DEBUG: Starting upload...");
+          bool uploadSuccess = await callAddContentApi();
+          debugPrint("DEBUG: Upload finished. Success: $uploadSuccess");
+
           // currently publish not required for publish content
           //if (data['message'] == "verified") {
 
-          widget.publishData?.mediaList.forEach((media) {
-            widget.myContentData?.contentMediaList.add(ContentMediaData(
-                "",
-                media.mediaPath,
-                media.mimeType,
-                media.thumbnail,
-                media.thumbnail));
-          });
-          Navigator.push(
-              navigatorKey.currentContext!,
-              MaterialPageRoute(
-                  builder: (context) => ContentSubmittedScreen(
-                        myContentDetail: widget.myContentData,
-                        publishData: widget.publishData,
-                        sellType: selectedSellType,
-                        price: priceController.text,
-                        isBeta: isBeta,
-                      )));
+          if (uploadSuccess) {
+            debugPrint("DEBUG: Navigating to ContentSubmittedScreen");
+            widget.publishData?.mediaList.forEach((media) {
+              widget.myContentData?.contentMediaList.add(ContentMediaData(
+                  "",
+                  media.mediaPath,
+                  media.mimeType,
+                  media.thumbnail,
+                  media.thumbnail));
+            });
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => ContentSubmittedScreen(
+                          myContentDetail: widget.myContentData,
+                          publishData: widget.publishData,
+                          sellType: selectedSellType,
+                          price: priceController.text,
+                          isBeta: isBeta,
+                        )));
+          } else {
+            debugPrint("DEBUG: Upload failed, showing error snackbar");
+            showSnackBar("Error", "Content upload failed. Please try again.",
+                Colors.red);
+          }
 
           break;
 

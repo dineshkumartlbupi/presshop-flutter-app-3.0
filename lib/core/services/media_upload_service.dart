@@ -13,14 +13,14 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
   /// Upload media files using Dio with progress notifications
-  static Future<void> uploadMedia({
+  static Future<bool> uploadMedia({
     required String endUrl,
     Map<String, String>? jsonBody,
     required List filePathList,
     required String imageParams,
   }) async {
     await WakelockPlus.enable();
-    
+
     Dio dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -29,9 +29,9 @@ class MediaUploadService {
         sendTimeout: const Duration(seconds: 120),
       ),
     );
-    
+
     FormData formData = FormData();
-    
+
     // Add files to form data
     if (filePathList.isNotEmpty) {
       for (var element in filePathList) {
@@ -49,9 +49,13 @@ class MediaUploadService {
 
     // Add authorization header
     if (sharedPreferences!.getString(tokenKey) != null) {
+      String token = sharedPreferences!.getString(tokenKey)!;
+      debugPrint("DEBUG: Upload Token: $token");
       dio.options.headers = {
-        "Authorization": "Bearer ${sharedPreferences!.getString(tokenKey)!}",
+        "Authorization": "Bearer $token",
       };
+    } else {
+      debugPrint("DEBUG: Upload Token is NULL");
     }
 
     // Add JSON body fields
@@ -63,7 +67,11 @@ class MediaUploadService {
 
     try {
       log("Upload started: ${DateTime.now()}");
-      
+      debugPrint("Upload URL: ${baseUrl + endUrl}");
+      debugPrint("Upload Headers: ${dio.options.headers}");
+      debugPrint(
+          "Upload Files: ${formData.files.map((e) => e.key + ": " + e.value.filename.toString()).toList()}");
+
       Response response = await dio.post(
         baseUrl + endUrl,
         data: formData,
@@ -73,7 +81,7 @@ class MediaUploadService {
       );
 
       debugPrint("Upload completed: ${response.data}");
-      
+
       if (response.statusCode! <= 201) {
         debugPrint("Upload successful: ${response.data}");
         localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
@@ -81,17 +89,25 @@ class MediaUploadService {
           localNotificationService.flutterLocalNotificationsPlugin,
           isDraft: jsonBody?['is_draft'] == 'true',
         );
+        return true;
       } else {
         _showFailedNotification(
           localNotificationService.flutterLocalNotificationsPlugin,
         );
         debugPrint("Upload failed with status code: ${response.statusCode}");
+        return false;
       }
     } catch (e) {
       debugPrint("Upload error: $e");
+      if (e is DioException) {
+        debugPrint("DioError Message: ${e.message}");
+        debugPrint("DioError Response: ${e.response?.data}");
+        debugPrint("DioError Status: ${e.response?.statusCode}");
+      }
       _showFailedNotification(
         localNotificationService.flutterLocalNotificationsPlugin,
       );
+      return false;
     } finally {
       await WakelockPlus.disable();
     }

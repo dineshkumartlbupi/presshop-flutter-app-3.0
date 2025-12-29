@@ -40,8 +40,12 @@ class ApiClient {
     final deviceId = _sharedPreferences.getString(deviceIdKey) ?? "";
 
     if (token != null && token.isNotEmpty) {
+      debugPrint("DEBUG: ApiClient Token: $token");
+
       /// Using same behavior as your existing NetworkClass
       options.headers[headerKey] = token;
+    } else {
+      debugPrint("DEBUG: ApiClient Token is NULL or EMPTY");
     }
 
     options.headers[headerDeviceIdKey] = deviceId;

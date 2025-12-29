@@ -98,13 +98,13 @@ Future<void> onDeeplinkCallbackApi(
 }
 
 /// Upload media using Dio with progress tracking
-Future<void> uploadMediaUsingDio(
+Future<bool> uploadMediaUsingDio(
   String endUrl,
   Map<String, String>? jsonBody,
   List filePathList,
   String imageParams,
 ) async {
-  await MediaUploadService.uploadMedia(
+  return await MediaUploadService.uploadMedia(
     endUrl: endUrl,
     jsonBody: jsonBody,
     filePathList: filePathList,

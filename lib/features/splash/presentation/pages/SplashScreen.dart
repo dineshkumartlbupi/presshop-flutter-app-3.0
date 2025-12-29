@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,7 +12,8 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart' hide Navigator;
+import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart'
+    hide Navigator;
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/onboarding/presentation/pages/WalkThrough.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,12 +45,14 @@ class _SplashScreenState extends State<SplashScreen>
     WidgetsBinding.instance.addObserver(this);
     FirebaseCrashlytics.instance.log("SplashScreen -> initState()");
     FirebaseAnalytics.instance.logEvent(name: "splash_opened");
+    getFcmToken();
     _checkInitialMessage();
     // AppStarted is dispatched in BlocProvider create
   }
 
   Future<void> _checkInitialMessage() async {
-    RemoteMessage? message = await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? message =
+        await FirebaseMessaging.instance.getInitialMessage();
     if (message != null) _handleMessage(message);
     FirebaseMessaging.onMessage.listen(_handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
@@ -91,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen>
       child: BlocConsumer<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashAuthenticated) {
-             Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (_) => Dashboard(
                   initialPosition: 2,
@@ -102,17 +106,16 @@ class _SplashScreenState extends State<SplashScreen>
               (route) => false,
             );
           } else if (state is SplashUnauthenticated) {
-             Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const LoginScreen()),
               (route) => false,
             );
           } else if (state is SplashNavigateToOnboarding) {
-             Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const Walkthrough()),
               (route) => false,
             );
-          }
- else if (state is SplashForceUpdate) {
+          } else if (state is SplashForceUpdate) {
             setState(() {
               mustForceUpdate = true;
             });
@@ -125,7 +128,8 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: size.width * numD15),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD15),
                     child: Image.asset('${commonImagePath}ic_splash.png'),
                   ),
                 ),
@@ -244,5 +248,25 @@ class _SplashScreenState extends State<SplashScreen>
       // For now, to keep it simple and consistent with previous refactor without adding new events:
       // We rely on the initial check. If detailed resume check is needed, we should add CheckVersionEvent to Bloc.
     }
+  }
+
+  Future<void> getFcmToken() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
+    debugPrint("FCM Token:::: $fcmToken");
+
+    String deviceId = "";
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      debugPrint('Running on ${androidInfo.model}');
+      deviceId = androidInfo.id;
+    } else {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      debugPrint('Running on ${iosInfo.utsname.machine}');
+      deviceId = iosInfo.identifierForVendor!;
+    }
+    debugPrint("Device ID: $deviceId");
+    // Note: We are not calling AddDevice API here yet as it requires SplashBloc update.
+    // The Dashboard will handle the actual API call.
   }
 }

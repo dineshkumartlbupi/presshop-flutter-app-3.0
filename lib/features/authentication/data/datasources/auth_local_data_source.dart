@@ -27,6 +27,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> cacheToken(String token) async {
     await secureStorage.write(key: tokenKey, value: token);
+    await sharedPreferences.setString(tokenKey, token);
   }
 
   @override
