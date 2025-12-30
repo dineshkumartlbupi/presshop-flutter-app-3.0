@@ -69,7 +69,7 @@ class MyContentData {
   });
 
   MyContentData.fromJson(json) {
-    id = json["_id"];
+    id = json['_id'] ?? json['id'] ?? "";
     exclusive = json["type"] == "shared" ? false : true;
     dateTime = json["timestamp"].toString();
     purchasedMediahouseCount = (json["purchased_mediahouse"] as List).length;

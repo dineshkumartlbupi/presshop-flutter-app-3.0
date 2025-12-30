@@ -14,7 +14,7 @@ class TutorialModel extends Tutorial {
 
   factory TutorialModel.fromJson(Map<String, dynamic> json) {
     return TutorialModel(
-      id: json['_id'] ?? "",
+      id: json['_id'] ?? json['id'] ?? "",
       video: json['video'] ?? "",
       description: json['description'] ?? "",
       category: json['category'] ?? "",

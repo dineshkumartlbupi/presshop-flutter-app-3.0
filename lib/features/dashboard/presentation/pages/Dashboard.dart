@@ -32,7 +32,6 @@ import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.da
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
-
 class Dashboard extends StatefulWidget {
   int initialPosition = 2;
   String? broadCastId;
@@ -145,7 +144,7 @@ class DashboardState extends State<Dashboard>
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
-        autoInitialize: widget.initialPosition == 2,
+        autoInitialize: true,
       ),
       // ChatBotScreen(),
       FeedScreen(),
@@ -376,8 +375,8 @@ class DashboardState extends State<Dashboard>
 
   void _showForceUpdateDialog(Size size,
       {String? sourceDataHeading, String? sourceDataDescription}) {
-      // ... (existing implementation) ...
-      showDialog(
+    // ... (existing implementation) ...
+    showDialog(
         barrierDismissible: false,
         context: navigatorKey.currentState!.context,
         builder: (BuildContext context) {
@@ -508,7 +507,7 @@ class DashboardState extends State<Dashboard>
                                     try {
                                       final url =
                                           setIsClickForBeansActivation();
-                                      
+
                                       // Note: setIsClickForBeansActivation returns void because it calls Bloc.
                                       // The original code expected a URL return.
                                       // We need to wait for state change 'StudentBeansActivated' to get the URL.
@@ -516,12 +515,12 @@ class DashboardState extends State<Dashboard>
                                       // To fix this without major refactor:
                                       // We can dispatch event, wait for state listener to handle URL launching.
                                       // OR just pop here and let listener handle it.
-                                      // But original code tried to await it. 
-                                      
-                                      // For now, let's keep it simple: dispatch and close. 
+                                      // But original code tried to await it.
+
+                                      // For now, let's keep it simple: dispatch and close.
                                       // We can't await a Bloc event outcome easily here without a Completer or Listener.
                                       // The BlocListener in build method handles StudentBeansActivated.
-                                      
+
                                       Navigator.pop(context);
                                     } catch (e) {
                                       debugPrint("Error launching URL: $e");
@@ -544,239 +543,250 @@ class DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return BlocProvider.value(
-      value: _dashboardBloc,
-      child: BlocListener<DashboardBloc, dynamic>(
-        listener: (context, state) {
-          if (state is DashboardActiveAdminsLoaded) {
-            setState(() {
-              adminList = state.admins.map((e) => AdminDetailModel(
-                id: e.id,
-                name: e.name,
-                profilePic: e.profilePic,
-                lastMessageTime: e.lastMessageTime,
-                lastMessage: e.lastMessage,
-                roomId: e.roomId,
-                senderId: e.senderId,
-                receiverId: e.receiverId,
-                roomType: e.roomType,
-              )).toList();
+        value: _dashboardBloc,
+        child: BlocListener<DashboardBloc, dynamic>(
+            listener: (context, state) {
+              if (state is DashboardActiveAdminsLoaded) {
+                setState(() {
+                  adminList = state.admins
+                      .map((e) => AdminDetailModel(
+                            id: e.id,
+                            name: e.name,
+                            profilePic: e.profilePic,
+                            lastMessageTime: e.lastMessageTime,
+                            lastMessage: e.lastMessage,
+                            roomId: e.roomId,
+                            senderId: e.senderId,
+                            receiverId: e.receiverId,
+                            roomType: e.roomType,
+                          ))
+                      .toList();
 
-              if (adminList.isNotEmpty) {
-                sharedPreferences?.setString('adminIdKey', adminList.first.id);
-                sharedPreferences?.setString('adminRoomIdKey', adminList.first.roomId);
-                sharedPreferences?.setString('adminImageKey', adminList.first.profilePic);
-                sharedPreferences?.setString('adminNameKey', adminList.first.name);
+                  if (adminList.isNotEmpty) {
+                    sharedPreferences?.setString(
+                        'adminIdKey', adminList.first.id);
+                    sharedPreferences?.setString(
+                        'adminRoomIdKey', adminList.first.roomId);
+                    sharedPreferences?.setString(
+                        'adminImageKey', adminList.first.profilePic);
+                    sharedPreferences?.setString(
+                        'adminNameKey', adminList.first.name);
+                  }
+                });
+              } else if (state is DashboardRoomIdLoaded) {
+                var data = (state as DashboardRoomIdLoaded).roomData;
+                if (data["details"] != null) {
+                  var roomId = data["details"]["room_id"] ?? "";
+                  sharedPreferences!.setString(adminRoomIdKey, roomId);
+                  debugPrint("Room Id : $roomId");
+                }
+              } else if (state is DashboardAppVersionChecked) {
+                var map = (state as DashboardAppVersionChecked).versionData;
+                if (map["code"] == 200) {
+                  var versionData = map["data"];
+                  sharedPreferences!.setInt(
+                      videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
+                  bool shouldUpdate = Platform.isAndroid
+                      ? versionData['aOSshouldForceUpdate']
+                      : versionData['iOSshouldForceUpdate'];
+                  if (shouldUpdate) forceUpdateCheck();
+                } else {
+                  showSnackBar(map["message"], "error", Colors.red);
+                }
+              } else if (state is DashboardTaskDetailLoaded) {
+                var task = (state as DashboardTaskDetailLoaded).taskDetail;
+                var broadCastedData = TaskDetailModel(
+                  id: task.id,
+                  deadLine: task.deadLine,
+                  mediaHouseId: task.mediaHouseId,
+                  mediaHouseImage: task.mediaHouseImage,
+                  mediaHouseName: task.mediaHouseName,
+                  companyName: task.companyName,
+                  title: task.title,
+                  description: task.description,
+                  acceptedBy: task.acceptedBy,
+                  specialReq: task.specialReq,
+                  location: task.location,
+                  photoPrice: task.photoPrice,
+                  videoPrice: task.videoPrice,
+                  interviewPrice: task.interviewPrice,
+                  receivedAmount: task.receivedAmount,
+                  latitude: task.latitude,
+                  longitude: task.longitude,
+                  role: task.role,
+                  categoryId: task.categoryId,
+                  userId: task.userId,
+                  createdAt: task.createdAt,
+                  miles: task.miles,
+                  byFeet: task.byFeet,
+                  byCar: task.byCar,
+                );
+
+                player.play(
+                  AssetSource('audio/task_sound.mp3'),
+                  volume: 1,
+                );
+                broadcastDialog(
+                  size: MediaQuery.of(context).size,
+                  taskDetail: broadCastedData,
+                  onTapView: () {
+                    if (mounted) {
+                      if (dashBoardInterface != null) {
+                        dashBoardInterface!.saveDraft();
+                      }
+                    }
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BroadCastScreen(
+                              taskId: broadCastedData.id,
+                              mediaHouseId: broadCastedData.mediaHouseId,
+                            )));
+                  },
+                );
+              } else if (state is StudentBeansActivated) {
+                var map = (state as StudentBeansActivated).data;
+                var studentBeansResponseUrl = map["url"];
+
+                if (studentBeansResponseUrl != null &&
+                    studentBeansResponseUrl.isNotEmpty) {
+                  _launchStudentBeansUrl(studentBeansResponseUrl);
+                }
+
+                // Complete the completer if someone is waiting (legacy support)
+                if (_studentBeansCompleter != null &&
+                    !_studentBeansCompleter!.isCompleted) {
+                  _studentBeansCompleter!.complete(studentBeansResponseUrl);
+                }
+              } else if (state is DashboardMyProfileLoaded) {
+                var user = (state as DashboardMyProfileLoaded).user;
+                var mapSource = user.source;
+
+                if (user.avatar != null && user.avatar!.isNotEmpty) {
+                  sharedPreferences!.setString(avatarKey, user.avatar!);
+                }
+
+                final src1 = mapSource;
+                final sourceDataIsOpened = src1?["is_opened"] ?? false;
+                final sourceDataType = src1?["type"] ?? "";
+                final sourceDataHeading = src1?["heading"] ?? "";
+                final sourceDataDescription = src1?["description"] ?? "";
+                final isClick = src1?["is_clicked"] ?? false;
+
+                if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+                    (sourceDataIsOpened == false) &&
+                    isClick == false) {
+                  final size =
+                      MediaQuery.of(navigatorKey.currentState!.context).size;
+                  _showForceUpdateDialog(size,
+                      sourceDataHeading: sourceDataHeading,
+                      sourceDataDescription: sourceDataDescription);
+                }
+                setState(() {});
+              } else if (state is DashboardTabChanged) {
+                setState(() {
+                  currentIndex = (state as DashboardTabChanged).index;
+                });
+              } else if (state is DashboardError) {
+                // Optional
               }
-            });
-          } else if (state is DashboardRoomIdLoaded) {
-            var data = (state as DashboardRoomIdLoaded).roomData;
-            if (data["details"] != null) {
-              var roomId = data["details"]["room_id"] ?? "";
-              sharedPreferences!.setString(adminRoomIdKey, roomId);
-              debugPrint("Room Id : $roomId");
-            }
-          } else if (state is DashboardAppVersionChecked) {
-             var map = (state as DashboardAppVersionChecked).versionData;
-             if (map["code"] == 200) {
-                 var versionData = map["data"];
-                 sharedPreferences!.setInt(videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
-                 bool shouldUpdate = Platform.isAndroid ? versionData['aOSshouldForceUpdate'] : versionData['iOSshouldForceUpdate'];
-                 if (shouldUpdate) forceUpdateCheck();
-             } else {
-                 showSnackBar(map["message"], "error", Colors.red);
-             }
-          } else if (state is DashboardTaskDetailLoaded) {
-             var task = (state as DashboardTaskDetailLoaded).taskDetail;
-              var broadCastedData = TaskDetailModel(
-                 id: task.id,
-                 deadLine: task.deadLine,
-                 mediaHouseId: task.mediaHouseId,
-                 mediaHouseImage: task.mediaHouseImage,
-                 mediaHouseName: task.mediaHouseName,
-                 companyName: task.companyName,
-                 title: task.title,
-                 description: task.description,
-                 acceptedBy: task.acceptedBy,
-                 specialReq: task.specialReq,
-                 location: task.location,
-                 photoPrice: task.photoPrice,
-                 videoPrice: task.videoPrice,
-                 interviewPrice: task.interviewPrice,
-                 receivedAmount: task.receivedAmount,
-                 latitude: task.latitude,
-                 longitude: task.longitude,
-                 role: task.role,
-                 categoryId: task.categoryId,
-                 userId: task.userId,
-                 createdAt: task.createdAt,
-                 miles: task.miles,
-                 byFeet: task.byFeet,
-                 byCar: task.byCar,
-              );
-
-             player.play(
-               AssetSource('audio/task_sound.mp3'),
-               volume: 1,
-             );
-             broadcastDialog(
-               size: MediaQuery.of(context).size,
-               taskDetail: broadCastedData,
-               onTapView: () {
-                 if (mounted) {
-                   if (dashBoardInterface != null) {
-                     dashBoardInterface!.saveDraft();
-                   }
-                 }
-                 Navigator.pop(context);
-                 Navigator.pop(context);
-                 Navigator.of(context).push(MaterialPageRoute(
-                     builder: (context) => BroadCastScreen(
-                           taskId: broadCastedData.id,
-                           mediaHouseId: broadCastedData.mediaHouseId,
-                         )));
-               },
-             );
-          } else if (state is StudentBeansActivated) {
-             var map = (state as StudentBeansActivated).data;
-              var studentBeansResponseUrl = map["url"];
-              
-              if (studentBeansResponseUrl != null && studentBeansResponseUrl.isNotEmpty) {
-                 _launchStudentBeansUrl(studentBeansResponseUrl);
-              }
-
-              // Complete the completer if someone is waiting (legacy support)
-              if (_studentBeansCompleter != null &&
-                  !_studentBeansCompleter!.isCompleted) {
-                _studentBeansCompleter!.complete(studentBeansResponseUrl);
-              }
-          } else if (state is DashboardMyProfileLoaded) {
-             var user = (state as DashboardMyProfileLoaded).user;
-             var mapSource = user.source; 
-
-            if (user.avatar != null && user.avatar!.isNotEmpty) {
-               sharedPreferences!.setString(avatarKey, user.avatar!);
-            }
-
-            final src1 = mapSource;
-            final sourceDataIsOpened = src1?["is_opened"] ?? false;
-            final sourceDataType = src1?["type"] ?? "";
-            final sourceDataHeading = src1?["heading"] ?? "";
-            final sourceDataDescription = src1?["description"] ?? "";
-            final isClick = src1?["is_clicked"] ?? false;
-
-            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
-                (sourceDataIsOpened == false) &&
-                isClick == false) {
-              final size =
-                  MediaQuery.of(navigatorKey.currentState!.context).size;
-              _showForceUpdateDialog(size,
-                  sourceDataHeading: sourceDataHeading,
-                  sourceDataDescription: sourceDataDescription);
-            }
-            setState(() {});
-          } else if (state is DashboardTabChanged) {
-             setState(() {
-                currentIndex = (state as DashboardTabChanged).index;
-             });
-          } else if (state is DashboardError) {
-             // Optional
-          }
-        },
-        child: WillPopScope(
-      onWillPop: () async {
-        DateTime now = DateTime.now();
-        if (currentTime == null ||
-            now.difference(currentTime!) > const Duration(seconds: 2)) {
-          currentTime = now;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Press again to exit'),
-            ),
-          );
-          return Future.value(false);
-        } else {
-          SystemNavigator.pop();
-          exit(0);
-        }
-      },
-      child: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          currentIndex: currentIndex,
-          showUnselectedLabels: true,
-          showSelectedLabels: true,
-          unselectedItemColor: Colors.black,
-          selectedItemColor: colorThemePink,
-          elevation: 0,
-          iconSize: size.width * numD05,
-          selectedFontSize: size.width * numD03,
-          unselectedFontSize: size.width * numD03,
-          type: BottomNavigationBarType.fixed,
-          onTap: _onBottomBarItemTapped,
-          items: const [
-            BottomNavigationBarItem(
-                icon: ImageIcon(
-                  AssetImage("${iconsPath}ic_content.png"),
+            },
+            child: WillPopScope(
+              onWillPop: () async {
+                DateTime now = DateTime.now();
+                if (currentTime == null ||
+                    now.difference(currentTime!) > const Duration(seconds: 2)) {
+                  currentTime = now;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Press again to exit'),
+                    ),
+                  );
+                  return Future.value(false);
+                } else {
+                  SystemNavigator.pop();
+                  exit(0);
+                }
+              },
+              child: Scaffold(
+                bottomNavigationBar: BottomNavigationBar(
+                  backgroundColor: Colors.white,
+                  currentIndex: currentIndex,
+                  showUnselectedLabels: true,
+                  showSelectedLabels: true,
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: colorThemePink,
+                  elevation: 0,
+                  iconSize: size.width * numD05,
+                  selectedFontSize: size.width * numD03,
+                  unselectedFontSize: size.width * numD03,
+                  type: BottomNavigationBarType.fixed,
+                  onTap: _onBottomBarItemTapped,
+                  items: const [
+                    BottomNavigationBarItem(
+                        icon: ImageIcon(
+                          AssetImage("${iconsPath}ic_content.png"),
+                        ),
+                        label: contentText),
+                    BottomNavigationBarItem(
+                        icon: ImageIcon(
+                          AssetImage("${iconsPath}ic_task.png"),
+                        ),
+                        label: taskText),
+                    BottomNavigationBarItem(
+                        icon: ImageIcon(
+                          AssetImage(
+                            "${iconsPath}ic_camera.png",
+                          ),
+                        ),
+                        label: cameraText),
+                    BottomNavigationBarItem(
+                        icon: ImageIcon(
+                          AssetImage("${iconsPath}ic_feed.png"),
+                        ),
+                        label: feedText),
+                    // BottomNavigationBarItem(
+                    //     icon: ImageIcon(
+                    //       AssetImage("${iconsPath}ic_chat.png"),
+                    //     ),
+                    //     label: chatText),
+                    BottomNavigationBarItem(
+                        icon: ImageIcon(
+                          AssetImage("${iconsPath}ic_menu.png"),
+                        ),
+                        label: menuText),
+                  ],
                 ),
-                label: contentText),
-            BottomNavigationBarItem(
-                icon: ImageIcon(
-                  AssetImage("${iconsPath}ic_task.png"),
-                ),
-                label: taskText),
-            BottomNavigationBarItem(
-                icon: ImageIcon(
-                  AssetImage(
-                    "${iconsPath}ic_camera.png",
-                  ),
-                ),
-                label: cameraText),
-            BottomNavigationBarItem(
-                icon: ImageIcon(
-                  AssetImage("${iconsPath}ic_feed.png"),
-                ),
-                label: feedText),
-            // BottomNavigationBarItem(
-            //     icon: ImageIcon(
-            //       AssetImage("${iconsPath}ic_chat.png"),
-            //     ),
-            //     label: chatText),
-            BottomNavigationBarItem(
-                icon: ImageIcon(
-                  AssetImage("${iconsPath}ic_menu.png"),
-                ),
-                label: menuText),
-          ],
-        ),
-        // body: Stack(
-        //   children: [
-        //     Center(child: Text("This is the center Text for popup")),
-        //     Visibility(
-        //       visible: !isGetLatLong,
-        //       replacement: showLoader(isForLocation: false),
-        //       child: bottomNavigationScreens[currentIndex],
-        //       //  )
-        //     ),
-        //   ],
-        // )),
-        body: Stack(
-          children: [
-            // Background text (optional)
-            const Center(child: Text("This is the center Text for popup")),
+                // body: Stack(
+                //   children: [
+                //     Center(child: Text("This is the center Text for popup")),
+                //     Visibility(
+                //       visible: !isGetLatLong,
+                //       replacement: showLoader(isForLocation: false),
+                //       child: bottomNavigationScreens[currentIndex],
+                //       //  )
+                //     ),
+                //   ],
+                // )),
+                body: Stack(
+                  children: [
+                    // Background text (optional)
+                    const Center(
+                        child: Text("This is the center Text for popup")),
 
-            // Show loader while getting location
-            Visibility(
-              visible: !isGetLatLong,
-              replacement: showLoader(isForLocation: false),
-              child: IndexedStack(
-                index: currentIndex,
-                children: bottomNavigationScreens,
+                    // Show loader while getting location
+                    Visibility(
+                      visible: !isGetLatLong,
+                      replacement: showLoader(isForLocation: false),
+                      child: IndexedStack(
+                        index: currentIndex,
+                        children: bottomNavigationScreens,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    )));
+            )));
   }
 
   /// FireBase Notification Initialize
@@ -1107,23 +1117,23 @@ class DashboardState extends State<Dashboard>
     if (index != 2) {
       updateLocationData();
     }
-    
+
     _dashboardBloc.add(ChangeDashboardTabEvent(index));
   }
 
   void _launchStudentBeansUrl(String url) async {
-      try {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-           await launchUrl(uri, mode: LaunchMode.externalApplication);
-           sharedPreferences!.setBool(sourceDataIsClickKey, true);
-           sharedPreferences!.setBool(sourceDataIsOpenedKey, true);
-        } else {
-          debugPrint("Could not launch URL: $url");
-        }
-      } catch (e) {
-         debugPrint("Error launching URL: $e");
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        sharedPreferences!.setBool(sourceDataIsClickKey, true);
+        sharedPreferences!.setBool(sourceDataIsOpenedKey, true);
+      } else {
+        debugPrint("Could not launch URL: $url");
       }
+    } catch (e) {
+      debugPrint("Error launching URL: $e");
+    }
   }
 
   String _getTabName(int index) {

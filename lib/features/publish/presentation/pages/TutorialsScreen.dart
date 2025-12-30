@@ -581,7 +581,7 @@ class TutorialsModel {
 
   factory TutorialsModel.fromJson(Map<String, dynamic> json) {
     return TutorialsModel(
-        id: json['_id'] ?? "",
+        id: json['_id'] ?? json['id'] ?? "",
         video: json['video'] ?? "",
         description: json['description'] ?? "",
         category: json['category'] ?? "",
@@ -609,7 +609,7 @@ class CategoryDataModel {
 
   factory CategoryDataModel.fromJson(Map<String, dynamic> json) {
     return CategoryDataModel(
-        id: json['_id'] ?? "",
+        id: json['_id'] ?? json['id'] ?? "",
         name: json['name'] ?? "",
         type: json['type'] ?? "",
         percentage: json['percentage'] ?? "",

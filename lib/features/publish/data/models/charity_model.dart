@@ -12,7 +12,7 @@ class CharityModel extends Charity {
 
   factory CharityModel.fromJson(Map<String, dynamic> json) {
     return CharityModel(
-      id: json['_id'] ?? "",
+      id: json['_id'] ?? json['id'] ?? "",
       organisationNumber: json['organisation_number'] ?? "",
       charityName: json['name'] ?? "",
       charityImage: json['logo'] ?? "",

@@ -11,7 +11,7 @@ class CategoryModel extends ContentCategory {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      id: json['_id'] ?? "",
+      id: json['_id'] ?? json['id'] ?? "",
       name: json['name'] ?? "",
       type: json['type'] ?? "",
       percentage: json['percentage']?.toString() ?? "",

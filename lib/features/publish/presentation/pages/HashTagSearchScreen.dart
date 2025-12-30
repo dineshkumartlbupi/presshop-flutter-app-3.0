@@ -517,13 +517,9 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
     try {
       switch (requestCode) {
         case getHashTagsUrlRequest:
-          var map = jsonDecode(response);
+          var list = jsonDecode(response) as List;
           debugPrint("GetHashTags: $response");
-          if (map["code"] == 200) {
-            var list = map["tags"] as List;
-            hashtagSearchList =
-                list.map((e) => HashTagData.fromJson(e)).toList();
-          }
+          hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
           var tageName = hashtagSearchList.first.name;
           for (var element in widget.tagData) {
             if (element.name == tageName) {
@@ -539,13 +535,9 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
           break;
 
         case searchHashTagsUrlRequest:
-          var map = jsonDecode(response);
+          var list = jsonDecode(response) as List;
           debugPrint("SearchHashTags: $response");
-          if (map["code"] == 200) {
-            var list = map["tags"] as List;
-            hashtagSearchList =
-                list.map((e) => HashTagData.fromJson(e)).toList();
-          }
+          hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
           if (hashtagSearchList.isEmpty &&
               hashTagController.text.trim().isNotEmpty) {
             addNew = true;
@@ -580,13 +572,20 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
         case addHashTagsUrlRequest:
           debugPrint("AddHashTagResponse: $response");
           var map = jsonDecode(response);
-          if (map["code"] == 200) {
+          // Assuming successful response is the tag object itself or has 200 code.
+          // If it's the tag object directly:
+          if (map["id"] != null) {
+            var newTag = HashTagData.fromJson(map);
+            hashtagSearchList.add(newTag..selected = true);
+            selectedHashTagList.add(newTag..selected = true);
+          } else if (map["code"] == 200 && map['tag'] != null) {
+            // Fallback to original if wrapped
             hashtagSearchList.add(HashTagData(
-                id: map['tag']["_id"] ?? '',
+                id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
                 name: map['tag']['name'],
                 selected: true));
             selectedHashTagList.add(HashTagData(
-                id: map['tag']["_id"] ?? '',
+                id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
                 name: map['tag']['name'],
                 selected: true));
           }
@@ -611,6 +610,8 @@ class HashTagData {
 
   factory HashTagData.fromJson(Map<String, dynamic> json) {
     return HashTagData(
-        id: json["_id"] ?? '', name: json["name"] ?? '', selected: false);
+        id: json["id"] ?? json["_id"] ?? '',
+        name: json["name"] ?? '',
+        selected: false);
   }
 }

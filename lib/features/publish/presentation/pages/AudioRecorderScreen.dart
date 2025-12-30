@@ -237,7 +237,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
           '${appFolder.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
       debugPrint("Audio FilePath : $filepath");
 
-      File(filepath).createSync();
+      await File(filepath).create();
 
       if (File(filepath).existsSync()) {
         await recorderController.record(path: filepath).then((value) {

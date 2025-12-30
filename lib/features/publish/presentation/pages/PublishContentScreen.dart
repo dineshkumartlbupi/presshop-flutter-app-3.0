@@ -1871,7 +1871,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         categoryList.swap(0, selectedPos);
                                       }
                                       //showCategoryDialogBox(context, size);
-                                      showCategoryBottomSheet(size);
+                                      showCategoryBottomSheet(
+                                          size, context.read<PublishBloc>());
                                     },
                                     child: Row(
                                       children: [
@@ -2615,85 +2616,86 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   /// show-category-bottom-sheet
-  void showCategoryBottomSheet(Size size) {
+  void showCategoryBottomSheet(Size size, PublishBloc publishBloc) {
     showModalBottomSheet(
         context: navigatorKey.currentContext!,
         builder: (context) {
-          return StatefulBuilder(builder: (context, sheetState) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: size.width * numD04),
-                  child: Row(
-                    children: [
-                      Text(
-                        categoryText.toUpperCase(),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD04,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                          splashRadius: size.width * numD06,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.cancel_outlined,
-                            size: size.width * numD08,
-                          ))
-                    ],
-                  ),
-                ),
-                Flexible(
-                  child: GridView.builder(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: size.width * numD04,
-                    ),
-                    itemBuilder: (context, index) {
-                      String selectedCat = selectedCategory!.name;
-                      return InkWell(
-                        onTap: () {
-                          context
-                              .read<PublishBloc>()
-                              .add(SelectCategoryEvent(categoryList[index].id));
-
-                          if (categoryList[index].name == "Shared" ||
-                              categoryList[index].name == "Exclusive") {
-                            selectedSellType = categoryList[index].name;
-                          }
-                          Navigator.pop(context);
-                        },
-                        child: Chip(
-                          label: Text(
-                            categoryList[index].name,
+          return BlocProvider.value(
+              value: publishBloc,
+              child: StatefulBuilder(builder: (context, sheetState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: size.width * numD04),
+                      child: Row(
+                        children: [
+                          Text(
+                            categoryText.toUpperCase(),
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
-                                color: categoryList[index].selected
-                                    ? Colors.white
-                                    : colorHint,
-                                fontWeight: FontWeight.w500),
+                                fontSize: size.width * numD04,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
                           ),
-                          backgroundColor: categoryList[index].selected
-                              ? Colors.black
-                              : colorLightGrey,
+                          const Spacer(),
+                          IconButton(
+                              splashRadius: size.width * numD06,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: Icon(
+                                Icons.cancel_outlined,
+                                size: size.width * numD08,
+                              ))
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: GridView.builder(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: size.width * numD04,
                         ),
-                      );
-                    },
-                    itemCount: categoryList.length,
-                  ),
-                ),
-              ],
-            );
-          });
+                        itemBuilder: (context, index) {
+                          String selectedCat = selectedCategory!.name;
+                          return InkWell(
+                            onTap: () {
+                              context.read<PublishBloc>().add(
+                                  SelectCategoryEvent(categoryList[index].id));
+
+                              if (categoryList[index].name == "Shared" ||
+                                  categoryList[index].name == "Exclusive") {
+                                selectedSellType = categoryList[index].name;
+                              }
+                              Navigator.pop(context);
+                            },
+                            child: Chip(
+                              label: Text(
+                                categoryList[index].name,
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: categoryList[index].selected
+                                        ? Colors.white
+                                        : colorHint,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              backgroundColor: categoryList[index].selected
+                                  ? Colors.black
+                                  : colorLightGrey,
+                            ),
+                          );
+                        },
+                        itemCount: categoryList.length,
+                      ),
+                    ),
+                  ],
+                );
+              }));
         });
   }
 

@@ -4,7 +4,16 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 
-enum CameraStatus { initial, loading, ready, failure, permissionDenied, recording, recordingPaused, success }
+enum CameraStatus {
+  initial,
+  loading,
+  ready,
+  failure,
+  permissionDenied,
+  recording,
+  recordingPaused,
+  success
+}
 
 class CameraState extends Equatable {
   final CameraStatus status;
@@ -38,6 +47,7 @@ class CameraState extends Equatable {
   CameraState copyWith({
     CameraStatus? status,
     CameraController? cameraController,
+    bool clearController = false,
     RecorderController? recorderController,
     String? selectedMode,
     bool? isRecording,
@@ -51,7 +61,8 @@ class CameraState extends Equatable {
   }) {
     return CameraState(
       status: status ?? this.status,
-      cameraController: cameraController ?? this.cameraController,
+      cameraController:
+          clearController ? null : (cameraController ?? this.cameraController),
       recorderController: recorderController ?? this.recorderController,
       selectedMode: selectedMode ?? this.selectedMode,
       isRecording: isRecording ?? this.isRecording,
