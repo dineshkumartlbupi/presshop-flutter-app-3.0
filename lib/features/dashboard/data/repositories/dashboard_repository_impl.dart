@@ -30,7 +30,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateLocation(Map<String, dynamic> params) async {
+  Future<Either<Failure, void>> updateLocation(
+      Map<String, dynamic> params) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.updateLocation(params);
@@ -72,10 +73,11 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> getRoomId() async {
+  Future<Either<Failure, Map<String, dynamic>>> getRoomId(
+      Map<String, dynamic> params) async {
     if (await networkInfo.isConnected) {
       try {
-        final roomIdData = await remoteDataSource.getRoomId();
+        final roomIdData = await remoteDataSource.getRoomId(params);
         return Right(roomIdData);
       } on ServerFailure {
         return Left(ServerFailure(message: ''));
@@ -114,7 +116,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<Either<Failure, void>> removeDevice(Map<String, dynamic> params) async {
+  Future<Either<Failure, void>> removeDevice(
+      Map<String, dynamic> params) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.removeDevice(params);

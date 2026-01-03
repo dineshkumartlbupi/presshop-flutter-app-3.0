@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/utils/extensions.dart';
+import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/content/domain/entities/content_item.dart';
@@ -17,6 +18,7 @@ import 'package:presshop/main.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/widgets/common_filter_sheet.dart';
+import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 
 class MyContentPage extends StatelessWidget {
   final bool hideLeading;
@@ -41,10 +43,13 @@ class MyContentView extends StatefulWidget {
   State<MyContentView> createState() => _MyContentViewState();
 }
 
-class _MyContentViewState extends State<MyContentView> with SingleTickerProviderStateMixin {
+class _MyContentViewState extends State<MyContentView>
+    with SingleTickerProviderStateMixin {
   late Size size;
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
-  final RefreshController _allRefreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  final RefreshController _allRefreshController =
+      RefreshController(initialRefresh: false);
   late TabController _tabController;
   int _selectedTabbar = 0;
   List<ContentItem> myContentList = [];
@@ -105,7 +110,7 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
           name: allExclusiveContentText,
           icon: "ic_exclusive.png",
           isSelected: false),
-       FilterModel(
+      FilterModel(
           name: allSharedContentText, icon: "ic_share.png", isSelected: false),
     ]);
   }
@@ -119,13 +124,12 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
       page++;
     }
 
-    Map<String, dynamic> params = {
-      "is_draft": 'false'
-    };
+    Map<String, dynamic> params = {"is_draft": 'false'};
 
     int pos = sortList.indexWhere((element) => element.isSelected);
     if (pos != -1) {
-      if (sortList[pos].name == filterDateText && sortList[pos].fromDate != null) {
+      if (sortList[pos].name == filterDateText &&
+          sortList[pos].fromDate != null) {
         params["startdate"] = DateFormat("yyyy-MM-ddTHH:mm:ss")
             .format(DateTime.parse(sortList[pos].fromDate!));
 
@@ -165,7 +169,9 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
       }
     }
 
-    context.read<ContentBloc>().add(FetchMyContentEvent(page: page, limit: limit, params: params));
+    context
+        .read<ContentBloc>()
+        .add(FetchMyContentEvent(page: page, limit: limit, params: params));
   }
 
   void _loadAllContent(bool isRefresh) {
@@ -181,9 +187,11 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
     // Assuming "All Content" means all my content without specific filters
     Map<String, dynamic> params = {};
 
-    context.read<ContentBloc>().add(FetchMyContentEvent(page: page, limit: limit, params: params));
+    context
+        .read<ContentBloc>()
+        .add(FetchMyContentEvent(page: page, limit: limit, params: params));
   }
-  
+
   void _onRefresh() {
     if (_selectedTabbar == 0) {
       _loadAllContent(true);
@@ -209,23 +217,24 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
         sortList: sortList,
         filterList: filterList,
         onClear: () {
-          for(var i in sortList) {
+          for (var i in sortList) {
             i.isSelected = false;
           }
-          for(var i in filterList) {
+          for (var i in filterList) {
             i.isSelected = false;
           }
           // default selection
-           filterList.firstWhere((e) => e.name == liveContentText).isSelected = true; 
-           setState(() {});
-           _loadMyContent(true);
+          filterList.firstWhere((e) => e.name == liveContentText).isSelected =
+              true;
+          setState(() {});
+          _loadMyContent(true);
         },
         onApply: (sorted, filtered) {
-           setState(() {
-             sortList = sorted;
-             filterList = filtered;
-           });
-           _loadMyContent(true);
+          setState(() {
+            sortList = sorted;
+            filterList = filtered;
+          });
+          _loadMyContent(true);
         },
       ),
     );
@@ -235,7 +244,7 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-       appBar: CommonAppBar(
+      appBar: CommonAppBar(
         elevation: 0,
         hideLeading: widget.hideLeading,
         title: Padding(
@@ -287,8 +296,8 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
           children: [
             SizedBox(height: size.width * numD04),
             Padding(
-               padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-               child: TabBar(
+              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+              child: TabBar(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
                 labelColor: Colors.white,
@@ -382,7 +391,8 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
                 crossAxisSpacing: size.width * numD04,
               ),
               itemBuilder: (context, index) {
-                if (index >= myContentList.length) return const SizedBox.shrink();
+                if (index >= myContentList.length)
+                  return const SizedBox.shrink();
                 return InkWell(
                     onTap: () {
                       var item = myContentList[index];
@@ -411,7 +421,6 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
       },
     );
   }
-      
 
   Widget _buildContentWidget(ContentItem item) {
     return Container(
@@ -457,8 +466,9 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
                 (item.isExclusive ?? false)
                     ? "${iconsPath}ic_exclusive.png"
                     : "${iconsPath}ic_share.png",
-                height:
-                    (item.isExclusive ?? false) ? size.width * numD03 : size.width * numD04,
+                height: (item.isExclusive ?? false)
+                    ? size.width * numD03
+                    : size.width * numD04,
                 color: colorTextFieldIcon,
               )
             ],
@@ -531,9 +541,8 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
                         "${iconsPath}ic_view.png",
                         height: size.width * numD026,
                         width: size.width * numD025,
-                        color: item.totalView == 0
-                            ? Colors.grey
-                            : colorThemePink,
+                        color:
+                            item.totalView == 0 ? Colors.grey : colorThemePink,
                       ),
                       SizedBox(width: size.width * numD013),
                       Text(
@@ -632,16 +641,32 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
     );
   }
 
-   Widget _buildMediaWidget(ContentItem item) {
+  Widget _buildMediaWidget(ContentItem item) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(size.width * numD04),
       child: Stack(
         children: [
           item.mediaUrls.isNotEmpty
-              ? _showImage(
-                  item.mediaType ?? 'photo', // default
-                  item.mediaUrls.first,
-                )
+              ? ((item.mediaType == 'video' ||
+                          (item.mediaList.isNotEmpty &&
+                              item.mediaList.first.mediaType == 'video')) &&
+                      item.mediaList.isNotEmpty
+                  ? VideoThumbnailWidget(
+                      videoUrl: fixS3Url(item.mediaUrls.first.startsWith('http')
+                          ? item.mediaUrls.first
+                          : "$contentImageUrl${item.mediaUrls.first}"),
+                      thumbnailUrl: item.mediaList.isNotEmpty &&
+                              item.mediaList.first.thumbnailUrl != null
+                          ? fixS3Url(item.mediaList.first.thumbnailUrl!)
+                          : null,
+                      width: size.width,
+                      height: size.width * numD30,
+                      fit: BoxFit.cover,
+                    )
+                  : _showImage(
+                      item.mediaType ?? 'photo', // default
+                      item.mediaUrls.first,
+                    ))
               : Container(
                   decoration: const BoxDecoration(color: colorLightGrey),
                   padding: EdgeInsets.all(size.width * numD06),
@@ -689,7 +714,6 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
   }
 
   Widget _showImage(String type, String url) {
-   
     return type == "audio"
         ? Container(
             height: size.width * numD30,
@@ -755,35 +779,39 @@ class _MyContentViewState extends State<MyContentView> with SingleTickerProvider
                   )
                 : CachedNetworkImage(
                     imageUrl: type == 'video'
-                        ? "$mediaThumbnailUrl$url"
-                        : "$contentImageUrl$url",
+                        ? (url.startsWith('http')
+                            ? url
+                            : "$mediaThumbnailUrl$url")
+                        : (url.startsWith('http')
+                            ? url
+                            : "$contentImageUrl$url"),
                     height: size.width * numD30,
                     width: size.width,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
-                        alignment: Alignment.topCenter,
-                        height: size.width * numD30,
-                        width: size.width,
-                        child: Center(
-                          child: Image.asset(
-                            "${commonImagePath}rabbitLogo.png",
-                            height: size.width * numD15,
-                            width: size.width * numD15,
-                          ),
+                      alignment: Alignment.topCenter,
+                      height: size.width * numD30,
+                      width: size.width,
+                      child: Center(
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          height: size.width * numD15,
+                          width: size.width * numD15,
                         ),
                       ),
+                    ),
                     errorWidget: (context, url, error) => Container(
-                        alignment: Alignment.topCenter,
-                        height: size.width * numD30,
-                        width: size.width,
-                        child: Center(
-                          child: Image.asset(
-                            "${commonImagePath}rabbitLogo.png",
-                            height: size.width * numD15,
-                            width: size.width * numD15,
-                          ),
+                      alignment: Alignment.topCenter,
+                      height: size.width * numD30,
+                      width: size.width,
+                      child: Center(
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          height: size.width * numD15,
+                          width: size.width * numD15,
                         ),
                       ),
+                    ),
                   );
   }
 }

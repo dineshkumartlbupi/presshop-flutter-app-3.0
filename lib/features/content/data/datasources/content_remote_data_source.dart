@@ -42,7 +42,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['code'] == 200) {
-          final List contentList = data['content'] ?? data['data'] ?? [];
+          final List contentList =
+              data['contentList'] ?? data['content'] ?? data['data'] ?? [];
           debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
           return contentList.map((e) => ContentItemModel.fromJson(e)).toList();
         }
@@ -243,12 +244,13 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<ContentItemModel> getContentDetail(String contentId) async {
     try {
-      final response = await apiClient.get('$uploadContentUrl/$contentId');
+      final response = await apiClient.get('$myContentDetailUrl$contentId');
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['code'] == 200) {
-          return ContentItemModel.fromJson(data['content'] ?? data['data']);
+          return ContentItemModel.fromJson(
+              data['contentDetail'] ?? data['content'] ?? data['data']);
         }
         throw ServerFailure(
             message: data['message'] ?? 'Failed to load content');

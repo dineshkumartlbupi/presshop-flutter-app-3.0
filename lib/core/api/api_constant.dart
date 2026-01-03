@@ -197,7 +197,7 @@ const getRoomIdReq = 36;
 const getHopperAcceptedCountUrl = "hopper/acceptedHoppersdata";
 const getHopperAcceptedCountReq = 37;
 
-const uploadContentUrl = "hopper/uploadMedia";
+const uploadContentUrl = "hopper/uploadmedia";
 const uploadContentReq = 38;
 
 const getMediaTaskChatListUrl = "hopper/getAllchat";

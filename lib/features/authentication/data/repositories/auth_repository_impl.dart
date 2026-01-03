@@ -25,6 +25,12 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.login(username, password);
         await localDataSource.cacheToken(remoteUser.token ?? ""); // Cache token
+        if (remoteUser.refreshToken != null) {
+          print("✅ Caching Refresh Token: ${remoteUser.refreshToken}");
+          await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
+        } else {
+          print("❌ Refresh Token is NULL from Remote Data Source");
+        }
         await localDataSource.setRememberMe(
             true); // Auto remember on explicit login? Or UI checkbox?
         // UI handles remember me separately usually.
@@ -63,6 +69,9 @@ class AuthRepositoryImpl implements AuthRepository {
         final remoteUser = await remoteDataSource.socialLogin(
             socialType, socialId, email, name, photoUrl);
         await localDataSource.cacheToken(remoteUser.token ?? "");
+        if (remoteUser.refreshToken != null) {
+          await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
+        }
         await localDataSource.setRememberMe(true);
         await _cacheUserDetails(remoteUser);
         return Right(remoteUser);
@@ -82,6 +91,9 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.register(data);
         await localDataSource.cacheToken(remoteUser.token ?? "");
+        if (remoteUser.refreshToken != null) {
+          await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
+        }
         await localDataSource.setRememberMe(true);
         await _cacheUserDetails(remoteUser);
         return Right(remoteUser);
@@ -192,6 +204,9 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.socialRegister(data);
         await localDataSource.cacheToken(remoteUser.token ?? "");
+        if (remoteUser.refreshToken != null) {
+          await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
+        }
         await localDataSource.setRememberMe(true);
         await _cacheUserDetails(remoteUser);
         return Right(remoteUser);

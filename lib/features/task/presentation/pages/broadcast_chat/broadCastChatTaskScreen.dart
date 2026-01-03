@@ -31,7 +31,8 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart' hide photoText, videoText, interviewText;
+import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart'
+    hide photoText, videoText, interviewText;
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -958,7 +959,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     MyEarningScreen(
-                                                      openDashboard: false, initialTapPosition: 0,
+                                                      openDashboard: false,
+                                                      initialTapPosition: 0,
                                                     )));
                                       }),
                                     ),
@@ -1947,7 +1949,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                     commonButtonStyle(size, colorThemePink), () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => MyEarningScreen(
-                            openDashboard: false, initialTapPosition: 0,
+                            openDashboard: false,
+                            initialTapPosition: 0,
                           )));
                 }),
               )
@@ -2665,7 +2668,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               commonButtonStyle(size, colorThemePink), () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => MyEarningScreen(
-                                      openDashboard: false, initialTapPosition: 2,
+                                      openDashboard: false,
+                                      initialTapPosition: 2,
                                     )));
                           }),
                         ),
@@ -3241,12 +3245,31 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   void callGetManageTaskListingApi() {
     Map<String, String> map = {
       "room_id": widget.roomId,
-      "type": "task_content"
     };
+
+    debugPrint(
+        "TAG_API: callGetManageTaskListingApi URL: $getMediaTaskChatListUrl");
+    debugPrint("TAG_API: callGetManageTaskListingApi Body: $map");
 
     NetworkClass.fromNetworkClass(
             getMediaTaskChatListUrl, this, getMediaTaskChatListReq, map)
         .callRequestServiceHeader(false, "post", null);
+  }
+
+  /// Create Room
+  void callCreateRoomApi() {
+    Map<String, String> map = {
+      "receiver_id": widget.taskDetail!.mediaHouseId,
+      "room_type": "HoppertoAdmin",
+      "type": "external_task",
+      "task_id": widget.taskDetail!.id,
+    };
+
+    debugPrint("TAG_API: callCreateRoomApi URL: $getRoomIdUrl");
+    debugPrint("TAG_API: callCreateRoomApi Body: $map");
+
+    NetworkClass.fromNetworkClass(getRoomIdUrl, this, getRoomIdReq, map)
+        .callRequestServiceHeader(true, "post", null);
   }
 
   @override
@@ -3263,12 +3286,22 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
       /// Get Chat Listing
       case getMediaTaskChatListReq:
         var data = jsonDecode(response);
-        debugPrint("getMediaTaskChatListReq Error : $data");
-        if (data["errors"] != null) {
+        debugPrint("TAG_API: getMediaTaskChatListReq Response: $data");
+        if (data["statusCode"] == 401) {
+          debugPrint("TAG_API: Room not found (401), creating room...");
+          callCreateRoomApi();
+        } else if (data["errors"] != null) {
           showSnackBar("Error", data["errors"]["msg"].toString(), Colors.red);
         } else {
           showSnackBar("Error", data.toString(), Colors.red);
         }
+        break;
+
+      /// Create Room
+      case getRoomIdReq:
+        var data = jsonDecode(response);
+        debugPrint("TAG_API: getRoomIdReq Error : $data");
+        showSnackBar("Error", data.toString(), Colors.red);
         break;
 
       case reqGetDetailsById:
@@ -3281,6 +3314,16 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   @override
   void onResponse({required int requestCode, required String response}) {
     switch (requestCode) {
+      /// Create Room
+      case getRoomIdReq:
+        var data = jsonDecode(response);
+        debugPrint("TAG_API: getRoomIdReq Success : $data");
+        if (data["data"] != null && data["data"]["_id"] != null) {
+          // Room created successfully, now fetch chat list
+          callGetManageTaskListingApi();
+        }
+        break;
+
       /// Upload Media
       case uploadTaskMediaReq:
         dismissProgressDialog();
@@ -3384,7 +3427,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
           MaterialPageRoute(
             builder: (context) => TransactionDetailScreen(
               pageType: PageType.TASK,
-              type:"received",
+              type: "received",
               transactionData: earningTransactionDataList[0].toEntity(),
             ),
           ),

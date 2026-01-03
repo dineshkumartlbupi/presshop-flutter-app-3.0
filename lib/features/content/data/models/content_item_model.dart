@@ -34,28 +34,41 @@ class ContentItemModel extends ContentItem {
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
     return ContentItemModel(
-      id: json['_id'] ?? '',
-      title: json['title'] ?? '',
+      id: json['_id'] ?? json['id'] ?? '',
+      title: json['title'] ?? json['heading'] ?? json['description'] ?? '',
       description: json['description'] ?? json['caption'] ?? '',
       mediaType: json['media_type'] ?? json['type'],
       mediaUrls: json['media_urls'] != null
           ? List<String>.from(json['media_urls'])
           : json['media'] != null
               ? List<String>.from(json['media'])
-              : [],
-      mediaList: json['content'] != null
-          ? (json['content'] as List).map((e) => ContentMedia(
-              mediaUrl: e['media'] ?? '',
-              mediaType: e['mediaType'] ?? e['media_type'] ?? 'image',
-              thumbnailUrl: e['thumbNail'] ?? e['thumbnail'] ?? e['thumb_nail'],
-              watermarkUrl: e['waterMark'] ?? e['water_mark'],
-              mimeType: e['mimeType'] ?? e['mime_type'],
-              fileName: e['fileName'] ?? e['file_name'],
-            )).toList()
+              : (json['images'] != null || json['videos'] != null)
+                  ? [
+                      ...(json['images'] != null
+                          ? List<String>.from(json['images'])
+                          : []),
+                      ...(json['videos'] != null
+                          ? List<String>.from(json['videos'])
+                          : [])
+                    ]
+                  : [],
+      mediaList: (json['content'] ?? json['content_metadata']) != null
+          ? ((json['content'] ?? json['content_metadata']) as List)
+              .map((e) => ContentMedia(
+                    mediaUrl: e['media'] ?? '',
+                    mediaType: e['mediaType'] ?? e['media_type'] ?? 'image',
+                    thumbnailUrl:
+                        e['thumbNail'] ?? e['thumbnail'] ?? e['thumb_nail'],
+                    watermarkUrl: e['waterMark'] ??
+                        e['water_mark'] ??
+                        e['watermarked_media'],
+                    mimeType: e['mimeType'] ?? e['mime_type'],
+                    fileName: e['fileName'] ?? e['file_name'],
+                  ))
+              .toList()
           : [],
-      hashtags: json['hashtags'] != null
-          ? List<String>.from(json['hashtags'])
-          : [],
+      hashtags:
+          json['hashtags'] != null ? List<String>.from(json['hashtags']) : [],
       location: json['location'] ?? json['address'],
       latitude: json['latitude']?.toString(),
       longitude: json['longitude']?.toString(),
@@ -75,11 +88,19 @@ class ContentItemModel extends ContentItem {
       totalSold: json['totalSold'] ?? json['total_earnings'] ?? 0,
       totalOffer: json['offer_content_size'] ?? 0,
       totalView: json['content_view_count_by_marketplace_for_app'] ?? 0,
-      paidStatus: json['paid_status']?.toString(),
-      purchasedMediahouseCount: json['purchased_mediahouse'] != null ? (json['purchased_mediahouse'] as List).length : 0,
+      paidStatus: (json['paid_status'] == false ||
+              json['paid_status'] == 'false' ||
+              json['paid_status'] == 'un_paid')
+          ? 'un_paid'
+          : json['paid_status']?.toString(),
+      purchasedMediahouseCount: json['purchased_mediahouse'] != null
+          ? (json['purchased_mediahouse'] as List).length
+          : 0,
       saleStatus: json['sale_status'],
       discountPercent: json['discount_percent'],
-      mediaHouseName: json['purchased_publication_details'] != null ? json['purchased_publication_details']['company_name'] : null,
+      mediaHouseName: json['purchased_publication_details'] != null
+          ? json['purchased_publication_details']['company_name']
+          : null,
       isPaidStatusToHopper: json['paid_status_to_hopper'] ?? false,
       userId: json['hopper_id'] ?? json['user_id'],
     );

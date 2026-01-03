@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:presshop/core/api/api_constant.dart' as ApiConstants;
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart' hide AdminDetailModel;
@@ -10,7 +11,7 @@ abstract class DashboardRemoteDataSource {
   Future<void> updateLocation(Map<String, dynamic> params);
   Future<void> addDevice(Map<String, dynamic> params);
   Future<TaskDetailModel> getTaskDetail(String id);
-  Future<Map<String, dynamic>> getRoomId();
+  Future<Map<String, dynamic>> getRoomId(Map<String, dynamic> params);
   Future<Map<String, dynamic>> checkAppVersion();
   Future<Map<String, dynamic>> activateStudentBeans();
   Future<void> removeDevice(Map<String, dynamic> params);
@@ -89,20 +90,32 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getRoomId() async {
+  Future<Map<String, dynamic>> getRoomId(Map<String, dynamic> params) async {
     try {
-      final response = await apiClient.get(getRoomIdUrl);
-      if (response.statusCode == 200) {
+      debugPrint("🚀 Calling Create Room API: $getRoomIdUrl");
+      debugPrint("📤 Create Room API Request Body: $params");
+      final response = await apiClient.post(getRoomIdUrl, data: params);
+      debugPrint("📩 Create Room API Response Status: ${response.statusCode}");
+      debugPrint("📦 Create Room API Response Body: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
+        Map<String, dynamic> responseMap;
         if (data is String) {
-          return jsonDecode(data);
+          responseMap = jsonDecode(data);
+        } else {
+          responseMap = Map<String, dynamic>.from(data);
         }
-        return data;
+
+        // Ensure we return the map so the caller can extract _id
+        return responseMap;
       } else {
-        throw ServerFailure(message: '');
+        throw ServerFailure(
+            message: 'Failed to create room: ${response.statusCode}');
       }
     } catch (e) {
-      throw ServerFailure(message: '');
+      debugPrint("❌ Create Room API Error: $e");
+      throw ServerFailure(message: e.toString());
     }
   }
 

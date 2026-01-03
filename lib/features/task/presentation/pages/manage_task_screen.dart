@@ -41,7 +41,8 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart' hide videoText, interviewText, photoText;
+import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart'
+    hide videoText, interviewText, photoText;
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
@@ -552,7 +553,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         context)
                                                                     .push(MaterialPageRoute(
                                                                         builder: (context) => MyEarningScreen(
-                                                                              openDashboard: false, initialTapPosition: 2,
+                                                                              openDashboard: false,
+                                                                              initialTapPosition: 2,
                                                                             )));
                                                               }),
                                                             )
@@ -2016,8 +2018,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           context)
                                                                       .push(MaterialPageRoute(
                                                                           builder: (context) => MyEarningScreen(
-                                                                                openDashboard: false, initialTapPosition: 2,
-                                                                                
+                                                                                openDashboard: false,
+                                                                                initialTapPosition: 2,
                                                                               )));
                                                                 }),
                                                               ),
@@ -5245,7 +5247,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             commonButtonStyle(size, colorThemePink), () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MyEarningScreen(
-                                    openDashboard: false, initialTapPosition: 2,
+                                    openDashboard: false,
+                                    initialTapPosition: 2,
                                   )));
                         }),
                       ),

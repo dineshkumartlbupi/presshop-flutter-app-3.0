@@ -5,6 +5,8 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/dashboard/presentation/pages/version_checker.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class ForceUpdateRepository {
   static const String endpoint = "auth/getLatestVersion";
 
@@ -69,14 +71,17 @@ class ForceUpdateRepository {
   static Future<Map<String, String>> _prepareHeaders() async {
     final headers = <String, String>{};
 
-    String? token = sharedPreferences!.getString(tokenKey);
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: tokenKey);
     String? deviceId = sharedPreferences!.getString(deviceIdKey);
 
-    headers[headerKey] = token!;
+    if (token != null) {
+      headers[headerKey] = token;
+    }
     headers[headerDeviceTypeKey] =
         "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
     headers[headerDeviceIdKey] = deviceId ?? "";
-  
+
     return headers;
   }
 
@@ -85,15 +90,18 @@ class ForceUpdateRepository {
   // ------------------------------------------
   static Future<bool> _refreshToken() async {
     try {
-      String? refresh = sharedPreferences!.getString(refreshtokenKey);
-      String? accessToken = sharedPreferences!.getString(tokenKey);
+      const storage = FlutterSecureStorage();
+      String? refresh = await storage.read(key: refreshtokenKey);
+      String? accessToken = await storage.read(key: tokenKey);
       String? deviceId = sharedPreferences!.getString(deviceIdKey);
+
+      if (refresh == null) return false;
 
       final response = await _dio.post(
         appRefreshTokenUrl,
         options: Options(headers: {
           refreshHeaderKey: refresh,
-          accessHeaderKey: refresh!.isEmpty ? accessToken : "",
+          accessHeaderKey: refresh.isEmpty ? (accessToken ?? "") : "",
           headerDeviceTypeKey:
               "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
           headerDeviceIdKey: deviceId ?? "",
@@ -104,6 +112,12 @@ class ForceUpdateRepository {
           response.data["data"] != null &&
           response.data["data"]["token"] != null) {
         // SAVE NEW TOKENS
+        await storage.write(
+            key: tokenKey, value: response.data["data"]["token"]);
+        await storage.write(
+            key: refreshtokenKey, value: response.data["data"]["refreshToken"]);
+
+        // Also update shared prefs for consistency if needed by other parts
         sharedPreferences!.setString(tokenKey, response.data["data"]["token"]);
         sharedPreferences!
             .setString(refreshtokenKey, response.data["data"]["refreshToken"]);

@@ -91,7 +91,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     FetchRoomIdEvent event,
     Emitter<DashboardState> emit,
   ) async {
-    final result = await getRoomId(NoParams());
+    final result = await getRoomId(event.params);
     result.fold(
       (failure) => emit(const DashboardError("Failed to fetch room ID")),
       (roomData) => emit(DashboardRoomIdLoaded(roomData)),
@@ -115,7 +115,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   ) async {
     final result = await activateStudentBeans(NoParams());
     result.fold(
-      (failure) => emit(const DashboardError("Failed to activate student beans")),
+      (failure) =>
+          emit(const DashboardError("Failed to activate student beans")),
       (data) => emit(StudentBeansActivated(data)),
     );
   }

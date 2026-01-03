@@ -25,6 +25,8 @@ import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
+import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/features/content/presentation/widgets/manage_content_widget.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
@@ -447,7 +449,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                   onTap: () {
                     if (item.mediaType == "pdf" || item.mediaType == "doc") {
                       openUrl(contentItem!.paidStatus == paidText
-                          ? contentImageUrl + item.mediaUrl
+                          ? (item.mediaUrl.startsWith('http')
+                              ? item.mediaUrl
+                              : contentImageUrl + item.mediaUrl)
                           : item.watermarkUrl ?? "");
                     }
                   },
@@ -456,7 +460,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       item.mediaType == "audio"
                           ? playAudioWidget()
                           : item.mediaType == "video"
-                              ? videoWidget()
+                              ? videoWidget(index)
                               : item.mediaType == "pdf"
                                   ? Padding(
                                       padding:
@@ -481,8 +485,21 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                           contentItem!.mediaList[index]
                                                       .mediaType ==
                                                   "video"
-                                              ? "$contentImageUrl${contentItem!.mediaList[index].thumbnailUrl ?? ''}"
-                                              : "$contentImageUrl${contentItem!.mediaList[index].mediaUrl}",
+                                              ? ((contentItem!.mediaList[index]
+                                                              .thumbnailUrl ??
+                                                          '')
+                                                      .startsWith('http')
+                                                  ? (contentItem!
+                                                          .mediaList[index]
+                                                          .thumbnailUrl ??
+                                                      '')
+                                                  : "$contentImageUrl${contentItem!.mediaList[index].thumbnailUrl ?? ''}")
+                                              : (contentItem!
+                                                      .mediaList[index].mediaUrl
+                                                      .startsWith('http')
+                                                  ? contentItem!
+                                                      .mediaList[index].mediaUrl
+                                                  : "$contentImageUrl${contentItem!.mediaList[index].mediaUrl}"),
                                           width: double.infinity,
                                           height: size.width * numD50,
                                           fit: BoxFit.cover,
@@ -1216,7 +1233,32 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           );}*/
 
   /// video widget
-  Widget videoWidget() {
+  Widget videoWidget(int index) {
+    if (index != _currentMediaIndex) {
+      // If this is not the current page, show a placeholder or thumbnail
+      // to avoid conflict with the single FlickManager instance.
+      var item = contentItem!.mediaList[index];
+      return Stack(
+        children: [
+          VideoThumbnailWidget(
+            videoUrl: fixS3Url((item.mediaUrl ?? "").startsWith('http')
+                ? (item.mediaUrl ?? "")
+                : "$contentImageUrl${item.mediaUrl ?? ''}"),
+            thumbnailUrl:
+                item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
+            width: double.infinity,
+            height: size.width * numD50,
+            fit: BoxFit.cover,
+          ),
+          const Center(
+            child:
+                Icon(Icons.play_circle_outline, color: Colors.white, size: 50),
+          ),
+        ],
+      );
+    }
+
+    var item = contentItem!.mediaList[index];
     return VisibilityDetector(
       key: ObjectKey(flickManager),
       onVisibilityChanged: (visibility) {
@@ -1229,22 +1271,54 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
       child: flickManager != null
           ? FlickVideoPlayer(
               flickManager: flickManager!,
-              flickVideoWithControls: const FlickVideoWithControls(
-                playerLoadingFallback: Center(
-                  child: CircularProgressIndicator(
-                    color: colorThemePink,
-                  ),
+              flickVideoWithControls: FlickVideoWithControls(
+                playerLoadingFallback: Stack(
+                  children: [
+                    VideoThumbnailWidget(
+                      videoUrl: fixS3Url(
+                          (item.mediaUrl ?? "").startsWith('http')
+                              ? (item.mediaUrl ?? "")
+                              : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                      thumbnailUrl: item.thumbnailUrl != null
+                          ? fixS3Url(item.thumbnailUrl!)
+                          : null,
+                      width: double.infinity,
+                      height: size.width * numD50,
+                      fit: BoxFit.cover,
+                    ),
+                    const Center(
+                      child: CircularProgressIndicator(
+                        color: colorThemePink,
+                      ),
+                    ),
+                  ],
                 ),
-                closedCaptionTextStyle: TextStyle(fontSize: 8),
-                controls: FlickPortraitControls(),
+                closedCaptionTextStyle: const TextStyle(fontSize: 8),
+                controls: const FlickPortraitControls(),
               ),
-              flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-                playerLoadingFallback: Center(
-                  child: CircularProgressIndicator(
-                    color: colorThemePink,
-                  ),
+              flickVideoWithControlsFullscreen: FlickVideoWithControls(
+                playerLoadingFallback: Stack(
+                  children: [
+                    VideoThumbnailWidget(
+                      videoUrl: fixS3Url(
+                          (item.mediaUrl ?? "").startsWith('http')
+                              ? (item.mediaUrl ?? "")
+                              : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                      thumbnailUrl: item.thumbnailUrl != null
+                          ? fixS3Url(item.thumbnailUrl!)
+                          : null,
+                      width: double.infinity,
+                      height: size.width * numD50,
+                      fit: BoxFit.cover,
+                    ),
+                    const Center(
+                      child: CircularProgressIndicator(
+                        color: colorThemePink,
+                      ),
+                    ),
+                  ],
                 ),
-                controls: FlickLandscapeControls(),
+                controls: const FlickLandscapeControls(),
               ),
             )
           : const SizedBox.shrink(),
@@ -1348,15 +1422,23 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
 
   void initialController() {
     if (contentItem?.mediaList[_currentMediaIndex].mediaType == "audio") {
-      var url = contentImageUrl +
-          (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
+      var url = (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
+              .startsWith('http')
+          ? (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
+          : contentImageUrl +
+              (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
       initWaveData(url);
     } else if (contentItem?.mediaList[_currentMediaIndex].mediaType ==
         "video") {
-      var url = contentImageUrl +
-          (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
+      var url = fixS3Url(
+          (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
+                  .startsWith('http')
+              ? (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
+              : contentImageUrl +
+                  (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? ""));
+      debugPrint("Video Player URL: $url");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
           Uri.parse(url),

@@ -15,7 +15,10 @@ import 'package:presshop/core/services/deeplink_service.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 
 // App widget
+// App widget
 import 'package:presshop/app.dart';
+import 'dart:io';
+import 'package:presshop/core/utils/http_overrides.dart';
 
 // ============================================================================
 // GLOBAL VARIABLES
@@ -40,6 +43,7 @@ List<MediaData> contentMediaList = [];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
 
   // 1. Load environment variables
   await AppInitializationService.loadEnvironment();

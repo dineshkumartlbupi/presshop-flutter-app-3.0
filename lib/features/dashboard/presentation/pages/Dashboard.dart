@@ -159,7 +159,12 @@ class DashboardState extends State<Dashboard>
     _dashboardBloc.add(CheckAppVersionEvent());
 
     // callGetRoomIdApi();
-    _dashboardBloc.add(FetchRoomIdEvent());
+    Map<String, dynamic> roomParams = {
+      "participants": ["hopper_id_1", "media_house_id_1"],
+      "type": "content_negotiation",
+      "content_id": "content_123"
+    };
+    _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
     facebookAppEvents.logEvent(
       name: "dashboard_open",
@@ -575,10 +580,20 @@ class DashboardState extends State<Dashboard>
                 });
               } else if (state is DashboardRoomIdLoaded) {
                 var data = (state as DashboardRoomIdLoaded).roomData;
-                if (data["details"] != null) {
-                  var roomId = data["details"]["room_id"] ?? "";
+                debugPrint("📦 Dashboard Received Room Data: $data");
+
+                String roomId = "";
+                if (data.containsKey("_id")) {
+                  roomId = data["_id"];
+                } else if (data["details"] != null) {
+                  roomId = data["details"]["room_id"] ?? "";
+                }
+
+                if (roomId.isNotEmpty) {
                   sharedPreferences!.setString(adminRoomIdKey, roomId);
-                  debugPrint("Room Id : $roomId");
+                  debugPrint("✅ Room Id Saved: $roomId");
+                } else {
+                  debugPrint("❌ Room Id NOT found in response");
                 }
               } else if (state is DashboardAppVersionChecked) {
                 var map = (state as DashboardAppVersionChecked).versionData;

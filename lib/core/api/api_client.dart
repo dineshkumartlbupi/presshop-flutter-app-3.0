@@ -43,7 +43,7 @@ class ApiClient {
       debugPrint("DEBUG: ApiClient Token: $token");
 
       /// Using same behavior as your existing NetworkClass
-      options.headers[headerKey] = token;
+      options.headers[headerKey] = "Bearer $token";
     } else {
       debugPrint("DEBUG: ApiClient Token is NULL or EMPTY");
     }
@@ -60,9 +60,108 @@ class ApiClient {
     ErrorInterceptorHandler handler,
   ) async {
     if (err.response?.statusCode == 401) {
-      /// TODO: Token refresh logic if needed
+      /// Token refresh logic
+      if (err.requestOptions.path.contains(appRefreshTokenUrl)) {
+        handler.next(err);
+        return;
+      }
+
+      final refreshToken = await _secureStorage.read(key: refreshtokenKey);
+      final accessToken = await _secureStorage.read(key: tokenKey) ?? "";
+
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        try {
+          final refreshDio = Dio();
+          refreshDio.options.baseUrl = baseUrl;
+
+          // Match TokenRefreshManager headers
+          refreshDio.options.headers[headerDeviceIdKey] =
+              _sharedPreferences.getString(deviceIdKey) ?? "";
+          refreshDio.options.headers[headerDeviceTypeKey] =
+              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
+
+          // Logic from TokenRefreshManager: if refresh token exists, access token header is empty
+          String tokenForAccess = refreshToken.isEmpty ? accessToken : "";
+
+          refreshDio.options.headers[refreshHeaderKey] = refreshToken;
+          refreshDio.options.headers[accessHeaderKey] = tokenForAccess;
+
+          debugPrint("🔄 Attempting Token Refresh (ApiClient)...");
+          // Send empty body as per TokenRefreshManager
+          final response = await refreshDio.get(appRefreshTokenUrl);
+
+          if (response.statusCode == 200) {
+            final data = response.data;
+            debugPrint("✅ Token Refresh Success: $data");
+
+            if (data["success"] == true &&
+                data["data"] != null &&
+                data["data"]["access_token"] != null &&
+                data["data"]["refresh_token"] != null) {
+              // 1. Delete old access token
+              // 2. Delete old refresh token
+              await _secureStorage.delete(key: tokenKey);
+              await _secureStorage.delete(key: refreshtokenKey);
+
+              // 3. Save NEW access token
+              // 4. Save NEW refresh token
+              final newAccessToken = data["data"]["access_token"];
+              final newRefreshToken = data["data"]["refresh_token"];
+
+              await _secureStorage.write(key: tokenKey, value: newAccessToken);
+              await _secureStorage.write(
+                  key: refreshtokenKey, value: newRefreshToken);
+
+              // Also update SharedPreferences to stay in sync
+              await _sharedPreferences.setString(tokenKey, newAccessToken);
+              await _sharedPreferences.setString(
+                  refreshtokenKey, newRefreshToken);
+
+              debugPrint("🔄 Retrying original request with new token");
+              final opts = err.requestOptions;
+              opts.headers[headerKey] = "Bearer $newAccessToken";
+
+              final cloneReq = await _dio.request(
+                opts.path,
+                options: Options(
+                  method: opts.method,
+                  headers: opts.headers,
+                  contentType: opts.contentType,
+                  responseType: opts.responseType,
+                  followRedirects: opts.followRedirects,
+                  validateStatus: opts.validateStatus,
+                  receiveTimeout: opts.receiveTimeout,
+                  sendTimeout: opts.sendTimeout,
+                  extra: opts.extra,
+                ),
+                data: opts.data,
+                queryParameters: opts.queryParameters,
+              );
+              return handler.resolve(cloneReq);
+            }
+          } else {
+            debugPrint(
+                "❌ Token Refresh Failed with status: ${response.statusCode}");
+            await _clearSession();
+          }
+        } catch (e) {
+          debugPrint("❌ Token Refresh Failed: $e");
+          await _clearSession();
+        }
+      } else {
+        debugPrint("❌ Refresh Token is NULL or EMPTY - Clearing Session");
+        await _clearSession();
+      }
     }
     handler.next(err);
+  }
+
+  Future<void> _clearSession() async {
+    debugPrint("🧹 Clearing User Session...");
+    await _secureStorage.deleteAll();
+    await _sharedPreferences.clear();
+    // Note: Navigation to login screen should be handled by the UI observing the auth state
+    // or by the user restarting the app if hot restart is needed.
   }
 
   Future<Response> get(

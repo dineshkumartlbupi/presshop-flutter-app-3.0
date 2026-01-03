@@ -15,9 +15,8 @@ class ChatModel {
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
         message: json['message'] ?? "",
-        isUser: json['is_user'] == true ? true : false,
+        isUser: json['is_user'] == true || json['is_user'] == "true",
         isNavigate: false,
-        time: json['time']);
+        time: json['createdAt'] ?? json['time'] ?? "");
   }
 }
-

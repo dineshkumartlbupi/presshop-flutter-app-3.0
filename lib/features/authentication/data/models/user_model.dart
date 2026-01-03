@@ -7,6 +7,7 @@ class UserModel extends User {
     required super.lastName,
     required super.email,
     super.token,
+    super.refreshToken, // Added refreshToken to constructor
     super.referralCode,
     super.currencySymbol,
     super.totalHopperArmy,
@@ -39,6 +40,7 @@ class UserModel extends User {
       lastName: json['last_name'] ?? '',
       email: json['email'] ?? '',
       token: json['token'],
+      refreshToken: json['refreshToken'], // Added refreshToken parsing
       referralCode: json['referral_code'],
       currencySymbol: currency,
       totalHopperArmy: json['totalHopperArmy']?.toString(),

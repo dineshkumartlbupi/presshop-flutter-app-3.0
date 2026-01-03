@@ -13,6 +13,8 @@ abstract class AuthLocalDataSource {
   Future<bool> getOnboardingSeen();
   Future<void> setOnboardingSeen();
   Future<String?> getUserId();
+  Future<void> cacheRefreshToken(String token);
+  Future<String?> getRefreshToken();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -91,5 +93,17 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<String?> getUserId() async {
     return sharedPreferences.getString(hopperIdKey);
+  }
+
+  @override
+  Future<void> cacheRefreshToken(String token) async {
+    print(
+        "🔐 AuthLocalDataSource: Writing Refresh Token to Secure Storage: $token");
+    await secureStorage.write(key: refreshtokenKey, value: token);
+  }
+
+  @override
+  Future<String?> getRefreshToken() async {
+    return await secureStorage.read(key: refreshtokenKey);
   }
 }

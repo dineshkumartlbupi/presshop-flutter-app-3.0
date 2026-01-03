@@ -49,8 +49,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         if (data['code'] == 200 || data['success'] == true) {
           final userMap = data['data'];
           if (userMap != null) {
+            print(
+                "****************************************************************");
+            print("🔵 LOGIN RESPONSE RAW DATA: $userMap");
+            print("🔵 LOGIN RESPONSE KEYS: ${userMap.keys.toList()}");
+            print(
+                "****************************************************************");
             userMap['token'] = userMap['access_token'];
-            userMap['refreshToken'] = userMap['refresh_token'];
+            // Check for both snake_case and camelCase
+            userMap['refreshToken'] =
+                userMap['refresh_token'] ?? userMap['refreshToken'];
             return UserModel.fromJson(userMap);
           } else {
             throw ServerFailure(message: "User data is null");
@@ -88,7 +96,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           if (data['token'] != null) {
             final userMap = data['user'];
             userMap['token'] = data['token'];
-            userMap['refreshToken'] = data['refreshToken'];
+            userMap['token'] = data['token'];
+            // Check for both snake_case and camelCase
+            userMap['refreshToken'] =
+                data['refreshToken'] ?? data['refresh_token'];
             return UserModel.fromJson(userMap);
           } else {
             throw const UserNotRegisteredFailure(

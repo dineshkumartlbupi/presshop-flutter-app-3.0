@@ -36,7 +36,14 @@ class FetchTaskDetailEvent extends DashboardEvent {
   List<Object> get props => [taskId];
 }
 
-class FetchRoomIdEvent extends DashboardEvent {}
+class FetchRoomIdEvent extends DashboardEvent {
+  final Map<String, dynamic> params;
+
+  const FetchRoomIdEvent(this.params);
+
+  @override
+  List<Object> get props => [params];
+}
 
 class CheckAppVersionEvent extends DashboardEvent {}
 

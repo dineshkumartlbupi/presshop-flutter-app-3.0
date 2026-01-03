@@ -183,15 +183,11 @@ class NetworkClass {
               showLoader, requestType, imageParams, mimeType);
           return;
         } else {
-          // NEVER logout automatically - always keep user logged in
-          // Token refresh failed but user stays logged in
-          // Let the original request fail so user can retry manually
-          debugPrint(
-              "Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
+          debugPrint("Token refresh failed - Session expired");
           networkResponse!.onError(
               requestCode: requestCode,
               response:
-                  '{"code": 401, "message": "Session expired. Please try again."}');
+                  '{"code": 401, "message": "Session expired. Please login again."}');
           return;
         }
       }
@@ -409,8 +405,10 @@ class NetworkClass {
   Future<void> callRequestServiceHeader(
     bool showLoader,
     String requestType,
-    Map<String, dynamic>? queryParameters,
-  ) async {
+    Map<String, dynamic>? queryParameters, {
+    bool handleAuth = true,
+    bool isJson = false,
+  }) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;
@@ -443,7 +441,12 @@ class NetworkClass {
 
       if (requestType != "get") {
         if (jsonBody != null) {
-          request.bodyFields = jsonBody!;
+          if (isJson) {
+            request.headers['Content-Type'] = 'application/json';
+            request.body = jsonEncode(jsonBody);
+          } else {
+            request.bodyFields = jsonBody!;
+          }
         }
       }
       String headerToken = "";
@@ -452,7 +455,7 @@ class NetworkClass {
       String? token = await storage.read(key: tokenKey);
 
       if (token != null) {
-        headerToken = token;
+        headerToken = "Bearer $token";
         var deviceID = sharedPreferences!.getString(deviceIdKey)!;
         // Add headers
         request.headers.addAll({
@@ -480,8 +483,9 @@ class NetworkClass {
 
       debugPrint("BodyIs: ${response.body.toString()}");
 
-      // Check for 401 Unauthorized - but skip if this is the refresh token API itself
-      if (TokenRefreshManager.isUnauthorizedResponse(
+      // Check for 401 Unauthorized - but skip if this is the refresh token API itself or if handleAuth is false
+      if (handleAuth &&
+          TokenRefreshManager.isUnauthorizedResponse(
               response.statusCode, response.body.toString()) &&
           !endUrl.contains(appRefreshTokenUrl)) {
         debugPrint("401 Unauthorized detected, attempting token refresh...");
@@ -499,7 +503,8 @@ class NetworkClass {
           // Retry the request after token refresh
           TokenRefreshManager().addPendingRequest(
             () => callRequestServiceHeader(
-                showLoader, requestType, queryParameters),
+                showLoader, requestType, queryParameters,
+                handleAuth: handleAuth, isJson: isJson),
           );
           return;
         }
@@ -512,18 +517,15 @@ class NetworkClass {
               "Token refreshed successfully, retrying original request...");
           // Retry the original request with new token
           await callRequestServiceHeader(
-              showLoader, requestType, queryParameters);
+              showLoader, requestType, queryParameters,
+              handleAuth: handleAuth, isJson: isJson);
           return;
         } else {
-          // NEVER logout automatically - always keep user logged in
-          // Token refresh failed but user stays logged in
-          // Let the original request fail so user can retry manually
-          debugPrint(
-              "Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
+          debugPrint("Token refresh failed - Session expired");
           networkResponse!.onError(
               requestCode: requestCode,
               response:
-                  '{"code": 401, "message": "Session expired. Please try again."}');
+                  '{"code": 401, "message": "Session expired. Please login again."}');
           return;
         }
       }
@@ -623,11 +625,11 @@ class NetworkClass {
         await callPatchServiceHeaderRow(context, showLoader);
         return;
       } else {
-        debugPrint("Token refresh failed, user will be logged out");
-        // Check if logout is needed and navigate
-        if (TokenRefreshManager.shouldLogout()) {
-          _handleLogout();
-        }
+        debugPrint("Token refresh failed - Session expired");
+        networkResponse!.onError(
+            requestCode: requestCode,
+            response:
+                '{"code": 401, "message": "Session expired. Please login again."}');
         return;
       }
     }
@@ -973,15 +975,11 @@ class NetworkClass {
               showLoader, requestType, imageParams);
           return;
         } else {
-          // NEVER logout automatically - always keep user logged in
-          // Token refresh failed but user stays logged in
-          // Let the original request fail so user can retry manually
-          debugPrint(
-              "Token refresh failed, but keeping user logged in. Original request will fail - user can retry.");
+          debugPrint("Token refresh failed - Session expired");
           networkResponse!.onError(
               requestCode: requestCode,
               response:
-                  '{"code": 401, "message": "Session expired. Please try again."}');
+                  '{"code": 401, "message": "Session expired. Please login again."}');
           return;
         }
       }
@@ -1094,17 +1092,6 @@ class NetworkClass {
         debugPrint("Unknown Error :$errorMessage");
         showSnackBar("Error", "Unknown Error", Colors.red);
     }
-  }
-
-  /// Handle user logout when token refresh fails
-  /// NOTE: This method is kept for reference but should NEVER be called automatically
-  /// Users should only be logged out through explicit user action (logout button)
-  void _handleLogout() {
-    // This method should not be called automatically
-    // Only manual logout should navigate to login screen
-    debugPrint(
-        "WARNING: _handleLogout() called - this should only happen on manual logout");
-    TokenRefreshManager.clearLogoutFlag();
   }
 }
 

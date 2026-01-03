@@ -8,6 +8,9 @@ import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/main.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
+
 /// Singleton class to manage token refresh operations
 /// Handles automatic token refresh when 401 errors occur
 class TokenRefreshManager {
@@ -19,7 +22,7 @@ class TokenRefreshManager {
   final List<Future<void> Function()> _pendingRequests = [];
   Completer<bool>? _refreshCompleter;
   int _retryCount = 0;
-  static const int _maxRetries = 5; // Increased retries to prevent logout
+  static const int _maxRetries = 3;
   static const Duration _initialRetryDelay = Duration(seconds: 2);
 
   /// Check if token refresh is in progress
@@ -27,7 +30,7 @@ class TokenRefreshManager {
 
   /// Refresh the access token using refresh token
   /// Returns true if refresh was successful, false otherwise
-  /// Retries on network errors, only logs out if refresh token is invalid (401)
+  /// Retries on network errors, logs out if refresh token is invalid (401)
   Future<bool> refreshToken({int retryAttempt = 0}) async {
     // If already refreshing, wait for the existing refresh to complete
     if (_isRefreshing && _refreshCompleter != null && retryAttempt == 0) {
@@ -35,27 +38,14 @@ class TokenRefreshManager {
       return await _refreshCompleter!.future;
     }
 
+    const storage = FlutterSecureStorage();
+    String? refreshTokenValue = await storage.read(key: refreshtokenKey);
+
     // Check if refresh token exists
-    if (sharedPreferences?.getString(refreshtokenKey) == null ||
-        sharedPreferences!.getString(refreshtokenKey)!.isEmpty) {
-      debugPrint("No refresh token available");
-      // Keep retrying - token might be saved by another process or will be available later
-      if (retryAttempt < _maxRetries) {
-        debugPrint(
-            "No refresh token on retry attempt $retryAttempt, waiting and retrying...");
-        await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
-        return await refreshToken(retryAttempt: retryAttempt + 1);
-      }
-      // Max retries reached, but NEVER logout - keep user logged in
+    if (refreshTokenValue == null || refreshTokenValue.isEmpty) {
       debugPrint(
-          "Max retries reached without refresh token, but keeping user logged in");
-      if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-        _refreshCompleter!.complete(false);
-      }
-      _processPendingRequests(false);
-      _isRefreshing = false;
-      _refreshCompleter = null;
-      _retryCount = 0;
+          "No refresh token available in storage (TokenRefreshManager) - Logging out");
+      _logoutUser();
       return false;
     }
 
@@ -65,25 +55,14 @@ class TokenRefreshManager {
     }
 
     try {
-      final refreshTokenValue = sharedPreferences!.getString(refreshtokenKey)!;
-      final token = sharedPreferences!.getString(tokenKey)!;
+      final token = await storage.read(key: tokenKey) ?? "";
       final deviceID = sharedPreferences!.getString(deviceIdKey) ?? "";
 
       final uri = Uri.parse(baseUrl + appRefreshTokenUrl);
       debugPrint(
           "Refreshing token: $uri (Attempt ${retryAttempt + 1}/${_maxRetries + 1})");
 
-      // request.headers.addAll({
-      // refreshHeaderKey: refreshHeaderToken,
-      // accessHeaderKey: tokenforAccess,
-      //         headerDeviceTypeKey:
-      //             "mobile-flutter-${Platform.isIOS ? "ios" : "android"}",
-      //         headerDeviceIdKey: deviceID
-      //       });
-
       String tokenforAccess = refreshTokenValue == "" ? token : "";
-
-      print("Token Access12345 $tokenforAccess");
 
       final request = http.Request("GET", uri);
       request.headers.addAll({
@@ -104,37 +83,45 @@ class TokenRefreshManager {
       debugPrint("Token refresh response: ${response.statusCode}");
       debugPrint("Token refresh body: ${response.body}");
 
-      // Even if refresh token returns 401, don't logout - keep retrying
-      // The token might be valid but server had a temporary issue
+      // If refresh token is invalid (401), logout immediately
       if (isUnauthorizedResponse(response.statusCode, response.body)) {
         debugPrint(
-            "Refresh token API returned 401, but keeping user logged in and retrying...");
-        // Retry even on 401 - might be temporary server issue
-        if (retryAttempt < _maxRetries) {
-          debugPrint("Retrying token refresh after 401 response...");
-          await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
-          return await refreshToken(retryAttempt: retryAttempt + 1);
-        }
-        // Max retries reached, but NEVER logout - keep user logged in
-        debugPrint("Max retries reached after 401, but keeping user logged in");
+            "Refresh token API returned 401 - Session expired - Logging out");
+        _logoutUser();
         if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
           _refreshCompleter!.complete(false);
         }
         _processPendingRequests(false);
         _isRefreshing = false;
         _refreshCompleter = null;
-        _retryCount = 0;
         return false;
       }
 
       if (response.statusCode <= 201) {
         try {
           final map = jsonDecode(response.body);
-          // print()
-          if (map["token"] != null && map["refreshToken"] != null) {
-            // Save new tokens
-            sharedPreferences!.setString(tokenKey, map["token"]);
-            sharedPreferences!.setString(refreshtokenKey, map["refreshToken"]);
+
+          // Check for nested data object and snake_case keys as per new API response
+          if (map["success"] == true &&
+              map["data"] != null &&
+              map["data"]["access_token"] != null &&
+              map["data"]["refresh_token"] != null) {
+            // 1. Delete old access token
+            // 2. Delete old refresh token
+            await storage.delete(key: tokenKey);
+            await storage.delete(key: refreshtokenKey);
+
+            // 3. Save NEW access token
+            // 4. Save NEW refresh token
+            final newAccessToken = map["data"]["access_token"];
+            final newRefreshToken = map["data"]["refresh_token"];
+
+            await storage.write(key: tokenKey, value: newAccessToken);
+            await storage.write(key: refreshtokenKey, value: newRefreshToken);
+
+            sharedPreferences!.setString(tokenKey, newAccessToken);
+            sharedPreferences!.setString(refreshtokenKey, newRefreshToken);
+
             debugPrint("Token refreshed successfully");
             _retryCount = 0; // Reset retry count on success
             if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
@@ -153,16 +140,7 @@ class TokenRefreshManager {
               await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
               return await refreshToken(retryAttempt: retryAttempt + 1);
             }
-            // Max retries reached, but don't logout - keep user logged in
-            debugPrint(
-                "Max retries reached after invalid response format, but keeping user logged in");
-            if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-              _refreshCompleter!.complete(false);
-            }
-            _processPendingRequests(false);
-            _isRefreshing = false;
-            _refreshCompleter = null;
-            _retryCount = 0;
+            _logoutUser();
             return false;
           }
         } catch (e) {
@@ -173,16 +151,7 @@ class TokenRefreshManager {
             await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
             return await refreshToken(retryAttempt: retryAttempt + 1);
           }
-          // Max retries reached, but don't logout - keep user logged in
-          debugPrint(
-              "Max retries reached after parse error, but keeping user logged in");
-          if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
-            _refreshCompleter!.complete(false);
-          }
-          _processPendingRequests(false);
-          _isRefreshing = false;
-          _refreshCompleter = null;
-          _retryCount = 0;
+          _logoutUser();
           return false;
         }
       } else {
@@ -194,16 +163,16 @@ class TokenRefreshManager {
           await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
           return await refreshToken(retryAttempt: retryAttempt + 1);
         }
-        // Max retries reached, but don't logout - keep user logged in
-        debugPrint(
-            "Max retries reached after status error, but keeping user logged in");
+        // If max retries reached for non-401 error, we might not want to logout immediately
+        // but we return false so the original request fails.
+        // However, if it's a persistent issue, user might be stuck.
+        // For now, let's NOT logout on 500s, just return false.
         if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
           _refreshCompleter!.complete(false);
         }
         _processPendingRequests(false);
         _isRefreshing = false;
         _refreshCompleter = null;
-        _retryCount = 0;
         return false;
       }
     } catch (e) {
@@ -214,16 +183,13 @@ class TokenRefreshManager {
         await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
         return await refreshToken(retryAttempt: retryAttempt + 1);
       }
-      // Max retries reached, but don't logout - keep user logged in
-      debugPrint(
-          "Max retries reached after exception, but keeping user logged in");
+
       if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
         _refreshCompleter!.complete(false);
       }
       _processPendingRequests(false);
       _isRefreshing = false;
       _refreshCompleter = null;
-      _retryCount = 0;
       return false;
     }
   }
@@ -248,28 +214,28 @@ class TokenRefreshManager {
       }
     } else {
       debugPrint(
-          "Token refresh failed, but keeping ${_pendingRequests.length} pending requests for next attempt");
-      // Don't clear pending requests - they will be retried when user makes next API call
-      // The tokens might be refreshed by then or on next 401 error
+          "Token refresh failed, clearing ${_pendingRequests.length} pending requests");
     }
     _pendingRequests.clear();
   }
 
-  /// NOTE: This method is kept for reference but should NEVER be called automatically
-  /// Users should only be logged out through explicit user action (logout button)
-  /// This method is intentionally not used to prevent automatic logouts
-  void _logoutUser() {
-    debugPrint(
-        "WARNING: _logoutUser() called - this should only happen on manual logout");
-    // This method is kept but should not be called automatically
-    // Only manual logout should clear tokens
+  /// Logout user and navigate to login screen
+  void _logoutUser() async {
+    debugPrint("Logging out user due to expired session");
+    const storage = FlutterSecureStorage();
+    await storage.deleteAll();
+    sharedPreferences?.clear();
+
+    if (navigatorKey.currentState != null) {
+      navigatorKey.currentState!.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false);
+    }
   }
 
   /// Check if user should be logged out
-  /// Always returns false to prevent automatic logouts
   static bool shouldLogout() {
-    // NEVER return true automatically - only manual logout should work
-    return false;
+    return true;
   }
 
   /// Clear logout flag

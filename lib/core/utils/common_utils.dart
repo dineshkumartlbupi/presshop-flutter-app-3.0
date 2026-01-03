@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 
 dynamic numberFormatting(dynamic number) {
@@ -29,4 +28,12 @@ dynamic numberFormatting(dynamic number) {
 bool isKeyEmptyMap(Map<String, dynamic> data, String key) {
   if (data[key] == null) return true;
   return data[key] is Map && data[key].isEmpty;
+}
+
+String fixS3Url(String url) {
+  if (url.contains("presshop3.0.s3.eu-west-2.amazonaws.com")) {
+    return url.replaceFirst("presshop3.0.s3.eu-west-2.amazonaws.com",
+        "s3.eu-west-2.amazonaws.com/presshop3.0");
+  }
+  return url;
 }

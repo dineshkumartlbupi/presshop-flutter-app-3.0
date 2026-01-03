@@ -23,58 +23,65 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
     on<AddLocalMessageEvent>(_onAddLocalMessage);
     on<RequestHumanAssistanceEvent>(_onRequestHumanAssistance);
     on<MessagesReceivedEvent>(_onMessagesReceived);
+    on<ChatbotErrorEvent>(_onChatbotError);
   }
 
-  Future<void> _onInitChatbot(InitChatbotEvent event, Emitter<ChatbotState> emit) async {
+  Future<void> _onInitChatbot(
+      InitChatbotEvent event, Emitter<ChatbotState> emit) async {
     try {
-      dialogFlowtter = await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
+      dialogFlowtter =
+          await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
       add(FetchMessagesEvent());
     } catch (e) {
       emit(ChatbotError("Failed to initialize chatbot: $e"));
     }
   }
 
-  Future<void> _onFetchMessages(FetchMessagesEvent event, Emitter<ChatbotState> emit) async {
+  Future<void> _onFetchMessages(
+      FetchMessagesEvent event, Emitter<ChatbotState> emit) async {
     emit(ChatbotLoading());
     try {
-         NetworkClass(getMessageApiUrl, ChatbotNetworkHandler(this), getMessageApiReq)
-          .callRequestServiceHeader(false, "get", null);
+      NetworkClass(
+              getMessageApiUrl, ChatbotNetworkHandler(this), getMessageApiReq)
+          .callRequestServiceHeader(false, "get", null, handleAuth: false);
     } catch (e) {
       emit(ChatbotError(e.toString()));
     }
   }
 
-  Future<void> _onMessagesReceived(MessagesReceivedEvent event, Emitter<ChatbotState> emit) async {
-      chatList = event.chatList;
-      emit(ChatbotLoaded(chatList: List.from(chatList)));
+  Future<void> _onMessagesReceived(
+      MessagesReceivedEvent event, Emitter<ChatbotState> emit) async {
+    chatList = event.chatList;
+    emit(ChatbotLoaded(chatList: List.from(chatList)));
   }
 
-  Future<void> _onSendMessage(SendMessageEvent event, Emitter<ChatbotState> emit) async {
-     chatList.add(ChatModel(
+  Future<void> _onSendMessage(
+      SendMessageEvent event, Emitter<ChatbotState> emit) async {
+    chatList.add(ChatModel(
         message: event.message,
         isUser: true,
         isNavigate: false,
         time: DateTime.now().toString()));
-    
+
     emit(ChatbotLoaded(chatList: List.from(chatList), isTyping: true));
 
     callAddMessageApi(event.message, event.time, "true");
-    
+
     // DialogFlow response
-     DetectIntentResponse response = await dialogFlowtter.detectIntent(
+    DetectIntentResponse response = await dialogFlowtter.detectIntent(
       queryInput: QueryInput(
           text: TextInput(
         text: event.message,
         languageCode: "en",
       )),
     );
-    
+
     if (response.message != null) {
       if (response.queryResult!.action == "input.unknown") {
         String msg = failCount < 1
-                  ? "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help."
-                  : "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?";
-        
+            ? "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help."
+            : "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?";
+
         chatList.add(
           ChatModel(
               message: msg,
@@ -90,7 +97,7 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
         failCount++;
       } else {
         failCount = 0;
-         chatList.add(ChatModel(
+        chatList.add(ChatModel(
             message: response.message!.text!.text![0],
             isUser: false,
             isNavigate: false,
@@ -99,33 +106,58 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
             DateTime.now().toString(), "false");
       }
     }
-    
+
     emit(ChatbotLoaded(chatList: List.from(chatList), isTyping: false));
   }
 
-  Future<void> _onAddLocalMessage(AddLocalMessageEvent event, Emitter<ChatbotState> emit) async {
-      chatList.add(ChatModel(
+  Future<void> _onAddLocalMessage(
+      AddLocalMessageEvent event, Emitter<ChatbotState> emit) async {
+    chatList.add(ChatModel(
         message: event.message,
         isUser: false,
         isNavigate: event.isHumanAssistanceRequested,
         time: DateTime.now().toString()));
-      emit(ChatbotLoaded(chatList: List.from(chatList)));
+    emit(ChatbotLoaded(chatList: List.from(chatList)));
   }
 
-  Future<void> _onRequestHumanAssistance(RequestHumanAssistanceEvent event, Emitter<ChatbotState> emit) async {
-      failCount = 0;
-      if (event.request) {
-          add(AddLocalMessageEvent(message: "Loved our chat! Now handing you over to a real person for extra support.", isHumanAssistanceRequested: true));
-          chatList.removeAt(event.index);
-      } else {
-          chatList.removeAt(event.index);
-          chatList.add(ChatModel(
-                message: "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
-                isUser: false,
-                isNavigate: false,
-                time: DateTime.now().toString()));
-           emit(ChatbotLoaded(chatList: List.from(chatList)));
-      }
+  Future<void> _onRequestHumanAssistance(
+      RequestHumanAssistanceEvent event, Emitter<ChatbotState> emit) async {
+    failCount = 0;
+    if (event.request) {
+      add(AddLocalMessageEvent(
+          message:
+              "Loved our chat! Now handing you over to a real person for extra support.",
+          isHumanAssistanceRequested: true));
+      chatList.removeAt(event.index);
+    } else {
+      chatList.removeAt(event.index);
+      chatList.add(ChatModel(
+          message:
+              "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
+          isUser: false,
+          isNavigate: false,
+          time: DateTime.now().toString()));
+      emit(ChatbotLoaded(chatList: List.from(chatList)));
+    }
+  }
+
+  Future<void> _onChatbotError(
+      ChatbotErrorEvent event, Emitter<ChatbotState> emit) async {
+    // Instead of showing error screen, we can show a default welcome message or empty state
+    // But for now, let's just log it and maybe show the default welcome message if list is empty
+    debugPrint("Chatbot Error: ${event.error}");
+
+    if (chatList.isEmpty) {
+      chatList.add(ChatModel(
+          message:
+              "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
+          isUser: false,
+          isNavigate: false,
+          time: DateTime.now().toString()));
+      emit(ChatbotLoaded(chatList: List.from(chatList)));
+    } else {
+      emit(ChatbotLoaded(chatList: List.from(chatList)));
+    }
   }
 
   callAddMessageApi(String message, String time, String isUser) {
@@ -135,9 +167,10 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
         "time": time,
         "is_user": isUser,
       };
-      NetworkClass.fromNetworkClass(
-              addMessageApiUrl, ChatbotNetworkHandler(this), addMessageApiReq, map)
-          .callRequestServiceHeader(false, "post", null);
+      NetworkClass.fromNetworkClass(addMessageApiUrl,
+              ChatbotNetworkHandler(this), addMessageApiReq, map)
+          .callRequestServiceHeader(false, "post", null,
+              handleAuth: false, isJson: true);
     } on Exception catch (exception) {
       debugPrint(exception.toString());
     }
@@ -150,36 +183,59 @@ class ChatbotNetworkHandler implements NetworkResponse {
 
   @override
   void onError({Key? key, required int requestCode, required String response}) {
-     debugPrint("Error: $requestCode $response");
+    debugPrint("Error: $requestCode $response");
+    bloc.add(ChatbotErrorEvent(response));
   }
 
   @override
-  void onResponse({Key? key, required int requestCode, required String response}) {
+  void onResponse(
+      {Key? key, required int requestCode, required String response}) {
     if (requestCode == getMessageApiReq) {
-       try {
-          var data = jsonDecode(response);
-          List<ChatModel> fetchedList = [];
-          if (data is List) {
-             fetchedList = data.map((e) => ChatModel.fromJson(e)).toList();
-          } else if (data is Map && data.containsKey('data')) {
-             fetchedList = (data['data'] as List).map((e) => ChatModel.fromJson(e)).toList();
-          }
-          
-          if (fetchedList.isEmpty) {
-            fetchedList.add(ChatModel(
-                message:
-                    "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
-                isUser: false,
-                isNavigate: false,
-                time: DateTime.now().toString()));
-          }
-           
-          bloc.add(MessagesReceivedEvent(fetchedList));
+      try {
+        var data = jsonDecode(response);
+        List<ChatModel> fetchedList = [];
+        if (data is List) {
+          fetchedList = data.map((e) => ChatModel.fromJson(e)).toList();
+        } else if (data is Map && data.containsKey('data')) {
+          fetchedList =
+              (data['data'] as List).map((e) => ChatModel.fromJson(e)).toList();
+        }
 
-       } catch (e) {
-          debugPrint("Failed to parse messages: $e");
-       }
+        if (fetchedList.isEmpty) {
+          fetchedList.add(ChatModel(
+              message:
+                  "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
+              isUser: false,
+              isNavigate: false,
+              time: DateTime.now().toString()));
+        }
+
+        bloc.add(MessagesReceivedEvent(fetchedList));
+      } catch (e) {
+        debugPrint("Failed to parse messages: $e");
+      }
+    } else if (requestCode == addMessageApiReq) {
+      try {
+        var data = jsonDecode(response);
+        if (data != null && data is Map<String, dynamic>) {
+          // Update the last message with server time if available
+          if (bloc.chatList.isNotEmpty) {
+            // Find the last user message that doesn't have a valid server ID yet (optional optimization)
+            // For now, just update the last user message
+            for (int i = bloc.chatList.length - 1; i >= 0; i--) {
+              if (bloc.chatList[i].isUser) {
+                bloc.chatList[i].time =
+                    data['createdAt'] ?? data['time'] ?? bloc.chatList[i].time;
+                // Trigger UI update
+                bloc.add(MessagesReceivedEvent(List.from(bloc.chatList)));
+                break;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint("Failed to parse add message response: $e");
+      }
     }
   }
 }
-
