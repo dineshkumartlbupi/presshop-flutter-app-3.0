@@ -63,6 +63,8 @@ const adminBaseUrl = "https://dev-api.presshop.news:5020/";
 const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 const googleMapURL =
     "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+const googlePlaceDetailsURL =
+    "https://maps.googleapis.com/maps/api/place/details/json";
 
 const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
 const profileImageUrl = "${mediaBaseUrl}userImages/";

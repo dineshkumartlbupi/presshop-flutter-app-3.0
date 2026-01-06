@@ -1,16 +1,16 @@
 import 'package:dartz/dartz.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/usecases/usecase.dart';
-import 'package:presshop/features/map/domain/entities/geo_point.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
-class GetCurrentLocation implements UseCase<GeoPoint, NoParams> {
+class GetCurrentLocation implements UseCase<LatLng, NoParams> {
   final MapRepository repository;
 
   GetCurrentLocation(this.repository);
 
   @override
-  Future<Either<Failure, GeoPoint>> call(NoParams params) async {
+  Future<Either<Failure, LatLng>> call(NoParams params) async {
     return await repository.getCurrentLocation();
   }
 }

@@ -28,3 +28,7 @@ class NetworkFailure extends Failure {
 class UserNotRegisteredFailure extends Failure {
    const UserNotRegisteredFailure({required super.message});
 }
+
+class LocationFailure extends Failure {
+  const LocationFailure({required super.message});
+}

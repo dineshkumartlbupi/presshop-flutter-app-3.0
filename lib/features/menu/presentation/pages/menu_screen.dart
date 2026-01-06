@@ -1,4 +1,3 @@
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,7 @@ import 'package:presshop/features/authentication/presentation/pages/LoginScreen.
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatCopy.dart';
+
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
@@ -25,6 +24,8 @@ import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dar
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
 import 'package:presshop/features/referral/presentation/pages/refer_screen.dart';
+import 'package:presshop/features/news/presentation/pages/news_page.dart';
+import 'package:presshop/features/map/presentation/pages/map_page.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -95,19 +96,19 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
     sharedPreferences!.clear();
     // Assuming googleSignIn is globally available from main.dart
     try {
-      if(await googleSignIn.isSignedIn()){
-          googleSignIn.signOut();
+      if (await googleSignIn.isSignedIn()) {
+        googleSignIn.signOut();
       }
     } catch (e) {
       debugPrint("Error signing out google: $e");
     }
-    
-    if(!mounted) return;
-    
+
+    if (!mounted) return;
+
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
         (route) => false);
-        
+
     await FirebaseAnalytics.instance.logEvent(
       name: 'device_token_removed',
       parameters: {
@@ -157,9 +158,11 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
                                   builder: (context) =>
                                       menuList[index].classWidget))
                               .then((value) => {
-                                // Refresh counts when coming back
-                                context.read<MenuBloc>().add(MenuLoadCounts())
-                              });
+                                    // Refresh counts when coming back
+                                    context
+                                        .read<MenuBloc>()
+                                        .add(MenuLoadCounts())
+                                  });
                         }
                       },
                       child: Padding(
@@ -206,7 +209,8 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
                                                 ),
                                               ),
                                               Text(
-                                                state.notificationCount.toString(),
+                                                state.notificationCount
+                                                    .toString(),
                                                 style: commonTextStyle(
                                                     size: size,
                                                     fontSize:
@@ -385,6 +389,17 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
         classWidget: const MyContentPage(
           hideLeading: false,
         )));
+
+    menuList.add(MenuData(
+        name: "News",
+        icon: "${iconsPath}ic_newspaper.png",
+        classWidget: const NewsPage()));
+
+    menuList.add(MenuData(
+        name: "Map",
+        icon: "${iconsPath}map.png",
+        classWidget: const MapPage()));
+
     menuList.add(MenuData(
         name: "My tasks",
         icon: "${iconsPath}ic_task.png",
@@ -393,18 +408,19 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
         name: "My earnings",
         icon: "${iconsPath}ic_earning.png",
         classWidget: MyEarningScreen(
-          openDashboard: false, initialTapPosition:0,
+          openDashboard: false,
+          initialTapPosition: 0,
         )));
 
     menuList.add(MenuData(
         name: notificationText,
         icon: "${iconsPath}ic_feed.png",
-        classWidget: MyNotificationScreen(count: _notificationCount))); 
-        // Note: count here is just initial, screen should also be reactive or fetch on its own.
-        // MyNotificationScreen was refactored previously to fetch its own data (it accepts count but does it use it? 
-        // Previously edited MyNotifications.dart uses GetNotifications.
-        // So passing count might be redundant or just for display before load.
-        
+        classWidget: MyNotificationScreen(count: _notificationCount)));
+    // Note: count here is just initial, screen should also be reactive or fetch on its own.
+    // MyNotificationScreen was refactored previously to fetch its own data (it accepts count but does it use it?
+    // Previously edited MyNotifications.dart uses GetNotifications.
+    // So passing count might be redundant or just for display before load.
+
     menuList.add(MenuData(
         name: "$ratingText & ${reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
@@ -472,7 +488,7 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
   void logoutDialog(Size size, BuildContext context) {
     showDialog(
         context: context,
-        builder: (BuildContext dialogContext) { 
+        builder: (BuildContext dialogContext) {
           // Use dialogContext or just context inside builder
           return AlertDialog(
               backgroundColor: Colors.transparent,
@@ -585,7 +601,9 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
                                     commonButtonStyle(size, Colors.black), () {
                                   Navigator.pop(context); // Close dialog
                                   // Call logout on BLoC
-                                  context.read<MenuBloc>().add(MenuLogoutRequested());
+                                  context
+                                      .read<MenuBloc>()
+                                      .add(MenuLogoutRequested());
                                 }),
                               )),
                               SizedBox(

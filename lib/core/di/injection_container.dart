@@ -31,7 +31,6 @@ import 'package:presshop/features/notification/domain/usecases/activate_student_
 import 'package:presshop/features/notification/domain/usecases/mark_student_beans_visited.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
-import 'package:presshop/features/map/data/datasources/map_remote_datasource_impl.dart';
 import 'package:presshop/features/map/data/repositories/map_repository_impl.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
@@ -41,8 +40,16 @@ import 'package:presshop/features/map/domain/usecases/report_incident.dart';
 import 'package:presshop/features/map/domain/usecases/get_route.dart';
 import 'package:presshop/features/map/domain/usecases/search_places.dart';
 import 'package:presshop/features/map/domain/usecases/get_place_details.dart';
-import 'package:presshop/features/map/presentation/pages/services/marker_service.dart';
-import 'package:presshop/features/map/presentation/pages/services/socket_service.dart';
+import 'package:presshop/features/map/data/services/marker_service.dart';
+import 'package:presshop/features/map/data/services/socket_service.dart';
+import 'package:presshop/features/news/data/datasources/news_remote_datasource.dart';
+import 'package:presshop/features/news/data/repositories/news_repository_impl.dart';
+import 'package:presshop/features/news/domain/repositories/news_repository.dart';
+import 'package:presshop/features/news/domain/usecases/get_aggregated_news.dart';
+import 'package:presshop/features/news/domain/usecases/get_comments.dart';
+import 'package:presshop/features/news/domain/usecases/get_news_detail.dart';
+import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:presshop/features/earning/domain/repositories/earning_repository.dart';
 import 'package:presshop/features/earning/data/repositories/earning_repository_impl.dart';
 import 'package:presshop/features/earning/data/datasources/earning_remote_data_source.dart';
@@ -173,6 +180,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => const FlutterSecureStorage());
   sl.registerLazySingleton(() => InternetConnectionChecker());
+  sl.registerLazySingleton(() => http.Client());
 
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
@@ -359,15 +367,17 @@ Future<void> init() async {
         getFeeds: sl(),
         toggleFeedInteraction: sl(),
       ));
+  sl.registerFactory(() => NewsBloc(
+        getAggregatedNews: sl(),
+        getNewsDetail: sl(),
+        getComments: sl(),
+      ));
+
   sl.registerFactory(() => MapBloc(
         getCurrentLocation: sl(),
-        getIncidents: sl(),
-        reportIncident: sl(),
         getRoute: sl(),
-        searchPlaces: sl(),
-        getPlaceDetails: sl(),
         repository: sl(),
-        markerService: sl(),
+        socketService: sl(),
       ));
 
   sl.registerFactory(() => MenuBloc(
@@ -453,6 +463,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SearchPlaces(sl()));
   sl.registerLazySingleton(() => GetPlaceDetails(sl()));
 
+  // News Use Cases
+  sl.registerLazySingleton(() => GetAggregatedNews(sl()));
+  sl.registerLazySingleton(() => GetNewsDetail(sl()));
+  sl.registerLazySingleton(() => GetComments(sl()));
+
   // Repository
   // AuthRepository and DashboardRepository already registered at the top
 
@@ -528,6 +543,10 @@ Future<void> init() async {
     () => MapRepositoryImpl(remoteDataSource: sl()),
   );
 
+  sl.registerLazySingleton<NewsRepository>(
+    () => NewsRepositoryImpl(remoteDataSource: sl()),
+  );
+
   // Data sources
   // AuthRemoteDataSource, AuthLocalDataSource, and DashboardRemoteDataSource already registered at the top
 
@@ -583,7 +602,14 @@ Future<void> init() async {
     () => PublishRemoteDataSourceImpl(apiClient: sl()),
   );
   sl.registerLazySingleton<MapRemoteDataSource>(
-    () => MapRemoteDataSourceImpl(dio: sl(), socketService: sl()),
+    () => MapRemoteDataSourceImpl(
+      client: sl(),
+      googleApiKey: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI',
+    ),
+  );
+
+  sl.registerLazySingleton<NewsRemoteDataSource>(
+    () => NewsRemoteDataSourceImpl(client: sl()),
   );
 
   sl.registerLazySingleton(() => MarkerService());

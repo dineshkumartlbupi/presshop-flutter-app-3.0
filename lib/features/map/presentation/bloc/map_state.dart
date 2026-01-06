@@ -1,129 +1,229 @@
-part of 'map_bloc.dart';
-
-enum MapStatus { initial, loading, success, failure }
+import 'package:equatable/equatable.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/features/map/domain/entities/route_info.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class MapState extends Equatable {
-  final MapStatus status;
-  final String errorMessage;
-  
-  // Domain State
-  final GeoPoint? myLocation;
-  final List<IncidentEntity> incidents;
-  final IncidentEntity? selectedIncident;
-  final RouteInfoEntity? routeInfo;
-  final List<PlaceSuggestionEntity> searchPredictions;
-  
-  // UI State (kept here for performance/compatibility)
+  final LatLng? myLocation;
+  final CameraPosition? initialCamera;
   final Set<Marker> markers;
   final Set<Polyline> polylines;
   final Set<Polygon> polygons;
   final Set<Circle> circles;
-  final CameraPosition? initialCamera;
-  
   final bool showAlertPanel;
   final bool showGetDirectionCard;
+  final LatLng? destination;
+  final RouteInfo? routeInfo;
+  final Incident? selectedIncident;
+  final LatLng? selectedPosition;
+  final bool isDragging;
   final String? selectedPolygonId;
-
+  final LatLng? selectedPolygonPosition;
   final String? selectedAlertType;
   final String? selectedDistance;
   final String? selectedCategory;
-  
-  // Internal/Transient
+  final bool isDestinationSelectionMode;
+  final bool isSelectingOrigin;
   final bool isNavigating;
-  final bool isDragging;
+  final LatLng? currentNavigationPosition;
+  final LatLng? mapSelectedLocation;
+  final String? mapSelectedAddress;
+  final bool? mapSelectedIsOrigin;
+  final LatLng? routeMidpoint;
+
+  final String? previewAlertMarkerId;
+  final String? previewAlertType;
+  final LatLng? previewAlertPosition;
+  final bool isLoadingNews;
+  final LatLng? searchedLocation;
+  final List<Incident> newsList;
+  final List<Map<String, dynamic>> placeSuggestions;
+  final String? errorMessage;
 
   const MapState({
-    this.status = MapStatus.initial,
-    this.errorMessage = '',
     this.myLocation,
-    this.incidents = const [],
-    this.selectedIncident,
-    this.routeInfo,
-    this.searchPredictions = const [],
+    this.initialCamera,
     this.markers = const {},
     this.polylines = const {},
     this.polygons = const {},
     this.circles = const {},
-    this.initialCamera,
     this.showAlertPanel = false,
     this.showGetDirectionCard = false,
+    this.destination,
+    this.routeInfo,
+    this.selectedIncident,
+    this.selectedPosition,
+    this.isDragging = false,
     this.selectedPolygonId,
+    this.selectedPolygonPosition,
     this.selectedAlertType,
     this.selectedDistance,
     this.selectedCategory,
+    this.isDestinationSelectionMode = false,
+    this.isSelectingOrigin = false,
     this.isNavigating = false,
-    this.isDragging = false,
+    this.currentNavigationPosition,
+    this.mapSelectedLocation,
+    this.mapSelectedAddress,
+    this.mapSelectedIsOrigin,
+    this.routeMidpoint,
+    this.previewAlertMarkerId,
+    this.previewAlertType,
+    this.previewAlertPosition,
+    this.newsList = const [],
+    this.isLoadingNews = false,
+    this.searchedLocation,
+    this.placeSuggestions = const [],
+    this.errorMessage,
   });
 
   MapState copyWith({
-    MapStatus? status,
-    String? errorMessage,
-    GeoPoint? myLocation,
-    List<IncidentEntity>? incidents,
-    IncidentEntity? selectedIncident,
-    bool clearSelectedIncident = false,
-    RouteInfoEntity? routeInfo,
-    bool clearRouteInfo = false,
-    List<PlaceSuggestionEntity>? searchPredictions,
+    LatLng? myLocation,
+    CameraPosition? initialCamera,
     Set<Marker>? markers,
     Set<Polyline>? polylines,
     Set<Polygon>? polygons,
     Set<Circle>? circles,
-    CameraPosition? initialCamera,
     bool? showAlertPanel,
     bool? showGetDirectionCard,
+    LatLng? destination,
+    RouteInfo? routeInfo,
+    Incident? selectedIncident,
+    LatLng? selectedPosition,
+    bool? isDragging,
     String? selectedPolygonId,
+    LatLng? selectedPolygonPosition,
     String? selectedAlertType,
     String? selectedDistance,
     String? selectedCategory,
+    bool? isDestinationSelectionMode,
+    bool? isSelectingOrigin,
     bool? isNavigating,
-    bool? isDragging,
+    LatLng? currentNavigationPosition,
+    LatLng? mapSelectedLocation,
+    String? mapSelectedAddress,
+    bool? mapSelectedIsOrigin,
+    LatLng? routeMidpoint,
+    String? previewAlertMarkerId,
+    String? previewAlertType,
+    LatLng? previewAlertPosition,
+    List<Incident>? newsList,
+    bool? isLoadingNews,
+    LatLng? searchedLocation,
+    List<Map<String, dynamic>>? placeSuggestions,
+    String? errorMessage,
+    bool clearDestination = false,
+    bool clearRouteInfo = false,
+    bool clearSelectedIncident = false,
+    bool clearSelectedPosition = false,
+    bool clearSelectedPolygonId = false,
+    bool clearSelectedPolygonPosition = false,
+    bool clearCurrentNavigationPosition = false,
+    bool clearMapSelectedLocation = false,
+    bool clearMapSelectedAddress = false,
+    bool clearMapSelectedIsOrigin = false,
+    bool clearPreviewAlert = false,
+    bool clearSearchedLocation = false,
   }) {
     return MapState(
-      status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
       myLocation: myLocation ?? this.myLocation,
-      incidents: incidents ?? this.incidents,
-      selectedIncident: clearSelectedIncident ? null : (selectedIncident ?? this.selectedIncident),
-      routeInfo: clearRouteInfo ? null : (routeInfo ?? this.routeInfo),
-      searchPredictions: searchPredictions ?? this.searchPredictions,
+      initialCamera: initialCamera ?? this.initialCamera,
       markers: markers ?? this.markers,
       polylines: polylines ?? this.polylines,
       polygons: polygons ?? this.polygons,
       circles: circles ?? this.circles,
-      initialCamera: initialCamera ?? this.initialCamera,
       showAlertPanel: showAlertPanel ?? this.showAlertPanel,
       showGetDirectionCard: showGetDirectionCard ?? this.showGetDirectionCard,
-      selectedPolygonId: selectedPolygonId ?? this.selectedPolygonId,
+      destination: clearDestination ? null : (destination ?? this.destination),
+      routeInfo: clearRouteInfo ? null : (routeInfo ?? this.routeInfo),
+      selectedIncident: clearSelectedIncident
+          ? null
+          : (selectedIncident ?? this.selectedIncident),
+      selectedPosition: clearSelectedPosition
+          ? null
+          : (selectedPosition ?? this.selectedPosition),
+      isDragging: isDragging ?? this.isDragging,
+      selectedPolygonId: clearSelectedPolygonId
+          ? null
+          : (selectedPolygonId ?? this.selectedPolygonId),
+      selectedPolygonPosition: clearSelectedPolygonPosition
+          ? null
+          : (selectedPolygonPosition ?? this.selectedPolygonPosition),
       selectedAlertType: selectedAlertType ?? this.selectedAlertType,
       selectedDistance: selectedDistance ?? this.selectedDistance,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      isDestinationSelectionMode:
+          isDestinationSelectionMode ?? this.isDestinationSelectionMode,
+      isSelectingOrigin: isSelectingOrigin ?? this.isSelectingOrigin,
       isNavigating: isNavigating ?? this.isNavigating,
-      isDragging: isDragging ?? this.isDragging,
+      currentNavigationPosition: clearCurrentNavigationPosition
+          ? null
+          : (currentNavigationPosition ?? this.currentNavigationPosition),
+      mapSelectedLocation: clearMapSelectedLocation
+          ? null
+          : (mapSelectedLocation ?? this.mapSelectedLocation),
+      mapSelectedAddress: clearMapSelectedAddress
+          ? null
+          : (mapSelectedAddress ?? this.mapSelectedAddress),
+      mapSelectedIsOrigin: clearMapSelectedIsOrigin
+          ? null
+          : (mapSelectedIsOrigin ?? this.mapSelectedIsOrigin),
+      routeMidpoint:
+          clearRouteInfo ? null : (routeMidpoint ?? this.routeMidpoint),
+      previewAlertMarkerId: clearPreviewAlert
+          ? null
+          : (previewAlertMarkerId ?? this.previewAlertMarkerId),
+      previewAlertType: clearPreviewAlert
+          ? null
+          : (previewAlertType ?? this.previewAlertType),
+      previewAlertPosition: clearPreviewAlert
+          ? null
+          : (previewAlertPosition ?? this.previewAlertPosition),
+      newsList: newsList ?? this.newsList,
+      isLoadingNews: isLoadingNews ?? this.isLoadingNews,
+      searchedLocation: clearSearchedLocation
+          ? null
+          : (searchedLocation ?? this.searchedLocation),
+      placeSuggestions: placeSuggestions ?? this.placeSuggestions,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
   List<Object?> get props => [
-        status,
-        errorMessage,
         myLocation,
-        incidents,
-        selectedIncident,
-        routeInfo,
-        searchPredictions,
+        initialCamera,
         markers,
         polylines,
         polygons,
         circles,
-        initialCamera,
         showAlertPanel,
         showGetDirectionCard,
+        destination,
+        routeInfo,
+        selectedIncident,
+        selectedPosition,
+        isDragging,
         selectedPolygonId,
+        selectedPolygonPosition,
         selectedAlertType,
         selectedDistance,
         selectedCategory,
+        isDestinationSelectionMode,
+        isSelectingOrigin,
         isNavigating,
-        isDragging,
+        currentNavigationPosition,
+        mapSelectedLocation,
+        mapSelectedAddress,
+        mapSelectedIsOrigin,
+        routeMidpoint,
+        previewAlertMarkerId,
+        previewAlertType,
+        previewAlertPosition,
+        newsList,
+        isLoadingNews,
+        searchedLocation,
+        placeSuggestions,
+        errorMessage,
       ];
 }

@@ -374,7 +374,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       SizedBox(
                         height: size.width * numD06,
                       ),
-                      widget.publishData != null
+                      widget.publishData != null ||
+                              (widget.hideDraft && widget.myContentData != null)
                           ? Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: size.width * numD04),
@@ -392,9 +393,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           child: Stack(
                                             children: [
                                               Visibility(
-                                                visible: widget
-                                                    .publishData!.mimeType
-                                                    .contains("doc"),
+                                                visible: widget.publishData !=
+                                                        null
+                                                    ? widget
+                                                        .publishData!.mimeType
+                                                        .contains("doc")
+                                                    : widget
+                                                            .myContentData!
+                                                            .contentMediaList
+                                                            .first
+                                                            .mediaType ==
+                                                        "doc",
                                                 child: Container(
                                                   padding: EdgeInsets.all(
                                                       size.width * numD01),
@@ -414,9 +423,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 ),
                                               ),
                                               Visibility(
-                                                visible: widget
-                                                    .publishData!.mimeType
-                                                    .contains("pdf"),
+                                                visible: widget.publishData !=
+                                                        null
+                                                    ? widget
+                                                        .publishData!.mimeType
+                                                        .contains("pdf")
+                                                    : widget
+                                                            .myContentData!
+                                                            .contentMediaList
+                                                            .first
+                                                            .mediaType ==
+                                                        "pdf",
                                                 child: Container(
                                                   padding: EdgeInsets.all(
                                                       size.width * numD01),
@@ -436,12 +453,20 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 ),
                                               ),
                                               Visibility(
-                                                visible: widget
-                                                        .publishData!
-                                                        .mediaList
-                                                        .first
-                                                        .mimeType ==
-                                                    "audio",
+                                                visible: widget.publishData !=
+                                                        null
+                                                    ? widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .mimeType ==
+                                                        "audio"
+                                                    : widget
+                                                            .myContentData!
+                                                            .contentMediaList
+                                                            .first
+                                                            .mediaType ==
+                                                        "audio",
                                                 child: Container(
                                                   width: size.width * numD30,
                                                   height: size.width * numD35,
@@ -464,40 +489,90 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 ),
                                               ),
                                               Visibility(
-                                                visible: widget
-                                                        .publishData!
-                                                        .mediaList
-                                                        .first
-                                                        .mimeType ==
-                                                    "video",
-                                                child: Image.file(
-                                                  File(widget
-                                                      .publishData!
-                                                      .mediaList
-                                                      .first
-                                                      .thumbnail),
-                                                  width: size.width * numD30,
-                                                  height: size.width * numD35,
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                visible: widget.publishData !=
+                                                        null
+                                                    ? widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .mimeType ==
+                                                        "video"
+                                                    : widget
+                                                            .myContentData!
+                                                            .contentMediaList
+                                                            .first
+                                                            .mediaType ==
+                                                        "video",
+                                                child: widget.publishData !=
+                                                        null
+                                                    ? Image.file(
+                                                        File(widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .thumbnail),
+                                                        width:
+                                                            size.width * numD30,
+                                                        height:
+                                                            size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Image.network(
+                                                        contentImageUrl +
+                                                            widget
+                                                                .myContentData!
+                                                                .contentMediaList
+                                                                .first
+                                                                .thumbNail,
+                                                        width:
+                                                            size.width * numD30,
+                                                        height:
+                                                            size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      ),
                                               ),
                                               Visibility(
-                                                visible: widget
-                                                        .publishData!
-                                                        .mediaList
-                                                        .first
-                                                        .mimeType ==
-                                                    "image",
-                                                child: Image.file(
-                                                  File(widget
-                                                      .publishData!
-                                                      .mediaList
-                                                      .first
-                                                      .mediaPath),
-                                                  width: size.width * numD30,
-                                                  height: size.width * numD35,
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                visible: widget.publishData !=
+                                                        null
+                                                    ? widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .mimeType ==
+                                                        "image"
+                                                    : widget
+                                                            .myContentData!
+                                                            .contentMediaList
+                                                            .first
+                                                            .mediaType ==
+                                                        "image",
+                                                child: widget.publishData !=
+                                                        null
+                                                    ? Image.file(
+                                                        File(widget
+                                                            .publishData!
+                                                            .mediaList
+                                                            .first
+                                                            .mediaPath),
+                                                        width:
+                                                            size.width * numD30,
+                                                        height:
+                                                            size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Image.network(
+                                                        contentImageUrl +
+                                                            widget
+                                                                .myContentData!
+                                                                .contentMediaList
+                                                                .first
+                                                                .media,
+                                                        width:
+                                                            size.width * numD30,
+                                                        height:
+                                                            size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      ),
                                               ),
 
                                               ///Watermark and Content count display UI
