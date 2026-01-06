@@ -1,4 +1,3 @@
-
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +16,6 @@ String dateTimeFormatter(
     String format = "d MMM yyyy",
     bool time = false,
     bool utc = false}) {
-  debugPrint("dateTimeFormatter::::$dateTime");
   try {
     DateTime currentDateTime =
         utc ? DateTime.now().toUtc() : DateTime.now().toLocal();

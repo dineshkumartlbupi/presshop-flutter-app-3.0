@@ -402,7 +402,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
     var size = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("Chat")
+          .collection("Chat2")
           .orderBy('date', descending: true)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapShot) {

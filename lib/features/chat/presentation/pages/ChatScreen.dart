@@ -200,58 +200,60 @@ class _ConversationScreenState extends State<ConversationScreen>
                   appBar: CommonAppBar(
                     elevation: 0,
                     hideLeading: widget.hideLeading,
-              title: Padding(
-                padding: EdgeInsets.only(
-                    left: widget.hideLeading ? size.width * numD04 : 0,
-                    right: size.width * numD04),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(
-                        size.width * numD01,
-                      ),
-                      height: size.width * numD11,
-                      width: size.width * numD11,
-                      decoration: BoxDecoration(
-                          color: Colors.grey.shade200, shape: BoxShape.circle),
-                      child: ClipOval(
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.network(
-                          adminProfileUrl + _receiverProfilePic,
-                          errorBuilder: (BuildContext context, Object exception,
-                              StackTrace? stackTrace) {
-                            return Image.asset(
-                              "${commonImagePath}rabbitLogo.png",
-                              height: size.width * numD07,
-                              width: size.width * numD07,
-                            );
-                          },
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * numD02,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    title: Padding(
+                      padding: EdgeInsets.only(
+                          left: widget.hideLeading ? size.width * numD04 : 0,
+                          right: size.width * numD04),
+                      child: Row(
                         children: [
-                          Text(
-                            _receiverName,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD045),
+                          Container(
+                            padding: EdgeInsets.all(
+                              size.width * numD01,
+                            ),
+                            height: size.width * numD11,
+                            width: size.width * numD11,
+                            decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                shape: BoxShape.circle),
+                            child: ClipOval(
+                              clipBehavior: Clip.antiAlias,
+                              child: Image.network(
+                                adminProfileUrl + _receiverProfilePic,
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                  return Image.asset(
+                                    "${commonImagePath}rabbitLogo.png",
+                                    height: size.width * numD07,
+                                    width: size.width * numD07,
+                                  );
+                                },
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           SizedBox(
-                            height: size.width * numD01,
+                            width: size.width * numD02,
                           ),
-                          if (_receiverId.isNotEmpty)
-                            checkOnlineOffline(context, size, _receiverId),
-                        ],
-                      ),
-                    ),
-                    /*
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _receiverName,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: size.width * numD045),
+                                ),
+                                SizedBox(
+                                  height: size.width * numD01,
+                                ),
+                                if (_receiverId.isNotEmpty)
+                                  checkOnlineOffline(
+                                      context, size, _receiverId),
+                              ],
+                            ),
+                          ),
+                          /*
                       SizedBox(
                         width: size.width * numD02,
                       ),
@@ -268,133 +270,139 @@ class _ConversationScreenState extends State<ConversationScreen>
                           width: size.width * numD13,
                         ),
                       ),*/
-                  ],
-                ),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
-              size: size,
-              showActions: true,
-              actionWidget: null,
-              leadingFxn: () {
-                Navigator.pop(context);
-              },
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: state.messages.isNotEmpty
-                      ? ListView.separated(
-                          padding: EdgeInsets.all(size.width * numD018),
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 10,
-                            );
-                          },
-                          itemBuilder: (context, index) {
-                            var document = state.messages[index];
-
-                            typingCheckSenderID = document.get('senderId');
-
-                            return Column(
-                              children: [
-                                document.get('senderId') == _senderId ||
-                                        document.get('receiverId') == _senderId
-                                    ? Container(
-                                        color: Colors.transparent,
-                                        alignment: Alignment.centerRight,
-                                        padding: EdgeInsets.only(
-                                            right: size.width * numD03,
-                                            left: size.width * numD03,
-                                            top: size.width * numD03),
-                                        child: messageWidget(
-                                            document, "sender", size),
-                                      )
-                                    : Container(
-                                        color: Colors.transparent,
-                                        alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.only(
-                                            right: size.width * numD03,
-                                            left: size.width * numD03,
-                                            top: size.width * numD03),
-                                        child: messageWidget(
-                                            document, "receiver", size),
-                                      ),
-                              ],
-                            );
-                          },
-                          reverse: true,
-                          shrinkWrap: true,
-                          itemCount: state.messages.length,
-                        )
-                      : showLoader(),
-                ),
-                Visibility(
-                  visible: isTyping,
-                  replacement: Container(),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: size.width * numD05),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                            margin: EdgeInsets.only(
-                              top: size.width * numD02,
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.grey.shade300,
-                                      spreadRadius: 2)
-                                ]),
-                            child: ClipOval(
-                              clipBehavior: Clip.antiAlias,
-                              child: Padding(
-                                padding: EdgeInsets.all(size.width * numD01),
-                                child: Image.asset(
-                                  "${commonImagePath}ic_black_rabbit.png",
-                                  color: Colors.white,
-                                  width: size.width * numD07,
-                                  height: size.width * numD07,
-                                ),
-                              ),
-                            )),
-                        SizedBox(
-                          width: size.width * numD02,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: size.width * numD02),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(size.width * numD04),
-                                bottomLeft:
-                                    Radius.circular(size.width * numD04),
-                                bottomRight:
-                                    Radius.circular(size.width * numD04),
-                              ),
-                              border: Border.all(
-                                  width: 1.5, color: colorSwitchBack)),
-                          child: Lottie.asset("assets/lottieFiles/typing.json",
-                              height: size.width * numD10,
-                              width: size.width * numD16),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                    centerTitle: false,
+                    titleSpacing: 0,
+                    size: size,
+                    showActions: true,
+                    actionWidget: null,
+                    leadingFxn: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                ),
-                bottomButton("sender", size),
+                  body: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: state.messages.isNotEmpty
+                            ? ListView.separated(
+                                padding: EdgeInsets.all(size.width * numD018),
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(
+                                    height: 10,
+                                  );
+                                },
+                                itemBuilder: (context, index) {
+                                  var document = state.messages[index];
 
-                /// Emoji Key Board
-                // buildStickerKeyboard()
-              ],
-            ))
-        : Scaffold(
-            body: showLoader(),
-          );
+                                  typingCheckSenderID =
+                                      document.get('senderId');
+
+                                  return Column(
+                                    children: [
+                                      document.get('senderId') == _senderId ||
+                                              document.get('receiverId') ==
+                                                  _senderId
+                                          ? Container(
+                                              color: Colors.transparent,
+                                              alignment: Alignment.centerRight,
+                                              padding: EdgeInsets.only(
+                                                  right: size.width * numD03,
+                                                  left: size.width * numD03,
+                                                  top: size.width * numD03),
+                                              child: messageWidget(
+                                                  document, "sender", size),
+                                            )
+                                          : Container(
+                                              color: Colors.transparent,
+                                              alignment: Alignment.centerLeft,
+                                              padding: EdgeInsets.only(
+                                                  right: size.width * numD03,
+                                                  left: size.width * numD03,
+                                                  top: size.width * numD03),
+                                              child: messageWidget(
+                                                  document, "receiver", size),
+                                            ),
+                                    ],
+                                  );
+                                },
+                                reverse: true,
+                                shrinkWrap: true,
+                                itemCount: state.messages.length,
+                              )
+                            : showLoader(),
+                      ),
+                      Visibility(
+                        visible: isTyping,
+                        replacement: Container(),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: size.width * numD05),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(
+                                    top: size.width * numD02,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey.shade300,
+                                            spreadRadius: 2)
+                                      ]),
+                                  child: ClipOval(
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.all(size.width * numD01),
+                                      child: Image.asset(
+                                        "${commonImagePath}ic_black_rabbit.png",
+                                        color: Colors.white,
+                                        width: size.width * numD07,
+                                        height: size.width * numD07,
+                                      ),
+                                    ),
+                                  )),
+                              SizedBox(
+                                width: size.width * numD02,
+                              ),
+                              Container(
+                                margin:
+                                    EdgeInsets.only(top: size.width * numD02),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topRight:
+                                          Radius.circular(size.width * numD04),
+                                      bottomLeft:
+                                          Radius.circular(size.width * numD04),
+                                      bottomRight:
+                                          Radius.circular(size.width * numD04),
+                                    ),
+                                    border: Border.all(
+                                        width: 1.5, color: colorSwitchBack)),
+                                child: Lottie.asset(
+                                    "assets/lottieFiles/typing.json",
+                                    height: size.width * numD10,
+                                    width: size.width * numD16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      bottomButton("sender", size),
+
+                      /// Emoji Key Board
+                      // buildStickerKeyboard()
+                    ],
+                  ))
+              : Scaffold(
+                  body: showLoader(),
+                );
         },
       ),
     );
@@ -1211,8 +1219,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   ///Message widgets-->
-  Widget messageWidget(
-      DocumentSnapshot<Object?> document, String type, size) {
+  Widget messageWidget(DocumentSnapshot<Object?> document, String type, size) {
     //callCustomNotificationApi(document.get('messageType') == 'text' ?document.get("message").toString():document.get('messageType'));
     return Slidable(
       key: ValueKey(
@@ -1760,7 +1767,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                         InkWell(
                                           onTap: () {
                                             FirebaseFirestore.instance
-                                                .collection('Chat')
+                                                .collection('Chat2')
                                                 .doc(roomId)
                                                 .collection('Messages')
                                                 .get()
@@ -2032,7 +2039,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                     /* InkWell(
                                       onTap: () {
                                         FirebaseFirestore.instance
-                                            .collection('Chat')
+                                            .collection('Chat2')
                                             .doc(roomId)
                                             .collection('Messages')
                                             .get()
@@ -2090,7 +2097,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                                     InkWell(
                                       onTap: () {
                                         FirebaseFirestore.instance
-                                            .collection('Chat')
+                                            .collection('Chat2')
                                             .doc(roomId)
                                             .collection('Messages')
                                             .get()
@@ -2266,7 +2273,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       debugPrint("Play=======>");
     } else {
       FirebaseFirestore.instance
-          .collection('Chat')
+          .collection('Chat2')
           .doc(roomId)
           .collection('Messages')
           .get()
@@ -2282,7 +2289,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     controller.onPlayerStateChanged.listen((event) {
       if (event.isPaused) {
         FirebaseFirestore.instance
-            .collection('Chat')
+            .collection('Chat2')
             .doc(roomId)
             .collection('Messages')
             .get()
@@ -2298,7 +2305,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     });
     /* controller.onCompletion.listen((event) {
       FirebaseFirestore.instance
-          .collection('Chat')
+          .collection('Chat2')
           .doc(roomId)
           .collection('Messages')
           .get()
@@ -2329,7 +2336,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     audio.onPlayerComplete.listen((event) {
       audioPlaying = false;
       FirebaseFirestore.instance
-          .collection('Chat')
+          .collection('Chat2')
           .doc(roomId)
           .collection('Messages')
           .get()
@@ -2979,7 +2986,7 @@ class _ConversationScreenState extends State<ConversationScreen>
           } else {
             isOnline = false;
           }
-                  debugPrint("userDocument : $userDocument");
+          debugPrint("userDocument : $userDocument");
           debugPrint("isOnline : $isOnline");
           return Text(
             isOnline
@@ -3123,13 +3130,12 @@ class _ConversationScreenState extends State<ConversationScreen>
         callGetRoomIdApi();
       } else {
         debugPrint(":::::::::Inside Room Id Exist:::::::::::");
-        
+
         _chatBloc.add(EnterChatRoomEvent(
             roomId: roomId,
             receiverId: _receiverId,
             receiverName: _receiverName,
-            receiverImage: _receiverProfilePic
-        ));
+            receiverImage: _receiverProfilePic));
 
         // checkRoomExists(roomId);
         timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
@@ -3180,22 +3186,24 @@ class _ConversationScreenState extends State<ConversationScreen>
     }
 
     _chatBloc.add(SendMessageEvent(
-        message: messageType == 'text' ? messageInput : '',
-        messageType: messageType,
-        filePath: messageType != 'text' ? messageInput : null,
-        audioDuration: duration,
-        thumbnailPath: thumbnailPath,
-        replyMessageContent: "Empty Coming Soon", // Consistent with original code
-        replyToMessageId: isReply == 1 ? "REPLY_ID_TODO" : null, // Original code didn't actually pass the reply ID properly in map construction shown
+      message: messageType == 'text' ? messageInput : '',
+      messageType: messageType,
+      filePath: messageType != 'text' ? messageInput : null,
+      audioDuration: duration,
+      thumbnailPath: thumbnailPath,
+      replyMessageContent: "Empty Coming Soon", // Consistent with original code
+      replyToMessageId: isReply == 1
+          ? "REPLY_ID_TODO"
+          : null, // Original code didn't actually pass the reply ID properly in map construction shown
     ));
 
-      callCustomNotificationApi(
-          messageType == "text" ? messageInput : messageType);
+    callCustomNotificationApi(
+        messageType == "text" ? messageInput : messageType);
   }
 
   Future<void> uploadChatNew(Map<String, dynamic> data) async {
     DocumentReference docReference = FirebaseFirestore.instance
-        .collection('Chat')
+        .collection('Chat2')
         .doc(roomId)
         .collection('Messages')
         .doc();
@@ -3203,7 +3211,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("::::: Inside Upload Chat New ::::::::::");
 
     DocumentReference roomDetails =
-        FirebaseFirestore.instance.collection('Chat').doc(roomId);
+        FirebaseFirestore.instance.collection('Chat2').doc(roomId);
 
     debugPrint("::::: Inside Upload Chat1 ::::::::::");
     await docReference.set(data);
@@ -3351,7 +3359,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   Future<void> updateAudio(String subCollectionId, bool value) async {
     debugPrint("::::: Inside Upload Chat Func ::::::::::");
 
-    CollectionReference? users = FirebaseFirestore.instance.collection('Chat');
+    CollectionReference? users = FirebaseFirestore.instance.collection('Chat2');
 
     debugPrint("updateAudioValue====> $value");
 
@@ -3366,7 +3374,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       {String thumbnail = ""}) {
     debugPrint("::::: Inside Upload Chat Func ::::::::::");
 
-    CollectionReference? users = FirebaseFirestore.instance.collection('Chat');
+    CollectionReference? users = FirebaseFirestore.instance.collection('Chat2');
 
     debugPrint("uploadPercentage====> $percent");
 
@@ -3393,7 +3401,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   ///Typing
 /*  void addTyping(int typingValue) {
     DocumentReference docTypingReference = FirebaseFirestore.instance
-        .collection('Chat')
+        .collection('Chat2')
         .doc(roomId)
         .collection('Typing')
         .doc(_senderId);
@@ -3416,7 +3424,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   void addTyping(int typingValue) {
     DocumentReference docTypingReference = FirebaseFirestore.instance
-        .collection('Chat')
+        .collection('Chat2')
         .doc(roomId)
         .collection('Typing')
         .doc(_senderId);
@@ -3427,7 +3435,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       if (!isTyping) {
         docTypingReference.set({'isTyping': true}, SetOptions(merge: true));
         FirebaseFirestore.instance
-            .collection('Chat')
+            .collection('Chat2')
             .doc(roomId)
             .collection('Typing')
             .doc(_senderId)
@@ -3441,7 +3449,7 @@ class _ConversationScreenState extends State<ConversationScreen>
         isTyping = false;
         debugPrint("isUser--Not--Typing::::::$isTyping");
         FirebaseFirestore.instance
-            .collection('Chat')
+            .collection('Chat2')
             .doc(roomId)
             .collection('Typing')
             .doc(_senderId)
@@ -3457,7 +3465,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("roomId::::::::$roomId");
     if (roomId.isNotEmpty) {
       FirebaseFirestore.instance
-          .collection('Chat')
+          .collection('Chat2')
           .doc(roomId)
           .collection('Typing')
           .doc(_receiverId)
@@ -3478,7 +3486,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   void listenToTyping() {
     if (roomId.isNotEmpty) {
       FirebaseFirestore.instance
-          .collection('Chat')
+          .collection('Chat2')
           .doc(roomId)
           .collection('Typing')
           .doc(_receiverId)
@@ -3535,7 +3543,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   Future<void> seeMsg() async {
     final query = await FirebaseFirestore.instance
-        .collection('Chat')
+        .collection('Chat2')
         .doc(roomId)
         .collection('Messages')
         .where('receiverId', isEqualTo: _receiverId)
@@ -3552,7 +3560,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   Future<void> seeFirstMsg() async {
     final query = await FirebaseFirestore.instance
-        .collection('Chat')
+        .collection('Chat2')
         .doc(roomId)
         .collection('Messages')
         .where('senderId', isEqualTo: _senderId)
@@ -3571,7 +3579,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("roomID--$myRoomId");
 
     DocumentReference roomDetails =
-        FirebaseFirestore.instance.collection('Chat').doc(myRoomId);
+        FirebaseFirestore.instance.collection('Chat2').doc(myRoomId);
 
     roomDetails.update({
       'readStatus': "read",
@@ -3582,7 +3590,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   ///  In Use
   _deleteChat(var document) async {
     await FirebaseFirestore.instance
-        .collection('Chat')
+        .collection('Chat2')
         .doc(roomId)
         .collection('Messages')
         .doc(document.id)

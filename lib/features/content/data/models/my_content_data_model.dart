@@ -69,47 +69,60 @@ class MyContentData {
   });
 
   MyContentData.fromJson(json) {
-    id = json['_id'] ?? json['id'] ?? "";
+    id = (json['_id'] ?? json['id'] ?? "").toString();
+    title = (json["heading"] ?? json["description"] ?? "").toString();
+    textValue = (json["description"] ?? "").toString();
     exclusive = json["type"] == "shared" ? false : true;
     dateTime = json["timestamp"].toString();
-    purchasedMediahouseCount = (json["purchased_mediahouse"] as List).length;
-    time = json["timestamp"].toString();
-    title = json["heading"] ?? "";
-    textValue = json["description"] ?? "";
-    location = json["location"] ?? "";
-    latitude = json["latitude"].toString();
-    longitude = json["longitude"].toString();
-    amount = json["original_ask_price"] != null
-        ? json["original_ask_price"].toString()
-        : "0";
-    originalAmount = json["original_ask_price"] != null
-        ? json["original_ask_price"].toString()
-        : "0";
 
-    totalEarning = json["total_earnings"] != null
-        ? json["total_earnings"].toString()
-        : "0";
-    contentView = json["content_view_count_by_marketplace_for_app"];
-    status = json["status"].toString();
-    discountPercent = json["discount_percent"] ?? "";
-    soldStatus = json["sale_status"] ?? '';
+    if (json["purchased_mediahouse"] != null &&
+        json["purchased_mediahouse"] is List) {
+      purchasedMediahouseCount = (json["purchased_mediahouse"] as List).length;
+    } else {
+      purchasedMediahouseCount = 0;
+    }
 
-    paidStatus = json["paid_status"].toString();
+    latitude = (json["latitude"] ?? "").toString();
+    longitude = (json["longitude"] ?? "").toString();
+
+    amount =
+        (json["original_ask_price"] ?? json["ask_price"] ?? "0").toString();
+    originalAmount =
+        (json["original_ask_price"] ?? json["price_original"] ?? "0")
+            .toString();
+
+    totalEarning = (json["total_earnings"] ?? "0").toString();
+    contentView = json["content_view_count_by_marketplace_for_app"] ?? 0;
+    status = (json["status"] ?? "").toString();
+    discountPercent = (json["discount_percent"] ?? "").toString();
+    soldStatus = (json["sale_status"] ?? "").toString();
+
+    paidStatus = (json["paid_status"] ?? "").toString();
 
     isPaidStatusToHopper = json["paid_status_to_hopper"] ?? false;
-    contentType = json['type'] ?? '';
+    contentType = (json['type'] ?? '').toString();
     offerCount = json['offer_content_size'] ?? 0;
 
-    mediaHouseName = json['purchased_publication_details'] != null
-        ? json['purchased_publication_details']['company_name'] ?? ""
-        : "";
-    audioDescription = json['audio_description'] ?? '';
-    categoryId = json['category_id'] ?? '';
+    if (json['purchased_publication_details'] != null) {
+      mediaHouseName =
+          json['purchased_publication_details']['company_name'] ?? "";
+    } else {
+      mediaHouseName = "";
+    }
+
+    audioDescription = (json['audio_description'] ?? '').toString();
+    categoryId = (json['category_id'] ?? '').toString();
+
     if (json["content"] != null) {
       var contentList = json["content"] as List;
       contentMediaList =
           contentList.map((e) => ContentMediaData.fromJson(e)).toList();
+    } else if (json["content_metadata"] != null) {
+      var contentList = json["content_metadata"] as List;
+      contentMediaList =
+          contentList.map((e) => ContentMediaData.fromJson(e)).toList();
     }
+
     if (json["tagData"] != null) {
       var tagList = json["tagData"] as List;
       hashTagList = tagList.map((e) => HashTagData.fromJson(e)).toList();

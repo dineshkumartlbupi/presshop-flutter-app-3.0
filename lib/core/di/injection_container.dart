@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/network_info.dart';
+import 'package:presshop/features/account_settings/domain/usecases/get_admin_contact_info.dart';
 import 'package:presshop/features/publish/domain/usecases/submit_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -406,7 +407,7 @@ Future<void> init() async {
 
   // Account Settings Use Cases
   sl.registerLazySingleton(() => DeleteAccount(sl()));
-
+  sl.registerLazySingleton(() => GetAdminContactInfo(sl()));
   // Leaderboard Use Cases
   sl.registerLazySingleton(() => GetLeaderboardData(sl()));
 

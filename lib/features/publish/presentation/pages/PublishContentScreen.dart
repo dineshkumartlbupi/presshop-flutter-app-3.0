@@ -2982,8 +2982,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
     debugPrint("draft::::${widget.hideDraft}:::::");
     if (widget.hideDraft) {
       locationController.text = widget.myContentData!.location;
-      timestampController.text = DateFormat("hh:mm a, dd MMM yyyy")
-          .format(DateTime.parse(widget.myContentData!.time));
+      timestampController.text = dateTimeFormatter(
+          dateTime: widget.myContentData!.dateTime,
+          format: "hh:mm a, dd MMM yyyy",
+          utc: true);
       descriptionController.text = widget.myContentData!.textValue;
       selectedHashtagList.addAll(widget.myContentData!.hashTagList);
       debugPrint("priceValuee=====> ${widget.myContentData!.amount}");
@@ -3027,13 +3029,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   updateDraftListAPI(String contentId) {
+    debugPrint("updateDraftListAPI contentId: $contentId");
     Map<String, String> map = {
       'content_id': contentId,
     };
 
     NetworkClass.fromNetworkClass(
             removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map)
-        .callRequestServiceHeader(true, "patch", null);
+        .callRequestServiceHeader(true, "patch", null, isJson: true);
   }
 
   Future playSound() async {
@@ -3180,7 +3183,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
             i < widget.myContentData!.contentMediaList.length;
             i++) {
           var element = widget.myContentData!.contentMediaList[i];
-          selectMediaList.add(element.media.toString());
+          if (element.media.startsWith('http') ||
+              element.media.startsWith('https')) {
+            alreadyUploadedMediaList.add(element.media.toString());
+          } else {
+            selectMediaList.add(element.media.toString());
+          }
         }
       }
     } else {

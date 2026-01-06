@@ -433,8 +433,9 @@ class MyDraftScreenState extends State<MyDraftScreen>
                     width: size.width,
                   )
                 : Image.network(
-                    //  "$contentImageUrl$url",
-                    "$contentImageUrl$url",
+                    url.startsWith('http') || url.startsWith('https')
+                        ? url
+                        : "$contentImageUrl$url",
                     height: size.width * numD50,
                     width: size.width,
                     fit: BoxFit.cover,
@@ -715,7 +716,7 @@ class MyDraftScreenState extends State<MyDraftScreen>
                                       "Please select to date above from date",
                                       Colors.red);
                                 }
-                                                            }
+                              }
                               stateSetter(() {});
                               setState(() {});
                             },
@@ -821,13 +822,14 @@ class MyDraftScreenState extends State<MyDraftScreen>
   }
 
   updateDraftListAPI(String contentId) {
+    debugPrint("updateDraftListAPI contentId: $contentId");
     Map<String, String> map = {
       'content_id': contentId,
     };
 
     NetworkClass.fromNetworkClass(
             removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map)
-        .callRequestServiceHeader(true, "patch", null);
+        .callRequestServiceHeader(true, "patch", null, isJson: true);
   }
 
   @override
@@ -852,7 +854,7 @@ class MyDraftScreenState extends State<MyDraftScreen>
             var data = jsonDecode(response);
             log("myDraftUrlRequest success: $data");
             if (data != null) {
-              var listModel = data["contentList"] as List;
+              var listModel = data["data"] as List;
               var list =
                   listModel.map((e) => MyContentData.fromJson(e)).toList();
               if (list.isNotEmpty) {
@@ -903,8 +905,10 @@ class MyDraftData {
 
   MyDraftData.fromJson(json) {
     exclusive = json["type"] == "shared" ? false : true;
-    time = changeDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", json["timestamp"],
-        "HH:mm, dd MMM, yyyy");
+    time = dateTimeFormatter(
+        dateTime: (json["timestamp"] ?? "").toString(),
+        format: "HH:mm, dd MMM, yyyy",
+        utc: true);
     textValue = json["description"];
     location = json["location"];
     latitude = json["latitude"].toString();
@@ -969,11 +973,12 @@ class ContentMediaData {
       this.id, this.media, this.mediaType, this.thumbNail, this.waterMark);
 
   ContentMediaData.fromJson(json) {
-    id = json["_id"].toString();
+    id = (json["_id"] ?? json["id"] ?? "").toString();
     media = json["media"];
     mediaType = json["media_type"] ?? "";
     thumbNail = (json["thumbnail"] ?? json["media"]).toString();
-    waterMark = (json["watermark"] ?? "").toString();
+    waterMark =
+        (json["watermark"] ?? json["watermarked_media"] ?? "").toString();
     // if (mediaType == "video") {
     //   getVideoThumbNail(media).then((value) {
     //     debugPrint("TValue: $value");

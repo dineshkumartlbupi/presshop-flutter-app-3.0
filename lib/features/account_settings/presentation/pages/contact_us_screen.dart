@@ -16,6 +16,7 @@ import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
 import '../bloc/account_settings_bloc.dart';
 import '../bloc/account_settings_event.dart';
 import '../bloc/account_settings_state.dart';
+import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -60,7 +61,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => sl<AccountSettingsBloc>()..add(const GetAdminContactInfoEvent()),
+      create: (context) =>
+          sl<AccountSettingsBloc>()..add(const GetAdminContactInfoEvent()),
       child: BlocListener<AccountSettingsBloc, AccountSettingsState>(
         listener: (context, state) {
           if (state is AdminContactInfoLoaded) {
@@ -144,7 +146,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                     bottom: 2,
                                     right: 10,
                                     child: Container(
-                                      padding: EdgeInsets.all(size.width * 0.005),
+                                      padding:
+                                          EdgeInsets.all(size.width * 0.005),
                                       decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.white),
@@ -178,7 +181,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                     bottom: 2,
                                     right: 10,
                                     child: Container(
-                                      padding: EdgeInsets.all(size.width * 0.005),
+                                      padding:
+                                          EdgeInsets.all(size.width * 0.005),
                                       decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.white),
@@ -212,7 +216,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                     bottom: 2,
                                     right: 10,
                                     child: Container(
-                                      padding: EdgeInsets.all(size.width * 0.005),
+                                      padding:
+                                          EdgeInsets.all(size.width * 0.005),
                                       decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.white),
@@ -233,7 +238,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   Container(
                                     height: size.width * numD20,
                                     width: size.width * numD20,
-                                    padding: EdgeInsets.all(size.width * numD04),
+                                    padding:
+                                        EdgeInsets.all(size.width * numD04),
                                     margin: const EdgeInsets.only(bottom: 5),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
@@ -244,13 +250,15 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                               spreadRadius: 2,
                                               blurRadius: 2)
                                         ]),
-                                    child: Image.asset("${iconsPath}ic_dots.png"),
+                                    child:
+                                        Image.asset("${iconsPath}ic_dots.png"),
                                   ),
                                   Positioned(
                                     bottom: 2,
                                     right: 10,
                                     child: Container(
-                                      padding: EdgeInsets.all(size.width * 0.005),
+                                      padding:
+                                          EdgeInsets.all(size.width * 0.005),
                                       decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.white),
@@ -287,14 +295,14 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             size: size,
                             fontSize: size.width * numD034,
                             color: Colors.black,
-                            fontWeight: FontWeight.w300, // Set fontWeight to normal
+                            fontWeight:
+                                FontWeight.w300, // Set fontWeight to normal
                           ),
                         )
                       ])),
                       SizedBox(
                         height: size.width * numD03,
                       ),
-    
                       RichText(
                         text: TextSpan(
                           children: [
@@ -371,7 +379,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               child: InkWell(
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const TutorialsScreen(),
+                                    builder: (context) =>
+                                        const TutorialsScreen(),
                                   ));
                                 },
                                 child: Text(
@@ -526,27 +535,32 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             fontFamily: 'AirbnbCereal_W_Md',
                           ),
                           disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(size.width * 0.03),
+                            borderRadius:
+                                BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
                                 width: 1, color: colorTextFieldBorder),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(size.width * 0.03),
+                            borderRadius:
+                                BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
                                 width: 1, color: colorTextFieldBorder),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(size.width * 0.03),
+                            borderRadius:
+                                BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
                                 width: 1, color: colorTextFieldBorder),
                           ),
                           errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(size.width * 0.03),
+                            borderRadius:
+                                BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
                                 width: 1, color: colorTextFieldBorder),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(size.width * 0.03),
+                            borderRadius:
+                                BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
                                 width: 1, color: colorTextFieldBorder),
                           ),
@@ -569,8 +583,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                       Container(
                         width: size.width,
                         height: size.width * numD14,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: size.width * numD08),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD08),
                         child: commonElevatedButton(
                             chatText,
                             size,
@@ -581,12 +595,15 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, colorThemePink), () {
                           if (messageController.text.isNotEmpty) {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        Dashboard(initialPosition: 3)),
-                                (route) => false);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ConversationScreen(
+                                  hideLeading: false,
+                                  message: messageController.text.trim(),
+                                ),
+                              ),
+                            );
                           }
                           setState(() {});
                         }),
@@ -597,8 +614,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                       Container(
                         width: size.width,
                         height: size.width * numD14,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: size.width * numD08),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * numD08),
                         child: commonElevatedButton(
                             emailUsText,
                             size,
@@ -609,7 +626,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, Colors.black), () async {
                           if (adminEmail.isEmpty) {
-                            showSnackBar('Error', 'Contact email not available, please try again later.', Colors.red);
+                            showSnackBar(
+                                'Error',
+                                'Contact email not available, please try again later.',
+                                Colors.red);
                             return;
                           }
                           final Uri emailURL = Uri(
@@ -618,12 +638,12 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             query:
                                 'subject=Please contact me &body=${messageController.text.trim()}',
                           );
-    
+
                           if (await canLaunchUrl(emailURL)) {
                             launchUrl(emailURL);
                           } else {
-                             // Fallback or show error
-                             debugPrint("Could not launch email");
+                            // Fallback or show error
+                            debugPrint("Could not launch email");
                           }
                           setState(() {});
                         }),
@@ -666,15 +686,16 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri twitterUrl = Uri.parse(
                                   'https://twitter.com/Presshopuk'); // Replace with the desired Twitter URL
-                              if (await canLaunchUrl(twitterUrl)) await launchUrl(twitterUrl);
+                              if (await canLaunchUrl(twitterUrl))
+                                await launchUrl(twitterUrl);
                             },
                             child: Container(
                               height: size.width * numD1,
                               width: size.width * numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * numD02)),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD02)),
                               padding: EdgeInsets.all(size.width * numD02),
                               child: Image.asset("${iconsPath}ic_twitter.png"),
                             ),
@@ -686,15 +707,16 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri linkedUrl = Uri.parse(
                                   'https://www.linkedin.com/company/presshop/');
-                              if (await canLaunchUrl(linkedUrl)) await launchUrl(linkedUrl);
+                              if (await canLaunchUrl(linkedUrl))
+                                await launchUrl(linkedUrl);
                             },
                             child: Container(
                               height: size.width * numD1,
                               width: size.width * numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * numD02)),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD02)),
                               padding: EdgeInsets.all(size.width * numD02),
                               child: Image.asset("${iconsPath}ic_linkdin.png"),
                             ),
@@ -706,17 +728,19 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri instagramUrl = Uri.parse(
                                   'https://www.instagram.com/presshopuk/'); // Replace with the desired Twitter URL
-                              if (await canLaunchUrl(instagramUrl)) await launchUrl(instagramUrl);
+                              if (await canLaunchUrl(instagramUrl))
+                                await launchUrl(instagramUrl);
                             },
                             child: Container(
                               height: size.width * numD1,
                               width: size.width * numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * numD02)),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD02)),
                               padding: EdgeInsets.all(size.width * numD02),
-                              child: Image.asset("${iconsPath}ic_instagram.png"),
+                              child:
+                                  Image.asset("${iconsPath}ic_instagram.png"),
                             ),
                           ),
                           SizedBox(width: size.width * numD04),
@@ -724,15 +748,16 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri facebookUrl = Uri.parse(
                                   'https://www.facebook.com/presshopuk/'); // Replace with the desired Twitter URL
-                              if (await canLaunchUrl(facebookUrl)) await launchUrl(facebookUrl);
+                              if (await canLaunchUrl(facebookUrl))
+                                await launchUrl(facebookUrl);
                             },
                             child: Container(
                               height: size.width * numD1,
                               width: size.width * numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * numD02)),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD02)),
                               padding: EdgeInsets.all(size.width * numD02),
                               child: Image.asset("${iconsPath}ic_facebook.png"),
                             ),
