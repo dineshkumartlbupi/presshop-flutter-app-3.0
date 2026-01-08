@@ -214,6 +214,14 @@ class ApiClient {
     return _dio.post(path,
         data: formData, queryParameters: queryParameters, options: options);
   }
+
+  Future<Response> postUri(
+    Uri uri, {
+    dynamic data,
+    Options? options,
+  }) async {
+    return _dio.postUri(uri, data: data, options: options);
+  }
 }
 
 class PrettyDioLogger extends Interceptor {
@@ -227,7 +235,7 @@ class PrettyDioLogger extends Interceptor {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ➡️ API REQUEST
 METHOD : ${options.method}
-URL    : ${options.baseUrl}${options.path}
+URL    : ${options.uri}
 HEADERS: ${_maskHeaders(options.headers)}
 QUERY  : ${options.queryParameters}
 BODY   : ${options.data}
@@ -247,7 +255,7 @@ BODY   : ${options.data}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ API RESPONSE
 STATUS : ${response.statusCode}
-URL    : ${response.requestOptions.baseUrl}${response.requestOptions.path}
+URL    : ${response.realUri}
 DATA   : ${response.data}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''',
@@ -265,7 +273,7 @@ DATA   : ${response.data}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ❌ API ERROR
 STATUS : ${err.response?.statusCode}
-URL    : ${err.requestOptions.baseUrl}${err.requestOptions.path}
+URL    : ${err.requestOptions.uri}
 ERROR  : ${err.message}
 DATA   : ${err.response?.data}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

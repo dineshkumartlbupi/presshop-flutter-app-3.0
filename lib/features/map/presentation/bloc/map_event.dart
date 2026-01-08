@@ -42,3 +42,20 @@ class OnIncidentUpdatedEvent extends MapEvent {
   @override
   List<Object> get props => [data];
 }
+
+class FetchNewsEvent extends MapEvent {
+  final double lat;
+  final double lng;
+  final double km;
+  final String category;
+
+  const FetchNewsEvent({
+    required this.lat,
+    required this.lng,
+    required this.km,
+    this.category = "all",
+  });
+
+  @override
+  List<Object> get props => [lat, lng, km, category];
+}

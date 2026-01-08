@@ -38,11 +38,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     try {
       final tasks = await getAllTasks(limit: event.limit, offset: event.offset);
-      
+
       bool hasReachedMax = tasks.length < event.limit;
-      List<TaskAll> updatedList = event.offset == 0
-          ? tasks
-          : List.of(state.allTasks)..addAll(tasks);
+      List<TaskAll> updatedList;
+      if (event.offset == 0) {
+        updatedList = List.from(tasks);
+      } else {
+        updatedList = List.from(state.allTasks)..addAll(tasks);
+      }
 
       emit(state.copyWith(
         allTasksStatus: TaskStatus.success,
@@ -65,12 +68,18 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     try {
       final tasks = await getLocalTasks(
-          limit: event.limit, offset: event.offset, filters: event.filterParams);
-      
+          limit: event.limit,
+          offset: event.offset,
+          filters: event.filterParams);
+
       bool hasReachedMax = tasks.length < event.limit;
-      List<Task> updatedList = event.offset == 0
-          ? tasks
-          : List.of(state.localTasks)..addAll(tasks);
+
+      List<Task> updatedList;
+      if (event.offset == 0) {
+        updatedList = List<Task>.from(tasks);
+      } else {
+        updatedList = List<Task>.from(state.localTasks)..addAll(tasks);
+      }
 
       emit(state.copyWith(
         localTasksStatus: TaskStatus.success,
@@ -87,34 +96,23 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onFetchTaskDetail(
       FetchTaskDetailEvent event, Emitter<TaskState> emit) async {
+    debugPrint(
+        "🚀 TaskBloc: FetchTaskDetailEvent Triggered. TaskId: ${event.taskId}");
     try {
       final taskDetail = await getTaskDetail(event.taskId);
-      
+      debugPrint(
+          "🚀 TaskBloc: Task Detail Fetched Successfully: ${taskDetail.title}");
+
       String myId = sharedPreferences.getString(hopperIdKey) ?? "";
       bool isAccepted = taskDetail.acceptedBy.contains(myId);
-      
-      // Removed roomId logic as it was fetched from a different part of the JSON response in the old code (map["resp"]["room_id"]).
-      // The TaskDetail entity doesn't seem to hold roomId unless I missed it.
-      // TaskDetail entity has `mediaHouseId`.
-      // The old code logic: `if (map["resp"] != null) { roomId = (map["resp"]["room_id"] ?? "").toString(); }`
-      // The repository `getTaskDetail` currently returns `TaskDetailModel` which parses `task`.
-      // It ignores `resp`.
-      // If `resp` is important (for Chat?), I should update `getTaskDetail` to return a wrapper or update Entity.
-      // But `TaskRemoteDataSourceImpl` returns `TaskDetailModel.fromJson(map["task"])`.
-      // So `resp` is lost.
-      // Use case: Chat room ID?
-      // I'll check `TaskDetail` entity again. It does NOT have roomId.
-      // I'll check if `roomId` is critical. Usually it is for chatting.
-      // If critical, I need to update Entity and Repo to include `roomId`.
-      // For now, I'll pass empty string or handle it later.
-      
+
       emit(state.copyWith(
           taskDetail: taskDetail,
           roomId: "", // temporary
           isTaskAccepted: isAccepted,
           myId: myId));
     } catch (e) {
-      debugPrint("Error fetching task detail: $e");
+      debugPrint("🚀 TaskBloc Error fetching task detail: $e");
       emit(state.copyWith(errorMessage: e.toString()));
     }
   }

@@ -8,24 +8,31 @@ import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
 import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
+import 'package:presshop/features/news/domain/repositories/news_repository.dart';
+import 'package:presshop/features/map/data/services/marker_service.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   final GetCurrentLocation getCurrentLocation;
   final GetRoute getRoute;
   final MapRepository repository;
   final SocketService socketService;
+  final NewsRepository newsRepository;
+  final MarkerService markerService;
 
   MapBloc({
     required this.getCurrentLocation,
     required this.getRoute,
     required this.repository,
     required this.socketService,
+    required this.newsRepository,
+    required this.markerService,
   }) : super(const MapState()) {
     on<GetCurrentLocationEvent>(_onGetCurrentLocation);
     on<GetRouteEvent>(_onGetRoute);
     on<SearchPlacesEvent>(_onSearchPlaces);
     on<OnIncidentNewEvent>(_onIncidentNew);
     on<OnIncidentUpdatedEvent>(_onIncidentUpdated);
+    on<FetchNewsEvent>(_onFetchNews);
 
     _initSocket();
   }
@@ -83,10 +90,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final result = await getCurrentLocation(NoParams());
     result.fold(
       (failure) => emit(state.copyWith(errorMessage: "Failed to get location")),
-      (location) => emit(state.copyWith(
-        myLocation: location,
-        initialCamera: CameraPosition(target: location, zoom: 14),
-      )),
+      (location) {
+        emit(state.copyWith(
+          myLocation: location,
+          initialCamera: CameraPosition(target: location, zoom: 14),
+        ));
+        add(FetchNewsEvent(
+            lat: location.latitude, lng: location.longitude, km: 10));
+      },
     );
   }
 
@@ -112,6 +123,64 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       (failure) =>
           emit(state.copyWith(errorMessage: "Failed to search places")),
       (places) => emit(state.copyWith(placeSuggestions: places)),
+    );
+  }
+
+  Future<void> _onFetchNews(
+    FetchNewsEvent event,
+    Emitter<MapState> emit,
+  ) async {
+    emit(state.copyWith(isLoadingNews: true));
+    final result = await newsRepository.getAggregatedNews(
+      lat: event.lat,
+      lng: event.lng,
+      km: event.km,
+      category: event.category,
+    );
+
+    await result.fold(
+      (failure) async {
+        emit(state.copyWith(
+            isLoadingNews: false,
+            errorMessage: failure.message ?? "Failed to fetch news"));
+      },
+      (newsList) async {
+        final List<Incident> incidents = newsList.map((news) {
+          final lat =
+              double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
+          final lng =
+              double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
+
+          return Incident(
+              id: news.id,
+              markerType: 'news', // or appropriate type
+              type: 'news',
+              position: LatLng(lat, lng),
+              address: news.location,
+              time: news.createdAt,
+              category: 'News',
+              alertType: 'News',
+              image: news.mediaUrl,
+              description: news.description,
+              title: news.title);
+        }).toList();
+
+        final Set<Marker> newMarkers = {};
+        for (final incident in incidents) {
+          // Basic marker creation logic - can be enhanced with custom icons
+          final marker = Marker(
+            markerId: MarkerId(incident.id),
+            position: incident.position,
+            infoWindow: InfoWindow(title: incident.title ?? 'News'),
+          );
+          newMarkers.add(marker);
+        }
+        emit(state.copyWith(
+          isLoadingNews: false,
+          newsList: incidents,
+          markers: {...state.markers, ...newMarkers},
+        ));
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/constants/string_constants.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
@@ -11,7 +12,8 @@ import '../models/task_models.dart';
 
 abstract class TaskRemoteDataSource {
   Future<List<AllTaskModel>> getAllTasks(int limit, int offset);
-  Future<List<Task>> getLocalTasks(int limit, int offset, Map<String, dynamic> filters);
+  Future<List<Task>> getLocalTasks(
+      int limit, int offset, Map<String, dynamic> filters);
   Future<TaskDetailModel> getTaskDetail(String taskId);
 }
 
@@ -19,7 +21,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   final Dio dio;
   final SharedPreferences sharedPreferences;
 
-  TaskRemoteDataSourceImpl({required this.dio, required this.sharedPreferences});
+  TaskRemoteDataSourceImpl(
+      {required this.dio, required this.sharedPreferences});
 
   @override
   Future<List<AllTaskModel>> getAllTasks(int limit, int offset) async {
@@ -29,27 +32,41 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
     // Note: Bloc had logic to handle 'offset == 0' loading state, etc. DataSource just fetches.
     // Bloc called POST? Yes, TaskBloc line 41: dio.post.
+    debugPrint("🚀 Calling getAllTasks API: ${baseUrl + getAllTaskUrl}");
+    debugPrint("🚀 Request Body: ${{"limit": limit, "offset": offset}}");
+
     var response = await dio.post(
       baseUrl + getAllTaskUrl,
       data: {"limit": limit, "offset": offset},
     );
 
-    if (response.statusCode == 200) {
+    debugPrint("🚀 Response Status: ${response.statusCode}");
+    debugPrint("🚀 Response Data: ${response.data}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var data = response.data;
+      if (data is String) {
+        data = jsonDecode(data);
+      }
       if (data['data'] != null) {
-        return (data['data'] as List)
+        var list = (data['data'] as List)
             .map((e) => AllTaskModel.fromJson(e))
             .toList();
+        debugPrint("🚀 Parsed ${list.length} tasks");
+        return list;
       } else {
+        debugPrint("🚀 No data found in response");
         return [];
       }
     } else {
+      debugPrint("🚀 API Error: ${response.statusCode}");
       throw Exception("Failed to fetch all tasks: ${response.statusCode}");
     }
   }
 
   @override
-  Future<List<Task>> getLocalTasks(int limit, int offset, Map<String, dynamic> filters) async {
+  Future<List<Task>> getLocalTasks(
+      int limit, int offset, Map<String, dynamic> filters) async {
     String token = sharedPreferences.getString(tokenKey) ?? "";
     dio.options.headers["Authorization"] = "Bearer $token";
     dio.options.headers["Content-Type"] = "application/json";
@@ -84,7 +101,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       if (offset == 0 && data['pending_unaccepted'] != null) {
         var pendingTaskList = data["pending_unaccepted"] as List;
         if (pendingTaskList.isNotEmpty) {
-          var pendingList = pendingTaskList.map((e) => PendingTask.fromJson(e)).toList();
+          var pendingList =
+              pendingTaskList.map((e) => PendingTask.fromJson(e)).toList();
           combinedList.addAll(pendingList);
         }
       }

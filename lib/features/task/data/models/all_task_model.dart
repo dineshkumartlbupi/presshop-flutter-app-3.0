@@ -27,7 +27,7 @@ class AllTaskModel extends TaskAll {
       description: (json['task_description'] ?? "").toString(),
       location: (json['location'] ?? "").toString(),
       status: (json['status'] ?? "").toString(),
-      mediaHouseDetails: json['mediahouse_id'] != null
+      mediaHouseDetails: (json['mediahouse_id'] is Map<String, dynamic>)
           ? MediaHouseDetails.fromJson(json['mediahouse_id'])
           : null,
       acceptedTasks: json['acceptedTasks'] != null

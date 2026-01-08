@@ -95,7 +95,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: null,
-      body: broadCastedData != null && _showMap
+      body: broadCastedData != null
           ? Stack(
               children: [
                 ListView(
@@ -1221,11 +1221,11 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         _showMap = true;
         debugPrint("_longitude: $_latLng");
       });
-      taskDetailApi();
     } else {
       showSnackBar(
           "Permission Denied", "Please Allow Loction permission", Colors.red);
     }
+    taskDetailApi();
   }
 
   /// Initialize Map icon
@@ -1236,14 +1236,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   }
 
   void openUrl() async {
-    String googleUrl = isDirection
+    String googleUrl = isDirection && _latLng != null
         ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
             '${_latLng!.longitude}&destination=${broadCastedData!.latitude},'
             '${broadCastedData!.longitude}&travelmode=driving&dir_action=navigate'
         : 'https://www.google.com/maps/search/?api=1&query=${broadCastedData!.latitude},${broadCastedData!.longitude}';
     debugPrint('value data===> $googleUrl');
 
-    String appleUrl = isDirection
+    String appleUrl = isDirection && _latLng != null
         ? 'http://maps.apple.com/maps?saddr=${_latLng!.latitude},'
             '${_latLng!.longitude}&daddr=${broadCastedData!.latitude},'
             '${broadCastedData!.longitude}'
@@ -1499,7 +1499,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             broadCastedData = BroadcastedData.fromJson(map["task"]);
             taskDetail = TaskDetailModel.fromJson(map["task"] ?? {});
             callGetHopperAcceptedCount();
-            getEstimateTime();
+            if (_latLng != null) {
+              getEstimateTime();
+            }
             _updateGoogleMap(
                 LatLng(broadCastedData!.latitude, broadCastedData!.longitude));
             // Future.delayed(const Duration(seconds: 5),()=>_updateGoogleMap(LatLng(broadcastedData!.latitude, broadcastedData!.longitude)));

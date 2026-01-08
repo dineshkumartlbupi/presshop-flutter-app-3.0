@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/main.dart'; // For currencySymbol
@@ -91,7 +90,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
-         // Logic to trigger fetch if needed handled in UI/Bloc
+        // Logic to trigger fetch if needed handled in UI/Bloc
         setState(() {});
       }
     });
@@ -106,7 +105,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -115,157 +113,165 @@ class MyTaskScreenState extends State<MyTaskScreen>
         final bloc = di.sl<TaskBloc>();
         bloc.add(FetchAllTasksEvent(offset: 0));
         if (widget.broadCastId != null) {
-           bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
+          bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
         }
         return bloc;
       },
       child: BlocListener<TaskBloc, TaskState>(
         listener: (context, state) {
-           if(state.taskDetail != null) {
-              // Handle broadcast dialog
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                broadcastDialog(
-                  size: size,
-                  taskDetail: state.taskDetail!,
-                  onTapView: () {
-                    if (widget.broadCastId != null) {
-                      Navigator.pop(context);
-                    }
+          debugPrint(
+              "🚀 UI: TaskBloc State Changed. TaskDetail: ${state.taskDetail?.title}");
+          if (state.taskDetail != null) {
+            debugPrint("🚀 UI: Showing Broadcast Dialog");
+            // Handle broadcast dialog
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              broadcastDialog(
+                size: size,
+                taskDetail: state.taskDetail!,
+                onTapView: () {
+                  if (widget.broadCastId != null) {
                     Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BroadCastScreen(
-                              taskId: state.taskDetail!.id,
-                              mediaHouseId: state.taskDetail!.mediaHouseId,
-                            )));
-                  },
-                );
-              });
-           }
-           
-           if(state.allTasksStatus == TaskStatus.success || state.localTasksStatus == TaskStatus.success) {
-               _refreshController.refreshCompleted();
-               _refreshController.loadComplete();
-           } else if (state.allTasksStatus == TaskStatus.failure || state.localTasksStatus == TaskStatus.failure) {
-               _refreshController.refreshFailed();
-               _refreshController.loadFailed();
-           }
+                  }
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => BroadCastScreen(
+                            taskId: state.taskDetail!.id,
+                            mediaHouseId: state.taskDetail!.mediaHouseId,
+                          )));
+                },
+              );
+            });
+          }
+
+          if (state.allTasksStatus == TaskStatus.success ||
+              state.localTasksStatus == TaskStatus.success) {
+            _refreshController.refreshCompleted();
+            _refreshController.loadComplete();
+          } else if (state.allTasksStatus == TaskStatus.failure ||
+              state.localTasksStatus == TaskStatus.failure) {
+            _refreshController.refreshFailed();
+            _refreshController.loadFailed();
+          }
         },
-        child: Builder(
-          builder: (context) {
-            return Scaffold(
-              appBar: CommonAppBar(
-                elevation: 0,
-                hideLeading: widget.hideLeading,
-                title: Padding(
-                  padding: EdgeInsets.only(
-                      left: widget.hideLeading ? size.width * numD04 : 0),
-                  child: Text(
-                    // "$myText ${taskText}s",
-                    "${taskText}s",
-                    style: TextStyle(
+        child: Builder(builder: (context) {
+          return Scaffold(
+            appBar: CommonAppBar(
+              elevation: 0,
+              hideLeading: widget.hideLeading,
+              title: Padding(
+                padding: EdgeInsets.only(
+                    left: widget.hideLeading ? size.width * numD04 : 0),
+                child: Text(
+                  // "$myText ${taskText}s",
+                  "${taskText}s",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.width * appBarHeadingFontSize),
+                ),
+              ),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: true,
+              leadingFxn: () {
+                Navigator.pop(context);
+              },
+              actionWidget: [
+                InkWell(
+                  onTap: () {
+                    showBottomSheet(size);
+                  },
+                  child: commonFilterIcon(size),
+                ),
+                SizedBox(
+                  width: size.width * numD02,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Dashboard(initialPosition: 2)),
+                        (route) => false);
+                  },
+                  child: Image.asset(
+                    "${commonImagePath}rabbitLogo.png",
+                    height: size.width * numD07,
+                    width: size.width * numD07,
+                  ),
+                ),
+                SizedBox(
+                  width: size.width * numD04,
+                )
+              ],
+            ),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  SizedBox(height: size.width * numD04),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    child: TabBar(
+                      controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      labelColor: Colors.white,
+                      dividerColor: colorThemePink,
+                      unselectedLabelColor: Colors.black,
+                      indicator: BoxDecoration(
+                        color: colorThemePink,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD02),
+                      ),
+                      labelStyle: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * numD038,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: size.width * appBarHeadingFontSize),
-                  ),
-                ),
-                centerTitle: false,
-                titleSpacing: 0,
-                size: size,
-                showActions: true,
-                leadingFxn: () {
-                  Navigator.pop(context);
-                },
-                actionWidget: [
-                  InkWell(
-                    onTap: () {
-                      showBottomSheet(size);
-                    },
-                    child: commonFilterIcon(size),
-                  ),
-                  SizedBox(
-                    width: size.width * numD02,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => Dashboard(initialPosition: 2)),
-                          (route) => false);
-                    },
-                    child: Image.asset(
-                      "${commonImagePath}rabbitLogo.png",
-                      height: size.width * numD07,
-                      width: size.width * numD07,
+                      ),
+                      tabs: [
+                        Tab(
+                          text: "All Tasks",
+                        ),
+                        Tab(
+                          text: "Local Tasks", // as
+                        ),
+                      ],
+                      onTap: (index) {
+                        if (index == 1) {
+                          // Trigger local task fetch if empty, but accessing bloc context here is tricky if not wrapping body.
+                          // Since we wrapped Scaffold, we can access using Context if we split widgets or Use Builder.
+                          // Or just let _tabController listener handle it but it needs context.
+                          // Better: use Builder below BlocProvider. I included BlocProvider in key changes.
+                        }
+                      },
                     ),
                   ),
-                  SizedBox(
-                    width: size.width * numD04,
-                  )
+                  const Divider(
+                    color: Color(0xFFD8D8D8),
+                    thickness: 1.5,
+                  ),
+                  Flexible(child: BlocBuilder<TaskBloc, TaskState>(
+                    builder: (context, state) {
+                      // Check if we need to fetch local tasks
+                      if (_tabController.index == 1 &&
+                          state.localTasks.isEmpty &&
+                          state.localTasksStatus == TaskStatus.initial) {
+                        context.read<TaskBloc>().add(FetchLocalTasksEvent(
+                            filterParams: getFilterParams()));
+                      }
+
+                      return _tabController.index == 0
+                          ? allTaskWidget(state.allTasks, context)
+                          : showLocalTasksDataWidget(state.localTasks, context);
+                    },
+                  )),
                 ],
               ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: size.width * numD04),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-              child: TabBar(
-                controller: _tabController,
-                physics: const NeverScrollableScrollPhysics(),
-                labelColor: Colors.white,
-                dividerColor: colorThemePink,
-                unselectedLabelColor: Colors.black,
-                indicator: BoxDecoration(
-                  color: colorThemePink,
-                  borderRadius: BorderRadius.circular(size.width * numD02),
-                ),
-                labelStyle: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * numD038,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                tabs: [
-                  Tab(
-                    text: "All Tasks",
-                  ),
-                  Tab(
-                    text: "Local Tasks", // as
-                  ),
-                ],
-                onTap: (index) {
-                   if(index == 1) {
-                      // Trigger local task fetch if empty, but accessing bloc context here is tricky if not wrapping body.
-                      // Since we wrapped Scaffold, we can access using Context if we split widgets or Use Builder.
-                      // Or just let _tabController listener handle it but it needs context.
-                      // Better: use Builder below BlocProvider. I included BlocProvider in key changes.
-                   }
-                },
-              ),
             ),
-            const Divider(
-              color: Color(0xFFD8D8D8),
-              thickness: 1.5,
-            ),
-            Flexible(
-                child: BlocBuilder<TaskBloc, TaskState>(
-                  builder: (context, state) {
-                     // Check if we need to fetch local tasks
-                     if(_tabController.index == 1 && state.localTasks.isEmpty && state.localTasksStatus == TaskStatus.initial) {
-                         context.read<TaskBloc>().add(FetchLocalTasksEvent(filterParams: getFilterParams()));
-                     }
-                    
-                     return _tabController.index == 0
-                        ? allTaskWidget(state.allTasks, context)
-                        : showLocalTasksDataWidget(state.localTasks, context);
-                  },
-                )),
-          ],
-        ),
-      ),
-            );
-          }
-        ),
+          );
+        }),
       ),
     );
   }
@@ -311,9 +317,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
   }
 
   Widget showLocalTasksDataWidget(List<Task> taskList, BuildContext context) {
-    if (taskList.isEmpty) { // Simplified check, loading handled by BlocBuilder state if needed, or overlay. 
+    if (taskList.isEmpty) {
+      // Simplified check, loading handled by BlocBuilder state if needed, or overlay.
       // Actually BlocBuilder handles loading state too if we want to show full page loader.
-      // But typically SmartRefresher handles list updates. 
+      // But typically SmartRefresher handles list updates.
       // If initial load and empty, we might want to show loader.
       // Let's rely on passed list.
       // If list is empty and state is loading, return loader?
@@ -323,7 +330,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
     if (taskList.isEmpty) {
       final state = context.read<TaskBloc>().state;
       if (state.localTasksStatus == TaskStatus.loading) {
-         return showLoader();
+        return showLoader();
       }
     }
     return taskList.isNotEmpty
@@ -350,7 +357,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   var item = taskList[index] as TaskPending;
                   return InkWell(
                     onTap: () {
-                      context.read<TaskBloc>().add(FetchTaskDetailEvent(item.broadCastId));
+                      context
+                          .read<TaskBloc>()
+                          .add(FetchTaskDetailEvent(item.broadCastId));
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -376,35 +385,48 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               ClipRRect(
                                 borderRadius:
                                     BorderRadius.circular(size.width * numD04),
-                                child: Image.network(
-                                  item.taskDetail!.mediaHouseImage,
-                                  height: size.width * numD28,
-                                  width: size.width,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      alignment: Alignment.topCenter,
-                                      child: Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * numD26,
-                                        width: size.width * numD26,
+                                child: item.taskDetail?.mediaHouseImage !=
+                                            null &&
+                                        item.taskDetail!.mediaHouseImage
+                                            .isNotEmpty
+                                    ? Image.network(
+                                        item.taskDetail!.mediaHouseImage,
+                                        height: size.width * numD28,
+                                        width: size.width,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Container(
+                                            alignment: Alignment.topCenter,
+                                            child: Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              height: size.width * numD26,
+                                              width: size.width * numD26,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder:
+                                            (context, exception, stackTrace) {
+                                          return Container(
+                                            alignment: Alignment.topCenter,
+                                            child: Image.asset(
+                                              "${commonImagePath}rabbitLogo.png",
+                                              height: size.width * numD26,
+                                              width: size.width * numD26,
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Container(
+                                        alignment: Alignment.topCenter,
+                                        child: Image.asset(
+                                          "${commonImagePath}rabbitLogo.png",
+                                          height: size.width * numD26,
+                                          width: size.width * numD26,
+                                        ),
                                       ),
-                                    );
-                                  },
-                                  errorBuilder:
-                                      (context, exception, stackTrace) {
-                                    return Container(
-                                      alignment: Alignment.topCenter,
-                                      child: Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * numD26,
-                                        width: size.width * numD26,
-                                      ),
-                                    );
-                                  },
-                                ),
                               ),
                             ],
                           ),
@@ -528,7 +550,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   taskStatus: item.status,
                                   taskId: item.taskDetail?.id ?? "",
                                   totalEarning: item.totalAmount)))
-                          .then((value) => context.read<TaskBloc>().add(FetchLocalTasksEvent(filterParams: getFilterParams())));
+                          .then((value) => context.read<TaskBloc>().add(
+                              FetchLocalTasksEvent(
+                                  filterParams: getFilterParams())));
 
                       //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
                     },
@@ -766,7 +790,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   taskStatus: item.status,
                                   taskId: item.id,
                                   totalEarning: "0")))
-                          .then((value) => context.read<TaskBloc>().add(FetchLocalTasksEvent(filterParams: getFilterParams())));
+                          .then((value) => context.read<TaskBloc>().add(
+                              FetchLocalTasksEvent(
+                                  filterParams: getFilterParams())));
 
                       // Navigator.push(
                       //     context,
@@ -1107,7 +1133,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
                         Navigator.pop(context);
-                        context.read<TaskBloc>().add(FetchLocalTasksEvent(filterParams: getFilterParams()));
+                        context.read<TaskBloc>().add(FetchLocalTasksEvent(
+                            filterParams: getFilterParams()));
                       }),
                     ),
                     SizedBox(
@@ -1251,7 +1278,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       "Please select to date above from date",
                                       Colors.red);
                                 }
-                                                            }
+                              }
 
                               setState(() {});
                               stateSetter(() {});
@@ -1323,19 +1350,21 @@ class MyTaskScreenState extends State<MyTaskScreen>
       context.read<TaskBloc>().add(FetchAllTasksEvent(offset: 0));
     } else {
       _localTaskOffset = 0;
-      context.read<TaskBloc>().add(FetchLocalTasksEvent(offset: 0, filterParams: getFilterParams()));
+      context.read<TaskBloc>().add(
+          FetchLocalTasksEvent(offset: 0, filterParams: getFilterParams()));
     }
   }
 
   void _onLoading(BuildContext context) {
     if (_tabController.index == 0) {
-       final state = context.read<TaskBloc>().state;
-       _allTaskOffset = state.allTasks.length;
-       context.read<TaskBloc>().add(FetchAllTasksEvent(offset: _allTaskOffset));
+      final state = context.read<TaskBloc>().state;
+      _allTaskOffset = state.allTasks.length;
+      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: _allTaskOffset));
     } else {
-       final state = context.read<TaskBloc>().state;
-       _localTaskOffset = state.localTasks.length;
-       context.read<TaskBloc>().add(FetchLocalTasksEvent(offset: _localTaskOffset, filterParams: getFilterParams()));
+      final state = context.read<TaskBloc>().state;
+      _localTaskOffset = state.localTasks.length;
+      context.read<TaskBloc>().add(FetchLocalTasksEvent(
+          offset: _localTaskOffset, filterParams: getFilterParams()));
     }
   }
 

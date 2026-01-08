@@ -16,7 +16,7 @@ class SocketService {
   Function(dynamic)? onNewsLike;
   void initSocket({
     required String userId,
-    required String joinAs, // "website" | "admin" | "hopper" | "user"
+    required String joinAs,
   }) {
     debugPrint(":::: Inside Socket Func :::::");
     debugPrint("socketUrl:::::$_socketUrl");

@@ -85,12 +85,23 @@ class LocationService implements NetworkResponse {
     try {
       geolocator.Position? position = await Future.any([
         geolocator.Geolocator.getCurrentPosition(
-            desiredAccuracy: geolocator.LocationAccuracy.medium),
-        Future.delayed(Duration(seconds: 8), () => null),
+            desiredAccuracy: geolocator.LocationAccuracy.high),
+        Future.delayed(Duration(seconds: 20), () => null),
       ]);
+
+      // Fallback to last known position if current position fetch fails
       if (position == null) {
+        debugPrint(
+            "🚀 LocationService: Current position timed out, trying last known position.");
+        position = await geolocator.Geolocator.getLastKnownPosition();
+      }
+
+      if (position == null) {
+        debugPrint("🚀 LocationService: Failed to get location.");
         return null; // Timeout or no position available
       } else {
+        debugPrint(
+            "🚀 LocationService: Location fetched: ${position.latitude}, ${position.longitude}");
         callUpdateCurrentData(position.latitude, position.longitude);
         return LocationData.fromMap({
           'latitude': position.latitude,
@@ -98,6 +109,7 @@ class LocationService implements NetworkResponse {
         });
       }
     } catch (e) {
+      debugPrint("🚀 LocationService: Error fetching location: $e");
       return null;
     }
   }

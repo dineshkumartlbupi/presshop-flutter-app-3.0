@@ -378,6 +378,8 @@ Future<void> init() async {
         getRoute: sl(),
         repository: sl(),
         socketService: sl(),
+        newsRepository: sl(),
+        markerService: sl(),
       ));
 
   sl.registerFactory(() => MenuBloc(

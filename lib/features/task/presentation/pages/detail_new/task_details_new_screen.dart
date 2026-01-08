@@ -279,9 +279,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                                         : true;
                                                   });
                                                   if (!isTimeOver()) {
-                                                    taskDetail!.deadLine
-                                                            .add(Duration(
-                                                                hours: 3));
+                                                    taskDetail!.deadLine.add(
+                                                        Duration(hours: 3));
                                                   }
                                                 });
                                               },
@@ -1065,6 +1064,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
   void getCurrentLocation() async {
     LocationData? loc = await LocationService()
         .getCurrentLocation(context, shouldShowSettingPopup: false);
+
+    if (!mounted) return;
+
     if (loc != null) {
       setState(() {
         _latLng = LatLng(loc.latitude!, loc.longitude!);
