@@ -519,11 +519,22 @@ class FAQScreenState extends State<FAQScreen>
           debugPrint(
               "reqGetHopperCategory_SuccessResponse ==> ${jsonDecode(response)}");
           var data = jsonDecode(response);
-          var dataList = data['categories'] as List;
+          var dataList = [];
+
+          if (data['data'] != null && data['data'] is List) {
+            dataList = data['data'] as List;
+          } else if (data['categories'] != null) {
+            dataList = data['categories'] as List;
+          } else if (data['data'] != null &&
+              data['data'] is Map &&
+              data['data']['categories'] != null) {
+            dataList = data['data']['categories'] as List;
+          }
 
           if (dataList.isNotEmpty) {
             categoryList =
                 dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
+            isApiSuccess = true; // Ensure UI is visible
             String categoryName = "";
             if (categoryList.isNotEmpty) {
               if (widget.benefits.isEmpty) {
@@ -569,6 +580,8 @@ class FAQScreenState extends State<FAQScreen>
                     : categoryList.first.name);
               }
             }
+          } else {
+            isApiSuccess = true;
           }
 
           setState(() {});

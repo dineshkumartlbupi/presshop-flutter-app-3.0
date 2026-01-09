@@ -390,3 +390,12 @@ const studentBeansActivationRequest = 89;
 
 const uploadUserMediaUrl = "hopper/uploadUserMedia";
 const uploadUserMediaReq = 100;
+
+const getAggregatedNewsUrl = "hopper/getAggregatedNews";
+const getAggregatedNewsUrlReq = 101;
+
+const getAggregatedNewsDetailUrl = "hopper/getAggregatedNewsDetail";
+const getAggregatedNewsDetailUrlReq = 102;
+
+const getAggregatedNewsCommentsUrl = "hopper/getAggregatedNewsComments";
+const getAggregatedNewsCommentsUrlReq = 103;

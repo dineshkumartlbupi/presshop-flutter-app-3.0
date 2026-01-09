@@ -1,3 +1,4 @@
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/news/data/models/comment_model.dart';
@@ -18,8 +19,6 @@ abstract class NewsRemoteDataSource {
 
 class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
   final ApiClient client;
-  final String baseUrl =
-      "https://dev-api.presshop.news:5019"; // Should ideally be in config
 
   NewsRemoteDataSourceImpl({required this.client});
 
@@ -30,8 +29,6 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
     required double km,
     String category = "all",
   }) async {
-    final url = '$baseUrl/hopper/getAggregatedNews';
-
     final body = {
       "category": category,
       "endpoint": "search-news",
@@ -43,8 +40,8 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
     };
 
     try {
-      final response = await client.postUri(
-        Uri.parse(url),
+      final response = await client.post(
+        getAggregatedNewsUrl,
         data: body,
       );
 
@@ -52,6 +49,9 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
         final data = response.data;
         if (data['data'] != null && data['data']['news'] != null) {
           final List<dynamic> newsList = data['data']['news'];
+          if (newsList.isNotEmpty) {
+            print("DEBUG: Raw News Item [0]: ${newsList[0]}");
+          }
           return newsList.map((item) => NewsModel.fromJson(item)).toList();
         }
         return [];
@@ -65,13 +65,11 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
   @override
   Future<NewsModel> getNewsDetail(String id) async {
-    final url = '$baseUrl/hopper/getAggregatedNewsDetail';
-
     final body = {"id": id};
 
     try {
-      final response = await client.postUri(
-        Uri.parse(url),
+      final response = await client.post(
+        getAggregatedNewsDetailUrl,
         data: body,
       );
 
@@ -103,16 +101,14 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
   @override
   Future<List<CommentModel>> getComments(String contentId,
       {int limit = 15}) async {
-    final url = '$baseUrl/hopper/getAggregatedNewsComments';
-
     final body = {
       "content_id": contentId,
       "limit": limit,
     };
 
     try {
-      final response = await client.postUri(
-        Uri.parse(url),
+      final response = await client.post(
+        getAggregatedNewsCommentsUrl,
         data: body,
       );
 

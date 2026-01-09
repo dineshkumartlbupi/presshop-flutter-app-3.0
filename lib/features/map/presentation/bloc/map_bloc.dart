@@ -130,6 +130,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     FetchNewsEvent event,
     Emitter<MapState> emit,
   ) async {
+    print(
+        "DEBUG: _onFetchNews triggered. Lat: ${event.lat}, Lng: ${event.lng}");
     emit(state.copyWith(isLoadingNews: true));
     final result = await newsRepository.getAggregatedNews(
       lat: event.lat,
@@ -140,46 +142,58 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     await result.fold(
       (failure) async {
+        print("DEBUG: FetchNews Failed: ${failure.message}");
         emit(state.copyWith(
             isLoadingNews: false,
             errorMessage: failure.message ?? "Failed to fetch news"));
       },
       (newsList) async {
-        final List<Incident> incidents = newsList.map((news) {
-          final lat =
-              double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
-          final lng =
-              double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
+        print("DEBUG: FetchNews Success. Items found: ${newsList.length}");
+        try {
+          final List<Incident> incidents = newsList.map((news) {
+            final lat =
+                double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
+            final lng =
+                double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
 
-          return Incident(
-              id: news.id,
-              markerType: 'news', // or appropriate type
-              type: 'news',
-              position: LatLng(lat, lng),
-              address: news.location,
-              time: news.createdAt,
-              category: 'News',
-              alertType: 'News',
-              image: news.mediaUrl,
-              description: news.description,
-              title: news.title);
-        }).toList();
+            print(
+                "DEBUG: News ID: ${news.id}, Location: ${news.location}, Parsed: $lat, $lng");
 
-        final Set<Marker> newMarkers = {};
-        for (final incident in incidents) {
-          // Basic marker creation logic - can be enhanced with custom icons
-          final marker = Marker(
-            markerId: MarkerId(incident.id),
-            position: incident.position,
-            infoWindow: InfoWindow(title: incident.title ?? 'News'),
-          );
-          newMarkers.add(marker);
+            return Incident(
+                id: news.id,
+                markerType: 'news', // or appropriate type
+                type: 'news',
+                position: LatLng(lat, lng),
+                address: news.location,
+                time: news.createdAt,
+                category: 'News',
+                alertType: 'News',
+                image: news.mediaUrl,
+                description: news.description,
+                title: news.title);
+          }).toList();
+
+          final Set<Marker> newMarkers = {};
+          for (final incident in incidents) {
+            // Basic marker creation logic - can be enhanced with custom icons
+            final marker = Marker(
+              markerId: MarkerId(incident.id),
+              position: incident.position,
+              infoWindow: InfoWindow(title: incident.title ?? 'News'),
+            );
+            newMarkers.add(marker);
+          }
+          emit(state.copyWith(
+            isLoadingNews: false,
+            newsList: incidents,
+            markers: {...state.markers, ...newMarkers},
+          ));
+        } catch (e, stack) {
+          print("Error parsing news for map: $e");
+          print(stack);
+          emit(state.copyWith(
+              isLoadingNews: false, errorMessage: "Error displaying news"));
         }
-        emit(state.copyWith(
-          isLoadingNews: false,
-          newsList: incidents,
-          markers: {...state.markers, ...newMarkers},
-        ));
       },
     );
   }

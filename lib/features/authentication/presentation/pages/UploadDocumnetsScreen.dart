@@ -2328,6 +2328,26 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen>
 
         case uploadDocReq:
           debugPrint("uploadDocReq success:::::: ${jsonDecode(response)}");
+          var map = jsonDecode(response);
+          if (map["code"] == 200) {
+            showSnackBar(
+                "Documents uploaded!", uploadDocMessage, colorOnlineGreen);
+            if (widget.menuScreen) {
+              uploadComplete = true;
+              setState(() {});
+            } else {
+              uploadComplete = true;
+              setState(() {});
+              sharedPreferences!.setBool(skipDocumentsKey, true);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => WelcomeScreen(
+                            hideLeading: true,
+                            screenType: '',
+                          )),
+                  (route) => false);
+            }
+          }
           break;
       }
     } on Exception catch (e) {

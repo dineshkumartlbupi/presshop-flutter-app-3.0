@@ -92,15 +92,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['code'] == 200) {
-          if (data['token'] != null) {
-            final userMap = data['user'];
-            userMap['token'] = data['token'];
-            userMap['token'] = data['token'];
-            // Check for both snake_case and camelCase
-            userMap['refreshToken'] =
-                data['refreshToken'] ?? data['refresh_token'];
-            return UserModel.fromJson(userMap);
+        print("🔵 SOCIAL LOGIN RESPONSE DATA: $data");
+        if (data['code'] == 200 || data['success'] == true) {
+          // Check for token in root or inside data object
+          String? accessToken = data['token'] ??
+              data['access_token'] ??
+              data['data']?['token'] ??
+              data['data']?['access_token'];
+
+          String? refreshToken = data['refreshToken'] ??
+              data['refresh_token'] ??
+              data['data']?['refreshToken'] ??
+              data['data']?['refresh_token'];
+
+          if (accessToken != null) {
+            final userMap = data['user'] ?? data['data'];
+
+            if (userMap != null) {
+              userMap['token'] = accessToken;
+              userMap['refreshToken'] = refreshToken;
+              return UserModel.fromJson(userMap);
+            } else {
+              throw ServerFailure(message: "User data is null");
+            }
           } else {
             throw const UserNotRegisteredFailure(
                 message: 'User not registered');
@@ -312,6 +326,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.get(getAvatarsUrl);
       if (response.statusCode == 200) {
         final data = response.data;
+        print("🔵 GET AVATARS RESPONSE: $data");
         // API returns: {"base_url": "...", "response": [...]}
         final String baseUrl = data['base_url'] ?? '';
         final List list = data['response'] ?? [];

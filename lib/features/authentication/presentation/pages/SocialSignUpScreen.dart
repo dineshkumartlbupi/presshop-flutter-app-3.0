@@ -148,467 +148,501 @@ class _SocialSignUpState extends State<SocialSignUp>
       create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent()),
       child: BlocConsumer<SignUpBloc, SignUpState>(
         listener: (context, state) {
-           if (state is SignUpError) {
-             commonErrorDialogDialog(
+          if (state is SignUpError) {
+            commonErrorDialogDialog(
                 MediaQuery.of(context).size, state.message, "", () {
               Navigator.pop(context);
             });
-           } else if (state is SignUpSuccess) {
-              _handleLoginSuccess(state.user);
-           } else if (state is AvatarsLoaded) {
-             avatarList = state.avatars.map((e) => AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar})).toList();
-             _avatarsNotifier.value = !_avatarsNotifier.value;
-           } else if (state is UserNameCheckResult) {
-             userNameAlreadyExists = !state.isAvailable;
-             setState((){});
-           } else if (state is PhoneCheckResult) {
-             phoneAlreadyExists = !state.isAvailable;
-             setState((){});
-           } else if (state is ReferralCodeVerified) {
-             isRefferalCodeValid = true;
-             setState((){});
-           }
+          } else if (state is SignUpSuccess) {
+            _handleLoginSuccess(state.user);
+          } else if (state is AvatarsLoaded) {
+            if (state.avatars.isNotEmpty) {
+              avatarBaseUrl = state.avatars.first.baseUrl ?? "";
+            }
+            avatarList = state.avatars
+                .map((e) =>
+                    AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar}))
+                .toList();
+            _avatarsNotifier.value = !_avatarsNotifier.value;
+          } else if (state is UserNameCheckResult) {
+            userNameAlreadyExists = !state.isAvailable;
+            setState(() {});
+          } else if (state is PhoneCheckResult) {
+            phoneAlreadyExists = !state.isAvailable;
+            setState(() {});
+          } else if (state is ReferralCodeVerified) {
+            isRefferalCodeValid = true;
+            setState(() {});
+          }
         },
         builder: (context, state) {
           return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: const Text(""),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: false,
-        actionWidget: null,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        leadingLeftSPace: size.width * numD04,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * numD08),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Almost there!",
-                    style: commonBigTitleTextStyle(size, Colors.black),
-                  ),
-                  SizedBox(
-                    height: size.width * numD01,
-                  ),
-                  Text(
-                    "Hi ${widget.name}, please complete your profile to continue.",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: size.width * numD035,
-                        fontFamily: 'AirbnbCereal'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      right: size.width * numD01,
-                      top: size.width * numD04,
-                      bottom: size.width * numD04,
-                    ),
+            appBar: CommonAppBar(
+              elevation: 0,
+              hideLeading: false,
+              title: const Text(""),
+              centerTitle: false,
+              titleSpacing: 0,
+              size: size,
+              showActions: false,
+              actionWidget: null,
+              leadingFxn: () {
+                Navigator.pop(context);
+              },
+              leadingLeftSPace: size.width * numD04,
+            ),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: size.width * numD08),
+                  child: Form(
+                    key: formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: size.width * numD04,
+                        Text(
+                          "Almost there!",
+                          style: commonBigTitleTextStyle(size, Colors.black),
                         ),
-                        selectedAvatar.isEmpty
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      avatarBottomSheet(size);
-                                    },
-                                    child: Container(
-                                      height: size.width * numD30,
-                                      width: size.width * numD35,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: colorTextFieldBorder),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                        SizedBox(
+                          height: size.width * numD01,
+                        ),
+                        Text(
+                          "Hi ${widget.name}, please complete your profile to continue.",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: size.width * numD035,
+                              fontFamily: 'AirbnbCereal'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: size.width * numD01,
+                            top: size.width * numD04,
+                            bottom: size.width * numD04,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: size.width * numD04,
+                              ),
+                              selectedAvatar.isEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            avatarBottomSheet(size);
+                                          },
+                                          child: Container(
+                                            height: size.width * numD30,
+                                            width: size.width * numD35,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color:
+                                                        colorTextFieldBorder),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        size.width * numD04)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  "${iconsPath}ic_user.png",
+                                                  width: size.width * numD11,
+                                                ),
+                                                SizedBox(
+                                                  height: size.width * numD01,
+                                                ),
+                                                Text(
+                                                  chooseYourAvatarText,
+                                                  style: commonTextStyle(
+                                                      size: size,
+                                                      fontSize:
+                                                          size.width * numD03,
+                                                      color: colorHint,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                  textAlign: TextAlign.center,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Stack(
                                         children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_user.png",
-                                            width: size.width * numD11,
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD04),
+                                            child: Image.network(
+                                              "$avatarBaseUrl/$selectedAvatar",
+                                              height: size.width * numD30,
+                                              width: size.width * numD35,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                          SizedBox(
-                                            height: size.width * numD01,
-                                          ),
-                                          Text(
-                                            chooseYourAvatarText,
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD03,
-                                                color: colorHint,
-                                                fontWeight: FontWeight.normal),
-                                            textAlign: TextAlign.center,
+                                          Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: InkWell(
+                                              onTap: () {
+                                                selectedAvatar = "";
+                                                if (selectedAvatar.isNotEmpty) {
+                                                  int pos = avatarList
+                                                      .indexWhere((element) =>
+                                                          element.avatar ==
+                                                          selectedAvatar);
+
+                                                  if (pos >= 0) {
+                                                    avatarList[pos].selected =
+                                                        false;
+                                                  }
+                                                }
+                                                showAvatarError = true;
+
+                                                setState(() {});
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(
+                                                    size.width * numD01),
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    shape: BoxShape.circle),
+                                                child: Icon(Icons.cancel,
+                                                    color: Colors.black,
+                                                    size: size.width * numD035),
+                                              ),
+                                            ),
                                           )
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              )
-                            : Align(
-                                alignment: Alignment.centerLeft,
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD04),
-                                      child: Image.network(
-                                        "$avatarBaseUrl/$selectedAvatar",
-                                        height: size.width * numD30,
-                                        width: size.width * numD35,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: InkWell(
-                                        onTap: () {
-                                          selectedAvatar = "";
-                                          if (selectedAvatar.isNotEmpty) {
-                                            int pos = avatarList.indexWhere(
-                                                (element) =>
-                                                    element.avatar ==
-                                                    selectedAvatar);
-
-                                            if (pos >= 0) {
-                                              avatarList[pos].selected = false;
-                                            }
-                                          }
-                                          showAvatarError = true;
-
-                                          setState(() {});
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD01),
-                                          decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle),
-                                          child: Icon(Icons.cancel,
-                                              color: Colors.black,
-                                              size: size.width * numD035),
+                              selectedAvatar.isEmpty
+                                  ? Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: size.width * numD01),
+                                        child: Text(
+                                          requiredText,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD03,
+                                              color: Colors.red.shade700,
+                                              fontWeight: FontWeight.normal),
                                         ),
                                       ),
                                     )
+                                  : Container(),
+                              SizedBox(
+                                height: size.width * numD02,
+                              ),
+                              Text(
+                                chooseAvatarNoteText,
+                                style: TextStyle(
+                                  color: colorHint,
+                                  fontSize: size.width * numD025,
+                                ),
+                                textAlign: TextAlign.justify,
+                              ),
+                              SizedBox(
+                                height: size.width * numD06,
+                              ),
+                              CommonTextField(
+                                size: size,
+                                maxLines: 1,
+                                borderColor: colorTextFieldBorder,
+                                controller: userNameController,
+                                hintText: userNameHintText,
+                                errorMaxLines: 2,
+                                textInputFormatters: [
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'[ \\]')),
+                                ],
+                                suffixIcon: getUsernameSuffixIcon(),
+                                prefixIcon:
+                                    const Icon(Icons.person_outline_sharp),
+                                prefixIconHeight: size.width * numD06,
+                                suffixIconIconHeight: size.width * numD085,
+                                hidePassword: false,
+                                keyboardType: TextInputType.text,
+                                enableValidations: true,
+                                validator: userNameValidator,
+                                filled: false,
+                                filledColor: Colors.transparent,
+                                autofocus: false,
+                                onChanged: (v) {
+                                  if (v!.trim().length >= 4) {
+                                    checkUserNameApi();
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(
+                                height: size.width * numD01,
+                              ),
+                              Text(
+                                userNameNoteText,
+                                style: TextStyle(
+                                    color: colorHint,
+                                    fontSize: size.width * numD025),
+                              ),
+                              SizedBox(
+                                height: size.height * numD02,
+                              ),
+                              CommonTextField(
+                                size: size,
+                                maxLines: 1,
+                                borderColor: colorTextFieldBorder,
+                                controller: phoneController,
+                                hintText: phoneHintText,
+                                textInputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp("[0-9]")),
+                                  LengthLimitingTextInputFormatter(
+                                      _getMaxPhoneLength()),
+                                ],
+                                prefixIcon: InkWell(
+                                  onTap: () {
+                                    openCountryCodePicker();
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.call_outlined),
+                                      SizedBox(
+                                        width: size.width * numD01,
+                                      ),
+                                      Text(
+                                        selectedCountryCodePicker,
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD035,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        size: size.width * numD07,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                prefixIconHeight: size.width * numD06,
+                                suffixIconIconHeight: size.width * numD085,
+                                suffixIcon:
+                                    phoneController.text.trim().length >= 7
+                                        ? phoneAlreadyExists
+                                            ? const Icon(
+                                                Icons.highlight_remove,
+                                                color: Colors.red,
+                                              )
+                                            : const Icon(
+                                                Icons.check_circle,
+                                                color: Colors.green,
+                                              )
+                                        : null,
+                                hidePassword: false,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: false, signed: true),
+                                validator: checkSignupPhoneValidator,
+                                enableValidations: true,
+                                filled: false,
+                                filledColor: Colors.transparent,
+                                autofocus: false,
+                                onChanged: (val) {
+                                  checkPhoneApi();
+                                  return null;
+                                },
+                              ),
+                              SizedBox(
+                                height: size.width * numD06,
+                              ),
+                              CommonTextField(
+                                size: size,
+                                maxLines: 1,
+                                borderColor: colorTextFieldBorder,
+                                controller: referralCodeController,
+                                hintText: referralCodeHintText,
+                                errorMaxLines: 2,
+                                textInputFormatters: [
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'[ \\]')),
+                                ],
+                                suffixIcon: getReferralCodeSuffixIcon(),
+                                prefixIcon: const Icon(Icons.campaign_outlined),
+                                prefixIconHeight: size.width * numD06,
+                                suffixIconIconHeight: size.width * numD085,
+                                hidePassword: false,
+                                keyboardType: TextInputType.text,
+                                enableValidations: false,
+                                filled: false,
+                                filledColor: Colors.transparent,
+                                autofocus: false,
+                                onChanged: (v) {
+                                  if (v!.trim().length >= 5) {
+                                    verifyReferredCode();
+                                  } else if (v.trim().isEmpty) {
+                                    isRefferalCodeValid = false;
+                                    setState(() {});
+                                  }
+                                  return null;
+                                },
+                                validator: null,
+                              ),
+                              SizedBox(
+                                height: size.width * numD01,
+                              ),
+                              Text(
+                                referralcodeNoteText,
+                                style: TextStyle(
+                                    color: colorHint,
+                                    fontSize: size.width * numD025),
+                              ),
+                              SizedBox(
+                                height: size.width * numD04,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  rememberMe = false;
+
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => TermCheckScreen(
+                                                type: 'legal',
+                                              )))
+                                      .then((value) {
+                                    if (value != null) {
+                                      debugPrint("value::::$value");
+                                      termConditionsChecked = value;
+                                      setState(() {});
+                                      //  termConditionsChecked = !termConditionsChecked;
+                                    }
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    termConditionsChecked
+                                        ? Container(
+                                            margin: EdgeInsets.only(
+                                                top: size.width * numD008),
+                                            child: Image.asset(
+                                              "${iconsPath}ic_checkbox_filled.png",
+                                              height: size.width * numD06,
+                                            ),
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.only(
+                                                top: size.width * numD008),
+                                            child: Image.asset(
+                                                "${iconsPath}ic_checkbox_empty.png",
+                                                height: size.width * numD06),
+                                          ),
+                                    SizedBox(
+                                      width: size.width * numD02,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        "Accept our T&Cs and Privacy Policy",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "AirbnbCereal",
+                                            fontSize: size.width * numD035),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-                        selectedAvatar.isEmpty
-                            ? Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: size.width * numD01),
-                                  child: Text(
-                                    requiredText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD03,
-                                        color: Colors.red.shade700,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-                        Text(
-                          chooseAvatarNoteText,
-                          style: TextStyle(
-                            color: colorHint,
-                            fontSize: size.width * numD025,
-                          ),
-                          textAlign: TextAlign.justify,
-                        ),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-                        CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          borderColor: colorTextFieldBorder,
-                          controller: userNameController,
-                          hintText: userNameHintText,
-                          errorMaxLines: 2,
-                          textInputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r'[ \\]')),
-                          ],
-                          suffixIcon: getUsernameSuffixIcon(),
-                          prefixIcon: const Icon(Icons.person_outline_sharp),
-                          prefixIconHeight: size.width * numD06,
-                          suffixIconIconHeight: size.width * numD085,
-                          hidePassword: false,
-                          keyboardType: TextInputType.text,
-                          enableValidations: true,
-                          validator: userNameValidator,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
-                          onChanged: (v) {
-                            if (v!.trim().length >= 4) {
-                              checkUserNameApi();
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(
-                          height: size.width * numD01,
-                        ),
-                        Text(
-                          userNameNoteText,
-                          style: TextStyle(
-                              color: colorHint, fontSize: size.width * numD025),
-                        ),
-                        SizedBox(
-                          height: size.height * numD02,
-                        ),
-                        CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          borderColor: colorTextFieldBorder,
-                          controller: phoneController,
-                          hintText: phoneHintText,
-                          textInputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-                            LengthLimitingTextInputFormatter(
-                                _getMaxPhoneLength()),
-                          ],
-                          prefixIcon: InkWell(
-                            onTap: () {
-                              openCountryCodePicker();
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.call_outlined),
-                                SizedBox(
-                                  width: size.width * numD01,
-                                ),
-                                Text(
-                                  selectedCountryCodePicker,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  size: size.width * numD07,
-                                )
-                              ],
-                            ),
-                          ),
-                          prefixIconHeight: size.width * numD06,
-                          suffixIconIconHeight: size.width * numD085,
-                          suffixIcon: phoneController.text.trim().length >= 7
-                              ? phoneAlreadyExists
-                                  ? const Icon(
-                                      Icons.highlight_remove,
-                                      color: Colors.red,
-                                    )
-                                  : const Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                    )
-                              : null,
-                          hidePassword: false,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: false, signed: true),
-                          validator: checkSignupPhoneValidator,
-                          enableValidations: true,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
-                          onChanged: (val) {
-                            checkPhoneApi();
-                            return null;
-                          },
-                        ),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-                        CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          borderColor: colorTextFieldBorder,
-                          controller: referralCodeController,
-                          hintText: referralCodeHintText,
-                          errorMaxLines: 2,
-                          textInputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r'[ \\]')),
-                          ],
-                          suffixIcon: getReferralCodeSuffixIcon(),
-                          prefixIcon: const Icon(Icons.campaign_outlined),
-                          prefixIconHeight: size.width * numD06,
-                          suffixIconIconHeight: size.width * numD085,
-                          hidePassword: false,
-                          keyboardType: TextInputType.text,
-                          enableValidations: false,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
-                          onChanged: (v) {
-                            if (v!.trim().length >= 5) {
-                              verifyReferredCode();
-                            } else if (v.trim().isEmpty) {
-                              isRefferalCodeValid = false;
-                              setState(() {});
-                            }
-                            return null;
-                          },
-                          validator: null,
-                        ),
-                        SizedBox(
-                          height: size.width * numD01,
-                        ),
-                        Text(
-                          referralcodeNoteText,
-                          style: TextStyle(
-                              color: colorHint, fontSize: size.width * numD025),
-                        ),
-                        SizedBox(
-                          height: size.width * numD04,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            rememberMe = false;
-
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(
-                                    builder: (context) => TermCheckScreen(
-                                          type: 'legal',
-                                        )))
-                                .then((value) {
-                              if (value != null) {
-                                debugPrint("value::::$value");
-                                termConditionsChecked = value;
-                                setState(() {});
-                                //  termConditionsChecked = !termConditionsChecked;
-                              }
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              termConditionsChecked
-                                  ? Container(
-                                      margin: EdgeInsets.only(
-                                          top: size.width * numD008),
-                                      child: Image.asset(
-                                        "${iconsPath}ic_checkbox_filled.png",
-                                        height: size.width * numD06,
-                                      ),
-                                    )
-                                  : Container(
-                                      margin: EdgeInsets.only(
-                                          top: size.width * numD008),
-                                      child: Image.asset(
-                                          "${iconsPath}ic_checkbox_empty.png",
-                                          height: size.width * numD06),
-                                    ),
                               SizedBox(
-                                width: size.width * numD02,
+                                height: size.width * numD06,
                               ),
-                              Expanded(
-                                child: Text(
-                                  "Accept our T&Cs and Privacy Policy",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "AirbnbCereal",
-                                      fontSize: size.width * numD035),
-                                ),
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD04),
+                                width: size.width,
+                                height: size.width * numD13,
+                                child: commonElevatedButton(
+                                    nextText,
+                                    size,
+                                    commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700),
+                                    commonButtonStyle(size, colorThemePink),
+                                    () {
+                                  if (formKey.currentState!.validate()) {
+                                    if (!isSelectCheck) {
+                                      showSnackBar("Error",
+                                          enableNotificationText, Colors.red);
+                                    } else if (!termConditionsChecked) {
+                                      showSnackBar(
+                                          "Privacy Policy",
+                                          "Please accept our T&Cs and Privacy Policy",
+                                          Colors.red);
+                                    } else if (selectedAvatar.isEmpty) {
+                                      showSnackBar(
+                                          "Avatar",
+                                          "Please select an Avatar",
+                                          Colors.red);
+                                    } else {
+                                      Map<String, dynamic> params = {};
+                                      params[emailKey] =
+                                          widget.email.trim().toLowerCase();
+                                      params[isTermAcceptedKey] =
+                                          termConditionsChecked.toString();
+                                      params[firstNameKey] = widget.name;
+                                      params[receiveTaskNotificationKey] =
+                                          isSelectCheck.toString();
+                                      params[phoneKey] =
+                                          phoneController.text.trim();
+                                      params[roleKey] = "Hopper";
+                                      params[avatarIdKey] = selectedAvatarId;
+                                      if (isRefferalCodeValid) {
+                                        params[referredCodeKey] =
+                                            referralCodeController.text.trim();
+                                      }
+                                      params[userNameKey] = userNameController
+                                          .text
+                                          .trim()
+                                          .toLowerCase();
+                                      params["social_id"] = widget.socialId;
+                                      params["social_type"] =
+                                          widget.socialType.toLowerCase();
+                                      params["_imagePath"] = userImagePath;
+
+                                      context.read<SignUpBloc>().add(
+                                          SocialSignUpSubmitted(data: params));
+                                    }
+                                  }
+                                  setState(() {});
+                                }),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: size.width * numD06,
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
-                          width: size.width,
-                          height: size.width * numD13,
-                          child: commonElevatedButton(
-                              nextText,
-                              size,
-                              commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700),
-                              commonButtonStyle(size, colorThemePink), () {
-                            if (formKey.currentState!.validate()) {
-                              if (!isSelectCheck) {
-                                showSnackBar("Error", enableNotificationText,
-                                    Colors.red);
-                              } else if (!termConditionsChecked) {
-                                showSnackBar(
-                                    "Privacy Policy",
-                                    "Please accept our T&Cs and Privacy Policy",
-                                    Colors.red);
-                              } else if (selectedAvatar.isEmpty) {
-                                showSnackBar("Avatar",
-                                    "Please select an Avatar", Colors.red);
-                              } else {
-                                Map<String, dynamic> params = {};
-                                params[emailKey] = widget.email.trim().toLowerCase();
-                                params[isTermAcceptedKey] = termConditionsChecked.toString();
-                                params[firstNameKey] = widget.name;
-                                params[receiveTaskNotificationKey] = isSelectCheck.toString();
-                                params[phoneKey] = phoneController.text.trim();
-                                params[roleKey] = "Hopper";
-                                params[avatarIdKey] = selectedAvatarId;
-                                if (isRefferalCodeValid) {
-                                  params[referredCodeKey] = referralCodeController.text.trim();
-                                }
-                                params[userNameKey] = userNameController.text.trim().toLowerCase();
-                                params["social_id"] = widget.socialId;
-                                params["social_type"] = widget.socialType.toLowerCase();
-                                params["_imagePath"] = userImagePath;
-
-                                context.read<SignUpBloc>().add(SocialSignUpSubmitted(data: params));
-                              }
-                            }
-                            setState(() {});
-                          }),
-                        ),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
         },
       ),
-    );  
-
+    );
   }
 
   Icon? getReferralCodeSuffixIcon() {
@@ -644,14 +678,16 @@ class _SocialSignUpState extends State<SocialSignUp>
     );
   }
 
-
-
   void verifyReferredCode() {
-    context.read<SignUpBloc>().add(VerifyReferralCodeEvent(referralCodeController.text.trim()));
+    context
+        .read<SignUpBloc>()
+        .add(VerifyReferralCodeEvent(referralCodeController.text.trim()));
   }
 
   void checkPhoneApi() {
-    context.read<SignUpBloc>().add(CheckPhoneEvent(phoneController.text.trim()));
+    context
+        .read<SignUpBloc>()
+        .add(CheckPhoneEvent(phoneController.text.trim()));
   }
 
   Icon? getUsernameSuffixIcon() {
@@ -949,7 +985,9 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   ///ApisSection------------
   void checkUserNameApi() {
-    context.read<SignUpBloc>().add(CheckUserNameEvent(userNameController.text.trim().toLowerCase()));
+    context
+        .read<SignUpBloc>()
+        .add(CheckUserNameEvent(userNameController.text.trim().toLowerCase()));
   }
 
   void checkEmailApi() {
@@ -1033,34 +1071,49 @@ class _SocialSignUpState extends State<SocialSignUp>
     sharedPreferences!.setString(firstNameKey, user.firstName);
     sharedPreferences!.setString(lastNameKey, user.lastName);
     sharedPreferences!.setString(emailKey, user.email);
-    
-    if(user.userName != null) sharedPreferences!.setString(userNameKey, user.userName!);
-    if(user.phone != null) sharedPreferences!.setString(phoneKey, user.phone!);
-    if(user.countryCode != null) sharedPreferences!.setString(countryCodeKey, user.countryCode!);
-    if(user.address != null) sharedPreferences!.setString(addressKey, user.address!);
-    if(user.latitude != null) sharedPreferences!.setString(latitudeKey, user.latitude!);
-    if(user.longitude != null) sharedPreferences!.setString(longitudeKey, user.longitude!);
-    if(user.avatarId != null) sharedPreferences!.setString(avatarIdKey, user.avatarId!);
-    if(user.receiveTaskNotification != null) sharedPreferences!.setBool(receiveTaskNotificationKey, user.receiveTaskNotification!);
-    if(user.isTermAccepted != null) sharedPreferences!.setBool(isTermAcceptedKey, user.isTermAccepted!);
-    if(user.profileImage != null) sharedPreferences!.setString(profileImageKey, user.profileImage!);
-    if(user.referralCode != null) sharedPreferences!.setString(referralCode, user.referralCode!);
-    if(user.currencySymbol != null) {
-        sharedPreferences!.setString(currencySymbolKey, user.currencySymbol!);
+
+    if (user.userName != null)
+      sharedPreferences!.setString(userNameKey, user.userName!);
+    if (user.phone != null) sharedPreferences!.setString(phoneKey, user.phone!);
+    if (user.countryCode != null)
+      sharedPreferences!.setString(countryCodeKey, user.countryCode!);
+    if (user.address != null)
+      sharedPreferences!.setString(addressKey, user.address!);
+    if (user.latitude != null)
+      sharedPreferences!.setString(latitudeKey, user.latitude!);
+    if (user.longitude != null)
+      sharedPreferences!.setString(longitudeKey, user.longitude!);
+    if (user.avatarId != null)
+      sharedPreferences!.setString(avatarIdKey, user.avatarId!);
+    if (user.receiveTaskNotification != null)
+      sharedPreferences!
+          .setBool(receiveTaskNotificationKey, user.receiveTaskNotification!);
+    if (user.isTermAccepted != null)
+      sharedPreferences!.setBool(isTermAcceptedKey, user.isTermAccepted!);
+    if (user.profileImage != null)
+      sharedPreferences!.setString(profileImageKey, user.profileImage!);
+    if (user.referralCode != null)
+      sharedPreferences!.setString(referralCode, user.referralCode!);
+    if (user.currencySymbol != null) {
+      sharedPreferences!.setString(currencySymbolKey, user.currencySymbol!);
     }
-    if(user.totalHopperArmy != null) sharedPreferences!.setString(totalHopperArmy, user.totalHopperArmy!);
+    if (user.totalHopperArmy != null)
+      sharedPreferences!.setString(totalHopperArmy, user.totalHopperArmy!);
 
     if (user.source != null) {
-        var src = user.source!;
-        sharedPreferences!.setBool(sourceDataIsOpenedKey, src["is_opened"] ?? false);
-        sharedPreferences!.setString(sourceDataTypeKey, src["type"] ?? "");
-        sharedPreferences!.setString(sourceDataUrlKey, src["url"] ?? "");
-        sharedPreferences!.setString(sourceDataHeadingKey, src["heading"] ?? "");
-        sharedPreferences!.setString(sourceDataDescriptionKey, src["description"] ?? "");
-        sharedPreferences!.setBool(sourceDataIsClickKey, src["is_clicked"] ?? false);
+      var src = user.source!;
+      sharedPreferences!
+          .setBool(sourceDataIsOpenedKey, src["is_opened"] ?? false);
+      sharedPreferences!.setString(sourceDataTypeKey, src["type"] ?? "");
+      sharedPreferences!.setString(sourceDataUrlKey, src["url"] ?? "");
+      sharedPreferences!.setString(sourceDataHeadingKey, src["heading"] ?? "");
+      sharedPreferences!
+          .setString(sourceDataDescriptionKey, src["description"] ?? "");
+      sharedPreferences!
+          .setBool(sourceDataIsClickKey, src["is_clicked"] ?? false);
     }
 
-     Navigator.of(context).pushAndRemoveUntil(
+    Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => WelcomeScreen(
                   hideLeading: false,
@@ -1069,14 +1122,11 @@ class _SocialSignUpState extends State<SocialSignUp>
                 )),
         (route) => false);
   }
-  
+
   @override
   // TODO: implement pageName
   String get pageName => throw UnimplementedError();
-  
 }
-
-
 
 class AvatarsData {
   String id = "";

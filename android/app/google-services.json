@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "750460561502-4lfb1q5681vg8s3aipn119nftgjrmtm0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.presshop.app",
+            "certificate_hash": "66ad9786c8c3bc5e11ccf14ef9bd711ce7e2bc89"
+          }
+        },
+        {
           "client_id": "750460561502-9mdedg0c3n4r4kpeb3kke4q1nuip998r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -36,6 +44,14 @@
           "android_info": {
             "package_name": "com.presshop.app",
             "certificate_hash": "9794e4bb36c4f438c029c59f8f9d8dd20bc10f97"
+          }
+        },
+        {
+          "client_id": "750460561502-nc6l2h4hsua82h5g7r3votrpgi918qf3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.presshop.app",
+            "certificate_hash": "a4e855a7752c695dd43137988bf3c72d77a8d430"
           }
         },
         {
