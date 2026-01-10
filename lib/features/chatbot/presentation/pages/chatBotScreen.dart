@@ -111,8 +111,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
             ],
           ),
           body: (state is ChatbotLoading)
-              ? const Center(
-                  child: CircularProgressIndicator(color: colorThemePink))
+              ? Center(child: showLoader())
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

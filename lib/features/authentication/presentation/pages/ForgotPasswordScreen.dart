@@ -102,126 +102,131 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             actionWidget: null,
           ),
           body: SafeArea(
-            child: Builder(
-              builder: (context) {
-                return Form(
-                  key: formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: size.width * numD25,
+            child: Builder(builder: (context) {
+              return Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: size.width * numD25,
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * numD06),
+                      child: Text(
+                        forgotPasswordText.toTitleCase(),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'AirbnbCereal',
+                            fontSize: size.width * numD07),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
-                        child: Text(
-                          forgotPasswordText.toTitleCase(),
+                    ),
+                    SizedBox(
+                      height: size.width * numD02,
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * numD06),
+                      child: Text(forgotPasswordSubHeading,
                           style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
                               fontFamily: 'AirbnbCereal',
-                              fontSize: size.width * numD07),
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.width * numD02,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
-                        child: Text(forgotPasswordSubHeading,
-                            style: TextStyle(
-                                fontFamily: 'AirbnbCereal',
-                                color: Colors.black,
-                                fontSize: size.width * numD035)),
-                      ),
-                      SizedBox(
-                        height: size.width * numD08,
-                      ),
+                              color: Colors.black,
+                              fontSize: size.width * numD035)),
+                    ),
+                    SizedBox(
+                      height: size.width * numD08,
+                    ),
 
-                      /// Email Controller
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
-                        child: CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          borderColor: colorTextFieldBorder,
-                          controller: emailAddressController,
-                          hintText: emailAddressHintText,
-                          textInputFormatters: null,
-                          prefixIcon: ImageIcon(
-                            AssetImage(
-                              "${iconsPath}ic_email.png",
-                            ),
-                            size: size.width * numD045,
+                    /// Email Controller
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * numD06),
+                      child: CommonTextField(
+                        size: size,
+                        maxLines: 1,
+                        borderColor: colorTextFieldBorder,
+                        controller: emailAddressController,
+                        hintText: emailAddressHintText,
+                        textInputFormatters: null,
+                        prefixIcon: ImageIcon(
+                          AssetImage(
+                            "${iconsPath}ic_email.png",
                           ),
-                          prefixIconHeight: size.width * numD045,
-                          suffixIconIconHeight: 0,
-                          suffixIcon: null,
-                          hidePassword: false,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: checkEmailValidator,
-                          enableValidations: true,
-                          filled: false,
-                          filledColor: Colors.transparent,
-                          autofocus: false,
+                          size: size.width * numD045,
                         ),
+                        prefixIconHeight: size.width * numD045,
+                        suffixIconIconHeight: 0,
+                        suffixIcon: null,
+                        hidePassword: false,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: checkEmailValidator,
+                        enableValidations: true,
+                        filled: false,
+                        filledColor: Colors.transparent,
+                        autofocus: false,
                       ),
-                      const Spacer(),
+                    ),
+                    const Spacer(),
 
-                      /// Submit Button
-                      Container(
-                        width: size.width,
-                        height: size.width * (isIpad ? numD1 : numD14),
-                        padding: EdgeInsets.symmetric(horizontal: size.width * numD08),
-                        child: BlocBuilder<AuthBloc, AuthState>(
-                          builder: (context, state) {
-                            if (state is AuthLoading) {
-                              return const Center(child: CircularProgressIndicator());
+                    /// Submit Button
+                    Container(
+                      width: size.width,
+                      height: size.width * (isIpad ? numD1 : numD14),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * numD08),
+                      child: BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          if (state is AuthLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          return commonElevatedButton(
+                              submitText,
+                              size,
+                              commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD035,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700),
+                              commonButtonStyle(size, colorThemePink), () {
+                            if (formKey.currentState!.validate()) {
+                              context.read<AuthBloc>().add(
+                                  ForgotPasswordRequested(
+                                      emailAddressController.text.trim()));
                             }
-                            return commonElevatedButton(
-                                submitText,
-                                size,
-                                commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700),
-                                commonButtonStyle(size, colorThemePink), () {
-                              if (formKey.currentState!.validate()) {
-                                context.read<AuthBloc>().add(ForgotPasswordRequested(emailAddressController.text.trim()));
-                              }
-                            });
-                          },
-                        ),
+                          });
+                        },
                       ),
-                      isIpad
-                          ? SizedBox(
-                              height: size.height * numD02,
-                            )
-                          : const SizedBox.shrink(),
-                      Align(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(signInText,
-                                style: TextStyle(
-                                    color: colorThemePink,
-                                    fontSize: size.width * numD035,
-                                    fontFamily: 'AirbnbCereal',
-                                    fontWeight: FontWeight.w700)),
-                          )),
-                      isIpad
-                          ? SizedBox(
-                              height: size.height * numD04,
-                            )
-                          : const SizedBox.shrink(),
-                    ],
-                  ),
-                );
-              }
-            ),
+                    ),
+                    isIpad
+                        ? SizedBox(
+                            height: size.height * numD02,
+                          )
+                        : const SizedBox.shrink(),
+                    Align(
+                        alignment: Alignment.center,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(signInText,
+                              style: TextStyle(
+                                  color: colorThemePink,
+                                  fontSize: size.width * numD035,
+                                  fontFamily: 'AirbnbCereal',
+                                  fontWeight: FontWeight.w700)),
+                        )),
+                    isIpad
+                        ? SizedBox(
+                            height: size.height * numD04,
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              );
+            }),
           ),
         ),
       ),
@@ -230,7 +235,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   void showOtpBottomSheet(BuildContext context, String email) {
     final authBloc = context.read<AuthBloc>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -312,15 +317,15 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is ForgotPasswordOtpVerified) {
-           Navigator.pop(context); // Close sheet
-           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ResetPasswordScreen(
-                  emailAddressValue: widget.email,
-                ),
+          Navigator.pop(context); // Close sheet
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResetPasswordScreen(
+                emailAddressValue: widget.email,
               ),
-            );
+            ),
+          );
         } else if (state is AuthError) {
           showSnackBar("Error", state.message, Colors.red);
         }
@@ -412,7 +417,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                   child: BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       if (state is AuthLoading) {
-                         return const Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       return commonElevatedButton(
                         "Verify OTP",
@@ -426,7 +431,8 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                         commonButtonStyle(size, colorThemePink),
                         () {
                           String otpValue =
-                              _otpPinController.currentState?.controller.text ?? "";
+                              _otpPinController.currentState?.controller.text ??
+                                  "";
                           if (otpValue.isEmpty || otpValue.length < 5) {
                             showSnackBar(
                               "Error",
@@ -435,7 +441,9 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                             );
                             return;
                           }
-                           context.read<AuthBloc>().add(VerifyForgotPasswordOtpRequested(email: widget.email, otp: otpValue));
+                          context.read<AuthBloc>().add(
+                              VerifyForgotPasswordOtpRequested(
+                                  email: widget.email, otp: otpValue));
                         },
                       );
                     },

@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -93,299 +92,310 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             ],
           ),
           body: BlocConsumer<PublicationBloc, PublicationState>(
-          listener: (context, state) {
-             if (state is PublicationLoaded) {
-               // Update local variables if needed for UI consistency with legacy code
+            listener: (context, state) {
+              if (state is PublicationLoaded) {
+                // Update local variables if needed for UI consistency with legacy code
                 earningData = state.stats;
-                publicationTransactionList = state.transactionsResult.transactions;
+                publicationTransactionList =
+                    state.transactionsResult.transactions;
                 publicationCount = state.transactionsResult.publicationCount;
                 totalPublicationAmount = state.transactionsResult.totalAmount;
-                
+
                 // Initialize filters if empty
                 if (filterList.isEmpty) {
-                   filterList = state.mediaHouses.map((e) => FilterModel(
-                     name: e.name,
-                     icon: e.icon,
-                     id: e.id, // Ensure FilterModel has id field map
-                     isSelected: false
-                   )).toList();
+                  filterList = state.mediaHouses
+                      .map((e) => FilterModel(
+                          name: e.name,
+                          icon: e.icon,
+                          id: e.id, // Ensure FilterModel has id field map
+                          isSelected: false))
+                      .toList();
                 }
-             } else if (state is PublicationError) {
-               showSnackBar("Error", state.message, Colors.red);
-             }
-          },
-          builder: (context, state) {
-             if (state is PublicationLoading) {
-               return const Center(child: CircularProgressIndicator());
-             }
-             if (earningData == null && state is! PublicationLoaded) {
-                 return Container(); // Or loading/empty
-             }
-             
-             return ListView(
-              padding: EdgeInsets.only(
-                left: size.width * numD06,
-                right: size.width * numD06,
-              ),
-              children: [
-                /// My Earnings
-                Container(
-                  padding: EdgeInsets.all(size.width * numD05),
-                  decoration: BoxDecoration(
-                      color: colorLightGrey,
-                      borderRadius: BorderRadius.circular(size.width * numD05)),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1.2, color: Colors.black),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04)),
-                            child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      avatarImageUrl + earningData!.avatar,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    height: size.width * numD32,
-                                    width: size.width * numD35,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover),
+              } else if (state is PublicationError) {
+                showSnackBar("Error", state.message, Colors.red);
+              }
+            },
+            builder: (context, state) {
+              if (state is PublicationLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (earningData == null && state is! PublicationLoaded) {
+                return Container(); // Or loading/empty
+              }
+
+              return ListView(
+                padding: EdgeInsets.only(
+                  left: size.width * numD06,
+                  right: size.width * numD06,
+                ),
+                children: [
+                  /// My Earnings
+                  Container(
+                    padding: EdgeInsets.all(size.width * numD05),
+                    decoration: BoxDecoration(
+                        color: colorLightGrey,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD05)),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.2, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD04)),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD04),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        avatarImageUrl + earningData!.avatar,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      height: size.width * numD32,
+                                      width: size.width * numD35,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
+                                      ),
                                     ),
-                                  ),
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      Image.asset(
-                                    "${commonImagePath}rabbitLogo.png",
-                                    fit: BoxFit.cover,
-                                    height: size.width * numD32,
-                                    width: size.width * numD35,
-                                  ),
-                                )),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: size.width * numD06),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  publicationsText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Text(
-                                  publicationCount.isNotEmpty
-                                      ? publicationCount
-                                      : '0',
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD08,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w800),
-                                ),
-                                SizedBox(
-                                  height: size.width * numD01,
-                                ),
-                                Text(
-                                  youHaveEarnedText,
-                                  //"Total amount",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                FittedBox(
-                                  child: Text(
-                                    totalPublicationAmount.isNotEmpty
-                                        ? "$currencySymbol${formatDouble(double.parse(totalPublicationAmount))}"
-                                        : '£0',
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
+                                      fit: BoxFit.cover,
+                                      height: size.width * numD32,
+                                      width: size.width * numD35,
+                                    ),
+                                  )),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: size.width * numD06),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    publicationsText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD075,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    publicationCount.isNotEmpty
+                                        ? publicationCount
+                                        : '0',
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD08,
                                         color: colorThemePink,
                                         fontWeight: FontWeight.w800),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.width * numD03,
-                      ),
-                      widget.contentType == "exclusive"
-                          ? Container()
-                          : Row(
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      fromDate = await commonDatePicker() ?? "";
-                                      toDate = '';
-                                      sortList[4].fromDate = fromDate;
-                                      if (mounted) {
-                                        setState(() {});
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: size.width * numD02,
-                                        horizontal: size.width * numD02,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1.2, color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            fromDate.isNotEmpty
-                                                ? dateTimeFormatter(
-                                                    dateTime:
-                                                        fromDate.toString())
-                                                : "From date",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD035,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          const Icon(
-                                            Icons.arrow_drop_down_sharp,
-                                            color: Colors.black,
-                                          )
-                                        ],
-                                      ),
+                                  SizedBox(
+                                    height: size.width * numD01,
+                                  ),
+                                  Text(
+                                    youHaveEarnedText,
+                                    //"Total amount",
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  FittedBox(
+                                    child: Text(
+                                      totalPublicationAmount.isNotEmpty
+                                          ? "$currencySymbol${formatDouble(double.parse(totalPublicationAmount))}"
+                                          : '£0',
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD075,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w800),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: size.width * numD05,
-                                ),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      if (fromDate.isNotEmpty) {
-                                        toDate = await commonDatePicker() ?? '';
-                                        if (toDate.isNotEmpty) {
-                                          DateTime parseFromDate =
-                                              DateTime.parse(fromDate);
-                                          DateTime parseToDate =
-                                              DateTime.parse(toDate);
-                                          debugPrint(
-                                              "parseFromDate : $parseFromDate");
-                                          debugPrint(
-                                              "parseToDate : $parseToDate");
-
-                                          if (parseToDate
-                                                  .isAfter(parseFromDate) ||
-                                              parseToDate.isAtSameMomentAs(
-                                                  parseFromDate)) {
-                                            sortList.indexWhere((element) =>
-                                                element.isSelected = false);
-                                            sortList[4].toDate = toDate;
-                                            sortList[4].isSelected = true;
-                                            _applyFilter(context);
-                                          } else {
-                                            showSnackBar(
-                                                "Date Error",
-                                                "Please select to date above from date",
-                                                Colors.red);
-                                          }
-                                        }
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.width * numD03,
+                        ),
+                        widget.contentType == "exclusive"
+                            ? Container()
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        fromDate =
+                                            await commonDatePicker() ?? "";
+                                        toDate = '';
+                                        sortList[4].fromDate = fromDate;
                                         if (mounted) {
                                           setState(() {});
                                         }
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: size.width * numD02,
-                                        horizontal: size.width * numD02,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1.2, color: Colors.black),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            toDate.isNotEmpty
-                                                ? dateTimeFormatter(
-                                                    dateTime: toDate.toString())
-                                                : "To date",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD035,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                          const Icon(
-                                            Icons.arrow_drop_down_sharp,
-                                            color: Colors.black,
-                                          )
-                                        ],
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: size.width * numD02,
+                                          horizontal: size.width * numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.2,
+                                                color: Colors.black),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD02)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              fromDate.isNotEmpty
+                                                  ? dateTimeFormatter(
+                                                      dateTime:
+                                                          fromDate.toString())
+                                                  : "From date",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD035,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
-                    ],
+                                  SizedBox(
+                                    width: size.width * numD05,
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        if (fromDate.isNotEmpty) {
+                                          toDate =
+                                              await commonDatePicker() ?? '';
+                                          if (toDate.isNotEmpty) {
+                                            DateTime parseFromDate =
+                                                DateTime.parse(fromDate);
+                                            DateTime parseToDate =
+                                                DateTime.parse(toDate);
+                                            debugPrint(
+                                                "parseFromDate : $parseFromDate");
+                                            debugPrint(
+                                                "parseToDate : $parseToDate");
+
+                                            if (parseToDate
+                                                    .isAfter(parseFromDate) ||
+                                                parseToDate.isAtSameMomentAs(
+                                                    parseFromDate)) {
+                                              sortList.indexWhere((element) =>
+                                                  element.isSelected = false);
+                                              sortList[4].toDate = toDate;
+                                              sortList[4].isSelected = true;
+                                              _applyFilter(context);
+                                            } else {
+                                              showSnackBar(
+                                                  "Date Error",
+                                                  "Please select to date above from date",
+                                                  Colors.red);
+                                            }
+                                          }
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: size.width * numD02,
+                                          horizontal: size.width * numD02,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.2,
+                                                color: Colors.black),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * numD02)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              toDate.isNotEmpty
+                                                  ? dateTimeFormatter(
+                                                      dateTime:
+                                                          toDate.toString())
+                                                  : "To date",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD035,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ],
+                    ),
                   ),
-                ),
 
-                SizedBox(
-                  height: size.width * numD04,
-                ),
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
 
-                Text(
-                  publicationsListHeadingText,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal),
-                ),
+                  Text(
+                    publicationsListHeadingText,
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * numD035,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal),
+                  ),
 
-                Divider(
-                  color: Colors.grey.shade300,
-                  thickness: 1.5,
-                ),
+                  Divider(
+                    color: Colors.grey.shade300,
+                    thickness: 1.5,
+                  ),
 
-                SizedBox(
-                  height: size.width * numD04,
-                ),
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
 
-                paymentReceivedWidget(),
+                  paymentReceivedWidget(),
 
-                SizedBox(
-                  height: size.width * numD04,
-                ),
-              ],
-            );
-          },
-        ),
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
+                ],
+              );
+            },
+          ),
         );
       }),
     );
@@ -600,7 +610,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                             pageType: PageType.CONTENT,
                                             type: "received",
                                             transactionData:
-                                                publicationTransactionList[index],
+                                                publicationTransactionList[
+                                                    index],
                                           )));
                             },
                             child: Row(
@@ -929,132 +940,132 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
         )),
         builder: (context) {
           return BlocProvider.value(
-             value: bloc,
-             child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
-            return Padding(
-              padding: EdgeInsets.only(
-                top: size.width * numD06,
-                left: size.width * numD05,
-                right: size.width * numD05,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          splashRadius: size.width * numD07,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.close,
-                            color: Colors.black,
-                            size: size.width * numD07,
-                          ),
-                        ),
-                        Text(
-                          "Sort and Filter",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * appBarHeadingFontSizeNew,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            filterList.indexWhere(
-                                (element) => element.isSelected = false);
-                            fromDate = "";
-                            toDate = "";
-                            sortList.clear();
-                            initializeFilter();
-                            _applyFilter(context);
-                            stateSetter(() {});
-                            setState(() {});
-                          },
-                          child: Text(
-                            "Clear all",
-                            style: TextStyle(
-                                color: colorThemePink,
-                                fontWeight: FontWeight.w400,
-                                fontSize: size.width * numD035),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    /// Sort
-                    SizedBox(
-                      height: size.width * numD085,
-                    ),
-
-                    /// Sort Heading
-                    Text(
-                      sortText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
-                    ),
-
-                    filterListWidget(sortList, stateSetter, size, true),
-
-                    /// Filter
-                    SizedBox(
-                      height: size.width * numD05,
-                    ),
-
-                    /// Filter Heading
-                    Text(
-                      filterText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
-                    ),
-
-                    filterListWidget(filterList, stateSetter, size, false),
-                    SizedBox(
-                      height: size.width * numD05,
-                    ),
-
-                    Container(
-                      width: size.width,
-                      height: size.width * numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                      ),
-                      child: commonElevatedButton(
-                          applyText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
-                        Navigator.pop(context);
-                        _applyFilter(context);
-                      }),
-                    ),
-
-                    SizedBox(
-                      height: size.width * numD04,
-                    ),
-                  ],
+            value: bloc,
+            child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  top: size.width * numD06,
+                  left: size.width * numD05,
+                  right: size.width * numD05,
                 ),
-              ),
-            );
-          }),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            splashRadius: size.width * numD07,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.black,
+                              size: size.width * numD07,
+                            ),
+                          ),
+                          Text(
+                            "Sort and Filter",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * appBarHeadingFontSizeNew,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              filterList.indexWhere(
+                                  (element) => element.isSelected = false);
+                              fromDate = "";
+                              toDate = "";
+                              sortList.clear();
+                              initializeFilter();
+                              _applyFilter(context);
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Text(
+                              "Clear all",
+                              style: TextStyle(
+                                  color: colorThemePink,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: size.width * numD035),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      /// Sort
+                      SizedBox(
+                        height: size.width * numD085,
+                      ),
+
+                      /// Sort Heading
+                      Text(
+                        sortText,
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD05,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
+                      ),
+
+                      filterListWidget(sortList, stateSetter, size, true),
+
+                      /// Filter
+                      SizedBox(
+                        height: size.width * numD05,
+                      ),
+
+                      /// Filter Heading
+                      Text(
+                        filterText,
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD05,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
+                      ),
+
+                      filterListWidget(filterList, stateSetter, size, false),
+                      SizedBox(
+                        height: size.width * numD05,
+                      ),
+
+                      Container(
+                        width: size.width,
+                        height: size.width * numD13,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: size.width * numD04),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * numD04,
+                        ),
+                        child: commonElevatedButton(
+                            applyText,
+                            size,
+                            commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD035,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            commonButtonStyle(size, colorThemePink), () {
+                          Navigator.pop(context);
+                          _applyFilter(context);
+                        }),
+                      ),
+
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
           );
         });
   }
@@ -1313,39 +1324,38 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
   }
 */
 
-
   void _applyFilter(BuildContext context) {
-      // Logic to collect params and dispatch event
-      Map<String, dynamic> map = {
-        "content_id": widget.contentId,
-      };
-      
-      int pos = sortList.indexWhere((element) => element.isSelected);
+    // Logic to collect params and dispatch event
+    Map<String, dynamic> map = {
+      "content_id": widget.contentId,
+    };
 
-      if (pos != -1) {
-        if (sortList[pos].fromDate != null) {
-          map["startdate"] = sortList[pos].fromDate!.trim();
-          map["endDate"] = sortList[pos].toDate!.trim();
-        } else if (sortList[pos].name == 'View first payment received') {
-          map["firstpaymentrecived"] = 'true';
-        } else if (sortList[pos].name == 'View last payment received') {
-          map["firstpaymentrecived"] = 'false';
-        } else if (sortList[pos].name == 'View highest payment received') {
-          map["highpaymentrecived"] = 'true';
-        } else if (sortList[pos].name == 'View lowest payment received') {
-          map["highpaymentrecived"] = 'false';
-        }
-      }
+    int pos = sortList.indexWhere((element) => element.isSelected);
 
-      /// Filter
-      // Note: filterList should now be populated from MediaHouses
-      for (var element in filterList) {
-        if (element.isSelected) {
-          map['publication'] = element.id ?? "";
-        }
+    if (pos != -1) {
+      if (sortList[pos].fromDate != null) {
+        map["startdate"] = sortList[pos].fromDate!.trim();
+        map["endDate"] = sortList[pos].toDate!.trim();
+      } else if (sortList[pos].name == 'View first payment received') {
+        map["firstpaymentrecived"] = 'true';
+      } else if (sortList[pos].name == 'View last payment received') {
+        map["firstpaymentrecived"] = 'false';
+      } else if (sortList[pos].name == 'View highest payment received') {
+        map["highpaymentrecived"] = 'true';
+      } else if (sortList[pos].name == 'View lowest payment received') {
+        map["highpaymentrecived"] = 'false';
       }
-      
-      context.read<PublicationBloc>().add(FilterPublicationTransactions(map));
+    }
+
+    /// Filter
+    // Note: filterList should now be populated from MediaHouses
+    for (var element in filterList) {
+      if (element.isSelected) {
+        map['publication'] = element.id ?? "";
+      }
+    }
+
+    context.read<PublicationBloc>().add(FilterPublicationTransactions(map));
   }
 }
 

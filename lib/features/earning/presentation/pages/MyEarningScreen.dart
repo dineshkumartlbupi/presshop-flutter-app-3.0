@@ -23,7 +23,8 @@ import '../../../../core/widgets/video_player_screen.dart';
 class MyEarningScreen extends StatefulWidget {
   final bool openDashboard;
 
-  const MyEarningScreen({super.key, this.openDashboard = false, required int initialTapPosition});
+  const MyEarningScreen(
+      {super.key, this.openDashboard = false, required int initialTapPosition});
 
   @override
   State<MyEarningScreen> createState() => _MyEarningScreenState();
@@ -34,7 +35,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
   late Size size;
   TabController? _tabController;
   int _selectedTabbar = 0;
-  
+
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
 
@@ -50,7 +51,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         _selectedTabbar = _tabController!.index;
       });
       context.read<EarningBloc>().add(ChangeTabEvent(_selectedTabbar));
-      
+
       // Fetch data for the selected tab if needed or rely on initial load
       if (_selectedTabbar == 0) {
         _fetchTransactions(context.read<EarningBloc>());
@@ -60,21 +61,21 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     });
 
     initializeFilter();
-    
+
     // Initial Data Fetch
     final now = DateTime.now();
     fromDate = now.year.toString();
     toDate = now.month.toString().padLeft(2, '0');
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-         final bloc = context.read<EarningBloc>();
-         bloc.add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
-         bloc.add(FetchEarningDataEvent(fromDate: fromDate, toDate: toDate));
-         _fetchTransactions(bloc);
-         _fetchCommissions(bloc);
+      final bloc = context.read<EarningBloc>();
+      bloc.add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
+      bloc.add(FetchEarningDataEvent(fromDate: fromDate, toDate: toDate));
+      _fetchTransactions(bloc);
+      _fetchCommissions(bloc);
     });
   }
-  
+
   void initializeFilter() {
     sortList = [
       FilterModel(
@@ -113,11 +114,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
   }
 
   void _fetchTransactions(EarningBloc bloc) {
-      _fetchTransactionsWithFilters(bloc);
+    _fetchTransactionsWithFilters(bloc);
   }
 
   void _fetchCommissions(EarningBloc bloc) {
-       bloc.add(FetchCommissionsEvent(limit: 10, offset: 0, filterParams: {}));
+    bloc.add(FetchCommissionsEvent(limit: 10, offset: 0, filterParams: {}));
   }
 
   void _fetchTransactionsWithFilters(EarningBloc bloc) {
@@ -136,9 +137,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         map["posted_date"] = "7";
       }
     } else {
-        // Default filter if none selected, use global year/month
-        map["year"] = fromDate;
-        map["month"] = toDate;
+      // Default filter if none selected, use global year/month
+      map["year"] = fromDate;
+      map["month"] = toDate;
     }
 
     // Check Filter List
@@ -166,7 +167,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         }
       }
     }
-    
+
     bloc.add(FetchTransactionsEvent(limit: 10, offset: 0, filterParams: map));
   }
 
@@ -242,603 +243,617 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           ),
           body: BlocConsumer<EarningBloc, EarningState>(
             listener: (context, state) {
-                if (state.fromDate.isNotEmpty) fromDate = state.fromDate;
-                if (state.toDate.isNotEmpty) toDate = state.toDate;
+              if (state.fromDate.isNotEmpty) fromDate = state.fromDate;
+              if (state.toDate.isNotEmpty) toDate = state.toDate;
             },
             builder: (context, state) {
-              if (state.status == EarningStatus.loading && state.earningData == null) {
-                  return const Center(child: CircularProgressIndicator());
+              if (state.status == EarningStatus.loading &&
+                  state.earningData == null) {
+                return const Center(child: CircularProgressIndicator());
               }
-              
+
               final earningData = state.earningData;
-              
+
               return SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(size.width * numD02),
-                    child: Column(
-                      children: [
-                        /// My Earnings
-                        Container(
-                          padding: EdgeInsets.all(size.width * numD05),
-                          decoration: BoxDecoration(
-                              color: colorLightGrey,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD05)),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 1.2, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * numD04)),
-                                    child: ClipRRect(
+                child: Padding(
+                  padding: EdgeInsets.all(size.width * numD02),
+                  child: Column(
+                    children: [
+                      /// My Earnings
+                      Container(
+                        padding: EdgeInsets.all(size.width * numD05),
+                        decoration: BoxDecoration(
+                            color: colorLightGrey,
+                            borderRadius:
+                                BorderRadius.circular(size.width * numD05)),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1.2, color: Colors.black),
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD04),
-                                      child: CachedNetworkImage(
-                                        imageUrl: avatarImageUrl +
-                                            (earningData?.avatar ?? ""),
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
-                                          height: size.width * numD32,
-                                          width: size.width * numD35,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                        placeholder: (context, url) =>
-                                            const CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                          "${commonImagePath}rabbitLogo.png",
-                                          fit: BoxFit.cover,
-                                          height: size.width * numD32,
-                                          width: size.width * numD35,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: size.width * numD10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Total earnings",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD045,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(
-                                          height: size.width * num0,
-                                        ),
-                                        Text(
-                                          earningData != null && earningData.totalEarning.isNotEmpty
-                                              ? '$currencySymbol${formatDouble(double.parse(earningData.totalEarning))}'
-                                              : '£0',
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD075,
-                                              color: colorThemePink,
-                                              fontWeight: FontWeight.w800),
-                                        ),
-                                        SizedBox(
-                                          height: size.width * numD02,
-                                        ),
-                                        Text(
-                                          "Monthly earnings",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD045,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(
-                                          height: size.width * num0,
-                                        ),
-                                        Text(
-                                          state.monthlyEarnings.isNotEmpty
-                                              ? '$currencySymbol${formatDouble(double.parse(state.monthlyEarnings))}'
-                                              : '£0',
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD075,
-                                              color: colorThemePink,
-                                              fontWeight: FontWeight.w800),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: size.width * numD03,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () async {
-                                        // Year picker
-                                        final now = DateTime.now();
-                                        final picked = await showDialog<int>(
-                                          context: context,
-                                          builder: (context) {
-                                            int selectedYear =
-                                                fromDate.isNotEmpty
-                                                    ? int.parse(fromDate)
-                                                    : now.year;
-                                            return AlertDialog(
-                                              title: Text('Select Year'),
-                                              content: SizedBox(
-                                                width: size.width * numD035,
-                                                height: size.height * numD30,
-                                                child: YearPicker(
-                                                  firstDate: DateTime(2020),
-                                                  lastDate: DateTime(now.year),
-                                                  selectedDate:
-                                                      DateTime(selectedYear),
-                                                  onChanged: (dateTime) {
-                                                    Navigator.pop(
-                                                        context, dateTime.year);
-                                                  },
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                        if (picked != null) {
-                                          fromDate = picked.toString();
-                                          toDate = ''; 
-                                          context.read<EarningBloc>().add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
-                                          context.read<EarningBloc>().add(FetchEarningDataEvent(fromDate: fromDate, toDate: toDate));
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: size.width * numD02,
-                                          horizontal: size.width * numD02,
-                                        ),
+                                          size.width * numD04)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD04),
+                                    child: CachedNetworkImage(
+                                      imageUrl: avatarImageUrl +
+                                          (earningData?.avatar ?? ""),
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        height: size.width * numD32,
+                                        width: size.width * numD35,
                                         decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 1.2,
-                                                color: Colors.black),
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD02)),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              fromDate.isNotEmpty
-                                                  ? fromDate
-                                                  : "Year",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD035,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            const Icon(
-                                              Icons.arrow_drop_down_sharp,
-                                              color: Colors.black,
-                                            )
-                                          ],
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover),
                                         ),
+                                      ),
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                        "${commonImagePath}rabbitLogo.png",
+                                        fit: BoxFit.cover,
+                                        height: size.width * numD32,
+                                        width: size.width * numD35,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: size.width * numD05,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: size.width * numD10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Total earnings",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD045,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                        height: size.width * num0,
+                                      ),
+                                      Text(
+                                        earningData != null &&
+                                                earningData
+                                                    .totalEarning.isNotEmpty
+                                            ? '$currencySymbol${formatDouble(double.parse(earningData.totalEarning))}'
+                                            : '£0',
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD075,
+                                            color: colorThemePink,
+                                            fontWeight: FontWeight.w800),
+                                      ),
+                                      SizedBox(
+                                        height: size.width * numD02,
+                                      ),
+                                      Text(
+                                        "Monthly earnings",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD045,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                        height: size.width * num0,
+                                      ),
+                                      Text(
+                                        state.monthlyEarnings.isNotEmpty
+                                            ? '$currencySymbol${formatDouble(double.parse(state.monthlyEarnings))}'
+                                            : '£0',
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD075,
+                                            color: colorThemePink,
+                                            fontWeight: FontWeight.w800),
+                                      ),
+                                    ],
                                   ),
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: fromDate.isEmpty
-                                          ? null
-                                          : () async {
-                                              // Month picker
-                                              final now = DateTime.now();
-                                              final int selectedYear =
-                                                  int.parse(fromDate);
-                                              final int lastMonth =
-                                                  (selectedYear == now.year)
-                                                      ? now.month
-                                                      : 12;
-                                              final picked =
-                                                  await showDialog<int>(
-                                                context: context,
-                                                builder: (context) {
-                                                  int selectedMonth =
-                                                      toDate.isNotEmpty
-                                                          ? int.parse(toDate)
-                                                          : 1;
-                                                  return AlertDialog(
-                                                    title: Text('Select Month'),
-                                                    content: SizedBox(
-                                                      width: 400,
-                                                      height: 400,
-                                                      child: GridView.builder(
-                                                        gridDelegate:
-                                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                                          crossAxisCount: 2,
-                                                          childAspectRatio: 2.5,
-                                                        ),
-                                                        itemCount: lastMonth,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          final month =
-                                                              index + 1;
-                                                          return InkWell(
-                                                            onTap: () {
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  month);
-                                                            },
-                                                            child: Container(
-                                                              margin: EdgeInsets
-                                                                  .all(8),
-                                                              decoration:
-                                                                  BoxDecoration(
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.width * numD03,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () async {
+                                      // Year picker
+                                      final now = DateTime.now();
+                                      final picked = await showDialog<int>(
+                                        context: context,
+                                        builder: (context) {
+                                          int selectedYear = fromDate.isNotEmpty
+                                              ? int.parse(fromDate)
+                                              : now.year;
+                                          return AlertDialog(
+                                            title: Text('Select Year'),
+                                            content: SizedBox(
+                                              width: size.width * numD035,
+                                              height: size.height * numD30,
+                                              child: YearPicker(
+                                                firstDate: DateTime(2020),
+                                                lastDate: DateTime(now.year),
+                                                selectedDate:
+                                                    DateTime(selectedYear),
+                                                onChanged: (dateTime) {
+                                                  Navigator.pop(
+                                                      context, dateTime.year);
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                      if (picked != null) {
+                                        fromDate = picked.toString();
+                                        toDate = '';
+                                        context.read<EarningBloc>().add(
+                                            UpdateDateEvent(
+                                                fromDate: fromDate,
+                                                toDate: toDate));
+                                        context.read<EarningBloc>().add(
+                                            FetchEarningDataEvent(
+                                                fromDate: fromDate,
+                                                toDate: toDate));
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: size.width * numD02,
+                                        horizontal: size.width * numD02,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.2, color: Colors.black),
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD02)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            fromDate.isNotEmpty
+                                                ? fromDate
+                                                : "Year",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD035,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const Icon(
+                                            Icons.arrow_drop_down_sharp,
+                                            color: Colors.black,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width * numD05,
+                                ),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: fromDate.isEmpty
+                                        ? null
+                                        : () async {
+                                            // Month picker
+                                            final now = DateTime.now();
+                                            final int selectedYear =
+                                                int.parse(fromDate);
+                                            final int lastMonth =
+                                                (selectedYear == now.year)
+                                                    ? now.month
+                                                    : 12;
+                                            final picked =
+                                                await showDialog<int>(
+                                              context: context,
+                                              builder: (context) {
+                                                int selectedMonth =
+                                                    toDate.isNotEmpty
+                                                        ? int.parse(toDate)
+                                                        : 1;
+                                                return AlertDialog(
+                                                  title: Text('Select Month'),
+                                                  content: SizedBox(
+                                                    width: 400,
+                                                    height: 400,
+                                                    child: GridView.builder(
+                                                      gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisCount: 2,
+                                                        childAspectRatio: 2.5,
+                                                      ),
+                                                      itemCount: lastMonth,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        final month = index + 1;
+                                                        return InkWell(
+                                                          onTap: () {
+                                                            Navigator.pop(
+                                                                context, month);
+                                                          },
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    8),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: selectedMonth ==
+                                                                      month
+                                                                  ? colorThemePink
+                                                                  : Colors.grey[
+                                                                      200],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              DateFormat.MMMM()
+                                                                  .format(
+                                                                      DateTime(
+                                                                          0,
+                                                                          month)),
+                                                              style:
+                                                                  commonTextStyle(
+                                                                size: size,
+                                                                fontSize:
+                                                                    size.width *
+                                                                        numD035,
                                                                 color: selectedMonth ==
                                                                         month
-                                                                    ? colorThemePink
-                                                                    : Colors.grey[
-                                                                        200],
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
-                                                              ),
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child: Text(
-                                                                DateFormat
-                                                                        .MMMM()
-                                                                    .format(DateTime(
-                                                                        0,
-                                                                        month)),
-                                                                style:
-                                                                    commonTextStyle(
-                                                                  size: size,
-                                                                  fontSize: size
-                                                                          .width *
-                                                                      numD035,
-                                                                  color: selectedMonth ==
-                                                                          month
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
                                                               ),
                                                             ),
-                                                          );
-                                                        },
-                                                      ),
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
-                                                  );
-                                                },
-                                              );
-                                              if (picked != null) {
-                                                toDate = picked
-                                                    .toString()
-                                                    .padLeft(2, '0');
-                                                final bloc = context.read<EarningBloc>();
-                                                bloc.add(UpdateDateEvent(fromDate: fromDate, toDate: toDate));
-                                                bloc.add(FetchEarningDataEvent(fromDate: fromDate, toDate: toDate));
-                                                if (_selectedTabbar == 0) {
-                                                  _fetchTransactions(bloc);
-                                                } else {
-                                                  _fetchCommissions(bloc);
-                                                }
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                            if (picked != null) {
+                                              toDate = picked
+                                                  .toString()
+                                                  .padLeft(2, '0');
+                                              final bloc =
+                                                  context.read<EarningBloc>();
+                                              bloc.add(UpdateDateEvent(
+                                                  fromDate: fromDate,
+                                                  toDate: toDate));
+                                              bloc.add(FetchEarningDataEvent(
+                                                  fromDate: fromDate,
+                                                  toDate: toDate));
+                                              if (_selectedTabbar == 0) {
+                                                _fetchTransactions(bloc);
+                                              } else {
+                                                _fetchCommissions(bloc);
                                               }
-                                            },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: size.width * numD02,
-                                          horizontal: size.width * numD02,
-                                        ),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 1.2,
-                                                color: Colors.black),
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD02)),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              toDate.isNotEmpty
-                                                  ? DateFormat.MMMM().format(
-                                                      DateTime(
-                                                          0, int.parse(toDate)))
-                                                  : "Month",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD035,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                            const Icon(
-                                              Icons.arrow_drop_down_sharp,
-                                              color: Colors.black,
-                                            )
-                                          ],
-                                        ),
+                                            }
+                                          },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: size.width * numD02,
+                                        horizontal: size.width * numD02,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.2, color: Colors.black),
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD02)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            toDate.isNotEmpty
+                                                ? DateFormat.MMMM().format(
+                                                    DateTime(
+                                                        0, int.parse(toDate)))
+                                                : "Month",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD035,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                          const Icon(
+                                            Icons.arrow_drop_down_sharp,
+                                            color: Colors.black,
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(
-                          height: size.width * numD04,
-                        ),
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TabBar(
-                              physics: const NeverScrollableScrollPhysics(),
-                              controller: _tabController,
-                              labelColor: Colors.white,
-                              dividerColor: colorThemePink,
-                              unselectedLabelColor: Colors.black,
-                              indicator: BoxDecoration(
-                                color: colorThemePink,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD02),
-                              ),
-                              labelStyle: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD038,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              tabs: [
-                                Tab(
-                                  text: paymentReceivedText,
-                                ),
-                                Tab(text: commissionEarnedText),
+                                  ),
+                                )
                               ],
                             ),
-                            const Divider(
-                              color: Color(0xFFD8D8D8),
-                              thickness: 1.5,
-                            ),
-                            Column(children: [
-                              if (_selectedTabbar == 0) ...[
-                                state.transactions.isEmpty && state.transactionStatus != EarningStatus.loading
-                                    ? Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: size.height * numD1),
-                                          child: Text(
-                                            "No payment received",
-                                            style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD035,
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : state.transactionStatus == EarningStatus.loading 
-                                       ? const Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator()) 
-                                       : Column(
-                                        children: [
-                                          SizedBox(
-                                            height: size.width * numD025,
-                                          ),
-                                          paymentReceivedWidget(state.transactions),
-                                          if (state.transactions
-                                                  .isNotEmpty &&
-                                              state.transactions.any(
-                                                  (item) =>
-                                                      !item.paidStatus)) ...[
-                                            Text(
-                                              paymentPendingText,
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD045,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            SizedBox(
-                                              height: size.width * numD02,
-                                            ),
-                                            const Divider(
-                                              color: Color(0xFFD8D8D8),
-                                              thickness: 1.5,
-                                            ),
-                                            SizedBox(
-                                              height: size.width * numD04,
-                                            ),
-                                            paymentPendingWidget(state.transactions),
-                                          ],
-                                        ],
-                                      )
-                              ] else ...[
-                                if (state.commissions.isEmpty && state.commissionStatus != EarningStatus.loading)
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: size.height * numD1),
-                                      child: Text(
-                                        "No commission earned",
-                                        style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD035,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                else if (state.commissionStatus == EarningStatus.loading)
-                                   const Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator())
-                                else
-                                  ListView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: state.commissions.length,
-                                    itemBuilder: (context, index) {
-                                      return CommissionWidget(
-                                        commissionData:
-                                            state.commissions[index],
-                                      );
-                                    },
-                                  ),
-                              ]
-                            ]),
                           ],
                         ),
-                        // Footer logic (Contact/FAQ/Tutorials) preserved conceptually but simplified for length constraint if needed
-                        // Including it properly:
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: size.width * numD06,
-                              bottom: size.width * numD07),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text:
-                                      "If you have any questions regarding your earnings or pending payments, please ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                WidgetSpan(
-                                    alignment: PlaceholderAlignment.middle,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ContactUsScreen()));
-                                      },
-                                      child: Text(
-                                        "${contactText.toLowerCase()} ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )),
-                                TextSpan(
-                                  text:
-                                      "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                TextSpan(
-                                  text: "Also check our ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                WidgetSpan(
-                                    alignment: PlaceholderAlignment.middle,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder: (context) => FAQScreen(
-                                                      priceTipsSelected: false,
-                                                      type: 'faq',
-                                                      index: 0,
-                                                    )));
-                                      },
-                                      child: Text(
-                                        "$faqText ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )),
-                                TextSpan(
-                                  text: "and ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                WidgetSpan(
-                                    alignment: PlaceholderAlignment.middle,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const TutorialsScreen()));
-                                      },
-                                      child: Text(
-                                        "${tutorialsText.toLowerCase()} ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )),
-                                TextSpan(
-                                  text:
-                                      "for answers to common payment queries. Thank you ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ],
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD03,
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.5),
+                      ),
+
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TabBar(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: _tabController,
+                            labelColor: Colors.white,
+                            dividerColor: colorThemePink,
+                            unselectedLabelColor: Colors.black,
+                            indicator: BoxDecoration(
+                              color: colorThemePink,
+                              borderRadius:
+                                  BorderRadius.circular(size.width * numD02),
                             ),
+                            labelStyle: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD038,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            tabs: [
+                              Tab(
+                                text: paymentReceivedText,
+                              ),
+                              Tab(text: commissionEarnedText),
+                            ],
                           ),
-                        )
-                      ],
-                    ),
+                          const Divider(
+                            color: Color(0xFFD8D8D8),
+                            thickness: 1.5,
+                          ),
+                          Column(children: [
+                            if (_selectedTabbar == 0) ...[
+                              state.transactions.isEmpty &&
+                                      state.transactionStatus !=
+                                          EarningStatus.loading
+                                  ? Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            top: size.height * numD1),
+                                        child: Text(
+                                          "No payment received",
+                                          style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD035,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : state.transactionStatus ==
+                                          EarningStatus.loading
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(20),
+                                          child: CircularProgressIndicator())
+                                      : Column(
+                                          children: [
+                                            SizedBox(
+                                              height: size.width * numD025,
+                                            ),
+                                            paymentReceivedWidget(
+                                                state.transactions),
+                                            if (state.transactions.isNotEmpty &&
+                                                state.transactions.any((item) =>
+                                                    !item.paidStatus)) ...[
+                                              Text(
+                                                paymentPendingText,
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize:
+                                                        size.width * numD045,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              SizedBox(
+                                                height: size.width * numD02,
+                                              ),
+                                              const Divider(
+                                                color: Color(0xFFD8D8D8),
+                                                thickness: 1.5,
+                                              ),
+                                              SizedBox(
+                                                height: size.width * numD04,
+                                              ),
+                                              paymentPendingWidget(
+                                                  state.transactions),
+                                            ],
+                                          ],
+                                        )
+                            ] else ...[
+                              if (state.commissions.isEmpty &&
+                                  state.commissionStatus !=
+                                      EarningStatus.loading)
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: size.height * numD1),
+                                    child: Text(
+                                      "No commission earned",
+                                      style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              else if (state.commissionStatus ==
+                                  EarningStatus.loading)
+                                const Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: CircularProgressIndicator())
+                              else
+                                ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: state.commissions.length,
+                                  itemBuilder: (context, index) {
+                                    return CommissionWidget(
+                                      commissionData: state.commissions[index],
+                                    );
+                                  },
+                                ),
+                            ]
+                          ]),
+                        ],
+                      ),
+                      // Footer logic (Contact/FAQ/Tutorials) preserved conceptually but simplified for length constraint if needed
+                      // Including it properly:
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: size.width * numD06,
+                            bottom: size.width * numD07),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    "If you have any questions regarding your earnings or pending payments, please ",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ContactUsScreen()));
+                                    },
+                                    child: Text(
+                                      "${contactText.toLowerCase()} ",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD03,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                              TextSpan(
+                                text:
+                                    "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              TextSpan(
+                                text: "Also check our ",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => FAQScreen(
+                                                    priceTipsSelected: false,
+                                                    type: 'faq',
+                                                    index: 0,
+                                                  )));
+                                    },
+                                    child: Text(
+                                      "$faqText ",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD03,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                              TextSpan(
+                                text: "and ",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TutorialsScreen()));
+                                    },
+                                    child: Text(
+                                      "${tutorialsText.toLowerCase()} ",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD03,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                              TextSpan(
+                                text:
+                                    "for answers to common payment queries. Thank you ",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD03,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: size.width * numD03,
+                                fontWeight: FontWeight.w300,
+                                height: 1.5),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                );
+                ),
+              );
             },
           )),
     );
@@ -903,7 +918,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                     videoUrl: item.uploadContent
                                                             .contains("http")
                                                         ? item.uploadContent
-                                                        : (item.type == "content"
+                                                        : (item.type ==
+                                                                    "content"
                                                                 ? contentImageUrl
                                                                 : taskMediaUrl) +
                                                             item.uploadContent,
@@ -928,17 +944,18 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                           color: Colors.white, width: 2),
-                                      borderRadius:
-                                          BorderRadius.circular(size.width * numD03),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD03),
                                     ),
                                     child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(size.width * numD03),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD03),
                                       child: CachedNetworkImage(
                                         imageUrl: avatarImageUrl +
                                             (item.hopperAvatar),
-                                        imageBuilder: (context, imageProvider) =>
-                                            Container(
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
                                           height: size.width * numD11,
                                           width: size.width * numD11,
                                           decoration: BoxDecoration(
@@ -963,8 +980,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     width: size.width * numD03,
                                   ),
                                   ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(size.width * numD03),
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03),
                                     child: Image.network(item.companyLogo,
                                         height: size.width * numD11,
                                         width: size.width * numD12,
@@ -1140,30 +1157,30 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               // Assuming contentDataList has media field for thumbnail if mapped
                               // Using safe fallback if contentDataList is empty or structure mismatch
                               if (item.contentDataList.isNotEmpty)
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(size.width * numD03),
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          '$contentImageUrl${item.contentDataList.first['media'] ?? ""}',
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD03),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        '$contentImageUrl${item.contentDataList.first['media'] ?? ""}',
+                                    height: size.width * numD11,
+                                    width: size.width * numD12,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Image.asset(
+                                      "assets/dummyImages/placeholderImage.png",
+                                      fit: BoxFit.cover,
                                       height: size.width * numD11,
                                       width: size.width * numD12,
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => Image.asset(
-                                        "assets/dummyImages/placeholderImage.png",
-                                        fit: BoxFit.cover,
-                                        height: size.width * numD11,
-                                        width: size.width * numD12,
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        fit: BoxFit.cover,
-                                        height: size.width * numD11,
-                                        width: size.width * numD12,
-                                      ),
+                                      height: size.width * numD11,
+                                      width: size.width * numD12,
                                     ),
                                   ),
+                                ),
                               SizedBox(
                                 width: size.width * numD03,
                               ),
@@ -1319,7 +1336,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               dateTimeFormatter(
-                                dateTime: item.createdAt, 
+                                dateTime: item.createdAt,
                                 format: "dd MMM yyyy",
                               ),
                               style: commonTextStyle(
@@ -1353,8 +1370,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                             ? PageType.CONTENT
                                             : PageType.TASK,
                                         type: "pending",
-                                        transactionData:
-                                            transactions[index],
+                                        transactionData: transactions[index],
                                       )));
                         },
                         child: Row(
@@ -1393,8 +1409,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   Widget filterListWidget(context, List<FilterModel> list,
       StateSetter stateSetter, Size size, bool isSort) {
-      // (Implementation same as original but ensuring parameter types are correct)
-      return ListView.separated(
+    // (Implementation same as original but ensuring parameter types are correct)
+    return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD03),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -1410,11 +1426,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                 list[pos].fromDate = null;
                 list[pos].toDate = null;
               }
-              filterList.forEach((element) => element.isSelected = false); 
+              filterList.forEach((element) => element.isSelected = false);
             }
             // Logic to clear other sort if one selected?
             // Simply toggling for now
-            
+
             list[index].isSelected = !list[index].isSelected;
 
             stateSetter(() {});
@@ -1597,8 +1613,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
   }
 
   Future<void> showBottomSheet(Size size, EarningBloc bloc) async {
-      // (Same structure, but calls _fetchTransactionsWithFilters(bloc) on Apply)
-       await showModalBottomSheet(
+    // (Same structure, but calls _fetchTransactionsWithFilters(bloc) on Apply)
+    await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
@@ -1660,21 +1676,45 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                     ],
                   ),
                   SizedBox(height: size.width * numD085),
-                  Text(sortText, style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500)),
-                  filterListWidget(context, sortList.where((data) => data.name != filterDateText).toList(), stateSetter, size, true),
+                  Text(sortText,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500)),
+                  filterListWidget(
+                      context,
+                      sortList
+                          .where((data) => data.name != filterDateText)
+                          .toList(),
+                      stateSetter,
+                      size,
+                      true),
                   SizedBox(height: size.width * numD05),
-                  Text(filterText, style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500)),
-                  filterListWidget(context, filterList, stateSetter, size, false),
+                  Text(filterText,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500)),
+                  filterListWidget(
+                      context, filterList, stateSetter, size, false),
                   SizedBox(height: size.width * numD06),
                   Container(
                     width: size.width,
                     height: size.width * numD13,
-                    margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
-                    padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    margin:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
                     child: commonElevatedButton(
                         applyText,
                         size,
-                        commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700),
+                        commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD035,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),
                         commonButtonStyle(size, colorThemePink), () {
                       Navigator.pop(context);
                       _fetchTransactionsWithFilters(bloc);
@@ -1705,7 +1745,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     );
 
     if (pickedDate != null) {
-      final String formatted = pickedDate.toString(); // API likely expects YYYY-MM-DD or similar? Legacy used toString().
+      final String formatted = pickedDate
+          .toString(); // API likely expects YYYY-MM-DD or similar? Legacy used toString().
       return formatted;
     } else {
       return null;

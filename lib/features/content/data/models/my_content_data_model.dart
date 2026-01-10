@@ -22,6 +22,7 @@ class MyContentData {
   bool exclusive = false;
   bool showVideo = false;
   String audioDescription = '';
+  String audioDuration = '';
   List<ContentMediaData> contentMediaList = [];
   List<HashTagData> hashTagList = [];
   CategoryDataModel? categoryData;
@@ -54,6 +55,7 @@ class MyContentData {
     required this.exclusive,
     required this.showVideo,
     required this.audioDescription,
+    required this.audioDuration,
     required this.contentMediaList,
     required this.hashTagList,
     required this.categoryData,
@@ -111,6 +113,7 @@ class MyContentData {
     }
 
     audioDescription = (json['audio_description'] ?? '').toString();
+    audioDuration = (json['audio_description_duration'] ?? '').toString();
     categoryId = (json['category_id'] ?? '').toString();
 
     if (json["content"] != null) {
@@ -142,6 +145,11 @@ class MyContentData {
 
     if (location.trim().isNotEmpty) {
       count += 1;
+    } else {
+      location = (json["location"] ?? "").toString();
+      if (location.trim().isNotEmpty) {
+        count += 1;
+      }
     }
 
     if (amount.trim().isNotEmpty) {
@@ -184,6 +192,7 @@ class MyContentData {
     bool? exclusive,
     bool? showVideo,
     String? audioDescription,
+    String? audioDuration,
     List<ContentMediaData>? contentMediaList,
     List<HashTagData>? hashTagList,
     CategoryDataModel? categoryData,
@@ -214,6 +223,7 @@ class MyContentData {
         exclusive: exclusive ?? this.exclusive,
         showVideo: showVideo ?? this.showVideo,
         audioDescription: audioDescription ?? this.audioDescription,
+        audioDuration: audioDuration ?? this.audioDuration,
         contentMediaList: contentMediaList ?? List.from(this.contentMediaList),
         hashTagList: hashTagList ?? List.from(this.hashTagList),
         categoryData: categoryData ?? this.categoryData,

@@ -59,6 +59,22 @@ class ApiClient {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    if (err.response != null &&
+        (err.response!.statusCode == 502 ||
+            err.response!.statusCode == 503 ||
+            err.response!.statusCode == 404 ||
+            err.response!.statusCode == 504)) {
+      final customError = DioException(
+        requestOptions: err.requestOptions,
+        response: err.response,
+        type: err.type,
+        error: "Server is currently down. Please try again later.",
+        message: "Server is currently down. Please try again later.",
+      );
+      handler.next(customError);
+      return;
+    }
+
     if (err.response?.statusCode == 401) {
       /// Token refresh logic
       if (err.requestOptions.path.contains(appRefreshTokenUrl)) {

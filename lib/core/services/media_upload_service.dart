@@ -18,6 +18,7 @@ class MediaUploadService {
     Map<String, String>? jsonBody,
     required List filePathList,
     required String imageParams,
+    Map<String, String>? additionalFiles,
   }) async {
     await WakelockPlus.enable();
 
@@ -44,6 +45,21 @@ class MediaUploadService {
           contentType: MediaType(mArray.first, mArray.last),
         );
         formData.files.add(MapEntry(imageParams, file));
+      }
+    }
+
+    // Add additional files with custom keys
+    if (additionalFiles != null && additionalFiles.isNotEmpty) {
+      for (var entry in additionalFiles.entries) {
+        var mimeType = lookupMimeType(entry.value) ?? "audio/mpeg";
+        debugPrint("AdditionalFile Mime: $mimeType Key: ${entry.key}");
+
+        var mArray = mimeType.split("/");
+        var file = await MultipartFile.fromFile(
+          entry.value,
+          contentType: MediaType(mArray.first, mArray.last),
+        );
+        formData.files.add(MapEntry(entry.key, file));
       }
     }
 

@@ -106,12 +106,14 @@ Future<bool> uploadMediaUsingDio(
   String endUrl,
   Map<String, String>? jsonBody,
   List filePathList,
-  String imageParams,
-) async {
+  String imageParams, {
+  Map<String, String>? additionalFiles,
+}) async {
   return await MediaUploadService.uploadMedia(
     endUrl: endUrl,
     jsonBody: jsonBody,
     filePathList: filePathList,
     imageParams: imageParams,
+    additionalFiles: additionalFiles,
   );
 }

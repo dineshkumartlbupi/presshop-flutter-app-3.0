@@ -59,20 +59,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (context) => const Center(child: CircularProgressIndicator()),
+              builder: (context) =>
+                  const Center(child: CircularProgressIndicator()),
             );
           } else if (state is AccountSettingsError) {
-             Navigator.pop(context); // Close loading dialog
-             showSnackBar("Error", state.message, Colors.red);
+            Navigator.pop(context); // Close loading dialog
+            showSnackBar("Error", state.message, Colors.red);
           } else if (state is PasswordChangedSuccess) {
-             Navigator.pop(context); // Close loading
-             _newPasswordController.clear();
-             _currentPasswordController.clear();
-             _confirmNewPasswordController.clear();
-             
-             // Navigate back or to dashboard
-             Navigator.pop(context);
-             showSnackBar(
+            Navigator.pop(context); // Close loading
+            _newPasswordController.clear();
+            _currentPasswordController.clear();
+            _confirmNewPasswordController.clear();
+
+            // Navigate back or to dashboard
+            Navigator.pop(context);
+            showSnackBar(
                 "Password updated!",
                 "Your password has been successfully changed!",
                 colorOnlineGreen);
@@ -128,7 +129,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       child: Text(
                         changePasswordSubTitleText,
                         style: TextStyle(
-                            color: Colors.black, fontSize: size.width * numD033),
+                            color: Colors.black,
+                            fontSize: size.width * numD033),
                       ),
                     ),
                     SizedBox(
@@ -192,7 +194,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         SizedBox(
                           height: size.width * numD06,
                         ),
-    
+
                         /// New Password
                         Text(
                           newPasswordText,
@@ -205,7 +207,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         SizedBox(
                           height: size.width * numD02,
                         ),
-               
+
                         CommonTextField(
                           size: size,
                           maxLines: 1,
@@ -228,7 +230,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               showMincase = true;
                               setState(() {});
                             }
-    
+
                             if (!RegExp(r'[A-Z]').hasMatch(text.toString())) {
                               showUppercase = false;
                               setState(() {});
@@ -236,7 +238,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               showUppercase = true;
                               setState(() {});
                             }
-    
+
                             if (!RegExp(r'[a-z]').hasMatch(text.toString())) {
                               showLowercase = false;
                               setState(() {});
@@ -244,7 +246,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               showLowercase = true;
                               setState(() {});
                             }
-    
+
                             if (!RegExp(r'[0-9]').hasMatch(text.toString())) {
                               showNumber = false;
                               setState(() {});
@@ -252,7 +254,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               showNumber = true;
                               setState(() {});
                             }
-    
+
                             if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]')
                                 .hasMatch(text.toString())) {
                               showSpecialcase = false;
@@ -301,7 +303,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             } else if (!showMincase) {
                               return '';
                             }
-    
+
                             return null; // Password is valid
                           },
                           enableValidations: true,
@@ -459,7 +461,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         SizedBox(
                           height: size.width * numD06,
                         ),
-    
+
                         /// Confirm New Password
                         Text(
                           confirmNewPasswordText,
@@ -520,41 +522,42 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           filledColor: Colors.transparent,
                           autofocus: false,
                         ),
-    
+
                         SizedBox(
                           height: size.width * numD30,
                         ),
-    
+
                         /// Button
                         Container(
                           width: size.width,
                           height: size.width * numD13,
                           margin: EdgeInsets.symmetric(
                               horizontal: size.width * numD04),
-                          child: Builder(
-                            builder: (context) {
-                              return commonElevatedButton(
-                                  submitText,
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink), () {
-                                if (formKey.currentState!.validate()) {
-                                  context.read<AccountSettingsBloc>().add(
-                                    ChangePasswordEvent(
-                                      oldPassword: _currentPasswordController.text.trim(),
-                                      newPassword: _newPasswordController.text.trim(),
-                                    ),
-                                  );
-                                }
-                              });
-                            }
-                          ),
+                          child: Builder(builder: (context) {
+                            return commonElevatedButton(
+                                submitText,
+                                size,
+                                commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                                commonButtonStyle(size, colorThemePink), () {
+                              if (formKey.currentState!.validate()) {
+                                context.read<AccountSettingsBloc>().add(
+                                      ChangePasswordEvent(
+                                        oldPassword: _currentPasswordController
+                                            .text
+                                            .trim(),
+                                        newPassword:
+                                            _newPasswordController.text.trim(),
+                                      ),
+                                    );
+                              }
+                            });
+                          }),
                         ),
-    
+
                         SizedBox(
                           height: size.width * numD03,
                         ),
@@ -594,5 +597,3 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     });
   }
 }
-
-

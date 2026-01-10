@@ -22,7 +22,8 @@ class LeaderboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<LeaderboardBloc>()..add(const GetLeaderboard("global")),
+      create: (context) =>
+          sl<LeaderboardBloc>()..add(const GetLeaderboard("global")),
       child: const LeaderboardView(),
     );
   }
@@ -62,8 +63,18 @@ class _LeaderboardViewState extends State<LeaderboardView> {
   String getFormattedDate(DateTime dateTime) {
     try {
       const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
       ];
       return "${months[dateTime.month - 1]} ${dateTime.year}";
     } catch (e) {
@@ -75,13 +86,23 @@ class _LeaderboardViewState extends State<LeaderboardView> {
     double value = double.tryParse(amount.toString()) ?? 0.0;
     String locale;
     switch (currencySymbol) {
-      case '₹': locale = 'en_IN'; break;
-      case '\$': locale = 'en_US'; break;
-      case '£': locale = 'en_GB'; break;
-      case '€': locale = 'en_EU'; break;
-      default: locale = 'en_US';
+      case '₹':
+        locale = 'en_IN';
+        break;
+      case '\$':
+        locale = 'en_US';
+        break;
+      case '£':
+        locale = 'en_GB';
+        break;
+      case '€':
+        locale = 'en_EU';
+        break;
+      default:
+        locale = 'en_US';
     }
-    return NumberFormat.currency(locale: locale, symbol: currencySymbol).format(value);
+    return NumberFormat.currency(locale: locale, symbol: currencySymbol)
+        .format(value);
   }
 
   @override
@@ -109,7 +130,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
         actionWidget: [
           InkWell(
             onTap: () {
-               Navigator.of(context).pushAndRemoveUntil(
+              Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                       builder: (context) => Dashboard(initialPosition: 2)),
                   (route) => false);
@@ -128,11 +149,11 @@ class _LeaderboardViewState extends State<LeaderboardView> {
       body: BlocBuilder<LeaderboardBloc, LeaderboardState>(
         builder: (context, state) {
           if (state is LeaderboardLoading) {
-             return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (state is LeaderboardError) {
-             return Center(child: Text(state.message));
+            return Center(child: Text(state.message));
           } else if (state is LeaderboardLoaded) {
-             return _buildBody(state.leaderboard);
+            return _buildBody(state.leaderboard);
           }
           return const SizedBox.shrink();
         },
@@ -141,157 +162,160 @@ class _LeaderboardViewState extends State<LeaderboardView> {
   }
 
   Widget _buildBody(LeaderboardEntity leaderboard) {
-     return Padding(
-        padding: EdgeInsets.all(size.width * numD04),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: size.width * numD10,
+    return Padding(
+      padding: EdgeInsets.all(size.width * numD04),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: size.width * numD10,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: leaderboard.countryList.length,
+              itemBuilder: (context, index) {
+                var countryItem = leaderboard.countryList[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedCountryCode = countryItem.countryCode;
+                    });
+                    context
+                        .read<LeaderboardBloc>()
+                        .add(GetLeaderboard(selectedCountryCode));
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: size.width * numD03),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD03,
+                        vertical: size.width * numD015),
+                    decoration: BoxDecoration(
+                      color: selectedCountryCode == countryItem.countryCode
+                          ? colorThemePink
+                          : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(size.width * numD02),
+                    ),
+                    child: Center(
+                      child: Text(countryItem.country,
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color:
+                                  selectedCountryCode == countryItem.countryCode
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          if (leaderboard.memberList.isEmpty) ...[
+            Padding(
+              padding: EdgeInsets.only(top: size.height * numD30),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "No Member available in this Country",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+            )
+          ] else ...[
+            SizedBox(height: size.height * numD04),
+            LeadershipTableWidget(
+              memberList: leaderboard.memberList.take(3).toList(),
+            ),
+            SizedBox(height: size.height * numD04),
+            Text('${leaderboard.totalMember} total earning members',
+                style: commonTextStyle(
+                    size: size,
+                    fontSize: size.width * numD035,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500)),
+            Divider(
+              height: size.height * numD02,
+              thickness: 0.5,
+              color: Colors.black,
+            ),
+            Expanded(
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: leaderboard.countryList.length,
+                controller: _scrollController,
+                itemCount: leaderboard.memberList.length,
                 itemBuilder: (context, index) {
-                  var countryItem = leaderboard.countryList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCountryCode = countryItem.countryCode;
-                      });
-                      context.read<LeaderboardBloc>().add(GetLeaderboard(selectedCountryCode));
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: size.width * numD03),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD03,
-                          vertical: size.width * numD015),
-                      decoration: BoxDecoration(
-                        color: selectedCountryCode == countryItem.countryCode
-                            ? colorThemePink
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(size.width * numD02),
-                      ),
-                      child: Center(
-                        child: Text(countryItem.country,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD035,
-                                color: selectedCountryCode == countryItem.countryCode
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500)),
-                      ),
+                  var memberItem = leaderboard.memberList[index];
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: size.height * numD02),
+                    child: Row(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(
+                              size.width * numD01,
+                            ),
+                            height: size.width * numD15,
+                            width: size.width * numD15,
+                            child: ClipOval(
+                              clipBehavior: Clip.antiAlias,
+                              child: CachedNetworkImage(
+                                imageUrl: avatarImageUrl + memberItem.avatar,
+                                errorWidget: (context, url, error) {
+                                  return Image.asset(
+                                    "${commonImagePath}rabbitLogo.png",
+                                    height: size.width * numD06,
+                                    width: size.width * numD06,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                                fit: BoxFit.cover,
+                              ),
+                            )),
+                        SizedBox(width: size.width * numD03),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              memberItem.userName.toTitleCase(),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD04,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            SizedBox(height: size.height * numD005),
+                            Text(
+                              "Hopper since ${getFormattedDate(memberItem.createdAt)}",
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD032,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Text(
+                          formatCurrency(
+                              memberItem.totalEarnings, currencySymbol),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD04,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
                     ),
                   );
                 },
               ),
             ),
-             if (leaderboard.memberList.isEmpty) ...[
-                Padding(
-                  padding: EdgeInsets.only(top: size.height * numD30),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "No Member available in this Country",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                )
-              ] else ...[
-                 SizedBox(height: size.height * numD04),
-                 LeadershipTableWidget(
-                    memberList: leaderboard.memberList.take(3).toList(),
-                 ),
-                 SizedBox(height: size.height * numD04),
-                 Text(
-                    '${leaderboard.totalMember} total earning members',
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500)),
-                 Divider(
-                    height: size.height * numD02,
-                    thickness: 0.5,
-                    color: Colors.black,
-                 ),
-                 Expanded(
-                   child: ListView.builder(
-                     controller: _scrollController,
-                     itemCount: leaderboard.memberList.length,
-                     itemBuilder: (context, index) {
-                       var memberItem = leaderboard.memberList[index];
-                       return Padding(
-                         padding: EdgeInsets.only(bottom: size.height * numD02),
-                         child: Row(
-                           children: [
-                             Container(
-                                 padding: EdgeInsets.all(
-                                   size.width * numD01,
-                                 ),
-                                 height: size.width * numD15,
-                                 width: size.width * numD15,
-                                 child: ClipOval(
-                                   clipBehavior: Clip.antiAlias,
-                                   child: CachedNetworkImage(
-                                     imageUrl: avatarImageUrl + memberItem.avatar,
-                                     errorWidget: (context, url, error) {
-                                       return Image.asset(
-                                         "${commonImagePath}rabbitLogo.png",
-                                         height: size.width * numD06,
-                                         width: size.width * numD06,
-                                         fit: BoxFit.cover,
-                                       );
-                                     },
-                                     fit: BoxFit.cover,
-                                   ),
-                                 )),
-                             SizedBox(width: size.width * numD03),
-                             Column(
-                               crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                 Text(
-                                   memberItem.userName.toTitleCase(),
-                                   style: commonTextStyle(
-                                       size: size,
-                                       fontSize: size.width * numD04,
-                                       color: Colors.black,
-                                       fontWeight: FontWeight.w500),
-                                 ),
-                                 SizedBox(height: size.height * numD005),
-                                 Text(
-                                   "Hopper since ${getFormattedDate(memberItem.createdAt)}",
-                                   style: commonTextStyle(
-                                       size: size,
-                                       fontSize: size.width * numD032,
-                                       color: Colors.grey,
-                                       fontWeight: FontWeight.w400),
-                                 ),
-                               ],
-                             ),
-                             Spacer(),
-                             Text(
-                               formatCurrency(memberItem.totalEarnings, currencySymbol),
-                               style: commonTextStyle(
-                                   size: size,
-                                   fontSize: size.width * numD04,
-                                   color: Colors.black,
-                                   fontWeight: FontWeight.bold),
-                             )
-                           ],
-                         ),
-                       );
-                     },
-                   ),
-                 ),
-              ]
-          ],
-        ),
-     );
+          ]
+        ],
+      ),
+    );
   }
 }

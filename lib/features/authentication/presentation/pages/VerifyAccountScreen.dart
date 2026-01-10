@@ -60,7 +60,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
       if (diff.inSeconds > 0) {
         int minutesDiff = diff.inMinutes < 60 ? diff.inMinutes : 0;
         String secondsDiff = (diff.inSeconds % 60).toString().padLeft(2, '0');
-        String mDiff = minutesDiff < 10 ? "0$minutesDiff" : minutesDiff.toString();
+        String mDiff =
+            minutesDiff < 10 ? "0$minutesDiff" : minutesDiff.toString();
         setState(() {
           expireTimeValue = "$mDiff:$secondsDiff";
         });
@@ -82,30 +83,31 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
       child: BlocConsumer<VerificationBloc, VerificationState>(
         listener: (context, state) {
           if (state is VerificationError) {
-             showSnackBar("Error", state.message, Colors.red);
+            showSnackBar("Error", state.message, Colors.red);
           } else if (state is ResendOtpSuccess) {
-             showSnackBar("OTP Sent", state.message, Colors.green);
-             setState(() {
-               showResend = false;
-               expireTimeValue = "05:00";
-             });
-             startResendTime();
+            showSnackBar("OTP Sent", state.message, Colors.green);
+            setState(() {
+              showResend = false;
+              expireTimeValue = "05:00";
+            });
+            startResendTime();
           } else if (state is VerifyOtpSuccess) {
-             // OTP Verified, now Register
-             context.read<VerificationBloc>().add(RegistrationRequested(
-               params: widget.params ?? {},
-               isSocial: widget.sociallogin,
-               imagePath: widget.imagePath,
-             ));
+            // OTP Verified, now Register
+            context.read<VerificationBloc>().add(RegistrationRequested(
+                  params: widget.params ?? {},
+                  isSocial: widget.sociallogin,
+                  imagePath: widget.imagePath,
+                ));
           } else if (state is RegistrationSuccess) {
-             Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => WelcomeScreen(
                           hideLeading: false,
                           screenType: '',
-                          sourceDataIsOpened: state.isSourceDataOpened, 
+                          sourceDataIsOpened: state.isSourceDataOpened,
                           sourceDataType: state.sourceDataType,
-                          sourceDataUrl: "", // Assuming handled by WelcomeScreen or logic
+                          sourceDataUrl:
+                              "", // Assuming handled by WelcomeScreen or logic
                           sourceDataHeading: "",
                           sourceDataDescription: "",
                           isClick: false,
@@ -133,7 +135,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
             ),
             bottomNavigationBar: Container(
               margin: EdgeInsets.symmetric(
-                  horizontal: size.width * numD04, vertical: size.width * numD08),
+                  horizontal: size.width * numD04,
+                  vertical: size.width * numD08),
               width: size.width,
               height: size.width * numD13,
               child: commonElevatedButton(
@@ -146,16 +149,18 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                       fontWeight: FontWeight.w700),
                   commonButtonStyle(size, colorThemePink), () {
                 // Submit OTP
-                final otp = _otpPinFieldMobileController.currentState?.controller.text ?? "";
-                 if (otp.length < 4) {
-                    showSnackBar("Error", "Please enter valid OTP", Colors.red);
-                    return;
-                 }
+                final otp = _otpPinFieldMobileController
+                        .currentState?.controller.text ??
+                    "";
+                if (otp.length < 4) {
+                  showSnackBar("Error", "Please enter valid OTP", Colors.red);
+                  return;
+                }
                 context.read<VerificationBloc>().add(VerifyOtpSubmitted(
-                  phone: widget.countryCode + widget.mobileNumberValue,
-                  email: widget.emailAddressValue,
-                  otp: otp,
-                ));
+                      phone: widget.countryCode + widget.mobileNumberValue,
+                      email: widget.emailAddressValue,
+                      otp: otp,
+                    ));
               }),
             ),
             body: Stack(
@@ -164,7 +169,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                   child: Form(
                     child: ListView(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04, vertical: size.width * numD25),
+                          horizontal: size.width * numD04,
+                          vertical: size.width * numD25),
                       children: [
                         Text(
                           "Verify Your Mobile Number",
@@ -181,13 +187,15 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                             TextSpan(
                                 text: verifyMobileSubHeadingText,
                                 style: TextStyle(
-                                    color: Colors.black, fontSize: size.width * numD035)),
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035)),
                             WidgetSpan(
                                 child: SizedBox(
                               width: size.width * numD01,
                             )),
                             TextSpan(
-                                text: "${widget.countryCode}${widget.mobileNumberValue}",
+                                text:
+                                    "${widget.countryCode}${widget.mobileNumberValue}",
                                 style: TextStyle(
                                     color: colorThemePink,
                                     fontSize: size.width * numD035))
@@ -231,7 +239,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                             ),
                             Text("$otpExpireText $expireTimeValue $minutesText",
                                 style: TextStyle(
-                                    color: Colors.black, fontSize: size.width * numD035))
+                                    color: Colors.black,
+                                    fontSize: size.width * numD035))
                           ],
                         ),
                         SizedBox(
@@ -256,12 +265,18 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   if (showResend) {
-                                    context.read<VerificationBloc>().add(ResendOtpRequested({
-                                       "phone": widget.countryCode + widget.mobileNumberValue,
-                                       "email": widget.emailAddressValue,
-                                    }));
+                                    context
+                                        .read<VerificationBloc>()
+                                        .add(ResendOtpRequested({
+                                          "phone": widget.countryCode +
+                                              widget.mobileNumberValue,
+                                          "email": widget.emailAddressValue,
+                                        }));
                                   } else {
-                                     showSnackBar("Wait", "Please wait for timer to expire", Colors.black);
+                                    showSnackBar(
+                                        "Wait",
+                                        "Please wait for timer to expire",
+                                        Colors.black);
                                   }
                                 },
                             ),
@@ -279,14 +294,14 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                   ),
                 ),
                 if (state is VerificationLoading)
-                   Positioned.fill(
-                     child: Container(
-                       color: Colors.black26,
-                       child: const Center(
-                         child: CircularProgressIndicator(),
-                       ),
-                     ),
-                   ),
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black26,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
               ],
             ),
           );

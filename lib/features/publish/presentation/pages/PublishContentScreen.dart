@@ -125,7 +125,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
     try {
       await dio.download(fileSrcUrl, filePath);
       debugPrint("fileSrcUrl:::::$fileSrcUrl");
-      debugPrint("filePath::::${widget.publishData!.mediaList.length}");
+      // debugPrint("filePath::::${widget.publishData!.mediaList.length}");
 
       audioPath = filePath;
 
@@ -295,7 +295,19 @@ class PublishContentScreenState extends State<PublishContentScreen>
             if (state.selectedCategory != null) {
               selectedCategory = state.selectedCategory;
             } else if (categoryList.isNotEmpty && selectedCategory == null) {
-              selectedCategory = categoryList.first;
+              if (widget.hideDraft &&
+                  widget.myContentData != null &&
+                  widget.myContentData!.categoryId.isNotEmpty) {
+                try {
+                  selectedCategory = categoryList.firstWhere((element) =>
+                      element.id == widget.myContentData!.categoryId);
+                } catch (e) {
+                  selectedCategory = categoryList.first;
+                }
+              } else {
+                selectedCategory = categoryList.first;
+              }
+
               context
                   .read<PublishBloc>()
                   .add(SelectCategoryEvent(selectedCategory!.id));
@@ -3078,6 +3090,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
       }
       selectedSellType =
           widget.myContentData!.exclusive ? exclusiveText : sharedText;
+      if (widget.myContentData!.audioDuration.isNotEmpty) {
+        audioDuration = widget.myContentData!.audioDuration;
+      }
     } else {
       locationController.text = widget.publishData!.address;
       timestampController.text = widget.publishData!.date;
@@ -3194,9 +3209,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
     params = {
       "description": descriptionController.text.trim(),
-      "location": widget.publishData != null
-          ? widget.publishData!.address
-          : widget.myContentData!.location,
+      "location": locationController.text.isNotEmpty
+          ? locationController.text
+          : (widget.publishData != null
+              ? widget.publishData!.address
+              : widget.myContentData!.location),
       "latitude": widget.publishData != null
           ? widget.publishData!.latitude
           : widget.myContentData!.latitude,
@@ -3288,11 +3305,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
     log("AddContent Params: $params");
     log("AddContent URL: $addContentUrl");
 
+    Map<String, String> additionalFiles = {};
+    if (audioPath.isNotEmpty) {
+      additionalFiles["audio_description"] = audioPath;
+    }
+
     return await uploadMediaUsingDio(
       addContentUrl,
       params,
       filesPath,
       "images",
+      additionalFiles: additionalFiles,
     );
     // widget.hideDraft ? [] :
 

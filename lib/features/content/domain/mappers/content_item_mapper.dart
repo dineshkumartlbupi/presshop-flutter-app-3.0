@@ -18,20 +18,21 @@ extension ContentItemMapper on ContentItem {
       soldStatus: saleStatus ?? "",
       paidStatus: paidStatus ?? "",
       contentType: mediaType ?? "",
-      dateTime: createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      dateTime:
+          createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
       isPaidStatusToHopper: isPaidStatusToHopper,
       exclusive: isExclusive ?? false,
       showVideo: false,
       audioDescription: "",
-      
-      contentMediaList: mediaList.map((m) => ContentMediaData(
-        "", // id
-        m.mediaUrl,
-        m.mediaType,
-        m.thumbnailUrl ?? "",
-        m.watermarkUrl ?? ""
-      )).toList(), 
-
+      audioDuration: "",
+      contentMediaList: mediaList
+          .map((m) => ContentMediaData(
+              "", // id
+              m.mediaUrl,
+              m.mediaType,
+              m.thumbnailUrl ?? "",
+              m.watermarkUrl ?? ""))
+          .toList(),
       hashTagList: [],
       categoryData: null,
       completionPercent: "0",

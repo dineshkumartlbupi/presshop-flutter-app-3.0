@@ -55,16 +55,17 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
       create: (context) => sl<AuthBloc>(),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-           if (state is ResetPasswordSuccess) {
-             Navigator.pop(context); // Pop ResetPasswordScreen
-             Navigator.pop(context); // Pop ForgotPasswordScreen (to return to login)
-             showSnackBar(
+          if (state is ResetPasswordSuccess) {
+            Navigator.pop(context); // Pop ResetPasswordScreen
+            Navigator.pop(
+                context); // Pop ForgotPasswordScreen (to return to login)
+            showSnackBar(
                 "Password Updated!",
                 "Your password has been changed successfully!",
                 colorOnlineGreen);
-           } else if (state is AuthError) {
-             showSnackBar("Error", state.message, Colors.red);
-           }
+          } else if (state is AuthError) {
+            showSnackBar("Error", state.message, Colors.red);
+          }
         },
         child: Scaffold(
           appBar: CommonAppBar(
@@ -142,7 +143,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 : const AssetImage(
                                     "${iconsPath}ic_block_eye.png",
                                   ),
-                            color: !hidePassword ? colorTextFieldIcon : colorHint,
+                            color:
+                                !hidePassword ? colorTextFieldIcon : colorHint,
                           ),
                         ),
                         SizedBox(
@@ -251,8 +253,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               Text(
                                 "Contains at least 01 lowercase character",
                                 style: TextStyle(
-                                    color:
-                                        !showLowercase ? Colors.red : Colors.green,
+                                    color: !showLowercase
+                                        ? Colors.red
+                                        : Colors.green,
                                     fontSize: size.width * 0.03,
                                     fontWeight: FontWeight.w500),
                               )
@@ -303,8 +306,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               Text(
                                 "Contains at least 01 uppercase character",
                                 style: TextStyle(
-                                    color:
-                                        !showUppercase ? Colors.red : Colors.green,
+                                    color: !showUppercase
+                                        ? Colors.red
+                                        : Colors.green,
                                     fontSize: size.width * 0.03,
                                     fontWeight: FontWeight.w500),
                               )
@@ -326,7 +330,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               Text(
                                 "Must be at least 08 characters",
                                 style: TextStyle(
-                                    color: !showMincase ? Colors.red : Colors.green,
+                                    color: !showMincase
+                                        ? Colors.red
+                                        : Colors.green,
                                     fontSize: size.width * 0.03,
                                     fontWeight: FontWeight.w500),
                               )
@@ -359,8 +365,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ],
                   ),
                   SizedBox(
-                    height:
-                        passwordStrengthValue.isNotEmpty ? size.width * numD02 : 0,
+                    height: passwordStrengthValue.isNotEmpty
+                        ? size.width * numD02
+                        : 0,
                   ),
                   passwordStrengthValue.trim().isNotEmpty
                       ? Row(
@@ -370,7 +377,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             Text(
                               passwordStrengthText,
                               style: TextStyle(
-                                  color: colorHint, fontSize: size.width * numD04),
+                                  color: colorHint,
+                                  fontSize: size.width * numD04),
                             ),
                             Text(
                               passwordStrengthValue,
@@ -411,8 +419,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             : const AssetImage(
                                 "${iconsPath}ic_block_eye.png",
                               ),
-                        color:
-                            !hideConfirmPassword ? colorTextFieldIcon : colorHint,
+                        color: !hideConfirmPassword
+                            ? colorTextFieldIcon
+                            : colorHint,
                       ),
                     ),
                     hidePassword: hideConfirmPassword,
@@ -439,13 +448,15 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   Container(
                     width: size.width,
                     height: size.width * numD14,
-                    padding: EdgeInsets.symmetric(horizontal: size.width * numD08),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD08),
                     child: BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
-                         if (state is AuthLoading) {
-                           return const Center(child: CircularProgressIndicator());
-                         }
-                         return commonElevatedButton(
+                        if (state is AuthLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return commonElevatedButton(
                             submitText,
                             size,
                             commonTextStyle(
@@ -455,16 +466,16 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, colorThemePink), () {
                           if (formKey.currentState!.validate()) {
-                             context.read<AuthBloc>().add(ResetPasswordSubmitted(
-                               email: widget.emailAddressValue,
-                               password: passwordController.text.trim(),
-                             ));
+                            context.read<AuthBloc>().add(ResetPasswordSubmitted(
+                                  email: widget.emailAddressValue,
+                                  password: passwordController.text.trim(),
+                                ));
                           } else if (passwordController.text.isEmpty) {
-                            showSnackBar(
-                                'Error', "Please enter new password", Colors.red);
+                            showSnackBar('Error', "Please enter new password",
+                                Colors.red);
                           } else if (confirmPasswordController.text.isEmpty) {
-                            showSnackBar(
-                                'Error', "Please confirm new password", Colors.red);
+                            showSnackBar('Error', "Please confirm new password",
+                                Colors.red);
                           }
                         });
                       },

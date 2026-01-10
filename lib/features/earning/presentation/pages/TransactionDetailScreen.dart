@@ -262,7 +262,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               top: size.width * numD02,
                               child: Column(
                                 children: getMediaCount2(
-                                    widget.transactionData!.contentDataList.cast<ContentDataModel>().toList(),
+                                    widget.transactionData!.contentDataList
+                                        .cast<ContentDataModel>()
+                                        .toList(),
                                     size),
                               ),
                             ),
@@ -1125,7 +1127,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 top: size.width * numD02,
                                 child: Column(
                                   children: getMediaCount2(
-                                      widget.transactionData!.contentDataList.cast<ContentDataModel>().toList(),
+                                      widget.transactionData!.contentDataList
+                                          .cast<ContentDataModel>()
+                                          .toList(),
                                       size),
                                 ),
                               ),
