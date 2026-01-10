@@ -439,7 +439,7 @@ class FAQScreenState extends State<FAQScreen>
       'type': widget.type,
       'offset': _offset.toString(),
       'limit': '10',
-      'category': category,
+      'category': category.toLowerCase(),
     };
     NetworkClass(getAllCmsUrl, this, getAllCmsUrlRequest)
         .callRequestServiceHeader(true, "get", map);
@@ -605,9 +605,13 @@ class FAQPriceTipsData {
   bool selected = false;
 
   FAQPriceTipsData.fromJson(json) {
-    id = json["_id"] ?? '';
-    question = json["ques"] ?? "";
-    answer = json["ans"] ?? "";
-    category = json['category'] ?? "";
+    var data = json;
+    if (json['_doc'] != null) {
+      data = json['_doc'];
+    }
+    id = data["_id"]?.toString() ?? '';
+    question = data["ques"] ?? "";
+    answer = data["ans"] ?? "";
+    category = data['category'] ?? "";
   }
 }
