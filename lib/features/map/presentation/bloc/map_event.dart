@@ -59,3 +59,55 @@ class FetchNewsEvent extends MapEvent {
   @override
   List<Object> get props => [lat, lng, km, category];
 }
+
+class SetSearchedLocationEvent extends MapEvent {
+  final LatLng location;
+  const SetSearchedLocationEvent(this.location);
+  @override
+  List<Object> get props => [location];
+}
+
+class SetSelectedPositionEvent extends MapEvent {
+  final LatLng position;
+  const SetSelectedPositionEvent(this.position);
+  @override
+  List<Object> get props => [position];
+}
+
+class ToggleAlertPanelEvent extends MapEvent {}
+
+class ClearSelectedMarkerEvent extends MapEvent {}
+
+class ClearSelectedPolygonEvent extends MapEvent {}
+
+class UpdateFiltersEvent extends MapEvent {
+  final String? alertType;
+  final String? distance;
+  final String? category;
+
+  const UpdateFiltersEvent({this.alertType, this.distance, this.category});
+
+  @override
+  List<Object> get props => [alertType ?? '', distance ?? '', category ?? ''];
+}
+
+class AddAlertMarkerEvent extends MapEvent {
+  final String type;
+  final LatLng position;
+
+  const AddAlertMarkerEvent({required this.type, required this.position});
+
+  @override
+  List<Object> get props => [type, position];
+}
+
+class SetPreviewAlertMarkerEvent extends MapEvent {
+  final String type;
+  final LatLng position;
+
+  const SetPreviewAlertMarkerEvent(
+      {required this.type, required this.position});
+
+  @override
+  List<Object> get props => [type, position];
+}

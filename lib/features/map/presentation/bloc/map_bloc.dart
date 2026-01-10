@@ -33,6 +33,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<OnIncidentNewEvent>(_onIncidentNew);
     on<OnIncidentUpdatedEvent>(_onIncidentUpdated);
     on<FetchNewsEvent>(_onFetchNews);
+    on<SetSearchedLocationEvent>(_onSetSearchedLocation);
+    on<SetSelectedPositionEvent>(_onSetSelectedPosition);
+    on<ToggleAlertPanelEvent>(_onToggleAlertPanel);
+    on<ClearSelectedMarkerEvent>(_onClearSelectedMarker);
+    on<ClearSelectedPolygonEvent>(_onClearSelectedPolygon);
+    on<UpdateFiltersEvent>(_onUpdateFilters);
+    on<AddAlertMarkerEvent>(_onAddAlertMarker);
+    on<SetPreviewAlertMarkerEvent>(_onSetPreviewAlertMarker);
 
     _initSocket();
   }
@@ -196,5 +204,94 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       },
     );
+  }
+
+  void _onSetSearchedLocation(
+    SetSearchedLocationEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(searchedLocation: event.location));
+    add(FetchNewsEvent(
+      lat: event.location.latitude,
+      lng: event.location.longitude,
+      km: 10, // Default or from state
+      category: state.selectedCategory ?? 'all',
+    ));
+  }
+
+  void _onSetSelectedPosition(
+    SetSelectedPositionEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(selectedPosition: event.position));
+  }
+
+  void _onToggleAlertPanel(
+    ToggleAlertPanelEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(showAlertPanel: !state.showAlertPanel));
+  }
+
+  void _onClearSelectedMarker(
+    ClearSelectedMarkerEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+        clearSelectedPosition: true, clearSelectedIncident: true));
+  }
+
+  void _onClearSelectedPolygon(
+    ClearSelectedPolygonEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+        clearSelectedPolygonId: true, clearSelectedPolygonPosition: true));
+  }
+
+  void _onUpdateFilters(
+    UpdateFiltersEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedAlertType: event.alertType,
+      selectedDistance: event.distance,
+      selectedCategory: event.category,
+    ));
+    // Re-fetch news if filters change
+    if (state.myLocation != null) {
+      add(FetchNewsEvent(
+        lat: state.searchedLocation?.latitude ?? state.myLocation!.latitude,
+        lng: state.searchedLocation?.longitude ?? state.myLocation!.longitude,
+        km: double.tryParse(event.distance?.split(' ')[0] ?? '10') ?? 10,
+        category: event.category ?? 'all',
+      ));
+    }
+  }
+
+  Future<void> _onAddAlertMarker(
+    AddAlertMarkerEvent event,
+    Emitter<MapState> emit,
+  ) async {
+    // Logic to add alert marker
+    // This typically involves calling a service to create the marker icon and then updating state
+    // For now, we'll just add a basic marker
+    final marker = Marker(
+      markerId: MarkerId('alert_${DateTime.now().millisecondsSinceEpoch}'),
+      position: event.position,
+      infoWindow: InfoWindow(title: event.type),
+      // icon: ... // Need to generate icon
+    );
+    emit(state.copyWith(markers: {...state.markers, marker}));
+  }
+
+  void _onSetPreviewAlertMarker(
+    SetPreviewAlertMarkerEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      previewAlertType: event.type,
+      previewAlertPosition: event.position,
+    ));
   }
 }

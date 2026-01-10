@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/authentication/data/models/term_model.dart';
 
@@ -9,12 +10,14 @@ class TermsRepository {
 
   Future<TermsResponse> fetchTerms(String type) async {
     try {
+    debugPrint("Fetching terms with URL: $baseUrl$termConditionUrl?type=$type");
       final response = await dio.get(
         "$baseUrl$termConditionUrl",
         queryParameters: {
           "type": type,
         },
       );
+      debugPrint("Terms API Response: ${response.data}");
 
       if (response.statusCode == 200) {
         return TermsResponse.fromJson(response.data);
