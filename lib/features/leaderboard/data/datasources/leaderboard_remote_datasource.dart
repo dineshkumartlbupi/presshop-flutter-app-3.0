@@ -1,5 +1,6 @@
 import '../../../../core/api/api_client.dart';
 import '../../../../core/api/api_constant.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import '../models/leaderboard_model.dart';
 
 abstract class LeaderboardRemoteDataSource {
@@ -13,11 +14,15 @@ class LeaderboardRemoteDataSourceImpl implements LeaderboardRemoteDataSource {
 
   @override
   Future<LeaderboardModel> getLeaderboardData(String countryCode) async {
-    final response = await apiClient.get(
-      leadershipurl,
-      queryParameters: {'country': countryCode},
-    );
-    
-    return LeaderboardModel.fromJson(response.data);
+    try {
+      final response = await apiClient.get(
+        leadershipurl,
+        queryParameters: {'country': countryCode},
+      );
+      
+      return LeaderboardModel.fromJson(response.data);
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 }

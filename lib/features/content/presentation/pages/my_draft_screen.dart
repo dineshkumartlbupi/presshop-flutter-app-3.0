@@ -4,8 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/features/content/domain/mappers/content_item_mapper.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -38,8 +37,7 @@ class MyDraftScreen extends StatefulWidget {
   }
 }
 
-class MyDraftScreenState extends State<MyDraftScreen>
-    implements NetworkResponse {
+class MyDraftScreenState extends State<MyDraftScreen> {
   late Size size;
   List<MyContentData> myDraftList = [];
   String selectedSellType = sharedText;
@@ -784,13 +782,17 @@ class MyDraftScreenState extends State<MyDraftScreen>
 
   ///--------Apis Section------------
 
-  void myDraftApi() {
-    Map<String, String> params = {"is_draft": 'true'};
+  ///--------Apis Section------------
+
+  Future<void> myDraftApi() async {
+    Map<String, dynamic> params = {"is_draft": 'true'};
 
     int pos = sortList.indexWhere((element) => element.isSelected);
 
     if (pos != -1) {
-      myDraftList.clear();
+      if (offset == 0) {
+        myDraftList.clear();
+      }
       if (sortList[pos].name == filterDateText) {
         params["startdate"] = sortList[pos].fromDate!;
         params["endDate"] = sortList[pos].toDate!;
@@ -818,72 +820,59 @@ class MyDraftScreenState extends State<MyDraftScreen>
       }
     }
 
-    NetworkClass(myDraftUrl, this, myDraftUrlRequest)
-        .callRequestServiceHeader(true, "get", params);
+    try {
+      final response =
+          await sl<ApiClient>().get(myDraftUrl, queryParameters: params);
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        if (data is String) data = jsonDecode(data);
+        log("myDraftUrlRequest success: $data");
+        if (data != null) {
+          var listModel = (data["contentList"] ?? []) as List;
+          var list = listModel.map((e) => MyContentData.fromJson(e)).toList();
+          if (list.isNotEmpty) {
+            _refreshController.loadComplete();
+          } else if (list.isEmpty) {
+            _refreshController.loadNoData();
+          } else {
+            _refreshController.loadFailed();
+          }
+
+          if (offset == 0) {
+            myDraftList.clear();
+          }
+
+          myDraftList.addAll(list);
+        }
+        showData = true;
+        setState(() {});
+      } else {
+        _refreshController.loadFailed();
+        setState(() {
+          showData = true;
+        });
+      }
+    } catch (e) {
+      debugPrint("Exception::::::::$e");
+      _refreshController.loadFailed();
+      setState(() {
+        showData = true;
+      });
+    }
   }
 
-  updateDraftListAPI(String contentId) {
+  Future<void> updateDraftListAPI(String contentId) async {
     debugPrint("updateDraftListAPI contentId: $contentId");
     Map<String, String> map = {
       'content_id': contentId,
     };
 
-    NetworkClass.fromNetworkClass(
-            removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map)
-        .callRequestServiceHeader(true, "patch", null, isJson: true);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
     try {
-      switch (requestCode) {
-        case myContentUrlRequest:
-          debugPrint("myContentError: $response");
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case myDraftUrlRequest:
-          try {
-            var data = jsonDecode(response);
-            log("myDraftUrlRequest success: $data");
-            if (data != null) {
-              var listModel = data["data"] as List;
-              var list =
-                  listModel.map((e) => MyContentData.fromJson(e)).toList();
-              if (list.isNotEmpty) {
-                _refreshController.loadComplete();
-              } else if (list.isEmpty) {
-                _refreshController.loadNoData();
-              } else {
-                _refreshController.loadFailed();
-              }
-
-              if (offset == 0) {
-                myDraftList.clear();
-              }
-
-              myDraftList.addAll(list);
-            }
-            showData = true;
-            setState(() {});
-          } catch (e) {
-            debugPrint("Exception::::::::$e");
-          }
-
-          break;
-
-        case reqRemoveFromDraftContentAPI:
-          log("reqRemoveFromDraftContentAPI===> ${jsonDecode(response)}");
-      }
-    } on Exception catch (e) {
+      final response =
+          await sl<ApiClient>().patch(removeFromDraftContentAPI, data: map);
+      log("reqRemoveFromDraftContentAPI===> ${response.data}");
+    } catch (e) {
       debugPrint("ApiError::::$e");
     }
   }

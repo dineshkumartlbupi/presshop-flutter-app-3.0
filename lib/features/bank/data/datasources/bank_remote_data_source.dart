@@ -1,6 +1,7 @@
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/bank/data/models/bank_detail_model.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/failures.dart';
 
 abstract class BankRemoteDataSource {
@@ -29,7 +30,7 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load banks');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -42,7 +43,7 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to delete bank');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -60,7 +61,7 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to update bank');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -81,7 +82,7 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to generate stripe link');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -37,7 +38,18 @@ class ApiClient {
 
   Future<void> _onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = await _secureStorage.read(key: tokenKey);
+    String? token = await _secureStorage.read(key: tokenKey);
+
+    /// Fallback to SharedPreferences if SecureStorage fails (common on some Android versions)
+    if (token == null || token.isEmpty) {
+      token = _sharedPreferences.getString(tokenKey);
+      if (token != null && token.isNotEmpty) {
+        debugPrint("DEBUG: ApiClient Token retrieved from SharedPreferences");
+        // Sync back to SecureStorage if it was empty
+        await _secureStorage.write(key: tokenKey, value: token);
+      }
+    }
+
     final deviceId = _sharedPreferences.getString(deviceIdKey) ?? "";
 
     if (token != null && token.isNotEmpty) {
@@ -60,31 +72,37 @@ class ApiClient {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.response != null &&
-        (err.response!.statusCode == 502 ||
-            err.response!.statusCode == 503 ||
-            err.response!.statusCode == 404 ||
-            err.response!.statusCode == 504)) {
-      final customError = DioException(
-        requestOptions: err.requestOptions,
-        response: err.response,
-        type: err.type,
-        error: "Server is currently down. Please try again later.",
-        message: "Server is currently down. Please try again later.",
-      );
-      handler.next(customError);
-      return;
-    }
-
-    if (err.response?.statusCode == 401) {
+    if (ApiErrorHandler.isUnauthenticated(err)) {
       /// Token refresh logic
       if (err.requestOptions.path.contains(appRefreshTokenUrl)) {
-        handler.next(err);
+        final failure = ApiErrorHandler.handle(err);
+        final sanitized = DioException(
+          requestOptions: err.requestOptions,
+          response: err.response,
+          type: err.type,
+          error: failure.message,
+          message: failure.message,
+        );
+        handler.next(sanitized);
         return;
       }
 
-      final refreshToken = await _secureStorage.read(key: refreshtokenKey);
-      final accessToken = await _secureStorage.read(key: tokenKey) ?? "";
+      String? refreshToken = await _secureStorage.read(key: refreshtokenKey);
+
+      /// Fallback for Refresh Token
+      if (refreshToken == null || refreshToken.isEmpty) {
+        refreshToken = _sharedPreferences.getString(refreshtokenKey);
+        if (refreshToken != null && refreshToken.isNotEmpty) {
+          debugPrint(
+              "DEBUG: ApiClient Refresh Token retrieved from SharedPreferences");
+          await _secureStorage.write(key: refreshtokenKey, value: refreshToken);
+        }
+      }
+
+      String? accessToken = await _secureStorage.read(key: tokenKey);
+      if (accessToken == null || accessToken.isEmpty) {
+        accessToken = _sharedPreferences.getString(tokenKey) ?? "";
+      }
 
       if (refreshToken != null && refreshToken.isNotEmpty) {
         try {
@@ -115,13 +133,11 @@ class ApiClient {
                 data["data"] != null &&
                 data["data"]["access_token"] != null &&
                 data["data"]["refresh_token"] != null) {
-              // 1. Delete old access token
-              // 2. Delete old refresh token
+              // 1. Delete old tokens
               await _secureStorage.delete(key: tokenKey);
               await _secureStorage.delete(key: refreshtokenKey);
 
-              // 3. Save NEW access token
-              // 4. Save NEW refresh token
+              // 2. Save NEW tokens
               final newAccessToken = data["data"]["access_token"];
               final newRefreshToken = data["data"]["refresh_token"];
 
@@ -129,7 +145,7 @@ class ApiClient {
               await _secureStorage.write(
                   key: refreshtokenKey, value: newRefreshToken);
 
-              // Also update SharedPreferences to stay in sync
+              // 3. Update SharedPreferences to stay in sync
               await _sharedPreferences.setString(tokenKey, newAccessToken);
               await _sharedPreferences.setString(
                   refreshtokenKey, newRefreshToken);
@@ -171,7 +187,18 @@ class ApiClient {
       }
     }
     _printCurlCommand(err.requestOptions);
-    handler.next(err);
+    
+    // Use ApiErrorHandler to sanitize the error before passing it up
+    final failure = ApiErrorHandler.handle(err);
+    final sanitizedError = DioException(
+      requestOptions: err.requestOptions,
+      response: err.response,
+      type: err.type,
+      error: failure.message,
+      message: failure.message,
+    );
+    
+    handler.next(sanitizedError);
   }
 
   void _printCurlCommand(RequestOptions options) {
@@ -203,11 +230,12 @@ class ApiClient {
   }
 
   Future<void> _clearSession() async {
-    debugPrint("🧹 Clearing User Session...");
-    await _secureStorage.deleteAll();
-    await _sharedPreferences.clear();
-    // Note: Navigation to login screen should be handled by the UI observing the auth state
-    // or by the user restarting the app if hot restart is needed.
+    debugPrint("🧹 Clearing User Session (ApiClient)...");
+    await _secureStorage.delete(key: tokenKey);
+    await _secureStorage.delete(key: refreshtokenKey);
+    await _sharedPreferences.remove(tokenKey);
+    await _sharedPreferences.remove(refreshtokenKey);
+    await _sharedPreferences.remove(rememberKey);
   }
 
   Future<Response> get(
@@ -222,26 +250,56 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    return _dio.post(path,
-        data: data, queryParameters: queryParameters, options: options);
+    return _dio.post(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 
   Future<Response> put(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    Options? options,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    return _dio.put(path, data: data, queryParameters: queryParameters);
+    return _dio.put(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 
   Future<Response> patch(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    Options? options,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    return _dio.patch(path, data: data, queryParameters: queryParameters);
+    return _dio.patch(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
+
+
 
   Future<Response> delete(
     String path, {

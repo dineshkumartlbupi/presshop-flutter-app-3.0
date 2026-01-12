@@ -131,7 +131,7 @@ class DashboardState extends State<Dashboard>
   @override
   void initState() {
     _dashboardBloc = sl<DashboardBloc>();
-    setIsClickForBeansActivation();
+    myProfileApi();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
@@ -219,6 +219,8 @@ class DashboardState extends State<Dashboard>
       Future.delayed(const Duration(seconds: 2), () {
         setIsClickForBeansActivation();
       });
+    } else {
+      _dashboardBloc.add(DashboardCheckStudentBeansEvent());
     }
     super.initState();
   }
@@ -638,29 +640,21 @@ class DashboardState extends State<Dashboard>
                     !_studentBeansCompleter!.isCompleted) {
                   _studentBeansCompleter!.complete(studentBeansResponseUrl);
                 }
-              } else if (state is DashboardMyProfileLoaded) {
-                var user = (state as DashboardMyProfileLoaded).user;
-                var mapSource = user.source;
-
-                if (user.avatar != null && user.avatar!.isNotEmpty) {
-                  sharedPreferences!.setString(avatarKey, user.avatar!);
-                }
-
-                final src1 = mapSource;
-                final sourceDataIsOpened = src1?["is_opened"] ?? false;
-                final sourceDataType = src1?["type"] ?? "";
-                final sourceDataHeading = src1?["heading"] ?? "";
-                final sourceDataDescription = src1?["description"] ?? "";
-                final isClick = src1?["is_clicked"] ?? false;
-
-                if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
-                    (sourceDataIsOpened == false) &&
-                    isClick == false) {
+              } else if (state is DashboardStudentBeansInfoLoaded) {
+                final info = state.info;
+                if (info.shouldShow) {
                   final size =
                       MediaQuery.of(navigatorKey.currentState!.context).size;
                   _showForceUpdateDialog(size,
-                      sourceDataHeading: sourceDataHeading,
-                      sourceDataDescription: sourceDataDescription);
+                      sourceDataHeading: info.heading,
+                      sourceDataDescription: info.description);
+                }
+              } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
+                // Visited state updated on server
+              } else if (state is DashboardMyProfileLoaded) {
+                var user = (state as DashboardMyProfileLoaded).user;
+                if (user.avatar != null && user.avatar!.isNotEmpty) {
+                  sharedPreferences!.setString(avatarKey, user.avatar!);
                 }
                 setState(() {});
               } else if (state is DashboardTabChanged) {
@@ -1108,6 +1102,7 @@ class DashboardState extends State<Dashboard>
         await launchUrl(uri, mode: LaunchMode.externalApplication);
         sharedPreferences!.setBool(sourceDataIsClickKey, true);
         sharedPreferences!.setBool(sourceDataIsOpenedKey, true);
+        _dashboardBloc.add(DashboardMarkStudentBeansVisitedEvent());
       } else {
         debugPrint("Could not launch URL: $url");
       }

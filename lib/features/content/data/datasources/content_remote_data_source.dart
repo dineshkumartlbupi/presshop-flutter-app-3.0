@@ -7,6 +7,7 @@ import '../models/hashtag_model.dart';
 import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 
 abstract class ContentRemoteDataSource {
   Future<List<ContentItemModel>> getMyContent(
@@ -58,7 +59,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load content');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -96,7 +97,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Publish failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -135,7 +136,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Save draft failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -156,7 +157,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Update failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -174,7 +175,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Delete failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -201,7 +202,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Upload failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -223,7 +224,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       return [];
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -242,7 +243,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       return [];
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -262,7 +263,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load content');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -288,7 +289,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load offers');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -316,7 +317,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load transactions');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

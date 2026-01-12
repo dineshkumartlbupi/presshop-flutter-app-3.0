@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/admin_detail.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/dashboard/domain/entities/student_beans_info.dart';
 import '../../../authentication/domain/entities/user.dart';
 
 abstract class DashboardState extends Equatable {
@@ -89,3 +90,15 @@ class DashboardError extends DashboardState {
   @override
   List<Object> get props => [message];
 }
+
+class DashboardStudentBeansInfoLoaded extends DashboardState {
+  final StudentBeansInfo info;
+
+  const DashboardStudentBeansInfoLoaded(this.info);
+
+  @override
+  List<Object> get props => [info];
+}
+
+class DashboardMarkStudentBeansVisitedLoaded extends DashboardState {}
+

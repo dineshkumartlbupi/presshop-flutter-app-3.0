@@ -24,12 +24,13 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.login(username, password);
+        debugPrint("✅ AuthRepository: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
         await localDataSource.cacheToken(remoteUser.token ?? ""); // Cache token
         if (remoteUser.refreshToken != null) {
-          print("✅ Caching Refresh Token: ${remoteUser.refreshToken}");
+          debugPrint("✅ AuthRepository: Received Refresh Token: ${remoteUser.refreshToken?.substring(0, (remoteUser.refreshToken?.length ?? 0) > 10 ? 10 : (remoteUser.refreshToken?.length ?? 0))}...");
           await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
         } else {
-          print("❌ Refresh Token is NULL from Remote Data Source");
+          debugPrint("❌ AuthRepository: Refresh Token is NULL from Remote Data Source");
         }
         await localDataSource.setRememberMe(
             true); // Auto remember on explicit login? Or UI checkbox?
@@ -90,8 +91,10 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.register(data);
+        debugPrint("✅ AuthRepository: Register Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
         await localDataSource.cacheToken(remoteUser.token ?? "");
         if (remoteUser.refreshToken != null) {
+          debugPrint("✅ AuthRepository: Received Refresh Token: ${remoteUser.refreshToken?.substring(0, (remoteUser.refreshToken?.length ?? 0) > 10 ? 10 : (remoteUser.refreshToken?.length ?? 0))}...");
           await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
         }
         await localDataSource.setRememberMe(true);
@@ -165,11 +168,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, bool>> checkAuthStatus() async {
     try {
-      // Logic: Check if token exists and rememberMe is true.
-      // Ideally we should also validate the token with backend, but getProfile does that.
-      // Here we just check local state for Splash speed
       final rememberMe = await localDataSource.getRememberMe();
       final token = await localDataSource.getToken();
+
+      debugPrint("🔍 AuthRepository: Checking Auth Status...");
+      debugPrint("🔍 AuthRepository: RememberMe: $rememberMe");
+      debugPrint("🔍 AuthRepository: Token exists: ${token != null && token.isNotEmpty}");
 
       if (rememberMe && token != null && token.isNotEmpty) {
         return const Right(true);
@@ -177,6 +181,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Right(false);
       }
     } catch (e) {
+      debugPrint("❌ AuthRepository: Error in checkAuthStatus: $e");
       return Left(CacheFailure(message: e.toString()));
     }
   }

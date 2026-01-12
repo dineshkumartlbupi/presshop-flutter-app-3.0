@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/utils/shared_preferences.dart'; // Using existing keys
@@ -28,13 +29,28 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> cacheToken(String token) async {
+    debugPrint("💾 AuthLocalDataSource: Caching Token: ${token.substring(0, (token.length > 10 ? 10 : token.length))}...");
     await secureStorage.write(key: tokenKey, value: token);
     await sharedPreferences.setString(tokenKey, token);
+    debugPrint("✅ AuthLocalDataSource: Token Cached in SecureStorage and SharedPreferences");
   }
 
   @override
   Future<String?> getToken() async {
-    return await secureStorage.read(key: tokenKey);
+    debugPrint("🔍 AuthLocalDataSource: Retrieving Token...");
+    String? token = await secureStorage.read(key: tokenKey);
+    if (token == null || token.isEmpty) {
+      debugPrint("⚠️ AuthLocalDataSource: Token not found in SecureStorage, checking SharedPreferences...");
+      token = sharedPreferences.getString(tokenKey);
+      if (token != null && token.isNotEmpty) {
+        debugPrint("✅ AuthLocalDataSource: Token found in SharedPreferences");
+      } else {
+        debugPrint("❌ AuthLocalDataSource: Token NOT found in SharedPreferences");
+      }
+    } else {
+      debugPrint("✅ AuthLocalDataSource: Token found in SecureStorage");
+    }
+    return token;
   }
 
   @override
@@ -66,17 +82,25 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> clearCache() async {
+    debugPrint("⚠️ AuthLocalDataSource: Clearing Auth Cache...");
     await secureStorage.delete(key: tokenKey);
-    await sharedPreferences.clear();
+    await secureStorage.delete(key: refreshtokenKey);
+    await sharedPreferences.remove(tokenKey);
+    await sharedPreferences.remove(refreshtokenKey);
+    await sharedPreferences.remove(rememberKey);
+    debugPrint("✅ AuthLocalDataSource: Auth Cache Cleared");
   }
 
   @override
   Future<bool> getRememberMe() async {
-    return sharedPreferences.getBool(rememberKey) ?? false;
+    final val = sharedPreferences.getBool(rememberKey) ?? false;
+    debugPrint("🔍 AuthLocalDataSource: Getting RememberMe: $val");
+    return val;
   }
 
   @override
   Future<void> setRememberMe(bool value) async {
+    debugPrint("💾 AuthLocalDataSource: Setting RememberMe: $value");
     await sharedPreferences.setBool(rememberKey, value);
   }
 
@@ -97,13 +121,18 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> cacheRefreshToken(String token) async {
-    print(
-        "🔐 AuthLocalDataSource: Writing Refresh Token to Secure Storage: $token");
+    debugPrint("💾 AuthLocalDataSource: Caching Refresh Token: ${token.substring(0, (token.length > 10 ? 10 : token.length))}...");
     await secureStorage.write(key: refreshtokenKey, value: token);
+    await sharedPreferences.setString(refreshtokenKey, token);
+    debugPrint("✅ AuthLocalDataSource: Refresh Token Cached in SecureStorage and SharedPreferences");
   }
 
   @override
   Future<String?> getRefreshToken() async {
-    return await secureStorage.read(key: refreshtokenKey);
+    String? token = await secureStorage.read(key: refreshtokenKey);
+    if (token == null || token.isEmpty) {
+      token = sharedPreferences.getString(refreshtokenKey);
+    }
+    return token;
   }
 }

@@ -18,7 +18,6 @@ import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:record/record.dart';
@@ -30,10 +29,10 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'SqliteDataBase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
@@ -56,13 +55,14 @@ class _ConversationScreenState extends State<ConversationScreen>
     with
         SingleTickerProviderStateMixin,
         WidgetsBindingObserver,
-        AnalyticsPageMixin
-    implements NetworkResponse {
+        AnalyticsPageMixin {
   // Analytics Mixin Requirements
   @override
   String get pageName => PageNames.conversationScreen;
 
   late Size size;
+  
+  final ApiClient _apiClient = sl<ApiClient>();
 
   final swipeLeftKey = GlobalKey<ScaffoldState>();
   TextEditingController messageController = TextEditingController();
@@ -3180,9 +3180,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
     if (isFirstTime) {
       isFirstTime = false;
-      NetworkClass.fromNetworkClass(
-              sendchatInitToAdminUrl, this, sendchatInitToAdminReq, {})
-          .callRequestServiceHeader(false, "post", null);
+      _apiClient.post(sendchatInitToAdminUrl, data: {});
     }
 
     _chatBloc.add(SendMessageEvent(
@@ -3662,7 +3660,8 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   ///custom
-  void callCustomNotificationApi(String type) {
+  ///custom
+  Future<void> callCustomNotificationApi(String type) async {
     Map<String, String> map = {
       'sender_id': _senderId,
       'receiver_id': _receiverId,
@@ -3670,13 +3669,17 @@ class _ConversationScreenState extends State<ConversationScreen>
       'body': type == 'text' ? messageController.text : type,
     };
     debugPrint('map: $map');
-    NetworkClass.fromNetworkClass(
-            sendPushNotificationAPI, this, reqSendPushNotificationAPI, map)
-        .callRequestServiceHeader(false, "post", null);
+    
+    try {
+        final response = await _apiClient.post(sendPushNotificationAPI, data: map);
+        debugPrint("sendNotification success : ${response.data}");
+    } catch (e) {
+        debugPrint("sendNotification Error : $e");
+    }
   }
 
   /// Get Room Id
-  void callGetRoomIdApi() {
+  Future<void> callGetRoomIdApi() async {
     Map<String, String> map = {
       "receiver_id": _receiverId,
       "room_type": "HoppertoAdmin",
@@ -3684,45 +3687,19 @@ class _ConversationScreenState extends State<ConversationScreen>
 
     debugPrint("Map : $map");
 
-    NetworkClass.fromNetworkClass(getRoomIdUrl, this, getRoomIdReq, map)
-        .callRequestServiceHeader(false, "post", null);
-  }
-
-  @override
-  void onError({Key? key, required int requestCode, required String response}) {
-    switch (requestCode) {
-      /// Get Room Id
-      case getRoomIdReq:
-        var data = jsonDecode(response);
-        debugPrint("getRoomIdReq Error : $data");
-        break;
-      case reqSendPushNotificationAPI:
-        var data = jsonDecode(response);
-        debugPrint("sendNotification Error : $data");
-        break;
-    }
-  }
-
-  @override
-  void onResponse(
-      {Key? key, required int requestCode, required String response}) {
-    switch (requestCode) {
-      /// Get Room Id
-      case getRoomIdReq:
-        var data = jsonDecode(response);
-        debugPrint("getRoomIdReq Success : $data");
-        if (data["details"] != null) {
+    try {
+      final response = await _apiClient.post(getRoomIdUrl, data: map);
+      debugPrint("getRoomIdReq Success : ${response.data}");
+      var data = response.data;
+      if (data["details"] != null) {
           roomId = data["details"]["room_id"] ?? "";
 
           sharedPreferences!.setString(adminRoomIdKey, roomId);
           debugPrint("Room Id : $roomId");
           _initializeData();
         }
-        break;
-      case reqSendPushNotificationAPI:
-        var data = jsonDecode(response);
-        debugPrint("sendNotification success : $data");
-        break;
+    } catch (e) {
+       debugPrint("getRoomIdReq Error : $e");
     }
   }
 }

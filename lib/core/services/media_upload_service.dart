@@ -9,6 +9,8 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/api/api_client.dart';
 
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
@@ -22,14 +24,8 @@ class MediaUploadService {
   }) async {
     await WakelockPlus.enable();
 
-    Dio dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 60),
-        receiveTimeout: const Duration(seconds: 60),
-        sendTimeout: const Duration(seconds: 120),
-      ),
-    );
+    // Use ApiClient from DI
+    final apiClient = sl<ApiClient>();
 
     FormData formData = FormData();
 
@@ -63,17 +59,6 @@ class MediaUploadService {
       }
     }
 
-    // Add authorization header
-    if (sharedPreferences!.getString(tokenKey) != null) {
-      String token = sharedPreferences!.getString(tokenKey)!;
-      debugPrint("DEBUG: Upload Token: $token");
-      dio.options.headers = {
-        "Authorization": "Bearer $token",
-      };
-    } else {
-      debugPrint("DEBUG: Upload Token is NULL");
-    }
-
     // Add JSON body fields
     if (jsonBody != null && jsonBody.isNotEmpty) {
       jsonBody.forEach((key, value) {
@@ -84,16 +69,22 @@ class MediaUploadService {
     try {
       log("Upload started: ${DateTime.now()}");
       debugPrint("Upload URL: ${baseUrl + endUrl}");
-      debugPrint("Upload Headers: ${dio.options.headers}");
+      // debugPrint("Upload Headers: ${dio.options.headers}"); // Headers handled by ApiClient
       debugPrint(
           "Upload Files: ${formData.files.map((e) => e.key + ": " + e.value.filename.toString()).toList()}");
 
-      Response response = await dio.post(
-        baseUrl + endUrl,
+      // Use ApiClient.post with custom timeouts via Options if needed, though ApiClient has defaults.
+      // If stricter timeouts needed, pass Options.
+      Response response = await apiClient.post(
+        endUrl,
         data: formData,
         onSendProgress: (int sent, int total) {
           _handleUploadProgress(sent, total, jsonBody);
         },
+        options: Options(
+          sendTimeout: const Duration(minutes: 5), // Extended timeout for media
+          receiveTimeout: const Duration(minutes: 5),
+        ),
       );
 
       debugPrint("Upload completed: ${response.data}");

@@ -1307,10 +1307,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
   ///--------Apis Section------------
 
-  // void taskDetailApi() {
-  //   NetworkClass("$taskDetailUrl${widget.taskId}", this, taskDetailUrlRequest)
-  //       .callRequestServiceHeader(false, "get", null);
-  // }
+
 
   void getEstimateTime() {
     debugPrint("::: Inside estimate Time Fuc ::::");
@@ -1395,122 +1392,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     // This is now handled via Bloc event in listener or init
   }
 
-  @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        /// Get Hopper Accepted List
-        case getHopperAcceptedCountReq:
-          {
-            var data = jsonDecode(response);
-            debugPrint("getHopperAcceptedCountReq Error : $data");
-            showSnackBar("Error", data.toString(), Colors.red);
-            break;
-          }
 
-        /// Get Room Id
-        case getRoomIdReq:
-          {
-            var data = jsonDecode(response);
-            debugPrint("getRoomIdReq Error : $data");
-            showSnackBar("Error", data.toString(), Colors.red);
-            break;
-          }
 
-        case taskDetailUrlRequest:
-          debugPrint("BroadcastedData::::Error");
-          break;
 
-        /// Task Accept Reject
-        case taskAcceptRejectRequestReq:
-          {
-            var data = jsonDecode(response);
-            debugPrint("taskAcceptRejectRequestReq Success : $data");
-            if (data != null && data['data'] != null) {
-              showSnackBar("Error", data['data'].toString(), Colors.red);
-            } else {
-              showSnackBar("Error", data.toString(), Colors.red);
-            }
-            break;
-          }
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        /// Get Hopper Accepted List
-        case getHopperAcceptedCountReq:
-          var data = jsonDecode(response);
-          debugPrint("getHopperAcceptedCountReq Success : $data");
-          _hopperAcceptedCount = (data["count"] ?? "0").toString();
-          /*  _hopperCountTimer = Timer(
-              const Duration(seconds: 10), () => callGetHopperAcceptedCount());*/
-          break;
-
-        /// Get Room Id
-        case getRoomIdReq:
-          var data = jsonDecode(response);
-          debugPrint("getRoomIdReq Success : $data");
-          //  openUrl();
-          Navigator.pushAndRemoveUntil(
-              navigatorKey.currentState!.context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Dashboard(initialPosition: 1, taskStatus: "accepted")),
-              (route) => false);
-          break;
-
-        /// Task Accept Reject
-        case taskAcceptRejectRequestReq:
-          var data = jsonDecode(response);
-          debugPrint("taskAcceptRejectRequestReq Success : $data");
-          debugPrint("taskStatus ========> $_isAccepted");
-          if (_isAccepted) {
-            debugPrint("taskStatus true ========> $_isAccepted");
-            callGetRoomIdApi();
-            showSnackBar("Accepted", "You have successfully accepted the task!",
-                Colors.green);
-          } else {
-            var taskStatusValue = data['data']['task_status'].toString();
-            debugPrint("taskStatus false========> $_isAccepted");
-
-            Navigator.pushAndRemoveUntil(
-                navigatorKey.currentState!.context,
-                MaterialPageRoute(
-                    builder: (context) => Dashboard(
-                        initialPosition: 1, taskStatus: taskStatusValue)),
-                (route) => false);
-          }
-          break;
-
-        case taskDetailUrlRequest:
-          debugPrint("BroadcastedData::::Success:  $response");
-
-          var map = jsonDecode(response);
-          if (map["code"] == 200 && map["task"] != null) {
-            // broadCastedData = BroadcastedData.fromJson(map["task"]); // This line is removed as broadCastedData is no longer used directly
-            taskDetail = TaskDetailModel.fromJson(map["task"] ?? {});
-            callGetHopperAcceptedCount();
-            if (_latLng != null) {
-              getEstimateTime();
-            }
-            _updateGoogleMap(
-                LatLng(taskDetail!.latitude, taskDetail!.longitude));
-            // Future.delayed(const Duration(seconds: 5),()=>_updateGoogleMap(LatLng(broadcastedData!.latitude, broadcastedData!.longitude)));
-          }
-          setState(() {});
-
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
 
   @override
   // TODO: implement pageName

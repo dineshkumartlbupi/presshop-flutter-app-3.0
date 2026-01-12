@@ -4,7 +4,7 @@ import 'package:location/location.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/api/network_response.dart';
+
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 class LocationErrorScreen extends StatefulWidget {
@@ -14,8 +14,7 @@ class LocationErrorScreen extends StatefulWidget {
   _LocationErrorScreenState createState() => _LocationErrorScreenState();
 }
 
-class _LocationErrorScreenState extends State<LocationErrorScreen>
-    implements NetworkResponse {
+class _LocationErrorScreenState extends State<LocationErrorScreen> {
   double latitude = 22.5744, longitude = 88.3629;
   late LocationService _locationService;
   bool isFetchingLocation =
@@ -178,13 +177,5 @@ class _LocationErrorScreenState extends State<LocationErrorScreen>
     );
   }
 
-  @override
-  void onError({required int requestCode, required String response}) {
-    // TODO: implement onError
-  }
 
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    // TODO: implement onResponse
-  }
 }

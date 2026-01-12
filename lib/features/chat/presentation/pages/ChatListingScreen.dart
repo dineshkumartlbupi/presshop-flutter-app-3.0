@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 const int getAdminListReq = 1;
@@ -25,8 +24,7 @@ class ChatListingScreen extends StatefulWidget {
 }
 
 class _ChatListingScreenState extends State<ChatListingScreen>
-    with AnalyticsPageMixin
-    implements NetworkResponse {
+    with AnalyticsPageMixin {
   late Size size;
 
   final TextEditingController _searchController = TextEditingController();
@@ -38,6 +36,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
   String userName = "";
   String userProfileImage = "";
   bool isOnline = false;
+
+  final ApiClient _apiClient = sl<ApiClient>();
 
   @override
   void initState() {
@@ -56,7 +56,9 @@ class _ChatListingScreenState extends State<ChatListingScreen>
     debugPrint("userId:::$userId");
     getOnlineUsersList();
     adminIDList = [];
-    setState(() {});
+    if(mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -129,69 +131,6 @@ class _ChatListingScreenState extends State<ChatListingScreen>
             ),
             allChatList(context, size),
             chatListingWidget(presshopText),
-            /*Padding(
-              padding: EdgeInsets.only(top: size.width * numD05),
-              child: Text(
-                chatWithPublicationsText.toUpperCase(),
-                style: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * numD035,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-            SizedBox(
-              height: size.width * numD04,
-            ),
-            Row(
-              children: [
-                Expanded(
-                    child: SizedBox(
-                  height: size.width * numD12,
-                  child: commonElevatedButton(
-                      contentsText,
-                      size,
-                      commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD04,
-                          color: _chatPubIndex == 0 ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w500),
-                      commonButtonStyle(size,
-                          _chatPubIndex == 0 ? Colors.black : colorLightGrey),
-                      () {
-                    setState(() {
-                      _chatPubIndex = 0;
-                    });
-                  }),
-                )),
-                SizedBox(
-                  width: size.width * numD04,
-                ),
-                Expanded(
-                    child: SizedBox(
-                  height: size.width * numD12,
-                  child: commonElevatedButton(
-                      "${taskText}s",
-                      size,
-                      commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD04,
-                          color: _chatPubIndex == 1 ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w500),
-                      commonButtonStyle(size,
-                          _chatPubIndex == 1 ? Colors.black : colorLightGrey),
-                      () {
-                    setState(() {
-                      _chatPubIndex = 1;
-                    });
-                  }),
-                )),
-              ],
-            ),
-            SizedBox(
-              height: size.width * numD03,
-            ),
-            chatListingWidget("Publication"),*/
           ],
         ),
       ),
@@ -261,15 +200,6 @@ class _ChatListingScreenState extends State<ChatListingScreen>
         return InkWell(
           onTap: () {
             debugPrint("converstatio screen ======> ");
-            /* Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => ConversationScreen(
-                          receiverId:  item.id.isNotEmpty? item.id:'' ,
-                          roomId: item.roomId.isNotEmpty?item.roomId: '',
-                          receiverName:  item.name.isNotEmpty?item.name : '',
-                          receiverImage: item.profilePic.isNotEmpty? item.profilePic : '',
-                        )))
-                .then((value) => callGetActiveAdmin());*/
           },
           child: Row(
             children: [
@@ -362,25 +292,6 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                             ),
                           ),
                         ),
-                        /*Container(
-                              margin: EdgeInsets.only(
-                                right: size.width * numD03,
-                                left: size.width * numD03,
-                              ),
-                              alignment: Alignment.center,
-                              height: size.width * numD055,
-                              width: size.width * numD055,
-                              decoration: const BoxDecoration(
-                                  color: colorOnlineGreen,
-                                  shape: BoxShape.circle),
-                              child: Text(
-                                "3",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD025,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              )),*/
                       ],
                     )
                   ],
@@ -458,25 +369,6 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                           EdgeInsets.symmetric(vertical: size.width * numD02),
                       child: InkWell(
                           onTap: () {
-                            /*Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ConversationScreen(
-                                    roomId: document.get('roomId'),
-                                    receiverId: document.get('receiverId') !=
-                                            userId.toString()
-                                        ? document.get('receiverId')
-                                        : document.get('senderId'),
-                                    receiverImage: document.get('receiverId') !=
-                                            userId.toString()
-                                        ? document.get('receiverImage')
-                                        : document.get('senderImage'),
-                                    receiverName: document.get('receiverId') !=
-                                            userId.toString()
-                                        ? document.get('receiverName')
-                                        : document.get('senderName'),
-                                  ),
-                                ));*/
                           },
                           child: Row(
                             children: [
@@ -666,7 +558,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
       }
     });
 
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Widget checkOnlineOffline(BuildContext context, var size, String receiverId) {
@@ -717,201 +609,23 @@ class _ChatListingScreenState extends State<ChatListingScreen>
         });
   }
 
-  /* Widget oldWidget(index, type) {
-    return InkWell(
-      onTap: () async {
-        */
-  /*Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ConversationScreen(
-              title: type == presshopText
-                  ? chatWithPRESSHOPText
-                  : chatWithPublicationsText,
-            )));*/
-  /*
-      },
-      child: Row(
-        children: [
-          Stack(
-            children: [
-              Container(
-                padding: EdgeInsets.all(
-                  size.width * numD01,
-                ),
-                height: size.width * numD16,
-                width: size.width * numD16,
-                decoration: BoxDecoration(
-                    color: Colors.grey.shade200, shape: BoxShape.circle),
-                child: ClipOval(
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.asset(
-                    "$dummyImagePath${type == "Publication" ? "news.png" : "image2.png"}",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 5,
-                right: 0,
-                child: Container(
-                    padding: EdgeInsets.all(size.width * 0.005),
-                    decoration: const BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.circle,
-                      color: colorOnlineGreen,
-                      size: size.width * numD03,
-                    )),
-              )
-            ],
-          ),
-          SizedBox(
-            width: size.width * numD02,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// User Name
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "John Doe",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: size.width * numD038,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * numD12,
-                      child: Text(
-                        "12:10 PM",
-                        style: TextStyle(
-                            fontSize: size.width * numD03,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                  ],
-                ),
+  Future<void> callGetActiveAdmin() async {
+    try {
+      final response = await _apiClient.get(getAdminListUrl);
 
-                /// Last Type Chat
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Lorem ipsum dolor sit amet korem ipsum dolor sit amet",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: size.width * numD032,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                    Container(
-                        margin: EdgeInsets.only(
-                          right: size.width * numD03,
-                          left: size.width * numD03,
-                        ),
-                        alignment: Alignment.center,
-                        height: size.width * numD055,
-                        width: size.width * numD055,
-                        decoration: const BoxDecoration(
-                            color: colorOnlineGreen, shape: BoxShape.circle),
-                        child: Text(
-                          "3",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD025,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500),
-                        )),
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }*/
+       debugPrint("getAdminListReq Success: ${response.data}");
+       var dataModel = response.data["data"] as List;
 
-  /*Future<void> callMessageFromLocalDataBase() async {
-    debugPrint(":::: Inside Message Fuc ::::");
-    SqliteDataBase sqliteDatabase = SqliteDataBase();
-    final db = await sqliteDatabase.getDataBase();
-    for (var element in adminList) {
-      var result = await db
-          .query('CHAT', where: 'receiverId = ?', whereArgs: [element.id]);
+       adminList = dataModel.map((e) => AdminDetailModel.fromJson(e)).toList();
 
-      if (result.isNotEmpty) {
-        debugPrint("Get room Id : ${result.last["roomId"].toString()}");
-        for (var element in result) {
-          debugPrint("roomId w=====> ${element["roomId"].toString()}");
-          roomNumberID.add(element["roomId"].toString());
-        }
+       for (var id in adminIDList) {
+         adminList.removeWhere((element) => element.id == id);
+       }
+       debugPrint("adminListLengthResponse=========> ${adminList.length}");
+       if (mounted) setState(() {});
 
-        if (result.last["roomId"] != null) {
-          var result1 = await db.query('CHAT',
-              where: 'roomId = ?', whereArgs: [result.last["roomId"]]);
-          setState(() {});
-          */
-  /* if(result1.isNotEmpty){
-            element.lastMessageTime = timeParse(result1.last['date'].toString());
-            debugPrint("element.lastMessageTime:${element.lastMessageTime}");
-            if(result1.last["messageType"].toString() == "text"){
-              element.lastMessage = result1.last["message"].toString().toCapitalized();
-              debugPrint(" element.lastMessage:${ element.lastMessage}");
-            }else {
-              element.lastMessage = result1.last["messageType"].toString().toCapitalized();
-              debugPrint(" element.lastMessage:${ element.lastMessage}");
-            }
-            if(mounted){
-              setState(() {});
-            }
-          }*/ /*
-        }
-      }
-    }
-  }*/
-
-  void callGetActiveAdmin() {
-    NetworkClass(getAdminListUrl, this, getAdminListReq)
-        .callRequestServiceHeader(true, "get", null);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    switch (requestCode) {
-      case getAdminListReq:
-        var data = jsonDecode(response);
-        debugPrint("getAdminListReq Error: $data");
-        break;
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    switch (requestCode) {
-      case getAdminListReq:
-        var data = jsonDecode(response);
-        debugPrint("getAdminListReq Success: $data");
-        var dataModel = data["data"] as List;
-
-        adminList = dataModel.map((e) => AdminDetailModel.fromJson(e)).toList();
-
-        for (var id in adminIDList) {
-          adminList.removeWhere((element) => element.id == id);
-        }
-        debugPrint("adminListLengthResponse=========> ${adminList.length}");
-        setState(() {});
-        break;
+    } catch (e) {
+      debugPrint("getAdminListReq Error: $e");
     }
   }
 

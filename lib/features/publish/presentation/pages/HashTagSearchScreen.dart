@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/di/injection_container.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
 
 class HashTagSearchScreen extends StatefulWidget {
   String country = "";
@@ -26,8 +26,7 @@ class HashTagSearchScreen extends StatefulWidget {
   }
 }
 
-class HashTagSearchScreenState extends State<HashTagSearchScreen>
-    implements NetworkResponse {
+class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   TextEditingController hashTagController = TextEditingController();
   List<HashTagData> hashtagSearchList = [];
   List<HashTagData> selectedHashTagList = [];
@@ -457,7 +456,10 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
 
   ///--------Apis Section------------
 
-  void getHashTagsApi(String searchParam, String tagId, bool showLoader) {
+  ///--------Apis Section------------
+
+  Future<void> getHashTagsApi(
+      String searchParam, String tagId, bool showLoader) async {
     Map<String, String> params = {};
     if (searchParam.trim().isNotEmpty) {
       params["tagName"] = searchParam;
@@ -466,60 +468,18 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
       debugPrint("GetHashTagsQueryParams: $params");
     }
 
-    NetworkClass(getHashTagsUrl, this, getHashTagsUrlRequest)
-        .callRequestServiceHeader(
-            showLoader, "get", searchParam.trim().isNotEmpty ? params : null);
-  }
-
-  void searchHashTagsApi(String searchParam) {
-    Map<String, String> params = {};
-    if (searchParam.trim().isNotEmpty) {
-      params["tagName"] = searchParam;
-      params["type"] = "hopper";
-      //params["tag_id"] = ;
-      debugPrint("GetHashTagsQueryParams: $params");
-    }
-
-    NetworkClass(getHashTagsUrl, this, searchHashTagsUrlRequest)
-        .callRequestServiceHeader(
-            false, "get", searchParam.trim().isNotEmpty ? params : null);
-  }
-
-  void addHashTagsApi() {
-    Map<String, String> params = {"name": hashTagController.text.trim()};
-    debugPrint("AddHashTagsParams: $params");
-    NetworkClass.fromNetworkClass(
-            addHashTagsUrl, this, addHashTagsUrlRequest, params)
-        .callRequestServiceHeader(true, "post", null);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
     try {
-      switch (requestCode) {
-        case getHashTagsUrlRequest:
-          debugPrint("getHashTagsUrlRequestError: $response");
-          break;
-        case searchHashTagsUrlRequest:
-          debugPrint("searchHashTagsUrlRequestError: $response");
-          break;
-        case addHashTagsUrlRequest:
-          debugPrint("AddHashTagError: $response");
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
+      final response =
+          await sl<ApiClient>().get(getHashTagsUrl, queryParameters: params);
 
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case getHashTagsUrlRequest:
-          var list = jsonDecode(response) as List;
-          debugPrint("GetHashTags: $response");
-          hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+      if (response.statusCode == 200) {
+        var list = response.data;
+        if (list is String) list = jsonDecode(list);
+        list = list as List;
+        debugPrint("GetHashTags: $response");
+        hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+
+        if (hashtagSearchList.isNotEmpty) {
           var tageName = hashtagSearchList.first.name;
           for (var element in widget.tagData) {
             if (element.name == tageName) {
@@ -530,68 +490,95 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen>
                   id: element.id, name: element.name, selected: false));
             }
           }
-          setState(() {});
-
-          break;
-
-        case searchHashTagsUrlRequest:
-          var list = jsonDecode(response) as List;
-          debugPrint("SearchHashTags: $response");
-          hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
-          if (hashtagSearchList.isEmpty &&
-              hashTagController.text.trim().isNotEmpty) {
-            addNew = true;
-          } else {
-            addNew = false;
-          }
-          if (hashtagSearchList.isEmpty) {
-            debugPrint("add new:::::::");
-            hashtagSearchList.add(HashTagData(
-                id: '', name: hashTagController.text.trim(), selected: false));
-          }
-          for (var i = 0; i < hashtagSearchList.length; i++) {
-            bool isSelected = selectedHashTagList.any(
-                (selectedItem) => selectedItem.id == hashtagSearchList[i].id);
-            if (isSelected) {
-              hashtagSearchList[i].selected = true;
-            }
-          }
-          /* var tageName= hashtagSearchList.first.name;
-          for (var element in selectedHashTagList) {
-            if (element.name == tageName) {
-              debugPrint("true:::::if :::::::${element.name}");
-              hashtagSearchList.add(HashTagData(id: element.id, name: element.name, selected: true));
-            }
-          }*/
-
-          if (mounted) {
-            setState(() {});
-          }
-
-          break;
-        case addHashTagsUrlRequest:
-          debugPrint("AddHashTagResponse: $response");
-          var map = jsonDecode(response);
-          // Assuming successful response is the tag object itself or has 200 code.
-          // If it's the tag object directly:
-          if (map["id"] != null) {
-            var newTag = HashTagData.fromJson(map);
-            hashtagSearchList.add(newTag..selected = true);
-            selectedHashTagList.add(newTag..selected = true);
-          } else if (map["code"] == 200 && map['tag'] != null) {
-            // Fallback to original if wrapped
-            hashtagSearchList.add(HashTagData(
-                id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
-                name: map['tag']['name'],
-                selected: true));
-            selectedHashTagList.add(HashTagData(
-                id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
-                name: map['tag']['name'],
-                selected: true));
-          }
-          break;
+        }
+        setState(() {});
       }
-    } on Exception catch (e) {
+    } catch (e) {
+      debugPrint("$e");
+    }
+  }
+
+  Future<void> searchHashTagsApi(String searchParam) async {
+    Map<String, String> params = {};
+    if (searchParam.trim().isNotEmpty) {
+      params["tagName"] = searchParam;
+      params["type"] = "hopper";
+      //params["tag_id"] = ;
+      debugPrint("GetHashTagsQueryParams: $params");
+    }
+
+    try {
+      final response =
+          await sl<ApiClient>().get(getHashTagsUrl, queryParameters: params);
+
+      if (response.statusCode == 200) {
+        var list = response.data;
+        if (list is String) list = jsonDecode(list);
+        list = list as List;
+
+        debugPrint("SearchHashTags: $response");
+        hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+        if (hashtagSearchList.isEmpty &&
+            hashTagController.text.trim().isNotEmpty) {
+          addNew = true;
+        } else {
+          addNew = false;
+        }
+        if (hashtagSearchList.isEmpty) {
+          debugPrint("add new:::::::");
+          hashtagSearchList.add(HashTagData(
+              id: '', name: hashTagController.text.trim(), selected: false));
+        }
+        for (var i = 0; i < hashtagSearchList.length; i++) {
+          bool isSelected = selectedHashTagList.any(
+              (selectedItem) => selectedItem.id == hashtagSearchList[i].id);
+          if (isSelected) {
+            hashtagSearchList[i].selected = true;
+          }
+        }
+
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      debugPrint("$e");
+    }
+  }
+
+  Future<void> addHashTagsApi() async {
+    Map<String, String> params = {"name": hashTagController.text.trim()};
+    debugPrint("AddHashTagsParams: $params");
+
+    try {
+      final response = await sl<ApiClient>().post(
+        addHashTagsUrl,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("AddHashTagResponse: $response");
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+
+        if (map["id"] != null) {
+          var newTag = HashTagData.fromJson(map);
+          hashtagSearchList.add(newTag..selected = true);
+          selectedHashTagList.add(newTag..selected = true);
+        } else if (map["code"] == 200 && map['tag'] != null) {
+          // Fallback to original if wrapped
+          hashtagSearchList.add(HashTagData(
+              id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
+              name: map['tag']['name'],
+              selected: true));
+          selectedHashTagList.add(HashTagData(
+              id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
+              name: map['tag']['name'],
+              selected: true));
+        }
+        setState(() {});
+      }
+    } catch (e) {
       debugPrint("$e");
     }
   }

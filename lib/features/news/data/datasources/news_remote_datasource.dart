@@ -1,5 +1,6 @@
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/news/data/models/comment_model.dart';
 import 'package:presshop/features/news/data/models/news_model.dart';
@@ -59,7 +60,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
         throw ServerException("Failed to fetch aggregated news");
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -94,7 +95,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
         throw ServerException("Failed to fetch news detail");
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -124,7 +125,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
         throw ServerException("Failed to fetch comments");
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

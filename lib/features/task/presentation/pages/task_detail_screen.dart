@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
+import 'package:presshop/core/di/injection_container.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -873,11 +873,15 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ManageTaskScreen(
-                                                        taskDetail: taskDetail!,
-                                                        roomId: roomId,
-                                                        type: 'task_content',
-                                                      )))
+                                                      BlocProvider<TaskBloc>(
+                                                    create: (_) =>
+                                                        sl<TaskBloc>(),
+                                                    child: ManageTaskScreen(
+                                                      taskDetail: taskDetail!,
+                                                      roomId: roomId,
+                                                      type: 'task_content',
+                                                    ),
+                                                  )))
                                               .then((value) => {
                                                     if (mounted)
                                                       _fetchTaskDetails()

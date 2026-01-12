@@ -7,6 +7,8 @@ import '../../domain/usecases/get_room_id.dart';
 import '../../domain/usecases/update_location.dart';
 import '../../domain/usecases/check_app_version.dart';
 import '../../domain/usecases/activate_student_beans.dart';
+import '../../domain/usecases/check_student_beans.dart';
+import '../../domain/usecases/mark_student_beans_visited.dart';
 import '../../../authentication/domain/usecases/get_profile.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
@@ -19,6 +21,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final GetRoomId getRoomId;
   final CheckAppVersion checkAppVersion;
   final ActivateStudentBeans activateStudentBeans;
+  final CheckStudentBeans checkStudentBeans;
+  final MarkStudentBeansVisited markStudentBeansVisited;
   final GetProfile getProfile;
 
   DashboardBloc({
@@ -29,6 +33,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     required this.getRoomId,
     required this.checkAppVersion,
     required this.activateStudentBeans,
+    required this.checkStudentBeans,
+    required this.markStudentBeansVisited,
     required this.getProfile,
   }) : super(DashboardInitial()) {
     on<FetchActiveAdmins>(_onFetchActiveAdmins);
@@ -40,6 +46,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<ActivateStudentBeansEvent>(_onActivateStudentBeans);
     on<FetchMyProfileEvent>(_onFetchMyProfile);
     on<ChangeDashboardTabEvent>(_onChangeDashboardTab);
+    on<DashboardCheckStudentBeansEvent>(_onCheckStudentBeans);
+    on<DashboardMarkStudentBeansVisitedEvent>(_onMarkStudentBeansVisited);
   }
 
   Future<void> _onFetchActiveAdmins(
@@ -137,5 +145,27 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     Emitter<DashboardState> emit,
   ) {
     emit(DashboardTabChanged(event.newIndex));
+  }
+
+  Future<void> _onCheckStudentBeans(
+    DashboardCheckStudentBeansEvent event,
+    Emitter<DashboardState> emit,
+  ) async {
+    final result = await checkStudentBeans(NoParams());
+    result.fold(
+      (failure) => emit(DashboardError(failure.message)),
+      (info) => emit(DashboardStudentBeansInfoLoaded(info)),
+    );
+  }
+
+  Future<void> _onMarkStudentBeansVisited(
+    DashboardMarkStudentBeansVisitedEvent event,
+    Emitter<DashboardState> emit,
+  ) async {
+    final result = await markStudentBeansVisited(NoParams());
+    result.fold(
+      (failure) => emit(DashboardError(failure.message)),
+      (_) => emit(DashboardMarkStudentBeansVisitedLoaded()),
+    );
   }
 }

@@ -28,6 +28,7 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
+import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -333,23 +334,31 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                 onPressed: () {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
-                                                          builder: (context) => ManageTaskScreen(
-                                                              roomId:
-                                                                  contentItem!
-                                                                      .id,
-                                                              contentId:
-                                                                  contentItem!
-                                                                      .id,
-                                                              type: 'content',
-                                                              mediaHouseDetail:
-                                                                  null,
-                                                              contentMedia:
-                                                                  showMediaWidget(),
-                                                              contentHeader:
-                                                                  headerWidget(),
-                                                              myContentData:
-                                                                  contentItem!
-                                                                      .toMyContentData())))
+                                                          builder: (context) =>
+                                                              BlocProvider<
+                                                                  TaskBloc>(
+                                                                create: (_) =>
+                                                                    sl<TaskBloc>(),
+                                                                child:
+                                                                    ManageTaskScreen(
+                                                                        roomId:
+                                                                            contentItem!
+                                                                                .id,
+                                                                        contentId:
+                                                                            contentItem!
+                                                                                .id,
+                                                                        type:
+                                                                            'content',
+                                                                        mediaHouseDetail:
+                                                                            null,
+                                                                        contentMedia:
+                                                                            showMediaWidget(),
+                                                                        contentHeader:
+                                                                            headerWidget(),
+                                                                        myContentData:
+                                                                            contentItem!
+                                                                                .toMyContentData()),
+                                                              )))
                                                       .then((value) {
                                                     shouldRestartAnimation =
                                                         true;

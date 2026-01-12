@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:presshop/core/api/api_constant.dart' as ApiConstants;
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart' hide AdminDetailModel;
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import '../models/admin_detail_model.dart';
 
 abstract class DashboardRemoteDataSource {
@@ -14,6 +16,8 @@ abstract class DashboardRemoteDataSource {
   Future<Map<String, dynamic>> getRoomId(Map<String, dynamic> params);
   Future<Map<String, dynamic>> checkAppVersion();
   Future<Map<String, dynamic>> activateStudentBeans();
+  Future<void> markStudentBeansVisited();
+  Future<Map<String, dynamic>> checkStudentBeans();
   Future<void> removeDevice(Map<String, dynamic> params);
 }
 
@@ -40,8 +44,9 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       } else {
         throw ServerFailure(message: '');
       }
+
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -50,23 +55,27 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     try {
       final response =
           await apiClient.post(ApiConstants.updateLocation, data: params);
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerFailure(message: '');
       }
+
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
     }
   }
 
+
   @override
   Future<void> addDevice(Map<String, dynamic> params) async {
+    debugPrint("🚀 Add Device API Request Body: $params"); 
     try {
       final response = await apiClient.post(addDeviceUrl, data: params);
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerFailure(message: '');
       }
+
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -84,8 +93,9 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       } else {
         throw ServerFailure(message: '');
       }
+
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -115,7 +125,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
     } catch (e) {
       debugPrint("❌ Create Room API Error: $e");
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -125,15 +135,18 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       final response = await apiClient.get(getLatestVersionUrl);
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data is String) {
-          return jsonDecode(data);
+        final Map<String, dynamic> responseMap = 
+            data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
+        
+        if (responseMap['success'] == true && responseMap['data'] != null) {
+          return responseMap['data'];
         }
-        return data;
+        return responseMap;
       } else {
-        throw ServerFailure(message: '');
+        throw ServerFailure(message: 'Failed to check app version: ${response.statusCode}');
       }
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -141,17 +154,54 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   Future<Map<String, dynamic>> activateStudentBeans() async {
     try {
       final response = await apiClient.post(studentBeansActivationUrl);
+      print("🚀 Activate Student Beans API Response Status: ${response.statusCode}");
+      print("📦 Activate Student Beans API Response Body: ${response.data}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        final responseMap = 
+            data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
+            
+        if (responseMap['success'] == true && responseMap['data'] != null) {
+          return responseMap['data'];
+        }
+        return responseMap;
+      } else {
+        throw ServerFailure(message: '');
+      }
+
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> checkStudentBeans() async {
+    try {
+      final response = await apiClient.get(myProfileUrl);
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data is String) {
-          return jsonDecode(data);
+        final responseMap = 
+            data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
+            
+        if (responseMap['success'] == true && responseMap['data'] != null) {
+          return responseMap['data'];
         }
-        return data;
+        return responseMap;
       } else {
         throw ServerFailure(message: '');
       }
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
+    }
+  }
+
+  @override
+  Future<void> markStudentBeansVisited() async {
+    try {
+      await apiClient.sharedPreferences.setBool(sourceDataIsClickKey, true);
+      await apiClient.sharedPreferences.setBool(sourceDataIsOpenedKey, true);
+    } catch (e) {
+       // Should we handle?
     }
   }
 
@@ -159,11 +209,15 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   Future<void> removeDevice(Map<String, dynamic> params) async {
     try {
       final response = await apiClient.post(removeDeviceUrl, data: params);
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerFailure(message: '');
       }
+
     } catch (e) {
-      throw ServerFailure(message: '');
+      throw ApiErrorHandler.handle(e);
     }
   }
+
+
+
 }

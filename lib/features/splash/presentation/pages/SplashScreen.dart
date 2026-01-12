@@ -38,6 +38,8 @@ class _SplashScreenState extends State<SplashScreen>
   bool mustForceUpdate = false;
   bool openChatScreen = false;
   bool openNotification = false;
+  bool showError = false;
+  String errorMessage = "";
 
   @override
   void initState() {
@@ -119,6 +121,11 @@ class _SplashScreenState extends State<SplashScreen>
             setState(() {
               mustForceUpdate = true;
             });
+          } else if (state is SplashError) {
+             setState(() {
+                showError = true;
+                errorMessage = state.message;
+             });
           }
         },
         builder: (context, state) {
@@ -134,6 +141,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 if (mustForceUpdate) _forceUpdateOverlay(size),
+                if (showError) _errorOverlay(size, errorMessage),
               ],
             ),
           );
@@ -215,6 +223,80 @@ class _SplashScreenState extends State<SplashScreen>
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, colorThemePink),
                     _openStore,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _errorOverlay(Size size, String message) {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Container(
+        color: Colors.black.withOpacity(0.3),
+        child: Center(
+          child: Container(
+            width: size.width * 0.85,
+            padding: EdgeInsets.all(size.width * 0.05),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(size.width * 0.04),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red, size: size.width * 0.07),
+                    SizedBox(width: size.width * 0.02),
+                    Text(
+                      "Connection Error",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: size.width * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: size.width * 0.02),
+                const Divider(color: Colors.black26, thickness: 0.5),
+                SizedBox(height: size.width * 0.03),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: size.width * 0.035,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                SizedBox(height: size.width * 0.06),
+                SizedBox(
+                  width: double.infinity,
+                  child: commonElevatedButton(
+                    "Retry",
+                    size,
+                    commonButtonTextStyle(size),
+                    commonButtonStyle(size, colorThemePink),
+                    () {
+                       setState(() {
+                         showError = false;
+                         errorMessage = "";
+                       });
+                       context.read<SplashBloc>().add(AppStarted());
+                    },
                   ),
                 ),
               ],

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../../../features/earning/domain/entities/earning_transaction.dart';
 
+
 class NotificationEntity extends Equatable {
   final String id;
   final String title;
@@ -71,19 +72,4 @@ class NotificationsResult extends Equatable {
   List<Object?> get props => [notifications, unreadCount, alertCount];
 }
 
-class StudentBeansInfo extends Equatable {
-  final bool shouldShow;
-  final String heading;
-  final String description;
-  final String activationUrl;
 
-  const StudentBeansInfo({
-    this.shouldShow = false, 
-    this.heading = "", 
-    this.description = "",
-    this.activationUrl = ""
-  });
-
-  @override
-  List<Object?> get props => [shouldShow, heading, description, activationUrl];
-}

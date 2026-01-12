@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -6,9 +5,10 @@ import 'package:presshop/features/notification/domain/entities/notification_enti
 import 'package:presshop/features/notification/domain/usecases/get_notifications.dart';
 import 'package:presshop/features/notification/domain/usecases/mark_notifications_read.dart';
 import 'package:presshop/features/notification/domain/usecases/clear_all_notifications.dart';
-import 'package:presshop/features/notification/domain/usecases/check_student_beans.dart';
-import 'package:presshop/features/notification/domain/usecases/activate_student_beans.dart';
-import 'package:presshop/features/notification/domain/usecases/mark_student_beans_visited.dart';
+import 'package:presshop/features/dashboard/domain/usecases/check_student_beans.dart';
+import 'package:presshop/features/dashboard/domain/usecases/activate_student_beans.dart' as dashboard_beans;
+import 'package:presshop/features/dashboard/domain/usecases/mark_student_beans_visited.dart';
+import 'package:presshop/core/usecases/usecase.dart';
 
 part 'notification_event.dart';
 part 'notification_state.dart';
@@ -18,7 +18,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final MarkNotificationsAsRead markNotificationsAsRead;
   final ClearAllNotifications clearAllNotifications;
   final CheckStudentBeans checkStudentBeans;
-  final ActivateStudentBeans activateStudentBeans;
+  final dashboard_beans.ActivateStudentBeans activateStudentBeans;
   final MarkStudentBeansVisited markStudentBeansVisited;
 
   NotificationBloc({
@@ -89,9 +89,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   Future<void> _onCheckStudentBeans(
       CheckStudentBeansEvent event, Emitter<NotificationState> emit) async {
-    final result = await checkStudentBeans();
+    final result = await checkStudentBeans(NoParams());
     result.fold(
-      (failure) => debugPrint("Error checking student beans: ${failure.message}"),
+      (failure) =>
+          debugPrint("Error checking student beans: ${failure.message}"),
       (info) {
         if (info.shouldShow) {
           emit(state.copyWith(
@@ -106,16 +107,25 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   Future<void> _onStudentBeansActivation(StudentBeansActivationEvent event,
       Emitter<NotificationState> emit) async {
-    final result = await activateStudentBeans();
+    final result = await activateStudentBeans(NoParams());
     result.fold(
-      (failure) => debugPrint("Error activating student beans: ${failure.message}"),
-      (url) => emit(state.copyWith(studentBeansActivationUrl: url)),
+      (failure) {
+        debugPrint("Error activating student beans: ${failure.message}");
+        emit(state.copyWith(
+          status: NotificationStatus.failure,
+          errorMessage: failure.message,
+        ));
+      },
+      (data) {
+        final url = data['url']?.toString() ?? '';
+        emit(state.copyWith(studentBeansActivationUrl: url));
+      },
     );
   }
 
   Future<void> _onMarkStudentBeansVisited(MarkStudentBeansVisitedEvent event,
       Emitter<NotificationState> emit) async {
-    final result = await markStudentBeansVisited();
+    final result = await markStudentBeansVisited(NoParams());
     result.fold(
       (failure) => debugPrint("Error marking student beans as visited: ${failure.message}"),
       (_) => null, // Success, no state change needed strictly, or we could reset `shouldShowStudentBeansDialog`

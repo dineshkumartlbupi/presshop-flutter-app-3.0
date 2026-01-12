@@ -18,7 +18,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_response.dart';
 
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
@@ -29,7 +28,8 @@ import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScr
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 
-import 'package:presshop/core/api/network_class.dart';
+import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/di/injection_container.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/charity_model.dart';
 import '../../domain/entities/content_category.dart';
@@ -61,7 +61,7 @@ class PublishContentScreen extends StatefulWidget {
 
 class PublishContentScreenState extends State<PublishContentScreen>
     with SingleTickerProviderStateMixin
-    implements NetworkResponse, DashBoardInterface {
+    implements DashBoardInterface {
   var formKey = GlobalKey<FormState>();
   PlayerController controller = PlayerController(); // Initialise
   List<HashTagData> hashtagList = [];
@@ -2553,30 +2553,36 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         size,
                                         commonButtonTextStyle(size),
                                         commonButtonStyle(size, Colors.black),
-                                        () {
+                                        () async {
                                       draftSelected = true;
                                       isSelectLetsGo = false;
                                       isShowDraftLoader = true;
                                       FocusScope.of(context)
                                           .requestFocus(FocusNode());
-                                      callAddContentApi();
-                                      showSnackBar(
-                                          "Draft",
-                                          "Draft successfully saved",
-                                          Colors.green);
-                                      Future.delayed(
-                                        const Duration(seconds: 2),
-                                        // This matches the SnackBar duration
-                                        () {
-                                          isShowDraftLoader = false;
-                                          Navigator.push(
-                                            navigatorKey.currentContext!,
-                                            MaterialPageRoute(
-                                                builder: (context) => Dashboard(
-                                                    initialPosition: 2)),
-                                          );
+                                      bool success = await callAddContentApi();
+                                      
+                                      if (success) {
+                                        showSnackBar(
+                                            "Draft",
+                                            "Draft successfully saved",
+                                            Colors.green);
+                                        Future.delayed(
+                                          const Duration(seconds: 2),
+                                          () {
+                                            isShowDraftLoader = false;
+                                            Navigator.push(
+                                              navigatorKey.currentContext!,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Dashboard(
+                                                      initialPosition: 2)),
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                         isShowDraftLoader = false;
+                                         // Error notification is handled by MediaUploadService/callAddContentApi
+                                      }
                                         },
-                                      );
 
                                       /* if (descriptionController.text.trim().isEmpty &&
                                     audioPath.isEmpty) {
@@ -2603,7 +2609,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 } else {
 
                                 }*/
-                                    }),
+                                    ),
                                   ))
                                 : Container(),
                             SizedBox(
@@ -3118,15 +3124,22 @@ class PublishContentScreenState extends State<PublishContentScreen>
     });
   }
 
-  updateDraftListAPI(String contentId) {
+  Future<void> updateDraftListAPI(String contentId) async {
     debugPrint("updateDraftListAPI contentId: $contentId");
     Map<String, String> map = {
       'content_id': contentId,
     };
 
-    NetworkClass.fromNetworkClass(
-            removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map)
-        .callRequestServiceHeader(true, "patch", null, isJson: true);
+    try {
+      final response =
+          await sl<ApiClient>().patch(removeFromDraftContentAPI, data: map);
+      if (response.statusCode == 200) {
+        log("reqRemoveFromDraftContentAPI===> ${response.data}");
+        callCheckOnboardingCompleteOrNotApi();
+      }
+    } catch (e) {
+      debugPrint("$e");
+    }
   }
 
   Future playSound() async {
@@ -3140,7 +3153,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   ///--------Apis Section------------
 
   /// Hash Tag
-  void getHashTagsApi(String searchParam) {
+  Future<void> getHashTagsApi(String searchParam) async {
     Map<String, String> params = {};
     if (searchParam.trim().isNotEmpty) {
       params["tagName"] = searchParam;
@@ -3148,24 +3161,38 @@ class PublishContentScreenState extends State<PublishContentScreen>
       debugPrint("GetHashTagsQueryParams: $params");
     }
 
-    NetworkClass(getHashTagsUrl, this, getHashTagsUrlRequest)
-        .callRequestServiceHeader(
-            false, "get", searchParam.trim().isNotEmpty ? params : null);
+    try {
+      final response = await sl<ApiClient>().get(getHashTagsUrl,
+          queryParameters: searchParam.trim().isNotEmpty ? params : null);
+
+      if (response.statusCode == 200) {
+        var decodedResponse = response.data;
+        if (decodedResponse is String) {
+          decodedResponse = jsonDecode(decodedResponse);
+        }
+        log("GetHashTags: $decodedResponse");
+
+        // Check if the response is a Map (normal success case)
+        if (decodedResponse is Map<String, dynamic>) {
+          if (decodedResponse["code"] == 200) {
+            var list = decodedResponse["tags"] as List;
+            hashtagList = list.map((e) => HashTagData.fromJson(e)).toList();
+            setState(() {});
+          }
+        }
+        // Check if the response is a List (likely empty list [])
+        else if (decodedResponse is List) {
+          // Handle empty list case (no tags found)
+          hashtagList = [];
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      debugPrint("getHashTagsApi Error: $e");
+    }
   }
 
-  /// Category
-  void categoryApi() {
-    NetworkClass(categoryUrl, this, categoryUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
-  }
 
-  void callGetShareExclusivePrice() {
-    Map<String, String> map = {
-      'type': 'selling_price',
-    };
-    NetworkClass(getAllCmsUrl, this, getAllCmsUrlRequest)
-        .callRequestServiceHeader(false, "get", map);
-  }
 
   /// add-content-api
   Future<bool> callAddContentApi() async {
@@ -3324,270 +3351,60 @@ class PublishContentScreenState extends State<PublishContentScreen>
         .callMultipartServiceSameParamMultiImage(true, "post", "images");*/
   }
 
-  void callCheckOnboardingCompleteOrNotApi() {
+  Future<void> callCheckOnboardingCompleteOrNotApi() async {
     debugPrint("Checking onboarding status API called");
-    NetworkClass(checkOnboardingCompleteOrNotUrl, this,
-            checkOnboardingCompleteOrNotReq)
-        .callRequestServiceHeader(true, "get", null);
-  }
 
-  void callCharityListApi() {
-    Map<String, String> map = {"limit": "10", "offset": offset.toString()};
-    NetworkClass(allCharityUrl, this, allCharityReq)
-        .callRequestServiceHeader(false, "get", map);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) async {
     try {
-      switch (requestCode) {
-        case getHashTagsUrlRequest:
-          debugPrint("getHashTagsUrlRequestError: $response");
-          break;
-        case addContentUrlRequest:
-          debugPrint("AddContent Error::::::: $response");
-          var data = jsonDecode(response);
-          isLoading = false;
-          setState(() {});
-          // if (data['errors']['msg'] == "not verified") {
-          //   onBoardingCompleteDialog(
-          //       size: MediaQuery.of(navigatorKey.currentContext!).size,
-          //       func: () {
-          //         draftSelected = true;
-          //         isSelectLetsGo = true;
-          //         callAddContentApi();
-          //         Navigator.push(
-          //             navigatorKey.currentContext!,
-          //             MaterialPageRoute(
-          //                 builder: (context) => AddBankScreen(
-          //                       editBank: false,
-          //                       myBankList: const [],
-          //                       screenType: "publish",
-          //                       myBankData: null,
-          //                     )));
-          //       });
-          // }
-          break;
+      final response =
+          await sl<ApiClient>().get(checkOnboardingCompleteOrNotUrl);
+      var data = response.data;
+      if (data is String) data = jsonDecode(data);
+      debugPrint("Onboarding response: $data");
 
-        case checkOnboardingCompleteOrNotReq:
-          debugPrint("checkOnboardingCompleteOrNotReq error: $response");
-          debugPrint("Onboarding API Response: $response");
-          var data = jsonDecode(response);
+      if (response.statusCode == 200) {
+        var isBeta = data['is_beta'] ?? false;
+        print("isBeta========>>>> $isBeta");
 
-          var isBeta = data['is_beta'] ?? false;
+        debugPrint("DEBUG: Starting upload...");
+        bool uploadSuccess = await callAddContentApi();
+        debugPrint("DEBUG: Upload finished. Success: $uploadSuccess");
 
-          if (data['message'] == "not verified") {
-            bool uploadSuccess = await callAddContentApi();
-            // currently publish not required for publish content
-            //if (data['message'] == "verified") {
-            if (uploadSuccess) {
-              widget.publishData?.mediaList.forEach((media) {
-                widget.myContentData?.contentMediaList.add(ContentMediaData(
-                    "",
-                    media.mediaPath,
-                    media.mimeType,
-                    media.thumbnail,
-                    media.thumbnail));
-              });
-
-              Navigator.push(
-                  navigatorKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => ContentSubmittedScreen(
-                            myContentDetail: widget.myContentData,
-                            publishData: widget.publishData,
-                            sellType: selectedSellType,
-                            price: priceController.text,
-                            isBeta: isBeta,
-                          )));
-            } else {
-              showSnackBar("Error", "Content upload failed. Please try again.",
-                  Colors.red);
-            }
-
-            // onBoardingCompleteDialog(
-            //     size: MediaQuery.of(navigatorKey.currentContext!).size,
-            //     func: () {
-            //       Navigator.pop(navigatorKey.currentContext!);
-            //       draftSelected = true;
-            //       isSelectLetsGo = true;
-            //       callAddContentApi();
-            //       Future.delayed(const Duration(milliseconds: 500), () {
-            //         Navigator.push(
-            //             navigatorKey.currentContext!,
-            //             MaterialPageRoute(
-            //                 builder: (context) => AddBankScreen(
-            //                       editBank: false,
-            //                       myBankList: const [],
-            //                       screenType: "publish",
-            //                       myBankData: null,
-            //                     )));
-            //       });
-            //     });
-          }
-          break;
-
-        case getAllCmsUrlRequest:
-          debugPrint("getAllCmsUrlRequestError===>: $response");
-          break;
-        case allCharityReq:
-          debugPrint("allCharityReq error::::::: $response");
-          break;
-        case multipleImageReq:
-          debugPrint("multipleImageReq error::::::: $response");
-          break;
+        if (uploadSuccess) {
+          debugPrint("DEBUG: Navigating to ContentSubmittedScreen");
+          widget.publishData?.mediaList.forEach((media) {
+            widget.myContentData?.contentMediaList.add(ContentMediaData(
+                "",
+                media.mediaPath,
+                media.mimeType,
+                media.thumbnail,
+                media.thumbnail));
+          });
+          Navigator.push(
+              navigatorKey.currentContext!,
+              MaterialPageRoute(
+                  builder: (context) => ContentSubmittedScreen(
+                        myContentDetail: widget.myContentData,
+                        publishData: widget.publishData,
+                        sellType: selectedSellType,
+                        price: priceController.text,
+                        isBeta: isBeta,
+                      )));
+        } else {
+          debugPrint("DEBUG: Upload failed, showing error snackbar");
+          showSnackBar(
+              "Error", "Content upload failed. Please try again.", Colors.red);
+        }
       }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
+    } catch (e) {
+      debugPrint("checkOnboardingCompleteOrNotReq error: $e");
+      if (e is DioException && e.response != null) {
+        var data = e.response!.data;
+        if (data is String) data = jsonDecode(data);
+        var isBeta = data['is_beta'] ?? false;
 
-  @override
-  void onResponse({required int requestCode, required String response}) async {
-    try {
-      switch (requestCode) {
-        case getHashTagsUrlRequest:
-          var decodedResponse = jsonDecode(response);
-          log("GetHashTags: $response");
-
-          // Check if the response is a Map (normal success case)
-          if (decodedResponse is Map<String, dynamic>) {
-            if (decodedResponse["code"] == 200) {
-              var list = decodedResponse["tags"] as List;
-              hashtagList = list.map((e) => HashTagData.fromJson(e)).toList();
-              setState(() {});
-            }
-          }
-          // Check if the response is a List (likely empty list [])
-          else if (decodedResponse is List) {
-            // Handle empty list case (no tags found)
-            hashtagList = [];
-            setState(() {});
-          }
-          break;
-        case categoryUrlRequest:
-          var map = jsonDecode(response);
-          log("CategoryData:$response");
-          if (map["code"] == 200) {
-            var list = map["categories"] as List;
-
-            categoryList = list.map((e) => CategoryModel.fromJson(e)).toList();
-
-            if (categoryList.isNotEmpty) {
-              dropDownValue = categoryList.first.name;
-              selectedCategory = categoryList.first;
-              // selectedCategory!.selected = true;
-              // categoryList.first.selected = true;
-            }
-
-            /// if coming from drafts then select the previous selected category
-            selectedCategoryFunc();
-            if (mounted) {
-              setState(() {});
-            }
-          }
-
-          break;
-        case addContentUrlRequest:
-          log("AddContentResponse: $response");
-          var map = jsonDecode(response);
-          MyContentData detail = MyContentData.fromJson(map["data"] ?? {});
-
-          if (detail.toString().isNotEmpty) {
-            debugPrint('Draft-selected::::::::::$draftSelected');
-            debugPrint('isSaveDraftFromTask:::::::::$isSaveDraftFromTask');
-
-            /*if (draftSelected) {
-              */
-            /*  Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => MyDraftScreen(
-                            publishedContent: true,
-                          )),
-                  (route) => false);*/
-            /*
-
-              draftSelected = false;
-              if (!isSaveDraftFromTask) {
-                Navigator.push(
-                    navigatorKey.currentContext!,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)));
-                showSnackBar("Draft", "Draft successfully saved", Colors.green);
-              }
-              else if (draftSelected && isSelectLetsGo) {
-                Navigator.push(
-                    navigatorKey.currentContext!,
-                    MaterialPageRoute(
-                        builder: (context) => AddBankScreen(
-                              editBank: false,
-                              myBankList: const [],
-                              screenType: "publish",
-                              myBankData: null,
-                            )));
-              }
-              else {
-                isSaveDraftFromTask = false;
-                debugPrint(":::Draft successfully saved:::::::::");
-              }
-            }
-            else {
-              //  Navigator.pop(navigatorKey.currentContext!);
-              Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => ContentSubmittedScreen(
-                            myContentDetail: detail,
-                          )),
-                  (route) => false);
-            }
-          } else {
-            Navigator.pop(navigatorKey.currentContext!);
-          }*/
-
-            if (!isSaveDraftFromTask) {
-              Navigator.push(
-                  navigatorKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
-              showSnackBar("Draft", "Draft successfully saved", Colors.green);
-            } else {
-              /*Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ContentSubmittedScreen(
-                            myContentDetail: detail,
-                          )),
-                      (route) => false);*/
-              Navigator.push(
-                  navigatorKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
-            }
-          }
-          isLoading = true;
-          setState(() {});
-          break;
-
-        case checkOnboardingCompleteOrNotReq:
-          debugPrint("checkOnboardingCompleteOrNotReq success: $response");
-
-          var data = jsonDecode(response);
-
-          var isBeta = data['is_beta'] ?? false;
-
-          // var isBeta = true;
-
-          print("isBeta========>>>> $isBeta");
-
-          debugPrint("DEBUG: Starting upload...");
+        if (data['message'] == "not verified") {
           bool uploadSuccess = await callAddContentApi();
-          debugPrint("DEBUG: Upload finished. Success: $uploadSuccess");
-
-          // currently publish not required for publish content
-          //if (data['message'] == "verified") {
-
           if (uploadSuccess) {
-            debugPrint("DEBUG: Navigating to ContentSubmittedScreen");
             widget.publishData?.mediaList.forEach((media) {
               widget.myContentData?.contentMediaList.add(ContentMediaData(
                   "",
@@ -3606,46 +3423,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           price: priceController.text,
                           isBeta: isBeta,
                         )));
-          } else {
-            debugPrint("DEBUG: Upload failed, showing error snackbar");
-            showSnackBar("Error", "Content upload failed. Please try again.",
-                Colors.red);
           }
-
-          break;
-
-        case getAllCmsUrlRequest:
-          log("getAllCmsUrlRequest======>: $response");
-          var data = jsonDecode(response);
-
-          sharedPrice = data['status']['shared'] ?? '';
-          exclusivePrice = data['status']['exclusive'] ?? '';
-          setState(() {});
-          break;
-
-        case reqRemoveFromDraftContentAPI:
-          log("reqRemoveFromDraftContentAPI===> ${jsonDecode(response)}");
-          callCheckOnboardingCompleteOrNotApi();
-
-          break;
-        case allCharityReq:
-          debugPrint("allCharityReq success::::::: $response");
-          var data = jsonDecode(response);
-          var dataModel = data['data'] as List;
-          allCharityList =
-              dataModel.map((e) => CharityModel.fromJson(e)).toList();
-          setState(() {});
-
-          break;
-
-        case multipleImageReq:
-          debugPrint("multipleImageReq suucess::::::: $response");
-          break;
+        }
       }
-    } on Exception catch (e) {
-      debugPrint("$e");
     }
   }
+
+
+
+
 
   ///---------------------------------------------------------------------------
   /// INTERFACE CLASS OVERRIDE METHOD
@@ -3666,7 +3452,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
       //callUploadMediaApi(false);
     });
   }
-}
+
 
 /*
 class AllCharityModel {
@@ -3697,3 +3483,4 @@ class AllCharityModel {
   }
 }
 */
+}

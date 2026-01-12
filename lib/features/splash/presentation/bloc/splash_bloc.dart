@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import '../../../authentication/domain/usecases/check_auth_status.dart';
@@ -32,7 +33,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     bool shouldForce = false;
     
     await versionResult.fold(
-      (failure) async {}, 
+      (failure) async {
+        emit(SplashError(message: failure.message.isNotEmpty ? failure.message : "Server Error"));
+      },  
       (map) async {
          if (map["code"] == 200) {
            if (Platform.isAndroid && map["data"]["aOSshouldForceUpdate"] == true) shouldForce = true;
@@ -41,34 +44,43 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       }
     );
 
+    if (state is SplashError) return;
+
     if (shouldForce) {
       emit(SplashForceUpdate());
       return;
     }
 
     final result = await checkAuthStatus(NoParams());
+    debugPrint("🔍 SplashBloc: CheckAuthStatus Result: $result");
     await result.fold(
-      (failure) async => emit(SplashUnauthenticated()), 
+      (failure) async {
+        debugPrint("❌ SplashBloc: CheckAuthStatus Failed: $failure");
+        emit(SplashUnauthenticated());
+      },
       (isLoggedIn) async {
+        debugPrint("🔍 SplashBloc: Is Logged In: $isLoggedIn");
         if (isLoggedIn) {
-           final profileResult = await getProfile(NoParams());
-           profileResult.fold(
-             (failure) => emit(SplashUnauthenticated()),
-             (user) => emit(SplashAuthenticated()),
-           );
+          emit(SplashAuthenticated());
         } else {
-           // Check if Onboarding Seen
-           final onboardingResult = await checkOnboardingStatus(NoParams());
-           onboardingResult.fold(
-             (failure) => emit(SplashNavigateToOnboarding()), // Default to onboarding if fail
-             (seen) {
-               if (seen) {
-                 emit(SplashUnauthenticated());
-               } else {
-                 emit(SplashNavigateToOnboarding());
-               }
-             }
-           );
+          // Check if Onboarding Seen
+          final onboardingResult = await checkOnboardingStatus(NoParams());
+          debugPrint("🔍 SplashBloc: Onboarding Status: $onboardingResult");
+          onboardingResult.fold(
+            (failure) {
+              debugPrint("⚠️ SplashBloc: Onboarding check failed, navigating to Onboarding");
+              emit(SplashNavigateToOnboarding());
+            },
+            (seen) {
+              if (seen) {
+                debugPrint("✅ SplashBloc: Onboarding seen, navigating to Unauthenticated");
+                emit(SplashUnauthenticated());
+              } else {
+                debugPrint("❌ SplashBloc: Onboarding NOT seen, navigating to Onboarding");
+                emit(SplashNavigateToOnboarding());
+              }
+            },
+          );
         }
       },
     );

@@ -59,3 +59,8 @@ class ChangeDashboardTabEvent extends DashboardEvent {
   @override
   List<Object> get props => [newIndex];
 }
+
+class DashboardCheckStudentBeansEvent extends DashboardEvent {}
+
+class DashboardMarkStudentBeansVisitedEvent extends DashboardEvent {}
+

@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 
@@ -12,11 +10,12 @@ part 'chatbot_event.dart';
 part 'chatbot_state.dart';
 
 class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
+  final ApiClient apiClient;
   late DialogFlowtter dialogFlowtter;
   int failCount = 0;
   List<ChatModel> chatList = [];
 
-  ChatbotBloc() : super(ChatbotInitial()) {
+  ChatbotBloc({required this.apiClient}) : super(ChatbotInitial()) {
     on<InitChatbotEvent>(_onInitChatbot);
     on<FetchMessagesEvent>(_onFetchMessages);
     on<SendMessageEvent>(_onSendMessage);
@@ -41,9 +40,30 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
       FetchMessagesEvent event, Emitter<ChatbotState> emit) async {
     emit(ChatbotLoading());
     try {
-      NetworkClass(
-              getMessageApiUrl, ChatbotNetworkHandler(this), getMessageApiReq)
-          .callRequestServiceHeader(false, "get", null, handleAuth: false);
+      final response = await apiClient.get(getMessageApiUrl);
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        List<ChatModel> fetchedList = [];
+        if (data is List) {
+          fetchedList = data.map((e) => ChatModel.fromJson(e)).toList();
+        } else if (data is Map && data.containsKey('data')) {
+          fetchedList =
+              (data['data'] as List).map((e) => ChatModel.fromJson(e)).toList();
+        }
+
+        if (fetchedList.isEmpty) {
+          fetchedList.add(ChatModel(
+              message:
+                  "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
+              isUser: false,
+              isNavigate: false,
+              time: DateTime.now().toString()));
+        }
+        add(MessagesReceivedEvent(fetchedList));
+      } else {
+        emit(ChatbotError("Failed to fetch messages: ${response.statusCode}"));
+      }
     } catch (e) {
       emit(ChatbotError(e.toString()));
     }
@@ -143,8 +163,6 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
 
   Future<void> _onChatbotError(
       ChatbotErrorEvent event, Emitter<ChatbotState> emit) async {
-    // Instead of showing error screen, we can show a default welcome message or empty state
-    // But for now, let's just log it and maybe show the default welcome message if list is empty
     debugPrint("Chatbot Error: ${event.error}");
 
     if (chatList.isEmpty) {
@@ -160,82 +178,34 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
     }
   }
 
-  callAddMessageApi(String message, String time, String isUser) {
+  Future<void> callAddMessageApi(
+      String message, String time, String isUser) async {
     try {
       Map<String, String> map = {
         "message": message,
         "time": time,
         "is_user": isUser,
       };
-      NetworkClass.fromNetworkClass(addMessageApiUrl,
-              ChatbotNetworkHandler(this), addMessageApiReq, map)
-          .callRequestServiceHeader(false, "post", null,
-              handleAuth: false, isJson: true);
-    } on Exception catch (exception) {
-      debugPrint(exception.toString());
-    }
-  }
-}
 
-class ChatbotNetworkHandler implements NetworkResponse {
-  final ChatbotBloc bloc;
-  ChatbotNetworkHandler(this.bloc);
+      final response = await apiClient.post(addMessageApiUrl, data: map);
 
-  @override
-  void onError({Key? key, required int requestCode, required String response}) {
-    debugPrint("Error: $requestCode $response");
-    bloc.add(ChatbotErrorEvent(response));
-  }
-
-  @override
-  void onResponse(
-      {Key? key, required int requestCode, required String response}) {
-    if (requestCode == getMessageApiReq) {
-      try {
-        var data = jsonDecode(response);
-        List<ChatModel> fetchedList = [];
-        if (data is List) {
-          fetchedList = data.map((e) => ChatModel.fromJson(e)).toList();
-        } else if (data is Map && data.containsKey('data')) {
-          fetchedList =
-              (data['data'] as List).map((e) => ChatModel.fromJson(e)).toList();
-        }
-
-        if (fetchedList.isEmpty) {
-          fetchedList.add(ChatModel(
-              message:
-                  "Hi, I’m Emily, your digital assistant at PressHop. How can I help? ",
-              isUser: false,
-              isNavigate: false,
-              time: DateTime.now().toString()));
-        }
-
-        bloc.add(MessagesReceivedEvent(fetchedList));
-      } catch (e) {
-        debugPrint("Failed to parse messages: $e");
-      }
-    } else if (requestCode == addMessageApiReq) {
-      try {
-        var data = jsonDecode(response);
+      if (response.statusCode == 200) {
+        var data = response.data;
         if (data != null && data is Map<String, dynamic>) {
-          // Update the last message with server time if available
-          if (bloc.chatList.isNotEmpty) {
-            // Find the last user message that doesn't have a valid server ID yet (optional optimization)
-            // For now, just update the last user message
-            for (int i = bloc.chatList.length - 1; i >= 0; i--) {
-              if (bloc.chatList[i].isUser) {
-                bloc.chatList[i].time =
-                    data['createdAt'] ?? data['time'] ?? bloc.chatList[i].time;
-                // Trigger UI update
-                bloc.add(MessagesReceivedEvent(List.from(bloc.chatList)));
+          if (chatList.isNotEmpty) {
+            for (int i = chatList.length - 1; i >= 0; i--) {
+              if (chatList[i].isUser) {
+                chatList[i].time =
+                    data['createdAt'] ?? data['time'] ?? chatList[i].time;
+                add(MessagesReceivedEvent(List.from(chatList)));
                 break;
               }
             }
           }
         }
-      } catch (e) {
-        debugPrint("Failed to parse add message response: $e");
       }
+    } catch (exception) {
+      debugPrint(exception.toString());
     }
   }
 }

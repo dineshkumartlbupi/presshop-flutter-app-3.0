@@ -11,14 +11,14 @@ import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/api/network_class.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_response.dart';
+import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,8 +39,7 @@ class MyProfile extends StatefulWidget {
 }
 
 class MyProfileState extends State<MyProfile>
-    with AnalyticsPageMixin
-    implements NetworkResponse {
+    with AnalyticsPageMixin {
   Size size = Size.zero;
 
   var formKey = GlobalKey<FormState>();
@@ -1776,58 +1775,174 @@ class MyProfileState extends State<MyProfile>
   }
 
   ///ApisSection------------
-  void checkUserNameApi() {
+  Future<void> checkUserNameApi() async {
     try {
-      NetworkClass(
-              "$checkUserNameUrl${userNameController.text.trim().toLowerCase()}",
-              this,
-              checkUserNameUrlRequest)
-          .callRequestServiceHeader(false, "get", null);
-    } on Exception catch (e) {
+      final response = await sl<ApiClient>().get(
+        "$checkUserNameUrl${userNameController.text.trim().toLowerCase()}",
+      );
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        debugPrint("CheckUserNameResponse:$map");
+        userNameAlreadyExists = map["userNameExist"];
+        setState(() {});
+      }
+    } catch (e) {
       debugPrint("$e");
     }
   }
 
-  void checkEmailApi() {
+  Future<void> checkEmailApi() async {
     try {
-      NetworkClass("$checkEmailUrl${emailAddressController.text.trim()}", this,
-              checkEmailUrlRequest)
-          .callRequestServiceHeader(false, "get", null);
-    } on Exception catch (e) {
+      final response = await sl<ApiClient>().get(
+        "$checkEmailUrl${emailAddressController.text.trim()}",
+      );
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        debugPrint("CheckEmailResponse:$map");
+        emailAlreadyExists = map["emailExist"];
+        setState(() {});
+      }
+    } catch (e) {
       debugPrint("$e");
     }
   }
 
-  void checkPhoneApi() {
+  Future<void> checkPhoneApi() async {
     try {
-      NetworkClass("$checkPhoneUrl${phoneNumberController.text.trim()}", this,
-              checkPhoneUrlRequest)
-          .callRequestServiceHeader(false, "get", null);
-    } on Exception catch (e) {
+      final response = await sl<ApiClient>().get(
+        "$checkPhoneUrl${phoneNumberController.text.trim()}",
+      );
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        debugPrint("CheckPhoneResponse:$map");
+        phoneAlreadyExists = map["phoneExist"];
+        setState(() {});
+      }
+    } catch (e) {
       debugPrint("$e");
     }
   }
 
-  void getAvatarsApi() {
+  Future<void> getAvatarsApi() async {
     try {
-      NetworkClass(getAvatarsUrl, this, getAvatarsUrlRequest)
-          .callRequestServiceHeader(false, "get", null);
-    } on Exception catch (e) {
+      final response = await sl<ApiClient>().get(getAvatarsUrl);
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        var list = map["response"] as List;
+        avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
+        debugPrint("AvatarList: ${avatarList.length}");
+        setState(() {});
+      }
+    } catch (e) {
       debugPrint("$e");
     }
   }
 
-  void myProfileApi() {
+  Future<void> myProfileApi() async {
     String userId = sharedPreferences!.getString(hopperIdKey) ?? "";
     print("🔴 DEBUG: Fetching Profile for userId: '$userId'");
-    NetworkClass(myProfileUrl, this, myProfileUrlRequest)
-        .callRequestServiceHeader(false, "get", {"userId": userId});
-    print("userId: $userId");
-    print("myProfileUrl: $myProfileUrl");
-    print("myProfileUrlRequest: $myProfileUrlRequest");
+    try {
+      final response = await sl<ApiClient>().get(
+        myProfileUrl,
+        queryParameters: {"userId": userId},
+      );
+      print("myProfileUrl: $myProfileUrl");
+
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        debugPrint("MyProfileSuccess:$map");
+
+        if (map["code"] == 200 || map["success"] == true) {
+          var userData = map["userData"] ?? map["data"];
+          myProfileData = MyProfileData.fromJson(userData);
+          if (userData[firstNameKey] != null && sharedPreferences != null) {
+            sharedPreferences!.setString(firstNameKey, userData[firstNameKey]);
+          }
+          if (userData[lastNameKey] != null && sharedPreferences != null) {
+            sharedPreferences!.setString(lastNameKey, userData[lastNameKey]);
+          }
+          if (userData[emailKey] != null && sharedPreferences != null) {
+            sharedPreferences!.setString(emailKey, userData[emailKey]);
+          }
+          if (userData[countryCodeKey] != null && sharedPreferences != null) {
+            sharedPreferences!
+                .setString(countryCodeKey, userData[countryCodeKey]);
+          }
+          if (userData[phoneKey] != null && sharedPreferences != null) {
+            sharedPreferences!
+                .setString(phoneKey, userData[phoneKey].toString());
+            debugPrint("phoneNumber======> ${userData[phoneKey]}");
+          }
+          if (userData[addressKey] != null && sharedPreferences != null) {
+            sharedPreferences!.setString(addressKey, userData[addressKey]);
+          }
+          if (userData[postCodeKey] != null && sharedPreferences != null) {
+            sharedPreferences!.setString(addressKey, userData[postCodeKey]);
+          }
+
+          if (userData[latitudeKey] != null && sharedPreferences != null) {
+            sharedPreferences!
+                .setString(latitudeKey, userData[latitudeKey].toString());
+          }
+          if (userData[longitudeKey] != null && sharedPreferences != null) {
+            sharedPreferences!
+                .setString(longitudeKey, userData[longitudeKey].toString());
+          }
+          if (userData[avatarIdKey] != null && sharedPreferences != null) {
+            sharedPreferences!
+                .setString(avatarIdKey, userData[avatarIdKey].toString());
+          }
+          if (userData["totalEarnings"] != null && sharedPreferences != null) {
+            sharedPreferences!
+                .setString(totalIncomeKey, userData["totalEarnings"].toString());
+          }
+
+          if (userData['avatarData'] != null &&
+              userData['avatarData'][avatarKey] != null &&
+              sharedPreferences != null) {
+            sharedPreferences!
+                .setString(avatarKey, userData['avatarData'][avatarKey]);
+          }
+
+          final src1 = userData["source"];
+          print("source ===> $src1");
+
+          final sourceDataIsOpened = src1?["is_opened"] ?? false;
+          final sourceDataType = src1?["type"] ?? "";
+          final sourceDataHeading = src1?["heading"] ?? "";
+          final sourceDataDescription = src1?["description"] ?? "";
+          final isClick = src1?["is_clicked"] ?? false;
+
+          if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
+              (sourceDataIsOpened == false) &&
+              isClick == false) {
+            final size = MediaQuery.of(navigatorKey.currentState!.context).size;
+            _showForceUpdateDialog(
+                size, sourceDataHeading, sourceDataDescription);
+          }
+
+          isLoading = true;
+          setProfileData();
+          setState(() {});
+        } else {
+          isLoading = true;
+          setState(() {});
+          debugPrint("MyProfileError: ${map["message"]}");
+        }
+      }
+    } catch (e) {
+      debugPrint("$e");
+      isLoading = true;
+      setState(() {});
+    }
   }
 
-  void editProfileApi() {
+  Future<void> editProfileApi() async {
     try {
       Map<String, String> params = {
         firstNameKey: firstNameController.text.trim(),
@@ -1847,249 +1962,44 @@ class MyProfileState extends State<MyProfile>
         apartmentKey: apartmentAndHouseNameController.text.trim(),
         roleKey: "Hopper",
       };
-      NetworkClass.fromNetworkClass(
-              editProfileUrl, this, editProfileUrlRequest, params)
-          .callRequestServiceHeader(true, "patch", null);
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
 
-  @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case studentBeansActivationRequest:
-          debugPrint("BroadcastData::::Error $response");
-          break;
-        case myProfileUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("MyProfileError:$map");
-          isLoading = true;
-          setState(() {});
-          break;
+      final response = await sl<ApiClient>().patch(
+        editProfileUrl,
+        data: params,
+      );
 
-        case editProfileUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("EditProfileError:$map");
-          break;
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
 
-        case getAvatarsUrlRequest:
-          debugPrint("GetAvatarsError: $response");
-          break;
+        if (map["code"] == 200 || map["success"] == true) {
+          widget.editProfileScreen = false;
+          debugPrint("heloooo::::${myProfileData!.avatarId}");
 
-        default:
-          debugPrint(
-              "Unhandled Error RequestCode: $requestCode Response: $response");
-          break;
+          myProfileApi();
+          sharedPreferences!.setString(avatarKey, myProfileData!.avatarImage);
+        }
+        setState(() {});
       }
-    } on Exception catch (e) {
+    } catch (e) {
       debugPrint("$e");
     }
   }
 
   Future<String?> setIsClickForBeansActivation() async {
-    _studentBeansCompleter = Completer<String?>();
-
-    NetworkClass.fromNetworkClass(
-      studentBeansActivationUrl,
-      this,
-      studentBeansActivationRequest,
-      null,
-    ).callRequestServiceHeader(false, "post", null);
-
-    return _studentBeansCompleter!.future;
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
     try {
-      switch (requestCode) {
-        // case studentBeansActivationRequest:
-        //   debugPrint("studentBeansActivationRequest32434: $response");
-        //   try {
-        //     var map = jsonDecode(response);
-        //     var studentBeansResponseUrl = map["url"];
-        //     studentBeansResponseUrlGlobal = studentBeansResponseUrl;
+      final response = await sl<ApiClient>().post(studentBeansActivationUrl);
 
-        //     // Complete the completer if someone is waiting
-        //     print(
-        //         "studentBeansResponseUrlGlobal$studentBeansResponseUrlGlobal");
-        //     // if (_studentBeansCompleter != null &&
-        //     //     !_studentBeansCompleter!.isCompleted) {
-        //     //   _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
-        //     // }
-        //   } catch (e) {
-        //     debugPrint("Error parsing studentBeans response: $e");
-        //     // if (_studentBeansCompleter != null &&
-        //     //     !_studentBeansCompleter!.isCompleted) {
-        //     //   _studentBeansCompleter!.complete(null);
-        //     // }
-        //   }
-        //   break;
-
-        case studentBeansActivationRequest:
-          var map = jsonDecode(response);
-          print("studentBeansActivationRequest234534645423 $map");
-          var studentBeansResponseUrl = map["url"];
-          studentBeansResponseUrlGlobal = studentBeansResponseUrl;
-
-          if (_studentBeansCompleter != null &&
-              !_studentBeansCompleter!.isCompleted) {
-            _studentBeansCompleter!.complete(studentBeansResponseUrlGlobal);
-          }
-          break;
-
-        case myProfileUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("MyProfileSuccess:$map");
-          print("MyProfileSuccess11:$response");
-
-          if (map["code"] == 200 || map["success"] == true) {
-            var userData = map["userData"] ?? map["data"];
-            myProfileData = MyProfileData.fromJson(userData);
-            if (userData[firstNameKey] != null && sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(firstNameKey, userData[firstNameKey]);
-            }
-            if (userData[lastNameKey] != null && sharedPreferences != null) {
-              sharedPreferences!.setString(lastNameKey, userData[lastNameKey]);
-            }
-            if (userData[emailKey] != null && sharedPreferences != null) {
-              sharedPreferences!.setString(emailKey, userData[emailKey]);
-            }
-            if (userData[countryCodeKey] != null && sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(countryCodeKey, userData[countryCodeKey]);
-            }
-            if (userData[phoneKey] != null && sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(phoneKey, userData[phoneKey].toString());
-              debugPrint("phoneNumber======> ${userData[phoneKey]}");
-            }
-            if (userData[addressKey] != null && sharedPreferences != null) {
-              sharedPreferences!.setString(addressKey, userData[addressKey]);
-            }
-            if (userData[postCodeKey] != null && sharedPreferences != null) {
-              sharedPreferences!.setString(addressKey, userData[postCodeKey]);
-            }
-
-            if (userData[latitudeKey] != null && sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(latitudeKey, userData[latitudeKey].toString());
-            }
-            if (userData[longitudeKey] != null && sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(longitudeKey, userData[longitudeKey].toString());
-            }
-            if (userData[avatarIdKey] != null && sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(avatarIdKey, userData[avatarIdKey].toString());
-            }
-            if (userData["totalEarnings"] != null &&
-                sharedPreferences != null) {
-              sharedPreferences!.setString(
-                  totalIncomeKey, userData["totalEarnings"].toString());
-            }
-
-            if (userData['avatarData'] != null &&
-                userData['avatarData'][avatarKey] != null &&
-                sharedPreferences != null) {
-              sharedPreferences!
-                  .setString(avatarKey, userData['avatarData'][avatarKey]);
-            }
-
-            // var sourceDataIsOpened = true;
-            // var sourceDataType = "student_beans";
-            // var sourceDataUrl = src?["url"] ?? "";
-            final src1 = userData["source"];
-            print("source ===> $src1");
-
-// source fields
-            final sourceDataIsOpened = src1?["is_opened"] ?? false;
-            final sourceDataType = src1?["type"] ?? "";
-            final sourceDataUrl = src1?["url"] ?? "";
-            final sourceDataHeading = src1?["heading"] ?? "";
-            final sourceDataDescription = src1?["description"] ?? "";
-            final isClick = src1?["is_clicked"] ?? false;
-
-            print("print new data data data ");
-            print("sourceDataIsOpened = $sourceDataIsOpened");
-            print("sourceDataType $sourceDataType");
-            print("sourceDataType $sourceDataUrl");
-            print("sourceDataHeading $sourceDataHeading");
-            print("sourceDataDescription $sourceDataDescription");
-            print("isClick $isClick");
-
-            // sharedPreferences!.setBool(sourceDataIsClickKey, false);
-            // sharedPreferences!.setBool(sourceDataIsOpenedKey, false);
-            // sharedPreferences!.setString(sourceDataTypeKey, "studentbeans");
-
-            if ((sourceDataType ?? '').toLowerCase() == 'studentbeans' &&
-                (sourceDataIsOpened == false) &&
-                isClick == false) {
-              // if (true) {
-              final size =
-                  MediaQuery.of(navigatorKey.currentState!.context).size;
-              _showForceUpdateDialog(
-                  size, sourceDataHeading, sourceDataDescription);
-            }
-
-            isLoading = true;
-            setProfileData();
-            setState(() {});
-          } else {
-            isLoading = true;
-            setState(() {});
-            debugPrint("MyProfileError: ${map["message"]}");
-          }
-          break;
-
-        case checkUserNameUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("CheckUserNameResponse:$map");
-          userNameAlreadyExists = map["userNameExist"];
-          setState(() {});
-          break;
-
-        case checkPhoneUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("CheckPhoneResponse:$map");
-          phoneAlreadyExists = map["phoneExist"];
-          setState(() {});
-          break;
-
-        case checkEmailUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("CheckEmailResponse:$map");
-          emailAlreadyExists = map["emailExist"];
-          setState(() {});
-          break;
-        case getAvatarsUrlRequest:
-          var map = jsonDecode(response);
-
-          var list = map["response"] as List;
-          avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
-          debugPrint("AvatarList: ${avatarList.length}");
-          setState(() {});
-          break;
-        case editProfileUrlRequest:
-          var map = jsonDecode(response);
-          if (map["code"] == 200 || map["success"] == true) {
-            widget.editProfileScreen = false;
-            /* showSnackBar("Profile Updated!",
-                "Your profile has been updated successfully", colorOnlineGreen);*/
-            debugPrint("heloooo::::${myProfileData!.avatarId}");
-
-            myProfileApi();
-            sharedPreferences!.setString(avatarKey, myProfileData!.avatarImage);
-          }
-          setState(() {});
-          break;
+      if (response.statusCode == 200) {
+        var map = response.data;
+        if (map is String) map = jsonDecode(map);
+        var studentBeansResponseUrl = map["url"];
+        return studentBeansResponseUrl;
       }
-    } on Exception catch (e) {
-      debugPrint("$e");
+    } catch (e) {
+      debugPrint("Error in StudentBeans Activation: $e");
     }
+    return null;
   }
 
   @override

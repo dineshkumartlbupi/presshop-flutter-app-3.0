@@ -1,8 +1,7 @@
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/failures.dart';
-
-import 'package:dio/dio.dart';
 import '../models/tutorials_model.dart';
 import '../models/category_data_model.dart';
 
@@ -43,10 +42,8 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
         throw ServerFailure(
             message: "Failed to fetch tutorials: ${response.statusMessage}");
       }
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? "Unknown Dio Error");
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -71,10 +68,8 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
         throw ServerFailure(
             message: "Failed to fetch categories: ${response.statusMessage}");
       }
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? "Unknown Dio Error");
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -113,9 +108,7 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
         // "user_id": ... // Skipping for now, assuming token is enough or will fix if needed. A lot of legacy code passes explicit UserID unnecessarily.
       });
     } catch (e) {
-      // Fire and forget or throw? Screen said nothing about error handling except print.
-      // I'll throw to be clean.
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

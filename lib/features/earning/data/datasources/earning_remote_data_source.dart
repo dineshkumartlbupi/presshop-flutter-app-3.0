@@ -1,6 +1,7 @@
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 
 abstract class EarningRemoteDataSource {
   Future<EarningProfileDataModel> getEarningProfile(String year, String month);
@@ -16,37 +17,45 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
   @override
   Future<EarningProfileDataModel> getEarningProfile(
       String year, String month) async {
-    final response = await apiClient.get(
-      getEarningDataAPI,
-      queryParameters: {"year": year, "month": month},
-    );
-
-    // ApiClient usually returns dynamic (Map or List) directly if configured,
-    // or we might need to handle it. Assuming it behaves like in PublicationRemoteDataSourceImpl.
-    final data = response.data;
-    return EarningProfileDataModel.fromJson(data);
+    try {
+      final response = await apiClient.get(
+        getEarningDataAPI,
+        queryParameters: {"year": year, "month": month},
+      );
+      final data = response.data;
+      return EarningProfileDataModel.fromJson(data);
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<Map<String, dynamic>> getTransactions(
       Map<String, dynamic> params) async {
-    final response = await apiClient.get(
-      getAllEarningTransactionAPI,
-      queryParameters: params,
-    );
-    // Returning full response to extract totalEarning and data list in Repository
-    return response as Map<String, dynamic>;
+    try {
+      final response = await apiClient.get(
+        getAllEarningTransactionAPI,
+        queryParameters: params,
+      );
+      return response.data;
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<List<CommissionData>> getCommissions(
       Map<String, dynamic> params) async {
-    final response = await apiClient.get(
-      commissionGetUrl,
-      queryParameters: params,
-    );
+    try {
+      final response = await apiClient.get(
+        commissionGetUrl,
+        queryParameters: params,
+      );
 
-    final List<dynamic> dataList = response.data;
-    return dataList.map((e) => CommissionData.fromJson(e)).toList();
+      final List<dynamic> dataList = response.data;
+      return dataList.map((e) => CommissionData.fromJson(e)).toList();
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 }

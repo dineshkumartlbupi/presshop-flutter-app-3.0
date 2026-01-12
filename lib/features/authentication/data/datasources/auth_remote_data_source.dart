@@ -4,6 +4,7 @@ import '../models/user_model.dart';
 import 'package:presshop/core/core_export.dart'; // For loginUrl and auth endpoints
 import '../models/avatar_model.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class AuthRemoteDataSource {
@@ -55,10 +56,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             print("🔵 LOGIN RESPONSE KEYS: ${userMap.keys.toList()}");
             print(
                 "****************************************************************");
-            userMap['token'] = userMap['access_token'];
-            // Check for both snake_case and camelCase
-            userMap['refreshToken'] =
-                userMap['refresh_token'] ?? userMap['refreshToken'];
+            // Robust token parsing
+            userMap['token'] = userMap['access_token'] ??
+                userMap['accessToken'] ??
+                userMap['token'];
+            userMap['refreshToken'] = userMap['refresh_token'] ??
+                userMap['refreshToken'] ??
+                userMap['refresh_token'];
             return UserModel.fromJson(userMap);
           } else {
             throw ServerFailure(message: "User data is null");
@@ -70,15 +74,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerFailure(
             message: 'Login failed with status code ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -133,15 +130,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message:
                 'Social Login failed with status code ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow; // UserNotRegisteredFailure is a Failure
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -177,15 +167,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message:
                 'Registration failed with status code ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -212,15 +195,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerFailure(
             message: 'Sending OTP failed: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -248,15 +224,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           message: resData['message'] ?? 'Failed to load profile',
         );
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Network error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -280,15 +249,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerFailure(
             message: 'OTP Verification failed: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -443,15 +405,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerFailure(
             message: 'Social Registration failed: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -478,15 +433,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           message: 'Forgot password failed: ${response.statusCode}',
         ));
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Network error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data?['message'] ?? errorMessage;
-      }
-      return Left(ServerFailure(message: errorMessage));
     } catch (e) {
-      if (e is Failure) return Left(e);
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ApiErrorHandler.handle(e));
     }
   }
 
@@ -508,15 +456,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerFailure(
             message: 'Verify OTP failed: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -537,15 +478,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerFailure(
             message: 'Reset password failed: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = e.message ?? 'Unknown error';
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is Failure) rethrow;
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

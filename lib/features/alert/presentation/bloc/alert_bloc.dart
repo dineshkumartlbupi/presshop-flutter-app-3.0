@@ -1,21 +1,20 @@
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/core/api/api_client.dart';
 import '../../data/models/alert_model.dart';
 import 'alert_event.dart';
 import 'alert_state.dart';
 
 class AlertBloc extends Bloc<AlertEvent, AlertState> {
+  final ApiClient apiClient;
   int _limit = 10;
   int _offset = 0;
   bool _isFetching = false;
 
-  AlertBloc() : super(const AlertState()) {
+  AlertBloc({required this.apiClient}) : super(const AlertState()) {
     on<FetchAlertsEvent>(_onFetchAlerts);
     on<RefreshAlertsEvent>(_onRefreshAlerts);
     on<LoadMoreAlertsEvent>(_onLoadMoreAlerts);
@@ -46,26 +45,8 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
       {required bool isRefresh}) async {
     _isFetching = true;
     try {
-      final sp = await SharedPreferences.getInstance();
-      String token = sp.getString(tokenKey) ?? "";
-
-      var dio = Dio();
-      dio.options.headers["Authorization"] = "Bearer $token";
-
-      // The API URL in AlertScreen was constructed as "${allAlertUrl}limit=10&offset=$offset"
-      // Assuming allAlertUrl ends with '?' or similar. If not, we might need '?' or '&'.
-      // However, usually it's cleaner to use queryParameters.
-      // But strictly following the string concatenation seen in AlertScreen might be safer if baseUrl is weird.
-      // Let's try to use queryParameters properly if possible, but first let's see how AlertUrl is defined.
-      // EarningBloc used queryParameters.
-      
-      // We will assume allAlertUrl is the path.
-      // But wait, AlertScreen used: NetworkClass("${allAlertUrl}limit=10&offset=$offset", ...
-      // This implies allAlertUrl might include the '?' or be a partial query string.
-      // Let's assume we can just pass parameters to dio.
-      
-      final response = await dio.get(
-        baseUrl + allAlertUrl, 
+      final response = await apiClient.get(
+        allAlertUrl, // Using constant directly, assuming it's the endpoint path
         queryParameters: {
           "limit": _limit,
           "offset": _offset,
@@ -83,12 +64,15 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
 
         emit(state.copyWith(
           status: AlertStatus.success,
-          alerts: isRefresh ? newAlerts : (List.of(state.alerts)..addAll(newAlerts)),
+          alerts: isRefresh
+              ? newAlerts
+              : (List.of(state.alerts)..addAll(newAlerts)),
           hasReachedMax: hasReachedMax,
         ));
       } else {
         emit(state.copyWith(
-            status: AlertStatus.failure, errorMessage: "Failed to fetch alerts"));
+            status: AlertStatus.failure,
+            errorMessage: "Failed to fetch alerts"));
       }
     } catch (e) {
       emit(state.copyWith(

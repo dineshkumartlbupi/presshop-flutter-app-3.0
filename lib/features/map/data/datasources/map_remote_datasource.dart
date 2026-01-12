@@ -1,6 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/domain/entities/map_marker.dart';
@@ -103,30 +104,34 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
 
   @override
   Future<LatLng> getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw LocationException('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        throw LocationException('Location permissions are denied');
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw LocationException('Location services are disabled.');
       }
-    }
 
-    if (permission == LocationPermission.deniedForever) {
-      throw LocationException(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw LocationException('Location permissions are denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw LocationException(
+            'Location permissions are permanently denied, we cannot request permissions.');
+      }
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      return LatLng(pos.latitude, pos.longitude);
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
     }
-    final pos = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    return LatLng(pos.latitude, pos.longitude);
   }
 
   @override

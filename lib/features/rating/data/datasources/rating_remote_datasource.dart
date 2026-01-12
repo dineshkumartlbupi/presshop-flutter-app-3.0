@@ -2,6 +2,7 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/rating/data/models/rating_review_model.dart';
 import 'package:presshop/core/models/publication_model.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
 
 abstract class RatingRemoteDataSource {
@@ -17,11 +18,11 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
   @override
   Future<List<RatingReviewModel>> getReviews(
       Map<String, dynamic> params) async {
-    final response = await apiClient.get(
-      getAllRatingAPI,
-      queryParameters: params,
-    );
     try {
+      final response = await apiClient.get(
+        getAllRatingAPI,
+        queryParameters: params,
+      );
       final data = response.data; // Access .data from Response
       if (data != null && data['resp'] != null) {
         return (data['resp'] as List)
@@ -31,16 +32,16 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
         throw ServerException('No data found');
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
   @override
   Future<List<PublicationDataModel>> getMediaHouses() async {
-    final response = await apiClient.get(
-      getMediaHouseDetailAPI,
-    );
     try {
+      final response = await apiClient.get(
+        getMediaHouseDetailAPI,
+      );
       final data = response.data; // Access .data from Response
       if (data != null && data['response'] != null) {
         return (data['response'] as List)
@@ -50,7 +51,7 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
         throw ServerException('No data found');
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

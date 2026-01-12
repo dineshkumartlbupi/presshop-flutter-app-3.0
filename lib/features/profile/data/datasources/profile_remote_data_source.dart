@@ -1,12 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
+import 'package:presshop/core/error/failures.dart';
 import '../models/profile_data_model.dart';
 import '../models/avatar_model.dart';
-
-import 'package:presshop/core/api/api_client.dart';
-
-import 'package:presshop/core/utils/shared_preferences.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<ProfileDataModel> getProfile(String userId);
@@ -42,7 +40,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load profile');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -82,7 +80,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       throw ServerFailure(message: 'Update failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -108,7 +106,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       throw ServerFailure(message: 'Upload failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -133,7 +131,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       throw ServerFailure(message: 'Password change failed');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -147,9 +145,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       return false;
     } catch (e) {
-      // If error, assume false or throw? If checking availability, error usually means we can't check.
-      // But adhering to failure pattern:
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -164,7 +160,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
       throw ServerFailure(message: 'Failed to load avatars');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
@@ -92,8 +93,15 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
   }
 
   void _handleLogoutSuccess() async {
+    debugPrint("🧹 Logging out user (Selective Wipe)...");
     rememberMe = false;
-    sharedPreferences!.clear();
+    final storage = FlutterSecureStorage();
+    await storage.delete(key: tokenKey);
+    await storage.delete(key: refreshtokenKey);
+    await sharedPreferences?.remove(tokenKey);
+    await sharedPreferences?.remove(refreshtokenKey);
+    await sharedPreferences?.remove(rememberKey);
+
     // Assuming googleSignIn is globally available from main.dart
     try {
       if (await googleSignIn.isSignedIn()) {

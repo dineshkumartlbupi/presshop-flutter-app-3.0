@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:presshop/core/api/api_constant.dart';
 import '../../../../core/api/api_client.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
 
 abstract class FeedRemoteDataSource {
@@ -15,32 +15,27 @@ class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> getFeeds(Map<String, dynamic> params) async {
-    final response = await apiClient.get(
-      getFeedListAPI, 
-      queryParameters: params,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.data is String) {
-        return jsonDecode(response.data) as Map<String, dynamic>;
-      }
-      return response.data as Map<String, dynamic>;
-    } else {
-      throw ServerException("Failed to get feeds");
+    try {
+      final response = await apiClient.get(
+        getFeedListAPI, 
+        queryParameters: params,
+      );
+      return response.data;
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
     }
   }
 
   @override
   Future<bool> toggleInteraction(Map<String, dynamic> params) async {
-    final response = await apiClient.patch(
-      likeFavFeedAPI,
-      data: params,
-    );
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      throw ServerException("Failed to toggle interaction");
+    try {
+      final response = await apiClient.patch(
+        likeFavFeedAPI,
+        data: params,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

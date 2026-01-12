@@ -1,5 +1,6 @@
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 import '../models/media_house_model.dart';
@@ -19,46 +20,56 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
 
   @override
   Future<PublicationEarningStats> getEarningStats(String type) async {
-    final Map<String, dynamic> params = {'type': type};
-    final response = await apiClient.get(getEarningDataAPI, queryParameters: params);
-    
-    // Response mapping logic based on legacy code of PublicationListScreen
-    // "resp" contains the data.
-    final data = response.data;
-    final earningData = EarningProfileDataModel.fromJson(data);
-    
-    return PublicationEarningStats(
-      avatar: earningData.avatar,
-      publicationCount: "", // This API doesn't seem to return count, transaction API does.
-      totalEarning: earningData.totalEarning,
-    );
+    try {
+      final Map<String, dynamic> params = {'type': type};
+      final response = await apiClient.get(getEarningDataAPI, queryParameters: params);
+      
+      final data = response.data;
+      final earningData = EarningProfileDataModel.fromJson(data);
+      
+      return PublicationEarningStats(
+        avatar: earningData.avatar,
+        publicationCount: "", // This API doesn't seem to return count, transaction API does.
+        totalEarning: earningData.totalEarning,
+      );
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<List<MediaHouseModel>> getMediaHouses() async {
-    final response = await apiClient.get(getMediaHouseDetailAPI);
-    final List<dynamic> dataList = response.data['data'];
-    return dataList.map((e) => MediaHouseModel.fromJson(e)).toList();
+    try {
+      final response = await apiClient.get(getMediaHouseDetailAPI);
+      final List<dynamic> dataList = response.data['data'];
+      return dataList.map((e) => MediaHouseModel.fromJson(e)).toList();
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<PublicationTransactionsResult> getPublicationTransactions(Map<String, dynamic> params) async {
-     final response = await apiClient.get(getPublicationTransactionAPI, queryParameters: params);
-     
-     final List<dynamic> dataList = response.data['data'];
-     final String publicationCount = response.data['countofmediahouse'].toString();
-     final String totalAmount = response.data['amount'].toString();
-     
-     final List<EarningTransaction> transactions = dataList
-         .map((e) => EarningTransactionDetail.fromJson(e)) // This returns Model
-         .map((model) => _mapModelToEntity(model)) // Map Model to Entity
-         .toList();
-
-     return PublicationTransactionsResult(
-       transactions: transactions,
-       publicationCount: publicationCount,
-       totalAmount: totalAmount,
-     );
+    try {
+       final response = await apiClient.get(getPublicationTransactionAPI, queryParameters: params);
+       
+       final List<dynamic> dataList = response.data['data'];
+       final String publicationCount = response.data['countofmediahouse'].toString();
+       final String totalAmount = response.data['amount'].toString();
+       
+       final List<EarningTransaction> transactions = dataList
+           .map((e) => EarningTransactionDetail.fromJson(e)) // This returns Model
+           .map((model) => _mapModelToEntity(model)) // Map Model to Entity
+           .toList();
+  
+       return PublicationTransactionsResult(
+         transactions: transactions,
+         publicationCount: publicationCount,
+         totalAmount: totalAmount,
+       );
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
   
   EarningTransaction _mapModelToEntity(EarningTransactionDetail model) {

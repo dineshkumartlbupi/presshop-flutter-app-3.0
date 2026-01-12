@@ -73,6 +73,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         state.cameraController!.value.isInitialized) {
       return;
     }
+    
+    // Prevent double initialization
+    if (state.status == CameraStatus.loading) return;
 
     emit(state.copyWith(status: CameraStatus.loading));
 
@@ -111,10 +114,14 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (cameras.isNotEmpty) {
       final cameraDescription =
           state.isFrontCamera && cameras.length > 1 ? cameras[1] : cameras[0];
+      // Dispose previous controller if exists to free resources
+      await state.cameraController?.dispose();
+
       final controller = CameraController(
         cameraDescription,
-        ResolutionPreset.max,
+        ResolutionPreset.high, // Changed from max to high to fix buffer issues
         imageFormatGroup: ImageFormatGroup.jpeg,
+        enableAudio: true, 
       );
 
       try {
@@ -165,7 +172,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     final cameraDescription = newIsFront ? cameras[1] : cameras[0];
     final controller = CameraController(
       cameraDescription,
-      ResolutionPreset.max,
+      ResolutionPreset.high, // Changed from max to high
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 

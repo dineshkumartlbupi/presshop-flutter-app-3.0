@@ -36,9 +36,8 @@ import 'package:presshop/features/notification/domain/repositories/notification_
 import 'package:presshop/features/notification/domain/usecases/get_notifications.dart';
 import 'package:presshop/features/notification/domain/usecases/mark_notifications_read.dart';
 import 'package:presshop/features/notification/domain/usecases/clear_all_notifications.dart';
-import 'package:presshop/features/notification/domain/usecases/check_student_beans.dart';
-import 'package:presshop/features/notification/domain/usecases/activate_student_beans.dart';
-import 'package:presshop/features/notification/domain/usecases/mark_student_beans_visited.dart';
+import 'package:presshop/features/dashboard/domain/usecases/check_student_beans.dart';
+import 'package:presshop/features/dashboard/domain/usecases/mark_student_beans_visited.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
 import 'package:presshop/features/map/data/repositories/map_repository_impl.dart';
@@ -237,7 +236,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<NotificationRemoteDataSource>(
-    () => NotificationRemoteDataSourceImpl(dio: sl(), sharedPreferences: sl()),
+    () => NotificationRemoteDataSourceImpl(apiClient: sl()),
   );
 
   //! Repositories - Register second
@@ -352,6 +351,8 @@ Future<void> init() async {
         getRoomId: sl(),
         checkAppVersion: sl(),
         activateStudentBeans: sl(),
+        checkStudentBeans: sl(),
+        markStudentBeansVisited: sl(),
         getProfile: sl(),
       ));
 
@@ -414,7 +415,7 @@ Future<void> init() async {
         getStripeOnboardingUrl: sl(),
       ));
 
-  sl.registerFactory(() => ChatbotBloc());
+  sl.registerFactory(() => ChatbotBloc(apiClient: sl()));
   sl.registerFactory(() => TaskBloc(
         getAllTasks: sl(),
         getLocalTasks: sl(),
@@ -440,7 +441,7 @@ Future<void> init() async {
         getTransactions: sl(),
         getCommissions: sl(),
       ));
-  sl.registerFactory(() => AlertBloc());
+  sl.registerFactory(() => AlertBloc(apiClient: sl()));
   sl.registerFactory(() => CameraBloc());
   sl.registerFactory(() => ChatBloc());
   sl.registerFactory(() => FeedBloc(
@@ -481,6 +482,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetDashboardTaskDetail(sl()));
   sl.registerLazySingleton(() => GetRoomId(sl()));
   sl.registerLazySingleton(() => dashboard_beans.ActivateStudentBeans(sl()));
+  sl.registerLazySingleton(() => CheckStudentBeans(sl()));
+  sl.registerLazySingleton(() => MarkStudentBeansVisited(sl()));
   // CheckUserName, CheckEmail, CheckPhone, GetAvatars, VerifyReferralCode, SocialExists already registered at the top
   sl.registerLazySingleton(() => GetProfileData(sl()));
   sl.registerLazySingleton(() => UpdateProfileData(sl()));
@@ -550,9 +553,7 @@ Future<void> init() async {
       apiClient: sl(),
     ),
   );
-  sl.registerLazySingleton(() => CheckStudentBeans(sl()));
-  sl.registerLazySingleton(() => ActivateStudentBeans(sl()));
-  sl.registerLazySingleton(() => MarkStudentBeansVisited(sl()));
+
 
   // Publication Use Cases
   sl.registerLazySingleton(() => GetPublicationEarningStats(sl()));

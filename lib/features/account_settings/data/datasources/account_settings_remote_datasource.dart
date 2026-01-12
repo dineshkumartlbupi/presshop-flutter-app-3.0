@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
-import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/error/api_error_handler.dart';
+import 'package:presshop/core/error/failures.dart';
 
 import '../models/admin_contact_info_model.dart';
 import '../../../publish/data/models/category_data_model.dart';
@@ -38,10 +38,8 @@ class AccountSettingsRemoteDataSourceImpl
             message: data['message'] ?? 'Failed to delete account');
       }
       throw const ServerFailure(message: 'Failed to delete account');
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -63,10 +61,8 @@ class AccountSettingsRemoteDataSourceImpl
         return AdminContactInfoModel.fromJson(data);
       }
       throw const ServerFailure(message: 'Failed to fetch admin details');
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -93,10 +89,8 @@ class AccountSettingsRemoteDataSourceImpl
         return [];
       }
       throw const ServerFailure(message: 'Failed to fetch FAQs');
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -123,10 +117,8 @@ class AccountSettingsRemoteDataSourceImpl
         return [];
       }
       throw const ServerFailure(message: 'Failed to fetch Price Tips');
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -155,10 +147,8 @@ class AccountSettingsRemoteDataSourceImpl
         return dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
       }
       throw const ServerFailure(message: 'Failed to fetch categories');
-    } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ApiErrorHandler.handle(e);
     }
   }
 }

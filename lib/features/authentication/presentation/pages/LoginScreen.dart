@@ -13,7 +13,6 @@ import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/common_web_view.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SocialSignUpScreen.dart';
 import 'SignUpScreen.dart';
@@ -26,7 +25,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/api/network_class.dart';
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';

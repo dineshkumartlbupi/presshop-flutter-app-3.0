@@ -221,10 +221,13 @@ class TokenRefreshManager {
 
   /// Logout user and navigate to login screen
   void _logoutUser() async {
-    debugPrint("Logging out user due to expired session");
+    debugPrint("🧹 Logging out user (Selective Wipe)...");
     const storage = FlutterSecureStorage();
-    await storage.deleteAll();
-    sharedPreferences?.clear();
+    await storage.delete(key: tokenKey);
+    await storage.delete(key: refreshtokenKey);
+    await sharedPreferences?.remove(tokenKey);
+    await sharedPreferences?.remove(refreshtokenKey);
+    await sharedPreferences?.remove(rememberKey);
 
     if (navigatorKey.currentState != null) {
       navigatorKey.currentState!.pushAndRemoveUntil(

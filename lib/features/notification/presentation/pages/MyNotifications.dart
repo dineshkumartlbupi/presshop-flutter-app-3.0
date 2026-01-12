@@ -21,6 +21,7 @@ import 'package:presshop/features/task/presentation/pages/manage_task_screen.dar
 import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
 import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
+import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 
 class MyNotificationScreen extends StatefulWidget {
   final int count;
@@ -47,6 +48,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
     // Check update logic - handled by CheckStudentBeansEvent
     super.initState();
   }
+
 
 
   void _showForceUpdateDialog(Size size,
@@ -519,15 +521,21 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                         Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ManageTaskScreen(
-                                                        roomId: item.contentId,
-                                                        contentId:
-                                                            item.contentId,
-                                                        type: 'content',
-                                                        mediaHouseDetail: null,
-                                                        contentMedia: null,
-                                                        contentHeader: null,
-                                                        myContentData: null)));
+                                                    BlocProvider<TaskBloc>(
+                                                      create: (_) =>
+                                                          di.sl<TaskBloc>(),
+                                                      child: ManageTaskScreen(
+                                                          roomId:
+                                                              item.contentId,
+                                                          contentId:
+                                                              item.contentId,
+                                                          type: 'content',
+                                                          mediaHouseDetail:
+                                                              null,
+                                                          contentMedia: null,
+                                                          contentHeader: null,
+                                                          myContentData: null),
+                                                    )));
                                       } else if (item.messageType ==
                                           "content_sold") {
                                         Navigator.of(context).push(
