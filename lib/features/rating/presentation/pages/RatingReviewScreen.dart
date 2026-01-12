@@ -1,17 +1,25 @@
-import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+import 'package:presshop/features/publish/data/models/category_data_model.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/features/rating/presentation/pages/ratingReviewsDataModel.dart';
+import 'package:presshop/features/rating/presentation/bloc/rating/rating_bloc.dart';
+
+import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/rating/domain/entities/review.dart';
+
+class FilterRatingData {
+  double ratingValue;
+  bool selected;
+
+  FilterRatingData({required this.ratingValue, required this.selected});
+}
 
 class RatingReviewScreen extends StatefulWidget {
   const RatingReviewScreen({super.key});
@@ -22,17 +30,12 @@ class RatingReviewScreen extends StatefulWidget {
   }
 }
 
-class RatingReviewScreenState extends State<RatingReviewScreen>
-    implements NetworkResponse {
-  ScrollController listController = ScrollController();
+class RatingReviewScreenState extends State<RatingReviewScreen> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  int _offset = 0;
   String selectedType = receivedText;
-  bool showData = false;
   List<CategoryDataModel> priceTipsCategoryList = [];
-  List<RatingReviewData> ratingReviewList = [];
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
   List<FilterRatingData> filterRatingList = [];
@@ -45,529 +48,6 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
         name: receivedText, selected: true, id: '', type: '', percentage: ''));
     priceTipsCategoryList.add(CategoryDataModel(
         name: givenText, selected: false, id: '', type: '', percentage: ''));
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      callGetAllRatingReview('');
-      callMediaHouseList();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          "$ratingText & $reviewText",
-          style: TextStyle(
-              color: Colors.black,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * numD04,
-          )
-        ],
-      ),
-      body: SafeArea(
-        child: showData
-            ? Column(
-                children: [
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
-                    child: Row(
-                      children: [
-                        Text(
-                          "$ratingText & $reviewText GIVEN".toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD036,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        const Spacer(),
-                        // InkWell(
-                        //     onTap: () {
-                        //       showBottomSheet(size);
-                        //     },
-                        //     child: Container(
-                        //         padding: EdgeInsets.all(size.width * numD04),
-                        //         child: Image.asset(
-                        //           "${iconsPath}ic_filter.png",
-                        //           height: size.width * numD05,
-                        //         )))
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-                  Flexible(
-                      child: ratingReviewList.isNotEmpty
-                          ? SmartRefresher(
-                              controller: _refreshController,
-                              enablePullDown: true,
-                              enablePullUp: true,
-                              onRefresh: _onRefresh,
-                              onLoading: _onLoading,
-                              child: ListView.separated(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD04,
-                                      vertical: size.width * numD02),
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD03,
-                                          vertical: size.width * numD04),
-                                      decoration: BoxDecoration(
-                                          color: colorLightGrey,
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 1,
-                                                        horizontal: 1),
-                                                height: size.width * numD20,
-                                                width: size.width * numD20,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD04),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors
-                                                            .grey.shade200,
-                                                        blurRadius: 1,
-                                                      )
-                                                    ]),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * numD04),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: avatarImageUrl +
-                                                          ratingReviewList[
-                                                                  index]
-                                                              .hopperImage,
-                                                      imageBuilder: (context,
-                                                              imageProvider) =>
-                                                          Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              image:
-                                                                  DecorationImage(
-                                                                image:
-                                                                    imageProvider,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          const CircularProgressIndicator(),
-                                                      errorWidget:
-                                                          (context, url,
-                                                                  error) =>
-                                                              Container(
-                                                                height:
-                                                                    size.width *
-                                                                        numD20,
-                                                                width:
-                                                                    size.width *
-                                                                        numD20,
-                                                                decoration: BoxDecoration(
-                                                                    color: colorGreyChat
-                                                                        .withOpacity(
-                                                                            .3),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(size.width *
-                                                                            numD03)),
-                                                              )),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: size.width * 0.02,
-                                              ),
-                                              Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical:
-                                                          size.width * numD016,
-                                                      horizontal:
-                                                          size.width * numD016),
-                                                  width: size.width * numD20,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey
-                                                        .withOpacity(.1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD02),
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Text(
-                                                        "Total Earning",
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize:
-                                                                size.width *
-                                                                    0.02,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w400),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      Text(
-                                                        "$currencySymbol${formatDouble(double.parse(ratingReviewList[index].totalEarning))}",
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize:
-                                                                size.width *
-                                                                    0.026,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ],
-                                                  )),
-                                              SizedBox(
-                                                height: size.width * 0.02,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Image.asset(
-                                                    "${iconsPath}ic_clock.png",
-                                                    height:
-                                                        size.width * numD036,
-                                                  ),
-                                                  SizedBox(
-                                                    width: size.width * numD01,
-                                                  ),
-                                                  Text(
-                                                    dateTimeFormatter(
-                                                        dateTime:
-                                                            ratingReviewList[
-                                                                    index]
-                                                                .time,
-                                                        format: "hh:mm a"),
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width *
-                                                            numD028,
-                                                        color: colorHint,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: size.width * 0.02,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Image.asset(
-                                                    "${iconsPath}calendar.png",
-                                                    height:
-                                                        size.width * numD035,
-                                                  ),
-                                                  SizedBox(
-                                                    width: size.width * numD01,
-                                                  ),
-                                                  Text(
-                                                    dateTimeFormatter(
-                                                        dateTime:
-                                                            ratingReviewList[
-                                                                    index]
-                                                                .date,
-                                                        format: "dd MMM yyyy"),
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width *
-                                                            numD028,
-                                                        color: colorHint,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          Expanded(
-                                              child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                size.width *
-                                                                    numD02),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          ratingReviewList[
-                                                                  index]
-                                                              .userName
-                                                              .toUpperCase(),
-                                                          style: commonTextStyle(
-                                                              size: size,
-                                                              fontSize:
-                                                                  size.width *
-                                                                      numD04,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        Text(
-                                                          "Hopper since ${dateTimeFormatter(dateTime: ratingReviewList[index].hopperCreatedAt, format: "MMM yyyy")}",
-                                                          style: commonTextStyle(
-                                                              size: size,
-                                                              fontSize:
-                                                                  size.width *
-                                                                      numD028,
-                                                              color:
-                                                                  Colors.grey,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const Spacer(),
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                size.width *
-                                                                    numD02,
-                                                            vertical:
-                                                                size.width *
-                                                                    numD02),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(size
-                                                                        .width *
-                                                                    numD025)),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          ratingReviewList[
-                                                                  index]
-                                                              .ratingValue
-                                                              .toString(),
-                                                          style: commonTextStyle(
-                                                              size: size,
-                                                              fontSize:
-                                                                  size.width *
-                                                                      numD03,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        SizedBox(
-                                                          width: size.width *
-                                                              numD01,
-                                                        ),
-                                                        RatingBar(
-                                                          ratingWidget:
-                                                              RatingWidget(
-                                                            empty: Image.asset(
-                                                                "${iconsPath}ic_empty_star.png"),
-                                                            full: Image.asset(
-                                                                "${iconsPath}ic_full_star.png"),
-                                                            half: Image.asset(
-                                                                "${iconsPath}ic_half_star.png"),
-                                                          ),
-                                                          onRatingUpdate:
-                                                              (value) {},
-                                                          itemSize: size.width *
-                                                              numD04,
-                                                          ignoreGestures: true,
-                                                          itemCount: 5,
-                                                          initialRating: ratingReviewList[
-                                                                      index]
-                                                                  .ratingValue
-                                                                  .isNotEmpty
-                                                              ? double.parse(
-                                                                  ratingReviewList[
-                                                                          index]
-                                                                      .ratingValue
-                                                                      .toString())
-                                                              : 0.0,
-                                                          allowHalfRating: true,
-                                                          itemPadding:
-                                                              EdgeInsets.only(
-                                                                  left: size
-                                                                          .width *
-                                                                      0.003),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: size.width * numD02,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * numD02),
-                                                child: Wrap(
-                                                    children:
-                                                        List<Widget>.generate(
-                                                            ratingReviewList[
-                                                                    index]
-                                                                .featureList
-                                                                .length,
-                                                            (int idx) {
-                                                  return Container(
-                                                      margin: EdgeInsets.only(
-                                                          right: size.width *
-                                                              0.04,
-                                                          top: size.width *
-                                                              0.014),
-                                                      decoration: BoxDecoration(
-                                                          color: colorThemePink,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(size
-                                                                          .width *
-                                                                      0.04)),
-                                                      padding: EdgeInsets
-                                                          .symmetric(
-                                                              vertical:
-                                                                  size.width *
-                                                                      0.012,
-                                                              horizontal:
-                                                                  size.width *
-                                                                      0.018),
-                                                      child: Text(
-                                                        ratingReviewList[index]
-                                                            .featureList[idx],
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:
-                                                                size.width *
-                                                                    0.025,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ));
-                                                })),
-                                              ),
-                                              SizedBox(
-                                                height: size.width * numD03,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * numD02),
-                                                child: Text(
-                                                  ratingReviewList[index]
-                                                      .review,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize:
-                                                          size.width * 0.033),
-                                                ),
-                                              )
-                                            ],
-                                          ))
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return SizedBox(
-                                      height: size.width * numD06,
-                                    );
-                                  },
-                                  itemCount: ratingReviewList.length),
-                            )
-                          : errorMessageWidget("Data Not Available")),
-                ],
-              )
-            : showLoader(),
-      ),
-    );
-  }
-
-  void _onRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    setState(() {
-      _offset = 0;
-      showData = false;
-      ratingReviewList.clear();
-      callGetAllRatingReview(selectedType);
-    });
-    _refreshController.refreshCompleted();
-  }
-
-  void _onLoading() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    setState(() {
-      _offset += 10;
-      callGetAllRatingReview(selectedType);
-    });
-    _refreshController.loadComplete();
   }
 
   void initializeFilter() {
@@ -594,23 +74,434 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
       FilterRatingData(ratingValue: 2.0, selected: false),
       FilterRatingData(ratingValue: 1.0, selected: false),
     ]);
-    /*filterList.addAll([
-            FilterModel(name: "Reuters", icon: "ic_sold.png", isSelected: false),
-            FilterModel(
-                name: "Daily Mail", icon: "ic_live_content.png", isSelected: false),
-            FilterModel(
-                name: "Daily Mirror",
-                icon: "ic_payment_reviced.png",
-                isSelected: false),
-            FilterModel(name: "The Sun", icon: "ic_pending.png", isSelected: false),
-            FilterModel(
-                name: "The Times", icon: "ic_exclusive.png", isSelected: false),
-          ]);*/
   }
 
-  Future<void> showBottomSheet(size) async {
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return BlocProvider(
+      create: (_) => di.sl<RatingBloc>()..add(RatingLoadInitial()),
+      child: Scaffold(
+        appBar: CommonAppBar(
+          elevation: 0,
+          hideLeading: false,
+          title: Text(
+            "$ratingText & $reviewText",
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: size.width * appBarHeadingFontSize),
+          ),
+          centerTitle: false,
+          titleSpacing: 0,
+          size: size,
+          showActions: true,
+          leadingFxn: () {
+            Navigator.pop(context);
+          },
+          actionWidget: [
+            InkWell(
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(initialPosition: 2)),
+                    (route) => false);
+              },
+              child: Image.asset(
+                "${commonImagePath}rabbitLogo.png",
+                height: size.width * numD07,
+                width: size.width * numD07,
+              ),
+            ),
+            SizedBox(
+              width: size.width * numD04,
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: BlocConsumer<RatingBloc, RatingState>(
+            listener: (context, state) {
+              if (state.status == RatingStatus.failure) {
+                _refreshController.refreshFailed();
+                _refreshController.loadFailed();
+                // Show error snackbar if needed
+              } else if (state.status == RatingStatus.success) {
+                _refreshController.refreshCompleted();
+                if (state.hasReachedMax) {
+                  _refreshController.loadNoData();
+                } else {
+                  _refreshController.loadComplete();
+                }
+              }
+            },
+            builder: (context, state) {
+              if (state.status == RatingStatus.initial ||
+                  (state.status == RatingStatus.loading &&
+                      state.reviews.isEmpty)) {
+                return showLoader();
+              }
+
+              return Column(
+                children: [
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    child: Row(
+                      children: [
+                        Text(
+                          "$ratingText & $reviewText ${state.type}"
+                              .toUpperCase(),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD036,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const Spacer(),
+                        InkWell(
+                            onTap: () {
+                              showBottomSheet(context, size, state);
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(size.width * numD04),
+                                child: Image.asset(
+                                  "${iconsPath}ic_filter.png",
+                                  height: size.width * numD05,
+                                )))
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
+                  Flexible(
+                      child: state.reviews.isNotEmpty
+                          ? SmartRefresher(
+                              controller: _refreshController,
+                              enablePullDown: true,
+                              enablePullUp: !state.hasReachedMax,
+                              onRefresh: () {
+                                context
+                                    .read<RatingBloc>()
+                                    .add(RatingLoadReviews(isRefresh: true));
+                              },
+                              onLoading: () {
+                                context
+                                    .read<RatingBloc>()
+                                    .add(RatingLoadReviews(isLoadMore: true));
+                              },
+                              child: ListView.separated(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * numD04,
+                                      vertical: size.width * numD02),
+                                  itemBuilder: (context, index) {
+                                    final review = state.reviews[index];
+                                    return _buildReviewItem(size, review);
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(
+                                      height: size.width * numD06,
+                                    );
+                                  },
+                                  itemCount: state.reviews.length),
+                            )
+                          : errorMessageWidget("Data Not Available")),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewItem(Size size, Review review) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: size.width * numD03, vertical: size.width * numD04),
+      decoration: BoxDecoration(
+          color: colorLightGrey,
+          borderRadius: BorderRadius.circular(size.width * numD04)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 1),
+                height: size.width * numD20,
+                width: size.width * numD20,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(size.width * numD04),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade200,
+                        blurRadius: 1,
+                      )
+                    ]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(size.width * numD04),
+                  child: CachedNetworkImage(
+                      imageUrl: avatarImageUrl + review.hopperImage,
+                      imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Container(
+                            height: size.width * numD20,
+                            width: size.width * numD20,
+                            decoration: BoxDecoration(
+                                color: colorGreyChat.withOpacity(.3),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD03)),
+                          )),
+                ),
+              ),
+              SizedBox(
+                height: size.width * 0.02,
+              ),
+              if (review.totalEarning.isNotEmpty)
+                Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * numD016,
+                        horizontal: size.width * numD016),
+                    width: size.width * numD20,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(size.width * numD02),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          "Total Earning",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: size.width * 0.02,
+                              fontWeight: FontWeight.w400),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          "$currencySymbol${formatDouble(double.tryParse(review.totalEarning) ?? 0.0)}",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: size.width * 0.026,
+                              fontWeight: FontWeight.w700),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )),
+              SizedBox(
+                height: size.width * 0.02,
+              ),
+              if (review.time.isNotEmpty)
+                Row(
+                  children: [
+                    Image.asset(
+                      "${iconsPath}ic_clock.png",
+                      height: size.width * numD036,
+                    ),
+                    SizedBox(
+                      width: size.width * numD01,
+                    ),
+                    Text(
+                      dateTimeFormatter(
+                          dateTime: review.time, format: "hh:mm a"),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD028,
+                          color: colorHint,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              SizedBox(
+                height: size.width * 0.02,
+              ),
+              if (review.date.isNotEmpty)
+                Row(
+                  children: [
+                    Image.asset(
+                      "${iconsPath}calendar.png",
+                      height: size.width * numD035,
+                    ),
+                    SizedBox(
+                      width: size.width * numD01,
+                    ),
+                    Text(
+                      dateTimeFormatter(
+                          dateTime: review.date, format: "dd MMM yyyy"),
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD028,
+                          color: colorHint,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
+            ],
+          ),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * numD02),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          review.userName.toUpperCase(),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD04,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        if (review.hopperCreatedAt.isNotEmpty)
+                          Text(
+                            "Hopper since ${dateTimeFormatter(dateTime: review.hopperCreatedAt, format: "MMM yyyy")}",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD028,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w400),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD02,
+                        vertical: size.width * numD02),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(size.width * numD025)),
+                    child: Row(
+                      children: [
+                        Text(
+                          review.ratingValue.toString(),
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD03,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: size.width * numD01,
+                        ),
+                        RatingBar(
+                          ratingWidget: RatingWidget(
+                            empty: Image.asset("${iconsPath}ic_empty_star.png"),
+                            full: Image.asset("${iconsPath}ic_full_star.png"),
+                            half: Image.asset("${iconsPath}ic_half_star.png"),
+                          ),
+                          onRatingUpdate: (value) {},
+                          itemSize: size.width * numD04,
+                          ignoreGestures: true,
+                          itemCount: 5,
+                          initialRating: review.ratingValue,
+                          allowHalfRating: true,
+                          itemPadding:
+                              EdgeInsets.only(left: size.width * 0.003),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: size.width * numD02,
+              ),
+              // Feature list is not in Review entity yet.
+              // Assuming it's part of data model or entity.
+              // If not present, I'll comment out or handle if existing.
+              // The API response mapping might have 'featureList'.
+              /*
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal:
+                        size.width * numD02),
+                child: Wrap(
+                    children:
+                        List<Widget>.generate(
+                            review.featureList
+                                .length,
+                            (int idx) {
+                  return Container(
+                      margin: EdgeInsets.only(
+                          right: size.width *
+                              0.04,
+                          top: size.width *
+                              0.014),
+                      decoration: BoxDecoration(
+                          color: colorThemePink,
+                          borderRadius:
+                              BorderRadius
+                                  .circular(size
+                                          .width *
+                                      0.04)),
+                      padding: EdgeInsets
+                          .symmetric(
+                              vertical:
+                                  size.width *
+                                      0.012,
+                              horizontal:
+                                  size.width *
+                                      0.018),
+                      child: Text(
+                        review
+                            .featureList[idx],
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize:
+                                size.width *
+                                    0.025,
+                            fontWeight:
+                                FontWeight
+                                    .w600),
+                      ));
+                })),
+              ),
+              */
+              SizedBox(
+                height: size.width * numD03,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+                child: Text(
+                  review.review ?? "",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: size.width * 0.033),
+                ),
+              )
+            ],
+          ))
+        ],
+      ),
+    );
+  }
+
+  Future<void> showBottomSheet(
+      BuildContext parentContext, Size size, RatingState state) async {
     showModalBottomSheet(
-        context: context,
+        context: parentContext,
         isScrollControlled: true,
         useSafeArea: true,
         backgroundColor: Colors.white,
@@ -657,11 +548,12 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                           ),
                           TextButton(
                             onPressed: () {
-                              sortList.clear();
-                              filterRatingList.indexWhere(
+                              sortList.forEach(
+                                  (element) => element.isSelected = false);
+                              filterRatingList.forEach(
                                   (element) => element.selected = false);
-                              initializeFilter();
                               stateSetter(() {});
+                              // Dispatch Clear Filter Event if needed
                             },
                             child: Text(
                               "Clear all",
@@ -689,8 +581,11 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                             fontWeight: FontWeight.w500),
                       ),
 
+                      // Using existing common widget logic for sortList
+                      // Adapt filterListWidget or re-implement simple list
                       filterListWidget(
                           context, sortList, stateSetter, size, true),
+
                       SizedBox(
                         height: size.width * numD05,
                       ),
@@ -773,14 +668,13 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                               height: size.width * numD04,
                             );
                           },
-                          itemCount: 5),
+                          itemCount: filterRatingList.length),
 
-                      /// Filter
+                      /// Filter Media Houses
                       SizedBox(
                         height: size.width * numD05,
                       ),
 
-                      /// Filter Heading
                       Text(
                         "$filterText $publicationsText",
                         style: commonTextStyle(
@@ -790,35 +684,59 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                             fontWeight: FontWeight.w500),
                       ),
 
-                      filterListWidget(
-                          context, filterList, stateSetter, size, false),
+                      // Using mediaHouses from state to populate filterList if not already done
+                      // Or just render mediaHouses directly here
+                      SizedBox(height: size.width * numD02),
+                      Wrap(
+                        spacing: size.width * numD02,
+                        runSpacing: size.width * numD02,
+                        children: state.mediaHouses.map((mediaHouse) {
+                          bool isSelected = false; // Implement selection logic
+                          return FilterChip(
+                              label: Text(mediaHouse.name),
+                              selected: isSelected,
+                              onSelected: (val) {
+                                stateSetter(() {});
+                              });
+                        }).toList(),
+                      )
                     ],
                   ),
                   Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: size.width * numD02),
                     child: Container(
-                      width: size.width,
-                      height: size.width * numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
+                      width: double.infinity,
+                      height: size.width * numD14,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(size.width * numD02),
+                          ),
+                        ),
+                        onPressed: () {
+                          // Apply filters
+                          // Construct filter map
+                          Map<String, dynamic> filters = {};
+                          // Add filter logic
+                          parentContext
+                              .read<RatingBloc>()
+                              .add(RatingFilterUpdated(filters));
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Show Results",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: size.width * numD045,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      child: commonElevatedButton(
-                          applyText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
-                        Navigator.pop(context);
-                        callGetAllRatingReview(selectedType);
-                      }),
                     ),
-                  ),
+                  )
                 ],
               ),
             );
@@ -827,7 +745,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
   }
 
   Widget filterListWidget(BuildContext context, List<FilterModel> list,
-      StateSetter stateSetter, size, bool isSort) {
+      StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD02),
       physics: const NeverScrollableScrollPhysics(),
@@ -843,9 +761,20 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                 list[pos].isSelected = false;
                 list[pos].fromDate = null;
                 list[pos].toDate = null;
+              } else {
+                int pos = list.indexWhere((element) => element.isSelected);
+                if (pos != -1) {
+                  list[pos].isSelected = false;
+                }
               }
+              // Clear other lists selection if needed, or just manage current list
+              // In FeedScreen it clears both, here we might want similar behavior or just single selection
+              filterList.indexWhere((element) => element.isSelected = false);
             }
-            item.isSelected = !item.isSelected;
+            sortList.indexWhere((element) => element.isSelected = false);
+
+            list[index].isSelected = !list[index].isSelected;
+
             stateSetter(() {});
             setState(() {});
           },
@@ -863,48 +792,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
             color: list[index].isSelected ? Colors.grey.shade400 : null,
             child: Row(
               children: [
-                list[index].icon.isNotEmpty
-                    ? list[index].icon.contains('https')
-                        ? Image.network(list[index].icon,
-                            height: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
-                            width: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
-                            errorBuilder: (context, i, d) => Image.asset(
-                                  "${commonImagePath}rabbitLogo.png",
-                                  height: list[index].name == soldContentText
-                                      ? size.width * numD06
-                                      : size.width * numD05,
-                                  width: list[index].name == soldContentText
-                                      ? size.width * numD06
-                                      : size.width * numD05,
-                                ))
-                        : Image.asset(
-                            "$iconsPath${list[index].icon}",
-                            color: Colors.black,
-                            height: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
-                            width: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
-                            errorBuilder: (context, i, d) => Image.asset(
-                              "${commonImagePath}rabbitLogo.png",
-                              height: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
-                              width: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
-                            ),
-                          )
-                    : Container(),
-                SizedBox(
-                  width: size.width * numD03,
-                ),
-                item.name == filterDateText
+                list[index].name == filterDateText
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1033,12 +921,12 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                           ),
                         ],
                       )
-                    : Text(item.name,
+                    : Text(list[index].name,
                         style: TextStyle(
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                        ))
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
@@ -1051,141 +939,4 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
       },
     );
   }
-
-  /// API Section
-  callGetAllRatingReview(String ratingType) {
-    debugPrint("ratingType =====> $ratingType");
-    Map<String, String> map = {
-      "limit": "10",
-      "offset": _offset.toString(),
-      "type": ratingType,
-    };
-
-    /// Short
-    int pos = sortList.indexWhere((element) => element.isSelected);
-    if (pos != -1) {
-      if (sortList[pos].name == filterDateText) {
-        map["startdate"] = sortList[pos].fromDate!;
-        map["endDate"] = sortList[pos].toDate!;
-      } else if (sortList[pos].name == viewMonthlyText) {
-        map["posted_date"] = "31";
-      } else if (sortList[pos].name == viewYearlyText) {
-        map["posted_date"] = "365";
-      } else if (sortList[pos].name == viewWeeklyText) {
-        map["posted_date"] = "7";
-      }
-    }
-
-    /// Filter
-    for (var element in filterList) {
-      if (element.isSelected) {
-        map['publication'] = element.id ?? "";
-      }
-    }
-
-    for (var element in filterRatingList) {
-      if (element.selected) {
-        switch (element.ratingValue.toString()) {
-          case '5.0':
-            map["rating"] = '5';
-            break;
-
-          case '4.0':
-            map["startrating"] = '4';
-            map["endrating"] = '5';
-            break;
-
-          case '3.0':
-            map["startrating"] = '3';
-            map["endrating"] = '4';
-            break;
-          case '2.0':
-            map["startrating"] = '2';
-            map["endrating"] = '3';
-            break;
-          case '1.0':
-            map["startrating"] = '1';
-            map["endrating"] = '2';
-            break;
-        }
-      }
-    }
-
-    NetworkClass(getAllRatingAPI, this, reqGetAllRatingAPI)
-        .callRequestServiceHeader(false, 'get', map);
-  }
-
-  /// Media House
-  callMediaHouseList() {
-    NetworkClass(getMediaHouseDetailAPI, this, reqGetMediaHouseDetailAPI)
-        .callRequestServiceHeader(false, 'get', {});
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case reqGetAllRatingAPI:
-          debugPrint(
-              "reqGetAllRatingAPI_errorResponse===> ${jsonDecode(response)}");
-          break;
-        case reqGetMediaHouseDetailAPI:
-          debugPrint("Error response===> ${jsonDecode(response)}");
-      }
-    } on Exception catch (e) {
-      debugPrint("error Exception==> $e");
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case reqGetAllRatingAPI:
-          debugPrint(
-              "reqGetAllRatingAPI_successResponse===> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-          var listModel = data["resp"] as List;
-          ratingReviewList =
-              listModel.map((e) => RatingReviewData.fromJson(e)).toList();
-
-          /*       if (list.isNotEmpty) {
-              _refreshController.loadComplete();
-            } else if (list.isEmpty) {
-              _refreshController.loadNoData();
-            } else {
-              _refreshController.loadFailed();
-            }
-
-            if (_offset == 0) {
-              ratingReviewList.clear();
-            }
-*/
-
-          showData = true;
-          setState(() {});
-          break;
-        case reqGetMediaHouseDetailAPI:
-          debugPrint("success response===> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-          var dataList = data['response'] as List;
-          filterList.clear();
-          var mediaHouseDataList =
-              dataList.map((e) => PublicationDataModel.fromJson(e)).toList();
-          for (var element in mediaHouseDataList) {
-            filterList.add(FilterModel(
-              name: element.companyName.isNotEmpty
-                  ? element.companyName.toCapitalized()
-                  : element.publicationName,
-              icon: element.companyProfile,
-              id: element.id,
-              isSelected: false,
-            ));
-          }
-          setState(() {});
-      }
-    } on Exception catch (e) {
-      debugPrint("error Exception==> $e");
-    }
-  }
-}
+} // End of State class

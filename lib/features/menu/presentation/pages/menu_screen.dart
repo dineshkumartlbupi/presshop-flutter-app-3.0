@@ -486,6 +486,9 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
   }
 
   void logoutDialog(Size size, BuildContext context) {
+    // Capture the Bloc instance from the parent context where it is valid
+    final menuBloc = context.read<MenuBloc>();
+
     showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -601,9 +604,7 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
                                     commonButtonStyle(size, Colors.black), () {
                                   Navigator.pop(context); // Close dialog
                                   // Call logout on BLoC
-                                  context
-                                      .read<MenuBloc>()
-                                      .add(MenuLogoutRequested());
+                                  menuBloc.add(MenuLogoutRequested());
                                 }),
                               )),
                               SizedBox(

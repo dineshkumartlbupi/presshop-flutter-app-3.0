@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:presshop/main.dart';
-import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
 
-class LocationService implements NetworkResponse {
+import 'package:presshop/core/core_export.dart';
+
+import 'package:presshop/core/widgets/common_widgets.dart';
+
+class LocationService {
   final Location _location = Location();
 
   // Check and request location permission
@@ -55,19 +53,6 @@ class LocationService implements NetworkResponse {
     return true;
   }
 
-  void callUpdateCurrentData(double latitude, double longitude) {
-    Map<String, String> params = {
-      "hopper_id": sharedPreferences!.getString(hopperIdKey).toString(),
-      "longitude": longitude.toString(),
-      "latitude": latitude.toString()
-    };
-
-    debugPrint('map: $params');
-    // NetworkClass.fromNetworkClass(
-    //         updateLocation, this, updateLocationRequest, params)
-    //     .callRequestServiceHeader(false, "post", null);
-  }
-
   Future<LocationData?> getCurrentLocation(BuildContext context,
       {bool shouldShowSettingPopup = true}) async {
     bool hasPermission =
@@ -102,7 +87,7 @@ class LocationService implements NetworkResponse {
       } else {
         debugPrint(
             "🚀 LocationService: Location fetched: ${position.latitude}, ${position.longitude}");
-        callUpdateCurrentData(position.latitude, position.longitude);
+
         return LocationData.fromMap({
           'latitude': position.latitude,
           'longitude': position.longitude,
@@ -112,15 +97,5 @@ class LocationService implements NetworkResponse {
       debugPrint("🚀 LocationService: Error fetching location: $e");
       return null;
     }
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    // TODO: implement onError
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    // TODO: implement onResponse
   }
 }

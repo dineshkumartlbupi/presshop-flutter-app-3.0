@@ -45,7 +45,6 @@ class TaskVideoModel {
 }
 
 class TaskDetailMediaModel extends TaskMedia {
-  
   TaskDetailMediaModel({
     super.id = "",
     super.type = "",
@@ -76,7 +75,6 @@ class TaskDetailMediaModel extends TaskMedia {
 }
 
 class TaskDetailModel extends TaskDetail {
-  
   TaskDetailModel({
     super.id = "",
     super.isNeedPhoto = false,
@@ -112,9 +110,13 @@ class TaskDetailModel extends TaskDetail {
     super.byCar = "",
     super.mediaList = const [],
     super.broadcastLocation = "",
+    super.roomId = "",
+    super.minimumPriceRange = "",
+    super.maximumPriceRange = "",
   });
 
-  factory TaskDetailModel.fromJson(Map<String, dynamic> json) {
+  factory TaskDetailModel.fromJson(Map<String, dynamic> json,
+      {String roomId = ""}) {
     debugPrint("json aditya::::$json");
 
     List<TaskMedia> mediaList = [];
@@ -124,7 +126,7 @@ class TaskDetailModel extends TaskDetail {
           uploadedMedia.map((e) => TaskDetailMediaModel.fromJson(e)).toList();
       debugPrint("mediaList Length : ${mediaList.length}");
     }
-    
+
     double latitude = 0.0;
     double longitude = 0.0;
 
@@ -133,39 +135,74 @@ class TaskDetailModel extends TaskDetail {
         var coordinator = json["address_location"]["coordinates"] as List;
 
         if (coordinator.isNotEmpty) {
-           // Assuming numberFormatting returns a number or string
-           // Just parsing safely
-           latitude = (coordinator.first is num) ? (coordinator.first as num).toDouble() : double.tryParse(coordinator.first.toString()) ?? 0.0;
-           longitude = (coordinator.last is num) ? (coordinator.last as num).toDouble() : double.tryParse(coordinator.last.toString()) ?? 0.0;
+          // Assuming numberFormatting returns a number or string
+          // Just parsing safely
+          latitude = (coordinator.first is num)
+              ? (coordinator.first as num).toDouble()
+              : double.tryParse(coordinator.first.toString()) ?? 0.0;
+          longitude = (coordinator.last is num)
+              ? (coordinator.last as num).toDouble()
+              : double.tryParse(coordinator.last.toString()) ?? 0.0;
         }
+      }
+    }
+
+    String minimumPriceRange = "";
+    String maximumPriceRange = "";
+
+    if (json['mediahouse_id'] != null &&
+        json['mediahouse_id'] is Map &&
+        json['mediahouse_id']['admin_rignts'] != null) {
+      if (json['mediahouse_id']['admin_rignts']['price_range'] != null) {
+        maximumPriceRange = json['mediahouse_id']['admin_rignts']['price_range']
+                ['maximum_price']
+            .toString();
+        minimumPriceRange = json['mediahouse_id']['admin_rignts']['price_range']
+                ['minimum_price']
+            .toString();
       }
     }
 
     return TaskDetailModel(
       id: (json["_id"] ?? "").toString(),
-      isNeedPhoto: (json["need_photos"] ?? "").toString().toLowerCase() == "true",
-      isNeedVideo: (json["need_videos"] ?? "").toString().toLowerCase() == "true",
-      isNeedInterview: (json["need_interview"] ?? "").toString().toLowerCase() == "true",
+      isNeedPhoto:
+          (json["need_photos"] ?? "").toString().toLowerCase() == "true",
+      isNeedVideo:
+          (json["need_videos"] ?? "").toString().toLowerCase() == "true",
+      isNeedInterview:
+          (json["need_interview"] ?? "").toString().toLowerCase() == "true",
       mode: (json["mode"] ?? "").toString(),
       type: (json["type"] ?? "").toString(),
       status: (json["status"] ?? "").toString(),
       paidStatus: json["paid_status"].toString(),
-      deadLine: DateTime.tryParse(json["deadline_date"] ?? "") ?? DateTime.now(),
-      
-      mediaHouseId: (json["mediahouse_id"] is Map ? (json["mediahouse_id"]["_id"] ?? "") : "").toString(),
-      mediaHouseName: (json["mediahouse_id"] is Map ? (json["mediahouse_id"]["full_name"] ?? "") : "").toString(),
-      companyName: (json["mediahouse_id"] is Map ? (json["mediahouse_id"]["company_name"] ?? "") : "").toString(),
-      mediaHouseImage: (json["mediahouse_id"] is Map ? (json["mediahouse_id"]["profile_image"] ?? "") : "").toString(),
-
+      deadLine:
+          DateTime.tryParse(json["deadline_date"] ?? "") ?? DateTime.now(),
+      mediaHouseId: (json["mediahouse_id"] is Map
+              ? (json["mediahouse_id"]["_id"] ?? "")
+              : "")
+          .toString(),
+      mediaHouseName: (json["mediahouse_id"] is Map
+              ? (json["mediahouse_id"]["full_name"] ?? "")
+              : "")
+          .toString(),
+      companyName: (json["mediahouse_id"] is Map
+              ? (json["mediahouse_id"]["company_name"] ?? "")
+              : "")
+          .toString(),
+      mediaHouseImage: (json["mediahouse_id"] is Map
+              ? (json["mediahouse_id"]["profile_image"] ?? "")
+              : "")
+          .toString(),
       title: (json["heading"] ?? "").toString(),
       description: (json["task_description"] ?? "").toString(),
-      acceptedBy: json['accepted_by'] != null ? List<String>.from(json['accepted_by']) : [],
+      acceptedBy: json['accepted_by'] != null
+          ? List<String>.from(json['accepted_by'])
+          : [],
       specialReq: (json["any_spcl_req"] ?? "").toString(),
       location: (json["location"] ?? "").toString(),
       photoPrice: (json["photo_price"] ?? "").toString(),
       videoPrice: (json["videos_price"] ?? "").toString(),
       createdAt: (json["createdAt"] ?? "").toString(),
-      
       interviewPrice: (json["interview_price"] ?? "").toString(),
       receivedAmount: (json["received_amount"] ?? "").toString(),
       role: (json["role"] ?? "").toString(),
@@ -173,7 +210,10 @@ class TaskDetailModel extends TaskDetail {
       userId: (json["user_id"] ?? "").toString(),
       mediaList: mediaList,
       latitude: latitude,
-      longitude: longitude
+      longitude: longitude,
+      minimumPriceRange: minimumPriceRange,
+      maximumPriceRange: maximumPriceRange,
+      roomId: roomId,
     );
   }
 
@@ -213,6 +253,9 @@ class TaskDetailModel extends TaskDetail {
       byCar: entity.byCar,
       mediaList: entity.mediaList,
       broadcastLocation: entity.broadcastLocation,
+      roomId: entity.roomId,
+      minimumPriceRange: entity.minimumPriceRange,
+      maximumPriceRange: entity.maximumPriceRange,
     );
   }
 }

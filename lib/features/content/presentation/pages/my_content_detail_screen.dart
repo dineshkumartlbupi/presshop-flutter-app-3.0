@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:developer';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:dio/dio.dart';
@@ -13,8 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
@@ -42,7 +38,7 @@ import '../bloc/content_state.dart';
 import '../../domain/entities/content_item.dart';
 import '../../domain/entities/content_media.dart';
 import '../../../../core/di/injection_container.dart';
-import '../../data/models/my_content_data_model.dart';
+
 import '../../domain/mappers/content_item_mapper.dart';
 
 class MyContentDetailScreen extends StatefulWidget {
@@ -68,8 +64,7 @@ class MyContentDetailScreen extends StatefulWidget {
   }
 }
 
-class MyContentDetailScreenState extends State<MyContentDetailScreen>
-    implements NetworkResponse {
+class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
   ContentItem? contentItem;
@@ -97,6 +92,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
     super.initState();
     _contentBloc = sl<ContentBloc>();
     _contentBloc.add(FetchContentDetailEvent(widget.contentId));
+    _contentBloc.add(FetchMediaHouseOffersEvent(widget.contentId));
+    _contentBloc.add(FetchContentTransactionsEvent(
+        contentId: widget.contentId, limit: 10, offset: 0));
   }
 
   void _checkOwnershipAndStartTimer() async {
@@ -104,19 +102,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String currentUserId = prefs.getString("_id") ?? "";
-
-    // contentItem doesn't have userId directly if it's not added to entity?
-    // Copied from MyDraftScreen, ContentItem might not have userId.
-    // Check ContentItem definition.
-    // It has `mediaHouseName`, `categoryId`... but `userId` is missing from my update?
-    // MyContentData had `userId`.
-    // I need to add userId to ContentItem if specific logic depends on it.
-    // For now, let's assume it's NOT checking properly or I need to fix ContentItem later.
-    // Proceeding with placeholder.
-
-    // isOwner = currentUserId == widget.hopperID;
-    // Use widget.hopperID if logic allows, or fetch from contentItem.
-    // Original code: isOwner = currentUserId == widget.hopperID;
 
     if (contentItem != null) {
       isOwner = currentUserId == (contentItem!.userId ?? widget.hopperID);
@@ -193,10 +178,18 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
             setState(() {
               contentItem = state.content;
               isLoading = false;
-              getMediaOfferApi();
               initialController();
               _checkOwnershipAndStartTimer();
-              callGetAllTransactionDetail();
+            });
+          } else if (state is MediaHouseOffersLoaded) {
+            setState(() {
+              _mediaHouseList.clear();
+              _mediaHouseList.addAll(state.offers);
+              isMediaOffer = state.offers.any((element) => !element.paidStatus);
+            });
+          } else if (state is ContentTransactionsLoaded) {
+            setState(() {
+              publicationTransactionList = state.transactions;
             });
           } else if (state is ContentError) {
             setState(() {
@@ -363,6 +356,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                                     _contentBloc.add(
                                                         FetchContentDetailEvent(
                                                             widget.contentId));
+                                                    _contentBloc.add(
+                                                        FetchMediaHouseOffersEvent(
+                                                            widget.contentId));
+                                                    _contentBloc.add(
+                                                        FetchContentTransactionsEvent(
+                                                            contentId: widget
+                                                                .contentId,
+                                                            limit: 10,
+                                                            offset: 0));
                                                   });
                                                 },
                                               ),
@@ -1054,45 +1056,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                     SizedBox(
                       width: size.width * numD01,
                     ),
-
-                    /*    Container(
-                          height: size.width * numD11,
-                          width: size.width * numD27,
-                          margin: EdgeInsets.only(top: size.width * numD02),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04,
-                          ),
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD03)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Offer Price",
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              Text(
-                                "$currencySymbol${item.initialOfferAmount}",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD05,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),*/
-
                     Container(
                       width: size.width * numD30,
                       padding: EdgeInsets.symmetric(
@@ -1155,34 +1118,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          /*AudioFileWaveforms(
-            size: Size(size.width, size.width * numD20),
-            playerController: controller,
-            enableSeekGesture: true,
-            waveformType: WaveformType.long,
-            continuousWaveform: true,
-            playerWaveStyle: PlayerWaveStyle(
-              fixedWaveColor: Colors.black,
-              liveWaveColor: colorThemePink,
-              spacing: 6,
-              liveWaveGradient: ui.Gradient.linear(
-                const Offset(70, 50),
-                Offset(MediaQuery.of(context).size.width / 2, 0),
-                [Colors.red, Colors.green],
-              ),
-              fixedWaveGradient: ui.Gradient.linear(
-                const Offset(70, 50),
-                Offset(MediaQuery.of(context).size.width / 2, 0),
-                [Colors.red, Colors.green],
-              ),
-              seekLineColor: colorThemePink,
-              seekLineThickness: 2,
-              showSeekLine: true,
-              showBottom: true,
-            ),
-          ),
-
-          */
           Image.asset(
             "${commonImagePath}watermark1.png",
             height: double.infinity,
@@ -1215,23 +1150,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
     );
   }
 
-  /*Widget videoWidget(int index) {
-    return FlickVideoPlayer(
-            flickManager: flickManager!,
-            flickVideoWithControls: const FlickVideoWithControls(
-              playerLoadingFallback: Center(
-                  child: CircularProgressIndicator(
-                    color: colorThemePink,
-                  )),
-            ),
-            flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-              playerLoadingFallback: CircularProgressIndicator(
-                color: colorThemePink,
-              ),
-              controls: FlickLandscapeControls(),
-            ),
-          );}*/
-
   /// video widget
   Widget videoWidget(int index) {
     if (index != _currentMediaIndex) {
@@ -1241,8 +1159,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
       return Stack(
         children: [
           VideoThumbnailWidget(
-            videoUrl: fixS3Url((item.mediaUrl ?? "").startsWith('http')
-                ? (item.mediaUrl ?? "")
+            videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
+                ? item.mediaUrl
                 : "$contentImageUrl${item.mediaUrl ?? ''}"),
             thumbnailUrl:
                 item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
@@ -1275,10 +1193,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 playerLoadingFallback: Stack(
                   children: [
                     VideoThumbnailWidget(
-                      videoUrl: fixS3Url(
-                          (item.mediaUrl ?? "").startsWith('http')
-                              ? (item.mediaUrl ?? "")
-                              : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                      videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
+                          ? item.mediaUrl
+                          : "$contentImageUrl${item.mediaUrl ?? ''}"),
                       thumbnailUrl: item.thumbnailUrl != null
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
@@ -1300,10 +1217,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 playerLoadingFallback: Stack(
                   children: [
                     VideoThumbnailWidget(
-                      videoUrl: fixS3Url(
-                          (item.mediaUrl ?? "").startsWith('http')
-                              ? (item.mediaUrl ?? "")
-                              : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                      videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
+                          ? item.mediaUrl
+                          : "$contentImageUrl${item.mediaUrl ?? ''}"),
                       thumbnailUrl: item.thumbnailUrl != null
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
@@ -1445,92 +1361,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
         ),
         autoPlay: false,
       );
-    }
-  }
-
-  ///--------Apis Section------------
-
-  /// Get content Media House Offer
-  void getMediaOfferApi() {
-    Map<String, String> map = {"image_id": widget.contentId};
-
-    NetworkClass(
-      getContentMediaHouseOfferUrl,
-      this,
-      getContentMediaHouseOfferReq,
-    ).callRequestServiceHeader(false, "get", map);
-  }
-
-  callGetAllTransactionDetail() {
-    Map<String, String> map = {
-      "content_id": contentItem?.id ?? widget.contentId,
-      "limit": '10',
-      "offset": '0'
-    };
-    debugPrint('map value ==> $map');
-    NetworkClass(
-            getPublicationTransactionAPI, this, reqGetPublicationTransactionReq)
-        .callRequestServiceHeader(false, 'get', map);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        /// Get Content detail
-
-        /// Get content Media House Offer
-        case getContentMediaHouseOfferReq:
-          var data = jsonDecode(response);
-          debugPrint("getContentMediaHouseOfferReq Error: $response");
-          if (data["errors"] != null) {
-            showSnackBar("Error", data["errors"]["msg"].toString(), Colors.red);
-          } else {
-            showSnackBar("Error", data.toString(), Colors.red);
-          }
-          break;
-
-        case reqGetPublicationTransactionReq:
-          debugPrint(
-              "reqGetPublicationTransactionAPI_ErrorResponse==> ${jsonDecode(response)}");
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        /// Get content Media House Offer
-        case getContentMediaHouseOfferReq:
-          var data = jsonDecode(response);
-          log("get ContentMediaHouseOfferReq Success: $data");
-          var dataModel = data["response"] as List;
-          _mediaHouseList.clear();
-          _mediaHouseList.addAll(dataModel
-              .map((e) => ManageTaskChatModel.fromJson(e ?? {}))
-              .toList());
-          for (var element in _mediaHouseList) {
-            if (!element.paidStatus) {
-              isMediaOffer = true;
-            }
-          }
-          setState(() {});
-          break;
-        case reqGetPublicationTransactionReq:
-          log("reqGetPublicationTransactionAPI_successResponse==> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-          var dataList = data['data'] as List;
-          publicationCount = data['countofmediahouse'].toString() ?? '';
-          publicationTransactionList = dataList
-              .map((e) => EarningTransactionDetail.fromJson(e))
-              .toList();
-          setState(() {});
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
     }
   }
 }

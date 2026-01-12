@@ -71,8 +71,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: 'Login failed with status code ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -129,9 +134,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
                 'Social Login failed with status code ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
-      if (e is UserNotRegisteredFailure) rethrow;
+      if (e is Failure) rethrow; // UserNotRegisteredFailure is a Failure
       throw ServerFailure(message: e.toString());
     }
   }
@@ -169,8 +178,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
                 'Registration failed with status code ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -199,8 +213,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: 'Sending OTP failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -230,10 +249,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      throw ServerFailure(
-        message: e.response?.data['message'] ?? e.message ?? 'Network error',
-      );
+      String errorMessage = e.message ?? 'Network error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -259,8 +281,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: 'OTP Verification failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -417,8 +444,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: 'Social Registration failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -447,10 +479,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ));
       }
     } on DioException catch (e) {
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Network error',
-      ));
+      String errorMessage = e.message ?? 'Network error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data?['message'] ?? errorMessage;
+      }
+      return Left(ServerFailure(message: errorMessage));
     } catch (e) {
+      if (e is Failure) return Left(e);
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -474,8 +509,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: 'Verify OTP failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
@@ -498,8 +538,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: 'Reset password failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw ServerFailure(message: e.message ?? 'Unknown error');
+      String errorMessage = e.message ?? 'Unknown error';
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      throw ServerFailure(message: errorMessage);
     } catch (e) {
+      if (e is Failure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }

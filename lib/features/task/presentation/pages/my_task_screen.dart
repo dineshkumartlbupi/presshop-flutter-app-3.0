@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/features/task/presentation/bloc/task_event.dart';
+import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/main.dart'; // For currencySymbol
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
@@ -55,7 +57,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
   String myId = "";
 
   int _allTaskOffset = 0;
-  int _localTaskOffset = 0;
+
   final int allTaskLimit = 10;
 
   bool _showData = false;
@@ -111,7 +113,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
     return BlocProvider(
       create: (context) {
         final bloc = di.sl<TaskBloc>();
+        // Initial Fetch
         bloc.add(FetchAllTasksEvent(offset: 0));
+
         if (widget.broadCastId != null) {
           bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
         }
@@ -1344,69 +1348,67 @@ class MyTaskScreenState extends State<MyTaskScreen>
     );
   }
 
-  void _onRefresh(BuildContext context) {
-    if (_tabController.index == 0) {
-      _allTaskOffset = 0;
-      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: 0));
-    } else {
-      _localTaskOffset = 0;
-      context.read<TaskBloc>().add(
-          FetchLocalTasksEvent(offset: 0, filterParams: getFilterParams()));
-    }
-  }
+  Map<String, dynamic> getFilterParams() {
+    Map<String, dynamic> params = {};
 
-  void _onLoading(BuildContext context) {
-    if (_tabController.index == 0) {
-      final state = context.read<TaskBloc>().state;
-      _allTaskOffset = state.allTasks.length;
-      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: _allTaskOffset));
-    } else {
-      final state = context.read<TaskBloc>().state;
-      _localTaskOffset = state.localTasks.length;
-      context.read<TaskBloc>().add(FetchLocalTasksEvent(
-          offset: _localTaskOffset, filterParams: getFilterParams()));
-    }
-  }
+    List<FilterModel> selectedSort =
+        sortList.where((element) => element.isSelected).toList();
+    List<FilterModel> selectedFilter =
+        filterList.where((element) => element.isSelected).toList();
 
-  Map<String, String> getFilterParams() {
-    Map<String, String> params = {};
-
-    int pos = sortList.indexWhere((element) => element.isSelected);
-
-    if (pos != -1) {
-      if (sortList[pos].name == filterDateText) {
-        params["startdate"] = sortList[pos].fromDate ?? "";
-        params["endDate"] = sortList[pos].toDate ?? "";
-      } else if (sortList[pos].name == viewMonthlyText) {
+    if (selectedSort.isNotEmpty) {
+      if (selectedSort[0].name == filterDateText) {
+        params["startdate"] = selectedSort[0].fromDate ?? "";
+        params["endDate"] = selectedSort[0].toDate ?? "";
+      } else if (selectedSort[0].name == viewMonthlyText) {
         params["posted_date"] = "31";
-      } else if (sortList[pos].name == viewYearlyText) {
+      } else if (selectedSort[0].name == viewYearlyText) {
         params["posted_date"] = "365";
-      } else if (sortList[pos].name == viewWeeklyText) {
+      } else if (selectedSort[0].name == viewWeeklyText) {
         params["posted_date"] = "7";
-      } else if (sortList[pos].name == "View highest payment received") {
+      } else if (selectedSort[0].name == "View highest payment received") {
         params["hightolow"] = "-1";
-      } else if (sortList[pos].name == "View lowest payment received") {
+      } else if (selectedSort[0].name == "View lowest payment received") {
         params["lowtohigh"] = "-1";
       }
     }
 
-    for (var element in filterList) {
-      if (element.isSelected) {
-        switch (element.name) {
-          case paymentsReceivedText:
-            params["paid_status"] = "paid";
-            break;
+    for (var element in selectedFilter) {
+      switch (element.name) {
+        case paymentsReceivedText:
+          params["paid_status"] = "paid";
+          break;
 
-          case liveTaskText:
-            params["status"] = "live";
-            break;
+        case liveTaskText:
+          params["status"] = "live";
+          break;
 
-          case pendingPaymentsText:
-            params["paid_status"] = "un_paid";
-            break;
-        }
+        case pendingPaymentsText:
+          params["paid_status"] = "un_paid";
+          break;
       }
     }
     return params;
+  }
+
+  void _onRefresh(BuildContext context) async {
+    if (_tabController.index == 0) {
+      _allTaskOffset = 0;
+      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: 0));
+    } else {
+      context
+          .read<TaskBloc>()
+          .add(FetchLocalTasksEvent(filterParams: getFilterParams()));
+    }
+  }
+
+  void _onLoading(BuildContext context) async {
+    if (_tabController.index == 0) {
+      _allTaskOffset += allTaskLimit;
+      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: _allTaskOffset));
+    } else {
+      // Local tasks pagination if applicable
+      _refreshController.loadComplete();
+    }
   }
 }

@@ -12,7 +12,8 @@ class FetchMyContentEvent extends ContentEvent {
   final int limit;
   final Map<String, dynamic> params;
 
-  const FetchMyContentEvent({this.page = 1, this.limit = 20, this.params = const {}});
+  const FetchMyContentEvent(
+      {this.page = 1, this.limit = 20, this.params = const {}});
 
   @override
   List<Object> get props => [page, limit, params];
@@ -72,4 +73,25 @@ class FetchContentDetailEvent extends ContentEvent {
 
   @override
   List<Object> get props => [contentId];
+}
+
+class FetchMediaHouseOffersEvent extends ContentEvent {
+  final String contentId;
+
+  const FetchMediaHouseOffersEvent(this.contentId);
+
+  @override
+  List<Object> get props => [contentId];
+}
+
+class FetchContentTransactionsEvent extends ContentEvent {
+  final String contentId;
+  final int limit;
+  final int offset;
+
+  const FetchContentTransactionsEvent(
+      {required this.contentId, required this.limit, required this.offset});
+
+  @override
+  List<Object> get props => [contentId, limit, offset];
 }

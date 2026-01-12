@@ -19,10 +19,41 @@ class TermsData {
     required this.termAndCond,
   });
 
-  factory TermsData.fromJson(Map<String, dynamic> json) {
+  factory TermsData.fromJson(dynamic json) {
+    CmsItem? privacyPolicy;
+    CmsItem? termAndCond;
+
+    if (json is List) {
+      for (var item in json) {
+        if (item is Map<String, dynamic>) {
+          final slug = (item['slug'] ??
+                  item['type'] ??
+                  item['name'] ??
+                  item['title'] ??
+                  "")
+              .toString()
+              .toLowerCase();
+          if (slug.contains('privacy')) {
+            privacyPolicy = CmsItem.fromJson(item);
+          } else if (slug.contains('term') ||
+              slug.contains('legal') ||
+              slug.contains('condition')) {
+            termAndCond = CmsItem.fromJson(item);
+          }
+        }
+      }
+    } else if (json is Map<String, dynamic>) {
+      if (json['privacyPolicy'] != null) {
+        privacyPolicy = CmsItem.fromJson(json['privacyPolicy']);
+      }
+      if (json['termAndCond'] != null) {
+        termAndCond = CmsItem.fromJson(json['termAndCond']);
+      }
+    }
+
     return TermsData(
-      privacyPolicy: CmsItem.fromJson(json['privacyPolicy']),
-      termAndCond: CmsItem.fromJson(json['termAndCond']),
+      privacyPolicy: privacyPolicy ?? CmsItem(id: '', description: ''),
+      termAndCond: termAndCond ?? CmsItem(id: '', description: ''),
     );
   }
 }
@@ -38,8 +69,8 @@ class CmsItem {
 
   factory CmsItem.fromJson(Map<String, dynamic> json) {
     return CmsItem(
-      id: json['id'],
-      description: json['description'],
+      id: (json['id'] ?? json['_id'] ?? "").toString(),
+      description: (json['description'] ?? json['content'] ?? "").toString(),
     );
   }
 }

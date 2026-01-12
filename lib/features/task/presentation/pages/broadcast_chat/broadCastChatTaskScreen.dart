@@ -1,6 +1,5 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
@@ -12,7 +11,7 @@ import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/services/location_service.dart';
-import 'package:presshop/core/api/network_response.dart';
+
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
@@ -29,18 +28,24 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/api/network_class.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
+import 'package:presshop/features/task/presentation/bloc/task_state.dart';
+import 'package:presshop/features/task/presentation/bloc/task_event.dart';
+
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart'
     hide photoText, videoText, interviewText;
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:socket_io_client/socket_io_client.dart';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:location/location.dart' as lc;
 
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
+
 class BroadCastChatTaskScreen extends StatefulWidget {
-  final TaskDetailModel? taskDetail;
+  final TaskDetail? taskDetail;
   final String roomId;
 
   const BroadCastChatTaskScreen(
@@ -51,8 +56,7 @@ class BroadCastChatTaskScreen extends StatefulWidget {
       _BroadCastChatTaskScreenState();
 }
 
-class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
-    implements NetworkResponse {
+class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   List<ManageTaskChatModel> chatList = [];
   late IO.Socket socket;
   final String _senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
@@ -116,7 +120,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     debugPrint("class name :::$runtimeType");
     super.initState();
     socketConnectionFunc();
-    callGetManageTaskListingApi();
+    socketConnectionFunc();
+    context
+        .read<TaskBloc>()
+        .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
     getCurrentLocation();
   }
 
@@ -219,770 +226,826 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          manageTaskText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
-            },
-            child: Image.asset(
-              "${commonImagePath}ic_black_rabbit.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * numD04,
-          )
-        ],
-      ),
-      bottomNavigationBar: !isLoading
-          ? showLoader()
-          : Padding(
-              padding: EdgeInsets.only(bottom: size.height * numD03),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD02),
-                      height: size.width * numD18,
-                      child: commonElevatedButton(
-                          galleryText,
-                          size,
-                          commonButtonTextStyle(size),
-                          commonButtonStyle(size, Colors.black), () {
-                        showGallaryChooser();
-                        // LocationService()
-                        //     .getCurrentLocation(context)
-                        //     .then((locationData) {
-                        //   if (locationData != null) {
-                        //     showGallaryChooser();
-                        //   }
-                        // });
-                      }),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD02),
-                      height: size.width * numD18,
-                      child: commonElevatedButton(
-                          cameraText,
-                          size,
-                          commonButtonTextStyle(size),
-                          commonButtonStyle(size, colorThemePink), () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CameraScreen(
-                                      picAgain: true,
-                                      previousScreen:
-                                          ScreenNameEnum.manageTaskScreen,
-                                    ))).then((value) {
-                          if (value != null) {
-                            debugPrint(
-                                "value:::::$value::::::::${value.first.path}");
-                            List<CameraData> temData = value;
-                            for (var element in temData) {
-                              selectMultipleMediaList.add(
-                                MediaData(
-                                  isFromGallery: element.fromGallary,
-                                  dateTime: "",
-                                  latitude: latitude.toString(),
-                                  location: address,
-                                  longitude: longitude.toString(),
-                                  mediaPath: element.path,
-                                  mimeType: element.mimeType,
-                                  thumbnail: "",
-                                ),
-                              );
-                            }
-                            previewBottomSheet();
-                          }
-                        });
-                      }),
-                    ),
-                  ),
-                ],
+    return BlocConsumer<TaskBloc, TaskState>(
+      listener: (context, state) {
+        if (state is TaskLoading) {
+          setState(() {
+            isLoading = true;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+
+        if (state is TaskChatLoaded) {
+          setState(() {
+            chatList = state.chatList;
+          });
+        } else if (state is TransactionDetailsLoaded) {
+          earningTransactionDataList = state.transactions;
+          if (earningTransactionDataList.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TransactionDetailScreen(
+                  pageType: PageType.TASK,
+                  type: "received",
+                  transactionData: earningTransactionDataList.first.toEntity(),
+                ),
               ),
+            );
+          }
+        } else if (state is TaskError) {
+          showSnackBar("Error", state.message, Colors.red);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: CommonAppBar(
+            elevation: 0,
+            hideLeading: false,
+            title: Text(
+              manageTaskText,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width * appBarHeadingFontSize),
             ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(size.width * numD04),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: size.width * numD055),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: size.width * numD03,
-                      vertical: size.width * numD02),
-                  width: size.width,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(size.width * numD04),
-                          bottomLeft: Radius.circular(size.width * numD04),
-                          bottomRight: Radius.circular(size.width * numD04))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            centerTitle: false,
+            titleSpacing: 0,
+            size: size,
+            showActions: true,
+            leadingFxn: () {
+              Navigator.pop(context);
+            },
+            actionWidget: [
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => Dashboard(initialPosition: 2)),
+                      (route) => false);
+                },
+                child: Image.asset(
+                  "${commonImagePath}ic_black_rabbit.png",
+                  height: size.width * numD07,
+                  width: size.width * numD07,
+                ),
+              ),
+              SizedBox(
+                width: size.width * numD04,
+              )
+            ],
+          ),
+          bottomNavigationBar: !isLoading
+              ? showLoader()
+              : Padding(
+                  padding: EdgeInsets.only(bottom: size.height * numD03),
+                  child: Row(
                     children: [
-                      SizedBox(
-                        height: size.width * numD025,
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD02),
+                          height: size.width * numD18,
+                          child: commonElevatedButton(
+                              galleryText,
+                              size,
+                              commonButtonTextStyle(size),
+                              commonButtonStyle(size, Colors.black), () {
+                            showGallaryChooser();
+                            // LocationService()
+                            //     .getCurrentLocation(context)
+                            //     .then((locationData) {
+                            //   if (locationData != null) {
+                            //     showGallaryChooser();
+                            //   }
+                            // });
+                          }),
+                        ),
                       ),
-                      Row(
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * numD04,
+                              vertical: size.width * numD02),
+                          height: size.width * numD18,
+                          child: commonElevatedButton(
+                              cameraText,
+                              size,
+                              commonButtonTextStyle(size),
+                              commonButtonStyle(size, colorThemePink), () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const CameraScreen(
+                                          picAgain: true,
+                                          previousScreen:
+                                              ScreenNameEnum.manageTaskScreen,
+                                        ))).then((value) {
+                              if (value != null) {
+                                debugPrint(
+                                    "value:::::$value::::::::${value.first.path}");
+                                List<CameraData> temData = value;
+                                for (var element in temData) {
+                                  selectMultipleMediaList.add(
+                                    MediaData(
+                                      isFromGallery: element.fromGallary,
+                                      dateTime: "",
+                                      latitude: latitude.toString(),
+                                      location: address,
+                                      longitude: longitude.toString(),
+                                      mediaPath: element.path,
+                                      mimeType: element.mimeType,
+                                      thumbnail: "",
+                                    ),
+                                  );
+                                }
+                                previewBottomSheet();
+                              }
+                            });
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+          body: SingleChildScrollView(
+            padding: EdgeInsets.all(size.width * numD04),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: size.width * numD055),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * numD03,
+                          vertical: size.width * numD02),
+                      width: size.width,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(size.width * numD04),
+                              bottomLeft: Radius.circular(size.width * numD04),
+                              bottomRight:
+                                  Radius.circular(size.width * numD04))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            // "$taskText ${widget.taskDetail?.status}",
-                            "TASK ACCEPTED",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD035,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600),
+                          SizedBox(
+                            height: size.width * numD025,
                           ),
-                          const Spacer(),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.grey.shade300,
-                                      spreadRadius: 2)
-                                ]),
-                            child: ClipOval(
-                              child: Image.network(
-                                widget.taskDetail!.mediaHouseImage.toString(),
-                                height: size.width * numD10,
-                                width: size.width * numD10,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(
-                                    "${commonImagePath}rabbitLogo.png", // Fallback image
+                          Row(
+                            children: [
+                              Text(
+                                // "$taskText ${widget.taskDetail?.status}",
+                                "TASK ACCEPTED",
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD035,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              const Spacer(),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          spreadRadius: 2)
+                                    ]),
+                                child: ClipOval(
+                                  child: Image.network(
+                                    widget.taskDetail!.mediaHouseImage
+                                        .toString(),
                                     height: size.width * numD10,
                                     width: size.width * numD10,
                                     fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "${commonImagePath}rabbitLogo.png", // Fallback image
+                                        height: size.width * numD10,
+                                        width: size.width * numD10,
+                                        fit: BoxFit.contain,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD03,
+                          ),
+                          Text(
+                            "${widget.taskDetail?.title}",
+                            style: TextStyle(
+                              fontSize: size.width * numD035,
+                              color: Colors.black,
+                              fontFamily: "AirbnbCereal",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.width * numD04,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.taskDetail!.isNeedPhoto
+                                          ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.photoPrice) ?? 0.0)}"
+                                          : "-",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD055,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Text(
+                                      offeredText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD03,
+                                    ),
+                                    Container(
+                                      width: size.width * numD24,
+                                      padding: EdgeInsets.symmetric(
+                                          // horizontal: size.width * numD05,
+                                          vertical: size.width * numD02),
+                                      decoration: BoxDecoration(
+                                          color: colorThemePink,
+                                          // color: colorThemePink,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD02)),
+                                      child: Center(
+                                        child: Text(
+                                          photoText.toUpperCase(),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD033,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.taskDetail!.isNeedInterview
+                                          ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
+                                          : "-",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD055,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Text(
+                                      offeredText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD03,
+                                    ),
+                                    Container(
+                                      // alignment: Alignment.center,
+                                      width: size.width * numD24,
+                                      padding: EdgeInsets.symmetric(
+                                          // horizontal: size.width * numD05,
+                                          vertical: size.width * numD02),
+                                      decoration: BoxDecoration(
+                                          color: colorThemePink,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD02)),
+                                      child: Center(
+                                        child: Text(
+                                          interviewText.toUpperCase(),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD033,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.taskDetail!.isNeedVideo
+                                          ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.videoPrice) ?? 0.0)}"
+                                          : "-",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD055,
+                                          color: colorThemePink,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Text(
+                                      offeredText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * numD03,
+                                    ),
+                                    Container(
+                                      width: size.width * numD24,
+                                      padding: EdgeInsets.symmetric(
+                                          // horizontal: size.width * numD05,
+                                          vertical: size.width * numD02),
+                                      decoration: BoxDecoration(
+                                          color: colorThemePink,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD02)),
+                                      child: Center(
+                                        child: Text(
+                                          videoText.toUpperCase(),
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD033,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.width * numD03,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        padding: EdgeInsets.all(size.width * numD025),
+                        decoration: const BoxDecoration(
+                            color: Colors.black, shape: BoxShape.circle),
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: size.width * numD07,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: size.width * numD04,
+                ),
+                uploadMediaInfoWidget('', size),
+                SizedBox(
+                  height: size.width * numD033,
+                ),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  ListView.separated(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      var item = chatList[index];
+                      return Column(
+                        children: [
+                          Visibility(
+                            visible: item.messageType == "media",
+                            child: ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return SizedBox(
+                                    height: size.width * numD035,
                                   );
                                 },
+                                shrinkWrap: true,
+                                itemBuilder: (context, idx) {
+                                  var item1 = item.mediaList[idx];
+                                  if (item.messageType == "media") {
+                                    if (item1.type == "video") {
+                                      return rightVideoChatWidget(
+                                          item1.thumbnail,
+                                          item1.imageVideoUrl,
+                                          item.createdAtTime,
+                                          size,
+                                          item1.address);
+                                    } else if (item1.type == "audio") {
+                                      return rightAudioChatWidget(
+                                          item1.imageVideoUrl,
+                                          item.createdAtTime,
+                                          size,
+                                          item1.address);
+                                    } else {
+                                      return rightImageChatWidget(
+                                          taskMediaUrl + item1.imageVideoUrl,
+                                          item.createdAtTime,
+                                          size,
+                                          item1.address);
+                                    }
+                                  } else if (item.messageType ==
+                                      "NocontentUpload") {
+                                    return uploadNoContentWidget(size);
+                                  } else if (item.messageType ==
+                                          "PaymentIntentApp" &&
+                                      item.paidStatus) {
+                                    return mediaHouseOfferWidget(
+                                        item,
+                                        item.messageType ==
+                                            "Mediahouse_initial_offer",
+                                        size);
+                                  } else {
+                                    return SizedBox.shrink();
+                                  }
+                                },
+                                itemCount: item.mediaList.length),
+                          ),
+
+                          Visibility(
+                            visible: item.mediaList.isNotEmpty &&
+                                (item.imageCount != "0" ||
+                                    item.videoCount != "0" ||
+                                    item.audioCount != "0"),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: size.width * numD035,
+                                ),
+                                thanksToUploadMediaWidget(
+                                    "",
+                                    size,
+                                    item.imageCount,
+                                    item.videoCount,
+                                    item.audioCount),
+                              ],
+                            ),
+                          ),
+
+                          /// Payment Received
+                          Visibility(
+                            visible: item.messageType == "PaymentIntent",
+                            child: Column(
+                              children: [
+                                paymentReceivedWidget(
+                                    item.mediaHouseName.toCapitalized(),
+                                    mediaInfo(item),
+                                    item.hopperPrice,
+                                    size,
+                                    item.transactionId),
+                                SizedBox(
+                                  height: size.width * numD04,
+                                ),
+                                myEarningWidget(
+                                    item.mediaHouseName,
+                                    mediaInfo(item),
+                                    item.payableHopperPrice,
+                                    size)
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: item.messageType == "request_more_content",
+                            child: moreContentReqWidget(item, size),
+                          ),
+                          Visibility(
+                            visible: item.messageType == "contentupload",
+                            child: uploadMediaInfoWidget(
+                                "request_more_content", size),
+                          ),
+                          Visibility(
+                              visible: item.messageType == "NocontentUpload",
+                              child: uploadNoContentWidget(size))
+                        ],
+                      );
+                    },
+                    itemCount: chatList.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return SizedBox(
+                        height: size.width * numD035,
+                      );
+                    },
+                  ),
+                  widget.taskDetail!.paidStatus == "paid"
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin:
+                                  EdgeInsets.only(top: size.width * numD013),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        spreadRadius: 2)
+                                  ]),
+                              child: ClipOval(
+                                child: Padding(
+                                  padding: EdgeInsets.all(size.width * numD01),
+                                  child: Image.asset(
+                                    "${commonImagePath}ic_black_rabbit.png",
+                                    width: size.width * numD075,
+                                    height: size.width * numD075,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.width * numD03,
-                      ),
-                      Text(
-                        "${widget.taskDetail?.title}",
-                        style: TextStyle(
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontFamily: "AirbnbCereal",
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.width * numD04,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.taskDetail!.isNeedPhoto
-                                      ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.photoPrice) ?? 0.0)}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD055,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                Text(
-                                  offeredText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: size.width * numD03,
-                                ),
-                                Container(
-                                  width: size.width * numD24,
-                                  padding: EdgeInsets.symmetric(
-                                      // horizontal: size.width * numD05,
-                                      vertical: size.width * numD02),
-                                  decoration: BoxDecoration(
-                                      color: colorThemePink,
-                                      // color: colorThemePink,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
-                                  child: Center(
-                                    child: Text(
-                                      photoText.toUpperCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD033,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            SizedBox(
+                              width: size.width * numD04,
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.taskDetail!.isNeedInterview
-                                      ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD055,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                Text(
-                                  offeredText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: size.width * numD03,
-                                ),
-                                Container(
-                                  // alignment: Alignment.center,
-                                  width: size.width * numD24,
-                                  padding: EdgeInsets.symmetric(
-                                      // horizontal: size.width * numD05,
-                                      vertical: size.width * numD02),
-                                  decoration: BoxDecoration(
-                                      color: colorThemePink,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
-                                  child: Center(
-                                    child: Text(
-                                      interviewText.toUpperCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD033,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD05,
+                                    vertical: size.width * numD02),
+                                width: size.width,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.grey.shade400),
+                                    borderRadius: BorderRadius.only(
+                                      topRight:
+                                          Radius.circular(size.width * numD04),
+                                      bottomLeft:
+                                          Radius.circular(size.width * numD04),
+                                      bottomRight:
+                                          Radius.circular(size.width * numD04),
+                                    )),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: size.width * numD01,
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.taskDetail!.isNeedVideo
-                                      ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.videoPrice) ?? 0.0)}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD055,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                Text(
-                                  offeredText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: size.width * numD03,
-                                ),
-                                Container(
-                                  width: size.width * numD24,
-                                  padding: EdgeInsets.symmetric(
-                                      // horizontal: size.width * numD05,
-                                      vertical: size.width * numD02),
-                                  decoration: BoxDecoration(
-                                      color: colorThemePink,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
-                                  child: Center(
-                                    child: Text(
-                                      videoText.toUpperCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD033,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
+                                    RichText(
+                                        text: TextSpan(
+                                            style: const TextStyle(
+                                              fontFamily: "AirbnbCereal",
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            children: [
+                                          TextSpan(
+                                            text: "Congratulations, ",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          TextSpan(
+                                            text: widget
+                                                .taskDetail!.mediaHouseName,
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                " has purchased your content for ",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          TextSpan(
+                                            text: widget.taskDetail!
+                                                    .interviewPrice.isNotEmpty
+                                                ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
+                                                : "-",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ])),
+                                    SizedBox(
+                                      height: size.width * numD03,
                                     ),
-                                  ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: size.width * numD13,
+                                          width: size.width,
+                                          child: commonElevatedButton(
+                                              "View Transaction Details",
+                                              size,
+                                              commonButtonTextStyle(size),
+                                              commonButtonStyle(
+                                                  size, colorThemePink), () {
+                                            context.read<TaskBloc>().add(
+                                                GetContentTransactionDetailsEvent(
+                                                    roomId: widget.roomId,
+                                                    mediaHouseId: widget
+                                                        .taskDetail!
+                                                        .mediaHouseId));
+                                          }),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD01,
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.width * numD03,
-                      ),
-                    ],
+                          ],
+                        )
+                      : Container(),
+                  SizedBox(
+                    height: widget.taskDetail!.paidStatus == "paid"
+                        ? size.width * numD035
+                        : 0,
                   ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: EdgeInsets.all(size.width * numD025),
-                    decoration: const BoxDecoration(
-                        color: Colors.black, shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: size.width * numD07,
-                    ),
-                  ),
-                ),
+                  widget.taskDetail!.paidStatus == "paid"
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin:
+                                  EdgeInsets.only(top: size.width * numD013),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        spreadRadius: 2)
+                                  ]),
+                              child: ClipOval(
+                                child: Padding(
+                                  padding: EdgeInsets.all(size.width * numD01),
+                                  child: Image.asset(
+                                    "${commonImagePath}ic_black_rabbit.png",
+                                    width: size.width * numD075,
+                                    height: size.width * numD075,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: size.width * numD04,
+                            ),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD05,
+                                    vertical: size.width * numD02),
+                                width: size.width,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: colorGoogleButtonBorder),
+                                    borderRadius: BorderRadius.only(
+                                      topRight:
+                                          Radius.circular(size.width * numD04),
+                                      bottomLeft:
+                                          Radius.circular(size.width * numD04),
+                                      bottomRight:
+                                          Radius.circular(size.width * numD04),
+                                    )),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: size.width * numD01,
+                                    ),
+                                    RichText(
+                                        text: TextSpan(
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: size.width * numD037,
+                                              fontFamily: "AirbnbCereal",
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            children: [
+                                          TextSpan(
+                                            text: "Woohoo! We have paid ",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                " into your bank account. Please visit ",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          TextSpan(
+                                            text: "My Earnings",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: colorThemePink,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                            text: " to view your transaction ",
+                                            style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD036,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.normal),
+                                          )
+                                        ])),
+                                    SizedBox(
+                                      height: size.width * numD03,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: size.width * numD13,
+                                          width: size.width,
+                                          child: commonElevatedButton(
+                                              "View My Earnings",
+                                              size,
+                                              commonButtonTextStyle(size),
+                                              commonButtonStyle(
+                                                  size, colorThemePink), () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyEarningScreen(
+                                                          openDashboard: false,
+                                                          initialTapPosition: 0,
+                                                        )));
+                                          }),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD01,
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      : Container(),
+                  widget.taskDetail!.paidStatus == "paid"
+                      ? ratingReview(size, widget.taskDetail!)
+                      : Container()
+                ]),
               ],
             ),
-            SizedBox(
-              height: size.width * numD04,
-            ),
-            uploadMediaInfoWidget('', size),
-            SizedBox(
-              height: size.width * numD033,
-            ),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  var item = chatList[index];
-                  return Column(
-                    children: [
-                      Visibility(
-                        visible: item.messageType == "media",
-                        child: ListView.separated(
-                            physics: const NeverScrollableScrollPhysics(),
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return SizedBox(
-                                height: size.width * numD035,
-                              );
-                            },
-                            shrinkWrap: true,
-                            itemBuilder: (context, idx) {
-                              var item1 = item.mediaList[idx];
-                              if (item.messageType == "media") {
-                                if (item1.type == "video") {
-                                  return rightVideoChatWidget(
-                                      item1.thumbnail,
-                                      item1.imageVideoUrl,
-                                      item.createdAtTime,
-                                      size,
-                                      item1.address);
-                                } else if (item1.type == "audio") {
-                                  return rightAudioChatWidget(
-                                      item1.imageVideoUrl,
-                                      item.createdAtTime,
-                                      size,
-                                      item1.address);
-                                } else {
-                                  return rightImageChatWidget(
-                                      taskMediaUrl + item1.imageVideoUrl,
-                                      item.createdAtTime,
-                                      size,
-                                      item1.address);
-                                }
-                              } else if (item.messageType ==
-                                  "NocontentUpload") {
-                                return uploadNoContentWidget(size);
-                              } else if (item.messageType ==
-                                      "PaymentIntentApp" &&
-                                  item.paidStatus) {
-                                return mediaHouseOfferWidget(
-                                    item,
-                                    item.messageType ==
-                                        "Mediahouse_initial_offer",
-                                    size);
-                              } else {
-                                return SizedBox.shrink();
-                              }
-                            },
-                            itemCount: item.mediaList.length),
-                      ),
-
-                      Visibility(
-                        visible: item.mediaList.isNotEmpty &&
-                            (item.imageCount != "0" ||
-                                item.videoCount != "0" ||
-                                item.audioCount != "0"),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: size.width * numD035,
-                            ),
-                            thanksToUploadMediaWidget("", size, item.imageCount,
-                                item.videoCount, item.audioCount),
-                          ],
-                        ),
-                      ),
-
-                      /// Payment Received
-                      Visibility(
-                        visible: item.messageType == "PaymentIntent",
-                        child: Column(
-                          children: [
-                            paymentReceivedWidget(
-                                item.mediaHouseName.toCapitalized(),
-                                mediaInfo(item),
-                                item.hopperPrice,
-                                size,
-                                item.transactionId),
-                            SizedBox(
-                              height: size.width * numD04,
-                            ),
-                            myEarningWidget(item.mediaHouseName,
-                                mediaInfo(item), item.payableHopperPrice, size)
-                          ],
-                        ),
-                      ),
-                      Visibility(
-                        visible: item.messageType == "request_more_content",
-                        child: moreContentReqWidget(item, size),
-                      ),
-                      Visibility(
-                        visible: item.messageType == "contentupload",
-                        child:
-                            uploadMediaInfoWidget("request_more_content", size),
-                      ),
-                      Visibility(
-                          visible: item.messageType == "NocontentUpload",
-                          child: uploadNoContentWidget(size))
-                    ],
-                  );
-                },
-                itemCount: chatList.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                    height: size.width * numD035,
-                  );
-                },
-              ),
-              widget.taskDetail!.paidStatus == "paid"
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: size.width * numD013),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    spreadRadius: 2)
-                              ]),
-                          child: ClipOval(
-                            child: Padding(
-                              padding: EdgeInsets.all(size.width * numD01),
-                              child: Image.asset(
-                                "${commonImagePath}ic_black_rabbit.png",
-                                width: size.width * numD075,
-                                height: size.width * numD075,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: size.width * numD04,
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD05,
-                                vertical: size.width * numD02),
-                            width: size.width,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey.shade400),
-                                borderRadius: BorderRadius.only(
-                                  topRight:
-                                      Radius.circular(size.width * numD04),
-                                  bottomLeft:
-                                      Radius.circular(size.width * numD04),
-                                  bottomRight:
-                                      Radius.circular(size.width * numD04),
-                                )),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: size.width * numD01,
-                                ),
-                                RichText(
-                                    text: TextSpan(
-                                        style: const TextStyle(
-                                          fontFamily: "AirbnbCereal",
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Congratulations, ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      TextSpan(
-                                        text: widget.taskDetail!.mediaHouseName,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            " has purchased your content for ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      TextSpan(
-                                        text: widget.taskDetail!.interviewPrice
-                                                .isNotEmpty
-                                            ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
-                                            : "-",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ])),
-                                SizedBox(
-                                  height: size.width * numD03,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: size.width * numD13,
-                                      width: size.width,
-                                      child: commonElevatedButton(
-                                          "View Transaction Details",
-                                          size,
-                                          commonButtonTextStyle(size),
-                                          commonButtonStyle(
-                                              size, colorThemePink), () {
-                                        callDetailApi(
-                                            widget.taskDetail!.mediaHouseId);
-                                      }),
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD01,
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Container(),
-              SizedBox(
-                height: widget.taskDetail!.paidStatus == "paid"
-                    ? size.width * numD035
-                    : 0,
-              ),
-              widget.taskDetail!.paidStatus == "paid"
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: size.width * numD013),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    spreadRadius: 2)
-                              ]),
-                          child: ClipOval(
-                            child: Padding(
-                              padding: EdgeInsets.all(size.width * numD01),
-                              child: Image.asset(
-                                "${commonImagePath}ic_black_rabbit.png",
-                                width: size.width * numD075,
-                                height: size.width * numD075,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: size.width * numD04,
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD05,
-                                vertical: size.width * numD02),
-                            width: size.width,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                border:
-                                    Border.all(color: colorGoogleButtonBorder),
-                                borderRadius: BorderRadius.only(
-                                  topRight:
-                                      Radius.circular(size.width * numD04),
-                                  bottomLeft:
-                                      Radius.circular(size.width * numD04),
-                                  bottomRight:
-                                      Radius.circular(size.width * numD04),
-                                )),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: size.width * numD01,
-                                ),
-                                RichText(
-                                    text: TextSpan(
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: size.width * numD037,
-                                          fontFamily: "AirbnbCereal",
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Woohoo! We have paid ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            " into your bank account. Please visit ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      TextSpan(
-                                        text: "My Earnings",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      TextSpan(
-                                        text: " to view your transaction ",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      )
-                                    ])),
-                                SizedBox(
-                                  height: size.width * numD03,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: size.width * numD13,
-                                      width: size.width,
-                                      child: commonElevatedButton(
-                                          "View My Earnings",
-                                          size,
-                                          commonButtonTextStyle(size),
-                                          commonButtonStyle(
-                                              size, colorThemePink), () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MyEarningScreen(
-                                                      openDashboard: false,
-                                                      initialTapPosition: 0,
-                                                    )));
-                                      }),
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD01,
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    )
-                  : Container(),
-              widget.taskDetail!.paidStatus == "paid"
-                  ? ratingReview(size, widget.taskDetail!)
-                  : Container()
-            ]),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -1834,10 +1897,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
   }
 
   void callTransactionDetailApi(String id) {
-    Map<String, String> map = {"transaction_id": id};
-    NetworkClass.fromNetworkClass(
-            getTaskTransactionDetails, this, getTaskTransactionDetailsReq, map)
-        .callRequestServiceHeader(true, 'post', null);
+    context.read<TaskBloc>().add(GetTaskTransactionDetailsEvent(id));
   }
 
   Widget myEarningWidget(
@@ -2540,7 +2600,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
                               size,
                               commonButtonTextStyle(size),
                               commonButtonStyle(size, colorThemePink), () {
-                            callDetailApi(item.mediaHouseId);
+                            context.read<TaskBloc>().add(
+                                GetContentTransactionDetailsEvent(
+                                    roomId: widget.roomId,
+                                    mediaHouseId: item.mediaHouseId));
+                            // Assuming navigation or dialog is handled by BLoC Listener
                           }),
                         ),
                         SizedBox(
@@ -2688,7 +2752,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     );
   }
 
-  Widget ratingReview(var size, TaskDetailModel item) {
+  Widget ratingReview(var size, TaskDetail item) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -3062,14 +3126,16 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
     debugPrint("Emit Socket : $map");
     debugPrint(" Socket=====>  : $socketEvent");
     socket.emit(socketEvent, map);
-    callGetManageTaskListingApi();
+    context
+        .read<TaskBloc>()
+        .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
   }
 
   void socketConnectionFunc() {
     debugPrint(":::: Inside Socket Func :::::");
     debugPrint("socketUrl:::::$socketUrl");
-    socket =
-        IO.io(socketUrl, OptionBuilder().setTransports(['websocket']).build());
+    socket = IO.io(
+        socketUrl, IO.OptionBuilder().setTransports(['websocket']).build());
 
     debugPrint("Socket Disconnect : ${socket.connected}");
     debugPrint("Socket Disconnect : ${widget.taskDetail?.mediaHouseId}");
@@ -3082,16 +3148,20 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
     debugPrint("Socket connected : ${socket.connected}");
 
-    socket.on("chat message", (data) => callGetManageTaskListingApi());
-    socket.on("getallchat", (data) => callGetManageTaskListingApi());
-    socket.on("updatehide", (data) => callGetManageTaskListingApi());
-    socket.on("media message", (data) => callGetManageTaskListingApi());
-    socket.on("offer message", (data) => callGetManageTaskListingApi());
-    socket.on("rating", (data) => callGetManageTaskListingApi());
-    socket.on("room join", (data) => callGetManageTaskListingApi());
-    socket.on("initialoffer", (data) => callGetManageTaskListingApi());
-    socket.on("updateOffer", (data) => callGetManageTaskListingApi());
-    socket.on("leave room", (data) => callGetManageTaskListingApi());
+    void refreshChat(data) => context
+        .read<TaskBloc>()
+        .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+
+    socket.on("chat message", refreshChat);
+    socket.on("getallchat", refreshChat);
+    socket.on("updatehide", refreshChat);
+    socket.on("media message", refreshChat);
+    socket.on("offer message", refreshChat);
+    socket.on("rating", refreshChat);
+    socket.on("room join", refreshChat);
+    socket.on("initialoffer", refreshChat);
+    socket.on("updateOffer", refreshChat);
+    socket.on("leave room", refreshChat);
 
     socket.onError((data) => debugPrint("Error Socket ::: $data"));
   }
@@ -3193,246 +3263,31 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen>
 
     if (result == "upload") {
       debugPrint("previewBottomSheet: Triggering upload");
-      callUploadMediaApi({}, "");
+      callUploadMediaApi();
     }
-  }
-
-  void callDetailApi(String id) {
-    Map<String, dynamic> map = {
-      "content_id": widget.roomId,
-      "media_house_id": id
-    };
-
-    NetworkClass(getDetailsById, this, reqGetDetailsById)
-        .callRequestServiceHeader(true, 'get', map);
   }
 
   /// Upload media
-  void callUploadMediaApi(Map<String, String> mediaMap, String type) async {
-    List<String> mediaList = [];
-    List<File> filesPath = [];
-    for (var element in selectMultipleMediaList) {
-      mediaList.add(element.mediaPath);
-    }
+  void callUploadMediaApi() async {
+    List<String> mediaList =
+        selectMultipleMediaList.map((e) => e.mediaPath).toList();
 
-    filesPath.addAll(mediaList.map((path) => File(path)).toList());
-    debugPrint("mediaList :::::$mediaList");
-
-    Map<String, String> map = {
+    FormData formData = FormData.fromMap({
       'task_id': widget.taskDetail!.id,
       "latitude": latitude.toString(),
       "longitude": longitude.toString(),
       "address": address,
-    };
-
-    debugPrint('map:::::::$map');
-
-    await Future.delayed(const Duration(milliseconds: 500));
-    showProgressDialog();
-
-    NetworkClass.multipartNetworkClassFiles(
-            uploadTaskMediaUrl, this, uploadTaskMediaReq, map, filesPath)
-        .callMultipartServiceSameParamMultiImage(false, "post", "files",
-            onProgress: (sent, total) {
-      uploadProgress = sent / total;
-      if (_dialogStateSetter != null) {
-        _dialogStateSetter!(() {});
-      }
     });
-  }
 
-  /// Get Listing
-  void callGetManageTaskListingApi() {
-    Map<String, String> map = {
-      "room_id": widget.roomId,
-    };
-
-    debugPrint(
-        "TAG_API: callGetManageTaskListingApi URL: $getMediaTaskChatListUrl");
-    debugPrint("TAG_API: callGetManageTaskListingApi Body: $map");
-
-    NetworkClass.fromNetworkClass(
-            getMediaTaskChatListUrl, this, getMediaTaskChatListReq, map)
-        .callRequestServiceHeader(false, "post", null);
-  }
-
-  /// Create Room
-  void callCreateRoomApi() {
-    Map<String, String> map = {
-      "receiver_id": widget.taskDetail!.mediaHouseId,
-      "room_type": "HoppertoAdmin",
-      "type": "external_task",
-      "task_id": widget.taskDetail!.id,
-    };
-
-    debugPrint("TAG_API: callCreateRoomApi URL: $getRoomIdUrl");
-    debugPrint("TAG_API: callCreateRoomApi Body: $map");
-
-    NetworkClass.fromNetworkClass(getRoomIdUrl, this, getRoomIdReq, map)
-        .callRequestServiceHeader(true, "post", null);
-  }
-
-  @override
-  void onError({required int requestCode, required String response}) {
-    switch (requestCode) {
-      /// Upload Media
-      case uploadTaskMediaReq:
-        dismissProgressDialog();
-        var data = jsonDecode(response);
-        debugPrint("uploadTaskMediaReq Error : $data");
-        showSnackBar("Manage task", data["message"].toString(), Colors.red);
-        break;
-
-      /// Get Chat Listing
-      case getMediaTaskChatListReq:
-        var data = jsonDecode(response);
-        debugPrint("TAG_API: getMediaTaskChatListReq Response: $data");
-        if (data["statusCode"] == 401) {
-          debugPrint("TAG_API: Room not found (401), creating room...");
-          callCreateRoomApi();
-        } else if (data["errors"] != null) {
-          showSnackBar("Error", data["errors"]["msg"].toString(), Colors.red);
-        } else {
-          showSnackBar("Error", data.toString(), Colors.red);
-        }
-        break;
-
-      /// Create Room
-      case getRoomIdReq:
-        var data = jsonDecode(response);
-        debugPrint("TAG_API: getRoomIdReq Error : $data");
-        showSnackBar("Error", data.toString(), Colors.red);
-        break;
-
-      case reqGetDetailsById:
-        var data = jsonDecode(response);
-        debugPrint("content detail Error : $data");
-        break;
+    for (String path in mediaList) {
+      formData.files.add(MapEntry(
+        "files",
+        await MultipartFile.fromFile(path),
+      ));
     }
-  }
 
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    switch (requestCode) {
-      /// Create Room
-      case getRoomIdReq:
-        var data = jsonDecode(response);
-        debugPrint("TAG_API: getRoomIdReq Success : $data");
-        if (data["data"] != null && data["data"]["_id"] != null) {
-          // Room created successfully, now fetch chat list
-          callGetManageTaskListingApi();
-        }
-        break;
-
-      /// Upload Media
-      case uploadTaskMediaReq:
-        dismissProgressDialog();
-        selectMultipleMediaList.clear();
-        var data = jsonDecode(response);
-        debugPrint("uploadTaskMediaReq Success : $data");
-
-        var dataModel = (data['videothubnail_path'] as List).map((item) {
-          return {...item, 'address': address};
-        }).toList();
-
-        var mediaMap = {
-          /*  "attachment": data["image_name"] ?? "",
-          "watermark": data["watermark"] ?? "",
-          "attachment_name": data["attachme_name"] ?? "",
-          "attachment_size": data["video_size"] ?? "",*/
-          "thumbnail_url": dataModel,
-          "recevier_id": widget.taskDetail!.mediaHouseId,
-          "sender_id": sharedPreferences!.getString(hopperIdKey) ?? "",
-          // "image_id": data["data"] != null ? data["data"]["_id"] : "",
-        };
-        debugPrint("mediaMap:::::${jsonEncode(mediaMap)}");
-        socketEmitFunc(
-          socketEvent: "media message",
-          messageType: "media",
-          dataMap: mediaMap,
-          // mediaType: data["type"] ?? "image"
-        );
-/*
-        if (_chatId.isNotEmpty) {
-          var map = {
-            "chat_id": _chatId,
-            "status": true,
-          };
-
-          socketEmitFunc(
-              socketEvent: "reqstatus", messageType: "", dataMap: map);
-          _chatId = "";
-          _againUpload = false;
-        }
-
-        uploadSuccess = true;*/
-        setState(() {});
-        break;
-
-      /// Get Chat Listing
-      case getMediaTaskChatListReq:
-        var data = jsonDecode(response);
-        debugPrint("getMediaTaskChatListReq Success::::: $data");
-        var dataModel = data["response"] as List;
-        contentView = data["views"].toString();
-        contentPurchased = data["purchased_count"].toString();
-        if (data["rating"] != null) {
-          ratingReviewController1.text = data["rating"]["review"];
-          ratings = double.tryParse(data["rating"]["rating"].toString()) ?? 0.0;
-          // dataList.addAll(data["rating"]["features"].toList());
-          isRatingGiven = true;
-          for (String data in data["rating"]["features"]) {
-            dataList.add(data);
-          }
-        }
-        chatList.clear();
-        chatList =
-            dataModel.map((e) => ManageTaskChatModel.fromJson(e)).toList();
-        selectMultipleMediaList.clear();
-        debugPrint("chatList length::::: ${chatList.length}");
-        isLoading = true;
-
-        if (mounted) {
-          setState(() {});
-        }
-
-        break;
-
-      case reqGetDetailsById:
-        var data = jsonDecode(response);
-        log("getDetail data Success::::: $data");
-        var dataList = data['response'] as List;
-        earningTransactionDataList =
-            dataList.map((e) => EarningTransactionDetail.fromJson(e)).toList();
-        setState(() {});
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TransactionDetailScreen(
-                      pageType: PageType.CONTENT,
-                      type: "received",
-                      transactionData: earningTransactionDataList[0].toEntity(),
-                    )));
-        break;
-
-      case getTaskTransactionDetailsReq:
-        var data = jsonDecode(response);
-        var dataList = data['response'] as List;
-        earningTransactionDataList = dataList
-            .map((e) => EarningTransactionDetail.taskFromJson(e))
-            .toList();
-        setState(() {});
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TransactionDetailScreen(
-              pageType: PageType.TASK,
-              type: "received",
-              transactionData: earningTransactionDataList[0].toEntity(),
-            ),
-          ),
-        );
-        break;
+    if (mounted) {
+      context.read<TaskBloc>().add(UploadTaskMediaEvent(formData));
     }
   }
 

@@ -37,11 +37,13 @@ class TaskDetailModel extends TaskDetail {
     super.byFeet,
     super.byCar,
     super.broadcastLocation,
+    super.roomId,
   });
 
-  factory TaskDetailModel.fromJson(Map<String, dynamic> json) {
+  factory TaskDetailModel.fromJson(Map<String, dynamic> json,
+      {String? roomId}) {
     Map<String, dynamic> mediaHouseDetailMap = json["mediahouse_id"] ?? {};
-    
+
     double lat = 0.0;
     double lng = 0.0;
 
@@ -49,35 +51,41 @@ class TaskDetailModel extends TaskDetail {
       if (json["address_location"]["coordinates"] != null) {
         var coordinator = json["address_location"]["coordinates"] as List;
         if (coordinator.isNotEmpty) {
-             // Assuming numberFormatting is available via Common.dart or handle safely here
-             // Using basic parsing for safety if numberFormatting isn't readily available without import issues
-             try {
-                 lat = double.parse(coordinator.first.toString());
-                 lng = double.parse(coordinator.last.toString());
-             } catch (e) {
-                 debugPrint("Error parsing coords: $e");
-             }
+          // Assuming numberFormatting is available via Common.dart or handle safely here
+          // Using basic parsing for safety if numberFormatting isn't readily available without import issues
+          try {
+            lat = double.parse(coordinator.first.toString());
+            lng = double.parse(coordinator.last.toString());
+          } catch (e) {
+            debugPrint("Error parsing coords: $e");
+          }
         }
       }
     }
 
     return TaskDetailModel(
       id: (json["_id"] ?? "").toString(),
-      isNeedPhoto: (json["need_photos"] ?? "").toString().toLowerCase() == "true",
-      isNeedVideo: (json["need_videos"] ?? "").toString().toLowerCase() == "true",
-      isNeedInterview: (json["need_interview"] ?? "").toString().toLowerCase() == "true",
+      isNeedPhoto:
+          (json["need_photos"] ?? "").toString().toLowerCase() == "true",
+      isNeedVideo:
+          (json["need_videos"] ?? "").toString().toLowerCase() == "true",
+      isNeedInterview:
+          (json["need_interview"] ?? "").toString().toLowerCase() == "true",
       mode: (json["mode"] ?? "").toString(),
       type: (json["type"] ?? "").toString(),
       status: (json["status"] ?? "").toString(),
       paidStatus: json["paid_status"].toString(),
-      deadLine: DateTime.tryParse(json["deadline_date"] ?? "") ?? DateTime.now(),
+      deadLine:
+          DateTime.tryParse(json["deadline_date"] ?? "") ?? DateTime.now(),
       mediaHouseId: (mediaHouseDetailMap["_id"] ?? "").toString(),
       mediaHouseName: (mediaHouseDetailMap["full_name"] ?? "").toString(),
       companyName: (mediaHouseDetailMap["company_name"] ?? "").toString(),
       mediaHouseImage: (mediaHouseDetailMap["profile_image"] ?? "").toString(),
       title: (json["heading"] ?? "").toString(),
       description: (json["task_description"] ?? "").toString(),
-      acceptedBy: json['accepted_by'] != null ? List<String>.from(json['accepted_by']) : [],
+      acceptedBy: json['accepted_by'] != null
+          ? List<String>.from(json['accepted_by'])
+          : [],
       specialReq: (json["any_spcl_req"] ?? "").toString(),
       location: (json["location"] ?? "").toString(),
       photoPrice: (json["photo_price"] ?? "").toString(),
@@ -90,9 +98,11 @@ class TaskDetailModel extends TaskDetail {
       categoryId: (json["category_id"] ?? "").toString(),
       userId: (json["user_id"] ?? "").toString(),
       createdAt: (json["createdAt"] ?? "").toString(),
-      miles: "", // Logic for calculation not carried over to fromJson, should be done in Bloc or separate util
+      miles:
+          "", // Logic for calculation not carried over to fromJson, should be done in Bloc or separate util
       byFeet: "",
       byCar: "",
+      roomId: roomId ?? "",
     );
   }
 }

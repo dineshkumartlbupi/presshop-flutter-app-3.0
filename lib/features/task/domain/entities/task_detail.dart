@@ -36,6 +36,9 @@ class TaskDetail extends Equatable {
   final String byCar;
   final List<TaskMedia> mediaList;
   final String broadcastLocation;
+  final String roomId;
+  final String minimumPriceRange;
+  final String maximumPriceRange;
 
   const TaskDetail({
     required this.id,
@@ -72,6 +75,9 @@ class TaskDetail extends Equatable {
     this.byCar = "",
     this.mediaList = const [],
     this.broadcastLocation = "",
+    this.roomId = "",
+    this.minimumPriceRange = "",
+    this.maximumPriceRange = "",
   });
 
   TaskDetail copyWith({
@@ -109,6 +115,9 @@ class TaskDetail extends Equatable {
     String? byCar,
     List<TaskMedia>? mediaList,
     String? broadcastLocation,
+    String? roomId,
+    String? minimumPriceRange,
+    String? maximumPriceRange,
   }) {
     return TaskDetail(
       id: id ?? this.id,
@@ -145,6 +154,9 @@ class TaskDetail extends Equatable {
       byCar: byCar ?? this.byCar,
       mediaList: mediaList ?? this.mediaList,
       broadcastLocation: broadcastLocation ?? this.broadcastLocation,
+      roomId: roomId ?? this.roomId,
+      minimumPriceRange: minimumPriceRange ?? this.minimumPriceRange,
+      maximumPriceRange: maximumPriceRange ?? this.maximumPriceRange,
     );
   }
 
@@ -166,5 +178,8 @@ class TaskDetail extends Equatable {
         location,
         createdAt,
         mediaList,
+        roomId,
+        minimumPriceRange,
+        maximumPriceRange,
       ];
 }

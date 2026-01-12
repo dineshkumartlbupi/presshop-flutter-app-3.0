@@ -3,13 +3,23 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/network_info.dart';
 import 'package:presshop/features/account_settings/domain/usecases/get_admin_contact_info.dart';
+import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_bloc.dart';
 import 'package:presshop/features/publish/domain/usecases/submit_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_bloc.dart';
-import 'package:presshop/features/authentication/presentation/bloc/verification_bloc.dart'; // Import
+import 'package:presshop/features/authentication/presentation/bloc/verification_bloc.dart';
+import 'package:presshop/features/authentication/data/datasources/verification_remote_datasource.dart';
+import 'package:presshop/features/authentication/data/datasources/verification_remote_datasource_impl.dart';
+import 'package:presshop/features/authentication/data/repositories/verification_repository_impl.dart';
+import 'package:presshop/features/authentication/domain/repositories/verification_repository.dart';
+import 'package:presshop/features/authentication/domain/usecases/verification/delete_document.dart';
+import 'package:presshop/features/authentication/domain/usecases/verification/get_document_instructions.dart';
+import 'package:presshop/features/authentication/domain/usecases/verification/get_uploaded_documents.dart';
+import 'package:presshop/features/authentication/domain/usecases/verification/upload_document.dart';
+
 import 'package:presshop/features/profile/domain/usecases/check_username.dart'
     as profile_check;
 import 'package:presshop/features/profile/domain/usecases/get_avatars.dart'
@@ -68,10 +78,16 @@ import 'package:presshop/features/feed/domain/usecases/toggle_feed_interaction.d
 import 'package:presshop/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:presshop/features/task/domain/repositories/task_repository.dart';
 import 'package:presshop/features/task/data/repositories/task_repository_impl.dart';
-import 'package:presshop/features/task/data/datasources/task_remote_data_source.dart';
+import 'package:presshop/features/task/data/datasources/task_remote_datasource.dart';
 import 'package:presshop/features/task/domain/usecases/get_all_tasks.dart';
 import 'package:presshop/features/task/domain/usecases/get_local_tasks.dart';
 import 'package:presshop/features/task/domain/usecases/get_task_detail.dart';
+import 'package:presshop/features/task/domain/usecases/accept_reject_task.dart';
+import 'package:presshop/features/task/domain/usecases/get_task_chat.dart';
+import 'package:presshop/features/task/domain/usecases/upload_task_media.dart';
+import 'package:presshop/features/task/domain/usecases/get_hopper_accepted_count.dart';
+import 'package:presshop/features/task/domain/usecases/get_task_transaction_details.dart';
+import 'package:presshop/features/task/domain/usecases/get_content_transaction_details.dart';
 
 import 'package:presshop/features/authentication/domain/usecases/login_user.dart';
 import 'package:presshop/features/authentication/domain/usecases/social_login_user.dart';
@@ -111,6 +127,8 @@ import 'package:presshop/features/dashboard/domain/usecases/add_device.dart';
 import 'package:presshop/features/dashboard/domain/usecases/remove_device.dart';
 import 'package:presshop/features/dashboard/domain/usecases/get_dashboard_task_detail.dart';
 import 'package:presshop/features/dashboard/domain/usecases/get_room_id.dart';
+import 'package:presshop/features/task/domain/usecases/get_room_id.dart'
+    as task_room;
 import 'package:presshop/features/dashboard/domain/usecases/check_app_version.dart';
 import 'package:presshop/features/dashboard/domain/usecases/activate_student_beans.dart'
     as dashboard_beans;
@@ -141,7 +159,21 @@ import 'package:presshop/features/content/domain/repositories/content_repository
 import 'package:presshop/features/content/data/repositories/content_repository_impl.dart';
 import 'package:presshop/features/content/data/datasources/content_remote_data_source.dart';
 
+import 'package:presshop/features/content/domain/usecases/get_media_house_offers.dart';
+import 'package:presshop/features/content/domain/usecases/get_content_transactions.dart';
+
 import 'package:presshop/features/account_settings/presentation/bloc/account_settings_bloc.dart';
+import 'package:presshop/features/account_settings/presentation/bloc/faq/faq_bloc.dart';
+import 'package:presshop/features/rating/presentation/bloc/rating/rating_bloc.dart';
+import 'package:presshop/features/rating/domain/usecases/get_reviews.dart';
+import 'package:presshop/features/rating/domain/usecases/get_media_houses.dart'
+    as rating_media;
+import 'package:presshop/features/rating/domain/repositories/rating_repository.dart';
+import 'package:presshop/features/rating/data/repositories/rating_repository_impl.dart';
+import 'package:presshop/features/rating/data/datasources/rating_remote_datasource.dart';
+import 'package:presshop/features/account_settings/domain/usecases/get_faqs.dart';
+import 'package:presshop/features/account_settings/domain/usecases/get_price_tips.dart';
+import 'package:presshop/features/account_settings/domain/usecases/get_faq_categories.dart';
 import 'package:presshop/features/account_settings/domain/usecases/delete_account.dart';
 import 'package:presshop/features/account_settings/domain/repositories/account_settings_repository.dart';
 import 'package:presshop/features/account_settings/data/repositories/account_settings_repository_impl.dart';
@@ -170,6 +202,13 @@ import 'package:presshop/features/publish/domain/repositories/publish_repository
 import 'package:presshop/features/publish/data/repositories/publish_repository_impl.dart';
 import 'package:presshop/features/publish/data/datasources/publish_remote_data_source.dart';
 import 'package:presshop/features/publish/presentation/bloc/publish_bloc.dart';
+import 'package:presshop/features/publish/presentation/bloc/tutorials/tutorials_bloc.dart';
+import 'package:presshop/features/publish/domain/usecases/get_tutorial_categories.dart';
+import 'package:presshop/features/publish/domain/usecases/get_tutorial_videos.dart';
+import 'package:presshop/features/publish/domain/usecases/add_tutorial_view_count.dart';
+import 'package:presshop/features/publish/domain/repositories/tutorials_repository.dart';
+import 'package:presshop/features/publish/data/repositories/tutorials_repository_impl.dart';
+import 'package:presshop/features/publish/data/datasources/tutorials_remote_datasource.dart';
 
 final sl = GetIt.instance; // sl = Service Locator
 
@@ -197,6 +236,10 @@ Future<void> init() async {
     () => DashboardRemoteDataSourceImpl(apiClient: sl()),
   );
 
+  sl.registerLazySingleton<NotificationRemoteDataSource>(
+    () => NotificationRemoteDataSourceImpl(dio: sl(), sharedPreferences: sl()),
+  );
+
   //! Repositories - Register second
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -214,6 +257,12 @@ Future<void> init() async {
     () => DashboardRepositoryImpl(
       remoteDataSource: sl(),
       networkInfo: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(
+      remoteDataSource: sl(),
     ),
   );
 
@@ -283,6 +332,11 @@ Future<void> init() async {
         getShareExclusivePrice: sl(),
         submitContent: sl(),
       ));
+  sl.registerFactory(() => TutorialsBloc(
+        getTutorialCategories: sl(),
+        getTutorialVideos: sl(),
+        addTutorialViewCount: sl(),
+      ));
   sl.registerFactory(() => VerificationBloc(
         verifyOtp: sl(),
         registerUser: sl(),
@@ -321,12 +375,32 @@ Future<void> init() async {
         searchHashtags: sl(),
         getTrendingHashtags: sl(),
         getContentDetail: sl(),
+        getMediaHouseOffers: sl(),
+        getContentTransactions: sl(),
       ));
 
   sl.registerFactory(() => AccountSettingsBloc(
         deleteAccount: sl(),
         changePassword: sl(),
         getAdminContactInfo: sl(),
+      ));
+  // Verification
+  sl.registerFactory(
+    () => UploadDocumentsBloc(
+      getDocumentInstructions: sl(),
+      getUploadedDocuments: sl(),
+      uploadDocument: sl(),
+      deleteDocument: sl(),
+    ),
+  );
+  sl.registerFactory(() => FAQBloc(
+        getFAQs: sl(),
+        getPriceTips: sl(),
+        getFAQCategories: sl(),
+      ));
+  sl.registerFactory(() => RatingBloc(
+        getReviews: sl(),
+        getMediaHouses: sl(),
       ));
 
   sl.registerFactory(() => LeaderboardBloc(
@@ -345,7 +419,13 @@ Future<void> init() async {
         getAllTasks: sl(),
         getLocalTasks: sl(),
         getTaskDetail: sl(),
-        sharedPreferences: sl(),
+        acceptRejectTask: sl(),
+        getTaskChat: sl(),
+        uploadTaskMedia: sl(),
+        getRoomId: sl(),
+        getHopperAcceptedCount: sl(),
+        getTaskTransactionDetails: sl(),
+        getContentTransactionDetails: sl(),
       ));
   sl.registerFactory(() => NotificationBloc(
         getNotifications: sl(),
@@ -416,10 +496,17 @@ Future<void> init() async {
   sl.registerLazySingleton(() => profile_avatars.GetAvatars(sl()));
   sl.registerLazySingleton(() => GetTrendingHashtags(sl()));
   sl.registerLazySingleton(() => GetContentDetail(sl()));
+  sl.registerLazySingleton(() => GetMediaHouseOffers(sl()));
+  sl.registerLazySingleton(() => GetContentTransactions(sl()));
 
   // Account Settings Use Cases
   sl.registerLazySingleton(() => DeleteAccount(sl()));
   sl.registerLazySingleton(() => GetAdminContactInfo(sl()));
+  sl.registerLazySingleton(() => GetFAQs(sl()));
+  sl.registerLazySingleton(() => GetPriceTips(sl()));
+  sl.registerLazySingleton(() => GetFAQCategories(sl()));
+  sl.registerLazySingleton(() => GetReviews(sl()));
+  sl.registerLazySingleton(() => rating_media.GetMediaHouses(sl()));
   // Leaderboard Use Cases
   sl.registerLazySingleton(() => GetLeaderboardData(sl()));
 
@@ -442,6 +529,27 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetNotifications(sl()));
   sl.registerLazySingleton(() => MarkNotificationsAsRead(sl()));
   sl.registerLazySingleton(() => ClearAllNotifications(sl()));
+
+  // Verification Use Cases
+  sl.registerLazySingleton(() => GetDocumentInstructions(sl()));
+  sl.registerLazySingleton(() => GetUploadedDocuments(sl()));
+  sl.registerLazySingleton(() => UploadDocument(sl()));
+  sl.registerLazySingleton(() => DeleteDocument(sl()));
+
+  // Verification Repository
+  sl.registerLazySingleton<VerificationRepository>(
+    () => VerificationRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Verification Data Sources
+  sl.registerLazySingleton<VerificationRemoteDataSource>(
+    () => VerificationRemoteDataSourceImpl(
+      apiClient: sl(),
+    ),
+  );
   sl.registerLazySingleton(() => CheckStudentBeans(sl()));
   sl.registerLazySingleton(() => ActivateStudentBeans(sl()));
   sl.registerLazySingleton(() => MarkStudentBeansVisited(sl()));
@@ -456,6 +564,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCharities(sl()));
   sl.registerLazySingleton(() => GetShareExclusivePrice(sl()));
   sl.registerLazySingleton(() => SubmitContent(sl()));
+  sl.registerLazySingleton(() => GetTutorialCategories(sl()));
+  sl.registerLazySingleton(() => GetTutorialVideos(sl()));
+  sl.registerLazySingleton(() => AddTutorialViewCount(sl()));
 
   // Map Use Cases
   sl.registerLazySingleton(() => GetCurrentLocation(sl()));
@@ -495,6 +606,13 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerLazySingleton<RatingRepository>(
+    () => RatingRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
   sl.registerLazySingleton<LeaderboardRepository>(
     () => LeaderboardRepositoryImpl(
       remoteDataSource: sl(),
@@ -522,12 +640,6 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerLazySingleton<NotificationRepository>(
-    () => NotificationRepositoryImpl(
-      remoteDataSource: sl(),
-    ),
-  );
-
   sl.registerLazySingleton<PublicationRepository>(
     () => PublicationRepositoryImpl(
       remoteDataSource: sl(),
@@ -537,6 +649,12 @@ Future<void> init() async {
 
   sl.registerLazySingleton<PublishRepository>(
     () => PublishRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+  sl.registerLazySingleton<TutorialsRepository>(
+    () => TutorialsRepositoryImpl(
       remoteDataSource: sl(),
       networkInfo: sl(),
     ),
@@ -564,6 +682,10 @@ Future<void> init() async {
     () => AccountSettingsRemoteDataSourceImpl(sl()),
   );
 
+  sl.registerLazySingleton<RatingRemoteDataSource>(
+    () => RatingRemoteDataSourceImpl(apiClient: sl()),
+  );
+
   sl.registerLazySingleton<LeaderboardRemoteDataSource>(
     () => LeaderboardRemoteDataSourceImpl(apiClient: sl()),
   );
@@ -582,19 +704,21 @@ Future<void> init() async {
 
   // Task Feature
   sl.registerLazySingleton<TaskRemoteDataSource>(
-    () => TaskRemoteDataSourceImpl(dio: sl(), sharedPreferences: sl()),
+    () => TaskRemoteDataSourceImpl(apiClient: sl()),
   );
   sl.registerLazySingleton<TaskRepository>(
-    () => TaskRepositoryImpl(remoteDataSource: sl()),
+    () => TaskRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   sl.registerLazySingleton(() => GetAllTasks(sl()));
   sl.registerLazySingleton(() => GetLocalTasks(sl()));
   sl.registerLazySingleton(() => GetTaskDetail(sl()));
-
-  // Notification Feature
-  sl.registerLazySingleton<NotificationRemoteDataSource>(
-    () => NotificationRemoteDataSourceImpl(dio: sl(), sharedPreferences: sl()),
-  );
+  sl.registerLazySingleton(() => AcceptRejectTask(sl()));
+  sl.registerLazySingleton(() => GetTaskChat(sl()));
+  sl.registerLazySingleton(() => UploadTaskMedia(sl()));
+  sl.registerLazySingleton(() => task_room.GetRoomId(sl()));
+  sl.registerLazySingleton(() => GetHopperAcceptedCount(sl()));
+  sl.registerLazySingleton(() => GetTaskTransactionDetails(sl()));
+  sl.registerLazySingleton(() => GetContentTransactionDetails(sl()));
 
   sl.registerLazySingleton<PublicationRemoteDataSource>(
     () => PublicationRemoteDataSourceImpl(sl()),
@@ -602,6 +726,9 @@ Future<void> init() async {
 
   sl.registerLazySingleton<PublishRemoteDataSource>(
     () => PublishRemoteDataSourceImpl(apiClient: sl()),
+  );
+  sl.registerLazySingleton<TutorialsRemoteDataSource>(
+    () => TutorialsRemoteDataSourceImpl(apiClient: sl()),
   );
   sl.registerLazySingleton<MapRemoteDataSource>(
     () => MapRemoteDataSourceImpl(

@@ -10,7 +10,8 @@ class TermsRepository {
 
   Future<TermsResponse> fetchTerms(String type) async {
     try {
-    debugPrint("Fetching terms with URL: $baseUrl$termConditionUrl?type=$type");
+      debugPrint(
+          "Fetching terms with URL: $baseUrl$termConditionUrl?type=$type");
       final response = await dio.get(
         "$baseUrl$termConditionUrl",
         queryParameters: {
@@ -27,9 +28,14 @@ class TermsRepository {
         );
       }
     } on DioException catch (e) {
-      throw Exception(
-        e.response?.data?['message'] ?? "Network error while loading Terms",
-      );
+      String errorMessage = "Network error while loading Terms";
+      if (e.response?.data is Map<String, dynamic>) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      } else if (e.message != null && e.message!.isNotEmpty) {
+        // Use the custom message set by ApiClient for 502/404
+        errorMessage = e.message!;
+      }
+      throw Exception(errorMessage);
     }
   }
 }

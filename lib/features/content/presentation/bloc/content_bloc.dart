@@ -8,6 +8,8 @@ import '../../domain/usecases/delete_content.dart';
 import '../../domain/usecases/search_hashtags.dart';
 import '../../domain/usecases/get_trending_hashtags.dart';
 import '../../domain/usecases/get_content_detail.dart';
+import '../../domain/usecases/get_media_house_offers.dart';
+import '../../domain/usecases/get_content_transactions.dart';
 import 'content_event.dart';
 import 'content_state.dart';
 
@@ -20,6 +22,8 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
   final SearchHashtags searchHashtags;
   final GetTrendingHashtags getTrendingHashtags;
   final GetContentDetail getContentDetail;
+  final GetMediaHouseOffers getMediaHouseOffers;
+  final GetContentTransactions getContentTransactions;
 
   ContentBloc({
     required this.getMyContent,
@@ -30,6 +34,8 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     required this.searchHashtags,
     required this.getTrendingHashtags,
     required this.getContentDetail,
+    required this.getMediaHouseOffers,
+    required this.getContentTransactions,
   }) : super(ContentInitial()) {
     on<FetchMyContentEvent>(_onFetchMyContent);
     on<PublishContentEvent>(_onPublishContent);
@@ -39,6 +45,8 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     on<SearchHashtagsEvent>(_onSearchHashtags);
     on<FetchTrendingHashtagsEvent>(_onFetchTrendingHashtags);
     on<FetchContentDetailEvent>(_onFetchContentDetail);
+    on<FetchMediaHouseOffersEvent>(_onFetchMediaHouseOffers);
+    on<FetchContentTransactionsEvent>(_onFetchContentTransactions);
   }
 
   Future<void> _onFetchMyContent(
@@ -47,7 +55,8 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
   ) async {
     emit(ContentLoading());
     final result = await getMyContent(
-      GetMyContentParams(page: event.page, limit: event.limit, params: event.params),
+      GetMyContentParams(
+          page: event.page, limit: event.limit, params: event.params),
     );
     result.fold(
       (failure) => emit(ContentError(failure.message)),
@@ -138,6 +147,34 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     result.fold(
       (failure) => emit(ContentError(failure.message)),
       (hashtags) => emit(TrendingHashtagsLoaded(hashtags)),
+    );
+  }
+
+  Future<void> _onFetchMediaHouseOffers(
+    FetchMediaHouseOffersEvent event,
+    Emitter<ContentState> emit,
+  ) async {
+    // emit(ContentLoading()); // Optional: might not want to show full page loader for this
+    final result = await getMediaHouseOffers(event.contentId);
+    result.fold(
+      (failure) => emit(ContentError(failure.message)),
+      (offers) => emit(MediaHouseOffersLoaded(offers)),
+    );
+  }
+
+  Future<void> _onFetchContentTransactions(
+    FetchContentTransactionsEvent event,
+    Emitter<ContentState> emit,
+  ) async {
+    // emit(ContentLoading()); // Optional
+    final result = await getContentTransactions(GetContentTransactionsParams(
+      contentId: event.contentId,
+      limit: event.limit,
+      offset: event.offset,
+    ));
+    result.fold(
+      (failure) => emit(ContentError(failure.message)),
+      (transactions) => emit(ContentTransactionsLoaded(transactions)),
     );
   }
 }

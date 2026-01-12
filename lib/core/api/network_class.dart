@@ -1034,7 +1034,6 @@ class NetworkClass {
           )),
     );
 
-  
     );
   }*/
   showLoaderDialog(BuildContext context) {

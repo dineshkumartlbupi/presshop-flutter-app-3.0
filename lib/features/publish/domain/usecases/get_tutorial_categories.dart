@@ -1,16 +1,18 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/usecases/usecase.dart';
-import '../entities/content_category.dart';
-import '../repositories/publish_repository.dart';
 
-class GetTutorialCategories implements UseCase<List<ContentCategory>, NoParams> {
-  final PublishRepository repository;
+import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/core/usecases/usecase.dart';
+import '../../data/models/category_data_model.dart';
+import '../repositories/tutorials_repository.dart';
+
+class GetTutorialCategories
+    implements UseCase<List<CategoryDataModel>, NoParams> {
+  final TutorialsRepository repository;
 
   GetTutorialCategories(this.repository);
 
   @override
-  Future<Either<Failure, List<ContentCategory>>> call(NoParams params) async {
-    return await repository.getTutorialCategories();
+  Future<Either<Failure, List<CategoryDataModel>>> call(NoParams params) async {
+    return await repository.getCategories();
   }
 }

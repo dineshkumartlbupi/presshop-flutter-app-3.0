@@ -4,6 +4,8 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart';
 import '../models/content_item_model.dart';
 import '../models/hashtag_model.dart';
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/api/api_client.dart';
 
 abstract class ContentRemoteDataSource {
@@ -18,6 +20,9 @@ abstract class ContentRemoteDataSource {
   Future<List<HashtagModel>> searchHashtags(String query);
   Future<List<HashtagModel>> getTrendingHashtags();
   Future<ContentItemModel> getContentDetail(String contentId);
+  Future<List<ManageTaskChatModel>> getMediaHouseOffers(String contentId);
+  Future<List<EarningTransactionDetail>> getContentTransactions(
+      String contentId, int limit, int offset);
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
@@ -256,6 +261,60 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             message: data['message'] ?? 'Failed to load content');
       }
       throw ServerFailure(message: 'Failed to load content');
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<ManageTaskChatModel>> getMediaHouseOffers(
+      String contentId) async {
+    try {
+      final response = await apiClient.get(
+        getContentMediaHouseOfferUrl,
+        queryParameters: {'image_id': contentId},
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['code'] == 200) {
+          final List offers = data['response'] ?? [];
+          return offers
+              .map((e) => ManageTaskChatModel.fromJson(e ?? {}))
+              .toList();
+        }
+        throw ServerFailure(
+            message: data['message'] ?? 'Failed to load offers');
+      }
+      throw ServerFailure(message: 'Failed to load offers');
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<EarningTransactionDetail>> getContentTransactions(
+      String contentId, int limit, int offset) async {
+    try {
+      final response = await apiClient.get(
+        getPublicationTransactionAPI,
+        queryParameters: {
+          'content_id': contentId,
+          'limit': limit,
+          'offset': offset,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        // Check for success code or directly parse data based on previous usage
+        // Previous code: var dataList = data['data'] as List;
+        final List transactions = data['data'] ?? [];
+        return transactions
+            .map((e) => EarningTransactionDetail.fromJson(e))
+            .toList();
+      }
+      throw ServerFailure(message: 'Failed to load transactions');
     } catch (e) {
       throw ServerFailure(message: e.toString());
     }

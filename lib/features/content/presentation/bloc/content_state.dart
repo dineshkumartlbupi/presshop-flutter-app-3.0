@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/content_item.dart';
 import '../../domain/entities/hashtag.dart';
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
 
 abstract class ContentState extends Equatable {
   const ContentState();
@@ -89,6 +91,24 @@ class TrendingHashtagsLoaded extends ContentState {
 
   @override
   List<Object> get props => [hashtags];
+}
+
+class MediaHouseOffersLoaded extends ContentState {
+  final List<ManageTaskChatModel> offers;
+
+  const MediaHouseOffersLoaded(this.offers);
+
+  @override
+  List<Object> get props => [offers];
+}
+
+class ContentTransactionsLoaded extends ContentState {
+  final List<EarningTransactionDetail> transactions;
+
+  const ContentTransactionsLoaded(this.transactions);
+
+  @override
+  List<Object> get props => [transactions];
 }
 
 class ContentError extends ContentState {

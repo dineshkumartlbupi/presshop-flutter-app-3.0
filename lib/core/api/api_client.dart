@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -169,7 +170,36 @@ class ApiClient {
         await _clearSession();
       }
     }
+    _printCurlCommand(err.requestOptions);
     handler.next(err);
+  }
+
+  void _printCurlCommand(RequestOptions options) {
+    try {
+      debugPrint("👇👇👇 CURL COMMAND FOR REPRODUCTION 👇👇👇");
+      String curl = "curl --request ${options.method} '${options.uri}'";
+
+      options.headers.forEach((key, value) {
+        if (key != "content-length") {
+          curl += " --header '$key: $value'";
+        }
+      });
+
+      if (options.data != null) {
+        if (options.data is FormData) {
+          curl += " --data '[FormData]'";
+        } else if (options.data is Map || options.data is List) {
+          curl += " --data '${jsonEncode(options.data)}'";
+        } else {
+          curl += " --data '${options.data}'";
+        }
+      }
+
+      debugPrint(curl);
+      debugPrint("👆👆👆 COPY AND RUN THIS IN TERMINAL 👆👆👆");
+    } catch (e) {
+      debugPrint("❌ Failed to generate CURL command: $e");
+    }
   }
 
   Future<void> _clearSession() async {

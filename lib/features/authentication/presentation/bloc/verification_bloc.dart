@@ -46,7 +46,7 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
   ) async {
     // Dont emit loading to avoid flicker of full screen loader?
     // Or do emit loading. Legacy showed nothing but cleared timer.
-    // Let's emit nothing but snackbar logic via listener. 
+    // Let's emit nothing but snackbar logic via listener.
     // Wait, we need to make the API call.
     final result = await sendOtp(RegisterParams(data: event.params));
     result.fold(
@@ -60,14 +60,15 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
     Emitter<VerificationState> emit,
   ) async {
     emit(VerificationLoading());
-    
+
     final params = Map<String, dynamic>.from(event.params);
     if (event.imagePath != null && event.imagePath!.isNotEmpty) {
       params['_imagePath'] = event.imagePath;
     }
 
     if (event.isSocial) {
-      final result = await socialRegisterUser(SocialRegisterParams(data: params));
+      final result =
+          await socialRegisterUser(SocialRegisterParams(data: params));
       result.fold(
         (failure) => emit(VerificationError(failure.message)),
         (user) => emit(RegistrationSuccess(user)),

@@ -1,74 +1,99 @@
-part of 'task_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
+import 'package:presshop/features/task/domain/entities/task.dart';
+import 'package:presshop/features/task/domain/entities/task_all.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
 enum TaskStatus { initial, loading, success, failure }
 
-class TaskState extends Equatable {
-  final TaskStatus allTasksStatus;
-  final TaskStatus localTasksStatus;
-  final List<TaskAll> allTasks;
-  final List<Task> localTasks;
-  final bool hasReachedMaxAllTasks;
-  final bool hasReachedMaxLocalTasks;
-  final String? errorMessage;
-  final TaskDetail? taskDetail; // For broadcast dialog
-  final String roomId;
-  final bool isTaskAccepted;
-  final String myId;
-
-  const TaskState({
-    this.allTasksStatus = TaskStatus.initial,
-    this.allTasks = const [],
-    this.hasReachedMaxAllTasks = false,
-    this.localTasksStatus = TaskStatus.initial,
-    this.localTasks = const [],
-    this.hasReachedMaxLocalTasks = false,
-    this.errorMessage = '',
-    this.taskDetail,
-    this.roomId = "",
-    this.isTaskAccepted = false,
-    this.myId = "",
-  });
-
-  TaskState copyWith({
-    TaskStatus? allTasksStatus,
-    List<TaskAll>? allTasks,
-    bool? hasReachedMaxAllTasks,
-    TaskStatus? localTasksStatus,
-    List<Task>? localTasks,
-    bool? hasReachedMaxLocalTasks,
-    String? errorMessage,
-    TaskDetail? taskDetail,
-    String? roomId,
-    bool? isTaskAccepted,
-    String? myId,
-  }) {
-    return TaskState(
-      allTasksStatus: allTasksStatus ?? this.allTasksStatus,
-      allTasks: allTasks ?? this.allTasks,
-      hasReachedMaxAllTasks: hasReachedMaxAllTasks ?? this.hasReachedMaxAllTasks,
-      localTasksStatus: localTasksStatus ?? this.localTasksStatus,
-      localTasks: localTasks ?? this.localTasks,
-      hasReachedMaxLocalTasks: hasReachedMaxLocalTasks ?? this.hasReachedMaxLocalTasks,
-      errorMessage: errorMessage ?? this.errorMessage,
-      taskDetail: taskDetail ?? this.taskDetail,
-      roomId: roomId ?? this.roomId,
-      isTaskAccepted: isTaskAccepted ?? this.isTaskAccepted,
-      myId: myId ?? this.myId,
-    );
-  }
+abstract class TaskState extends Equatable {
+  const TaskState();
 
   @override
-  List<Object?> get props => [
-        allTasksStatus,
-        allTasks,
-        hasReachedMaxAllTasks,
-        localTasksStatus,
-        localTasks,
-        hasReachedMaxLocalTasks,
-        errorMessage,
-        taskDetail,
-        roomId,
-        isTaskAccepted,
-        myId,
-      ];
+  List<Object?> get props => [];
+
+  TaskDetail? get taskDetail => null;
+  List<TaskAll> get allTasks => [];
+  List<Task> get localTasks => [];
+  TaskStatus get allTasksStatus => TaskStatus.initial;
+  TaskStatus get localTasksStatus => TaskStatus.initial;
+}
+
+class TaskInitial extends TaskState {}
+
+class TaskLoading extends TaskState {}
+
+class TaskDetailLoaded extends TaskState {
+  final TaskDetail taskDetail;
+  const TaskDetailLoaded(this.taskDetail);
+  @override
+  List<Object> get props => [taskDetail];
+}
+
+class TaskChatLoaded extends TaskState {
+  final List<ManageTaskChatModel> chatList;
+  const TaskChatLoaded(this.chatList);
+  @override
+  List<Object> get props => [chatList];
+}
+
+class TaskMediaUploaded extends TaskState {
+  final Map<String, dynamic> response;
+  const TaskMediaUploaded(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class RoomIdLoaded extends TaskState {
+  final String roomId;
+  const RoomIdLoaded(this.roomId);
+  @override
+  List<Object> get props => [roomId];
+}
+
+class HopperAcceptedCountLoaded extends TaskState {
+  final String count;
+  const HopperAcceptedCountLoaded(this.count);
+  @override
+  List<Object> get props => [count];
+}
+
+class TaskError extends TaskState {
+  final String message;
+  const TaskError(this.message);
+  @override
+  List<Object> get props => [message];
+}
+
+class TaskActionSuccess extends TaskState {
+  final String message;
+  const TaskActionSuccess(this.message);
+  @override
+  List<Object> get props => [message];
+}
+
+class TransactionDetailsLoaded extends TaskState {
+  final List<EarningTransactionDetail> transactions;
+  const TransactionDetailsLoaded(this.transactions);
+  @override
+  List<Object> get props => [transactions];
+}
+
+class TasksLoaded extends TaskState {
+  final List<TaskAll> allTasks;
+  final List<Task> localTasks;
+  final TaskStatus allTasksStatus;
+  final TaskStatus localTasksStatus;
+
+  const TasksLoaded({
+    this.allTasks = const [],
+    this.localTasks = const [],
+    this.allTasksStatus = TaskStatus.initial,
+    this.localTasksStatus = TaskStatus.initial,
+  });
+
+  @override
+  List<Object> get props =>
+      [allTasks, localTasks, allTasksStatus, localTasksStatus];
 }

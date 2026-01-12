@@ -1,140 +1,144 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/utils/extensions.dart';
-import 'package:presshop/core/api/network_class.dart';
-import 'package:presshop/core/api/network_response.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/features/account_settings/presentation/bloc/faq/faq_bloc.dart';
+import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-
 class FAQScreen extends StatefulWidget {
-  bool priceTipsSelected = false;
-  String type = "";
-  String benefits = "";
-  int index = 0;
+  final bool priceTipsSelected;
+  final String type;
+  final String benefits;
+  final int index;
 
-  FAQScreen(
-      {super.key,
-      required this.priceTipsSelected,
-      required this.type,
-      this.benefits = "",
-      required this.index});
+  const FAQScreen({
+    super.key,
+    required this.priceTipsSelected,
+    required this.type,
+    this.benefits = "",
+    required this.index,
+  });
 
   @override
-  State<StatefulWidget> createState() {
-    return FAQScreenState();
-  }
+  State<FAQScreen> createState() => _FAQScreenState();
 }
 
-class FAQScreenState extends State<FAQScreen>
-    with AnalyticsPageMixin
-    implements NetworkResponse {
-  ScrollController listController = ScrollController();
+class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-
-  int selectedCategoryIndex = 0;
-  int _offset = 0;
-
-  String selectedSellType = sharedText, selectedCategoryId = "";
-
-  bool isApiSuccess = false;
-  bool isSearch = false;
-
-  List<FAQPriceTipsData> questionAnswerList = [];
-  List<FAQPriceTipsData> searchResult = [];
-  List<CategoryDataModel> categoryList = [];
+  late FAQBloc _bloc;
+  final ScrollController _listController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    debugPrint("widget.index:::::${widget.index}");
+    _bloc = sl<FAQBloc>();
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => callFAQCategoryAPI());
+    String? initialCategoryName;
+    if (widget.priceTipsSelected) {
+      // Logic for price tips (handled by bloc usually, looks for "price tips" category or just loads generic)
+    } else {
+      if (widget.benefits.isNotEmpty) {
+        initialCategoryName = "PRO benefits";
+      } else if (widget.index == 1) {
+        initialCategoryName = "Emergency";
+      }
+    }
+
+    _bloc.add(FAQLoadCategories(
+      initialCategoryName: initialCategoryName,
+    ));
   }
 
-  void _onRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    if (!mounted) return;
-    setState(() {
-      _offset = 0;
-      if (widget.priceTipsSelected) {
-        callPriceTipsAPI(categoryList[selectedCategoryIndex].name);
-      } else {
-        callFAQAPI(categoryList[selectedCategoryIndex].name);
-      }
-    });
-    _refreshController.refreshCompleted();
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    _listController.dispose();
+    _bloc.close(); // Close bloc since we created it
+    super.dispose();
   }
 
-  void _onLoading() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    if (!mounted) return;
-    setState(() {
-      _offset += 10;
-      if (widget.priceTipsSelected) {
-        callPriceTipsAPI(categoryList[selectedCategoryIndex].name);
-      } else {
-        callFAQAPI(categoryList[selectedCategoryIndex].name);
-      }
-    });
+  void _onRefresh() {
+    _bloc.add(const FAQLoadData(isRefresh: true));
+  }
+
+  void _onLoading() {
+    // Implement pagination if supported by Bloc.
+    // For now, FAQLoadData resets/loads all (limit 1000 in bloc).
+    // If pagination is needed, we need to update Bloc to support loading more.
+    // Assuming current bloc loads all for now based on 'limit: 1000' in bloc.
     _refreshController.loadComplete();
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          widget.priceTipsSelected ? priceTipsText : faqText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
-            ),
+    return BlocProvider(
+      create: (_) => _bloc,
+      child: Scaffold(
+        appBar: CommonAppBar(
+          elevation: 0,
+          hideLeading: false,
+          title: Text(
+            widget.priceTipsSelected ? priceTipsText : faqText,
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: size.width * appBarHeadingFontSize),
           ),
-          SizedBox(
-            width: size.width * numD04,
-          )
-        ],
-      ),
-      body: SafeArea(
-        child: isApiSuccess
-            ? SmartRefresher(
+          centerTitle: false,
+          titleSpacing: 0,
+          size: size,
+          showActions: true,
+          leadingFxn: () {
+            Navigator.pop(context);
+          },
+          actionWidget: [
+            InkWell(
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(initialPosition: 2)),
+                    (route) => false);
+              },
+              child: Image.asset(
+                "${commonImagePath}rabbitLogo.png",
+                height: size.width * numD07,
+                width: size.width * numD07,
+              ),
+            ),
+            SizedBox(
+              width: size.width * numD04,
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: BlocConsumer<FAQBloc, FAQState>(
+            listener: (context, state) {
+              if (state.status == FAQStatus.success) {
+                _refreshController.refreshCompleted();
+                _refreshController.loadComplete();
+              } else if (state.status == FAQStatus.failure) {
+                _refreshController.refreshFailed();
+                // Show error snackbar or dialog?
+              }
+            },
+            builder: (context, state) {
+              if (state.categories.isEmpty &&
+                  state.status == FAQStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return SmartRefresher(
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                enablePullUp: true,
+                enablePullUp: false, // Disabled pull up since bloc fetches 1000
                 enablePullDown: true,
                 child: SingleChildScrollView(
                   child: Column(
@@ -202,20 +206,10 @@ class FAQScreenState extends State<FAQScreen>
                                   vertical: size.width * numD015),
                             ),
                             onChanged: (value) {
-                              if (value.isNotEmpty) {
-                                searchResult = questionAnswerList
-                                    .where((element) => element.question
-                                        .toLowerCase()
-                                        .contains(value.toLowerCase()))
-                                    .toList();
-                                isSearch = true;
-                              } else {
-                                isSearch = false;
-                              }
-                              setState(() {});
+                              _bloc.add(FAQSearch(value));
                             }),
                       ),
-                      categoryList.isEmpty
+                      state.categories.isEmpty
                           ? Center(
                               child: errorMessageWidget("No Category found"))
                           : Container(
@@ -223,57 +217,31 @@ class FAQScreenState extends State<FAQScreen>
                               margin:
                                   EdgeInsets.only(left: size.width * numD035),
                               child: ListView.separated(
-                                  controller: listController,
+                                  controller: _listController,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (context, index) {
+                                    final category = state.categories[index];
                                     return InkWell(
                                       onTap: () {
-                                        int pos = categoryList.indexWhere(
-                                            (element) => element.selected);
-                                        if (pos >= 0) {
-                                          categoryList[pos].selected = false;
-                                        }
-                                        categoryList[index].selected =
-                                            !categoryList[index].selected;
-                                        if (categoryList[index].selected) {
-                                          selectedCategoryIndex = index;
-                                          if (widget.priceTipsSelected) {
-                                            callPriceTipsAPI(categoryList[
-                                                    selectedCategoryIndex]
-                                                .name);
-                                          } else {
-                                            callFAQAPI(categoryList[
-                                                    selectedCategoryIndex]
-                                                .name);
-                                          }
-                                        }
-
-                                        listController.animateTo(index * 100,
+                                        _bloc.add(FAQSelectCategory(index));
+                                        _listController.animateTo(index * 100.0,
                                             duration: const Duration(
                                                 milliseconds: 200),
                                             curve: Curves.ease);
-
-                                        selectedCategoryId =
-                                            categoryList[index].id;
-                                        setState(() {});
                                       },
                                       child: Chip(
-                                        backgroundColor:
-                                            categoryList[index].selected
-                                                ? Colors.black
-                                                : colorLightGrey,
+                                        backgroundColor: category.selected
+                                            ? Colors.black
+                                            : colorLightGrey,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: size.width * numD025,
                                             vertical: size.width * numD02),
                                         label: Text(
-                                          categoryList[index]
-                                              .name
-                                              .toTitleCase(),
+                                          category.name.toTitleCase(),
                                           style: TextStyle(
-                                              color:
-                                                  categoryList[index].selected
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                              color: category.selected
+                                                  ? Colors.white
+                                                  : Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontSize: size.width * numD036,
                                               fontWeight: FontWeight.w600),
@@ -286,18 +254,16 @@ class FAQScreenState extends State<FAQScreen>
                                       width: size.width * numD04,
                                     );
                                   },
-                                  itemCount: categoryList.length),
+                                  itemCount: state.categories.length),
                             ),
-                      questionAnswerList.isNotEmpty
+                      state.items.isNotEmpty
                           ? ListView.separated(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               padding: EdgeInsets.symmetric(
                                   horizontal: size.width * numD035),
                               itemBuilder: (context, index) {
-                                var item = isSearch
-                                    ? searchResult[index]
-                                    : questionAnswerList[index];
+                                var item = state.items[index];
                                 return Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(
@@ -347,9 +313,9 @@ class FAQScreenState extends State<FAQScreen>
                                     ),
                                     iconColor: Colors.black,
                                     onExpansionChanged: (value) {
-                                      item.selected = value;
-                                      setState(() {});
+                                      _bloc.add(FAQToggleItem(index));
                                     },
+                                    initiallyExpanded: item.selected,
                                     children: [
                                       Container(
                                         height: 1,
@@ -419,199 +385,26 @@ class FAQScreenState extends State<FAQScreen>
                                   height: size.width * numD04,
                                 );
                               },
-                              itemCount: isSearch
-                                  ? searchResult.length
-                                  : questionAnswerList.length)
-                          : errorMessageWidget(widget.priceTipsSelected
-                              ? "No Price Tips Found"
-                              : "No FAQ found"),
+                              itemCount: state.items.length)
+                          : state.status == FAQStatus.loading
+                              ? const Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: CircularProgressIndicator()))
+                              : errorMessageWidget(widget.priceTipsSelected
+                                  ? "No Price Tips Found"
+                                  : "No FAQ found"),
                     ],
                   ),
                 ),
-              )
-            : Container(),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  void callFAQAPI(String category) {
-    Map<String, String> map = {
-      'type': widget.type,
-      'offset': _offset.toString(),
-      'limit': '10',
-      'category': category.toLowerCase(),
-    };
-    NetworkClass(getAllCmsUrl, this, getAllCmsUrlRequest)
-        .callRequestServiceHeader(true, "get", map);
-  }
-
-  void callPriceTipsAPI(String category) {
-    Map<String, String> map = {
-      'offset': _offset.toString(),
-      'limit': '10',
-      'category': category,
-    };
-    NetworkClass(priceTipsAPI, this, reqPriceTipsAPI)
-        .callRequestServiceHeader(true, "get", map);
-  }
-
-  callFAQCategoryAPI() {
-    Map<String, String> map = {
-      "type": widget.priceTipsSelected ? 'priceTip' : 'FAQ',
-    };
-    NetworkClass(getHopperCategory, this, reqGetHopperCategory)
-        .callRequestServiceHeader(true, "get", map);
-  }
-
   @override
-  void onError({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case getAllCmsUrlRequest:
-          debugPrint(
-              "getAllCmsUrlRequest_ErrorResponse ==> ${jsonDecode(response)}");
-          break;
-        case reqPriceTipsAPI:
-          debugPrint(
-              "reqPriceTipsAPI_ErrorResponse ==> ${jsonDecode(response)}");
-          break;
-
-        case reqGetHopperCategory:
-          debugPrint(
-              "reqGetHopperCategory_ErrorResponse ==> ${jsonDecode(response)}");
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
-
-  @override
-  void onResponse({required int requestCode, required String response}) {
-    try {
-      switch (requestCode) {
-        case getAllCmsUrlRequest:
-          var map = jsonDecode(response);
-          debugPrint("FaqData:$response");
-          var list = map["status"] as List;
-          if (list.isNotEmpty) {
-            questionAnswerList =
-                list.map((e) => FAQPriceTipsData.fromJson(e)).toList();
-            isApiSuccess = true;
-            setState(() {});
-          }
-
-          break;
-
-        case reqPriceTipsAPI:
-          var map = jsonDecode(response);
-          debugPrint("priceTrips=====> :$response");
-          if (map["code"] == 200) {
-            var list = map["price_tips"] as List;
-            questionAnswerList =
-                list.map((e) => FAQPriceTipsData.fromJson(e)).toList();
-            isApiSuccess = true;
-            setState(() {});
-          }
-          break;
-
-        case reqGetHopperCategory:
-          debugPrint(
-              "reqGetHopperCategory_SuccessResponse ==> ${jsonDecode(response)}");
-          var data = jsonDecode(response);
-          var dataList = [];
-
-          if (data['data'] != null && data['data'] is List) {
-            dataList = data['data'] as List;
-          } else if (data['categories'] != null) {
-            dataList = data['categories'] as List;
-          } else if (data['data'] != null &&
-              data['data'] is Map &&
-              data['data']['categories'] != null) {
-            dataList = data['data']['categories'] as List;
-          }
-
-          if (dataList.isNotEmpty) {
-            categoryList =
-                dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
-            isApiSuccess = true; // Ensure UI is visible
-            String categoryName = "";
-            if (categoryList.isNotEmpty) {
-              if (widget.benefits.isEmpty) {
-                categoryName = categoryList.first.name;
-                categoryList.indexWhere((element) {
-                  if (element.name == categoryName) {
-                    element.selected = true;
-                  }
-                  return true;
-                });
-              } else {
-                categoryName = categoryList.last.name;
-                debugPrint("categoryName===> ${categoryList.last.name}");
-                categoryList.lastIndexWhere((element) {
-                  if (element.name.contains(categoryName)) {
-                    debugPrint("here===>");
-                    element.selected = true;
-                  }
-                  return true;
-                });
-              }
-            }
-            if (widget.index == 1 && categoryList.length > 1) {
-              for (var item in categoryList) {
-                item.selected = false;
-              }
-              categoryList[1].selected = true;
-              setState(() {});
-            }
-
-            if (widget.priceTipsSelected) {
-              callPriceTipsAPI(categoryList.first.name);
-            } else {
-              if (widget.benefits.isNotEmpty) {
-                for (var item in categoryList) {
-                  item.selected = false;
-                }
-                categoryList[5].selected = true;
-                callFAQAPI("PRO benefits");
-              } else {
-                callFAQAPI(widget.index == 1 && categoryList.length > 1
-                    ? "Emergency"
-                    : categoryList.first.name);
-              }
-            }
-          } else {
-            isApiSuccess = true;
-          }
-
-          setState(() {});
-          break;
-      }
-    } on Exception catch (e) {
-      debugPrint("$e");
-    }
-  }
-
-  @override
-  // TODO: implement pageName
   String get pageName => PageNames.faq;
-}
-
-class FAQPriceTipsData {
-  String id = "";
-  String question = "";
-  String answer = "";
-  String category = "";
-  bool selected = false;
-
-  FAQPriceTipsData.fromJson(json) {
-    var data = json;
-    if (json['_doc'] != null) {
-      data = json['_doc'];
-    }
-    id = data["_id"]?.toString() ?? '';
-    question = data["ques"] ?? "";
-    answer = data["ans"] ?? "";
-    category = data['category'] ?? "";
-  }
 }

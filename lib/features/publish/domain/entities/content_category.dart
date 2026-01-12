@@ -12,8 +12,11 @@ class ContentCategory extends Equatable {
     required this.name,
     required this.type,
     required this.percentage,
-    required this.selected,
+    this.selected = false,
   });
+
+  @override
+  List<Object?> get props => [id, name, type, percentage, selected];
 
   ContentCategory copyWith({
     String? id,
@@ -30,7 +33,4 @@ class ContentCategory extends Equatable {
       selected: selected ?? this.selected,
     );
   }
-
-  @override
-  List<Object?> get props => [id, name, type, percentage, selected];
 }

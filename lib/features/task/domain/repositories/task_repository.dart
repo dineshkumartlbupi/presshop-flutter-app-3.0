@@ -1,9 +1,32 @@
-import '../entities/task.dart';
-import '../entities/task_all.dart';
-import '../entities/task_detail.dart';
+import 'package:dartz/dartz.dart' hide Task;
+import 'package:dio/dio.dart';
+import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task.dart';
+import 'package:presshop/features/task/domain/entities/task_all.dart';
+import 'package:presshop/core/common_models_export.dart';
+import 'package:presshop/features/earning/data/models/earning_model.dart';
 
 abstract class TaskRepository {
-  Future<List<TaskAll>> getAllTasks({required int limit, required int offset});
-  Future<List<Task>> getLocalTasks({required int limit, required int offset, required Map<String, dynamic> filters});
-  Future<TaskDetail> getTaskDetail(String taskId);
+  Future<Either<Failure, TaskDetail>> getTaskDetail(String taskId);
+  Future<Either<Failure, void>> acceptRejectTask(
+      {required String taskId,
+      required String mediaHouseId,
+      required String status});
+  Future<Either<Failure, List<ManageTaskChatModel>>> getTaskChat(
+      String roomId, String type, String contentId);
+  Future<Either<Failure, Map<String, dynamic>>> uploadTaskMedia(FormData data);
+  Future<Either<Failure, String>> getRoomId(
+      String receiverId, String taskId, String roomType, String type);
+  Future<Either<Failure, String>> getHopperAcceptedCount(String taskId);
+  Future<Either<Failure, List<EarningTransactionDetail>>>
+      getTaskTransactionDetails(String transactionId);
+  Future<Either<Failure, List<EarningTransactionDetail>>>
+      getContentTransactionDetails(String roomId, String mediaHouseId);
+  Future<Either<Failure, List<TaskAll>>> getAllTasks(
+      {required int limit,
+      required int offset,
+      Map<String, dynamic>? filterParams});
+  Future<Either<Failure, List<Task>>> getLocalTasks(
+      Map<String, dynamic> filterParams);
 }

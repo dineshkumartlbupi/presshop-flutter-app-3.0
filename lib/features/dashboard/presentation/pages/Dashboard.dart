@@ -229,41 +229,6 @@ class DashboardState extends State<Dashboard>
     super.dispose();
   }
 
-  // Future<String?> fetchStudentBeansUrl(
-  //     {Duration timeout = const Duration(seconds: 10)}) async {
-  //   // If a previous completer is still pending, return its future
-  //   if (_studentBeansCompleter != null &&
-  //       !_studentBeansCompleter!.isCompleted) {
-  //     return _studentBeansCompleter!.future
-  //         .timeout(timeout, onTimeout: () => null);
-  //   }
-
-  //   _studentBeansCompleter = Completer<String?>();
-
-  //   try {
-  //     NetworkClass.fromNetworkClass(
-  //       studentBeansActivationUrl,
-  //       this,
-  //       studentBeansActivationRequest,
-  //       null,
-  //     ).callRequestServiceHeader(false, "post", null);
-  //   } catch (e) {
-  //     // Ensure completer completes on error
-  //     if (!_studentBeansCompleter!.isCompleted) {
-  //       _studentBeansCompleter!.complete(null);
-  //     }
-  //     return null;
-  //   }
-
-  //   // Wait for onResponse to complete the completer (or timeout -> null)
-  //   try {
-  //     return await _studentBeansCompleter!.future
-  //         .timeout(timeout, onTimeout: () => null);
-  //   } catch (_) {
-  //     return null;
-  //   }
-  // }
-
   void myProfileApi() {
     _dashboardBloc.add(FetchMyProfileEvent());
   }
@@ -1201,12 +1166,4 @@ class DashboardState extends State<Dashboard>
   void callGetActiveAdmin() {
     _dashboardBloc.add(FetchActiveAdmins());
   }
-
-/*
-  // Legacy NetworkResponse methods removed. Refactored to Bloc.
-  @override
-  void onError({required int requestCode, required String response}) {}
-  @override
-  void onResponse({required int requestCode, required String response}) {}
-*/
 }
