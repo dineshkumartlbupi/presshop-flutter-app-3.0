@@ -33,11 +33,27 @@ class ContentItemModel extends ContentItem {
   });
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
+    var mediaList = (json['content'] ?? json['content_metadata']) != null
+          ? ((json['content'] ?? json['content_metadata']) as List)
+              .map((e) => ContentMedia(
+                    mediaUrl: e['media'] ?? '',
+                    mediaType: e['mediaType'] ?? e['media_type'] ?? 'image',
+                    thumbnailUrl:
+                        e['thumbNail'] ?? e['thumbnail'] ?? e['thumb_nail'],
+                    watermarkUrl: e['waterMark'] ??
+                        e['water_mark'] ??
+                        e['watermarked_media'],
+                    mimeType: e['mimeType'] ?? e['mime_type'],
+                    fileName: e['fileName'] ?? e['file_name'],
+                  ))
+              .toList()
+          : <ContentMedia>[];
+
     return ContentItemModel(
       id: json['_id'] ?? json['id'] ?? '',
       title: json['title'] ?? json['heading'] ?? json['description'] ?? '',
       description: json['description'] ?? json['caption'] ?? '',
-      mediaType: json['media_type'] ?? json['type'],
+      mediaType: json['media_type'] ?? json['type'] ?? (mediaList.isNotEmpty ? mediaList.first.mediaType : null),
       mediaUrls: json['media_urls'] != null
           ? List<String>.from(json['media_urls'])
           : json['media'] != null
@@ -52,27 +68,13 @@ class ContentItemModel extends ContentItem {
                           : [])
                     ]
                   : [],
-      mediaList: (json['content'] ?? json['content_metadata']) != null
-          ? ((json['content'] ?? json['content_metadata']) as List)
-              .map((e) => ContentMedia(
-                    mediaUrl: e['media'] ?? '',
-                    mediaType: e['mediaType'] ?? e['media_type'] ?? 'image',
-                    thumbnailUrl:
-                        e['thumbNail'] ?? e['thumbnail'] ?? e['thumb_nail'],
-                    watermarkUrl: e['waterMark'] ??
-                        e['water_mark'] ??
-                        e['watermarked_media'],
-                    mimeType: e['mimeType'] ?? e['mime_type'],
-                    fileName: e['fileName'] ?? e['file_name'],
-                  ))
-              .toList()
-          : [],
+      mediaList: mediaList,
       hashtags:
           json['hashtags'] != null ? List<String>.from(json['hashtags']) : [],
       location: json['location'] ?? json['address'],
       latitude: json['latitude']?.toString(),
       longitude: json['longitude']?.toString(),
-      price: json['price']?.toString(),
+      price: json['price']?.toString() ?? json['ask_price']?.toString() ?? json['original_ask_price']?.toString(),
       status: json['status'] ?? 'draft',
       categoryId: json['category_id'] ?? json['categoryId'],
       createdAt: json['created_at'] != null
@@ -83,7 +85,7 @@ class ContentItemModel extends ContentItem {
       publishedAt: json['published_at'] != null
           ? DateTime.tryParse(json['published_at'])
           : null,
-      isExclusive: json['is_exclusive'] ?? json['isExclusive'],
+      isExclusive: json['is_exclusive'] ?? json['isExclusive'] ?? (json['type'] != 'shared'),
       watermark: json['watermark'],
       totalSold: json['totalSold'] ?? json['total_earnings'] ?? 0,
       totalOffer: json['offer_content_size'] ?? 0,

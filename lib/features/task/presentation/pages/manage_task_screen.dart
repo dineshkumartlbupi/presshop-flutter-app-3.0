@@ -6900,7 +6900,11 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
       socket.emit('room join', {"room_id": widget.roomId});
     });
 
-    void refreshChat(data) => callGetManageTaskListingApi();
+    void refreshChat(data) {
+      if (mounted) {
+        callGetManageTaskListingApi();
+      }
+    }
 
     socket.on("chat message", refreshChat);
     socket.on("getallchat", refreshChat);
@@ -6945,6 +6949,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
 
   /// Get Listing
   void callGetManageTaskListingApi() {
+    if (!mounted) return;
     context.read<TaskBloc>().add(GetTaskChatEvent(
         roomId: widget.roomId,
         type: widget.type,

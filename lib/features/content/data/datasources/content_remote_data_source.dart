@@ -297,20 +297,19 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<List<EarningTransactionDetail>> getContentTransactions(
       String contentId, int limit, int offset) async {
     try {
-      final response = await apiClient.get(
-        getPublicationTransactionAPI,
-        queryParameters: {
+      final response = await apiClient.post(
+        getDetailsById,
+        data: {
           'content_id': contentId,
-          'limit': limit,
-          'offset': offset,
+          // 'limit': limit, // Endpoint might not support limit/offset or handles it differently
+          // 'offset': offset, 
         },
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
-        // Check for success code or directly parse data based on previous usage
-        // Previous code: var dataList = data['data'] as List;
-        final List transactions = data['data'] ?? [];
+        // TaskRemoteDataSource uses 'response' key for this endpoint
+        final List transactions = data['response'] ?? [];
         return transactions
             .map((e) => EarningTransactionDetail.fromJson(e))
             .toList();
