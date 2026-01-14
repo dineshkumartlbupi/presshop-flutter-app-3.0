@@ -1,6 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
-import 'package:facebook_app_events/facebook_app_events.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -27,7 +27,7 @@ import 'package:presshop/core/utils/http_overrides.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 GoogleSignIn googleSignIn = GoogleSignIn();
 bool rememberMe = false;
-FacebookAppEvents facebookAppEvents = FacebookAppEvents();
+
 SharedPreferences? sharedPreferences;
 final player = AudioPlayer();
 const iOSLocalizedLabels = false;
