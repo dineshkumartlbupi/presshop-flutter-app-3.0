@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -56,7 +57,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
     debugPrint("userId:::$userId");
     getOnlineUsersList();
     adminIDList = [];
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -368,8 +369,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                       padding:
                           EdgeInsets.symmetric(vertical: size.width * numD02),
                       child: InkWell(
-                          onTap: () {
-                          },
+                          onTap: () {},
                           child: Row(
                             children: [
                               Stack(
@@ -613,17 +613,16 @@ class _ChatListingScreenState extends State<ChatListingScreen>
     try {
       final response = await _apiClient.get(getAdminListUrl);
 
-       debugPrint("getAdminListReq Success: ${response.data}");
-       var dataModel = response.data["data"] as List;
+      debugPrint("getAdminListReq Success: ${response.data}");
+      var dataModel = response.data["data"] as List;
 
-       adminList = dataModel.map((e) => AdminDetailModel.fromJson(e)).toList();
+      adminList = dataModel.map((e) => AdminDetailModel.fromJson(e)).toList();
 
-       for (var id in adminIDList) {
-         adminList.removeWhere((element) => element.id == id);
-       }
-       debugPrint("adminListLengthResponse=========> ${adminList.length}");
-       if (mounted) setState(() {});
-
+      for (var id in adminIDList) {
+        adminList.removeWhere((element) => element.id == id);
+      }
+      debugPrint("adminListLengthResponse=========> ${adminList.length}");
+      if (mounted) setState(() {});
     } catch (e) {
       debugPrint("getAdminListReq Error: $e");
     }

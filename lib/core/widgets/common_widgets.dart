@@ -796,7 +796,6 @@ void broadcastDialog({
 //             ));
 //       });
 // }
-
 void commonErrorDialogDialog(
     Size size, String message, String errorCode, VoidCallback callback,
     {String actionButton = "Ok",
