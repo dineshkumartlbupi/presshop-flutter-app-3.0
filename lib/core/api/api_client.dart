@@ -187,7 +187,7 @@ class ApiClient {
       }
     }
     _printCurlCommand(err.requestOptions);
-    
+
     // Use ApiErrorHandler to sanitize the error before passing it up
     final failure = ApiErrorHandler.handle(err);
     final sanitizedError = DioException(
@@ -197,7 +197,7 @@ class ApiClient {
       error: failure.message,
       message: failure.message,
     );
-    
+
     handler.next(sanitizedError);
   }
 
@@ -298,8 +298,6 @@ class ApiClient {
       onReceiveProgress: onReceiveProgress,
     );
   }
-
-
 
   Future<Response> delete(
     String path, {

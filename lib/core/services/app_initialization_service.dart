@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:facebook_app_events/facebook_app_events.dart';
+
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/core/services/appsflyer_service.dart';
 import 'package:presshop/core/services/local_notification_service.dart';
@@ -187,14 +187,14 @@ class AppInitializationService {
   /// Log app open event to Facebook
   static void logAppOpenEvent() {
     try {
-      facebookAppEvents.logEvent(
-        name: "app_open",
-        parameters: {
-          "app_name": "Presshop",
-          "platform": Platform.operatingSystem,
-          "version": Platform.version,
-        },
-      );
+      // facebookAppEvents.logEvent(
+      //   name: "app_open",
+      //   parameters: {
+      //     "app_name": "Presshop",
+      //     "platform": Platform.operatingSystem,
+      //     "version": Platform.version,
+      //   },
+      // );
       debugPrint("✅ App open event logged");
     } catch (e) {
       debugPrint("❌ Facebook event logging error: $e");

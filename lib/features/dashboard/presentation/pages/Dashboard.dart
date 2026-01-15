@@ -166,14 +166,14 @@ class DashboardState extends State<Dashboard>
     };
     _dashboardBloc.add(FetchRoomIdEvent(roomParams));
 
-    facebookAppEvents.logEvent(
-      name: "dashboard_open",
-      parameters: {
-        "app_name": "Presshop",
-        "platform": Platform.operatingSystem,
-        "version": Platform.version,
-      },
-    );
+    // facebookAppEvents.logEvent(
+    //   name: "dashboard_open",
+    //   parameters: {
+    //     "app_name": "Presshop",
+    //     "platform": Platform.operatingSystem,
+    //     "version": Platform.version,
+    //   },
+    // );
     currentIndex = widget.initialPosition;
 
     if (widget.taskStatus == 'rejected') {
