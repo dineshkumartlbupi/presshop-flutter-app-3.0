@@ -1,21 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-
 import 'TermCheckScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/WelcomeScreen.dart';
-
 import 'package:presshop/main.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
@@ -26,9 +19,8 @@ import 'package:presshop/features/authentication/presentation/bloc/signup_event.
 import 'package:presshop/features/authentication/presentation/bloc/signup_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/domain/entities/user.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'UploadDocumnetsScreen.dart';
 
+// ignore: must_be_immutable
 class SocialSignUp extends StatefulWidget {
   bool socialLogin = false;
   String socialId = "";
@@ -57,7 +49,7 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   late AnimationController controller;
   Timer? debounce;
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
   final RegExp _restrictPattern = RegExp(
     r"@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com)$",
     caseSensitive: true,
@@ -104,7 +96,7 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   List<AvatarsData> avatarList = [];
 
-  final bool _isLoggedIn = false;
+  // final bool _isLoggedIn = false;
   String socialEmail = "";
   String socialId = "";
   String socialName = "";
@@ -118,7 +110,7 @@ class _SocialSignUpState extends State<SocialSignUp>
     super.initState();
 
     if (widget.socialLogin) {
-      List<String> nameParts = widget.name.split(' ');
+      // List<String> nameParts = widget.name.split(' ');
     }
 
     // WidgetsBinding.instance.addPostFrameCallback((_) => getAvatarsApi());
@@ -135,14 +127,14 @@ class _SocialSignUpState extends State<SocialSignUp>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
-        .chain(CurveTween(curve: Curves.elasticIn))
-        .animate(controller)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controller.reverse();
-        }
-      });
+    // final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
+    //     .chain(CurveTween(curve: Curves.elasticIn))
+    //     .animate(controller)
+    //   ..addStatusListener((status) {
+    //     if (status == AnimationStatus.completed) {
+    //       controller.reverse();
+    //     }
+    //   });
 
     return BlocProvider(
       create: (context) => sl<SignUpBloc>()..add(FetchAvatarsEvent()),
@@ -156,9 +148,7 @@ class _SocialSignUpState extends State<SocialSignUp>
           } else if (state is SignUpSuccess) {
             _handleLoginSuccess(state.user);
           } else if (state is AvatarsLoaded) {
-            if (state.avatars.isNotEmpty) {
-              avatarBaseUrl = state.avatars.first.baseUrl ?? "";
-            }
+            if (state.avatars.isNotEmpty) {}
             avatarList = state.avatars
                 .map((e) =>
                     AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar}))
@@ -284,7 +274,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                             borderRadius: BorderRadius.circular(
                                                 size.width * numD04),
                                             child: Image.network(
-                                              "$avatarBaseUrl/$selectedAvatar",
+                                              selectedAvatar,
                                               height: size.width * numD30,
                                               width: size.width * numD35,
                                               fit: BoxFit.cover,
@@ -876,7 +866,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                         child: Stack(
                                           children: [
                                             Image.network(
-                                              "$avatarBaseUrl/${item.avatar}",
+                                              item.avatar,
                                               errorBuilder:
                                                   (BuildContext context,
                                                       Object exception,

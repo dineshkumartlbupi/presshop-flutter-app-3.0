@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
+import 'package:presshop/features/map/data/datasources/map_remote_data_source.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/domain/entities/map_marker.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';

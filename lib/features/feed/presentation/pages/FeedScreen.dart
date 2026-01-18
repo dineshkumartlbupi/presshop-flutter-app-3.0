@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flick_video_player/flick_video_player.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
@@ -56,6 +56,17 @@ class FeedScreenState extends State<FeedScreen> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+  final Map<String, ChewieController> _videoControllers = {};
+
+  @override
+  void dispose() {
+    for (var controller in _videoControllers.values) {
+      controller.videoPlayerController.dispose();
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   @override
   void initState() {
     debugPrint("class ====> $runtimeType");
@@ -63,12 +74,6 @@ class FeedScreenState extends State<FeedScreen> {
     _feedBloc = sl<FeedBloc>();
     _feedBloc.add(const FetchFeeds(isRefresh: true));
     initializeFilter();
-  }
-
-  @override
-  void dispose() {
-    //flickManager?.dispose();
-    super.dispose();
   }
 
   @override
@@ -222,18 +227,14 @@ class FeedScreenState extends State<FeedScreen> {
                                 itemBuilder: (context, idx) {
                                   var item =
                                       state.feeds[index].contentList[idx];
-                                  var flickManager = initialController(
-                                      state.feeds[index], idx);
+                                  ChewieController? chewieController =
+                                      initialController(
+                                          state.feeds[index], idx);
                                   return VisibilityDetector(
                                     key: Key("${state.feeds[index].id}_$idx"),
                                     onVisibilityChanged: (visibility) {
                                       if (visibility.visibleFraction < 0.6) {
-                                        flickManager?.flickControlManager
-                                            ?.autoPause();
-                                      } else if (visibility.visibleFraction ==
-                                          1) {
-                                        flickManager?.flickControlManager
-                                            ?.autoResume();
+                                        chewieController?.pause();
                                       }
                                     },
                                     child: ClipRRect(
@@ -245,6 +246,17 @@ class FeedScreenState extends State<FeedScreen> {
                                               item.mediaType == "doc") {
                                             openUrl(contentImageUrl +
                                                 item.mediaUrl);
+                                          } else if (item.mediaType ==
+                                                  "video" &&
+                                              chewieController != null) {
+                                            if (chewieController
+                                                .videoPlayerController
+                                                .value
+                                                .isPlaying) {
+                                              chewieController.pause();
+                                            } else {
+                                              chewieController.play();
+                                            }
                                           }
                                         },
                                         child: Stack(
@@ -255,7 +267,7 @@ class FeedScreenState extends State<FeedScreen> {
                                                     ? videoWidget(
                                                         Key(
                                                             "${state.feeds[index].id}_$idx"),
-                                                        flickManager)
+                                                        chewieController)
                                                     : item.mediaType == "pdf"
                                                         ? Padding(
                                                             padding:
@@ -294,8 +306,16 @@ class FeedScreenState extends State<FeedScreen> {
                                                             : Image.network(
                                                                 item.mediaType ==
                                                                         "video"
-                                                                    ? "$contentImageUrl${item.thumbnail}"
-                                                                    : "$contentImageUrl${item.mediaUrl}",
+                                                                    ? (item.thumbnail.startsWith(
+                                                                            "http")
+                                                                        ? item
+                                                                            .thumbnail
+                                                                        : "$contentImageUrl${item.thumbnail}")
+                                                                    : (item.mediaUrl.startsWith(
+                                                                            "http")
+                                                                        ? item
+                                                                            .mediaUrl
+                                                                        : "$contentImageUrl${item.mediaUrl}"),
                                                                 width:
                                                                     size.width,
                                                                 fit: BoxFit
@@ -400,6 +420,14 @@ class FeedScreenState extends State<FeedScreen> {
                                       state.feeds[index].feedImage,
                                       height: size.width * numD06,
                                       fit: BoxFit.fill,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          "${commonImagePath}rabbitLogo.png",
+                                          height: size.width * numD06,
+                                          fit: BoxFit.fill,
+                                        );
+                                      },
                                     )),
                               ),
                               SizedBox(
@@ -995,26 +1023,11 @@ class FeedScreenState extends State<FeedScreen> {
     await controller.pausePlayer(); // Start audio player
   }
 
-  Widget videoWidget(Key key, flickManager) {
-    return flickManager != null
-        ? FlickVideoPlayer(
+  Widget videoWidget(Key key, ChewieController? chewieController) {
+    return chewieController != null
+        ? Chewie(
             key: key,
-            flickManager: flickManager!,
-            flickVideoWithControls: const FlickVideoWithControls(
-              playerLoadingFallback: Center(
-                  child: CircularProgressIndicator(
-                color: colorThemePink,
-              )),
-              closedCaptionTextStyle: TextStyle(fontSize: 8),
-              controls: FlickPortraitControls(),
-            ),
-            flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-              playerLoadingFallback: Center(
-                  child: CircularProgressIndicator(
-                color: colorThemePink,
-              )),
-              controls: FlickLandscapeControls(),
-            ),
+            controller: chewieController,
           )
         : Container();
   }
@@ -1479,22 +1492,90 @@ class FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  FlickManager? initialController(Feed feed, int currentMediaIndex) {
-    FlickManager? flickManager;
+  ChewieController? initialController(Feed feed, int currentMediaIndex) {
+    String key = "${feed.id}_$currentMediaIndex";
+    if (_videoControllers.containsKey(key)) {
+      return _videoControllers[key];
+    }
+
+    ChewieController? chewieController;
     var content = feed.contentList[currentMediaIndex];
 
-    if (content.mediaType == "audio") {
-      initWaveData(contentImageUrl + content.mediaUrl);
-    } else if (content.mediaType == "video") {
-      debugPrint("videoLink=====> ${content.mediaUrl}");
-      flickManager = FlickManager(
-        videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse(contentImageUrl + content.mediaUrl),
-        ),
-        autoPlay: false,
-      );
+    String url = content.mediaUrl;
+    if (!url.startsWith("http")) {
+      url = contentImageUrl + url;
     }
-    return flickManager;
+
+    if (content.mediaType == "audio") {
+      initWaveData(url);
+    } else if (content.mediaType == "video") {
+      debugPrint("videoLink=====> $url");
+      Uri? videoUri;
+      try {
+        String processingUrl = url;
+        String scheme = "https";
+        if (processingUrl.startsWith("http://")) {
+          scheme = "http";
+          processingUrl = processingUrl.substring(7);
+        } else if (processingUrl.startsWith("https://")) {
+          scheme = "https";
+          processingUrl = processingUrl.substring(8);
+        }
+
+        var parts = processingUrl.split('/');
+        String host = parts[0];
+        List<String> pathSegments = parts.sublist(1);
+
+        // Fix for S3 buckets with dots in the name (causes TLS error)
+        // Convert virtual-hosted style (bucket.s3.region.amazonaws.com)
+        // to path-style (s3.region.amazonaws.com/bucket/key)
+        if (host.contains(".s3.") && host.contains("amazonaws.com")) {
+          final hostParts = host.split(".s3.");
+          if (hostParts.length == 2) {
+            final bucketName = hostParts[0];
+            final regionAndDomain =
+                hostParts[1]; // e.g. eu-west-2.amazonaws.com
+
+            if (bucketName.contains('.')) {
+              // Reconstruct as path-style
+              host = "s3.$regionAndDomain";
+              pathSegments.insert(0, bucketName);
+              debugPrint(
+                  "Converted to Path-Style S3 URL: $host / ${pathSegments.join('/')}");
+            }
+          }
+        }
+
+        videoUri = Uri(scheme: scheme, host: host, pathSegments: pathSegments);
+        debugPrint("Final Video URI: $videoUri");
+      } catch (e) {
+        debugPrint("Error constructing URI: $e");
+        videoUri = Uri.tryParse(url);
+      }
+
+      if (videoUri != null) {
+        final videoPlayerController =
+            VideoPlayerController.networkUrl(videoUri);
+        chewieController = ChewieController(
+          videoPlayerController: videoPlayerController,
+          autoPlay: false,
+          looping: false,
+          showControls: true,
+          aspectRatio: 16 / 9,
+          autoInitialize: true,
+          errorBuilder: (context, errorMessage) {
+            return Center(
+              child: Text(
+                errorMessage,
+                style: const TextStyle(color: Colors.white),
+              ),
+            );
+          },
+        );
+        _videoControllers[key] = chewieController;
+      }
+    }
+    return chewieController;
   }
 
   /// Filter List API

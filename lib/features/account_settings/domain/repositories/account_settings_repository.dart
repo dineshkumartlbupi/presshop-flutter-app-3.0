@@ -12,5 +12,5 @@ abstract class AccountSettingsRepository {
       String category, int offset, int limit);
   Future<Either<Failure, List<FAQ>>> getPriceTips(
       String category, int offset, int limit);
-  Future<Either<Failure, List<ContentCategory>>> getFAQCategories();
+  Future<Either<Failure, List<ContentCategory>>> getFAQCategories(String type);
 }

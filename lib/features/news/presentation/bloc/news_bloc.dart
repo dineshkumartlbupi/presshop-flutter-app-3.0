@@ -1,20 +1,28 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/news/domain/usecases/get_aggregated_news.dart';
 import 'package:presshop/features/news/domain/usecases/get_comments.dart';
 import 'package:presshop/features/news/domain/usecases/get_news_detail.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
+import 'package:presshop/features/news/domain/entities/news.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetAggregatedNews getAggregatedNews;
   final GetNewsDetail getNewsDetail;
   final GetComments getComments;
+  final SocketService socketService;
+  final SharedPreferences sharedPreferences;
 
   NewsBloc({
     required this.getAggregatedNews,
     required this.getNewsDetail,
     required this.getComments,
+    required this.socketService,
+    required this.sharedPreferences,
   }) : super(const NewsState()) {
     on<GetAggregatedNewsEvent>(_onGetAggregatedNews);
     on<GetNewsDetailEvent>(_onGetNewsDetail);
@@ -24,18 +32,32 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     on<ToggleLikeStatusEvent>(_onToggleLikeStatus);
     on<IncrementViewCountEvent>(_onIncrementViewCount);
     on<UpdateShareCountEvent>(_onUpdateShareCount);
+    on<ToggleNewsLikeEvent>(_onToggleNewsLike);
+    on<OnNewsLikeUpdatedEvent>(_onNewsLikeUpdated);
+
+    _initSocketListener();
+  }
+
+  void _initSocketListener() {
+    socketService.onNewsLike = (data) {
+      add(OnNewsLikeUpdatedEvent(likeData: data));
+    };
   }
 
   Future<void> _onGetAggregatedNews(
     GetAggregatedNewsEvent event,
     Emitter<NewsState> emit,
   ) async {
+    // ... existing method body ...
     emit(state.copyWith(isLoading: true));
     final result = await getAggregatedNews(GetAggregatedNewsParams(
       lat: event.lat,
       lng: event.lng,
       km: event.km,
       category: event.category,
+      alertType: event.alertType,
+      limit: event.limit,
+      offset: event.offset,
     ));
 
     result.fold(
@@ -45,6 +67,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     );
   }
 
+// ... rest of existing methods ...
   Future<void> _onGetNewsDetail(
     GetNewsDetailEvent event,
     Emitter<NewsState> emit,
@@ -144,6 +167,77 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       final updatedNews =
           state.selectedNews!.copyWith(sharesCount: event.count);
       emit(state.copyWith(selectedNews: updatedNews));
+    }
+  }
+
+  void _onToggleNewsLike(
+    ToggleNewsLikeEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    if (userId.isNotEmpty) {
+      socketService.likeNews(userId: userId, contentId: event.contentId);
+
+      // Optimistic Update
+      final updatedList = state.newsList.map((news) {
+        if (news.id == event.contentId) {
+          final isLiked = !(news.isLiked ?? false);
+          final likesCount = (news.likesCount ?? 0) + (isLiked ? 1 : -1);
+          return news.copyWith(isLiked: isLiked, likesCount: likesCount);
+        }
+        return news;
+      }).toList();
+
+      News? updatedSelectedNews = state.selectedNews;
+      if (updatedSelectedNews != null &&
+          updatedSelectedNews.id == event.contentId) {
+        final isLiked = !(updatedSelectedNews.isLiked ?? false);
+        final likesCount =
+            (updatedSelectedNews.likesCount ?? 0) + (isLiked ? 1 : -1);
+        updatedSelectedNews = updatedSelectedNews.copyWith(
+            isLiked: isLiked, likesCount: likesCount);
+      }
+
+      emit(state.copyWith(
+          newsList: updatedList, selectedNews: updatedSelectedNews));
+    }
+  }
+
+  void _onNewsLikeUpdated(
+    OnNewsLikeUpdatedEvent event,
+    Emitter<NewsState> emit,
+  ) {
+    final data = event.likeData;
+    if (data is Map<String, dynamic>) {
+      final contentId = data['contentId'] ?? data['_id'];
+      if (contentId == null) return;
+
+      int? likesCount;
+      if (data['total_likes'] != null) {
+        likesCount = int.tryParse(data['total_likes'].toString());
+      }
+      bool? isLiked = data['is_liked'];
+
+      final updatedList = state.newsList.map((news) {
+        if (news.id == contentId) {
+          return news.copyWith(
+            likesCount: likesCount ?? news.likesCount,
+            isLiked: isLiked ?? news.isLiked,
+          );
+        }
+        return news;
+      }).toList();
+
+      News? updatedSelectedNews = state.selectedNews;
+      if (updatedSelectedNews != null && updatedSelectedNews.id == contentId) {
+        updatedSelectedNews = updatedSelectedNews.copyWith(
+          likesCount: likesCount ?? updatedSelectedNews.likesCount,
+          isLiked: isLiked ?? updatedSelectedNews.isLiked,
+        );
+      }
+
+      emit(state.copyWith(
+          newsList: updatedList, selectedNews: updatedSelectedNews));
     }
   }
 }

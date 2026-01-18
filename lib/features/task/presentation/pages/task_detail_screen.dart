@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -25,6 +23,7 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
+// ignore: must_be_immutable
 class TaskDetailScreen extends StatefulWidget {
   String taskStatus = "";
   String taskId = "";
@@ -60,11 +59,11 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
     zoom: 14.4746,
   );
 
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  // static const CameraPosition _kLake = CameraPosition(
+  //     bearing: 192.8334901395799,
+  //     target: LatLng(37.43296265331129, -122.08832357078792),
+  //     tilt: 59.440717697143555,
+  //     zoom: 19.151926040649414);
 
   @override
   void initState() {
@@ -874,14 +873,15 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                                               .push(MaterialPageRoute(
                                                   builder: (context) =>
                                                       BlocProvider<TaskBloc>(
-                                                    create: (_) =>
-                                                        sl<TaskBloc>(),
-                                                    child: ManageTaskScreen(
-                                                      taskDetail: taskDetail!,
-                                                      roomId: roomId,
-                                                      type: 'task_content',
-                                                    ),
-                                                  )))
+                                                        create: (_) =>
+                                                            sl<TaskBloc>(),
+                                                        child: ManageTaskScreen(
+                                                          taskDetail:
+                                                              taskDetail!,
+                                                          roomId: roomId,
+                                                          type: 'task_content',
+                                                        ),
+                                                      )))
                                               .then((value) => {
                                                     if (mounted)
                                                       _fetchTaskDetails()

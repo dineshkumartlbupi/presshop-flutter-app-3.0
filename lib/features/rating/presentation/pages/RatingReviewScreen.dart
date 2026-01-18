@@ -245,7 +245,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(size.width * numD04),
                   child: CachedNetworkImage(
-                      imageUrl: avatarImageUrl + review.hopperImage,
+                      imageUrl: review.hopperImage,
                       imageBuilder: (context, imageProvider) => Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
@@ -484,7 +484,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
                 child: Text(
-                  review.review ?? "",
+                  review.review,
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w400,

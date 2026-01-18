@@ -29,10 +29,12 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> cacheToken(String token) async {
-    debugPrint("💾 AuthLocalDataSource: Caching Token: ${token.substring(0, (token.length > 10 ? 10 : token.length))}...");
+    debugPrint(
+        "💾 AuthLocalDataSource: Caching Token: ${token.substring(0, (token.length > 10 ? 10 : token.length))}...");
     await secureStorage.write(key: tokenKey, value: token);
     await sharedPreferences.setString(tokenKey, token);
-    debugPrint("✅ AuthLocalDataSource: Token Cached in SecureStorage and SharedPreferences");
+    debugPrint(
+        "✅ AuthLocalDataSource: Token Cached in SecureStorage and SharedPreferences");
   }
 
   @override
@@ -40,12 +42,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     debugPrint("🔍 AuthLocalDataSource: Retrieving Token...");
     String? token = await secureStorage.read(key: tokenKey);
     if (token == null || token.isEmpty) {
-      debugPrint("⚠️ AuthLocalDataSource: Token not found in SecureStorage, checking SharedPreferences...");
+      debugPrint(
+          "⚠️ AuthLocalDataSource: Token not found in SecureStorage, checking SharedPreferences...");
       token = sharedPreferences.getString(tokenKey);
       if (token != null && token.isNotEmpty) {
         debugPrint("✅ AuthLocalDataSource: Token found in SharedPreferences");
       } else {
-        debugPrint("❌ AuthLocalDataSource: Token NOT found in SharedPreferences");
+        debugPrint(
+            "❌ AuthLocalDataSource: Token NOT found in SharedPreferences");
       }
     } else {
       debugPrint("✅ AuthLocalDataSource: Token found in SecureStorage");
@@ -121,10 +125,12 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> cacheRefreshToken(String token) async {
-    debugPrint("💾 AuthLocalDataSource: Caching Refresh Token: ${token.substring(0, (token.length > 10 ? 10 : token.length))}...");
+    debugPrint(
+        "💾 AuthLocalDataSource: Caching Refresh Token: ${token.substring(0, (token.length > 10 ? 10 : token.length))}...");
     await secureStorage.write(key: refreshtokenKey, value: token);
     await sharedPreferences.setString(refreshtokenKey, token);
-    debugPrint("✅ AuthLocalDataSource: Refresh Token Cached in SecureStorage and SharedPreferences");
+    debugPrint(
+        "✅ AuthLocalDataSource: Refresh Token Cached in SecureStorage and SharedPreferences");
   }
 
   @override

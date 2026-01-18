@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +12,9 @@ import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 import 'package:presshop/features/map/data/services/marker_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
+
 class MapBloc extends Bloc<MapEvent, MapState> {
   final GetCurrentLocation getCurrentLocation;
   final GetRoute getRoute;
@@ -18,6 +22,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final SocketService socketService;
   final NewsRepository newsRepository;
   final MarkerService markerService;
+  final SharedPreferences sharedPreferences;
 
   MapBloc({
     required this.getCurrentLocation,
@@ -26,6 +31,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required this.socketService,
     required this.newsRepository,
     required this.markerService,
+    required this.sharedPreferences,
   }) : super(const MapState()) {
     on<GetCurrentLocationEvent>(_onGetCurrentLocation);
     on<GetRouteEvent>(_onGetRoute);
@@ -41,14 +47,28 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<UpdateFiltersEvent>(_onUpdateFilters);
     on<AddAlertMarkerEvent>(_onAddAlertMarker);
     on<SetPreviewAlertMarkerEvent>(_onSetPreviewAlertMarker);
+    on<SetSelectedIncidentEvent>(_onSetSelectedIncident);
+    on<SetMapSelectedLocationEvent>(_onSetMapSelectedLocation);
+    on<ClearMapSelectedLocationEvent>(_onClearMapSelectedLocation);
+    on<StartNavigationEvent>(_onStartNavigation);
+    on<StopNavigationEvent>(_onStopNavigation);
+    on<ToggleGetDirectionCardEvent>(_onToggleGetDirectionCard);
 
     _initSocket();
   }
 
+  void _onToggleGetDirectionCard(
+    ToggleGetDirectionCardEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(showGetDirectionCard: !state.showGetDirectionCard));
+  }
+
   void _initSocket() {
-    // Assuming userId is available or passed. For now using a placeholder or fetching from prefs if possible in data layer
-    // Ideally, userId should be passed to Bloc or retrieved from a User repository
-    // socketService.initSocket(userId: "USER_ID", joinAs: "hopper");
+    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    if (userId.isNotEmpty) {
+      socketService.initSocket(userId: userId, joinAs: "hopper");
+    }
 
     socketService.onIncidentNew = (data) {
       add(OnIncidentNewEvent(data));
@@ -116,9 +136,81 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // emit(state.copyWith(isLoading: true));
     final result =
         await getRoute(GetRouteParams(start: event.start, end: event.end));
-    result.fold(
-      (failure) => emit(state.copyWith(errorMessage: "Failed to get route")),
-      (routeInfo) => emit(state.copyWith(routeInfo: routeInfo)),
+
+    await result.fold(
+      (failure) async =>
+          emit(state.copyWith(errorMessage: "Failed to get route")),
+      (routeInfo) async {
+        // Create polyline
+        final polyline = Polyline(
+          polylineId: const PolylineId('route'),
+          points: routeInfo.points,
+          color: Colors.blue,
+          width: 5,
+          geodesic: true,
+        );
+
+        // Calculate midpoint
+        LatLng? midpoint;
+        if (routeInfo.points.isNotEmpty) {
+          final midIndex = routeInfo.points.length ~/ 2;
+          midpoint = routeInfo.points[midIndex];
+        }
+
+        // Create Markers
+        // Note: For now using default markers to simplify migration.
+        // Ideally should use markerService.bitmapFromIncidentAsset like Controller did.
+        // If markerService is available, we can try to use it.
+
+        BitmapDescriptor startIcon = BitmapDescriptor.defaultMarker;
+        BitmapDescriptor endIcon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+
+        try {
+          startIcon = await markerService.bitmapFromIncidentAsset(
+            "assets/markers/starting_markers.png",
+            100,
+          );
+          endIcon = await markerService.bitmapFromIncidentAsset(
+            "assets/markers/destination-marker.png",
+            100,
+          );
+        } catch (e) {
+          print("Error loading route markers: $e");
+        }
+
+        final startMarker = Marker(
+          markerId: const MarkerId('start'),
+          position: event.start,
+          infoWindow: const InfoWindow(title: 'Start Location'),
+          icon: startIcon,
+        );
+
+        final destinationMarker = Marker(
+          markerId: const MarkerId('destination'),
+          position: event.end,
+          infoWindow: InfoWindow(
+            title: 'Destination',
+            snippet: routeInfo.formattedInfo,
+          ),
+          icon: endIcon,
+        );
+
+        emit(state.copyWith(
+          routeInfo: routeInfo,
+          polylines: {polyline},
+          destination: event.end,
+          routeMidpoint: midpoint,
+          markers: {
+            ...state.markers
+              ..removeWhere((m) =>
+                  m.markerId.value == 'destination' ||
+                  m.markerId.value == 'start'),
+            startMarker,
+            destinationMarker,
+          },
+        ));
+      },
     );
   }
 
@@ -159,13 +251,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         print("DEBUG: FetchNews Success. Items found: ${newsList.length}");
         try {
           final List<Incident> incidents = newsList.map((news) {
-            final lat =
-                double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
-            final lng =
-                double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
+            double lat = news.latitude ?? 0.0;
+            double lng = news.longitude ?? 0.0;
 
-            print(
-                "DEBUG: News ID: ${news.id}, Location: ${news.location}, Parsed: $lat, $lng");
+            if (lat == 0.0 && lng == 0.0) {
+              lat = double.tryParse(news.location?.split(',')[0] ?? '0') ?? 0.0;
+              lng = double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
+            }
+
+            print("DEBUG: News ID: ${news.id}, Lat: $lat, Lng: $lng");
 
             return Incident(
                 id: news.id,
@@ -181,16 +275,38 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 title: news.title);
           }).toList();
 
-          final Set<Marker> newMarkers = {};
-          for (final incident in incidents) {
-            // Basic marker creation logic - can be enhanced with custom icons
-            final marker = Marker(
+          final List<Future<Marker>> markerFutures =
+              incidents.map((incident) async {
+            BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+
+            if (incident.markerType == 'news') {
+              try {
+                // Try to load custom image
+                // print("DEBUG: Loading image for ${incident.id}: ${incident.image}");
+                icon = await markerService.bitmapFromUrl(incident.image ?? '',
+                    defaultAsset: "assets/markers/bg-removed-content.png");
+              } catch (e) {
+                print(
+                    "DEBUG: Failed to load image for marker ${incident.id}, using default. Error: $e");
+                icon = BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueViolet);
+              }
+            }
+
+            return Marker(
               markerId: MarkerId(incident.id),
               position: incident.position,
+              icon: icon,
               infoWindow: InfoWindow(title: incident.title ?? 'News'),
+              onTap: () {
+                add(SetSelectedIncidentEvent(incident));
+              },
             );
-            newMarkers.add(marker);
-          }
+          }).toList();
+
+          final List<Marker> newMarkersList = await Future.wait(markerFutures);
+          print("DEBUG: Created ${newMarkersList.length} markers for news.");
+          final Set<Marker> newMarkers = newMarkersList.toSet();
           emit(state.copyWith(
             isLoadingNews: false,
             newsList: incidents,
@@ -292,6 +408,61 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     emit(state.copyWith(
       previewAlertType: event.type,
       previewAlertPosition: event.position,
+    ));
+  }
+
+  void _onSetSelectedIncident(
+    SetSelectedIncidentEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedIncident: event.incident,
+      selectedPosition: event.incident.position,
+      clearSelectedPolygonId: true,
+      clearSelectedPolygonPosition: true,
+    ));
+  }
+
+  void _onSetMapSelectedLocation(
+    SetMapSelectedLocationEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      mapSelectedLocation: event.position,
+      mapSelectedAddress: event.address,
+      mapSelectedIsOrigin: event.isOrigin,
+      clearMapSelectedLocation: false,
+    ));
+  }
+
+  void _onClearMapSelectedLocation(
+    ClearMapSelectedLocationEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      clearMapSelectedLocation: true,
+      clearMapSelectedAddress: true,
+      clearMapSelectedIsOrigin: true,
+    ));
+  }
+
+  void _onStartNavigation(
+    StartNavigationEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      isNavigating: true,
+      showGetDirectionCard: false,
+    ));
+  }
+
+  void _onStopNavigation(
+    StopNavigationEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      isNavigating: false,
+      clearCurrentNavigationPosition: true,
     ));
   }
 }

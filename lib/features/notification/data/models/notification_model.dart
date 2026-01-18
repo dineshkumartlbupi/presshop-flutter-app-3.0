@@ -23,16 +23,19 @@ class NotificationModel extends NotificationEntity {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     EarningTransaction? transactionEntity;
-    
-    if (json['sold_item_details'] != null && json['sold_item_details'] is Map<String, dynamic>) {
-       try {
-         var detailModel = EarningTransactionDetail.fromJson(json['sold_item_details']);
-         // Map EarningTransactionDetail (Model) to EarningTransaction (Entity)
-         transactionEntity = EarningTransaction(
+
+    if (json['sold_item_details'] != null &&
+        json['sold_item_details'] is Map<String, dynamic>) {
+      try {
+        var detailModel =
+            EarningTransactionDetail.fromJson(json['sold_item_details']);
+        // Map EarningTransactionDetail (Model) to EarningTransaction (Entity)
+        transactionEntity = EarningTransaction(
             id: detailModel.id,
             amount: detailModel.amount,
             totalEarningAmt: detailModel.totalEarningAmt,
-            status: detailModel.paidStatus.toString(), // Convert bool to string if needed, or mapped field
+            status: detailModel.paidStatus
+                .toString(), // Convert bool to string if needed, or mapped field
             paidStatus: detailModel.paidStatus,
             contentTitle: detailModel.contentTitle,
             contentType: detailModel.contentType,
@@ -50,25 +53,27 @@ class NotificationModel extends NotificationEntity {
             contentDataList: detailModel.contentDataList,
             type: detailModel.type,
             typesOfContent: detailModel.typesOfContent,
-            hopperAvatar: detailModel.hopperAvatar, 
-            dueDate:detailModel.dueDate
-         );
-       } catch (e) {
-         print("Error mapping transaction detail: $e");
-       }
+            hopperAvatar: detailModel.hopperAvatar,
+            dueDate: detailModel.dueDate);
+      } catch (e) {
+        print("Error mapping transaction detail: $e");
+      }
     }
 
     return NotificationModel(
       title: json['title'] ?? "",
-      senderImage: json['sender_id'] != null
+      senderImage: json['sender_id'] is Map
           ? json['sender_id']['admin_detail'] != null
               ? json['sender_id']['admin_detail']['admin_profile'].toString()
               : ""
           : "",
 
-      senderId: json['sender_id'] != null ? json['sender_id']['_id'] : '',
+      senderId: json['sender_id'] is Map
+          ? json['sender_id']['_id']
+          : (json['sender_id'] ?? ''),
 
-      unread: !(json['is_read'] ?? false), // Note: Logic was `unread` property but json is `is_read`. If `is_read` is true, unread is false. Or if unread means "is unread".
+      unread: !(json['is_read'] ??
+          false), // Note: Logic was `unread` property but json is `is_read`. If `is_read` is true, unread is false. Or if unread means "is unread".
       // Original code: unread: json['is_read'] ?? false,
       // Wait, if json['is_read'] is true, it means it is read.
       // If the field is `unread`, it should be `!is_read`.
@@ -83,7 +88,7 @@ class NotificationModel extends NotificationEntity {
       // Since I named it `unread` in Entity, I should probably stick to `isRead` semantics if the value is `json['is_read']`.
       // Let's change Entity `unread` to `isRead`? Or just map it strictly.
       // Existing: `unread: json['is_read'] ?? false`.
-      
+
       paymentStatus: json['content_details'] != null
           ? json['content_details']['status'] ?? ""
           : "",
@@ -93,7 +98,7 @@ class NotificationModel extends NotificationEntity {
       description: json['body'] ?? "",
 
       imageUrl: json['image_url'] ?? "",
-      
+
       videoUrl: json['video_url'] ?? "",
       messageType: json['message_type'] ?? "",
       time: json['createdAt'] ?? "",

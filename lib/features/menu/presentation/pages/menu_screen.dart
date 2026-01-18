@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
@@ -129,25 +130,33 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
   Widget _buildContent(BuildContext context, MenuState state) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: CommonAppBar(
+        elevation: 0,
+        hideLeading: false,
+        title: Text(
+          menuText,
+          style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: size.width * appBarHeadingFontSize),
+        ),
+        centerTitle: false,
+        titleSpacing: 0,
+        size: size,
+        showActions: false,
+        leadingFxn: () {
+          Navigator.pop(context);
+        },
+        actionWidget: [],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(
-              height: size.width * numD08,
-            ),
-            Text(
-              menuText,
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * numD07,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600),
-            ),
             Flexible(
               child: ListView.separated(
                   padding: EdgeInsets.symmetric(
                       horizontal: size.width * numD06,
-                      vertical: size.width * numD06),
+                      vertical: size.width * numD02),
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {

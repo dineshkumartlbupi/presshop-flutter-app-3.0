@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:ui';
@@ -40,6 +40,7 @@ import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
+// ignore: must_be_immutable
 class ConversationScreen extends StatefulWidget {
   bool hideLeading = false;
   final String message;
@@ -61,7 +62,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   String get pageName => PageNames.conversationScreen;
 
   late Size size;
-  
+
   final ApiClient _apiClient = sl<ApiClient>();
 
   final swipeLeftKey = GlobalKey<ScaffoldState>();
@@ -83,7 +84,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   /// Sender Information
   final String _senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
   final String _senderProfilePic =
-      avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
+      (sharedPreferences!.getString(avatarKey) ?? "");
   final String _senderName =
       ("${sharedPreferences!.getString(firstNameKey) ?? ""} "
           " ${sharedPreferences!.getString(lastNameKey) ?? ""}");
@@ -183,9 +184,9 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   ///Typing-->
-  void _onTypingFocusChange() {
-    addTyping(messageController.text.length);
-  }
+  // void _onTypingFocusChange() {
+  //   addTyping(messageController.text.length);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -3669,12 +3670,13 @@ class _ConversationScreenState extends State<ConversationScreen>
       'body': type == 'text' ? messageController.text : type,
     };
     debugPrint('map: $map');
-    
+
     try {
-        final response = await _apiClient.post(sendPushNotificationAPI, data: map);
-        debugPrint("sendNotification success : ${response.data}");
+      final response =
+          await _apiClient.post(sendPushNotificationAPI, data: map);
+      debugPrint("sendNotification success : ${response.data}");
     } catch (e) {
-        debugPrint("sendNotification Error : $e");
+      debugPrint("sendNotification Error : $e");
     }
   }
 
@@ -3692,14 +3694,14 @@ class _ConversationScreenState extends State<ConversationScreen>
       debugPrint("getRoomIdReq Success : ${response.data}");
       var data = response.data;
       if (data["details"] != null) {
-          roomId = data["details"]["room_id"] ?? "";
+        roomId = data["details"]["room_id"] ?? "";
 
-          sharedPreferences!.setString(adminRoomIdKey, roomId);
-          debugPrint("Room Id : $roomId");
-          _initializeData();
-        }
+        sharedPreferences!.setString(adminRoomIdKey, roomId);
+        debugPrint("Room Id : $roomId");
+        _initializeData();
+      }
     } catch (e) {
-       debugPrint("getRoomIdReq Error : $e");
+      debugPrint("getRoomIdReq Error : $e");
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 
 abstract class ChatEvent extends Equatable {
   const ChatEvent();
@@ -21,11 +21,11 @@ class SearchUserEvent extends ChatEvent {
 }
 
 class CheckOnlineStatusEvent extends ChatEvent {
-   final String userId;
-   const CheckOnlineStatusEvent(this.userId);
-   
-   @override
-   List<Object> get props => [userId];
+  final String userId;
+  const CheckOnlineStatusEvent(this.userId);
+
+  @override
+  List<Object> get props => [userId];
 }
 
 /// Events for Conversation
@@ -35,7 +35,7 @@ class EnterChatRoomEvent extends ChatEvent {
   final String receiverName;
   final String receiverImage;
   const EnterChatRoomEvent({
-    required this.roomId, 
+    required this.roomId,
     required this.receiverId,
     required this.receiverName,
     required this.receiverImage,
@@ -56,18 +56,24 @@ class SendMessageEvent extends ChatEvent {
   final String? replyToMessageId; // For reply
   final String? replyMessageContent;
 
-  const SendMessageEvent({
-    required this.message,
-    required this.messageType,
-    this.filePath,
-    this.thumbnailPath,
-    this.audioDuration,
-    this.replyToMessageId,
-    this.replyMessageContent
-  });
+  const SendMessageEvent(
+      {required this.message,
+      required this.messageType,
+      this.filePath,
+      this.thumbnailPath,
+      this.audioDuration,
+      this.replyToMessageId,
+      this.replyMessageContent});
 
   @override
-  List<Object> get props => [message, messageType, filePath ?? '', thumbnailPath ?? '', audioDuration ?? '', replyToMessageId ?? ''];
+  List<Object> get props => [
+        message,
+        messageType,
+        filePath ?? '',
+        thumbnailPath ?? '',
+        audioDuration ?? '',
+        replyToMessageId ?? ''
+      ];
 }
 
 class UpdateTypingStatusEvent extends ChatEvent {
@@ -82,7 +88,7 @@ class UpdateTypingStatusEvent extends ChatEvent {
 class ReceiveMessageEvent extends ChatEvent {
   final List<DocumentSnapshot> messages;
   const ReceiveMessageEvent(this.messages);
-  
+
   @override
   List<Object> get props => [messages];
 }
@@ -91,20 +97,21 @@ class ReceiveMessageEvent extends ChatEvent {
 class PickChatAttachmentEvent extends ChatEvent {
   final String type; // 'camera', 'gallery', 'video'
   const PickChatAttachmentEvent(this.type);
-  
+
   @override
   List<Object> get props => [type];
 }
 
 /// Audio Recording
 class StartAudioRecordingEvent extends ChatEvent {}
+
 class StopAudioRecordingEvent extends ChatEvent {}
 
 /// App Lifecycle for Online Status
 class UpdateAppLifecycleEvent extends ChatEvent {
-    final bool isOnline;
-    final String roomId;
-    const UpdateAppLifecycleEvent({required this.isOnline, required this.roomId});
-    @override
-    List<Object> get props => [isOnline, roomId];
+  final bool isOnline;
+  final String roomId;
+  const UpdateAppLifecycleEvent({required this.isOnline, required this.roomId});
+  @override
+  List<Object> get props => [isOnline, roomId];
 }

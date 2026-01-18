@@ -75,9 +75,9 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
       (Failure failure) => emit(state.copyWith(
           status: RatingStatus.failure, errorMessage: failure.message)),
       (newReviews) {
-        final allReviews =
-            event.isRefresh ? newReviews : List<Review>.from(state.reviews)
-              ..addAll(newReviews);
+        final allReviews = event.isRefresh
+            ? newReviews
+            : (List<Review>.from(state.reviews)..addAll(newReviews));
 
         emit(state.copyWith(
           status: RatingStatus.success,

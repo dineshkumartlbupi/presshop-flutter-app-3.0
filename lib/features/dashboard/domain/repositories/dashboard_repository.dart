@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:presshop/core/error/failures.dart';
 import '../entities/student_beans_info.dart';
-import 'package:presshop/features/notification/domain/entities/notification_entity.dart';
 import '../entities/admin_detail.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 

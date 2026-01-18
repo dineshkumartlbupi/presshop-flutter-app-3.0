@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:presshop/features/map/presentation/constants/map_news_constants.dart';
+import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class CustomInfoWindow extends StatelessWidget {

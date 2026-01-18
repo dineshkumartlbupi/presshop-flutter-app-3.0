@@ -1,0 +1,46 @@
+
+flutter: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+flutter:
+flutter: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+flutter: ✅ API RESPONSE
+flutter: STATUS : 200
+flutter: URL    : https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/auth/registerHopper
+flutter: DATA   : {
+flutter:   "success": true,
+flutter:   "message": "Request successful",
+flutter:   "data": {
+flutter:     "email": "sdfert34wgfsd@gmail.com",
+flutter:     "chat_status": "online",
+flutter:     "createdAt": "2026-01-16T10:00:27.842Z",
+flutter:     "hopperStatus": "waiting",
+flutter:     "isVerified": false,
+flutter:     "referredBy": null,
+flutter:     "role": "hopper",
+flutter:     "stripeStatus": 0,
+flutter:     "updatedAt": "2026-01-16T10:01:55.254Z",
+flutter:     "first_name": "Dsfsdfdsf",
+flutter:     "last_name": "dsfsdfsdf",
+flutter:     "phone": "2342343242",
+flutter:     "country_code": "+44",
+flutter:     "address": "",
+flutter:     "city": "",
+flutter:     "country": "",
+flutter:     "post_code": "",
+flutter:     "receive_task_notification": true,
+flutter:     "latitude": 0,
+flutter:     "longitude": 0,
+flutter:     "user_name": "dfghgfdgdfg",
+flutter:     "dob": "Select date of birth",
+flutter:     "profile_image": null,
+flutter:     "id": "696a0c3c6b4d8a17e6034d4a",
+flutter:     "access_token": "94dc42da8871cf7a8011289bffcabb582e13f81284343e6354534ab09626d4e39ba28fc15fa5bafd1225bf53ad09c30d279264dcdd14dc2f698946e3b1626e4bd089c2d31bda63cfda0621ae86631b79e3d07b4ce2223ae26faaa47ff5e482dcba59e53c3c09ac286580f423468d88a3457ba1b0dd86abf1b6aa30e067c66d6008d1305310cd0c2df0423595ab834e98dce9619ed46fd12b6608d28635f89b35ef74bb892efe5a98600527ee4656cd7f9d6e693ccd0b1a38cdc81b596fee2a4ea3e4090296b46445e47c2eabca78a35d",
+flutter:     "refresh_token": "94dc42da8871cf7a8011289bffcabb582e13f81284343e6354534ab09626d4e39ba28fc15fa5bafd1225bf53ad09c30d279264dcdd14dc2f698946e3b1626e4bd089c2d31bda63cfda0621ae86631b79e3d07b4ce2223ae26faaa47ff5e482dcba59e53c3c09ac286580f423468d88a3457ba1b0dd86abf1b6aa30e067c66d6008d1305310cd0c2df0423595ab834e9896a7fa4d15a0a990e280db4f0a93018272521aa144d2ae38433d6eb048e46d78362bb7f80d88938f50bc852b19ae88be492adc6dd48fae0df25d2efc7a8968e6"
+flutter:   }
+flutter: }
+flutter: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+flutter:
+flutter: ✅ AuthRepository: Register Success. Received Token: null...
+flutter: 💾 AuthLocalDataSource: Caching Token: ...
+flutter: ✅ AuthLocalDataSource: Token Cached in SecureStorage and SharedPreferences
+flutter: 💾 AuthLocalDataSource: Setting RememberMe: true
+flutter: Data f

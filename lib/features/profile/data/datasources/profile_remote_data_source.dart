@@ -155,7 +155,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await apiClient.get(getAvatarsUrl);
       if (response.statusCode == 200) {
         final data = response.data;
-        final List list = data['response'] ?? [];
+        final List list = data['data'] ?? [];
         return list.map((e) => AvatarModel.fromJson(e)).toList();
       }
       throw ServerFailure(message: 'Failed to load avatars');

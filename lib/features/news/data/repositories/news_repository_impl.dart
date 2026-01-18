@@ -17,6 +17,9 @@ class NewsRepositoryImpl implements NewsRepository {
     required double lng,
     required double km,
     String category = "all",
+    String? alertType,
+    int limit = 10,
+    int offset = 0,
   }) async {
     try {
       final result = await remoteDataSource.getAggregatedNews(
@@ -24,6 +27,9 @@ class NewsRepositoryImpl implements NewsRepository {
         lng: lng,
         km: km,
         category: category,
+        alertType: alertType,
+        limit: limit,
+        offset: offset,
       );
       return Right(result);
     } on ServerException catch (e) {

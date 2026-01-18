@@ -20,10 +20,10 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:video_player/video_player.dart';
 
+// ignore: must_be_immutable
 class CustomGallery extends StatefulWidget {
   bool picAgain = false;
 
@@ -250,13 +250,11 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               mimeType: "video",
                               videoImagePath: thumbnail ?? "",
                               latitude: sharedPreferences!
-                                      .getDouble(currentLat)
-                                      .toString() ??
-                                  "",
+                                  .getDouble(currentLat)
+                                  .toString(),
                               longitude: sharedPreferences!
-                                      .getDouble(currentLon)
-                                      .toString() ??
-                                  "",
+                                  .getDouble(currentLon)
+                                  .toString(),
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
                               location: sharedPreferences!

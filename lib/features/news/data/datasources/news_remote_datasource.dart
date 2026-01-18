@@ -11,6 +11,9 @@ abstract class NewsRemoteDataSource {
     required double lng,
     required double km,
     String category = "all",
+    String? alertType,
+    int limit = 10,
+    int offset = 0,
   });
 
   Future<NewsModel> getNewsDetail(String id);
@@ -29,6 +32,9 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
     required double lng,
     required double km,
     String category = "all",
+    String? alertType,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final body = {
       "category": category,
@@ -37,7 +43,9 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
       "locationFilter": "",
       "coordinates": "$lat,$lng",
       "km": km,
-      "limit": 100
+      "limit": limit,
+      "offset": offset,
+      "alert_type": alertType,
     };
 
     try {

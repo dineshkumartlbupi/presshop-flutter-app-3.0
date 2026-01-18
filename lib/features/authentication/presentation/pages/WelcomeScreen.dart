@@ -8,6 +8,7 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
+// ignore: must_be_immutable
 class WelcomeScreen extends StatefulWidget {
   bool hideLeading = false;
   String screenType = "";

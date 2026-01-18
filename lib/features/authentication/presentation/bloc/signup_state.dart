@@ -4,7 +4,7 @@ import '../../domain/entities/avatar.dart';
 
 abstract class SignUpState extends Equatable {
   const SignUpState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -40,11 +40,12 @@ class SignUpError extends SignUpState {
 
 class UserNameCheckResult extends SignUpState {
   final bool isAvailable;
+  final String errorMessage;
 
-  const UserNameCheckResult(this.isAvailable);
+  const UserNameCheckResult(this.isAvailable, {this.errorMessage = ""});
 
   @override
-  List<Object> get props => [isAvailable];
+  List<Object> get props => [isAvailable, errorMessage];
 }
 
 class EmailCheckResult extends SignUpState {
@@ -58,11 +59,12 @@ class EmailCheckResult extends SignUpState {
 
 class PhoneCheckResult extends SignUpState {
   final bool isAvailable;
+  final String errorMessage;
 
-  const PhoneCheckResult(this.isAvailable);
+  const PhoneCheckResult(this.isAvailable, {this.errorMessage = ""});
 
   @override
-  List<Object> get props => [isAvailable];
+  List<Object> get props => [isAvailable, errorMessage];
 }
 
 class AvatarsLoaded extends SignUpState {

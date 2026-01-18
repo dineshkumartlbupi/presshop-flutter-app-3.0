@@ -19,6 +19,9 @@ class GetAggregatedNews
       lng: params.lng,
       km: params.km,
       category: params.category,
+      alertType: params.alertType,
+      limit: params.limit,
+      offset: params.offset,
     );
   }
 }
@@ -28,14 +31,20 @@ class GetAggregatedNewsParams extends Equatable {
   final double lng;
   final double km;
   final String category;
+  final String? alertType;
+  final int limit;
+  final int offset;
 
   const GetAggregatedNewsParams({
     required this.lat,
     required this.lng,
     required this.km,
     this.category = "all",
+    this.alertType,
+    this.limit = 10,
+    this.offset = 0,
   });
 
   @override
-  List<Object?> get props => [lat, lng, km, category];
+  List<Object?> get props => [lat, lng, km, category, alertType, limit, offset];
 }

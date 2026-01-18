@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -11,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -19,7 +18,6 @@ import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_state.dart';
 import 'package:presshop/features/camera/presentation/pages/CustomGallary.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
-import 'package:presshop/main.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 
 // Constants (Keep if not in common)
@@ -214,16 +212,12 @@ class CameraScreenState extends State<CameraScreen>
   // AppBar Widget
   PreferredSizeWidget _buildAppBar(
       BuildContext context, CameraState state, Size size) {
-    return AppBar(
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      backgroundColor: Colors.white,
-      elevation: 0,
-      toolbarHeight: size.width * numD1,
+    return NewHomeAppBar(
+      size: size,
+      hideLeading: widget.previousScreen == ScreenNameEnum.dashboardScreen,
+      showFilter: false,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
+        preferredSize: Size.fromHeight(size.width * numD1),
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: size.width * numD06, vertical: size.width * numD02),

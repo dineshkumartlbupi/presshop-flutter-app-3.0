@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/core_export.dart'; // Constants
 import 'package:presshop/core/utils/shared_preferences.dart'; // Prefs
@@ -12,7 +11,6 @@ import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/main.dart'; // Globals
 import 'package:record/record.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -119,7 +117,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .snapshots()
           .listen((snapshot) {
         if (snapshot.exists) {
-          bool isTyping = snapshot.data()?['isTyping'] ?? false;
+          // bool isTyping = snapshot.data()?['isTyping'] ?? false;
           // specific event or just emit? Can't emit. Need event.
           // I'll reuse UpdateTypingStatusEvent IS WRONG (that's for self).
           // I need `ReceiverTypingUpdatedEvent`.
@@ -155,14 +153,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final senderName =
         ("${sharedPreferences!.getString(firstNameKey) ?? ""} ${sharedPreferences!.getString(lastNameKey) ?? ""}")
             .trim();
-    final senderImage =
-        avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
+    final senderImage = (sharedPreferences!.getString(avatarKey) ?? "");
     final senderUserName = sharedPreferences!.getString(userNameKey) ?? "";
 
     String messageId = DateTime.now().toUtc().millisecondsSinceEpoch.toString();
     String message = event.message;
     String thumbnail = event.thumbnailPath ?? "";
-    double uploadPercent = 0.0;
+    // double uploadPercent = 0.0;
 
     // Upload Media if needed
     if (event.messageType != "text" &&
@@ -188,7 +185,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       try {
         TaskSnapshot taskSnapshot = await uploadTask;
         message = await taskSnapshot.ref.getDownloadURL();
-        uploadPercent = 100.0;
+        // uploadPercent = 100.0;
 
         // Upload Thumbnail if video
         if (event.messageType == 'video' && thumbnail.isNotEmpty) {

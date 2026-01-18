@@ -99,16 +99,21 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     });
   }
 
-  void _checkConnectivity(List<ConnectivityResult> results) {
-    // If list contains none, or is empty (though usually it has at least one), we are offline.
-    // Note: On Android, turning off WiFi might result in [ConnectivityResult.none] if no mobile data.
-    bool isOffline = results.contains(ConnectivityResult.none);
+  Future<void> _checkConnectivity(List<ConnectivityResult> results) async {
+    // If list contains none, we might be offline.
+    bool isDeviceOffline = results.contains(ConnectivityResult.none);
 
     debugPrint(
-        "ConnectivityWrapper: isOffline: $isOffline, DialogShowing: $_isDialogShowing");
+        "ConnectivityWrapper: isDeviceOffline: $isDeviceOffline, DialogShowing: $_isDialogShowing");
 
-    if (isOffline) {
-      _showOfflineDialog();
+    if (isDeviceOffline) {
+      // Double check with actual internet connection check to avoid false positives
+      bool hasConnection = await InternetConnectionChecker().hasConnection;
+      if (!hasConnection) {
+        _showOfflineDialog();
+      } else {
+        _dismissOfflineDialog();
+      }
     } else {
       _dismissOfflineDialog();
     }

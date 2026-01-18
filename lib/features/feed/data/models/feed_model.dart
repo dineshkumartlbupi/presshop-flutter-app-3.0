@@ -30,26 +30,79 @@ class FeedModel extends Feed {
 
   factory FeedModel.fromJson(Map<String, dynamic> json) {
     List<FeedContent> contentList = [];
-    if (json['content'] != null) {
+    if (json['content_metadata'] != null) {
+      json['content_metadata'].forEach((v) {
+        contentList.add(FeedContentModel.fromJson(v));
+      });
+    } else if (json['content'] != null) {
       json['content'].forEach((v) {
         contentList.add(FeedContentModel.fromJson(v));
       });
     }
 
+    if (contentList.isEmpty) {
+      if (json['images'] != null && json['images'] is List) {
+        for (var img in json['images']) {
+          contentList.add(FeedContentModel(
+            id: "",
+            mediaType: "image",
+            mediaUrl: img,
+            thumbnail: "",
+          ));
+        }
+      }
+      if (json['videos'] != null && json['videos'] is List) {
+        for (var vid in json['videos']) {
+          contentList.add(FeedContentModel(
+            id: "",
+            mediaType: "video",
+            mediaUrl: vid,
+            thumbnail: "", // Fallback or generate?
+          ));
+        }
+      }
+    }
+
+    String avatarUrl = "";
+    if (json['hopper_id'] != null && json['hopper_id'] is Map) {
+      var hopper = json['hopper_id'];
+      if (hopper['avatar_id'] != null &&
+          hopper['avatar_id'] is Map &&
+          hopper['avatar_id']['avatar'] != null) {
+        avatarUrl =
+            "https://presshop3.0.s3.eu-west-2.amazonaws.com/public/avatars/${hopper['avatar_id']['avatar']}";
+      } else if (hopper['avatarData'] != null &&
+          hopper['avatarData'] is Map &&
+          hopper['avatarData']['avatar'] != null) {
+        avatarUrl =
+            "https://presshop3.0.s3.eu-west-2.amazonaws.com/public/avatars/${hopper['avatarData']['avatar']}";
+      }
+    }
+    if (avatarUrl.isEmpty) {
+      avatarUrl = json['feed_image'] ?? "";
+    }
+
     return FeedModel(
-      id: json['_id'] ?? "",
-      heading: json['heading'] ?? "",
+      id: json['id'] ?? json['_id'] ?? "",
+      heading: json['heading'] ?? json['description'] ?? "",
       description: json['description'] ?? "",
       location: json['location'] ?? "",
-      categoryName: json['category_id'] is Map ? (json['category_id']['name'] ?? "") : "",
-      askPrice: json['original_ask_price']?.toString() ?? "",
+      categoryName: json['category_id'] is Map
+          ? (json['category_id']['name'] ?? "")
+          : "General", // Fallback for ID string
+      askPrice: json['ask_price']?.toString() ??
+          json['original_ask_price']?.toString() ??
+          "",
       displayPrice: json['display_price']?.toString() ?? "",
-      displayCurrency: json['currency_symbol'] ?? "£", // Default or fetch
-      viewCount: json['view_count'] ?? 0,
+      displayCurrency:
+          json['currency_symbol'] ?? json['display_currency'] ?? "£",
+      viewCount: json['content_view_count_by_marketplace_for_app'] ??
+          json['view_count'] ??
+          0,
       offerCount: json['offer_count'] ?? 0,
-      createdAt: json['createdAt'] ?? "",
-      timeAgo: "", // Calculate if needed or use createdAt
-      feedImage: json['feed_image'] ?? "", // Verify field name from previous model
+      createdAt: json['created_at'] ?? json['createdAt'] ?? "",
+      timeAgo: "",
+      feedImage: avatarUrl,
       status: json['status'] ?? "",
       isFavourite: json['is_favourite'] ?? false,
       isLiked: json['is_liked'] ?? false,
@@ -57,10 +110,14 @@ class FeedModel extends Feed {
       isClap: json['is_clap'] ?? false,
       contentList: contentList,
       type: json['type'] ?? "",
-      isDraft: json['is_draft'] ?? false,
-      userId: json['user_id'] ?? "",
+      isDraft: json['is_draft'] == "true" || json['is_draft'] == true,
+      userId: json['hopper_id'] is Map
+          ? (json['hopper_id']['_id'] is Map
+              ? "" // Buffer object?
+              : json['hopper_id']['_id']?.toString() ?? "")
+          : json['user_id'] ?? "",
       saleStatus: json['sale_status'] ?? "",
-      paidStatus: json['paid_status'] ?? "",
+      paidStatus: json['paid_status'] == true ? "Paid" : "Unpaid",
     );
   }
 }

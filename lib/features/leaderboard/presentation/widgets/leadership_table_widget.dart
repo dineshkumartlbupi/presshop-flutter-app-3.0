@@ -144,7 +144,7 @@ class LeadershipTableWidget extends StatelessWidget {
                     clipBehavior: Clip.antiAlias,
                     child: hasData && avatar.isNotEmpty
                         ? CachedNetworkImage(
-                            imageUrl: avatarImageUrl + avatar,
+                            imageUrl: avatar,
                             errorWidget: (context, url, error) {
                               return Image.asset(
                                 "${commonImagePath}rabbitLogo.png",

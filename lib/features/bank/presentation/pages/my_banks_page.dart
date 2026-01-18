@@ -38,9 +38,10 @@ class _MyBanksViewState extends State<MyBanksView> {
     context.read<BankBloc>().add(GetStripeUrlEvent());
   }
 
+  // ignore: unused_element
   void _deleteBankDialog(BuildContext context, String id, String stripeBankId) {
     if (stripeBankId.isEmpty) return;
-    
+
     var size = MediaQuery.of(context).size;
     showDialog(
       context: context,
@@ -90,7 +91,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                 const Divider(color: Colors.black, thickness: 0.5),
                 SizedBox(height: size.width * numD02),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD035),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: size.width * numD035),
                   child: Text(
                     "Are you sure you wish to delete this bank account?",
                     style: TextStyle(
@@ -104,7 +106,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                 ),
                 SizedBox(height: size.width * numD05),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * numD035),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: size.width * numD035),
                   child: Row(
                     children: [
                       Expanded(
@@ -152,14 +155,14 @@ class _MyBanksViewState extends State<MyBanksView> {
     );
   }
 
-  void _selectDefault(BuildContext context, String stripeBankId, bool isDefault) {
-    context.read<BankBloc>().add(
-          SetDefaultBankEvent(
-            stripeBankId: stripeBankId,
-            isDefault: isDefault,
-          ),
-        );
-  }
+  // void _selectDefault(BuildContext context, String stripeBankId, bool isDefault) {
+  //   context.read<BankBloc>().add(
+  //         SetDefaultBankEvent(
+  //           stripeBankId: stripeBankId,
+  //           isDefault: isDefault,
+  //         ),
+  //       );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -230,8 +233,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                 ? _upliftAccountsPaymentDesign(context, size, banks)
                 : _upliftNoAccountsPaymentDesign(context, size);
           } else {
-             // Fallback or initial load
-             // trigger load if not loading?
+            // Fallback or initial load
+            // trigger load if not loading?
             return showLoader();
           }
         },
@@ -239,7 +242,8 @@ class _MyBanksViewState extends State<MyBanksView> {
     );
   }
 
-  Widget _upliftAccountsPaymentDesign(BuildContext context, Size size, List banks) {
+  Widget _upliftAccountsPaymentDesign(
+      BuildContext context, Size size, List banks) {
     final firstBank = banks.first;
     // Assuming the first bank is the default/primary one as per legacy logic (sort of)
     // Legacy logic did a bit of swapping for default. Here we just display them.
@@ -296,7 +300,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                         Row(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(size.width * numD02),
+                              borderRadius:
+                                  BorderRadius.circular(size.width * numD02),
                               child: Image.network(
                                 firstBank.bankImage,
                                 height: size.width * numD11,
@@ -308,7 +313,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                                     width: size.width * numD11,
                                     decoration: BoxDecoration(
                                       color: colorLightGrey,
-                                      borderRadius: BorderRadius.circular(size.width * numD02),
+                                      borderRadius: BorderRadius.circular(
+                                          size.width * numD02),
                                     ),
                                   );
                                 },
@@ -336,7 +342,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                                     ),
                                     SizedBox(width: size.width * numD01),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2),
                                       decoration: BoxDecoration(
                                         color: Colors.blueGrey[100],
                                         borderRadius: BorderRadius.circular(5),
@@ -381,7 +388,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: colorThemePink,
-                                  borderRadius: BorderRadius.circular(size.width * numD03),
+                                  borderRadius: BorderRadius.circular(
+                                      size.width * numD03),
                                 ),
                                 child: Text(
                                   "Default",
@@ -401,7 +409,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.green,
-                                borderRadius: BorderRadius.circular(size.width * numD03),
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD03),
                               ),
                               child: Text(
                                 "Verified",
@@ -423,7 +432,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
+                          text:
+                              "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: size.width * numD032,
@@ -431,7 +441,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                           ),
                         ),
                         TextSpan(
-                          text: "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
+                          text:
+                              "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: size.width * numD032,
@@ -473,7 +484,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                       commonButtonTextStyle(size),
                       commonButtonStyle(size, colorThemePink),
                       () {
-                         stripeBankPageTitle = "Change bank account";
+                        stripeBankPageTitle = "Change bank account";
                         _generateAddBankApi(context);
                       },
                     ),
@@ -522,7 +533,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                   ),
                   children: [
                     TextSpan(
-                      text: "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
+                      text:
+                          "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: size.width * numD032,
@@ -530,7 +542,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                       ),
                     ),
                     TextSpan(
-                      text: "Just tap the CTA below to get started - it takes less than a minute.\n\n",
+                      text:
+                          "Just tap the CTA below to get started - it takes less than a minute.\n\n",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: size.width * numD032,

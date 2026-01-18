@@ -21,9 +21,9 @@ class FAQModel extends FAQ {
       data = json['_doc'];
     }
     return FAQModel(
-      id: data["_id"]?.toString() ?? '',
-      question: data["ques"] ?? "",
-      answer: data["ans"] ?? "",
+      id: data["id"]?.toString() ?? data["_id"]?.toString() ?? '',
+      question: data["question"] ?? data["ques"] ?? "",
+      answer: data["answer"] ?? data["ans"] ?? "",
       category: data['category'] ?? "",
     );
   }

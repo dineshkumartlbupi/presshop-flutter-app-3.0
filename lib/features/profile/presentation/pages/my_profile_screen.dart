@@ -38,8 +38,7 @@ class MyProfile extends StatefulWidget {
   }
 }
 
-class MyProfileState extends State<MyProfile>
-    with AnalyticsPageMixin {
+class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   Size size = Size.zero;
 
   var formKey = GlobalKey<FormState>();
@@ -1340,9 +1339,7 @@ class MyProfileState extends State<MyProfile>
                       topLeft: Radius.circular(size.width * numD04),
                       bottomLeft: Radius.circular(size.width * numD04)),
                   child: Image.network(
-                    myProfileData != null
-                        ? "$avatarImageUrl${myProfileData!.avatarImage}"
-                        : "",
+                    myProfileData != null ? myProfileData!.avatarImage : "",
                     errorBuilder: (context, exception, stacktrace) {
                       return Padding(
                         padding: EdgeInsets.all(size.width * numD04),
@@ -1653,7 +1650,7 @@ class MyProfileState extends State<MyProfile>
                             },
                             child: Stack(
                               children: [
-                                Image.network("$avatarImageUrl${item.avatar}"),
+                                Image.network(item.avatar),
                                 if (item.selected)
                                   Align(
                                     alignment: Alignment.topRight,
@@ -1832,7 +1829,7 @@ class MyProfileState extends State<MyProfile>
       if (response.statusCode == 200) {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
-        var list = map["response"] as List;
+        var list = map["data"] as List;
         avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
         debugPrint("AvatarList: ${avatarList.length}");
         setState(() {});
@@ -1859,6 +1856,12 @@ class MyProfileState extends State<MyProfile>
 
         if (map["code"] == 200 || map["success"] == true) {
           var userData = map["userData"] ?? map["data"];
+          // Handle nested data object (API structure: data -> data -> user_fields)
+          if (userData is Map &&
+              userData.containsKey('data') &&
+              userData['data'] is Map) {
+            userData = userData['data'];
+          }
           myProfileData = MyProfileData.fromJson(userData);
           if (userData[firstNameKey] != null && sharedPreferences != null) {
             sharedPreferences!.setString(firstNameKey, userData[firstNameKey]);
@@ -1898,8 +1901,8 @@ class MyProfileState extends State<MyProfile>
                 .setString(avatarIdKey, userData[avatarIdKey].toString());
           }
           if (userData["totalEarnings"] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(totalIncomeKey, userData["totalEarnings"].toString());
+            sharedPreferences!.setString(
+                totalIncomeKey, userData["totalEarnings"].toString());
           }
 
           if (userData['avatarData'] != null &&
@@ -1963,7 +1966,7 @@ class MyProfileState extends State<MyProfile>
         roleKey: "Hopper",
       };
 
-      final response = await sl<ApiClient>().patch(
+      final response = await sl<ApiClient>().post(
         editProfileUrl,
         data: params,
       );
@@ -2226,12 +2229,20 @@ class MyProfileData {
     longitude = (json[longitudeKey] ?? "").toString();
     totalIncome =
         json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
-    avatarImage =
-        json["avatarData"] != null ? (json["avatarData"]["avatar"] ?? "") : "";
-    avatarId =
-        json["avatarData"] != null ? (json["avatarData"]["_id"] ?? "") : "";
-    joinedDate = changeDateFormat(
-        "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy");
+    avatarImage = (json["avatarData"] != null
+            ? (json["avatarData"]["avatar"]?.toString() ?? "")
+            : null) ??
+        json["avatar"]?.toString() ??
+        "";
+    avatarId = (json["avatarData"] != null
+            ? (json["avatarData"]["_id"]?.toString() ?? "")
+            : null) ??
+        json["avatar"]?.toString() ??
+        "";
+    joinedDate = json["createdAt"] != null
+        ? changeDateFormat(
+            "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy")
+        : "";
     validDegree = json["doc_to_become_pro"] != null
         ? json["doc_to_become_pro"]["govt_id_mediatype"].toString()
         : "";

@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 
 import 'package:presshop/core/core_export.dart';
 
+// ignore: must_be_immutable
 class AudioWaveFormWidgetScreen extends StatefulWidget {
   String mediaPath = "";
 

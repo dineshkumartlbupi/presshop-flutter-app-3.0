@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
+
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
@@ -20,7 +20,7 @@ import '../../presentation/bloc/profile_bloc.dart';
 import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import '../../domain/entities/profile_data.dart'; // Ensure this entity exists
+import '../../domain/entities/profile_data.dart';
 
 class DigitalIdScreen extends StatefulWidget {
   const DigitalIdScreen({super.key});
@@ -47,7 +47,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
     userName = sharedPreferences!.getString(userNameKey) ?? "Hopper";
     // Setup initial image from prefs if available
-    String sessionAvatar = sharedPreferences!.getString(avatarKey) ?? "";
+    String sessionAvatar = sharedPreferences!.getString(profileImageKey) ?? "";
     if (sessionAvatar.isNotEmpty) {
       userImage = sessionAvatar;
     }
@@ -56,7 +56,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   void _showImagePicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext modalContext) {
         return SafeArea(
           child: Wrap(
             children: <Widget>[
@@ -65,7 +65,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 title: const Text('Photo Library'),
                 onTap: () {
                   _pickImage(ImageSource.gallery, context);
-                  Navigator.of(context).pop();
+                  Navigator.of(modalContext).pop();
                 },
               ),
               ListTile(
@@ -73,7 +73,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 title: const Text('Camera'),
                 onTap: () {
                   _pickImage(ImageSource.camera, context);
-                  Navigator.of(context).pop();
+                  Navigator.of(modalContext).pop();
                 },
               ),
             ],
@@ -87,6 +87,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: source);
       if (pickedFile != null) {
+        if (!mounted) return;
         context
             .read<ProfileBloc>()
             .add(UploadProfileImageEvent(pickedFile.path));
@@ -107,6 +108,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             _updateUserProfile(state.profile);
           } else if (state is ProfileImageUploaded) {
             _updateUserImage(state.imageUrl);
+          } else if (state is ProfileUpdated) {
+            _updateUserProfile(state.profile);
+            showSnackBar(
+                "Success", "Profile updated successfully", Colors.green);
           } else if (state is ProfileError) {
             Fluttertoast.showToast(msg: state.message);
           }
@@ -600,7 +605,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             "https://dev-cdn.presshop.news/public/avatarImages/";
         userImage = "$cdnAvatarUrl$imageUrl";
       }
-      sharedPreferences!.setString(avatarKey, userImage);
+      sharedPreferences!.setString(profileImageKey, userImage);
     });
     showSnackBar("Success", "Profile image updated successfully", Colors.green);
   }
@@ -615,301 +620,3 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     }
   }
 }
-
-//   Widget oldDigitalId() {
-//       size = MediaQuery.of(context).size;
-//     return SingleChildScrollView(
-//       child: Container(
-//         margin: EdgeInsets.only(
-//           left: size.width * numD05,
-//           right: size.width * numD05,
-//           top: size.width * numD02,
-//           bottom: size.width * numD1,
-//         ),
-//         decoration: BoxDecoration(
-//             color: colorLightGrey,
-//             borderRadius: BorderRadius.circular(size.width * numD03),
-//             border: Border.all(width: 1.0, color: Colors.black)),
-//         padding: EdgeInsets.only(
-//           left: size.width * numD05,
-//           right: size.width * numD05,
-//         ),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             SizedBox(
-//               height: size.width * numD09,
-//             ),
-
-//             Row(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Expanded(
-//                     child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.start,
-//                   children: [
-//                     Container(
-//                       alignment: Alignment.center,
-//                       height: size.width * numD30,
-//                       width: size.width * numD30,
-//                       decoration: BoxDecoration(
-//                           shape: BoxShape.circle,
-//                           border: Border.all(width: 1.5, color: Colors.black),
-//                           image: DecorationImage(
-//                             image: NetworkImage(userImage),
-//                             fit: BoxFit.cover,
-//                             onError: (context, stacktrace) {
-//                               Padding(
-//                                 padding: EdgeInsets.all(size.width * numD07),
-//                                 child: Image.asset(
-//                                   "${commonImagePath}rabbitLogo.png",
-//                                 ),
-//                               );
-//                             },
-//                           )),
-//                       child: ClipRRect(
-//                         borderRadius:
-//                             BorderRadius.circular(size.width * numD08),
-//                         /*child: Image.network(
-//                             height: size.width * numD20,
-//                             width: size.width * numD20,
-//                             userImage,
-//                             // fit: BoxFit.cover,
-//                             errorBuilder: (context, exception, stacktrace) {
-//                               return Padding(
-//                                 padding: EdgeInsets.all(size.width * numD07),
-//                                 child: Image.asset(
-//                                   "${commonImagePath}rabbitLogo.png",
-//                                 ),
-//                               );
-//                             },
-//                           ),*/
-//                       ),
-//                     ),
-
-//                     SizedBox(
-//                       height: size.width * numD03,
-//                     ),
-
-//                     /// Name
-//                     Container(
-//                       alignment: Alignment.center,
-//                       margin: EdgeInsets.only(
-//                         left: size.width * numD02,
-//                         bottom: size.width * numD05,
-//                       ),
-//                       child: Text(
-//                         userName,
-//                         style: commonTextStyle(
-//                             size: size,
-//                             fontSize: size.width * numD05,
-//                             color: Colors.black,
-//                             fontWeight: FontWeight.w500),
-//                       ),
-//                     ),
-//                   ],
-//                 )),
-//                 Expanded(
-//                   child: Container(
-//                     alignment: Alignment.centerRight,
-//                     height: size.width * numD30,
-//                     child: QrImageView(
-//                       // data: "$userId\n https://www.presshop.co.uk",
-//                       data: Platform.isAndroid
-//                           ? "https://play.google.com/store/apps/details?id="
-//                           : "https://apps.apple.com/in/app/",
-//                       version: QrVersions.auto,
-//                     ),
-//                   ),
-//                 )
-//               ],
-//             ),
-
-//             Container(
-//                 padding: EdgeInsets.symmetric(
-//                   vertical: size.width * numD03,
-//                   horizontal: size.width * numD03,
-//                 ),
-//                 decoration: BoxDecoration(
-//                   color: colorThemePink,
-//                   borderRadius: BorderRadius.circular(size.width * numD03),
-//                 ),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Image.asset(
-//                       "${iconsPath}ic_verified.png",
-//                       height: size.width * numD085,
-//                       width: size.width * numD085,
-//                       color: Colors.white,
-//                     ),
-//                     SizedBox(
-//                       width: size.width * numD05,
-//                     ),
-//                     Text(
-//                       verifiedHopperText,
-//                       textAlign: TextAlign.start,
-//                       style: commonTextStyle(
-//                           size: size,
-//                           fontSize: size.width * numD06,
-//                           color: Colors.white,
-//                           fontWeight: FontWeight.w500),
-//                     ),
-//                   ],
-//                 )),
-
-//             /// Digital ID Expire
-//             Container(
-//                 width: size.width,
-//                 alignment: Alignment.center,
-//                 margin: EdgeInsets.only(top: size.width * numD05),
-//                 padding: EdgeInsets.symmetric(
-//                   vertical: size.width * numD03,
-//                   horizontal: size.width * numD03,
-//                 ),
-//                 decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(size.width * numD03),
-//                     border: Border.all(width: 1.0, color: Colors.black)),
-//                 child: RichText(
-//                   textAlign: TextAlign.start,
-//                   text: TextSpan(
-//                     text: digitalIdExpireOnText,
-//                     style: TextStyle(
-//                         fontSize: size.width * numD038,
-//                         color: Colors.black,
-//                         fontWeight: FontWeight.w400,
-//                         height: 1.5),
-//                     children: [
-//                       TextSpan(
-//                         text: DateFormat("dd MMM yyyy").format(DateTime.now()),
-//                         style: TextStyle(
-//                             fontSize: size.width * numD038,
-//                             color: Colors.black,
-//                             fontWeight: FontWeight.w600,
-//                             height: 1.5),
-//                       )
-//                     ],
-//                   ),
-//                 )),
-
-//             /// Company Address
-
-//             Container(
-//                 margin: EdgeInsets.only(top: size.width * numD05),
-//                 padding: EdgeInsets.symmetric(
-//                   vertical: size.width * numD05,
-//                   horizontal: size.width * numD03,
-//                 ),
-//                 decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(size.width * numD03),
-//                     border: Border.all(width: 1.0, color: Colors.black)),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.start,
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     SizedBox(
-//                       width: size.width / 4,
-//                       child: Image.asset(
-//                         "${iconsPath}ic_digitalId_logo.png",
-//                         height: size.width * numD28,
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       width: size.width * numD02,
-//                     ),
-//                     /*  Expanded(
-//                           child: RichText(
-//                         textAlign: TextAlign.start,
-//                         text: TextSpan(
-//                           text: mediaUk,
-//                           style: TextStyle(
-//                               fontSize: size.width * numD038,
-//                               color: Colors.black,
-//                               fontWeight: FontWeight.w600,
-//                               height: 1.5),
-//                           children: [
-//                             TextSpan(
-//                               text: companyName,
-//                               style: TextStyle(
-//                                   fontSize: size.width * numD038,
-//                                   color: Colors.black,
-//                                   fontWeight: FontWeight.w400,
-//                                   height: 1.5),
-//                             )
-//                           ],
-//                         ),
-//                       )),*/
-//                     Expanded(
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             "Presso Media UK Limited",
-//                             style: TextStyle(
-//                                 fontSize: size.width * numD036,
-//                                 color: Colors.black,
-//                                 fontWeight: FontWeight.w600,
-//                                 height: 1.5),
-//                           ),
-//                           Text(
-//                             "Company number:13522872",
-//                             style: TextStyle(
-//                                 fontSize: size.width * numD033,
-//                                 color: Colors.black,
-//                                 fontWeight: FontWeight.w400,
-//                                 height: 1.5),
-//                           ),
-//                           Text(
-//                             "167-169, Great Portland Street",
-//                             style: TextStyle(
-//                                 fontSize: size.width * numD033,
-//                                 color: Colors.black,
-//                                 fontWeight: FontWeight.w400,
-//                                 height: 1.5),
-//                           ),
-//                           Text(
-//                             "London, W1W 5PF",
-//                             style: TextStyle(
-//                                 fontSize: size.width * numD033,
-//                                 color: Colors.black,
-//                                 fontWeight: FontWeight.w400,
-//                                 height: 1.5),
-//                           ),
-//                           Text(
-//                             "hello@presshop.co.uk",
-//                             style: TextStyle(
-//                                 fontSize: size.width * numD035,
-//                                 color: Colors.black,
-//                                 fontWeight: FontWeight.bold,
-//                                 height: 1.5),
-//                           ),
-//                           InkWell(
-//                             onTap: () {
-//                               _launchURL();
-//                             },
-//                             child: Text(
-//                               "www.presshop.co.uk",
-//                               style: TextStyle(
-//                                   decoration: TextDecoration.underline,
-//                                   fontSize: size.width * numD036,
-//                                   color: Colors.blue,
-//                                   fontWeight: FontWeight.w500,
-//                                   height: 1.5),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     )
-//                   ],
-//                 )),
-//             SizedBox(
-//               height: size.width * numD045,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

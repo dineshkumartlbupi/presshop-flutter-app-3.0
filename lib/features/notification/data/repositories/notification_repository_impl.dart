@@ -11,27 +11,28 @@ class NotificationRepositoryImpl implements NotificationRepository {
   NotificationRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, NotificationsResult>> getNotifications(int limit, int offset) async {
+  Future<Either<Failure, NotificationsResult>> getNotifications(
+      int limit, int offset) async {
     try {
       final remoteData = await remoteDataSource.getNotifications(limit, offset);
-      
+
       List<NotificationModel> notifications = [];
-      if (remoteData['data'] != null) {
-        notifications = (remoteData['data'] as List)
+      if (remoteData['data'] != null && remoteData['data']['data'] != null) {
+        notifications = (remoteData['data']['data'] as List)
             .map((e) => NotificationModel.fromJson(e))
             .toList();
       }
-      
-      int unreadCount = remoteData['unreadCount'] ?? 0;
-      int alertCount = remoteData['hopperAlertCount'] ?? 0;
-      
+
+      int unreadCount = remoteData['data']?['unreadCount'] ?? 0;
+      int alertCount = remoteData['data']?['hopperAlertCount'] ?? 0;
+
       return Right(NotificationsResult(
         notifications: notifications,
         unreadCount: unreadCount,
         alertCount: alertCount,
       ));
     } catch (e) {
-      return Left(ServerFailure(message:  e.toString()));
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -41,7 +42,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       await remoteDataSource.markNotificationsAsRead();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message:  e.toString()));
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
@@ -51,7 +52,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       await remoteDataSource.clearAllNotifications();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message:  e.toString()));
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 }

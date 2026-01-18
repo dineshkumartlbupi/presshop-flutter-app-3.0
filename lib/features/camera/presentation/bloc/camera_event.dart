@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -41,7 +40,7 @@ class LoadGalleryMediaEvent extends CameraEvent {}
 class UpdateExposureEvent extends CameraEvent {
   final double exposure;
   const UpdateExposureEvent(this.exposure);
-  
+
   @override
   List<Object> get props => [exposure];
 }
@@ -73,7 +72,7 @@ class CameraTimerTickEvent extends CameraEvent {
 class UpdateCapturedMediaEvent extends CameraEvent {
   final List<CameraData> media;
   const UpdateCapturedMediaEvent(this.media);
-  
+
   @override
   List<Object> get props => [media];
 }

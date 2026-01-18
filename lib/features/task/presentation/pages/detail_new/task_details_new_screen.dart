@@ -21,6 +21,7 @@ import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
+// ignore: must_be_immutable
 class TaskDetailNewScreen extends StatefulWidget {
   String taskStatus = "";
   String taskId = "";
@@ -54,11 +55,11 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
     zoom: 14.4746,
   );
 
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  // static const CameraPosition _kLake = CameraPosition(
+  //     bearing: 192.8334901395799,
+  //     target: LatLng(37.43296265331129, -122.08832357078792),
+  //     tilt: 59.440717697143555,
+  //     zoom: 19.151926040649414);
 
   @override
   void initState() {

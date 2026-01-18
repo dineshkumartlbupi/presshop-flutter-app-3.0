@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:presshop/core/core_export.dart';
 
+// ignore: must_be_immutable
 class ImagePreview extends StatefulWidget {
   String imageURL = "";
   ImagePreview({super.key, required this.imageURL});

@@ -280,8 +280,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: CachedNetworkImage(
-                                      imageUrl: avatarImageUrl +
-                                          (earningData?.avatar ?? ""),
+                                      imageUrl: (earningData?.avatar ?? ""),
                                       imageBuilder: (context, imageProvider) =>
                                           Container(
                                         height: size.width * numD32,
@@ -951,8 +950,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD03),
                                       child: CachedNetworkImage(
-                                        imageUrl: avatarImageUrl +
-                                            (item.hopperAvatar),
+                                        imageUrl: (item.hopperAvatar),
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 Container(

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +7,6 @@ import 'package:mime/mime.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/api/api_constant.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/api/api_client.dart';
 

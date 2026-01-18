@@ -24,8 +24,6 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import '../../domain/entities/avatar.dart';
-
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
@@ -33,7 +31,6 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'UploadDocumnetsScreen.dart';
 import 'VerifyAccountScreen.dart';
 
 // ignore: must_be_immutable
@@ -147,11 +144,12 @@ class _SignUpScreenState extends State<SignUpScreen>
       showNumber = false,
       isSelectCheck = true;
   bool validUserName = false;
+  String userNameApiError = "";
+  String phoneApiError = "";
 
   List<AvatarsData> avatarList = [];
 
   late GoogleSignInAccount _userObj;
-  bool _isLoggedIn = false;
   String socialEmail = "";
   String socialId = "";
   String socialName = "";
@@ -192,14 +190,14 @@ class _SignUpScreenState extends State<SignUpScreen>
     var size = MediaQuery.of(context).size;
     _signUpBloc = context.read<SignUpBloc>();
 
-    final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
-        .chain(CurveTween(curve: Curves.elasticIn))
-        .animate(controller)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controller.reverse();
-        }
-      });
+    // final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 24.0)
+    //     .chain(CurveTween(curve: Curves.elasticIn))
+    //     .animate(controller)
+    //   ..addStatusListener((status) {
+    //     if (status == AnimationStatus.completed) {
+    //       controller.reverse();
+    //     }
+    //   });
 
     return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -265,20 +263,18 @@ class _SignUpScreenState extends State<SignUpScreen>
                   .map((e) =>
                       AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar}))
                   .toList();
-              // Extract base URL from the first avatar (all avatars have the same base URL)
-              if (state.avatars.isNotEmpty &&
-                  state.avatars.first.baseUrl != null) {
-                avatarBaseUrl = state.avatars.first.baseUrl!;
-              }
+
               _avatarsNotifier.value = !_avatarsNotifier.value;
             } else if (state is UserNameCheckResult) {
               userNameAlreadyExists = !state.isAvailable;
+              userNameApiError = state.errorMessage;
               setState(() {});
             } else if (state is EmailCheckResult) {
               emailAlreadyExists = !state.isAvailable;
               setState(() {});
             } else if (state is PhoneCheckResult) {
               phoneAlreadyExists = !state.isAvailable;
+              phoneApiError = state.errorMessage;
               setState(() {});
             } else if (state is ReferralCodeVerified) {
               isRefferalCodeValid = true;
@@ -395,7 +391,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                   BorderRadius.circular(
                                                       size.width * numD04),
                                               child: Image.network(
-                                                "$avatarBaseUrl/$selectedAvatar",
+                                                selectedAvatar,
                                                 height: size.width * numD30,
                                                 width: size.width * numD35,
                                                 fit: BoxFit.cover,
@@ -1259,7 +1255,7 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   Future<void> googleLogin() async {
     googleSignIn.signIn().then((userData) {
-      _isLoggedIn = true;
+      // _isLoggedIn = true;
       _userObj = userData!;
 
       socialId = _userObj.id;
@@ -1293,10 +1289,10 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   void startVibration() async {
-    final Iterable<Duration> pauses = [
-      const Duration(milliseconds: 50),
-      const Duration(milliseconds: 50),
-    ];
+    // final Iterable<Duration> pauses = [
+    //   const Duration(milliseconds: 50),
+    //   const Duration(milliseconds: 50),
+    // ];
   }
 
   Icon? getUsernameSuffixIcon() {
@@ -1369,7 +1365,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       Icons.check_circle,
       color: Colors.green,
     );
-    return null;
+    // return null;
   }
 
   Icon? getReferralCodeSuffixIcon() {
@@ -1539,7 +1535,9 @@ class _SignUpScreenState extends State<SignUpScreen>
       return "Domain names are not allowed for security reasons.";
     }
     if (userNameAlreadyExists) {
-      return "This username is already taken. Please choose another one.";
+      return userNameApiError.isNotEmpty
+          ? userNameApiError
+          : "This username is already taken. Please choose another one.";
     }
 
     return null;
@@ -1621,7 +1619,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         child: Stack(
                                           children: [
                                             Image.network(
-                                              "$avatarBaseUrl/${item.avatar}",
+                                              item.avatar,
                                               errorBuilder:
                                                   (BuildContext context,
                                                       Object exception,
@@ -1883,7 +1881,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     if (phoneAlreadyExists) {
       print("This phone number already exists");
       print(phoneAlreadyExists);
-      return phoneExistsErrorText;
+      return phoneApiError.isNotEmpty ? phoneApiError : phoneExistsErrorText;
     }
 
     return null;

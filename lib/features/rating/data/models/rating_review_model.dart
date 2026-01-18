@@ -43,20 +43,37 @@ class RatingReviewModel extends Review {
       review: json["updateddata"] != null
           ? json['updateddata']['review'].toString()
           : "",
-      id: json["_id"] ?? "",
-      from: json["from"] ?? "",
-      to: json["to"] ??
-          "", // Fixed: was json["to"] in original but let's assume same key
-      senderType: json["sender_type"] ?? "",
+      id: json["_id"] != null ? json["_id"].toString() : "",
+      from: json["updateddata"] != null && json["updateddata"]["from"] != null
+          ? json["updateddata"]["from"].toString()
+          : "",
+      to: json["updateddata"] != null && json["updateddata"]["to"] != null
+          ? json["updateddata"]["to"].toString()
+          : "",
+      senderType: json["updateddata"] != null
+          ? json["updateddata"]["sender_type"] ?? ""
+          : "",
       totalEarning: json["total_earining"] != null
           ? json["total_earining"].toString()
           : "0",
-      hopperImage: json['hopper_details'] != null &&
-              json['hopper_details']['avatar_id'] != null
-          ? json['hopper_details']['avatar_id']['avatar'].toString()
+      hopperImage: json['hopper_details'] != null
+          ? (json['hopper_details']['avatar_id'] != null &&
+                  json['hopper_details']['avatar_id']['avatar'] != null)
+              ? json['hopper_details']['avatar_id']['avatar'].toString()
+              : (json['hopper_details']['profile_image'] != null)
+                  ? json['hopper_details']['profile_image'].toString()
+                  : ""
           : "",
       userName: json['hopper_details'] != null
-          ? json['hopper_details']['user_name'] ?? ""
+          ? (json['hopper_details']['user_name'] != null &&
+                  json['hopper_details']['user_name'].toString().isNotEmpty)
+              ? json['hopper_details']['user_name']
+              : (json['hopper_details']['companyName'] != null &&
+                      json['hopper_details']['companyName']
+                          .toString()
+                          .isNotEmpty)
+                  ? json['hopper_details']['companyName']
+                  : "${json['hopper_details']['firstName'] ?? ""} ${json['hopper_details']['lastName'] ?? ""}"
           : "",
       hopperCreatedAt: json['hopper_details'] != null
           ? json['hopper_details']['createdAt'] ?? ""

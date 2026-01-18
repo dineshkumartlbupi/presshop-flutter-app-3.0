@@ -52,6 +52,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
 
     _bloc.add(FAQLoadCategories(
       initialCategoryName: initialCategoryName,
+      type: widget.type,
     ));
   }
 

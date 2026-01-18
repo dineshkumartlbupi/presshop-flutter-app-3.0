@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/features/earning/data/models/earning_model.dart';
+
 import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
 
@@ -15,7 +15,6 @@ import '../bloc/publication_bloc.dart';
 import '../bloc/publication_event.dart';
 import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
-import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 
 class PublicationListScreen extends StatefulWidget {
   String contentId = "";
@@ -150,8 +149,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   borderRadius: BorderRadius.circular(
                                       size.width * numD04),
                                   child: CachedNetworkImage(
-                                    imageUrl:
-                                        avatarImageUrl + earningData!.avatar,
+                                    imageUrl: earningData!.avatar,
                                     imageBuilder: (context, imageProvider) =>
                                         Container(
                                       height: size.width * numD32,

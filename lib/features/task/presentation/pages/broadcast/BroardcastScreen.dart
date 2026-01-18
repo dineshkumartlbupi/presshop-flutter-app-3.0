@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 // import 'package:contacts_service/contacts_service.dart';
@@ -21,12 +20,12 @@ import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/main.dart';
-import 'package:http/http.dart' as http;
 import 'package:fast_contacts/fast_contacts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// ignore: must_be_immutable
 class BroadCastScreen extends StatefulWidget {
   String taskId = "";
   String mediaHouseId = "";
@@ -63,10 +62,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   SharedPreferences? sharedPreferences;
   String currencySymbol = "";
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  // static const CameraPosition _kGooglePlex = CameraPosition(
+  //   target: LatLng(37.42796133580664, -122.085749655962),
+  //   zoom: 14.4746,
+  // );
 
 /*
   static const CameraPosition _kLake = CameraPosition(
@@ -1307,8 +1306,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
   ///--------Apis Section------------
 
-
-
   void getEstimateTime() {
     debugPrint("::: Inside estimate Time Fuc ::::");
     dynamic mapKey;
@@ -1332,40 +1329,40 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     debugPrint("drivingMode : $drivingMode");
     debugPrint("walkingMode : $walkingMode");
 
-    var res = http.get(Uri.parse(drivingMode)).then((value) {
-      debugPrint("Status Code : ${value.statusCode}");
-      debugPrint("Body : ${value.body}");
-      if (value.statusCode <= 201) {
-        var data = jsonDecode(value.body);
-        var dataModel = data["rows"] as List;
-        if (dataModel.isNotEmpty) {
-          var dataModel2 = dataModel.first["elements"] as List;
-          if (dataModel2.isNotEmpty) {
-            _drivingEstTime = dataModel2.first["duration"]["text"] ?? "";
-            _distance = dataModel2.first["distance"]["text"] ?? "";
-          }
-        }
-      }
-      setState(() {});
-    });
+    // var res = http.get(Uri.parse(drivingMode)).then((value) {
+    //   debugPrint("Status Code : ${value.statusCode}");
+    //   debugPrint("Body : ${value.body}");
+    //   if (value.statusCode <= 201) {
+    //     var data = jsonDecode(value.body);
+    //     var dataModel = data["rows"] as List;
+    //     if (dataModel.isNotEmpty) {
+    //       var dataModel2 = dataModel.first["elements"] as List;
+    //       if (dataModel2.isNotEmpty) {
+    //         _drivingEstTime = dataModel2.first["duration"]["text"] ?? "";
+    //         _distance = dataModel2.first["distance"]["text"] ?? "";
+    //       }
+    //     }
+    //   }
+    //   setState(() {});
+    // });
 
-    var res1 = http.get(Uri.parse(walkingMode)).then((value) {
-      debugPrint("Status Code : ${value.statusCode}");
-      debugPrint("Body : ${value.body}");
-      debugPrint("");
-      if (value.statusCode <= 201) {
-        var data = jsonDecode(value.body);
-        var dataModel = data["rows"] as List;
-        if (dataModel.isNotEmpty) {
-          var dataModel2 = dataModel.first["elements"] as List;
-          if (dataModel2.isNotEmpty) {
-            _walkingEstTime = dataModel2.first["duration"]["text"] ?? "";
-            _distance = dataModel2.first["distance"]["text"] ?? "";
-          }
-          setState(() {});
-        }
-      }
-    });
+    // var res1 = http.get(Uri.parse(walkingMode)).then((value) {
+    //   debugPrint("Status Code : ${value.statusCode}");
+    //   debugPrint("Body : ${value.body}");
+    //   debugPrint("");
+    //   if (value.statusCode <= 201) {
+    //     var data = jsonDecode(value.body);
+    //     var dataModel = data["rows"] as List;
+    //     if (dataModel.isNotEmpty) {
+    //       var dataModel2 = dataModel.first["elements"] as List;
+    //       if (dataModel2.isNotEmpty) {
+    //         _walkingEstTime = dataModel2.first["duration"]["text"] ?? "";
+    //         _distance = dataModel2.first["distance"]["text"] ?? "";
+    //       }
+    //       setState(() {});
+    //     }
+    //   }
+    // });
   }
 
   /// Accept Reject Api
@@ -1392,10 +1389,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     // This is now handled via Bloc event in listener or init
   }
 
-
-
-
-
   @override
   // TODO: implement pageName
   String get pageName => "BroardcastScreen";
@@ -1417,18 +1410,18 @@ class ContactListModel {
 }
 
 /// Show loader dialog
-Future<void> _showLoaderDialog(BuildContext context) async {
-  // Show the dialog and wait for it to be fully rendered
-  showDialog(
-    barrierDismissible: false,
-    barrierColor: Colors.white.withOpacity(0),
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        elevation: 0,
-        backgroundColor: Colors.white.withOpacity(0),
-        content: Center(child: showLoader()),
-      );
-    },
-  );
-}
+// Future<void> _showLoaderDialog(BuildContext context) async {
+//   // Show the dialog and wait for it to be fully rendered
+//   showDialog(
+//     barrierDismissible: false,
+//     barrierColor: Colors.white.withOpacity(0),
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         elevation: 0,
+//         backgroundColor: Colors.white.withOpacity(0),
+//         content: Center(child: showLoader()),
+//       );
+//     },
+//   );
+// }

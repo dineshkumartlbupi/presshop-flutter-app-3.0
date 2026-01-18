@@ -50,9 +50,8 @@ class AlertModel {
       if (timeByFeetInMinutes >= 60) {
         int hours = timeByFeetInMinutes ~/ 60;
         int hour = timeByCarInMinutes ~/ 60;
-        double minutes = timeByFeetInMinutes.round() % 60;
-        double minute = timeByCarInMinutes.round() % 60;
-        // The original code calculated minutes but didn't use them in the formatted string, preserving behavior.
+        // double minutes = timeByFeetInMinutes.round() % 60;
+        // double minute = timeByCarInMinutes.round() % 60;
         formattedTime = "$hours h ";
         formattedCarTime = "$hour h";
       } else {
@@ -75,7 +74,7 @@ class AlertModel {
       if (json['distance'] is num) {
         dis = (json['distance'] as num).toDouble();
       } else {
-         dis = double.tryParse(json['distance'].toString()) ?? 0.0;
+        dis = double.tryParse(json['distance'].toString()) ?? 0.0;
       }
       calculateTravelDetails(dis);
     }

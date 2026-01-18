@@ -1129,11 +1129,18 @@ showLoaderDialog(BuildContext context) {
 
 /// common amountFormater
 
-amountFormat(String price) {
-  var priceAmount = price.isNotEmpty || price != null ? price : "0";
-  var formattedNumber =
-      NumberFormat("#,##0", "en_US").format(double.parse(price));
-  return formattedNumber;
+amountFormat(String? price) {
+  if (price == null || price.isEmpty || price.toLowerCase() == "nan") {
+    return "0";
+  }
+  try {
+    var formattedNumber =
+        NumberFormat("#,##0", "en_US").format(double.parse(price));
+    return formattedNumber;
+  } catch (e) {
+    debugPrint("amountFormat error: $e");
+    return "0";
+  }
 }
 
 double calculateDistance(lat1, lon1, lat2, lon2) {
@@ -1261,7 +1268,7 @@ commonFilterIcon(Size size) {
   return Container(
       padding: EdgeInsets.all(size.width * (isIpad ? numD008 : numD043)),
       child: Image.asset(
-        "${iconsPath}ic_filter.png",
+        "assets/icons/newfilter.png",
         fit: BoxFit.fill,
       ));
 }

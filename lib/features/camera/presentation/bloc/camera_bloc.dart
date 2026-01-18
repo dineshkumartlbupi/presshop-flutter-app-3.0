@@ -28,8 +28,8 @@ import 'camera_state.dart';
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Timer? _recordingTimer;
   DateTime? _startTime;
-  Duration? _stopDurationDifference;
-  double _currentZoom = 1.0;
+  // Duration? _stopDurationDifference;
+  // double _currentZoom = 1.0;
 
   // Location
   final LocationService _locationService = LocationService();
@@ -73,7 +73,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         state.cameraController!.value.isInitialized) {
       return;
     }
-    
+
     // Prevent double initialization
     if (state.status == CameraStatus.loading) return;
 
@@ -121,7 +121,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         cameraDescription,
         ResolutionPreset.high, // Changed from max to high to fix buffer issues
         imageFormatGroup: ImageFormatGroup.jpeg,
-        enableAudio: true, 
+        enableAudio: true,
       );
 
       try {
@@ -486,7 +486,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   void _startTimer() {
     _startTime = DateTime.now();
-    _stopDurationDifference = null;
+    // _stopDurationDifference = null;
     _recordingTimer?.cancel();
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();

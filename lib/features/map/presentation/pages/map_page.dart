@@ -8,14 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+
+import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
 import 'package:presshop/features/map/presentation/bloc/map_event.dart';
 import 'package:presshop/features/map/presentation/bloc/map_state.dart';
-import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/map/presentation/widgets/alert_button_map.dart';
 import 'package:presshop/features/map/presentation/widgets/alert_panel.dart';
 import 'package:presshop/features/map/presentation/widgets/burst_animation.dart';
@@ -24,17 +24,34 @@ import 'package:presshop/features/map/presentation/widgets/custom_info_window.da
 import 'package:presshop/features/map/presentation/widgets/danger_zone_info_window.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
 import 'package:presshop/features/map/presentation/widgets/side_action_panal.dart';
+import 'package:presshop/features/map/presentation/widgets/get_direction_card.dart';
 import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
 
-class MapPage extends StatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
+
+class MapPage extends StatelessWidget {
+  final bool hideLeading;
+  const MapPage({Key? key, this.hideLeading = false}) : super(key: key);
 
   @override
-  State<MapPage> createState() => _MapPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<MapBloc>()..add(GetCurrentLocationEvent()),
+      child: _MapPageContent(hideLeading: hideLeading),
+    );
+  }
 }
 
-class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
+class _MapPageContent extends StatefulWidget {
+  final bool hideLeading;
+  const _MapPageContent({Key? key, this.hideLeading = false}) : super(key: key);
+
+  @override
+  State<_MapPageContent> createState() => _MapPageContentState();
+}
+
+class _MapPageContentState extends State<_MapPageContent>
+    with SingleTickerProviderStateMixin {
   final Completer<GoogleMapController> _controller = Completer();
   double _currentZoom = 14.0;
   final TextEditingController _searchController = TextEditingController();
@@ -205,18 +222,6 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
     }
   }
 
-  final Map<String, String> burstIcons = {
-    "accident": "assets/markers/bg-removed-accident.png",
-    "crash": "assets/markers/bg-removed-crash.png",
-    "fire": "assets/markers/bg-removed-fire.png",
-    "medical": "assets/markers/bg-removed-medicine.png",
-    "gun": "assets/markers/bg-removed-gun.png",
-    "protest": "assets/markers/bg-removed-protest.png",
-    "knife": "assets/markers/bg-removed-knife.png",
-    "fight": "assets/markers/bg-removed-fight.png",
-    "content": "assets/markers/bg-removed-content.png",
-  };
-
   Future<void> _addBurst(LatLng position, String type) async {
     final size = MediaQuery.of(context).size;
     // _burstType = type;
@@ -286,366 +291,363 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
     }
   }
 
+  void _showLocationPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Location Permission Required'),
+        content: const Text(
+            'This app needs location access to function properly. Please enable it in settings.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              openAppSettings();
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return BlocProvider(
-      create: (_) => sl<MapBloc>()..add(GetCurrentLocationEvent()),
-      child: BlocConsumer<MapBloc, MapState>(
-        listener: (context, state) {
-          if (state.errorMessage != null) {
+    return BlocConsumer<MapBloc, MapState>(
+      listener: (context, state) {
+        if (state.errorMessage != null) {
+          if (state.errorMessage == "Location permissions are denied" ||
+              state.errorMessage ==
+                  "Location permissions are permanently denied") {
+            _showLocationPermissionDialog();
+          } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage!)),
             );
           }
-          if (state.myLocation != null && !_controller.isCompleted) {
-            // Initial location set
-          }
+        }
+        if (state.myLocation != null && !_controller.isCompleted) {
+          // Initial location set
+        }
 
-          // Listen for selection changes to update info window position
-          // This logic was in ref.listen in the original file
-          if (state.selectedPosition != null) {
-            _controller.future.then((ctrl) {
-              ctrl.animateCamera(
-                  CameraUpdate.newLatLng(state.selectedPosition!));
-            });
-            _updateInfoWindow();
-          }
-        },
-        builder: (context, state) {
-          if (state.myLocation == null) {
-            return const Scaffold(
-                body: Center(child: CircularProgressIndicator()));
-          }
+        // Listen for selection changes to update info window position
+        // This logic was in ref.listen in the original file
+        if (state.selectedPosition != null) {
+          _controller.future.then((ctrl) {
+            ctrl.animateCamera(CameraUpdate.newLatLng(state.selectedPosition!));
+          });
+          _updateInfoWindow();
+        }
+      },
+      builder: (context, state) {
+        if (state.myLocation == null) {
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
+        }
 
-          return Scaffold(
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: true,
-              title: Padding(
-                padding: EdgeInsets.only(left: size.width * numD04),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD10,
-                    width: size.width * numD10,
-                  ),
-                ),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
-              size: size,
-              showActions: true,
-              leadingFxn: () {
-                Navigator.pop(context);
-              },
-              actionWidget: [
-                SizedBox(
-                  width: size.width * numD02,
-                ),
-                Center(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MenuScreen()));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(size.width * numD025),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD035),
-                      ),
-                      child: Image.asset(
-                        'assets/icons/menu3.png',
-                        width: size.width * numD06,
-                        height: size.width * numD06,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * numD04,
-                )
-              ],
-            ),
-            body: Stack(
-              children: [
-                GoogleMap(
-                  onMapCreated: (c) {
-                    if (!_controller.isCompleted) {
-                      _controller.complete(c);
-                    }
+        return Scaffold(
+          appBar: NewHomeAppBar(
+            size: size,
+            hideLeading: widget.hideLeading,
+          ),
+          body: Stack(
+            children: [
+              GoogleMap(
+                onMapCreated: (c) {
+                  if (!_controller.isCompleted) {
+                    _controller.complete(c);
+                  }
+                  _updateInfoWindow();
+                },
+                onCameraMoveStarted: () {
+                  // mapController.setDragging(true); // Add event if needed
+                },
+                onCameraMove: (_) => _updateInfoWindow(),
+                onCameraIdle: () {
+                  if (mounted) {
+                    // mapController.setDragging(false); // Add event if needed
                     _updateInfoWindow();
-                  },
-                  onCameraMoveStarted: () {
-                    // mapController.setDragging(true); // Add event if needed
-                  },
-                  onCameraMove: (_) => _updateInfoWindow(),
-                  onCameraIdle: () {
-                    if (mounted) {
-                      // mapController.setDragging(false); // Add event if needed
-                      _updateInfoWindow();
-                    }
-                  },
-                  onTap: (pos) async {
-                    if (_isSelectingAlertLocation &&
-                        _pendingAlertType != null) {
-                      context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
-                          type: _pendingAlertType!, position: pos));
-                      setState(() {
-                        _isSelectingAlertLocation = false;
-                        _pendingAlertType = null;
-                      });
-                      return;
-                    }
-
-                    if (state.showAlertPanel) {
-                      context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                      return;
-                    }
-
-                    // Destination selection mode logic omitted for brevity as it requires more BLoC updates
-                    // If needed, can be added similarly
-
-                    context.read<MapBloc>().add(ClearSelectedMarkerEvent());
-                    context.read<MapBloc>().add(ClearSelectedPolygonEvent());
+                  }
+                },
+                onTap: (pos) async {
+                  if (_isSelectingAlertLocation && _pendingAlertType != null) {
+                    context.read<MapBloc>().add(SetPreviewAlertMarkerEvent(
+                        type: _pendingAlertType!, position: pos));
                     setState(() {
-                      _infoOffset = null;
-                      _polygonInfoOffset = null;
+                      _isSelectingAlertLocation = false;
+                      _pendingAlertType = null;
                     });
-                  },
-                  initialCameraPosition: state.initialCamera ??
-                      CameraPosition(
-                          target: state.myLocation!, zoom: _currentZoom),
-                  markers: state.markers,
-                  polylines: state.polylines,
-                  polygons: state.polygons,
-                  circles: state.circles,
-                  myLocationButtonEnabled: false,
-                  myLocationEnabled: true,
-                  zoomControlsEnabled: false,
-                  padding: const EdgeInsets.only(bottom: 220),
-                ),
-                if (_infoOffset != null && state.selectedIncident != null)
-                  Positioned(
-                    left: _infoOffset!.dx -
-                        (state.selectedIncident!.markerType == 'content'
-                            ? 32
-                            : 140),
-                    top: _infoOffset!.dy -
-                        (state.selectedIncident!.markerType == 'content'
-                            ? 260
-                            : 195),
-                    child: state.selectedIncident!.markerType == 'content'
-                        ? ContentMarkerPopup(
-                            incident: state.selectedIncident!,
-                            onViewPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => NewsDetailsScreen(
-                                    newsId: state.selectedIncident!.id,
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : CustomInfoWindow(
-                            incident: state.selectedIncident!,
-                            onPressed: () {},
-                          ),
-                  ),
+                    return;
+                  }
 
-                // ======================= Polygon Info =======================
-                if (_polygonInfoOffset != null &&
-                    state.selectedPolygonId != null)
-                  Positioned(
-                    left: _polygonInfoOffset!.dx - 110,
-                    top: _polygonInfoOffset!.dy - 140,
-                    child: DangerZoneInfoWindow(
-                      name: "Danger Zone",
-                      description: "High risk area - proceed with caution",
-                      onPressed: () {
-                        context
-                            .read<MapBloc>()
-                            .add(ClearSelectedPolygonEvent());
-                        setState(() => _polygonInfoOffset = null);
-                      },
-                    ),
-                  ),
+                  if (state.showAlertPanel) {
+                    context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                    return;
+                  }
 
-                // ======================= Route Info =======================
-                // Route info logic omitted for brevity, can be added if needed
+                  // Destination selection mode logic omitted for brevity as it requires more BLoC updates
+                  // If needed, can be added similarly
 
-                // ======================= Search + Filter Bar =======================
+                  context.read<MapBloc>().add(ClearSelectedMarkerEvent());
+                  context.read<MapBloc>().add(ClearSelectedPolygonEvent());
+                  setState(() {
+                    _infoOffset = null;
+                    _polygonInfoOffset = null;
+                  });
+                },
+                initialCameraPosition: state.initialCamera ??
+                    CameraPosition(
+                        target: state.myLocation!, zoom: _currentZoom),
+                markers: state.markers,
+                polylines: state.polylines,
+                polygons: state.polygons,
+                circles: state.circles,
+                myLocationButtonEnabled: false,
+                myLocationEnabled: true,
+                zoomControlsEnabled: false,
+                padding: const EdgeInsets.only(bottom: 220),
+              ),
+              if (_infoOffset != null && state.selectedIncident != null)
                 Positioned(
-                  top: 10,
-                  left: 0,
-                  right: 0,
-                  child: SizedBox(
-                    height: 390,
-                    child: Stack(
-                      children: [
-                        SearchAndFilterBar(
-                          searchController: _searchController,
-                          searchFocusNode: _searchFocusNode,
-                          onPressedOnNavigation: () {
-                            // Toggle get direction card
-                          },
-                          onChange: (value) {
-                            _searchPlaces(value);
-                          },
-                          selectedAlertType: state.selectedAlertType,
-                          selectedDistance: state.selectedDistance,
-                          selectedCategory: state.selectedCategory,
-                          onAlertTypeChanged: (value) {
-                            context.read<MapBloc>().add(UpdateFiltersEvent(
-                                  alertType: value,
-                                  distance: state.selectedDistance,
-                                  category: state.selectedCategory,
-                                ));
-                          },
-                          onDistanceChanged: (value) {
-                            context.read<MapBloc>().add(UpdateFiltersEvent(
-                                  alertType: state.selectedAlertType,
-                                  distance: value,
-                                  category: state.selectedCategory,
-                                ));
-                          },
-                          onCategoryChanged: (value) {
-                            context.read<MapBloc>().add(UpdateFiltersEvent(
-                                  alertType: state.selectedAlertType,
-                                  distance: state.selectedDistance,
-                                  category: value,
-                                ));
-                          },
-                        ),
-                        // Dropdown overlaps filters and starts right under the search bar
-                        if (_showDropdown && _predictions.isNotEmpty)
-                          Positioned(
-                            left: 12,
-                            right: 55,
-                            top: 50,
-                            child: Material(
-                              elevation: 4,
-                              borderRadius: BorderRadius.circular(8),
-                              child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxHeight: 200),
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  itemCount: _predictions.length,
-                                  itemBuilder: (context, index) {
-                                    final prediction = _predictions[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        _selectPlace(
-                                          prediction['place_id'],
-                                          prediction['description'],
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                        child: Text(prediction['description']),
-                                      ),
-                                    );
-                                  },
+                  left: _infoOffset!.dx -
+                      (state.selectedIncident!.markerType == 'content'
+                          ? 32
+                          : 140),
+                  top: _infoOffset!.dy -
+                      (state.selectedIncident!.markerType == 'content'
+                          ? 260
+                          : 195),
+                  child: state.selectedIncident!.markerType == 'content'
+                      ? ContentMarkerPopup(
+                          incident: state.selectedIncident!,
+                          onViewPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewsDetailsScreen(
+                                  newsId: state.selectedIncident!.id,
                                 ),
+                              ),
+                            );
+                          },
+                        )
+                      : CustomInfoWindow(
+                          incident: state.selectedIncident!,
+                          onPressed: () {},
+                        ),
+                ),
+
+              // ======================= Polygon Info =======================
+              if (_polygonInfoOffset != null && state.selectedPolygonId != null)
+                Positioned(
+                  left: _polygonInfoOffset!.dx - 110,
+                  top: _polygonInfoOffset!.dy - 140,
+                  child: DangerZoneInfoWindow(
+                    name: "Danger Zone",
+                    description: "High risk area - proceed with caution",
+                    onPressed: () {
+                      context.read<MapBloc>().add(ClearSelectedPolygonEvent());
+                      setState(() => _polygonInfoOffset = null);
+                    },
+                  ),
+                ),
+
+              // ======================= Route Info =======================
+              // Route info logic omitted for brevity, can be added if needed
+
+              // ======================= Search + Filter Bar =======================
+              Positioned(
+                top: 10,
+                left: 0,
+                right: 0,
+                child: SizedBox(
+                  height: 390,
+                  child: Stack(
+                    children: [
+                      SearchAndFilterBar(
+                        searchController: _searchController,
+                        searchFocusNode: _searchFocusNode,
+                        onPressedOnNavigation: () {
+                          context
+                              .read<MapBloc>()
+                              .add(ToggleGetDirectionCardEvent());
+                        },
+                        // We need to implement the callback in build:
+                        // onPressedOnNavigation: () { context.read<MapBloc>().add(ToggleGetDirectionCardEvent()); }
+                        // But wait, there is no ToggleGetDirectionCardEvent in my lookup.
+                        // There is _onStartNavigation but that's for after.
+                        // I should probably add an event 'ShowGetDirectionCardEvent' or similar.
+                        // Checking MapBloc again... no specific event for showing it solely.
+                        // But MapController had `toggleGetDirectionCard`.
+                        // I'll stick to what I have. If logic is missing in BLoC, I'll add it later.
+                        // For now, I'll just leave the callback empty or log it.
+                        onChange: (value) {
+                          _searchPlaces(value);
+                        },
+                        selectedAlertType: state.selectedAlertType,
+                        selectedDistance: state.selectedDistance,
+                        selectedCategory: state.selectedCategory,
+                        onAlertTypeChanged: (value) {
+                          context.read<MapBloc>().add(UpdateFiltersEvent(
+                                alertType: value,
+                                distance: state.selectedDistance,
+                                category: state.selectedCategory,
+                              ));
+                        },
+                        onDistanceChanged: (value) {
+                          context.read<MapBloc>().add(UpdateFiltersEvent(
+                                alertType: state.selectedAlertType,
+                                distance: value,
+                                category: state.selectedCategory,
+                              ));
+                        },
+                        onCategoryChanged: (value) {
+                          context.read<MapBloc>().add(UpdateFiltersEvent(
+                                alertType: state.selectedAlertType,
+                                distance: state.selectedDistance,
+                                category: value,
+                              ));
+                        },
+                      ),
+                      // Dropdown overlaps filters and starts right under the search bar
+                      if (_showDropdown && _predictions.isNotEmpty)
+                        Positioned(
+                          left: 12,
+                          right: 55,
+                          top: 50,
+                          child: Material(
+                            elevation: 4,
+                            borderRadius: BorderRadius.circular(8),
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxHeight: 200),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                itemCount: _predictions.length,
+                                itemBuilder: (context, index) {
+                                  final prediction = _predictions[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      _selectPlace(
+                                        prediction['place_id'],
+                                        prediction['description'],
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      child: Text(prediction['description']),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
-                      ],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ======================= Get Direction Card =======================
+              Positioned(
+                top: 65,
+                right: 15, // Aligned to the right button
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: state.showGetDirectionCard ? 1 : 0,
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeOutBack,
+                    alignment: Alignment.topRight,
+                    scale: state.showGetDirectionCard ? 1.0 : 0.0,
+                    child: IgnorePointer(
+                      ignoring: !state.showGetDirectionCard,
+                      child: const GetDirectionCard(),
                     ),
                   ),
                 ),
+              ),
 
-                // ======================================> Alert Button
-                Positioned(
-                  left: 16,
-                  bottom: 15,
-                  child: GestureDetector(
-                    onTap: () {
-                      context.read<MapBloc>().add(ToggleAlertPanelEvent());
-                    },
-                    child: const AlertButtonMap(),
-                  ),
+              // ======================================> Alert Button
+              Positioned(
+                left: 16,
+                bottom: 15,
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                  },
+                  child: const AlertButtonMap(),
                 ),
+              ),
 
-                // ======================= Side Action Panel =======================
-                Positioned(
-                  right: 20,
-                  bottom: 20,
-                  child: SideActionPanel(
-                    onCurrentLocation: _goToCurrentLocation,
-                    onZoomIn: _zoomIn,
-                    onZoomOut: _zoomOut,
-                  ),
+              // ======================= Side Action Panel =======================
+              Positioned(
+                right: 20,
+                bottom: 20,
+                child: SideActionPanel(
+                  onCurrentLocation: _goToCurrentLocation,
+                  onZoomIn: _zoomIn,
+                  onZoomOut: _zoomOut,
                 ),
+              ),
 
-                // ======================= Alert Panel =======================
-                Positioned(
-                  bottom: 56,
-                  left: 0,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 300),
-                    opacity: state.showAlertPanel ? 1 : 0,
-                    child: AnimatedScale(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeOutBack,
-                      alignment: Alignment.bottomLeft,
-                      scale: state.showAlertPanel ? 1 : 0.0,
-                      child: IgnorePointer(
-                        ignoring: !state.showAlertPanel,
-                        child: AlertPanel(
-                          onClose: () {
-                            context
-                                .read<MapBloc>()
-                                .add(ToggleAlertPanelEvent());
-                          },
-                          onAlertSelected: (type) async {
-                            try {
-                              debugPrint("AlertSelected: $type");
-                              if (state.myLocation != null) {
-                                _addBurst(state.myLocation!, type);
-                                context.read<MapBloc>().add(AddAlertMarkerEvent(
-                                    type: type, position: state.myLocation!));
-                              } else {
-                                debugPrint(
-                                    "AlertSelected: Location not available");
-                              }
-                            } catch (e) {
-                              debugPrint("Error adding alert marker: $e");
+              // ======================= Alert Panel =======================
+              Positioned(
+                bottom: 56,
+                left: 0,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: state.showAlertPanel ? 1 : 0,
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeOutBack,
+                    alignment: Alignment.bottomLeft,
+                    scale: state.showAlertPanel ? 1 : 0.0,
+                    child: IgnorePointer(
+                      ignoring: !state.showAlertPanel,
+                      child: AlertPanel(
+                        onClose: () {
+                          context.read<MapBloc>().add(ToggleAlertPanelEvent());
+                        },
+                        onAlertSelected: (type) async {
+                          try {
+                            debugPrint("AlertSelected: $type");
+                            if (state.myLocation != null) {
+                              _addBurst(state.myLocation!, type);
+                              context.read<MapBloc>().add(AddAlertMarkerEvent(
+                                  type: type, position: state.myLocation!));
+                            } else {
+                              debugPrint(
+                                  "AlertSelected: Location not available");
                             }
-                          },
-                        ),
+                          } catch (e) {
+                            debugPrint("Error adding alert marker: $e");
+                          }
+                        },
                       ),
                     ),
                   ),
                 ),
-                IgnorePointer(
-                  child: CustomPaint(
-                    painter: BurstPainter(_particles, _burstImage),
-                    child: Container(),
-                  ),
+              ),
+              IgnorePointer(
+                child: CustomPaint(
+                  painter: BurstPainter(_particles, _burstImage),
+                  child: Container(),
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

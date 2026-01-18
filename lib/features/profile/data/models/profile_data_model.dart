@@ -25,6 +25,7 @@ class ProfileDataModel extends ProfileData {
     super.avatarId,
     super.sourceMap,
     super.joinedDate,
+    super.avatarUrl,
   });
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
@@ -35,9 +36,11 @@ class ProfileDataModel extends ProfileData {
       userName: json['username'] ?? json['user_name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? json['mobile_number'] ?? '',
-      profileImage: json['profile_image'] ??
-          (json['avatarData'] != null ? json['avatarData']['avatar'] : null) ??
-          json['avatar'],
+      profileImage: json['profile_image']?.toString(),
+      avatarUrl: (json['avatarData'] != null
+              ? json['avatarData']['avatar']?.toString()
+              : null) ??
+          json['avatar']?.toString(),
       address: json['address'],
       city: json['city'],
       country: json['country'],
@@ -52,11 +55,15 @@ class ProfileDataModel extends ProfileData {
       totalEarnings: json['totalEarnings']?.toString(),
       apartment: json['apartment'] ?? '',
       countryCode: json['country_code'] ?? json['countryCode'] ?? '',
-      avatarId: json["avatarId"] ??
-          (json["avatarData"] != null ? json["avatarData"]["_id"] : null),
+      avatarId: json["avatarId"]?.toString() ??
+          (json["avatarData"] != null
+              ? json["avatarData"]["_id"]?.toString()
+              : null),
       sourceMap: json['source'],
-      joinedDate: changeDateFormat(
-          "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"], "dd MMMM, yyyy"),
+      joinedDate: json["createdAt"] != null
+          ? changeDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"],
+              "dd MMMM, yyyy")
+          : null,
     );
   }
 

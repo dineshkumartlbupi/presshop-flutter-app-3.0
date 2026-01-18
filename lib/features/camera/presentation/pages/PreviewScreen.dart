@@ -21,6 +21,7 @@ import 'AudioWaveFormWidgetScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 
+// ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
   CameraData? cameraData;
   List<CameraData> cameraListData;

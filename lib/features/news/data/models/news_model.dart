@@ -16,6 +16,8 @@ class NewsModel extends News {
     bool? isLiked,
     String? userImage,
     String? userName,
+    double? latitude,
+    double? longitude,
   }) : super(
           id: id,
           title: title,
@@ -31,6 +33,8 @@ class NewsModel extends News {
           isLiked: isLiked,
           userImage: userImage,
           userName: userName,
+          latitude: latitude,
+          longitude: longitude,
         );
 
   factory NewsModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +56,16 @@ class NewsModel extends News {
           : null,
       userName: json['user_id'] != null && json['user_id'] is Map
           ? json['user_id']['full_name']
+          : null,
+      latitude: json['position'] != null && json['position'] is Map
+          ? (json['position']['lat'] is double
+              ? json['position']['lat']
+              : double.tryParse(json['position']['lat'].toString()))
+          : null,
+      longitude: json['position'] != null && json['position'] is Map
+          ? (json['position']['lng'] is double
+              ? json['position']['lng']
+              : double.tryParse(json['position']['lng'].toString()))
           : null,
     );
   }

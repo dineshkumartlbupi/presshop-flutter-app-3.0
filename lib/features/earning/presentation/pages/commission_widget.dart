@@ -5,6 +5,7 @@ import '../../domain/entities/commission.dart';
 
 import 'package:presshop/main.dart';
 
+// ignore: must_be_immutable
 class CommissionWidget extends StatelessWidget {
   final Commission commissionData;
   late Size size;

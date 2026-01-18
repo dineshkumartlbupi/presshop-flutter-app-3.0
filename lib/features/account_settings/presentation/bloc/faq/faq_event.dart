@@ -10,16 +10,19 @@ abstract class FAQEvent extends Equatable {
 class FAQLoadCategories extends FAQEvent {
   final String? initialCategoryName;
   final int? initialCategoryIndex;
+  final String type;
 
   const FAQLoadCategories({
     this.initialCategoryName,
     this.initialCategoryIndex,
+    this.type = 'FAQ',
   });
 
   @override
   List<Object> get props => [
         initialCategoryName ?? '',
         initialCategoryIndex ?? -1,
+        type,
       ];
 }
 

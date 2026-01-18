@@ -11,8 +11,6 @@ import 'package:presshop/main.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 
-/// Singleton class to manage token refresh operations
-/// Handles automatic token refresh when 401 errors occur
 class TokenRefreshManager {
   static final TokenRefreshManager _instance = TokenRefreshManager._internal();
   factory TokenRefreshManager() => _instance;
@@ -21,18 +19,12 @@ class TokenRefreshManager {
   bool _isRefreshing = false;
   final List<Future<void> Function()> _pendingRequests = [];
   Completer<bool>? _refreshCompleter;
-  int _retryCount = 0;
+  // int _retryCount = 0;
   static const int _maxRetries = 3;
   static const Duration _initialRetryDelay = Duration(seconds: 2);
 
-  /// Check if token refresh is in progress
   bool get isRefreshing => _isRefreshing;
-
-  /// Refresh the access token using refresh token
-  /// Returns true if refresh was successful, false otherwise
-  /// Retries on network errors, logs out if refresh token is invalid (401)
   Future<bool> refreshToken({int retryAttempt = 0}) async {
-    // If already refreshing, wait for the existing refresh to complete
     if (_isRefreshing && _refreshCompleter != null && retryAttempt == 0) {
       debugPrint("Token refresh already in progress, waiting...");
       return await _refreshCompleter!.future;
@@ -41,7 +33,6 @@ class TokenRefreshManager {
     const storage = FlutterSecureStorage();
     String? refreshTokenValue = await storage.read(key: refreshtokenKey);
 
-    // Check if refresh token exists
     if (refreshTokenValue == null || refreshTokenValue.isEmpty) {
       debugPrint(
           "No refresh token available in storage (TokenRefreshManager) - Logging out");
@@ -83,7 +74,6 @@ class TokenRefreshManager {
       debugPrint("Token refresh response: ${response.statusCode}");
       debugPrint("Token refresh body: ${response.body}");
 
-      // If refresh token is invalid (401), logout immediately
       if (isUnauthorizedResponse(response.statusCode, response.body)) {
         debugPrint(
             "Refresh token API returned 401 - Session expired - Logging out");
@@ -101,18 +91,12 @@ class TokenRefreshManager {
         try {
           final map = jsonDecode(response.body);
 
-          // Check for nested data object and snake_case keys as per new API response
           if (map["success"] == true &&
               map["data"] != null &&
               map["data"]["access_token"] != null &&
               map["data"]["refresh_token"] != null) {
-            // 1. Delete old access token
-            // 2. Delete old refresh token
             await storage.delete(key: tokenKey);
             await storage.delete(key: refreshtokenKey);
-
-            // 3. Save NEW access token
-            // 4. Save NEW refresh token
             final newAccessToken = map["data"]["access_token"];
             final newRefreshToken = map["data"]["refresh_token"];
 
@@ -123,7 +107,7 @@ class TokenRefreshManager {
             sharedPreferences!.setString(refreshtokenKey, newRefreshToken);
 
             debugPrint("Token refreshed successfully");
-            _retryCount = 0; // Reset retry count on success
+            // _retryCount = 0;
             if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
               _refreshCompleter!.complete(true);
             }
@@ -133,7 +117,6 @@ class TokenRefreshManager {
             return true;
           } else {
             debugPrint("Invalid token refresh response format");
-            // Retry on invalid response format (might be server issue)
             if (retryAttempt < _maxRetries) {
               debugPrint(
                   "Retrying token refresh after invalid response format...");
@@ -145,7 +128,6 @@ class TokenRefreshManager {
           }
         } catch (e) {
           debugPrint("Error parsing token refresh response: $e");
-          // Retry on parse errors (might be network issue)
           if (retryAttempt < _maxRetries) {
             debugPrint("Retrying token refresh after parse error...");
             await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
@@ -155,7 +137,6 @@ class TokenRefreshManager {
           return false;
         }
       } else {
-        // Non-401 error - retry (might be server error, network issue, etc.)
         debugPrint("Token refresh failed with status: ${response.statusCode}");
         if (retryAttempt < _maxRetries) {
           debugPrint(
@@ -163,10 +144,6 @@ class TokenRefreshManager {
           await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
           return await refreshToken(retryAttempt: retryAttempt + 1);
         }
-        // If max retries reached for non-401 error, we might not want to logout immediately
-        // but we return false so the original request fails.
-        // However, if it's a persistent issue, user might be stuck.
-        // For now, let's NOT logout on 500s, just return false.
         if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
           _refreshCompleter!.complete(false);
         }
@@ -177,7 +154,6 @@ class TokenRefreshManager {
       }
     } catch (e) {
       debugPrint("Token refresh exception: $e");
-      // Retry on exceptions (network errors, etc.)
       if (retryAttempt < _maxRetries) {
         debugPrint("Retrying token refresh after exception...");
         await Future.delayed(_initialRetryDelay * (retryAttempt + 1));
@@ -194,14 +170,12 @@ class TokenRefreshManager {
     }
   }
 
-  /// Add a pending request to be retried after token refresh
   void addPendingRequest(Future<void> Function() retryFunction) {
     _pendingRequests.add(retryFunction);
     debugPrint(
         "Added pending request. Total pending: ${_pendingRequests.length}");
   }
 
-  /// Process all pending requests after token refresh
   void _processPendingRequests(bool success) {
     if (success) {
       debugPrint("Processing ${_pendingRequests.length} pending requests");
@@ -219,7 +193,6 @@ class TokenRefreshManager {
     _pendingRequests.clear();
   }
 
-  /// Logout user and navigate to login screen
   void _logoutUser() async {
     debugPrint("🧹 Logging out user (Selective Wipe)...");
     const storage = FlutterSecureStorage();
@@ -236,23 +209,19 @@ class TokenRefreshManager {
     }
   }
 
-  /// Check if user should be logged out
   static bool shouldLogout() {
     return true;
   }
 
-  /// Clear logout flag
   static void clearLogoutFlag() {
     sharedPreferences?.remove("force_logout");
   }
 
-  /// Check if response indicates unauthorized (401)
   static bool isUnauthorizedResponse(int statusCode, String? responseBody) {
     if (statusCode == 401) {
       return true;
     }
 
-    // Also check response body for unauthorized messages
     if (responseBody != null) {
       try {
         final map = jsonDecode(responseBody);
@@ -266,7 +235,7 @@ class TokenRefreshManager {
           return true;
         }
       } catch (e) {
-        // If parsing fails, just check status code
+        debugPrint("Error parsing response body: $e");
       }
     }
 

@@ -12,8 +12,7 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart'
-    hide Navigator;
+import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/onboarding/presentation/pages/WalkThrough.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -122,10 +121,10 @@ class _SplashScreenState extends State<SplashScreen>
               mustForceUpdate = true;
             });
           } else if (state is SplashError) {
-             setState(() {
-                showError = true;
-                errorMessage = state.message;
-             });
+            setState(() {
+              showError = true;
+              errorMessage = state.message;
+            });
           }
         },
         builder: (context, state) {
@@ -141,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 if (mustForceUpdate) _forceUpdateOverlay(size),
-                if (showError) _errorOverlay(size, errorMessage),
+                if (showError) _errorOverlay(context, size, errorMessage),
               ],
             ),
           );
@@ -233,7 +232,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Widget _errorOverlay(Size size, String message) {
+  Widget _errorOverlay(BuildContext context, Size size, String message) {
     return WillPopScope(
       onWillPop: () async => false,
       child: Container(
@@ -258,7 +257,8 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 Row(
                   children: [
-                    Icon(Icons.error_outline, color: Colors.red, size: size.width * 0.07),
+                    Icon(Icons.error_outline,
+                        color: Colors.red, size: size.width * 0.07),
                     SizedBox(width: size.width * 0.02),
                     Text(
                       "Connection Error",
@@ -291,11 +291,11 @@ class _SplashScreenState extends State<SplashScreen>
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, colorThemePink),
                     () {
-                       setState(() {
-                         showError = false;
-                         errorMessage = "";
-                       });
-                       context.read<SplashBloc>().add(AppStarted());
+                      setState(() {
+                        showError = false;
+                        errorMessage = "";
+                      });
+                      context.read<SplashBloc>().add(AppStarted());
                     },
                   ),
                 ),
@@ -348,7 +348,5 @@ class _SplashScreenState extends State<SplashScreen>
       deviceId = iosInfo.identifierForVendor!;
     }
     debugPrint("Device ID: $deviceId");
-    // Note: We are not calling AddDevice API here yet as it requires SplashBloc update.
-    // The Dashboard will handle the actual API call.
   }
 }

@@ -12,7 +12,7 @@ abstract class AccountSettingsRemoteDataSource {
   Future<AdminContactInfoModel> getAdminContactInfo();
   Future<List<FAQModel>> getFAQs(String category, int offset, int limit);
   Future<List<FAQModel>> getPriceTips(String category, int offset, int limit);
-  Future<List<CategoryDataModel>> getFAQCategories();
+  Future<List<CategoryDataModel>> getFAQCategories(String type);
 }
 
 class AccountSettingsRemoteDataSourceImpl
@@ -31,7 +31,12 @@ class AccountSettingsRemoteDataSourceImpl
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
-        if (data['code'] == 200) {
+        // Check for success flag or code in various locations to be robust
+        if (data['success'] == true ||
+            data['code'] == 200 ||
+            (data['data'] != null &&
+                data['data'] is Map &&
+                data['data']['code'] == 200)) {
           return true;
         }
         throw ServerFailure(
@@ -49,15 +54,7 @@ class AccountSettingsRemoteDataSourceImpl
       final response = await apiClient.get(adminDetailAPI);
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data is String) {
-          // Handle string response if necessary (double decode logic sometimes seen in this project)
-          // But assuming ApiClient handles it or it's a map.
-          // However previous code showed JSON decoding might be needed if response.data is string.
-          // ApiClient usually returns Map if configured, but let's see current usages.
-          // In deleteAccount it accessed data['code'].
-          // Let's assume Map.
-          // Wait, dashboard remote source handled "data is String".
-        }
+        if (data is String) {}
         return AdminContactInfoModel.fromJson(data);
       }
       throw const ServerFailure(message: 'Failed to fetch admin details');
@@ -81,10 +78,16 @@ class AccountSettingsRemoteDataSourceImpl
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data is Map && data['status'] is List) {
-          return (data['status'] as List)
-              .map((e) => FAQModel.fromJson(e)) // Use stored clean model
-              .toList();
+        if (data is Map) {
+          if (data['data'] != null && data['data'] is List) {
+            return (data['data'] as List)
+                .map((e) => FAQModel.fromJson(e))
+                .toList();
+          } else if (data['status'] != null && data['status'] is List) {
+            return (data['status'] as List)
+                .map((e) => FAQModel.fromJson(e))
+                .toList();
+          }
         }
         return [];
       }
@@ -123,11 +126,11 @@ class AccountSettingsRemoteDataSourceImpl
   }
 
   @override
-  Future<List<CategoryDataModel>> getFAQCategories() async {
+  Future<List<CategoryDataModel>> getFAQCategories(String type) async {
     try {
       final response = await apiClient.get(
         getHopperCategory,
-        queryParameters: {'type': 'FAQ'},
+        queryParameters: {'type': type},
       );
 
       if (response.statusCode == 200) {

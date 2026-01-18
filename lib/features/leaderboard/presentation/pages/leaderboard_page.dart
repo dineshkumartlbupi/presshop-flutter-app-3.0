@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/api/api_constant.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -262,7 +262,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                             child: ClipOval(
                               clipBehavior: Clip.antiAlias,
                               child: CachedNetworkImage(
-                                imageUrl: avatarImageUrl + memberItem.avatar,
+                                imageUrl: memberItem.avatar,
                                 errorWidget: (context, url, error) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",

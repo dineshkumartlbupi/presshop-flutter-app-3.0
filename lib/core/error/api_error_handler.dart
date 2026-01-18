@@ -5,7 +5,9 @@ import 'package:presshop/core/error/exceptions.dart';
 
 class ApiErrorHandler {
   static Failure handle(dynamic error) {
-    if (error is DioException) {
+    if (error is Failure) {
+      return error;
+    } else if (error is DioException) {
       return _handleDioError(error);
     } else if (error is FormatException) {
       return const ServerFailure(message: "Data parsing error (Invalid JSON)");
@@ -40,49 +42,73 @@ class ApiErrorHandler {
   }
 
   static Failure _parseBadResponse(DioException e) {
+    if (e.response?.statusCode == 502 || e.response?.statusCode == 503) {
+      return _handleStatusCode(e.response?.statusCode);
+    }
+
     try {
       if (e.response != null && e.response?.data != null) {
         final data = e.response?.data;
-        if (data is Map && data.containsKey('message') && data['message'] != null) {
+        if (data is Map &&
+            data.containsKey('message') &&
+            data['message'] != null) {
           String msg = data['message'];
           if (msg.contains("Cannot GET")) {
-             return const ServerFailure(message: "Service endpoint not found (404)");
+            return const ServerFailure(
+                message: "Service endpoint not found (404)");
+          }
+          if (msg.contains("ERR_NGROK") || msg.contains("is offline")) {
+            return const ServerFailure(
+                message:
+                    "Server is currently unavailable. Please start the server.");
           }
           return ServerFailure(message: msg);
         } else if (data is String) {
-           try {
-              final json = jsonDecode(data);
-              if (json is Map && json.containsKey('message') && json['message'] != null) {
-                String msg = json['message'];
-                if (msg.contains("Cannot GET")) {
-                  return const ServerFailure(message: "Service endpoint not found (404)");
-                }
-                return ServerFailure(message: msg);
+          try {
+            final json = jsonDecode(data);
+            if (json is Map &&
+                json.containsKey('message') &&
+                json['message'] != null) {
+              String msg = json['message'];
+              if (msg.contains("Cannot GET")) {
+                return const ServerFailure(
+                    message: "Service endpoint not found (404)");
               }
-           } catch(_) {}
-           if (data.toString().contains("Cannot GET")) {
-              return const ServerFailure(message: "Service endpoint not found (404)");
-           }
-           // Use the raw string if it's not too long, otherwise fall back to status code
-           if (data.toString().length < 100) {
-             return ServerFailure(message: data.toString());
-           }
+              return ServerFailure(message: msg);
+            }
+          } catch (_) {}
+
+          if (data.toString().contains("Cannot GET")) {
+            return const ServerFailure(
+                message: "Service endpoint not found (404)");
+          }
+          if (data.toString().contains("ERR_NGROK") ||
+              data.toString().contains("is offline")) {
+            return const ServerFailure(
+                message:
+                    "Server is currently unavailable. Please start the server.");
+          }
+
+          if (data.toString().length < 100) {
+            return ServerFailure(message: data.toString());
+          }
         }
       }
     } catch (_) {}
-    
-    // Fallback to strict status code handling if parsing failed
+
     return _handleStatusCode(e.response?.statusCode);
   }
 
   static ServerFailure _handleStatusCode(int? statusCode) {
-    if (statusCode == null) return const ServerFailure(message: "Unknown server error");
-    
+    if (statusCode == null)
+      return const ServerFailure(message: "Unknown server error");
+
     switch (statusCode) {
       case 400:
         return const ServerFailure(message: "Bad request");
       case 401:
-        return const ServerFailure(message: "Unauthorized. Please login again.");
+        return const ServerFailure(
+            message: "Unauthorized. Please login again.");
       case 403:
         return const ServerFailure(message: "Access denied or forbidden");
       case 404:
@@ -98,11 +124,13 @@ class ApiErrorHandler {
       case 502:
         return const ServerFailure(message: "Bad Gateway. Server is down.");
       case 503:
-        return const ServerFailure(message: "Service unavailable. Please try again later.");
+        return const ServerFailure(
+            message: "Service unavailable. Please try again later.");
       case 504:
         return const ServerFailure(message: "Gateway timeout.");
       default:
-        return ServerFailure(message: "Received invalid status code: $statusCode");
+        return ServerFailure(
+            message: "Received invalid status code: $statusCode");
     }
   }
 

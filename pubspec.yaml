@@ -107,6 +107,7 @@ dependencies:
   flutter_dotenv: ^6.0.0
   connectivity_plus: ^7.0.0
   flutter_secure_storage: ^10.0.0
+  chewie: ^1.13.0
   # flutter_foreground_service: ^0.4.1
   # image_cropper: any
 
@@ -126,6 +127,9 @@ flutter:
     - assets/lottieFiles/
     - assets/audio/
     - assets/markers/
+    - assets/markers/gifs/
+    - assets/markers/marker-icons/
+    - assets/markers/bg-removed/
     - assets/rabbits/
     - assets/chatIcons/
     - assets/dialog_flow_auth.json

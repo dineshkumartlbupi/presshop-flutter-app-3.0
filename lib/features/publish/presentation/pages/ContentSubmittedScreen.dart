@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class ContentSubmittedScreen extends StatefulWidget {
   MyContentData? myContentDetail;
   PublishData? publishData;

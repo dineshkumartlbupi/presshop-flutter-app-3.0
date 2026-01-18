@@ -39,7 +39,7 @@ import 'package:presshop/features/notification/domain/usecases/clear_all_notific
 import 'package:presshop/features/dashboard/domain/usecases/check_student_beans.dart';
 import 'package:presshop/features/dashboard/domain/usecases/mark_student_beans_visited.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
-import 'package:presshop/features/map/data/datasources/map_remote_datasource.dart';
+import 'package:presshop/features/map/data/datasources/map_remote_data_source.dart';
 import 'package:presshop/features/map/data/repositories/map_repository_impl.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
@@ -452,6 +452,8 @@ Future<void> init() async {
         getAggregatedNews: sl(),
         getNewsDetail: sl(),
         getComments: sl(),
+        socketService: sl(),
+        sharedPreferences: sl(),
       ));
 
   sl.registerFactory(() => MapBloc(
@@ -461,6 +463,7 @@ Future<void> init() async {
         socketService: sl(),
         newsRepository: sl(),
         markerService: sl(),
+        sharedPreferences: sl(),
       ));
 
   sl.registerFactory(() => MenuBloc(
@@ -553,7 +556,6 @@ Future<void> init() async {
       apiClient: sl(),
     ),
   );
-
 
   // Publication Use Cases
   sl.registerLazySingleton(() => GetPublicationEarningStats(sl()));
@@ -733,7 +735,7 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<MapRemoteDataSource>(
     () => MapRemoteDataSourceImpl(
-      client: sl(),
+      apiClient: sl(),
       googleApiKey: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI',
     ),
   );

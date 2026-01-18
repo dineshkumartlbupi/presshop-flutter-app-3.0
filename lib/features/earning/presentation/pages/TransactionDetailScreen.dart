@@ -18,7 +18,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import '../../domain/entities/earning_transaction.dart';
 import '../../../publication/presentation/pages/publication_list_screen.dart';
-import '../../data/models/earning_model.dart';
+
 import '../../../../features/feed/presentation/pages/feedDataModel.dart';
 
 enum PageType { CONTENT, TASK }
@@ -208,8 +208,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(size.width * numD03),
-                    child: Image.network(
-                        avatarImageUrl + widget.transactionData!.hopperAvatar,
+                    child: Image.network(widget.transactionData!.hopperAvatar,
                         height: size.width * numD11,
                         width: size.width * numD12,
                         fit: BoxFit.cover,

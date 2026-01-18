@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:presshop/core/theme/app_colors.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
@@ -18,8 +19,12 @@ import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
 
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
+import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
+
 class NewsPage extends StatefulWidget {
-  const NewsPage({Key? key}) : super(key: key);
+  final bool hideLeading;
+  const NewsPage({Key? key, this.hideLeading = false}) : super(key: key);
 
   @override
   State<NewsPage> createState() => _NewsPageState();
@@ -56,62 +61,13 @@ class _NewsPageState extends State<NewsPage> {
 
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: true,
-              title: Padding(
-                padding: EdgeInsets.only(left: size.width * numD04),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD10,
-                    width: size.width * numD10,
-                  ),
-                ),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: NewHomeAppBar(
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                Navigator.pop(context);
+              hideLeading: widget.hideLeading,
+              showFilter: true,
+              onFilterTap: () {
+                _showFilterBottomSheet(context, size);
               },
-              actionWidget: [
-                SizedBox(
-                  width: size.width * numD02,
-                ),
-                Center(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MenuScreen()));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(size.width * numD025),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD035),
-                      ),
-                      child: Image.asset(
-                        'assets/icons/menu3.png',
-                        width: size.width * numD06,
-                        height: size.width * numD06,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * numD04,
-                )
-              ],
             ),
             body: Stack(
               children: [
@@ -164,8 +120,7 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   void _toggleLike(String id) {
-    // TODO: Implement toggle like in NewsBloc
-    // context.read<NewsBloc>().add(ToggleNewsLikeEvent(id));
+    context.read<NewsBloc>().add(ToggleNewsLikeEvent(contentId: id));
   }
 
   Future<void> _handleShare(BuildContext context, News item) async {
@@ -509,6 +464,212 @@ class _NewsPageState extends State<NewsPage> {
           initialNews: item,
           scrollToComments: scrollToComments,
         ),
+      ),
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context, Size size) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return _FilterBottomSheetContent(
+          size: size,
+          initialAlertType: 'Alert',
+          initialDistance: '2 miles',
+          initialCategory: 'Category',
+          onApply: (alertType, distance, category) {
+            double km = _convertDistanceToKm(distance);
+            context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+                  lat: 0, // TODO: Use real location
+                  lng: 0,
+                  km: km,
+                  category: category == 'Category' ? 'all' : category,
+                  alertType: alertType == 'Alert' ? null : alertType,
+                ));
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
+  double _convertDistanceToKm(String distance) {
+    switch (distance) {
+      case '1 mile':
+        return 1.60934;
+      case '2 miles':
+        return 3.21869;
+      case '5 miles':
+        return 8.04672;
+      case '10 miles':
+        return 16.0934;
+      case '15 miles':
+        return 24.1402;
+      case '20 miles':
+        return 32.1869;
+      case '25 miles':
+        return 40.2336;
+      case '30 miles':
+        return 48.2803;
+      case '50 miles':
+        return 80.4672;
+      default:
+        return 50.0;
+    }
+  }
+}
+
+class _FilterBottomSheetContent extends StatefulWidget {
+  final Size size;
+  final String initialAlertType;
+  final String initialDistance;
+  final String initialCategory;
+  final Function(String, String, String) onApply;
+
+  const _FilterBottomSheetContent({
+    Key? key,
+    required this.size,
+    required this.initialAlertType,
+    required this.initialDistance,
+    required this.initialCategory,
+    required this.onApply,
+  }) : super(key: key);
+
+  @override
+  _FilterBottomSheetContentState createState() =>
+      _FilterBottomSheetContentState();
+}
+
+class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
+  late String tempAlertType;
+  late String tempDistance;
+  late String tempCategory;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    tempAlertType = widget.initialAlertType;
+    tempDistance = widget.initialDistance;
+    tempCategory = widget.initialCategory;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: widget.size.width * numD05,
+        right: widget.size.width * numD05,
+        top: widget.size.width * numD05,
+        bottom: MediaQuery.of(context).viewInsets.bottom +
+            widget.size.width * numD05,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(widget.size.width * numD05),
+          topRight: Radius.circular(widget.size.width * numD05),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                splashRadius: widget.size.width * numD07,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.close,
+                  color: Colors.black,
+                  size: widget.size.width * numD07,
+                ),
+              ),
+              Text(
+                "Sort and Filter",
+                style: commonTextStyle(
+                    size: widget.size,
+                    fontSize: widget.size.width * appBarHeadingFontSizeNew,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    tempAlertType = 'Alert';
+                    tempDistance = '2 miles';
+                    tempCategory = 'Category';
+                    _searchController.clear();
+                  });
+                },
+                child: Text(
+                  "Clear all",
+                  style: TextStyle(
+                      color: colorThemePink,
+                      fontWeight: FontWeight.w400,
+                      fontSize: widget.size.width * numD035),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: widget.size.width * numD05),
+
+          // Search And Filters
+          SearchAndFilterBar(
+            searchController: _searchController,
+            selectedAlertType: tempAlertType,
+            selectedDistance: tempDistance,
+            selectedCategory: tempCategory,
+            onAlertTypeChanged: (val) {
+              if (val != null) setState(() => tempAlertType = val);
+            },
+            onDistanceChanged: (val) {
+              if (val != null) setState(() => tempDistance = val);
+            },
+            onCategoryChanged: (val) {
+              if (val != null) setState(() => tempCategory = val);
+            },
+            onPressedOnNavigation: () {},
+          ),
+
+          SizedBox(height: widget.size.width * numD08),
+
+          // Apply Button
+          Container(
+            width: widget.size.width,
+            height: widget.size.width * numD13,
+            margin:
+                EdgeInsets.symmetric(horizontal: widget.size.width * numD04),
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.size.width * numD04,
+            ),
+            child: commonElevatedButton(
+                "Apply",
+                widget.size,
+                commonTextStyle(
+                    size: widget.size,
+                    fontSize: widget.size.width * numD035,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700),
+                commonButtonStyle(widget.size, colorThemePink), () {
+              widget.onApply(tempAlertType, tempDistance, tempCategory);
+            }),
+          ),
+          SizedBox(height: widget.size.width * numD02),
+        ],
       ),
     );
   }

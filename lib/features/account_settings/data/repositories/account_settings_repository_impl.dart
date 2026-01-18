@@ -85,10 +85,11 @@ class AccountSettingsRepositoryImpl implements AccountSettingsRepository {
   }
 
   @override
-  Future<Either<Failure, List<ContentCategory>>> getFAQCategories() async {
+  Future<Either<Failure, List<ContentCategory>>> getFAQCategories(
+      String type) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getFAQCategories();
+        final result = await remoteDataSource.getFAQCategories(type);
         return Right(result);
       } on Failure catch (failure) {
         return Left(failure);

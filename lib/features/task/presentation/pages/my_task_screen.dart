@@ -6,19 +6,19 @@ import 'package:presshop/main.dart'; // For currencySymbol
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
 
+// ignore: must_be_immutable
 class MyTaskScreen extends StatefulWidget {
   bool hideLeading = false;
   String? broadCastId;
@@ -60,9 +60,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   final int allTaskLimit = 10;
 
-  bool _showData = false;
+  // bool _showData = false;
 
-  bool _isLocalLoading = false;
+  // bool _isLocalLoading = false;
 
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
@@ -159,56 +159,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
         },
         child: Builder(builder: (context) {
           return Scaffold(
-            appBar: CommonAppBar(
-              elevation: 0,
-              hideLeading: widget.hideLeading,
-              title: Padding(
-                padding: EdgeInsets.only(
-                    left: widget.hideLeading ? size.width * numD04 : 0),
-                child: Text(
-                  // "$myText ${taskText}s",
-                  "${taskText}s",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: size.width * appBarHeadingFontSize),
-                ),
-              ),
-              centerTitle: false,
-              titleSpacing: 0,
+            appBar: NewHomeAppBar(
               size: size,
-              showActions: true,
-              leadingFxn: () {
-                Navigator.pop(context);
+              hideLeading: widget.hideLeading,
+              onFilterTap: () {
+                showBottomSheet(size);
               },
-              actionWidget: [
-                InkWell(
-                  onTap: () {
-                    showBottomSheet(size);
-                  },
-                  child: commonFilterIcon(size),
-                ),
-                SizedBox(
-                  width: size.width * numD02,
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
-                  },
-                  child: Image.asset(
-                    "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD07,
-                    width: size.width * numD07,
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * numD04,
-                )
-              ],
             ),
             body: SafeArea(
               child: Column(
@@ -1307,9 +1263,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 children: [
                                   Text(
                                     dateTimeFormatter(
-                                            dateTime: item.toDate.toString(),
-                                            format: "dd/mm/yy") ??
-                                        toText,
+                                        dateTime: item.toDate.toString(),
+                                        format: "dd/mm/yy"),
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize: size.width * numD032,

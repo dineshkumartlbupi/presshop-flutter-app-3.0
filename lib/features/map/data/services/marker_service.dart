@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image/image.dart' as image;
 import 'package:presshop/features/map/data/models/marker_model.dart';
+import 'package:http/http.dart' as http;
 
 class MarkerService {
   final Map<String, String> markerIcons = {
@@ -44,5 +45,37 @@ class MarkerService {
     return BitmapDescriptor.fromBytes(
       Uint8List.fromList(image.encodePng(resized)),
     );
+  }
+
+  Future<BitmapDescriptor> bitmapFromUrl(
+    String url, {
+    int width = 120,
+    String defaultAsset = "assets/markers/bg-removed-content.png",
+  }) async {
+    try {
+      if (url.isEmpty) {
+        return bitmapResize(defaultAsset, width: width);
+      }
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        final img = image.decodeImage(bytes);
+        if (img == null) return bitmapResize(defaultAsset, width: width);
+
+        // Circular crop (optional but looks better for news/users)
+        // For now, just resizing to keep it simple and safe
+        final resized = image.copyResize(img, width: width);
+        final rounded =
+            image.copyCropCircle(resized); // Make it round if possible
+
+        return BitmapDescriptor.fromBytes(
+          Uint8List.fromList(image.encodePng(rounded)),
+        );
+      }
+      return bitmapResize(defaultAsset, width: width);
+    } catch (e) {
+      print("Error loading marker from URL: $e");
+      return bitmapResize(defaultAsset, width: width);
+    }
   }
 }

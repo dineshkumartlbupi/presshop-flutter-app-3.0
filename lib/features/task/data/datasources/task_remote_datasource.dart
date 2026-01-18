@@ -246,12 +246,24 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         data: map,
       );
 
-      if (response.data["code"] == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
         List<TaskAll> list = [];
-        if (response.data["tasks"] != null) {
-          response.data["tasks"].forEach((v) {
+
+        List? targetList;
+
+        if (data["tasks"] != null) {
+          targetList = data["tasks"];
+        } else if (data["data"] is List) {
+          targetList = data["data"];
+        } else if (data["data"] is Map && data["data"]["data"] is List) {
+          targetList = data["data"]["data"];
+        }
+
+        if (targetList != null) {
+          for (var v in targetList) {
             list.add(AllTaskModel.fromJson(v));
-          });
+          }
         }
         return list;
       } else {

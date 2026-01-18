@@ -12,11 +12,9 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/core/widgets/error/location_error_screen.dart';
-
-import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/content/presentation/pages/my_content_page.dart';
 import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
-import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -26,12 +24,15 @@ import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
+import 'package:presshop/features/map/presentation/pages/map_page.dart';
+import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
+// ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
   int initialPosition = 2;
   String? broadCastId;
@@ -74,7 +75,7 @@ class DashboardState extends State<Dashboard>
   int currentIndex = 2;
   String fcmToken = "";
   String deviceId = "";
-  StreamSubscription? _sub;
+  // StreamSubscription? _sub;
   static DashBoardInterface? dashBoardInterface;
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
@@ -102,18 +103,6 @@ class DashboardState extends State<Dashboard>
   DateTime? currentTime;
   late List<Widget> bottomNavigationScreens;
 
-  // final bottomNavigationScreens = <Widget>[
-  //   MyContentPage(hideLeading: true),
-  //   MyTaskScreen(hideLeading: true),
-  //   CameraScreen(
-  //     key: _cameraKey,
-  //     picAgain: false,
-  //     previousScreen: ScreenNameEnum.dashboardScreen,
-  //   ),
-  //   ChatBotScreen(),
-  //   //ChatListingScreen(hideLeading: true),
-  //   const MenuScreen()
-  // ];
   late AppLinks linkStream;
 
   // Analytics Mixin Requirements
@@ -147,9 +136,8 @@ class DashboardState extends State<Dashboard>
         autoInitialize: true,
       ),
       // ChatBotScreen(),
-      FeedScreen(),
-      const MenuScreen()
-      // MarketplaceScreen()
+      NewsPage(hideLeading: true),
+      MapPage(hideLeading: true)
     ];
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -277,13 +265,13 @@ class DashboardState extends State<Dashboard>
     debugPrint("initPlatformStateForStringUniLinks=======>Enter");
 
     ///Attach a listener to the links stream
-    _sub = linkStream.uriLinkStream.listen((link) {
-      if (!mounted) return;
-      debugPrint('initPlatformStateForStringUniLinks  $link');
-    }, onError: (err) {
-      if (!mounted) return;
-      debugPrint('exception $err');
-    });
+    // _sub = linkStream.uriLinkStream.listen((link) {
+    //   if (!mounted) return;
+    //   debugPrint('initPlatformStateForStringUniLinks  $link');
+    // }, onError: (err) {
+    //   if (!mounted) return;
+    //   debugPrint('exception $err');
+    // });
 
     /// Attach a second listener to the stream Note:
     /// The jump here should be when the APP is opened and cut to the background process.
@@ -569,8 +557,8 @@ class DashboardState extends State<Dashboard>
                   sharedPreferences!.setInt(
                       videoLimitKey, (versionData['video_limit'] ?? 2) * 60);
                   bool shouldUpdate = Platform.isAndroid
-                      ? versionData['aOSshouldForceUpdate']
-                      : versionData['iOSshouldForceUpdate'];
+                      ? (versionData['aOSshouldForceUpdate'] ?? false)
+                      : (versionData['iOSshouldForceUpdate'] ?? false);
                   if (shouldUpdate) forceUpdateCheck();
                 } else {
                   showSnackBar(map["message"], "error", Colors.red);
@@ -696,39 +684,55 @@ class DashboardState extends State<Dashboard>
                   unselectedFontSize: size.width * numD03,
                   type: BottomNavigationBarType.fixed,
                   onTap: _onBottomBarItemTapped,
-                  items: const [
+                  items: [
+                    // assets/icons/homeIcons/camera.png
                     BottomNavigationBarItem(
                         icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_content.png"),
+                          AssetImage("${iconsPath}ic_content1.png"),
+                          // AssetImage("${iconsPath}/homeIcons/camera.png"),
                         ),
                         label: contentText),
                     BottomNavigationBarItem(
                         icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_task.png"),
+                          AssetImage("${iconsPath}ic_task1.png"),
                         ),
                         label: taskText),
                     BottomNavigationBarItem(
-                        icon: ImageIcon(
-                          AssetImage(
-                            "${iconsPath}ic_camera.png",
+                        icon: Transform.scale(
+                          scale: 1.3,
+                          child: ImageIcon(
+                            AssetImage(
+                              "${iconsPath}ic_camera1.png",
+                            ),
                           ),
                         ),
                         label: cameraText),
+                    // BottomNavigationBarItem(
+                    //     icon: ImageIcon(
+                    //       AssetImage("${iconsPath}ic_feed.png"),
+                    //     ),
+                    //     label: feedText),
+
                     BottomNavigationBarItem(
                         icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_feed.png"),
+                          AssetImage("${iconsPath}ic_news1.png"),
                         ),
-                        label: feedText),
+                        label: "News"),
                     // BottomNavigationBarItem(
                     //     icon: ImageIcon(
                     //       AssetImage("${iconsPath}ic_chat.png"),
                     //     ),
                     //     label: chatText),
+                    // BottomNavigationBarItem(
+                    //     icon: ImageIcon(
+                    //       AssetImage("${iconsPath}ic_menu.png"),
+                    //     ),
+                    //     label: menuText),
                     BottomNavigationBarItem(
                         icon: ImageIcon(
-                          AssetImage("${iconsPath}ic_menu.png"),
+                          AssetImage("${iconsPath}ic_map1.png"),
                         ),
-                        label: menuText),
+                        label: "Map"),
                   ],
                 ),
                 // body: Stack(

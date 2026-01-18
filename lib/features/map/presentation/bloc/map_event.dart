@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
 
 abstract class MapEvent extends Equatable {
   const MapEvent();
@@ -111,3 +112,33 @@ class SetPreviewAlertMarkerEvent extends MapEvent {
   @override
   List<Object> get props => [type, position];
 }
+
+class SetSelectedIncidentEvent extends MapEvent {
+  final Incident incident;
+  const SetSelectedIncidentEvent(this.incident);
+  @override
+  List<Object> get props => [incident];
+}
+
+class SetMapSelectedLocationEvent extends MapEvent {
+  final LatLng position;
+  final String address;
+  final bool isOrigin;
+
+  const SetMapSelectedLocationEvent({
+    required this.position,
+    required this.address,
+    required this.isOrigin,
+  });
+
+  @override
+  List<Object> get props => [position, address, isOrigin];
+}
+
+class ClearMapSelectedLocationEvent extends MapEvent {}
+
+class StartNavigationEvent extends MapEvent {}
+
+class StopNavigationEvent extends MapEvent {}
+
+class ToggleGetDirectionCardEvent extends MapEvent {}

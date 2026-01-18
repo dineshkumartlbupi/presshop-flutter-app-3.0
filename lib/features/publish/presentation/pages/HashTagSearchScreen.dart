@@ -253,65 +253,66 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                               },
                               backgroundColor: Colors.black),
                         )
-                      : Stack(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                /* selectedHashTagList[index].selected =
-                          !selectedHashTagList[index].selected;
-                          setState(() {});*/
-                              },
-                              child: Container(
-                                margin:
-                                    EdgeInsets.only(right: size.width * numD02),
-                                child: Chip(
-                                  label: Text(
-                                    "#${selectedHashTagList[index].name}",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD03,
-                                        color:
-                                            selectedHashTagList[index].selected
-                                                ? Colors.white
-                                                : colorHint,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  deleteIcon: Icon(
-                                    Icons.close,
-                                  ),
-                                  backgroundColor:
-                                      selectedHashTagList[index].selected
-                                          ? Colors.black
-                                          : colorLightGrey,
-                                ),
-                              ),
-                            ),
-                            /*   Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () {
-                                  int pos = hashtagSearchList.indexWhere((element) => element.id == selectedHashTagList[index].id);
-                                  debugPrint("dh dy $pos");
-                                  if (pos >= 0) {
-                                    selectedHashTagList.removeAt(index);
-                                    hashtagSearchList[pos].selected = false;
-                                  }
-                                  debugPrint("hashtagSearchList value::::::${hashtagSearchList[index].selected}");
-                                  setState(() {});
+                      : Container();
+                  // : Stack(
+                  //     children: [
+                  //       InkWell(
+                  //         onTap: () {
+                  //           /* selectedHashTagList[index].selected =
+                  //     !selectedHashTagList[index].selected;
+                  //     setState(() {});*/
+                  //         },
+                  //         child: Container(
+                  //           margin:
+                  //               EdgeInsets.only(right: size.width * numD02),
+                  //           child: Chip(
+                  //             label: Text(
+                  //               "#${selectedHashTagList[index].name}",
+                  //               style: commonTextStyle(
+                  //                   size: size,
+                  //                   fontSize: size.width * numD03,
+                  //                   color:
+                  //                       selectedHashTagList[index].selected
+                  //                           ? Colors.white
+                  //                           : colorHint,
+                  //                   fontWeight: FontWeight.normal),
+                  //             ),
+                  //             deleteIcon: Icon(
+                  //               Icons.close,
+                  //             ),
+                  //             backgroundColor:
+                  //                 selectedHashTagList[index].selected
+                  //                     ? Colors.black
+                  //                     : colorLightGrey,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       /*   Positioned(
+                  //         top: 0,
+                  //         right: 0,
+                  //         child: InkWell(
+                  //           onTap: () {
+                  //             int pos = hashtagSearchList.indexWhere((element) => element.id == selectedHashTagList[index].id);
+                  //             debugPrint("dh dy $pos");
+                  //             if (pos >= 0) {
+                  //               selectedHashTagList.removeAt(index);
+                  //               hashtagSearchList[pos].selected = false;
+                  //             }
+                  //             debugPrint("hashtagSearchList value::::::${hashtagSearchList[index].selected}");
+                  //             setState(() {});
 
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical:size.width * numD018,horizontal:size.width * numD01 ),
-                                  child: Icon(
-                                    Icons.cancel_outlined,
-                                    color: Colors.white,
-                                    size: size.width * numD04,
-                                  ),
-                                ),
-                              ))*/
-                          ],
-                        );
+                  //           },
+                  //           child: Container(
+                  //             padding: EdgeInsets.symmetric(vertical:size.width * numD018,horizontal:size.width * numD01 ),
+                  //             child: Icon(
+                  //               Icons.cancel_outlined,
+                  //               color: Colors.white,
+                  //               size: size.width * numD04,
+                  //             ),
+                  //           ),
+                  //         ))*/
+                  //     ],
+                  //   );
                 }),
               ),
               SizedBox(

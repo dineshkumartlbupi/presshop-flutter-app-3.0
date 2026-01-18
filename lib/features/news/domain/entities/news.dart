@@ -15,6 +15,8 @@ class News extends Equatable {
   final bool? isLiked;
   final String? userImage;
   final String? userName;
+  final double? latitude;
+  final double? longitude;
 
   const News({
     required this.id,
@@ -31,6 +33,8 @@ class News extends Equatable {
     this.isLiked,
     this.userImage,
     this.userName,
+    this.latitude,
+    this.longitude,
   });
 
   News copyWith({

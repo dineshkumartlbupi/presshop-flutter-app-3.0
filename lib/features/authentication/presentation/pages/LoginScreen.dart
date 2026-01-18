@@ -1,18 +1,14 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/widgets/common_web_view.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SocialSignUpScreen.dart';
 import 'SignUpScreen.dart';
@@ -54,10 +50,6 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
 
   bool hidePassword = true;
 
-  late GoogleSignInAccount _userObj;
-  late FirebaseAuth _firebaseAuth;
-
-  bool _isLoggedIn = false;
   String socialEmail = "";
   String socialId = "";
   String socialName = "";
@@ -86,7 +78,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
 
   @override
   void initState() {
-    _firebaseAuth = FirebaseAuth.instance;
+    // _firebaseAuth = FirebaseAuth.instance;
     rawNonce = generateNonce();
     nonce = sha256ofString(rawNonce);
     getDeviceInfo();
@@ -666,7 +658,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
 
       // STEP 4 — Save fallback data locally
       await prefs.setString('apple_email', finalEmail);
-      await prefs.setString('apple_name', finalName ?? "User");
+      await prefs.setString('apple_name', finalName);
       await prefs.setString('apple_id',
           userCredential.user?.uid ?? appleCredential.userIdentifier ?? "");
 
@@ -686,7 +678,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
             socialType: socialType,
             socialId: socialId,
             email: socialEmail,
-            name: socialName ?? "",
+            name: socialName,
             photoUrl: "",
           ));
     } on SignInWithAppleAuthorizationException catch (e) {

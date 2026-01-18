@@ -9,6 +9,9 @@ abstract class NewsRepository {
     required double lng,
     required double km,
     String category = "all",
+    String? alertType,
+    int limit = 10,
+    int offset = 0,
   });
 
   Future<Either<Failure, News>> getNewsDetail(String id);

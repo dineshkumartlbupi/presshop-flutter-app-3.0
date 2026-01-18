@@ -21,7 +21,8 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
       required this.hideLeading,
       this.leadingLeftSPace,
       this.appBarbackgroundColor = Colors.transparent,
-      this.leadingIconColor = Colors.black});
+      this.leadingIconColor = Colors.black,
+      this.bottom});
 
   final double elevation;
   final Widget title;
@@ -35,6 +36,7 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback leadingFxn;
   final List<Widget>? actionWidget;
   double? leadingLeftSPace;
+  final PreferredSizeWidget? bottom;
 
   @override
   State<StatefulWidget> createState() {
@@ -43,9 +45,10 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      Size.fromHeight(sharedPreferences?.getBool('isIpad') ?? false
-          ? kToolbarHeightIpad
-          : kToolbarHeight);
+      Size.fromHeight((sharedPreferences?.getBool('isIpad') ?? false
+              ? kToolbarHeightIpad
+              : kToolbarHeight) +
+          (bottom?.preferredSize.height ?? 0));
 }
 
 class CommonAppBarState extends State<CommonAppBar> {
@@ -72,6 +75,7 @@ class CommonAppBarState extends State<CommonAppBar> {
             ),
             automaticallyImplyLeading: false,
             actions: widget.showActions ? widget.actionWidget : null,
+            bottom: widget.bottom,
             leading: widget.hideLeading
                 ? null
                 : IconButton(
@@ -119,6 +123,7 @@ class CommonAppBarState extends State<CommonAppBar> {
             titleSpacing: widget.titleSpacing,
             automaticallyImplyLeading: false,
             actions: widget.showActions ? widget.actionWidget : null,
+            bottom: widget.bottom,
           );
   }
 }

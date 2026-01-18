@@ -1218,8 +1218,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             SizedBox(
               width: size.width * numD02,
             ),
-            (avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? ""))
-                    .isNotEmpty
+            (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
                 ? Container(
                     padding: EdgeInsets.all(
                       size.width * numD01,
@@ -1229,8 +1228,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     child: ClipOval(
                         clipBehavior: Clip.antiAlias,
                         child: Image.network(
-                          avatarImageUrl +
-                              (sharedPreferences!.getString(avatarKey) ?? ""),
+                          (sharedPreferences!.getString(avatarKey) ?? ""),
                           fit: BoxFit.cover,
                           height: size.width * numD09,
                           width: size.width * numD09,
@@ -1376,8 +1374,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               SizedBox(
                 width: size.width * numD02,
               ),
-              (avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? ""))
-                      .isNotEmpty
+              (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
                   ? Container(
                       padding: EdgeInsets.all(
                         size.width * numD01,
@@ -1387,8 +1384,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
-                            avatarImageUrl +
-                                (sharedPreferences!.getString(avatarKey) ?? ""),
+                            (sharedPreferences!.getString(avatarKey) ?? ""),
                             fit: BoxFit.cover,
                             height: size.width * numD09,
                             width: size.width * numD09,
@@ -1560,10 +1556,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
-                              avatarImageUrl +
-                                  sharedPreferences!
-                                      .getString(avatarKey)
-                                      .toString(),
+                              sharedPreferences!
+                                  .getString(avatarKey)
+                                  .toString(),
                               height: size.width * numD09,
                               width: size.width * numD09,
                               fit: BoxFit.cover, errorBuilder:

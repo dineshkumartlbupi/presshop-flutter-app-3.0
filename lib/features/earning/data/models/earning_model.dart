@@ -3,7 +3,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/feed/presentation/pages/feedDataModel.dart';
 import '../../domain/entities/earning_transaction.dart';
 
-
 class EarningProfileDataModel {
   String id = '';
   String avatarId = '';
@@ -57,7 +56,7 @@ class CommissionData {
     return CommissionData(
       totalEarning: json['totalEarning']?.toDouble() ?? 0.0,
       commission: json['commission']?.toDouble() ?? 0.0,
-      avatar: '$avatarImageUrl${json['avatarInfo']['avatar']}'.trim(),
+      avatar: '${json['avatarInfo']['avatar']}'.trim(),
       commissionReceived: json['commissionReceived']?.toDouble() ?? 0.0,
       commissionPending: json['commissionPending']?.toDouble() ?? 0.0,
       paidOn: json['paidOn'] != null

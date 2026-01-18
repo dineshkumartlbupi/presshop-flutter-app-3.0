@@ -42,6 +42,7 @@ import '../../../../core/di/injection_container.dart';
 
 import '../../domain/mappers/content_item_mapper.dart';
 
+// ignore: must_be_immutable
 class MyContentDetailScreen extends StatefulWidget {
   String hopperID = "";
   final String contentId;
@@ -334,16 +335,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                 onPressed: () {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              BlocProvider<
-                                                                  TaskBloc>(
-                                                                create: (_) =>
-                                                                    sl<TaskBloc>(),
-                                                                child:
-                                                                    ManageTaskScreen(
-                                                                        roomId:
-                                                                            contentItem!
-                                                                                .id,
+                                                          builder:
+                                                              (context) =>
+                                                                  BlocProvider<
+                                                                      TaskBloc>(
+                                                                    create: (_) =>
+                                                                        sl<TaskBloc>(),
+                                                                    child: ManageTaskScreen(
+                                                                        roomId: contentItem!
+                                                                            .id,
                                                                         contentId:
                                                                             contentItem!
                                                                                 .id,
@@ -356,9 +356,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                                         contentHeader:
                                                                             headerWidget(),
                                                                         myContentData:
-                                                                            contentItem!
-                                                                                .toMyContentData()),
-                                                              )))
+                                                                            contentItem!.toMyContentData()),
+                                                                  )))
                                                       .then((value) {
                                                     shouldRestartAnimation =
                                                         true;
@@ -1170,7 +1169,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
           VideoThumbnailWidget(
             videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
                 ? item.mediaUrl
-                : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                : "$contentImageUrl${item.mediaUrl}"),
             thumbnailUrl:
                 item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
             width: double.infinity,
@@ -1204,7 +1203,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     VideoThumbnailWidget(
                       videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
                           ? item.mediaUrl
-                          : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                          : "$contentImageUrl${item.mediaUrl}"),
                       thumbnailUrl: item.thumbnailUrl != null
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
@@ -1228,7 +1227,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     VideoThumbnailWidget(
                       videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
                           ? item.mediaUrl
-                          : "$contentImageUrl${item.mediaUrl ?? ''}"),
+                          : "$contentImageUrl${item.mediaUrl}"),
                       thumbnailUrl: item.thumbnailUrl != null
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,

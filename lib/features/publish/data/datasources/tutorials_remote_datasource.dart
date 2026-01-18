@@ -36,7 +36,20 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
         // var data = jsonDecode(response);
         // var dataModel = data["status"] as List;
         final data = response.data;
-        final List<dynamic> dataModel = data['status'];
+        print("🔍 DEBUG: getTutorials API Data: $data");
+
+        List<dynamic>? list;
+        if (data['data'] != null) {
+          if (data['data'] is List) {
+            list = data['data'];
+          } else if (data['data'] is Map) {
+            list = data['data']['status'];
+          }
+        } else {
+          list = data['status'];
+        }
+
+        final List<dynamic> dataModel = list ?? [];
         return dataModel.map((e) => TutorialsModel.fromJson(e)).toList();
       } else {
         throw ServerFailure(
@@ -62,7 +75,10 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
         // var data = jsonDecode(response);
         // var dataList = data['categories'] as List;
         final data = response.data;
-        final List<dynamic> dataList = data['categories'];
+        final list = data['data'] != null
+            ? data['data']['categories']
+            : data['categories'];
+        final List<dynamic> dataList = list ?? [];
         return dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
       } else {
         throw ServerFailure(

@@ -2,28 +2,23 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/features/content/domain/mappers/content_item_mapper.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:presshop/features/content/domain/entities/content_item.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
-import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
-import 'package:presshop/features/content/presentation/bloc/content_event.dart';
-import 'package:presshop/features/content/presentation/bloc/content_state.dart';
-import 'package:presshop/features/content/data/models/my_content_data_model.dart'; // Kept for mapping if needed, or removed if fully replaced
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+
+import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import '../../../../core/di/injection_container.dart';
 
+// ignore: must_be_immutable
 class MyDraftScreen extends StatefulWidget {
   bool publishedContent = false;
   String screenType = "";

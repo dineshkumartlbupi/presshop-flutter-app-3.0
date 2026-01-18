@@ -1,7 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart' hide Navigator;
+import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
@@ -44,123 +44,125 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
       child: BlocListener<AccountSettingsBloc, AccountSettingsState>(
         listener: _handleAccountSettingsState,
         child: Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          "Delete account",
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          /*  if (widget.editProfileScreen) {
+          appBar: CommonAppBar(
+            elevation: 0,
+            hideLeading: false,
+            title: Text(
+              "Delete account",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width * appBarHeadingFontSize),
+            ),
+            centerTitle: false,
+            titleSpacing: 0,
+            size: size,
+            showActions: true,
+            leadingFxn: () {
+              /*  if (widget.editProfileScreen) {
               widget.editProfileScreen = false;
             }*/
-          Navigator.pop(context);
-        },
-        actionWidget: [],
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(size.width * numD045),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              deleteAccountText,
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * numD035,
-                  color: Colors.red,
-                  fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: size.height * numD02,
-            ),
-            Text(
-              "Please let us know your reason for deleting the app :- ",
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * numD04,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500),
-            ),
-            SizedBox(
-              height: size.height * numD01,
-            ),
-            Expanded(
-              child: ListView.separated(
-                shrinkWrap: true,
-                separatorBuilder: (context, index) =>
-                    const Divider(height: 1, color: Colors.grey),
-                padding: isIpad
-                    ? EdgeInsets.symmetric(vertical: size.width * numD012)
-                    : EdgeInsets.zero,
-                physics: const BouncingScrollPhysics(),
-                itemCount: purposeData.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (ctx, int) {
-                  return ListTile(
-                    contentPadding: isIpad
-                        ? EdgeInsets.symmetric(vertical: size.width * numD02)
+              Navigator.pop(context);
+            },
+            actionWidget: [],
+          ),
+          body: Padding(
+            padding: EdgeInsets.all(size.width * numD045),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  deleteAccountText,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: size.height * numD02,
+                ),
+                Text(
+                  "Please let us know your reason for deleting the app :- ",
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD04,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: size.height * numD01,
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1, color: Colors.grey),
+                    padding: isIpad
+                        ? EdgeInsets.symmetric(vertical: size.width * numD012)
                         : EdgeInsets.zero,
-                    leading: Transform.scale(
-                      scale: isIpad ? 1.8 : 1,
-                      child: Checkbox(
-                        visualDensity: VisualDensity.compact,
-                        value: selectReason == purposeData[int],
-                        onChanged: (value) {
-                          selectReason = purposeData[int];
-                          setState(() {});
-                        },
-                        activeColor: colorThemePink,
-                        checkColor: Colors.white,
-                      ),
-                    ),
-                    title: Text(
-                      purposeData[int]['title'],
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD034,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
-                    ),
-                  );
-                },
-              ),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: purposeData.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (ctx, int) {
+                      return ListTile(
+                        contentPadding: isIpad
+                            ? EdgeInsets.symmetric(
+                                vertical: size.width * numD02)
+                            : EdgeInsets.zero,
+                        leading: Transform.scale(
+                          scale: isIpad ? 1.8 : 1,
+                          child: Checkbox(
+                            visualDensity: VisualDensity.compact,
+                            value: selectReason == purposeData[int],
+                            onChanged: (value) {
+                              selectReason = purposeData[int];
+                              setState(() {});
+                            },
+                            activeColor: colorThemePink,
+                            checkColor: Colors.white,
+                          ),
+                        ),
+                        title: Text(
+                          purposeData[int]['title'],
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD034,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: size.height * (isIpad ? numD1 : numD08),
+                  padding:
+                      EdgeInsets.symmetric(vertical: size.height * numD015),
+                  child: commonElevatedButton(
+                    'Delete Account',
+                    size,
+                    commonTextStyle(
+                        size: size,
+                        fontSize: size.width * (isIpad ? numD032 : numD038),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700),
+                    commonButtonStyle(size, colorThemePink),
+                    () {
+                      if (selectReason.isNotEmpty) {
+                        showDeleteDialog(size);
+                      } else {
+                        showToast("Please select reason...");
+                      }
+                    },
+                  ),
+                )
+              ],
             ),
-            Container(
-              width: double.infinity,
-              height: size.height * (isIpad ? numD1 : numD08),
-              padding: EdgeInsets.symmetric(vertical: size.height * numD015),
-              child: commonElevatedButton(
-                'Delete Account',
-                size,
-                commonTextStyle(
-                    size: size,
-                    fontSize: size.width * (isIpad ? numD032 : numD038),
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700),
-                commonButtonStyle(size, colorThemePink),
-                () {
-                  if (selectReason.isNotEmpty) {
-                    showDeleteDialog(size);
-                  } else {
-                    showToast("Please select reason...");
-                  }
-                },
-              ),
-            )
-          ],
+          ),
         ),
       ),
-      ),
-    ),
     );
   }
 
@@ -309,7 +311,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
         });
   }
 
-  void _handleAccountSettingsState(BuildContext context, AccountSettingsState state) async {
+  void _handleAccountSettingsState(
+      BuildContext context, AccountSettingsState state) async {
     if (state is AccountDeleted) {
       // Log Firebase Analytics
       await FirebaseAnalytics.instance.logEvent(
@@ -319,14 +322,14 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
           'timestamp': DateTime.now().toIso8601String(),
         },
       );
-      
+
       // Clear data
       await sharedPreferences!.clear();
       await googleSignIn.signOut();
-      
+
       // Show message
       showToast(state.message);
-      
+
       // Navigate to login
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(

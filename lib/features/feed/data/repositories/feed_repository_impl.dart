@@ -17,16 +17,35 @@ class FeedRepositoryImpl implements FeedRepository {
   });
 
   @override
-  Future<Either<Failure, List<Feed>>> getFeeds(Map<String, dynamic> params) async {
+  Future<Either<Failure, List<Feed>>> getFeeds(
+      Map<String, dynamic> params) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteData = await remoteDataSource.getFeeds(params);
-        if (remoteData['code'] == 200) {
-           final List<dynamic> list = remoteData['response'] ?? [];
-           final feeds = list.map((e) => FeedModel.fromJson(e)).toList();
-           return Right(feeds);
+        if (remoteData['code'] == 200 || remoteData['success'] == true) {
+          List<dynamic> list = [];
+          if (remoteData['data'] != null) {
+            if (remoteData['data'] is Map) {
+              if (remoteData['data']['response'] != null &&
+                  remoteData['data']['response'] is List) {
+                list = remoteData['data']['response'];
+              } else if (remoteData['data']['data'] != null &&
+                  remoteData['data']['data'] is List) {
+                list = remoteData['data']['data'];
+              }
+            } else if (remoteData['data'] is List) {
+              list = remoteData['data'];
+            }
+          } else if (remoteData['response'] != null &&
+              remoteData['response'] is List) {
+            list = remoteData['response'];
+          }
+
+          final feeds = list.map((e) => FeedModel.fromJson(e)).toList();
+          return Right(feeds);
         } else {
-           return Left(ServerFailure(message: remoteData['message'] ?? "Unknown Error"));
+          return Left(
+              ServerFailure(message: remoteData['message'] ?? "Unknown Error"));
         }
       } on ServerException {
         return Left(ServerFailure(message: ''));
@@ -37,7 +56,8 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> toggleInteraction(String id, bool isLike, bool isFav, bool isEmoji, bool isClap) async {
+  Future<Either<Failure, bool>> toggleInteraction(
+      String id, bool isLike, bool isFav, bool isEmoji, bool isClap) async {
     if (await networkInfo.isConnected) {
       try {
         Map<String, dynamic> params = {
@@ -47,7 +67,7 @@ class FeedRepositoryImpl implements FeedRepository {
           "is_emoji": isEmoji.toString(),
           "is_clap": isClap.toString(),
         };
-        
+
         final success = await remoteDataSource.toggleInteraction(params);
         return Right(success);
       } on ServerException {

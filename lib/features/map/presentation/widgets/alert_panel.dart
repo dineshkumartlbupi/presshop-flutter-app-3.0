@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class AlertPanel extends StatelessWidget {
   final VoidCallback onClose;
@@ -10,37 +11,6 @@ class AlertPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    final List<Map<String, String>> alertTypes = [
-      {
-        'type': 'accident',
-        'icon': 'assets/markers/accident.gif',
-        'label': 'Accident',
-      },
-      {
-        'type': 'crash',
-        'icon': 'assets/markers/car-crash.gif',
-        'label': 'Crash',
-      },
-      {
-        'type': 'fire',
-        'icon': 'assets/markers/fire.gif',
-        'label': 'Fire Alert',
-      },
-      {'type': 'fight', 'icon': 'assets/markers/fight.gif', 'label': 'Fight'},
-      {'type': 'knife', 'icon': 'assets/markers/knife.gif', 'label': 'Knife'},
-      {'type': 'gun', 'icon': 'assets/markers/gun.gif', 'label': 'gun'},
-      {
-        'type': 'medical',
-        'icon': 'assets/markers/medicine.gif',
-        'label': 'Medical',
-      },
-      {
-        'type': 'protest',
-        'icon': 'assets/markers/protesters.gif',
-        'label': 'Protest',
-      },
-    ];
 
     return Stack(
       children: [

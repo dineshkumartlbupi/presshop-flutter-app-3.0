@@ -1,17 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/utils/common_utils.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
+import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/content/domain/entities/content_item.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_state.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/content/presentation/pages/my_content_detail_screen.dart';
 import 'package:presshop/main.dart';
@@ -244,52 +243,10 @@ class _MyContentViewState extends State<MyContentView>
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: widget.hideLeading,
-        title: Padding(
-          padding: EdgeInsets.only(
-              left: widget.hideLeading ? size.width * numD04 : 0),
-          child: Text(
-            myContentText.toTitleCase(),
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
-          ),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
+      appBar: NewHomeAppBar(
         size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: _showFilterSheet,
-            child: commonFilterIcon(size),
-          ),
-          SizedBox(
-            width: size.width * numD02,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * numD04,
-          )
-        ],
+        hideLeading: widget.hideLeading,
+        onFilterTap: _showFilterSheet,
       ),
       body: SafeArea(
         child: Column(

@@ -5,6 +5,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
+// ignore: must_be_immutable
 class ManageContentScreen extends StatefulWidget {
   String taskStatus = "";
 

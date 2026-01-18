@@ -29,9 +29,9 @@ import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/di/injection_container.dart';
-import '../../data/models/category_model.dart';
-import '../../data/models/charity_model.dart';
+// import 'package:presshop/core/di/injection_container.dart';
+// import '../../data/models/category_model.dart';
+// import '../../data/models/charity_model.dart';
 import '../../domain/entities/content_category.dart';
 import '../../domain/entities/charity.dart';
 import '../bloc/publish_bloc.dart';
@@ -40,6 +40,7 @@ import '../bloc/publish_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'AudioRecorderScreen.dart';
 
+// ignore: must_be_immutable
 class PublishContentScreen extends StatefulWidget {
   PublishData? publishData;
   MyContentData? myContentData;
@@ -2549,40 +2550,43 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     child: SizedBox(
                                     height: size.width * numD15,
                                     child: commonElevatedButton(
-                                        "${saveText.toTitleCase()} ${draftText.toTitleCase()}",
-                                        size,
-                                        commonButtonTextStyle(size),
-                                        commonButtonStyle(size, Colors.black),
-                                        () async {
-                                      draftSelected = true;
-                                      isSelectLetsGo = false;
-                                      isShowDraftLoader = true;
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode());
-                                      bool success = await callAddContentApi();
-                                      
-                                      if (success) {
-                                        showSnackBar(
-                                            "Draft",
-                                            "Draft successfully saved",
-                                            Colors.green);
-                                        Future.delayed(
-                                          const Duration(seconds: 2),
-                                          () {
-                                            isShowDraftLoader = false;
-                                            Navigator.push(
-                                              navigatorKey.currentContext!,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Dashboard(
-                                                      initialPosition: 2)),
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                         isShowDraftLoader = false;
-                                         // Error notification is handled by MediaUploadService/callAddContentApi
-                                      }
-                                        },
+                                      "${saveText.toTitleCase()} ${draftText.toTitleCase()}",
+                                      size,
+                                      commonButtonTextStyle(size),
+                                      commonButtonStyle(size, Colors.black),
+                                      () async {
+                                        draftSelected = true;
+                                        isSelectLetsGo = false;
+                                        isShowDraftLoader = true;
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        bool success =
+                                            await callAddContentApi();
+
+                                        if (success) {
+                                          showSnackBar(
+                                              "Draft",
+                                              "Draft successfully saved",
+                                              Colors.green);
+                                          Future.delayed(
+                                            const Duration(seconds: 2),
+                                            () {
+                                              isShowDraftLoader = false;
+                                              Navigator.push(
+                                                navigatorKey.currentContext!,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Dashboard(
+                                                            initialPosition:
+                                                                2)),
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          isShowDraftLoader = false;
+                                          // Error notification is handled by MediaUploadService/callAddContentApi
+                                        }
+                                      },
 
                                       /* if (descriptionController.text.trim().isEmpty &&
                                     audioPath.isEmpty) {
@@ -3192,8 +3196,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
   }
 
-
-
   /// add-content-api
   Future<bool> callAddContentApi() async {
     debugPrint("DEBUG: callAddContentApi called");
@@ -3429,10 +3431,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
   }
 
-
-
-
-
   ///---------------------------------------------------------------------------
   /// INTERFACE CLASS OVERRIDE METHOD
   @override
@@ -3452,7 +3450,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
       //callUploadMediaApi(false);
     });
   }
-
 
 /*
 class AllCharityModel {

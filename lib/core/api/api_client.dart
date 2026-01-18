@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
+import 'package:presshop/core/widgets/global_loader.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -24,6 +25,7 @@ class ApiClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: _onRequest,
+        onResponse: _onResponse,
         onError: _onError,
       ),
     );
@@ -38,6 +40,11 @@ class ApiClient {
 
   Future<void> _onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    // Default to true if not specified
+    bool showLoader = options.extra['show_loader'] ?? true;
+    if (showLoader) {
+      GlobalLoader.show();
+    }
     String? token = await _secureStorage.read(key: tokenKey);
 
     /// Fallback to SharedPreferences if SecureStorage fails (common on some Android versions)
@@ -68,11 +75,21 @@ class ApiClient {
     handler.next(options);
   }
 
+  Future<void> _onResponse(
+    Response response,
+    ResponseInterceptorHandler handler,
+  ) async {
+    GlobalLoader.hide();
+    handler.next(response);
+  }
+
   Future<void> _onError(
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    GlobalLoader.hide();
     if (ApiErrorHandler.isUnauthenticated(err)) {
+      /*
       /// Token refresh logic
       if (err.requestOptions.path.contains(appRefreshTokenUrl)) {
         final failure = ApiErrorHandler.handle(err);
@@ -185,6 +202,7 @@ class ApiClient {
         debugPrint("❌ Refresh Token is NULL or EMPTY - Clearing Session");
         await _clearSession();
       }
+      */
     }
     _printCurlCommand(err.requestOptions);
 
@@ -241,8 +259,13 @@ class ApiClient {
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
+    bool showLoader = true,
   }) async {
-    return _dio.get(path, queryParameters: queryParameters);
+    return _dio.get(
+      path,
+      queryParameters: queryParameters,
+      options: Options(extra: {'show_loader': showLoader}),
+    );
   }
 
   Future<Response> post(
@@ -252,7 +275,12 @@ class ApiClient {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool showLoader = true,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    options.extra!['show_loader'] = showLoader;
+
     return _dio.post(
       path,
       data: data,
@@ -270,7 +298,12 @@ class ApiClient {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool showLoader = true,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    options.extra!['show_loader'] = showLoader;
+
     return _dio.put(
       path,
       data: data,
@@ -288,7 +321,12 @@ class ApiClient {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool showLoader = true,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    options.extra!['show_loader'] = showLoader;
+
     return _dio.patch(
       path,
       data: data,
@@ -303,8 +341,14 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    bool showLoader = true,
   }) async {
-    return _dio.delete(path, data: data, queryParameters: queryParameters);
+    return _dio.delete(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(extra: {'show_loader': showLoader}),
+    );
   }
 
   Future<Response> multipartPost(
@@ -312,7 +356,12 @@ class ApiClient {
     required FormData formData,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    bool showLoader = true,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    options.extra!['show_loader'] = showLoader;
+
     return _dio.post(path,
         data: formData, queryParameters: queryParameters, options: options);
   }
@@ -321,7 +370,12 @@ class ApiClient {
     Uri uri, {
     dynamic data,
     Options? options,
+    bool showLoader = true,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    options.extra!['show_loader'] = showLoader;
+
     return _dio.postUri(uri, data: data, options: options);
   }
 }
@@ -340,7 +394,7 @@ METHOD : ${options.method}
 URL    : ${options.uri}
 HEADERS: ${_maskHeaders(options.headers)}
 QUERY  : ${options.queryParameters}
-BODY   : ${options.data}
+BODY   : ${_prettyJson(options.data)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''',
     );
@@ -358,7 +412,7 @@ BODY   : ${options.data}
 ✅ API RESPONSE
 STATUS : ${response.statusCode}
 URL    : ${response.realUri}
-DATA   : ${response.data}
+DATA   : ${_prettyJson(response.data)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''',
     );
@@ -377,7 +431,7 @@ DATA   : ${response.data}
 STATUS : ${err.response?.statusCode}
 URL    : ${err.requestOptions.uri}
 ERROR  : ${err.message}
-DATA   : ${err.response?.data}
+DATA   : ${_prettyJson(err.response?.data)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''',
     );
@@ -393,5 +447,23 @@ DATA   : ${err.response?.data}
       print("Token masked final: ${masked[headerKey]}");
     }
     return masked;
+  }
+
+  String _prettyJson(dynamic data) {
+    if (data == null) return "null";
+    try {
+      const encoder = JsonEncoder.withIndent('  ');
+      if (data is String) {
+        try {
+          final decoded = jsonDecode(data);
+          return encoder.convert(decoded);
+        } catch (_) {
+          return data;
+        }
+      }
+      return encoder.convert(data);
+    } catch (e) {
+      return data.toString();
+    }
   }
 }

@@ -3,10 +3,6 @@ import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:presshop/core/core_export.dart';
-
-import 'package:presshop/core/widgets/common_widgets.dart';
-
 class LocationService {
   final Location _location = Location();
 
@@ -29,17 +25,17 @@ class LocationService {
   }
 
   // Show dialog if location permission is denied
-  Future<void> _showLocationMandatoryDialog(BuildContext context) async {
-    return commonErrorDialogDialog(
-        isFromNetworkError: false,
-        actionButton: "Open Settings",
-        MediaQuery.of(context).size,
-        "This app needs access to your location to provide its features. Please enable location permission in your app settings",
-        "Location permission required", () {
-      Navigator.pop(context);
-      openAppSettings();
-    });
-  }
+  // Future<void> _showLocationMandatoryDialog(BuildContext context) async {
+  //   return commonErrorDialogDialog(
+  //       isFromNetworkError: false,
+  //       actionButton: "Open Settings",
+  //       MediaQuery.of(context).size,
+  //       "This app needs access to your location to provide its features. Please enable location permission in your app settings",
+  //       "Location permission required", () {
+  //     Navigator.pop(context);
+  //     openAppSettings();
+  //   });
+  // }
 
   // Check if GPS is enabled
   Future<bool> _checkAndRequestGps() async {

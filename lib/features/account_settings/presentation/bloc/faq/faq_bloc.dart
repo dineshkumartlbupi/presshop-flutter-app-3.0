@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/core/usecases/usecase.dart';
+
 import '../../../../publish/domain/entities/content_category.dart';
 import '../../../domain/entities/faq.dart';
 import '../../../domain/usecases/get_faqs.dart';
@@ -35,7 +35,20 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
     Emitter<FAQState> emit,
   ) async {
     emit(state.copyWith(status: FAQStatus.loading));
-    final result = await getFAQCategories(NoParams());
+
+    // Determine the type string for API
+    String apiType = 'FAQ';
+    if (event.type.toLowerCase().contains('price') ||
+        event.type.toLowerCase().contains('tip')) {
+      apiType = 'PRICE_TIP';
+    } else if (event.type.toLowerCase() == 'faq') {
+      apiType = 'FAQ';
+    } else {
+      apiType = event.type;
+    }
+
+    final result =
+        await getFAQCategories(GetFAQCategoriesParams(type: apiType));
 
     result.fold(
       (Failure failure) => emit(state.copyWith(

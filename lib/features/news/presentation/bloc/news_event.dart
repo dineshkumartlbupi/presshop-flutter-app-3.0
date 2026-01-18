@@ -13,16 +13,22 @@ class GetAggregatedNewsEvent extends NewsEvent {
   final double lng;
   final double km;
   final String category;
+  final String? alertType;
+  final int limit;
+  final int offset;
 
   const GetAggregatedNewsEvent({
     required this.lat,
     required this.lng,
     required this.km,
     this.category = "all",
+    this.alertType,
+    this.limit = 10,
+    this.offset = 0,
   });
 
   @override
-  List<Object> get props => [lat, lng, km, category];
+  List<Object?> get props => [lat, lng, km, category, alertType, limit, offset];
 }
 
 class GetNewsDetailEvent extends NewsEvent {
@@ -77,6 +83,20 @@ class ToggleLikeStatusEvent extends NewsEvent {
 class IncrementViewCountEvent extends NewsEvent {
   @override
   List<Object> get props => [];
+}
+
+class ToggleNewsLikeEvent extends NewsEvent {
+  final String contentId;
+  const ToggleNewsLikeEvent({required this.contentId});
+  @override
+  List<Object> get props => [contentId];
+}
+
+class OnNewsLikeUpdatedEvent extends NewsEvent {
+  final dynamic likeData;
+  const OnNewsLikeUpdatedEvent({required this.likeData});
+  @override
+  List<Object> get props => [likeData];
 }
 
 class UpdateShareCountEvent extends NewsEvent {

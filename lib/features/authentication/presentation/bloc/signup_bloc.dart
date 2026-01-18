@@ -77,7 +77,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   ) async {
     final result = await checkUserName(event.userName);
     result.fold(
-      (failure) => emit(SignUpError(message: failure.message)),
+      (failure) =>
+          emit(UserNameCheckResult(false, errorMessage: failure.message)),
       (isAvailable) => emit(UserNameCheckResult(isAvailable)),
     );
   }
@@ -100,7 +101,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     final result = await checkPhone(event.phone);
     print("Phone check result: $result");
     result.fold(
-      (failure) => emit(SignUpError(message: failure.message)),
+      (failure) => emit(PhoneCheckResult(false, errorMessage: failure.message)),
       (isAvailable) => emit(PhoneCheckResult(isAvailable)),
     );
   }

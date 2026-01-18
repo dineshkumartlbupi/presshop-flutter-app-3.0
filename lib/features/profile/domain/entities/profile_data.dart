@@ -23,6 +23,7 @@ class ProfileData extends Equatable {
   final String? avatarId;
   final Map<String, dynamic>? sourceMap;
   final String? joinedDate;
+  final String? avatarUrl;
 
   const ProfileData({
     required this.id,
@@ -47,6 +48,7 @@ class ProfileData extends Equatable {
     this.avatarId,
     this.sourceMap,
     this.joinedDate,
+    this.avatarUrl,
   });
 
   @override
@@ -73,5 +75,6 @@ class ProfileData extends Equatable {
         avatarId,
         sourceMap,
         joinedDate,
+        avatarUrl,
       ];
 }

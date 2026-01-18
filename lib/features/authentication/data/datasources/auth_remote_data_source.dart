@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/failures.dart';
 import '../models/user_model.dart';
 import 'package:presshop/core/core_export.dart'; // For loginUrl and auth endpoints
@@ -57,12 +58,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             print(
                 "****************************************************************");
             // Robust token parsing
-            userMap['token'] = userMap['access_token'] ??
-                userMap['accessToken'] ??
-                userMap['token'];
-            userMap['refreshToken'] = userMap['refresh_token'] ??
+            String? accessToken = data['token'] ??
+                data['access_token'] ??
+                userMap['token'] ??
+                userMap['access_token'];
+            String? refreshToken = data['refreshToken'] ??
+                data['refresh_token'] ??
                 userMap['refreshToken'] ??
                 userMap['refresh_token'];
+
+            if (accessToken != null) {
+              userMap['token'] = accessToken;
+            }
+            if (refreshToken != null) {
+              userMap['refreshToken'] = refreshToken;
+            }
             return UserModel.fromJson(userMap);
           } else {
             throw ServerFailure(message: "User data is null");
@@ -96,30 +106,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         final data = response.data;
         print("🔵 SOCIAL LOGIN RESPONSE DATA: $data");
         if (data['code'] == 200 || data['success'] == true) {
-          // Check for token in root or inside data object
-          String? accessToken = data['token'] ??
-              data['access_token'] ??
-              data['data']?['token'] ??
-              data['data']?['access_token'];
+          final userMap = data['user'] ?? data['data'];
 
-          String? refreshToken = data['refreshToken'] ??
-              data['refresh_token'] ??
-              data['data']?['refreshToken'] ??
-              data['data']?['refresh_token'];
+          if (userMap != null) {
+            // Robust token parsing
+            String? accessToken = data['token'] ??
+                data['access_token'] ??
+                userMap['token'] ??
+                userMap['access_token'];
+            String? refreshToken = data['refreshToken'] ??
+                data['refresh_token'] ??
+                userMap['refreshToken'] ??
+                userMap['refresh_token'];
 
-          if (accessToken != null) {
-            final userMap = data['user'] ?? data['data'];
-
-            if (userMap != null) {
+            if (accessToken != null) {
               userMap['token'] = accessToken;
-              userMap['refreshToken'] = refreshToken;
-              return UserModel.fromJson(userMap);
-            } else {
-              throw ServerFailure(message: "User data is null");
             }
+            if (refreshToken != null) {
+              userMap['refreshToken'] = refreshToken;
+            }
+            return UserModel.fromJson(userMap);
           } else {
-            throw const UserNotRegisteredFailure(
-                message: 'User not registered');
+            throw ServerFailure(message: "User data is null");
           }
         } else {
           throw ServerFailure(
@@ -138,10 +146,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> register(Map<String, dynamic> data) async {
     try {
-      final response = await apiClient.post(
-        registerUrl,
-        data: data,
-      );
+      String? imagePath;
+      if (data.containsKey('_imagePath')) {
+        imagePath = data['_imagePath'];
+        data.remove('_imagePath');
+      }
+
+      Response response;
+      if (imagePath != null && imagePath.isNotEmpty) {
+        // Multipart request
+        FormData formData = FormData.fromMap(data);
+        formData.files.add(MapEntry(
+          "profile_image",
+          await MultipartFile.fromFile(imagePath),
+        ));
+
+        response = await apiClient.multipartPost(
+          registerUrl,
+          formData: formData,
+        );
+      } else {
+        response = await apiClient.post(
+          registerUrl,
+          data: data,
+        );
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final resData = response.data;
@@ -153,9 +182,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             throw ServerFailure(message: 'Invalid response: User data missing');
           }
 
-          if (resData['token'] != null) {
-            userMap['token'] = resData['token'];
-            userMap['refreshToken'] = resData['refreshToken'];
+          String? accessToken = resData['token'] ??
+              resData['access_token'] ??
+              userMap['token'] ??
+              userMap['access_token'];
+          String? refreshToken = resData['refreshToken'] ??
+              resData['refresh_token'] ??
+              userMap['refreshToken'] ??
+              userMap['refresh_token'];
+
+          if (accessToken != null) {
+            userMap['token'] = accessToken;
+          }
+          if (refreshToken != null) {
+            userMap['refreshToken'] = refreshToken;
           }
           return UserModel.fromJson(userMap);
         } else {
@@ -176,7 +216,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> sendOtp(Map<String, dynamic> data) async {
     try {
       final response = await apiClient.post(
-        sendOtpUrl,
+        ApiConstants.auth.sendOtp,
         data: data,
       );
 
@@ -261,18 +301,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.get(url);
       if (response.statusCode == 200) {
         final data = response.data;
-        // If code is 200, it means it EXISTS, so it is NOT available.
-        return data['code'] != 200;
+
+        // New Logic: Check for nested 'exists' key
+        if (data['data'] != null && data['data'] is Map) {
+          if (data['data']['exists'] == true) {
+            throw ServerFailure(
+                message: data['message'] ?? "Username is taken");
+          }
+        }
+
+        // Fallback/Legacy: Check code
+        if (data['code'] != null) {
+          if (data['code'] != 200) {
+            // In legacy, != 200 usually meant error/taken.
+            // If code is present and not 200, assume failure/taken.
+            return false;
+          }
+        }
+
+        return true; // Default to available if 'exists' is not true and no error code
+      } else {
+        throw ServerFailure(
+            message: 'Check UserName failed: ${response.statusCode}');
       }
-      return true; // If not 200, assume available? Or check for specific 404?
     } catch (e) {
-      if (e is DioException && e.response?.statusCode == 404) {
-        // 404 means "Not Found", so it IS available.
-        return true;
-      }
-      // Other errors, assume not available or throw?
-      // Legacy code returned false on error.
-      return false;
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -281,14 +334,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final url = checkEmailUrl.replaceAll(":email", email);
       final response = await apiClient.get(url);
-      final data = response.data;
-      // If code is 200, it means it EXISTS, so it is NOT available.
-      return data['code'] != 200;
-    } catch (e) {
-      if (e is DioException && e.response?.statusCode == 404) {
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        // New Logic: Check for nested 'exists' key
+        if (data['data'] != null && data['data'] is Map) {
+          if (data['data']['exists'] == true) {
+            return false; // User exists, so NOT available
+          }
+        }
+
+        // Fallback/Legacy: Check code
+        if (data['code'] != null) {
+          return data['code'] != 200;
+        }
+
         return true;
+      } else {
+        throw ServerFailure(
+            message: 'Check Email failed: ${response.statusCode}');
       }
-      return false;
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -297,15 +364,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final url = checkPhoneUrl.replaceAll(":phone", phone);
       final response = await apiClient.get(url);
-      final data = response.data;
-      print("Phone check uttar: $data");
-      // If code is 200, it means it EXISTS, so it is NOT available.
-      return data['code'] != 200;
-    } catch (e) {
-      if (e is DioException && e.response?.statusCode == 404) {
+      if (response.statusCode == 200) {
+        final data = response.data;
+        print("Phone check uttar: $data");
+
+        // New Logic: Check for nested 'exists' key
+        if (data['data'] != null && data['data'] is Map) {
+          if (data['data']['exists'] == true) {
+            throw ServerFailure(
+                message: data['message'] ?? "Phone number is already taken");
+          }
+        }
+
+        // Fallback/Legacy: Check code
+        if (data['code'] != null) {
+          if (data['code'] != 200) {
+            return false;
+          }
+        }
+
         return true;
+      } else {
+        throw ServerFailure(
+            message: 'Check Phone failed: ${response.statusCode}');
       }
-      return false;
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
     }
   }
 
@@ -316,12 +400,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.statusCode == 200) {
         final data = response.data;
         print("🔵 GET AVATARS RESPONSE: $data");
-        // API returns: {"base_url": "...", "response": [...]}
-        final String baseUrl = data['base_url'] ?? '';
-        final List list = data['response'] ?? [];
-        return list
-            .map((e) => AvatarModel.fromJson(e, baseUrl: baseUrl))
-            .toList();
+        // API returns: {"success": true, "data": [{"avatar": "...", ...}]}
+        final List list = data['data'] ?? [];
+        return list.map((e) => AvatarModel.fromJson(e)).toList();
       }
       return [];
     } catch (e) {
@@ -392,9 +473,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             throw ServerFailure(message: 'Invalid response: User data missing');
           }
 
-          if (resData['token'] != null) {
-            userMap['token'] = resData['token'];
-            userMap['refreshToken'] = resData['refreshToken'];
+          // Robust token parsing
+          String? accessToken = resData['token'] ??
+              resData['access_token'] ??
+              userMap['token'] ??
+              userMap['access_token'];
+          String? refreshToken = resData['refreshToken'] ??
+              resData['refresh_token'] ??
+              userMap['refreshToken'] ??
+              userMap['refresh_token'];
+
+          if (accessToken != null) {
+            userMap['token'] = accessToken;
+          }
+          if (refreshToken != null) {
+            userMap['refreshToken'] = refreshToken;
           }
           return UserModel.fromJson(userMap);
         } else {

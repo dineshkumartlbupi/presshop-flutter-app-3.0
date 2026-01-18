@@ -26,8 +26,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
   final bool _alwaysShowChatButton = true;
   final messageController = TextEditingController();
   final scrollController = ScrollController();
-  String senderPic =
-      avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? "");
+  String senderPic = (sharedPreferences!.getString(avatarKey) ?? "");
 
   @override
   void initState() {

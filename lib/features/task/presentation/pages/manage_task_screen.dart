@@ -50,6 +50,7 @@ import 'package:presshop/features/account_settings/presentation/pages/faq_screen
 
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
+// ignore: must_be_immutable
 class ManageTaskScreen extends StatefulWidget {
   final TaskDetail? taskDetail;
   MyContentData? myContentData;
@@ -99,7 +100,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
     "Hopper Support"
   ];
   double ratings = 0.0;
-  bool _againUpload = false;
+  // bool _againUpload = false;
   bool showAcceptBtn = false;
   bool showRejectBtn = false;
   bool isRatingGiven = false;
@@ -116,13 +117,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
   bool uploadSuccess = false;
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  void _scrollDown() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(seconds: 2),
-      curve: Curves.fastOutSlowIn,
-    );
-  }
+  // void _scrollDown() {
+  //   scrollController.animateTo(
+  //     scrollController.position.maxScrollExtent,
+  //     duration: const Duration(seconds: 2),
+  //     curve: Curves.fastOutSlowIn,
+  //   );
+  // }
 
   @override
   void initState() {
@@ -4422,8 +4423,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
           SizedBox(
             width: size.width * numD02,
           ),
-          (avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? ""))
-                  .isNotEmpty
+          (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
               ? Container(
                   padding: EdgeInsets.all(
                     size.width * numD01,
@@ -4433,8 +4433,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        avatarImageUrl +
-                            (sharedPreferences!.getString(avatarKey) ?? ""),
+                        (sharedPreferences!.getString(avatarKey) ?? ""),
                         fit: BoxFit.cover,
                         height: size.width * numD09,
                         width: size.width * numD09,
@@ -4522,8 +4521,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
           SizedBox(
             width: size.width * numD02,
           ),
-          (avatarImageUrl + (sharedPreferences!.getString(avatarKey) ?? ""))
-                  .isNotEmpty
+          (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
               ? Container(
                   padding: EdgeInsets.all(
                     size.width * numD01,
@@ -4533,8 +4531,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        avatarImageUrl +
-                            (sharedPreferences!.getString(avatarKey) ?? ""),
+                        (sharedPreferences!.getString(avatarKey) ?? ""),
                         fit: BoxFit.cover,
                         height: size.width * numD09,
                         width: size.width * numD09,
@@ -4648,10 +4645,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
-                              avatarImageUrl +
-                                  sharedPreferences!
-                                      .getString(avatarKey)
-                                      .toString(),
+                              sharedPreferences!
+                                  .getString(avatarKey)
+                                  .toString(),
                               height: size.width * numD09,
                               width: size.width * numD09,
                               fit: BoxFit.cover, errorBuilder:
@@ -5360,7 +5356,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                             ? Colors.grey
                             : colorThemePink), () {
                   if (item.requestStatus.isEmpty) {
-                    _againUpload = true;
+                    // _againUpload = true;
 
                     setState(() {});
                   }

@@ -13,6 +13,7 @@ import 'package:presshop/features/authentication/presentation/bloc/term_state.da
 import 'package:presshop/features/authentication/data/repositories/term_repository.dart';
 import 'package:presshop/core/di/injection_container.dart'; // For sl
 
+// ignore: must_be_immutable
 class TermCheckScreen extends StatefulWidget {
   String type = "";
 

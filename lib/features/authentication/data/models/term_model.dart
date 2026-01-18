@@ -43,11 +43,14 @@ class TermsData {
         }
       }
     } else if (json is Map<String, dynamic>) {
-      if (json['privacyPolicy'] != null) {
-        privacyPolicy = CmsItem.fromJson(json['privacyPolicy']);
+      final targetMap =
+          (json['data'] is Map<String, dynamic>) ? json['data'] : json;
+
+      if (targetMap['privacyPolicy'] != null) {
+        privacyPolicy = CmsItem.fromJson(targetMap['privacyPolicy']);
       }
-      if (json['termAndCond'] != null) {
-        termAndCond = CmsItem.fromJson(json['termAndCond']);
+      if (targetMap['termAndCond'] != null) {
+        termAndCond = CmsItem.fromJson(targetMap['termAndCond']);
       }
     }
 

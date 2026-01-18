@@ -4,6 +4,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/main.dart';
 
+// ignore: must_be_immutable
 class ManageContentWidget extends StatelessWidget {
   Map<String, dynamic> data = {};
   ManageContentWidget(this.data, {super.key});

@@ -1,7 +1,7 @@
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 
 class MyContentData {
   String id = "";
@@ -235,8 +235,7 @@ class MyContentData {
         mediaHouseName: mediaHouseName ?? this.mediaHouseName,
         categoryId: categoryId ?? this.categoryId,
         contentView: contentView ?? this.contentView,
-        purchasedMediahouseCount:
-            purchasedMediahouseCount ?? purchasedMediahouseCount,
+        purchasedMediahouseCount: purchasedMediahouseCount,
         totalEarning: totalEarning ?? this.totalEarning);
   }
 }

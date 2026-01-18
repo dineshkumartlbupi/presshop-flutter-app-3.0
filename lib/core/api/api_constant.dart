@@ -1,36 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// ==============================================================================
-// CONFIGURATION & KEYS
-// ==============================================================================
+const name = 1;
+const baseUrl = (name == 1)
+    ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/"
+    : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
 
-String get googleMapAPiKey {
-  try {
-    return dotenv.get('GOOGLE_MAP_API_KEY',
-        fallback: "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI");
-  } catch (_) {
-    return "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
-  }
-}
-
-String get appleMapAPiKey {
-  try {
-    return dotenv.get('APPLE_MAP_API_KEY',
-        fallback: "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw");
-  } catch (_) {
-    return "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
-  }
-}
-
-final String appUrl = Platform.isAndroid
-    ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
-    : 'https://apps.apple.com/in/app/presshop/id6744651614';
-
-// Base URLs
-const baseUrl =
-    "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
+// const baseUrl =
+//     "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
 const adminBaseUrl = "https://dev-api.presshop.news:5020/";
 const mediaBaseUrl = "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
 const socketUrl = "https://dev-api.presshop.news:3005";
@@ -42,7 +19,7 @@ const googlePlaceDetailsURL =
     "https://maps.googleapis.com/maps/api/place/details/json";
 
 // Media Paths
-const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
+
 const profileImageUrl = "${mediaBaseUrl}userImages/";
 const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
 const adminProfileUrl = "${mediaBaseUrl}adminImages/";
@@ -57,7 +34,7 @@ const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 // AUTHENTICATION & ONBOARDING
 // ==============================================================================
 
-const sendOtpUrl = "auth/sendOTP";
+// const sendOtpUrl = "auth/sendOTP";
 const verifyOtpUrl = "auth/verifyOTP";
 const registerUrl = "auth/registerHopper";
 const loginUrl = "auth/login";
@@ -98,7 +75,7 @@ const addDeviceUrl = "hopper/add/fcm/token";
 const removeDeviceUrl = "hopper/remove/fcm/token";
 const deleteAccountUrl = "hopper/verifyAndDeleteAccount";
 const checkOnboardingCompleteOrNotUrl = "hopper/checkOnboardingCompleteOrNot";
-const getAvatarsUrl = "https://dev-api.presshop.news:5020/users/getAvatars";
+const getAvatarsUrl = "admin/getAvatars";
 const appSettingUrl = "hopper/appSettings";
 const studentBeansActivationUrl = "hopper/studentBeansActivation";
 
@@ -214,3 +191,26 @@ const onAppInstallCallback = "admin/onAppInstallCallback";
 // // const baseUrl = (name == "1")
 // //     ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api"
 // //     : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+
+String get googleMapAPiKey {
+  try {
+    return dotenv.get('GOOGLE_MAP_API_KEY',
+        fallback: "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI");
+  } catch (_) {
+    return "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
+  }
+}
+
+String get appleMapAPiKey {
+  try {
+    return dotenv.get('APPLE_MAP_API_KEY',
+        fallback: "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw");
+  } catch (_) {
+    return "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
+  }
+}
+
+final String appUrl = Platform.isAndroid
+    ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
+    : 'https://apps.apple.com/in/app/presshop/id6744651614';
+// Base URLs

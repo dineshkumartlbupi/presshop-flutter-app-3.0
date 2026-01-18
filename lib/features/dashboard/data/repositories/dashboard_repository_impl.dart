@@ -4,7 +4,6 @@ import 'package:presshop/core/api/network_info.dart';
 import '../../domain/entities/admin_detail.dart';
 import '../../domain/entities/student_beans_info.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
-import 'package:presshop/features/notification/domain/entities/notification_entity.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../datasources/dashboard_remote_data_source.dart';

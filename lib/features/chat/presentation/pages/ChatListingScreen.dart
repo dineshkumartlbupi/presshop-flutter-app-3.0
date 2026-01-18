@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +14,7 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 const int getAdminListReq = 1;
 
+// ignore: must_be_immutable
 class ChatListingScreen extends StatefulWidget {
   bool hideLeading = false;
 
@@ -390,8 +390,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                                 userId.toString()
                                             ? adminProfileUrl +
                                                 document.get('receiverImage')
-                                            : avatarImageUrl +
-                                                document.get('senderImage'),
+                                            : document.get('senderImage'),
                                         errorBuilder: (BuildContext context,
                                             Object exception,
                                             StackTrace? stackTrace) {
@@ -549,11 +548,11 @@ class _ChatListingScreenState extends State<ChatListingScreen>
       for (int i = 0; i < onlineUserList.docs.length; i++) {
         if (onlineUserList.docs[i].id != sharedPreferences?.getString(userId) &&
             onlineUserList.docs[i].get('isOnline')) {
-          var onlineMap = {
-            "senderImage": onlineUserList.docs[i].get('senderImage') ?? "",
-            "userName": onlineUserList.docs[i].get('userName') ?? "",
-            "isOnline": onlineUserList.docs[i].get('isOnline') ?? false
-          };
+          // var onlineMap = {
+          //   "senderImage": onlineUserList.docs[i].get('senderImage') ?? "",
+          //   "userName": onlineUserList.docs[i].get('userName') ?? "",
+          //   "isOnline": onlineUserList.docs[i].get('isOnline') ?? false
+          // };
         }
       }
     });

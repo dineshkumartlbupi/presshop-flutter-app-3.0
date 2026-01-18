@@ -1,5 +1,3 @@
-import 'package:presshop/core/api/api_constant.dart';
-
 class CommentData {
   String id;
   String name;
@@ -44,7 +42,7 @@ class CommentData {
       name: name,
       date: json['createdAt'] ?? "", // You might want to format this
       comment: json['text'] ?? "",
-      avatarUrl: (avatar.trim().isEmpty) ? "" : "$avatarImageUrl$avatar",
+      avatarUrl: (avatar.trim().isEmpty) ? "" : avatar,
       likes: json['likes_count'] ?? 0,
       replies: replies,
       isLiked: json['is_liked'] ?? false, // Check API response key
