@@ -14,7 +14,6 @@ import 'package:presshop/features/splash/data/repositories/force_update_reposito
 import 'package:presshop/features/splash/presentation/pages/SplashScreen.dart';
 import 'package:presshop/main.dart';
 
-/// Main application widget with force update functionality
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -51,7 +50,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  /// Fetch the required app version for force update check
   Future<String> _fetchRequiredVersion() async {
     try {
       final force = await ForceUpdateRepository.checkForceUpdate();
@@ -64,7 +62,6 @@ class MyApp extends StatelessWidget {
     } catch (e) {
       debugPrint("Force update check failed: $e");
 
-      // Return current version as fallback
       final info = await PackageInfo.fromPlatform();
       return info.version;
     }
@@ -86,13 +83,11 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   @override
   void initState() {
     super.initState();
-    // Check initial state
     Connectivity().checkConnectivity().then((results) {
       debugPrint("ConnectivityWrapper: Initial check: $results");
       _checkConnectivity(results);
     });
 
-    // Listen to connectivity changes
     _subscription = Connectivity().onConnectivityChanged.listen((results) {
       debugPrint("ConnectivityWrapper: Status changed: $results");
       _checkConnectivity(results);
@@ -100,14 +95,12 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   }
 
   Future<void> _checkConnectivity(List<ConnectivityResult> results) async {
-    // If list contains none, we might be offline.
     bool isDeviceOffline = results.contains(ConnectivityResult.none);
 
     debugPrint(
         "ConnectivityWrapper: isDeviceOffline: $isDeviceOffline, DialogShowing: $_isDialogShowing");
 
     if (isDeviceOffline) {
-      // Double check with actual internet connection check to avoid false positives
       bool hasConnection = await InternetConnectionChecker().hasConnection;
       if (!hasConnection) {
         _showOfflineDialog();
@@ -126,7 +119,6 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     debugPrint("ConnectivityWrapper: Showing offline dialog");
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Ensure navigator is ready
       if (navigatorKey.currentContext == null) {
         debugPrint("ConnectivityWrapper: Navigator context is null!");
         _isDialogShowing = false;
@@ -149,7 +141,6 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   }
 
   Future<void> _checkConnection() async {
-    // For retry, we can use the more robust check
     bool hasConnection = await InternetConnectionChecker().hasConnection;
     debugPrint(
         "ConnectivityWrapper: Retry check hasConnection: $hasConnection");
@@ -157,8 +148,6 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     if (hasConnection) {
       _dismissOfflineDialog();
     } else {
-      // If still offline, the dialog was popped by the button press in commonErrorDialogDialog.
-      // We need to show it again.
       _isDialogShowing = false;
       _showOfflineDialog();
     }

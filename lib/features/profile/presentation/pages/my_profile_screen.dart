@@ -74,6 +74,23 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       showPostalCodeError = false,
       isLoading = false;
   FocusNode apartmentFocusNode = FocusNode();
+  Timer? _debounceTimer;
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    userNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    phoneNumberController.dispose();
+    emailAddressController.dispose();
+    addressController.dispose();
+    postCodeController.dispose();
+    apartmentAndHouseNameController.dispose();
+    cityNameController.dispose();
+    countryNameController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -1524,25 +1541,28 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void setUserNameListener() {
     userNameController.addListener(() {
       if (widget.editProfileScreen) {
-        debugPrint("UserName:${userNameController.text}");
-        if (userNameController.text.trim().isNotEmpty &&
-            firstNameController.text.trim().isNotEmpty &&
-            lastNameController.text.trim().isNotEmpty &&
-            userNameController.text.trim().length >= 4 &&
-            !userNameController.text
-                .trim()
-                .toLowerCase()
-                .contains(firstNameController.text.trim().toLowerCase()) &&
-            !userNameController.text
-                .trim()
-                .toLowerCase()
-                .contains(lastNameController.text.trim().toLowerCase())) {
-          debugPrint("notsuccess");
-          checkUserNameApi();
-        } else {
-          userNameAlreadyExists = false;
-        }
-        setState(() {});
+        if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          debugPrint("UserName:${userNameController.text}");
+          if (userNameController.text.trim().isNotEmpty &&
+              firstNameController.text.trim().isNotEmpty &&
+              lastNameController.text.trim().isNotEmpty &&
+              userNameController.text.trim().length >= 4 &&
+              !userNameController.text
+                  .trim()
+                  .toLowerCase()
+                  .contains(firstNameController.text.trim().toLowerCase()) &&
+              !userNameController.text
+                  .trim()
+                  .toLowerCase()
+                  .contains(lastNameController.text.trim().toLowerCase())) {
+            debugPrint("notsuccess");
+            checkUserNameApi();
+          } else {
+            userNameAlreadyExists = false;
+          }
+          setState(() {});
+        });
       }
     });
   }
