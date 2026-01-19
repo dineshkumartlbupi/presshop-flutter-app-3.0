@@ -27,6 +27,10 @@ import 'package:presshop/features/profile/domain/usecases/get_avatars.dart'
 import 'package:presshop/features/authentication/data/repositories/term_repository.dart';
 
 import 'package:presshop/features/splash/presentation/bloc/splash_bloc.dart';
+import 'package:presshop/features/splash/data/datasources/splash_remote_data_source.dart';
+import 'package:presshop/features/splash/data/repositories/splash_repository_impl.dart';
+import 'package:presshop/features/splash/domain/repositories/splash_repository.dart';
+import 'package:presshop/features/splash/domain/usecases/check_splash_version.dart';
 import 'package:presshop/features/chatbot/presentation/bloc/chatbot_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
@@ -128,7 +132,6 @@ import 'package:presshop/features/dashboard/domain/usecases/get_dashboard_task_d
 import 'package:presshop/features/dashboard/domain/usecases/get_room_id.dart';
 import 'package:presshop/features/task/domain/usecases/get_room_id.dart'
     as task_room;
-import 'package:presshop/features/dashboard/domain/usecases/check_app_version.dart';
 import 'package:presshop/features/dashboard/domain/usecases/activate_student_beans.dart'
     as dashboard_beans;
 import 'package:presshop/features/authentication/domain/usecases/check_username.dart';
@@ -281,8 +284,16 @@ Future<void> init() async {
   // Use cases needed by SplashBloc
   sl.registerLazySingleton(() => CheckAuthStatus(sl()));
   sl.registerLazySingleton(() => GetProfile(sl()));
-  sl.registerLazySingleton(() => CheckAppVersion(sl()));
+  sl.registerLazySingleton(() => CheckSplashVersion(sl()));
   sl.registerLazySingleton(() => CheckOnboardingStatus(sl()));
+
+  // Splash Feature Dependencies
+  sl.registerLazySingleton<SplashRemoteDataSource>(
+    () => SplashRemoteDataSourceImpl(apiClient: sl()),
+  );
+  sl.registerLazySingleton<SplashRepository>(
+    () => SplashRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
 
   // Use cases needed by SignUpBloc
   sl.registerLazySingleton(() => CheckUserName(sl()));
