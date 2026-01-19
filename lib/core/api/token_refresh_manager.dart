@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/main.dart';
@@ -49,7 +50,7 @@ class TokenRefreshManager {
       final token = await storage.read(key: tokenKey) ?? "";
       final deviceID = sharedPreferences!.getString(deviceIdKey) ?? "";
 
-      final uri = Uri.parse(baseUrl + appRefreshTokenUrl);
+      final uri = Uri.parse(baseUrl + ApiConstants.auth.refreshToken);
       debugPrint(
           "Refreshing token: $uri (Attempt ${retryAttempt + 1}/${_maxRetries + 1})");
 

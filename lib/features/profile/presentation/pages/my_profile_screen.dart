@@ -24,6 +24,7 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:presshop/main.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 
 class MyProfile extends StatefulWidget {
   bool editProfileScreen;
@@ -1801,7 +1802,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
         debugPrint("CheckUserNameResponse:$map");
-        userNameAlreadyExists = map["userNameExist"];
+        if (map['data'] != null &&
+            map['data'] is Map &&
+            map['data']['exists'] != null) {
+          userNameAlreadyExists = map['data']['exists'];
+        } else {
+          userNameAlreadyExists = map["userNameExist"] ?? false;
+        }
         setState(() {});
       }
     } catch (e) {
@@ -1818,7 +1825,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
         debugPrint("CheckEmailResponse:$map");
-        emailAlreadyExists = map["emailExist"];
+        if (map['data'] != null &&
+            map['data'] is Map &&
+            map['data']['exists'] != null) {
+          emailAlreadyExists = map['data']['exists'];
+        } else {
+          emailAlreadyExists = map["emailExist"] ?? false;
+        }
         setState(() {});
       }
     } catch (e) {
@@ -1835,7 +1848,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
         debugPrint("CheckPhoneResponse:$map");
-        phoneAlreadyExists = map["phoneExist"];
+        if (map['data'] != null &&
+            map['data'] is Map &&
+            map['data']['exists'] != null) {
+          phoneAlreadyExists = map['data']['exists'];
+        } else {
+          phoneAlreadyExists = map["phoneExist"] ?? false;
+        }
         setState(() {});
       }
     } catch (e) {
@@ -2249,11 +2268,17 @@ class MyProfileData {
     longitude = (json[longitudeKey] ?? "").toString();
     totalIncome =
         json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
-    avatarImage = (json["avatarData"] != null
+    String tempAvatar = (json["avatarData"] != null
             ? (json["avatarData"]["avatar"]?.toString() ?? "")
             : null) ??
         json["avatar"]?.toString() ??
         "";
+    if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
+      avatarImage = "${ApiConstants.config.avatarImage}$tempAvatar";
+    } else {
+      avatarImage = tempAvatar;
+    }
+    avatarImage = fixS3Url(avatarImage);
     avatarId = (json["avatarData"] != null
             ? (json["avatarData"]["_id"]?.toString() ?? "")
             : null) ??

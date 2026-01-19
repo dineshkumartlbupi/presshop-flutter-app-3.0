@@ -1,4 +1,5 @@
 import '../../domain/entities/feed.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 
 class FeedModel extends Feed {
   const FeedModel({
@@ -70,12 +71,12 @@ class FeedModel extends Feed {
           hopper['avatar_id'] is Map &&
           hopper['avatar_id']['avatar'] != null) {
         avatarUrl =
-            "https://presshop3.0.s3.eu-west-2.amazonaws.com/public/avatars/${hopper['avatar_id']['avatar']}";
+            "${ApiConstants.config.avatarImage}${hopper['avatar_id']['avatar']}";
       } else if (hopper['avatarData'] != null &&
           hopper['avatarData'] is Map &&
           hopper['avatarData']['avatar'] != null) {
         avatarUrl =
-            "https://presshop3.0.s3.eu-west-2.amazonaws.com/public/avatars/${hopper['avatarData']['avatar']}";
+            "${ApiConstants.config.avatarImage}${hopper['avatarData']['avatar']}";
       }
     }
     if (avatarUrl.isEmpty) {
