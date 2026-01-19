@@ -33,7 +33,10 @@ bool isKeyEmptyMap(Map<String, dynamic> data, String key) {
 String fixS3Url(String url) {
   if (url.contains("presshop3.0.s3.eu-west-2.amazonaws.com")) {
     return url.replaceFirst("presshop3.0.s3.eu-west-2.amazonaws.com",
-        "s3.eu-west-2.amazonaws.com/presshop3.0");
+        "dev-presshope.s3.eu-west-2.amazonaws.com");
+  } else if (url.contains("s3.eu-west-2.amazonaws.com/presshop3.0")) {
+    return url.replaceFirst("s3.eu-west-2.amazonaws.com/presshop3.0",
+        "dev-presshope.s3.eu-west-2.amazonaws.com/public");
   }
   return url;
 }

@@ -35,6 +35,7 @@ const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 // ==============================================================================
 
 // const sendOtpUrl = "auth/sendOTP";
+
 const verifyOtpUrl = "auth/verifyOTP";
 const registerUrl = "auth/registerHopper";
 const loginUrl = "auth/login";
