@@ -1,6 +1,5 @@
 class ApiConstants {
   ApiConstants._();
-
   static const Config config = Config();
   static const Auth auth = Auth();
   static const Profile profile = Profile();
@@ -13,41 +12,14 @@ class ApiConstants {
 
 class Config {
   const Config();
-
   static const int env = 1;
-
   String get baseUrl => env == 1
       ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api"
       : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
-
-  final String adminBaseUrl = "https://dev-api.presshop.news:5020/";
-  final String socketUrl = "https://dev-api.presshop.news:3005";
-  final String mediaBaseUrl =
-      "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
-
-  /// Media paths
-  String get avatarImage => "${mediaBaseUrl}avatarImages/";
-  String get profileImage => "${mediaBaseUrl}userImages/";
-  String get documentImage => "${mediaBaseUrl}docToBecomePro/";
-  String get adminProfileImage => "${mediaBaseUrl}adminImages/";
-
-  final String contentImageUrl =
-      "https://dev-cdn.presshop.news/public/contentData/";
-  final String taskMediaUrl =
-      "https://dev-cdn.presshop.news/public/uploadContent/";
-  final String mediaThumbnailUrl =
-      "https://dev-cdn.presshop.news/public/thumbnail/";
-
-  /// Google APIs
-  final String googleAutoComplete =
-      "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-  final String googlePlaceDetails =
-      "https://maps.googleapis.com/maps/api/place/details/json";
 }
 
 class Auth {
   const Auth();
-
   final String sendOtp = "auth/sendOTP";
   final String verifyOtp = "auth/verifyOTP";
   final String register = "auth/registerHopper";
@@ -107,12 +79,10 @@ class Content {
   final String likeFeed = "hopper/updatefeed";
   final String mostViewed = "hopper/mostviewed";
 
-  /// Aggregated News
   final String aggregatedNews = "hopper/getAggregatedNews";
   final String aggregatedNewsDetail = "hopper/getAggregatedNewsDetail";
   final String aggregatedNewsComments = "hopper/getAggregatedNewsComments";
 
-  /// Tags & Category
   final String getTags = "users/getTags";
   final String addTags = "users/addTag";
   final String category = "users/getCategory/";

@@ -476,9 +476,16 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       if (response.statusCode == 200) {
         var list = response.data;
         if (list is String) list = jsonDecode(list);
-        list = list as List;
+
+        List tags = [];
+        if (list is Map<String, dynamic>) {
+          tags = list['data'] ?? list['tags'] ?? list['hashtags'] ?? [];
+        } else if (list is List) {
+          tags = list;
+        }
+
         debugPrint("GetHashTags: $response");
-        hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+        hashtagSearchList = tags.map((e) => HashTagData.fromJson(e)).toList();
 
         if (hashtagSearchList.isNotEmpty) {
           var tageName = hashtagSearchList.first.name;
@@ -515,10 +522,16 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       if (response.statusCode == 200) {
         var list = response.data;
         if (list is String) list = jsonDecode(list);
-        list = list as List;
+
+        List tags = [];
+        if (list is Map<String, dynamic>) {
+          tags = list['data'] ?? list['tags'] ?? list['hashtags'] ?? [];
+        } else if (list is List) {
+          tags = list;
+        }
 
         debugPrint("SearchHashTags: $response");
-        hashtagSearchList = list.map((e) => HashTagData.fromJson(e)).toList();
+        hashtagSearchList = tags.map((e) => HashTagData.fromJson(e)).toList();
         if (hashtagSearchList.isEmpty &&
             hashTagController.text.trim().isNotEmpty) {
           addNew = true;

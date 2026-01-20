@@ -16,7 +16,9 @@ class ChatModel {
     return ChatModel(
         message: json['message'] ?? "",
         isUser: json['is_user'] == true || json['is_user'] == "true",
-        isNavigate: false,
+        isNavigate: (json['message'] ?? "")
+            .toString()
+            .contains("handing you over to a real person"),
         time: json['createdAt'] ?? json['time'] ?? "");
   }
 }

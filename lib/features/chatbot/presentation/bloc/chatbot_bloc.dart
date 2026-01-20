@@ -87,44 +87,54 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
 
     callAddMessageApi(event.message, event.time, "true");
 
-    // DialogFlow response
-    DetectIntentResponse response = await dialogFlowtter.detectIntent(
-      queryInput: QueryInput(
-          text: TextInput(
-        text: event.message,
-        languageCode: "en",
-      )),
-    );
+    try {
+      // DialogFlow response
+      DetectIntentResponse response = await dialogFlowtter.detectIntent(
+        queryInput: QueryInput(
+            text: TextInput(
+          text: event.message,
+          languageCode: "en",
+        )),
+      );
 
-    if (response.message != null) {
-      if (response.queryResult!.action == "input.unknown") {
-        String msg = failCount < 1
-            ? "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help."
-            : "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?";
+      if (response.message != null) {
+        if (response.queryResult!.action == "input.unknown") {
+          String msg = failCount < 1
+              ? "I’m sorry, I didn’t quite get that! Can you repeat or rephrase your question? I’m eager to help."
+              : "Hmm... I’m not quite sure about that one! Shall I grab a human from the PressHop team to assist you?";
 
-        chatList.add(
-          ChatModel(
-              message: msg,
+          chatList.add(
+            ChatModel(
+                message: msg,
+                isUser: false,
+                isNavigate: false,
+                time: DateTime.now().toString(),
+                hasShownFirstFailMsg: failCount > 0),
+          );
+
+          if (failCount < 1) {
+            callAddMessageApi(msg, DateTime.now().toString(), "false");
+          }
+          failCount++;
+        } else {
+          failCount = 0;
+          chatList.add(ChatModel(
+              message: response.message!.text!.text![0],
               isUser: false,
               isNavigate: false,
-              time: DateTime.now().toString(),
-              hasShownFirstFailMsg: failCount > 0),
-        );
-
-        if (failCount < 1) {
-          callAddMessageApi(msg, DateTime.now().toString(), "false");
+              time: DateTime.now().toString()));
+          callAddMessageApi(response.message!.text!.text![0],
+              DateTime.now().toString(), "false");
         }
-        failCount++;
-      } else {
-        failCount = 0;
-        chatList.add(ChatModel(
-            message: response.message!.text!.text![0],
-            isUser: false,
-            isNavigate: false,
-            time: DateTime.now().toString()));
-        callAddMessageApi(response.message!.text!.text![0],
-            DateTime.now().toString(), "false");
       }
+    } catch (e) {
+      debugPrint("DialogFlow Error: $e");
+      chatList.add(ChatModel(
+          message:
+              "I'm having trouble connecting right now. Please try again later.",
+          isUser: false,
+          isNavigate: false,
+          time: DateTime.now().toString()));
     }
 
     emit(ChatbotLoaded(chatList: List.from(chatList), isTyping: false));
@@ -148,6 +158,10 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
           message:
               "Loved our chat! Now handing you over to a real person for extra support.",
           isHumanAssistanceRequested: true));
+      callAddMessageApi(
+          "Loved our chat! Now handing you over to a real person for extra support.",
+          DateTime.now().toString(),
+          "false");
       chatList.removeAt(event.index);
     } else {
       chatList.removeAt(event.index);

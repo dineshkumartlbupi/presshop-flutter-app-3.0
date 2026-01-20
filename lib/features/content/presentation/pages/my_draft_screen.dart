@@ -824,7 +824,16 @@ class MyDraftScreenState extends State<MyDraftScreen> {
         if (data is String) data = jsonDecode(data);
         log("myDraftUrlRequest success: $data");
         if (data != null) {
-          var listModel = (data["contentList"] ?? []) as List;
+          var contentList = [];
+          if (data['data'] != null &&
+              data['data'] is Map &&
+              data['data']['contentList'] != null) {
+            contentList = data['data']['contentList'];
+          } else if (data['contentList'] != null) {
+            contentList = data['contentList'];
+          }
+
+          var listModel = contentList as List;
           var list = listModel.map((e) => MyContentData.fromJson(e)).toList();
           if (list.isNotEmpty) {
             _refreshController.loadComplete();

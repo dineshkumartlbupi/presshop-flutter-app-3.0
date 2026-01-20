@@ -134,6 +134,7 @@ import 'package:presshop/features/task/domain/usecases/get_room_id.dart'
     as task_room;
 import 'package:presshop/features/dashboard/domain/usecases/activate_student_beans.dart'
     as dashboard_beans;
+import 'package:presshop/features/dashboard/domain/usecases/check_app_version.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_username.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_email.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_phone.dart';
@@ -498,6 +499,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => dashboard_beans.ActivateStudentBeans(sl()));
   sl.registerLazySingleton(() => CheckStudentBeans(sl()));
   sl.registerLazySingleton(() => MarkStudentBeansVisited(sl()));
+  sl.registerLazySingleton(() => CheckAppVersion(sl()));
   // CheckUserName, CheckEmail, CheckPhone, GetAvatars, VerifyReferralCode, SocialExists already registered at the top
   sl.registerLazySingleton(() => GetProfileData(sl()));
   sl.registerLazySingleton(() => UpdateProfileData(sl()));

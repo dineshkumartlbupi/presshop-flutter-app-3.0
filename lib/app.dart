@@ -10,9 +10,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:presshop/core/analytics/analytics_helper.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/services/force_update_service.dart';
-import 'package:presshop/features/splash/data/repositories/force_update_repository.dart';
+import 'package:presshop/features/splash/data/repositories/force_update_repositor.dart';
 import 'package:presshop/features/splash/presentation/pages/SplashScreen.dart';
 import 'package:presshop/main.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
+import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -20,32 +24,38 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        builder: (context, child) {
-          return ForceUpdateWidget(
-            navigatorKey: navigatorKey,
-            forceUpdateClient: ForceUpdateClient(
-              fetchRequiredVersion: _fetchRequiredVersion,
-              iosAppStoreId: '6744651614',
-            ),
-            allowCancel: false,
-            showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
-            showStoreListing: (Uri storeUrl) async {},
-            child: ConnectivityWrapper(child: child ?? const SizedBox()),
-          );
-        },
-        debugShowCheckedModeBanner: false,
-        navigatorObservers: [
-          AnalyticsHelper.observer,
-          AnalyticsRouteObserver(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => sl<TaskBloc>()),
+          BlocProvider(create: (_) => sl<EarningBloc>()),
         ],
-        theme: ThemeData(
-          fontFamily: "AirbnbCereal",
-          scaffoldBackgroundColor: Colors.white,
-          useMaterial3: false,
+        child: MaterialApp(
+          navigatorKey: navigatorKey,
+          builder: (context, child) {
+            return ForceUpdateWidget(
+              navigatorKey: navigatorKey,
+              forceUpdateClient: ForceUpdateClient(
+                fetchRequiredVersion: _fetchRequiredVersion,
+                iosAppStoreId: '6744651614',
+              ),
+              allowCancel: false,
+              showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
+              showStoreListing: (Uri storeUrl) async {},
+              child: ConnectivityWrapper(child: child ?? const SizedBox()),
+            );
+          },
+          debugShowCheckedModeBanner: false,
+          navigatorObservers: [
+            AnalyticsHelper.observer,
+            AnalyticsRouteObserver(),
+          ],
+          theme: ThemeData(
+            fontFamily: "AirbnbCereal",
+            scaffoldBackgroundColor: Colors.white,
+            useMaterial3: false,
+          ),
+          home: const SplashScreen(),
         ),
-        home: const SplashScreen(),
       ),
     );
   }

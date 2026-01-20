@@ -24,7 +24,9 @@ class EarningProfileDataModel {
       avatar: json['avatar_details'] != null
           ? json['avatar_details']['avatar']
           : '',
-      totalEarning: json['total_earning'].toString(),
+      totalEarning: double.tryParse(json['total_earning']?.toString() ?? "")
+              ?.toString() ??
+          "0.0",
     );
   }
 }
@@ -250,8 +252,10 @@ class EarningTransactionDetail {
         id: json['_id'] ?? '',
         mediaTypeImage: "",
         totalEarningAmt: json['type'] == 'task_content'
-            ? json['hopper_price'].toString()
-            : json['original_ask_price'].toString(),
+            ? double.tryParse(json['hopper_price']?.toString() ?? "")?.toString() ??
+                "0.0"
+            : double.tryParse(json['original_ask_price']?.toString() ?? "")?.toString() ??
+                "0.0",
         paidStatus: json['paid_status_for_hopper'] ?? false,
         adminFullName: json['media_house_id'] != null
             ? json['media_house_id']['full_name'].toString()
@@ -278,13 +282,9 @@ class EarningTransactionDetail {
                 .toString()
             : '',
         adminSortCode: (json['media_house_id'] != null && json['media_house_id']['company_bank_details'] != null)
-            ? json['media_house_id']['company_bank_details']['sort_code']
-                .toString()
+            ? json['media_house_id']['company_bank_details']['sort_code'].toString()
             : '',
-        adminAccountNumber: (json['media_house_id'] != null &&
-                json['media_house_id']['company_bank_details'] != null)
-            ? json['media_house_id']['company_bank_details']['account_number'].toString()
-            : '',
+        adminAccountNumber: (json['media_house_id'] != null && json['media_house_id']['company_bank_details'] != null) ? json['media_house_id']['company_bank_details']['account_number'].toString() : '',
         companyLogo: json['media_house_id'] != null ? json['media_house_id']['profile_image'].toString() : '',
         adminRole: json['media_house_id'] != null ? json['media_house_id']['role'].toString() : '',
         adminStatus: json['media_house_id'] != null ? json['media_house_id']['status'].toString() : '',
@@ -301,19 +301,19 @@ class EarningTransactionDetail {
         hopperAvatar: json['hopper_id'] != null ? json['hopper_id']['avatar'] ?? "" : '',
         hopperBankName: json["received_bank_detail"] != null ? json["received_bank_detail"]["bank_name"] ?? "" : "",
         hopperBankLogo: json["received_bank_detail"] != null ? json["received_bank_detail"]["bank_logo"] ?? "" : "",
-        vat: vatFee.toString(),
-        allAmount: totalAmount.toString(),
-        payableT0Hopper: json['payable_to_hopper'] != "null" ? json['payable_to_hopper'].toString() : '',
-        payableCommission: json['presshop_commission'].toString() ?? '',
-        stripefee: json.containsKey("stripe_fee") ? json["stripe_fee"].toString() : "0.0",
+        vat: double.tryParse(vatFee?.toString() ?? "")?.toString() ?? "0.0",
+        allAmount: double.tryParse(totalAmount?.toString() ?? "")?.toString() ?? "0.0",
+        payableT0Hopper: double.tryParse(json['payable_to_hopper']?.toString() ?? "")?.toString() ?? "0.0",
+        payableCommission: double.tryParse(json['presshop_commission']?.toString() ?? "")?.toString() ?? "0.0",
+        stripefee: double.tryParse(json['stripe_fee']?.toString() ?? "")?.toString() ?? "0.0",
         type: json['type'] ?? '',
-        percentage: json.containsKey("percentage") ? json["percentage"].toString() : "0.0",
+        percentage: double.tryParse(json['percentage']?.toString() ?? "")?.toString() ?? "0.0",
         typesOfContent: json['typeofcontent'] == "shared" ? false : true,
         createdAT: dateTimeFormatter(dateTime: json['createdAt']),
         updatedAT: dateTimeFormatter(dateTime: json['updatedAt']),
         dueDate: json['Due_date'] ?? "",
         contentId: json['content_id'] != null ? json['content_id']['_id'] : '',
-        amount: amount.toString(),
+        amount: double.tryParse(amount?.toString() ?? "")?.toString() ?? "0.0",
         contentTitle: json['content_id'] != null ? json['content_id']['heading'] : '',
         contentImage: contentsImage,
         adminUserName: '');

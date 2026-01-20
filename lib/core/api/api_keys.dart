@@ -20,6 +20,11 @@ String get appleMapAPiKey {
   }
 }
 
+final String googleAutoComplete =
+    "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+final String googlePlaceDetails =
+    "https://maps.googleapis.com/maps/api/place/details/json";
+
 final String appUrl = Platform.isAndroid
     ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
     : 'https://apps.apple.com/in/app/presshop/id6744651614';

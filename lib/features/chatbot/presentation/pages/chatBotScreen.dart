@@ -23,7 +23,7 @@ class ChatBotScreen extends StatefulWidget {
 }
 
 class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
-  final bool _alwaysShowChatButton = true;
+  final bool _alwaysShowChatButton = false;
   final messageController = TextEditingController();
   final scrollController = ScrollController();
   String senderPic = (sharedPreferences!.getString(avatarKey) ?? "");

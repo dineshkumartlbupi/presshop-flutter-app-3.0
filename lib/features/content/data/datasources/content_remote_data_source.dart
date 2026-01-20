@@ -46,13 +46,32 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       debugPrint("DEBUG: getMyContent response: ${response.data}");
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
+
+        // Handle nested structure from recent logs
+        if (data['data'] != null && data['data'] is Map) {
+          final innerData = data['data'];
+          if (innerData['code'] == 200) {
+            final List contentList = innerData['contentList'] ??
+                innerData['content'] ??
+                innerData['data'] ??
+                [];
+            debugPrint(
+                "DEBUG: getMyContent list length (nested): ${contentList.length}");
+            return contentList
+                .map((e) => ContentItemModel.fromJson(e))
+                .toList();
+          }
+        }
+
+        // Fallback or original structure
         if (data['code'] == 200) {
           final List contentList =
               data['contentList'] ?? data['content'] ?? data['data'] ?? [];
           debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
           return contentList.map((e) => ContentItemModel.fromJson(e)).toList();
         }
+
         debugPrint("DEBUG: getMyContent failed code: ${data['code']}");
         throw ServerFailure(
             message: data['message'] ?? 'Failed to load content');
@@ -253,7 +272,19 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       final response = await apiClient.get('$myContentDetailUrl$contentId');
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
+
+        // Handle nested structure from logs
+        if (data['data'] != null && data['data'] is Map) {
+          final innerData = data['data'];
+          if (innerData['code'] == 200) {
+            return ContentItemModel.fromJson(innerData['contentDetail'] ??
+                innerData['content'] ??
+                innerData['data']);
+          }
+        }
+
+        // Fallback
         if (data['code'] == 200) {
           return ContentItemModel.fromJson(
               data['contentDetail'] ?? data['content'] ?? data['data']);
@@ -302,7 +333,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         data: {
           'content_id': contentId,
           // 'limit': limit, // Endpoint might not support limit/offset or handles it differently
-          // 'offset': offset, 
+          // 'offset': offset,
         },
       );
 

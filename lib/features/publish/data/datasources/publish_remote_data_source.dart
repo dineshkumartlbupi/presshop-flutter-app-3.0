@@ -40,6 +40,9 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         if (response.data['categories'] != null) {
           final data = response.data['categories'] as List;
           return data.map((e) => CategoryModel.fromJson(e)).toList();
+        } else if (response.data['data'] != null) {
+          final data = response.data['data'] as List;
+          return data.map((e) => CategoryModel.fromJson(e)).toList();
         }
       }
 
@@ -101,7 +104,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         "limit": limit,
         "category": category,
       };
-      final response = await apiClient.get(getAllCmsUrl, queryParameters: params);
+      final response =
+          await apiClient.get(getAllCmsUrl, queryParameters: params);
       if (response.data is! Map<String, dynamic>) {
         throw ServerException(response.data.toString());
       }
@@ -131,7 +135,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       final Map<String, dynamic> params = {
         "type": "price",
       };
-      final response = await apiClient.get(getAllCmsUrl, queryParameters: params);
+      final response =
+          await apiClient.get(getAllCmsUrl, queryParameters: params);
       if (response.data is! Map<String, dynamic>) {
         throw ServerException(response.data.toString());
       }

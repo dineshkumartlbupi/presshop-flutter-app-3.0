@@ -273,7 +273,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> verifyOtp(Map<String, dynamic> data) async {
     try {
       final response = await apiClient.post(
-        verifyOtpUrl,
+        ApiConstants.auth.verifyOtp,
         data: data,
       );
 

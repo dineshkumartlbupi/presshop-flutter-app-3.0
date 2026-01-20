@@ -48,16 +48,24 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         "$taskDetailUrl$taskId",
       );
 
-      if (response.data["code"] == 200) {
+      final data = response.data;
+      var responseData = data;
+
+      // Handle nested structure: data['data']
+      if (data['data'] != null && data['data'] is Map) {
+        responseData = data['data'];
+      }
+
+      if (responseData["code"] == 200) {
         String roomId = "";
-        if (response.data["resp"] != null) {
-          roomId = (response.data["resp"]["room_id"] ?? "").toString();
+        if (responseData["resp"] != null) {
+          roomId = (responseData["resp"]["room_id"] ?? "").toString();
         }
-        return TaskDetailModel.fromJson(response.data["task"] ?? {},
+        return TaskDetailModel.fromJson(responseData["task"] ?? {},
             roomId: roomId);
       } else {
         throw ServerException(
-            response.data["message"] ?? "Failed to load task details");
+            responseData["message"] ?? "Failed to load task details");
       }
     } catch (e) {
       throw ApiErrorHandler.handle(e);

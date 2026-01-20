@@ -3431,17 +3431,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     if (typingValue > 0) {
       _typingTimer?.cancel();
 
-      if (!isTyping) {
-        docTypingReference.set({'isTyping': true}, SetOptions(merge: true));
-        FirebaseFirestore.instance
-            .collection('Chat2')
-            .doc(roomId)
-            .collection('Typing')
-            .doc(_senderId)
-            .update({
-          'isTyping': true,
-        });
-      }
+      docTypingReference.set({'isTyping': true}, SetOptions(merge: true));
     } else {
       _typingTimer?.cancel();
       _typingTimer = Timer(const Duration(seconds: 2), () {
@@ -3452,9 +3442,9 @@ class _ConversationScreenState extends State<ConversationScreen>
             .doc(roomId)
             .collection('Typing')
             .doc(_senderId)
-            .update({
+            .set({
           'isTyping': false,
-        });
+        }, SetOptions(merge: true));
       });
     }
   }
@@ -3580,10 +3570,10 @@ class _ConversationScreenState extends State<ConversationScreen>
     DocumentReference roomDetails =
         FirebaseFirestore.instance.collection('Chat2').doc(myRoomId);
 
-    roomDetails.update({
+    roomDetails.set({
       'readStatus': "read",
       'unReadCount': "0",
-    });
+    }, SetOptions(merge: true));
   }
 
   ///  In Use

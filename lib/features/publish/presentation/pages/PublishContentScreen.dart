@@ -3178,9 +3178,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
         // Check if the response is a Map (normal success case)
         if (decodedResponse is Map<String, dynamic>) {
-          if (decodedResponse["code"] == 200) {
-            var list = decodedResponse["tags"] as List;
-            hashtagList = list.map((e) => HashTagData.fromJson(e)).toList();
+          if (decodedResponse["code"] == 200 ||
+              decodedResponse["success"] == true) {
+            var list = decodedResponse["data"] ??
+                decodedResponse["tags"] ??
+                decodedResponse["hashtags"] ??
+                [];
+            if (list is List) {
+              hashtagList = list.map((e) => HashTagData.fromJson(e)).toList();
+            }
             setState(() {});
           }
         }

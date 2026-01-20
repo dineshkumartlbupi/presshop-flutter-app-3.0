@@ -22,9 +22,7 @@ import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'package:presshop/main.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
 
 class MyProfile extends StatefulWidget {
   bool editProfileScreen;
@@ -1479,7 +1477,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
     String username = userNameController.text.trim().toLowerCase();
 
-    // If username is empty or too short, we can't check substring yet → just require input
     if (username.isEmpty || username.length < 4) {
       return null;
     }
@@ -1606,17 +1603,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void avatarBottomSheet(Size size) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled:
-          true, // Ensures the bottom sheet is full height if needed
+      isScrollControlled: true,
       builder: (context) {
         return StatefulBuilder(builder: (context, avatarState) {
           return Container(
-            height: size.height * 0.6, // Set a fixed height
+            height: size.height * 0.6,
             padding: EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with title and close button
                 Padding(
                   padding: EdgeInsets.only(left: size.width * numD04),
                   child: Row(
@@ -1895,7 +1890,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
         if (map["code"] == 200 || map["success"] == true) {
           var userData = map["userData"] ?? map["data"];
-          // Handle nested data object (API structure: data -> data -> user_fields)
           if (userData is Map &&
               userData.containsKey('data') &&
               userData['data'] is Map) {
@@ -2274,7 +2268,8 @@ class MyProfileData {
         json["avatar"]?.toString() ??
         "";
     if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
-      avatarImage = "${ApiConstants.config.avatarImage}$tempAvatar";
+      avatarImage =
+          "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$tempAvatar";
     } else {
       avatarImage = tempAvatar;
     }
