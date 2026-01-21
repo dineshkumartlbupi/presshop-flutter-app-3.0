@@ -3,9 +3,10 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
+import 'package:presshop/features/splash/data/models/version_model.dart';
 
 abstract class SplashRemoteDataSource {
-  Future<Map<String, dynamic>> checkAppVersion();
+  Future<VersionModel> checkAppVersion();
 }
 
 class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
@@ -14,7 +15,7 @@ class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
   SplashRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<Map<String, dynamic>> checkAppVersion() async {
+  Future<VersionModel> checkAppVersion() async {
     try {
       final response = await apiClient.get(getLatestVersionUrl);
       if (response.statusCode == 200) {
@@ -23,9 +24,9 @@ class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
             data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
 
         if (responseMap['success'] == true && responseMap['data'] != null) {
-          return responseMap['data'];
+          return VersionModel.fromJson(responseMap['data']);
         }
-        return responseMap;
+        throw ServerFailure(message: responseMap['message'] ?? 'Unknown error');
       } else {
         throw ServerFailure(
             message: 'Failed to check app version: ${response.statusCode}');

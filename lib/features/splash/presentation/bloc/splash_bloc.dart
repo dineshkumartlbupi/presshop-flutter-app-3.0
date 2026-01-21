@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
@@ -37,13 +36,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       emit(SplashError(
           message:
               failure.message.isNotEmpty ? failure.message : "Server Error"));
-    }, (map) async {
-      if (map["code"] == 200 || map["success"] == true) {
-        var data = map["data"] ?? map;
-        if (Platform.isAndroid && data["aOSshouldForceUpdate"] == true)
-          shouldForce = true;
-        if (Platform.isIOS && data["iOSshouldForceUpdate"] == true)
-          shouldForce = true;
+    }, (version) async {
+      if (version.forceUpdate) {
+        shouldForce = true;
       }
     });
 
@@ -66,7 +61,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         if (isLoggedIn) {
           emit(SplashAuthenticated());
         } else {
-          // Check if Onboarding Seen
           final onboardingResult = await checkOnboardingStatus(NoParams());
           debugPrint("🔍 SplashBloc: Onboarding Status: $onboardingResult");
           onboardingResult.fold(

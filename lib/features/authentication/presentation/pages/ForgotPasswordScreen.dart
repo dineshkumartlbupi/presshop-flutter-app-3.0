@@ -79,7 +79,11 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           if (state is AuthError) {
             showSnackBar("Error", state.message, Colors.red);
           } else if (state is ForgotPasswordSent) {
-            showSnackBar("Message", "OTP Sent Successfully", Colors.green);
+            String msg = "OTP Sent Successfully";
+            if (state.otp.isNotEmpty) {
+              msg += " (OTP: ${state.otp})";
+            }
+            showSnackBar("Message", msg, Colors.green);
             showOtpBottomSheet(context, emailAddressController.text.trim());
           }
         },

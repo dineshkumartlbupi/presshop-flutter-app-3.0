@@ -209,33 +209,336 @@ class _MyContentViewState extends State<MyContentView>
 
   void _showFilterSheet() {
     showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => CommonFilterSheet(
-        sortList: sortList,
-        filterList: filterList,
-        onClear: () {
-          for (var i in sortList) {
-            i.isSelected = false;
-          }
-          for (var i in filterList) {
-            i.isSelected = false;
-          }
-          // default selection
-          filterList.firstWhere((e) => e.name == liveContentText).isSelected =
-              true;
-          setState(() {});
-          _loadMyContent(true);
-        },
-        onApply: (sorted, filtered) {
-          setState(() {
-            sortList = sorted;
-            filterList = filtered;
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(size.width * numD085),
+          topRight: Radius.circular(size.width * numD085),
+        )),
+        builder: (context) {
+          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+            return Padding(
+              padding: EdgeInsets.only(
+                top: size.width * numD06,
+                left: size.width * numD05,
+                right: size.width * numD05,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          splashRadius: size.width * numD07,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.black,
+                            size: size.width * numD07,
+                          ),
+                        ),
+                        Text(
+                          "Sort and Filter",
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * appBarHeadingFontSizeNew,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            filterList.clear();
+                            sortList.clear();
+                            initializeFilter();
+                            stateSetter(() {});
+                          },
+                          child: Text(
+                            "Clear all",
+                            style: TextStyle(
+                                color: colorThemePink,
+                                fontWeight: FontWeight.w400,
+                                fontSize: size.width * numD035),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    /// Sort
+                    SizedBox(
+                      height: size.width * numD085,
+                    ),
+
+                    /// Sort Heading
+                    Text(
+                      sortText,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
+
+                    filterListWidget(sortList, stateSetter, size, true),
+
+                    /// Filter
+                    SizedBox(
+                      height: size.width * numD05,
+                    ),
+
+                    /// Filter Heading
+                    Text(
+                      filterText,
+                      style: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * numD05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
+
+                    filterListWidget(filterList, stateSetter, size, false),
+                    SizedBox(
+                      height: size.width * numD06,
+                    ),
+
+                    /// Button
+                    Container(
+                      width: size.width,
+                      height: size.width * numD13,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * numD04,
+                      ),
+                      child: commonElevatedButton(
+                          applyText,
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () {
+                        setState(() {});
+                        Navigator.pop(context);
+                        _loadMyContent(true);
+                      }),
+                    ),
+                    SizedBox(
+                      height: size.width * numD02,
+                    ),
+                  ],
+                ),
+              ),
+            );
           });
-          _loadMyContent(true);
-        },
-      ),
+        });
+  }
+
+  Widget filterListWidget(
+      List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
+    return ListView.separated(
+      padding: EdgeInsets.only(top: size.width * numD03),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        var item = list[index];
+        return InkWell(
+          onTap: () {
+            if (isSort) {
+              int pos = list.indexWhere((element) => element.isSelected);
+              if (pos != -1) {
+                list[pos].isSelected = false;
+                list[pos].fromDate = null;
+                list[pos].toDate = null;
+              }
+            } else {
+              int pos = list.indexWhere((element) => element.isSelected);
+              if (pos != -1) {
+                list[pos].isSelected = false;
+              }
+            }
+            list[index].isSelected = !list[index].isSelected;
+            stateSetter(() {});
+            setState(() {});
+          },
+          child: Container(
+            padding: EdgeInsets.only(
+              top: list[index].name == filterDateText
+                  ? size.width * 0
+                  : size.width * numD025,
+              bottom: list[index].name == filterDateText
+                  ? size.width * 0
+                  : size.width * numD025,
+              left: size.width * numD02,
+              right: size.width * numD02,
+            ),
+            color: item.isSelected ? Colors.grey.shade400 : null,
+            child: Row(
+              children: [
+                Image.asset(
+                  "$iconsPath${list[index].icon}",
+                  color: Colors.black,
+                  height: list[index].name == soldContentText
+                      ? size.width * numD06
+                      : size.width * numD05,
+                  width: list[index].name == soldContentText
+                      ? size.width * numD06
+                      : size.width * numD05,
+                ),
+                SizedBox(
+                  width: size.width * numD03,
+                ),
+                item.name == filterDateText
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              item.fromDate = await commonDatePicker();
+                              item.toDate = null;
+                              int pos = list
+                                  .indexWhere((element) => element.isSelected);
+                              if (pos != -1) {
+                                list[pos].isSelected = false;
+                              }
+                              item.isSelected = !item.isSelected;
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: size.width * numD01,
+                                horizontal: size.width * numD02,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.fromDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.fromDate.toString())
+                                        : 'From Date',
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD015,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * numD03,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (item.fromDate != null) {
+                                String? pickedDate = await commonDatePicker();
+                                debugPrint("formData=====> ${item.fromDate}");
+                                debugPrint("pickedDate=====> $pickedDate}");
+                                if (pickedDate != null) {
+                                  DateTime parseFromDate =
+                                      DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate =
+                                      DateTime.parse(pickedDate);
+
+                                  debugPrint("parseFromDate : $parseFromDate");
+                                  debugPrint("parseToDate : $parseToDate");
+
+                                  if (parseToDate.isAfter(parseFromDate) ||
+                                      parseToDate
+                                          .isAtSameMomentAs(parseFromDate)) {
+                                    item.toDate = pickedDate;
+                                  } else {
+                                    showSnackBar(
+                                        "Date Error",
+                                        "Please select to date above from date",
+                                        Colors.red);
+                                  }
+                                }
+                              }
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: size.width * numD01,
+                                horizontal: size.width * numD02,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD04),
+                                border: Border.all(
+                                    width: 1, color: const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.toDate != null
+                                        ? dateTimeFormatter(
+                                            dateTime: item.toDate.toString())
+                                        : 'To Date',
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD035,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD02,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(list[index].name,
+                        style: TextStyle(
+                            fontSize: size.width * numD035,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "AirbnbCereal_W_Bk"))
+              ],
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (context, index) {
+        return SizedBox(
+          height: size.width * numD01,
+        );
+      },
     );
   }
 
@@ -323,7 +626,7 @@ class _MyContentViewState extends State<MyContentView>
       },
       builder: (context, state) {
         if (state is ContentLoading && page == 1 && myContentList.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          // return const Center(child: CircularProgressIndicator());
         }
 
         if (myContentList.isEmpty && state is! ContentLoading) {

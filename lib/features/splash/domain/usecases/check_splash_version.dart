@@ -2,14 +2,15 @@ import 'package:dartz/dartz.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/splash_repository.dart';
+import 'package:presshop/features/splash/domain/entities/version.dart';
 
-class CheckSplashVersion implements UseCase<Map<String, dynamic>, NoParams> {
+class CheckSplashVersion implements UseCase<Version, NoParams> {
   final SplashRepository repository;
 
   CheckSplashVersion(this.repository);
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> call(NoParams params) async {
+  Future<Either<Failure, Version>> call(NoParams params) async {
     return await repository.checkAppVersion();
   }
 }

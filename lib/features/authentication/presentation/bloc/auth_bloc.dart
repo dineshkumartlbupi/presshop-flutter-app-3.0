@@ -24,8 +24,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.resetPassword,
   }) : super(AuthInitial()) {
     on<LoginRequested>((event, emit) async {
-       emit(AuthLoading());
-       final result = await loginUser(LoginParams(
+      emit(AuthLoading());
+      final result = await loginUser(LoginParams(
         username: event.username,
         password: event.password,
       ));
@@ -36,30 +36,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SocialLoginRequested>((event, emit) async {
-       emit(AuthLoading());
-       final result = await socialLoginUser(SocialLoginParams(
-         socialType: event.socialType,
-         socialId: event.socialId,
-         email: event.email,
-         name: event.name,
-         photoUrl: event.photoUrl,
-       ));
-       result.fold(
-         (failure) {
-           if (failure is UserNotRegisteredFailure) {
-             emit(AuthSocialSignUpRequired(
-               socialType: event.socialType,
-               socialId: event.socialId,
-               email: event.email,
-               name: event.name,
-               photoUrl: event.photoUrl,
-             ));
-           } else {
-             emit(AuthError(message: failure.message));
-           }
-         },
-         (user) => emit(AuthAuthenticated(user: user)),
-       );
+      emit(AuthLoading());
+      final result = await socialLoginUser(SocialLoginParams(
+        socialType: event.socialType,
+        socialId: event.socialId,
+        email: event.email,
+        name: event.name,
+        photoUrl: event.photoUrl,
+      ));
+      result.fold(
+        (failure) {
+          if (failure is UserNotRegisteredFailure) {
+            emit(AuthSocialSignUpRequired(
+              socialType: event.socialType,
+              socialId: event.socialId,
+              email: event.email,
+              name: event.name,
+              photoUrl: event.photoUrl,
+            ));
+          } else {
+            emit(AuthError(message: failure.message));
+          }
+        },
+        (user) => emit(AuthAuthenticated(user: user)),
+      );
     });
 
     on<ForgotPasswordRequested>((event, emit) async {
@@ -67,44 +67,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result = await forgotPassword(event.email);
       result.fold(
         (failure) => emit(AuthError(message: failure.message)),
-        (success) {
-          if (success) {
-            emit(ForgotPasswordSent());
-          } else {
-            emit(const AuthError(message: "Failed to send OTP"));
-          }
+        (otp) {
+          emit(ForgotPasswordSent(otp: otp));
         },
       );
     });
 
     on<VerifyForgotPasswordOtpRequested>((event, emit) async {
       emit(AuthLoading());
-      final result = await verifyForgotPasswordOtp(VerifyForgotPasswordOtpParams(email: event.email, otp: event.otp));
+      final result = await verifyForgotPasswordOtp(
+          VerifyForgotPasswordOtpParams(email: event.email, otp: event.otp));
       result.fold(
         (failure) => emit(AuthError(message: failure.message)),
         (success) {
-           if (success) {
-             emit(ForgotPasswordOtpVerified());
-           } else {
-             emit(const AuthError(message: "Invalid OTP"));
-           }
+          if (success) {
+            emit(ForgotPasswordOtpVerified());
+          } else {
+            emit(const AuthError(message: "Invalid OTP"));
+          }
         },
       );
     });
 
     on<ResetPasswordSubmitted>((event, emit) async {
       emit(AuthLoading());
-      final result = await resetPassword(ResetPasswordParams(email: event.email, password: event.password));
-      result.fold(
-        (failure) => emit(AuthError(message: failure.message)),
-        (success) {
-           if (success) {
-             emit(ResetPasswordSuccess());
-           } else {
-             emit(const AuthError(message: "Failed to reset password"));
-           }
+      final result = await resetPassword(
+          ResetPasswordParams(email: event.email, password: event.password));
+      result.fold((failure) => emit(AuthError(message: failure.message)),
+          (success) {
+        if (success) {
+          emit(ResetPasswordSuccess());
+        } else {
+          emit(const AuthError(message: "Failed to reset password"));
         }
-      );
+      });
     });
   }
 }

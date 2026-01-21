@@ -104,13 +104,13 @@ class _NewsPageState extends State<NewsPage> {
                           },
                         ),
                 ),
-                if (state.isLoading && newsList.isEmpty)
-                  Container(
-                    color: Colors.transparent,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
+                // if (state.isLoading && newsList.isEmpty)
+                //   Container(
+                //     color: Colors.transparent,
+                //     child: const Center(
+                //       child: CircularProgressIndicator(),
+                //     ),
+                //   ),
               ],
             ),
           );

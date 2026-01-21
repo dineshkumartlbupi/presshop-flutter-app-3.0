@@ -70,15 +70,16 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
             await apiClient.post(editProfileUrl, data: data, options: options);
       }
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final resData = response.data;
-        if (resData['code'] == 200) {
+        if (resData['code'] == 200 || resData['success'] == true) {
           return ProfileDataModel.fromJson(
               resData['userData'] ?? resData['data']);
         }
         throw ServerFailure(message: resData['message'] ?? 'Update failed');
       }
-      throw ServerFailure(message: 'Update failed');
+      throw ServerFailure(
+          message: 'Update failed with status ${response.statusCode}');
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -96,15 +97,19 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
       final response = await apiClient.multipartPost(editProfileUrl,
           formData: formData, options: options);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
-        if (data['code'] == 200) {
+        if (data['code'] == 200 || data['success'] == true) {
           final userData = data['userData'] ?? data['data'];
-          return userData['profile_image'] ?? '';
+          if (userData != null && userData is Map) {
+            return userData['profile_image']?.toString() ?? '';
+          }
+          return '';
         }
         throw ServerFailure(message: data['message'] ?? 'Upload failed');
       }
-      throw ServerFailure(message: 'Upload failed');
+      throw ServerFailure(
+          message: 'Upload failed with status ${response.statusCode}');
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }

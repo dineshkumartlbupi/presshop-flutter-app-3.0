@@ -24,13 +24,16 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.login(username, password);
-        debugPrint("✅ AuthRepository: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
+        debugPrint(
+            "✅ AuthRepository: Login Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
         await localDataSource.cacheToken(remoteUser.token ?? ""); // Cache token
         if (remoteUser.refreshToken != null) {
-          debugPrint("✅ AuthRepository: Received Refresh Token: ${remoteUser.refreshToken?.substring(0, (remoteUser.refreshToken?.length ?? 0) > 10 ? 10 : (remoteUser.refreshToken?.length ?? 0))}...");
+          debugPrint(
+              "✅ AuthRepository: Received Refresh Token: ${remoteUser.refreshToken?.substring(0, (remoteUser.refreshToken?.length ?? 0) > 10 ? 10 : (remoteUser.refreshToken?.length ?? 0))}...");
           await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
         } else {
-          debugPrint("❌ AuthRepository: Refresh Token is NULL from Remote Data Source");
+          debugPrint(
+              "❌ AuthRepository: Refresh Token is NULL from Remote Data Source");
         }
         await localDataSource.setRememberMe(
             true); // Auto remember on explicit login? Or UI checkbox?
@@ -91,10 +94,12 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.register(data);
-        debugPrint("✅ AuthRepository: Register Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
+        debugPrint(
+            "✅ AuthRepository: Register Success. Received Token: ${remoteUser.token?.substring(0, (remoteUser.token?.length ?? 0) > 10 ? 10 : (remoteUser.token?.length ?? 0))}...");
         await localDataSource.cacheToken(remoteUser.token ?? "");
         if (remoteUser.refreshToken != null) {
-          debugPrint("✅ AuthRepository: Received Refresh Token: ${remoteUser.refreshToken?.substring(0, (remoteUser.refreshToken?.length ?? 0) > 10 ? 10 : (remoteUser.refreshToken?.length ?? 0))}...");
+          debugPrint(
+              "✅ AuthRepository: Received Refresh Token: ${remoteUser.refreshToken?.substring(0, (remoteUser.refreshToken?.length ?? 0) > 10 ? 10 : (remoteUser.refreshToken?.length ?? 0))}...");
           await localDataSource.cacheRefreshToken(remoteUser.refreshToken!);
         }
         await localDataSource.setRememberMe(true);
@@ -173,7 +178,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       debugPrint("🔍 AuthRepository: Checking Auth Status...");
       debugPrint("🔍 AuthRepository: RememberMe: $rememberMe");
-      debugPrint("🔍 AuthRepository: Token exists: ${token != null && token.isNotEmpty}");
+      debugPrint(
+          "🔍 AuthRepository: Token exists: ${token != null && token.isNotEmpty}");
 
       if (rememberMe && token != null && token.isNotEmpty) {
         return const Right(true);
@@ -321,7 +327,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> forgotPassword(String email) async {
+  Future<Either<Failure, String>> forgotPassword(String email) async {
     if (await networkInfo.isConnected) {
       return await remoteDataSource.forgotPassword(email);
     } else {

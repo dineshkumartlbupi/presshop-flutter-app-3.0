@@ -68,6 +68,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                   FilteringTextInputFormatter.allow(RegExp(r'^[^#]*$'))
                 ],
                 onChanged: (val) {
+                  if (debounce?.isActive ?? false) debounce!.cancel();
                   debounce = Timer(const Duration(milliseconds: 500), () {
                     searchHashTagsApi(val);
                   });
@@ -442,17 +443,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
         ),
       ),
     );
-  }
-
-  void addHashTagListener() {
-    hashTagController.addListener(() {
-      if (hashTagController.text.trim().isNotEmpty) {
-        searchHashTagsApi(hashTagController.text.trim());
-      } else {
-        addNew = false;
-        setState(() {});
-      }
-    });
   }
 
   ///--------Apis Section------------

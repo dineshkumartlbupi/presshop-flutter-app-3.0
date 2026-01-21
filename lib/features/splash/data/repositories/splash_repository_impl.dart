@@ -3,6 +3,7 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
 import '../../domain/repositories/splash_repository.dart';
 import '../datasources/splash_remote_data_source.dart';
+import 'package:presshop/features/splash/domain/entities/version.dart';
 
 class SplashRepositoryImpl implements SplashRepository {
   final SplashRemoteDataSource remoteDataSource;
@@ -14,7 +15,7 @@ class SplashRepositoryImpl implements SplashRepository {
   });
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> checkAppVersion() async {
+  Future<Either<Failure, Version>> checkAppVersion() async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.checkAppVersion();

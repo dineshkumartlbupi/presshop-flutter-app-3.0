@@ -37,7 +37,7 @@ class ProfileDataModel extends ProfileData {
       email: json['email'] ?? '',
       phone: json['phone'] ?? json['mobile_number'] ?? '',
       profileImage: json['profile_image']?.toString(),
-      avatarUrl: (json['avatarData'] != null
+      avatarUrl: (json['avatarData'] is Map
               ? json['avatarData']['avatar']?.toString()
               : null) ??
           json['avatar']?.toString(),
@@ -56,9 +56,9 @@ class ProfileDataModel extends ProfileData {
       apartment: json['apartment'] ?? '',
       countryCode: json['country_code'] ?? json['countryCode'] ?? '',
       avatarId: json["avatarId"]?.toString() ??
-          (json["avatarData"] != null
+          (json["avatarData"] is Map
               ? json["avatarData"]["_id"]?.toString()
-              : null),
+              : json["avatarData"]?.toString()),
       sourceMap: json['source'],
       joinedDate: json["createdAt"] != null
           ? changeDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", json["createdAt"],

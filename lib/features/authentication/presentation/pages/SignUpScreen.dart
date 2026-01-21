@@ -60,6 +60,20 @@ class _SignUpScreenState extends State<SignUpScreen>
   String get pageName => PageNames.signup;
   Timer? _phoneDebounce;
   Timer? _emailDebounce;
+  Timer? _userDebounce;
+
+  String? _onUserNameChanged(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+
+    _userDebounce?.cancel();
+
+    _userDebounce = Timer(const Duration(milliseconds: 800), () {
+      if (value.trim().length >= 4) {
+        checkUserNameApi();
+      }
+    });
+    return null;
+  }
 
   void _onPhoneChanged(String? value) {
     if (value == null || value.trim().isEmpty) return;
@@ -180,6 +194,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   void dispose() {
     _emailDebounce?.cancel();
     _phoneDebounce?.cancel();
+    _userDebounce?.cancel();
     controller.dispose();
     _avatarsNotifier.dispose();
     super.dispose();
@@ -544,12 +559,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   filled: false,
                                   filledColor: Colors.transparent,
                                   autofocus: false,
-                                  onChanged: (v) {
-                                    if (v!.trim().length >= 4) {
-                                      checkUserNameApi();
-                                    }
-                                    return null;
-                                  },
+                                  onChanged: _onUserNameChanged,
                                 ),
                                 SizedBox(
                                   height: size.width * numD01,

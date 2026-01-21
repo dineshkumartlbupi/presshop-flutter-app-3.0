@@ -183,36 +183,34 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 ),
               ],
             ),
-            body: state is TermsLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: size.width * numD02,
-                      ),
-                      htmlDataList.isNotEmpty
-                          ? Flexible(
-                              child: SingleChildScrollView(
-                              controller: scrollController,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  !rememberMe
-                                      ? Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD04),
-                                          child: Text(
-                                            "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: size.width * numD035,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        )
-                                      : Container(),
-                                  /*   SizedBox(
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: size.width * numD02,
+                ),
+                htmlDataList.isNotEmpty
+                    ? Flexible(
+                        child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            !rememberMe
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: size.width * numD04),
+                                    child: Text(
+                                      "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: size.width * numD035,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                : Container(),
+                            /*   SizedBox(
                               height: size.width * numD06,
                             ),
                             Padding(
@@ -227,90 +225,81 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     fontWeight: FontWeight.w500),
                               ),
                             ),*/
-                                  ListView.separated(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD02),
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        return Html(
-                                          data: htmlDataList[index],
-                                          style: {
-                                            "span": Style(
-                                              color: colorTextFieldIcon,
-                                              fontSize:
-                                                  FontSize(size.width * numD01),
-                                            ),
-                                            "h1": Style(
-                                                color: colorGreyNew,
-                                                fontSize: FontSize(
-                                                    size.width * numD02),
-                                                padding: HtmlPaddings.symmetric(
-                                                    vertical:
-                                                        size.width * numD01)),
-                                            "h2": Style(
-                                                color: Colors.black,
-                                                fontSize: FontSize(
-                                                    size.width * numD04),
-                                                padding: HtmlPaddings.symmetric(
-                                                    vertical:
-                                                        size.width * numD01)),
-                                            "h3": Style(
-                                                color: Colors.black,
-                                                fontSize: FontSize(
-                                                    size.width * numD035),
-                                                padding: HtmlPaddings.symmetric(
-                                                    vertical:
-                                                        size.width * numD01)),
-                                            "h4": Style(
-                                                color: Colors.black,
-                                                fontSize: FontSize(
-                                                    size.width * numD035),
-                                                padding: HtmlPaddings.symmetric(
-                                                    vertical:
-                                                        size.width * numD01)),
-                                            "td": Style(
-                                                color: colorGreyNew,
-                                                fontSize: FontSize(
-                                                    size.width * numD02),
-                                                padding: HtmlPaddings.symmetric(
-                                                    vertical:
-                                                        size.width * numD01)),
-                                            "th": Style(
-                                                color: colorGreyNew,
-                                                fontSize: FontSize(
-                                                    size.width * numD02),
-                                                fontWeight: FontWeight.w600,
-                                                padding: HtmlPaddings.zero),
-                                            "div": Style(
-                                              backgroundColor: colorLightGrey,
-                                            )
-                                          },
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return const SizedBox(
-                                          height: 0,
-                                        );
-                                      },
-                                      itemCount: htmlDataList.length),
-                                  !rememberMe
-                                      ? checkBoxWidget(size)
-                                      : Container(),
-                                  !rememberMe
-                                      ? Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD06),
-                                          child: buttonWidget(size),
-                                        )
-                                      : Container(),
-                                ],
-                              ),
-                            ))
-                          : Container()
-                    ],
-                  ),
+                            ListView.separated(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * numD02),
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Html(
+                                    data: htmlDataList[index],
+                                    style: {
+                                      "span": Style(
+                                        color: colorTextFieldIcon,
+                                        fontSize: FontSize(size.width * numD01),
+                                      ),
+                                      "h1": Style(
+                                          color: colorGreyNew,
+                                          fontSize:
+                                              FontSize(size.width * numD02),
+                                          padding: HtmlPaddings.symmetric(
+                                              vertical: size.width * numD01)),
+                                      "h2": Style(
+                                          color: Colors.black,
+                                          fontSize:
+                                              FontSize(size.width * numD04),
+                                          padding: HtmlPaddings.symmetric(
+                                              vertical: size.width * numD01)),
+                                      "h3": Style(
+                                          color: Colors.black,
+                                          fontSize:
+                                              FontSize(size.width * numD035),
+                                          padding: HtmlPaddings.symmetric(
+                                              vertical: size.width * numD01)),
+                                      "h4": Style(
+                                          color: Colors.black,
+                                          fontSize:
+                                              FontSize(size.width * numD035),
+                                          padding: HtmlPaddings.symmetric(
+                                              vertical: size.width * numD01)),
+                                      "td": Style(
+                                          color: colorGreyNew,
+                                          fontSize:
+                                              FontSize(size.width * numD02),
+                                          padding: HtmlPaddings.symmetric(
+                                              vertical: size.width * numD01)),
+                                      "th": Style(
+                                          color: colorGreyNew,
+                                          fontSize:
+                                              FontSize(size.width * numD02),
+                                          fontWeight: FontWeight.w600,
+                                          padding: HtmlPaddings.zero),
+                                      "div": Style(
+                                        backgroundColor: colorLightGrey,
+                                      )
+                                    },
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(
+                                    height: 0,
+                                  );
+                                },
+                                itemCount: htmlDataList.length),
+                            !rememberMe ? checkBoxWidget(size) : Container(),
+                            !rememberMe
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: size.width * numD06),
+                                    child: buttonWidget(size),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ))
+                    : Container()
+              ],
+            ),
           );
         },
       ),

@@ -11,7 +11,7 @@ import 'package:presshop/core/analytics/analytics_helper.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/services/force_update_service.dart';
 import 'package:presshop/features/splash/data/repositories/force_update_repositor.dart';
-import 'package:presshop/features/splash/presentation/pages/SplashScreen.dart';
+import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
 import 'package:presshop/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';

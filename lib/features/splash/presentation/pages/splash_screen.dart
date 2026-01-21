@@ -324,12 +324,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed) {
-      // In a real BLoC implementation, we would dispatch a CheckVersionEvent here
-      // causing the BLoC to re-check and emit SplashForceUpdate if needed.
-      // For now, to keep it simple and consistent with previous refactor without adding new events:
-      // We rely on the initial check. If detailed resume check is needed, we should add CheckVersionEvent to Bloc.
-    }
+    if (state == AppLifecycleState.resumed) {}
   }
 
   Future<void> getFcmToken() async {

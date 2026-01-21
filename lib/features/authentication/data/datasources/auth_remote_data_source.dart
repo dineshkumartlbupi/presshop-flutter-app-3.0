@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/failures.dart';
 import '../models/user_model.dart';
-import 'package:presshop/core/core_export.dart'; // For loginUrl and auth endpoints
+import 'package:presshop/core/core_export.dart';
 import '../models/avatar_model.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
@@ -24,7 +24,7 @@ abstract class AuthRemoteDataSource {
   Future<List<AvatarModel>> getAvatars();
   Future<Map<String, dynamic>> verifyReferralCode(String code);
   Future<bool> socialExists(Map<String, dynamic> params);
-  Future<Either<Failure, bool>> forgotPassword(String email);
+  Future<Either<Failure, String>> forgotPassword(String email);
   Future<bool> verifyForgotPasswordOtp(String email, String otp);
   Future<bool> resetPassword(String email, String password);
 }
@@ -298,7 +298,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> checkUserName(String userName) async {
     try {
       final url = checkUserNameUrl.replaceAll(":username", userName);
-      final response = await apiClient.get(url);
+      final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
 
@@ -333,7 +333,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> checkEmail(String email) async {
     try {
       final url = checkEmailUrl.replaceAll(":email", email);
-      final response = await apiClient.get(url);
+      final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
 
@@ -363,7 +363,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> checkPhone(String phone) async {
     try {
       final url = checkPhoneUrl.replaceAll(":phone", phone);
-      final response = await apiClient.get(url);
+      final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
         print("Phone check uttar: $data");
@@ -504,7 +504,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, bool>> forgotPassword(String email) async {
+  Future<Either<Failure, String>> forgotPassword(String email) async {
     try {
       final response = await apiClient.post(
         forgotPasswordUrl,
@@ -513,9 +513,41 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print("Forgot Password Response: $data");
 
-        if (data['code'] == 200) {
-          return const Right(true);
+        // Structure check:
+        // { "success": true, "message": "...", "data": { "code": 200, "data": "OTP" } }
+
+        // Check top-level success
+        bool isSuccess = data['success'] == true;
+
+        // Check nested code if available
+        if (data['data'] != null && data['data'] is Map) {
+          final nestedData = data['data'];
+          if (nestedData['code'] == 200) {
+            isSuccess = true;
+          }
+        } else if (data['code'] == 200) {
+          isSuccess = true;
+        }
+
+        if (isSuccess) {
+          // Attempt to extract OTP
+          String otp = "";
+
+          if (data['data'] != null) {
+            if (data['data'] is Map) {
+              // Nested case: data['data']['data']
+              if (data['data']['data'] != null) {
+                otp = data['data']['data'].toString();
+              }
+            } else {
+              // Flat case (legacy fallback): data['data']
+              otp = data['data'].toString();
+            }
+          }
+
+          return Right(otp);
         } else {
           return Left(ServerFailure(
             message: data['message'] ?? 'Forgot password failed',
@@ -538,9 +570,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .post(verifyForgotPasswordOTPUrl, data: {"email": email, "otp": otp});
       if (response.statusCode == 200) {
         final data = response.data;
-        // Check "otp_match" boolean or similar based on legacy code
-        // Legacy: if (map["otp_match"]) ...
+        print("Verify OTP Response: $data");
+
+        bool otpMatch = false;
+
         if (data['otp_match'] == true) {
+          otpMatch = true;
+        } else if (data['data'] != null && data['data'] is Map) {
+          if (data['data']['otp_match'] == true) {
+            otpMatch = true;
+          }
+        }
+
+        if (otpMatch) {
           return true;
         } else {
           throw ServerFailure(message: data['message'] ?? 'Invalid OTP');
@@ -561,7 +603,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .post(resetPasswordUrl, data: {"email": email, "password": password});
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['code'] == 200) {
+        print("Reset Password Response: $data");
+
+        bool isSuccess = false;
+
+        // Check top-level code or success
+        if (data['code'] == 200 || data['success'] == true) {
+          isSuccess = true;
+        }
+
+        // Check nested code if not found yet
+        if (!isSuccess && data['data'] != null && data['data'] is Map) {
+          if (data['data']['code'] == 200) {
+            isSuccess = true;
+          }
+        }
+
+        if (isSuccess) {
           return true;
         } else {
           throw ServerFailure(

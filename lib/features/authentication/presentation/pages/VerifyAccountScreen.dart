@@ -293,15 +293,15 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                     ),
                   ),
                 ),
-                if (state is VerificationLoading)
-                  Positioned.fill(
-                    child: Container(
-                      color: Colors.black26,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ),
+                // if (state is VerificationLoading)
+                //   Positioned.fill(
+                //     child: Container(
+                //       color: Colors.black26,
+                //       child: const Center(
+                //         child: CircularProgressIndicator(),
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
           );
