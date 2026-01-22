@@ -8,8 +8,9 @@ class InlineVideoControllerManager {
 
   /// Sets the active manager: pauses the previous and keeps the new one as current.
   static void setActive(FlickManager manager) {
+    if (_currentManager == manager) return;
     try {
-      _currentManager?.flickControlManager?.pause();
+      _currentManager?.dispose();
     } catch (e) {
       // ignore
     }

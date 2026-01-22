@@ -399,7 +399,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   }
 
   Widget showImage(String type, String url) {
-    debugPrint("url::::${contentImageUrl + url}");
+    debugPrint("url::::${getMediaImageUrl(url)}");
     return type == "audio"
         ? Container(
             alignment: Alignment.center,
@@ -429,7 +429,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                 : Image.network(
                     url.startsWith('http') || url.startsWith('https')
                         ? url
-                        : "$contentImageUrl$url",
+                        : getMediaImageUrl(url),
                     height: size.width * numD50,
                     width: size.width,
                     fit: BoxFit.cover,

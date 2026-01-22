@@ -10,6 +10,7 @@ import '../../domain/usecases/get_trending_hashtags.dart';
 import '../../domain/usecases/get_content_detail.dart';
 import '../../domain/usecases/get_media_house_offers.dart';
 import '../../domain/usecases/get_content_transactions.dart';
+import '../../domain/entities/content_item.dart';
 import 'content_event.dart';
 import 'content_state.dart';
 
@@ -53,18 +54,39 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     FetchMyContentEvent event,
     Emitter<ContentState> emit,
   ) async {
-    emit(ContentLoading());
+    // If data is already loaded and it's not a refresh or pagination, don't fetch
+    if (state is MyContentLoaded && !event.isRefresh && event.page == 1) {
+      return;
+    }
+
+    // Only emit loading if we don't have data already or if it's a refresh of the first page
+    if (state is! MyContentLoaded || event.isRefresh || event.page > 1) {
+      if (event.page == 1) {
+        emit(ContentLoading());
+      }
+    }
+
     final result = await getMyContent(
       GetMyContentParams(
           page: event.page, limit: event.limit, params: event.params),
     );
     result.fold(
       (failure) => emit(ContentError(failure.message)),
-      (content) => emit(MyContentLoaded(
-        content: content,
-        currentPage: event.page,
-        hasMore: content.length >= event.limit,
-      )),
+      (content) {
+        List<ContentItem> updatedContent = [];
+        if (state is MyContentLoaded && event.page > 1) {
+          updatedContent = List.from((state as MyContentLoaded).content);
+          updatedContent.addAll(content);
+        } else {
+          updatedContent = content;
+        }
+
+        emit(MyContentLoaded(
+          content: updatedContent,
+          currentPage: event.page,
+          hasMore: content.length >= event.limit,
+        ));
+      },
     );
   }
 

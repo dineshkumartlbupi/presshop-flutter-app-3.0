@@ -133,7 +133,7 @@ class DashboardState extends State<Dashboard>
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
-        autoInitialize: true,
+        autoInitialize: widget.initialPosition == 2,
       ),
       // ChatBotScreen(),
       NewsPage(hideLeading: true),

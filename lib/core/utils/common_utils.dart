@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:presshop/core/api/api_constant.dart';
 
 dynamic numberFormatting(dynamic number) {
   String value = number.toString();
@@ -38,4 +39,23 @@ String fixS3Url(String url) {
     return url;
   }
   return url;
+}
+
+String getMediaImageUrl(String? url,
+    {bool isVideo = false, bool isTask = false}) {
+  if (url == null || url.isEmpty) return "";
+
+  String trimmedUrl = url.trim();
+
+  if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
+    return fixS3Url(trimmedUrl);
+  }
+
+  String baseUrl = isTask
+      ? taskMediaUrl
+      : isVideo
+          ? mediaThumbnailUrl
+          : contentImageUrl;
+
+  return fixS3Url("$baseUrl$trimmedUrl");
 }

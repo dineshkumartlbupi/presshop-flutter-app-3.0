@@ -1,7 +1,7 @@
-// InlineFlickPlayer.dart
 import 'package:flutter/material.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:video_player/video_player.dart';
+import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 import 'InlineVideoControllerManager.dart';
 
 class InlineFlickPlayer extends StatefulWidget {
@@ -21,29 +21,12 @@ class InlineFlickPlayer extends StatefulWidget {
 class _InlineFlickPlayerState extends State<InlineFlickPlayer> {
   FlickManager? flickManager;
 
-  // Preview controller for showing first frame
-  VideoPlayerController? previewController;
-  bool previewReady = false;
-
   bool showPlayer = false;
   bool isInitializing = false;
 
   @override
   void initState() {
     super.initState();
-    _initPreview();
-  }
-
-  Future<void> _initPreview() async {
-    previewController = VideoPlayerController.network(widget.videoUrl);
-
-    try {
-      await previewController!.initialize();
-      previewController!.setLooping(false);
-      setState(() => previewReady = true);
-    } catch (e) {
-      debugPrint("Preview load failed: $e");
-    }
   }
 
   @override
@@ -56,17 +39,12 @@ class _InlineFlickPlayerState extends State<InlineFlickPlayer> {
       } catch (e) {}
     }
 
-    previewController?.dispose();
     super.dispose();
   }
 
   Future<void> _startAndPlay() async {
     if (isInitializing) return;
     isInitializing = true;
-
-    // Dispose preview
-    await previewController?.dispose();
-    previewController = null;
 
     // Create new FlickManager
     final videoPlayerController =
@@ -131,22 +109,12 @@ class _InlineFlickPlayerState extends State<InlineFlickPlayer> {
           alignment: Alignment.center,
           children: [
             // Thumbnail (first frame)
-            if (previewReady)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: previewController!.value.size.width,
-                    height: previewController!.value.size.height,
-                    child: VideoPlayer(previewController!),
-                  ),
-                ),
-              )
-            else
-              const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+            VideoThumbnailWidget(
+              videoUrl: widget.videoUrl,
+              width: double.infinity,
+              height: widget.height,
+              fit: BoxFit.cover,
+            ),
 
             // Play button in center
             const Icon(

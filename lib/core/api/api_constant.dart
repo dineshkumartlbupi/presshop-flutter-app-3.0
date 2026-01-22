@@ -169,49 +169,10 @@ const getAdminListUrl = "hopper/adminlist";
 const onDeeplinkCallback = "admin/onDeeplinkCallback";
 const onAppInstallCallback = "admin/onAppInstallCallback";
 
-// ==============================================================================
-// LEGACY / COMMENTED OUT
-// ==============================================================================
+String get googleMapAPiKey => dotenv.get('GOOGLE_MAP_API_KEY');
 
-// //--------production urls----------------
-// // const baseUrl = "https://datastream22843-r.presshop.news:6003/";
-// // const adminBaseUrl = "https://datastream22843-r.presshop.news:7001/";
-// // const mediaBaseUrl = "https://livestreamdata-r.presshop.news/public/";
-// // const googleMapURL = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-// // const avatarImageUrl = "${mediaBaseUrl}avatarImages/";
-// // const profileImageUrl = "${mediaBaseUrl}userImages/";
-// // const docImageUrl = "${mediaBaseUrl}docToBecomePro/";
-// // const contentImageUrl = "https://livestreamdata-r.presshop.news/public/contentData/";
-// // const imageUrlBefore = "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
-// // const taskMediaUrl = "https://livestreamdata-r.presshop.news/public/uploadContent/";
-// // const mediaThumbnailUrl = "https://livestreamdata-r.presshop.news/public/thumbnail/";
-// // const adminProfileUrl = "${mediaBaseUrl}adminImages/";
-// // const oldappUrl = "https://developers.promaticstechnologies.com/";
-// // const socketUrl = "https://datastream22843-r.presshop.news:4005";
-// // const name = "1";
-// // const baseUrl = (name == "1")
-// //     ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api"
-// //     : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
-
-String get googleMapAPiKey {
-  try {
-    return dotenv.get('GOOGLE_MAP_API_KEY',
-        fallback: "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI");
-  } catch (_) {
-    return "AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI";
-  }
-}
-
-String get appleMapAPiKey {
-  try {
-    return dotenv.get('APPLE_MAP_API_KEY',
-        fallback: "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw");
-  } catch (_) {
-    return "AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw";
-  }
-}
+String get appleMapAPiKey => dotenv.get('APPLE_MAP_API_KEY');
 
 final String appUrl = Platform.isAndroid
     ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
     : 'https://apps.apple.com/in/app/presshop/id6744651614';
-// Base URLs

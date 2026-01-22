@@ -141,14 +141,18 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             if (item.mimeType == "video") {
                               VideoPlayerController controller =
                                   VideoPlayerController.file(File(item.path));
-                              await controller.initialize();
-                              if (controller.value.duration.inSeconds >
-                                  (sharedPreferences!.getInt(videoLimitKey) ??
-                                      120)) {
-                                showToast(
-                                    "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
-                                validationVideoLenght = false;
-                                break;
+                              try {
+                                await controller.initialize();
+                                if (controller.value.duration.inSeconds >
+                                    (sharedPreferences!.getInt(videoLimitKey) ??
+                                        120)) {
+                                  showToast(
+                                      "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+                                  validationVideoLenght = false;
+                                  break;
+                                }
+                              } finally {
+                                await controller.dispose();
                               }
                             }
                           }

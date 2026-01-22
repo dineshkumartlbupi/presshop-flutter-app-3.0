@@ -168,9 +168,8 @@ class _MyContentViewState extends State<MyContentView>
       }
     }
 
-    context
-        .read<ContentBloc>()
-        .add(FetchMyContentEvent(page: page, limit: limit, params: params));
+    context.read<ContentBloc>().add(FetchMyContentEvent(
+        page: page, limit: limit, params: params, isRefresh: isRefresh));
   }
 
   void _loadAllContent(bool isRefresh) {
@@ -186,9 +185,8 @@ class _MyContentViewState extends State<MyContentView>
     // Assuming "All Content" means all my content without specific filters
     Map<String, dynamic> params = {};
 
-    context
-        .read<ContentBloc>()
-        .add(FetchMyContentEvent(page: page, limit: limit, params: params));
+    context.read<ContentBloc>().add(FetchMyContentEvent(
+        page: page, limit: limit, params: params, isRefresh: isRefresh));
   }
 
   void _onRefresh() {
@@ -912,9 +910,8 @@ class _MyContentViewState extends State<MyContentView>
                               item.mediaList.first.mediaType == 'video')) &&
                       item.mediaList.isNotEmpty
                   ? VideoThumbnailWidget(
-                      videoUrl: fixS3Url(item.mediaUrls.first.startsWith('http')
-                          ? item.mediaUrls.first
-                          : "$contentImageUrl${item.mediaUrls.first}"),
+                      videoUrl:
+                          getMediaImageUrl(item.mediaUrls.first, isVideo: true),
                       thumbnailUrl: item.mediaList.isNotEmpty &&
                               item.mediaList.first.thumbnailUrl != null
                           ? fixS3Url(item.mediaList.first.thumbnailUrl!)
@@ -1038,13 +1035,7 @@ class _MyContentViewState extends State<MyContentView>
                     ),
                   )
                 : CachedNetworkImage(
-                    imageUrl: type == 'video'
-                        ? (url.startsWith('http')
-                            ? url
-                            : "$mediaThumbnailUrl$url")
-                        : (url.startsWith('http')
-                            ? url
-                            : "$contentImageUrl$url"),
+                    imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),
                     height: size.width * numD30,
                     width: size.width,
                     fit: BoxFit.cover,

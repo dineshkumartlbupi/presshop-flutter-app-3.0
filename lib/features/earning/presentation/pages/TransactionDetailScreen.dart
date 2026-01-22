@@ -250,9 +250,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 : item.mediaType == "video"
                                     ? videoWidget()
                                     : Image.network(
-                                        item.mediaType == "video"
-                                            ? "$mediaThumbnailUrl${item.thumbnail}"
-                                            : "${widget.pageType == PageType.TASK ? taskMediaUrl : contentImageUrl}${item.thumbnail}",
+                                        getMediaImageUrl(
+                                            item.mediaType == "video"
+                                                ? item.thumbnail
+                                                : item.thumbnail,
+                                            isVideo: item.mediaType == "video",
+                                            isTask: widget.pageType ==
+                                                PageType.TASK),
                                         width: size.width,
                                         fit: BoxFit.cover,
                                       ),
@@ -836,17 +840,16 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   void initialController(currentMediaIndex) {
     if (widget.transactionData!.contentDataList[currentMediaIndex].mediaType ==
         "audio") {
-      initWaveData((widget.pageType == PageType.TASK
-              ? taskMediaUrl
-              : contentImageUrl) +
-          widget.transactionData!.contentDataList[currentMediaIndex].thumbnail);
+      initWaveData(getMediaImageUrl(
+          widget.transactionData!.contentDataList[currentMediaIndex].thumbnail,
+          isTask: widget.pageType == PageType.TASK));
     } else if (widget
             .transactionData!.contentDataList[currentMediaIndex].mediaType ==
         "video") {
-      var videoURL = (widget.pageType == PageType.TASK
-              ? taskMediaUrl
-              : contentImageUrl) +
-          widget.transactionData!.contentDataList[currentMediaIndex].thumbnail;
+      var videoURL = getMediaImageUrl(
+          widget.transactionData!.contentDataList[currentMediaIndex].thumbnail,
+          isVideo: true,
+          isTask: widget.pageType == PageType.TASK);
       debugPrint("videoURL=====> $videoURL");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
@@ -1073,7 +1076,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           onTap: () {
                             if (item.mediaType == "pdf" ||
                                 item.mediaType == "doc") {
-                              openUrl(contentImageUrl + item.media);
+                              openUrl(getMediaImageUrl(item.media));
                             }
                           },
                           child: Stack(
@@ -1115,9 +1118,14 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                                   ),
                                                 )
                                               : Image.network(
-                                                  item.mediaType == "video"
-                                                      ? "$mediaThumbnailUrl${item.thumbnail}"
-                                                      : "${widget.pageType == PageType.TASK ? taskMediaUrl : contentImageUrl}${item.thumbnail}",
+                                                  getMediaImageUrl(
+                                                      item.mediaType == "video"
+                                                          ? item.thumbnail
+                                                          : item.thumbnail,
+                                                      isVideo: item.mediaType ==
+                                                          "video",
+                                                      isTask: widget.pageType ==
+                                                          PageType.TASK),
                                                   width: size.width,
                                                   fit: BoxFit.cover,
                                                 ),

@@ -379,7 +379,7 @@ Future<void> init() async {
         checkPhone: sl(),
       ));
 
-  sl.registerFactory(() => ContentBloc(
+  sl.registerLazySingleton(() => ContentBloc(
         getMyContent: sl(),
         publishContent: sl(),
         saveDraft: sl(),

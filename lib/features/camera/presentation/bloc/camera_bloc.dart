@@ -151,7 +151,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   Future<void> _onLifecycleEvent(
       CameraLifecycleEvent event, Emitter<CameraState> emit) async {
-    if (event.state == AppLifecycleState.inactive) {
+    if (event.state == AppLifecycleState.inactive ||
+        event.state == AppLifecycleState.paused ||
+        event.state == AppLifecycleState.detached) {
       final controller = state.cameraController;
       emit(state.copyWith(clearController: true, status: CameraStatus.initial));
       await controller?.dispose();

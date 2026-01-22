@@ -73,5 +73,5 @@ ios/Pods/*
 ios/build/*r
 
 # android/keystore.properties
-# assets/dialog_flow_auth.json
+assets/dialog_flow_auth.json
 .env

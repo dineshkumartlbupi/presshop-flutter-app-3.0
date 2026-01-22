@@ -3205,13 +3205,17 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           if (mimeType?.contains("video") ?? false) {
             VideoPlayerController controller =
                 VideoPlayerController.file(File(filePath));
-            await controller.initialize();
-            if (controller.value.duration.inSeconds >
-                (sharedPreferences!.getInt(videoLimitKey) ?? 120)) {
-              showToast(
-                  "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
-              validationVideoLenght = false;
-              return;
+            try {
+              await controller.initialize();
+              if (controller.value.duration.inSeconds >
+                  (sharedPreferences!.getInt(videoLimitKey) ?? 120)) {
+                showToast(
+                    "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
+                validationVideoLenght = false;
+                return;
+              }
+            } finally {
+              await controller.dispose();
             }
           }
 

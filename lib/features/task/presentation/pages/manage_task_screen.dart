@@ -111,7 +111,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
   PlayerController controller = PlayerController();
   int _currentMediaIndex = 0;
   bool audioPlaying = false;
-  bool isLoading = false;
+  bool isDataLoaded = false;
   bool isRequiredVisible = false;
   bool showCelebration = false;
   bool uploadSuccess = false;
@@ -194,6 +194,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
       listener: (context, state) {
         if (state is TaskChatLoaded) {
           chatList = state.chatList;
+          isDataLoaded = true;
+          setState(() {});
+        } else if (state is TaskLoading) {
+          isDataLoaded = false;
+          setState(() {});
+        } else if (state is TaskDetailLoaded) {
+          isDataLoaded = true;
           setState(() {});
         } else if (state is TaskMediaUploaded) {
           showSnackBar("Success", "Media uploaded successfully", Colors.green);
@@ -211,7 +218,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                     )));
           }
         } else if (state is TaskError) {
+          isDataLoaded = true;
           showSnackBar("Error", state.message, Colors.red);
+          setState(() {});
         }
       },
       builder: (context, state) {
@@ -260,7 +269,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                     )
                   ],
                 ),
-                body: isLoading
+                body: isDataLoaded
                     ? SafeArea(
                         child: Column(
                           children: [
@@ -3124,7 +3133,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                   onTap: () {
                     if (item.mediaType == "pdf" || item.mediaType == "doc") {
                       openUrl(widget.myContentData!.paidStatus == paidText
-                          ? contentImageUrl + item.media
+                          ? getMediaImageUrl(item.media)
                           : item.waterMark);
                     }
                   },
@@ -3161,8 +3170,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                       .contentMediaList[index]
                                                       .mediaType ==
                                                   "video"
-                                              ? "$contentImageUrl${widget.myContentData!.contentMediaList[index].thumbNail}"
-                                              : "$contentImageUrl${widget.myContentData!.contentMediaList[index].media}",
+                                              ? getMediaImageUrl(
+                                                  widget
+                                                      .myContentData!
+                                                      .contentMediaList[index]
+                                                      .thumbNail,
+                                                  isVideo: true)
+                                              : getMediaImageUrl(widget
+                                                  .myContentData!
+                                                  .contentMediaList[index]
+                                                  .media),
                                           width: double.infinity,
                                           height: size.width * numD50,
                                           fit: BoxFit.cover,
@@ -6746,16 +6763,17 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
   void initialController() {
     if (widget.myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "audio") {
-      var url = contentImageUrl +
-          widget.myContentData!.contentMediaList[_currentMediaIndex].media;
-      /*  initWaveData(contentImageUrl +
-          myContentData!.contentMediaList[_currentMediaIndex].media);*/
+      var url = getMediaImageUrl(
+          widget.myContentData!.contentMediaList[_currentMediaIndex].media);
+      /*  initWaveData(getMediaImageUrl(
+          myContentData!.contentMediaList[_currentMediaIndex].media));*/
       initWaveData(url);
     } else if (widget
             .myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "video") {
-      var url = contentImageUrl +
-          widget.myContentData!.contentMediaList[_currentMediaIndex].media;
+      var url = getMediaImageUrl(
+          widget.myContentData!.contentMediaList[_currentMediaIndex].media,
+          isVideo: true);
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
           Uri.parse(url),

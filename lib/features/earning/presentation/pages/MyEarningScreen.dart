@@ -914,14 +914,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       VideoPlayerScreen(
-                                                    videoUrl: item.uploadContent
-                                                            .contains("http")
-                                                        ? item.uploadContent
-                                                        : (item.type ==
-                                                                    "content"
-                                                                ? contentImageUrl
-                                                                : taskMediaUrl) +
-                                                            item.uploadContent,
+                                                    videoUrl: getMediaImageUrl(
+                                                        item.uploadContent,
+                                                        isTask: item.type !=
+                                                            "content"),
                                                   ),
                                                 ),
                                               );
@@ -1159,8 +1155,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   borderRadius: BorderRadius.circular(
                                       size.width * numD03),
                                   child: CachedNetworkImage(
-                                    imageUrl:
-                                        '$contentImageUrl${item.contentDataList.first['media'] ?? ""}',
+                                    imageUrl: getMediaImageUrl(
+                                        item.contentDataList.first['media']),
                                     height: size.width * numD11,
                                     width: size.width * numD12,
                                     fit: BoxFit.cover,

@@ -57,6 +57,8 @@ class FeedScreenState extends State<FeedScreen> {
       RefreshController(initialRefresh: false);
 
   final Map<String, ChewieController> _videoControllers = {};
+  final List<String> _controllerOrder = [];
+  static const int _maxCachedControllers = 5;
 
   @override
   void dispose() {
@@ -244,8 +246,8 @@ class FeedScreenState extends State<FeedScreen> {
                                         onTap: () {
                                           if (item.mediaType == "pdf" ||
                                               item.mediaType == "doc") {
-                                            openUrl(contentImageUrl +
-                                                item.mediaUrl);
+                                            openUrl(getMediaImageUrl(
+                                                item.mediaUrl));
                                           } else if (item.mediaType ==
                                                   "video" &&
                                               chewieController != null) {
@@ -304,18 +306,16 @@ class FeedScreenState extends State<FeedScreen> {
                                                                 ),
                                                               )
                                                             : Image.network(
-                                                                item.mediaType ==
-                                                                        "video"
-                                                                    ? (item.thumbnail.startsWith(
-                                                                            "http")
+                                                                getMediaImageUrl(
+                                                                    item.mediaType ==
+                                                                            "video"
                                                                         ? item
                                                                             .thumbnail
-                                                                        : "$contentImageUrl${item.thumbnail}")
-                                                                    : (item.mediaUrl.startsWith(
-                                                                            "http")
-                                                                        ? item
-                                                                            .mediaUrl
-                                                                        : "$contentImageUrl${item.mediaUrl}"),
+                                                                        : item
+                                                                            .mediaUrl,
+                                                                    isVideo: item
+                                                                            .mediaType ==
+                                                                        "video"),
                                                                 width:
                                                                     size.width,
                                                                 fit: BoxFit
@@ -1495,16 +1495,16 @@ class FeedScreenState extends State<FeedScreen> {
   ChewieController? initialController(Feed feed, int currentMediaIndex) {
     String key = "${feed.id}_$currentMediaIndex";
     if (_videoControllers.containsKey(key)) {
+      _controllerOrder.remove(key);
+      _controllerOrder.add(key);
       return _videoControllers[key];
     }
 
     ChewieController? chewieController;
     var content = feed.contentList[currentMediaIndex];
 
-    String url = content.mediaUrl;
-    if (!url.startsWith("http")) {
-      url = contentImageUrl + url;
-    }
+    String url = getMediaImageUrl(content.mediaUrl,
+        isVideo: content.mediaType == "video");
 
     if (content.mediaType == "audio") {
       initWaveData(url);
@@ -1573,6 +1573,14 @@ class FeedScreenState extends State<FeedScreen> {
           },
         );
         _videoControllers[key] = chewieController;
+        _controllerOrder.add(key);
+
+        if (_controllerOrder.length > _maxCachedControllers) {
+          String oldestKey = _controllerOrder.removeAt(0);
+          var oldestController = _videoControllers.remove(oldestKey);
+          oldestController?.videoPlayerController.dispose();
+          oldestController?.dispose();
+        }
       }
     }
     return chewieController;

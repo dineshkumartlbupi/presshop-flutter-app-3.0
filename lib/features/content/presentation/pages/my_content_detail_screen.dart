@@ -458,11 +458,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                 child: InkWell(
                   onTap: () {
                     if (item.mediaType == "pdf" || item.mediaType == "doc") {
-                      openUrl(contentItem!.paidStatus == paidText
-                          ? (item.mediaUrl.startsWith('http')
-                              ? item.mediaUrl
-                              : contentImageUrl + item.mediaUrl)
-                          : item.watermarkUrl ?? "");
+                      openUrl(getMediaImageUrl(item.mediaUrl));
                     }
                   },
                   child: Stack(
@@ -495,21 +491,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           contentItem!.mediaList[index]
                                                       .mediaType ==
                                                   "video"
-                                              ? ((contentItem!.mediaList[index]
-                                                              .thumbnailUrl ??
-                                                          '')
-                                                      .startsWith('http')
-                                                  ? (contentItem!
-                                                          .mediaList[index]
-                                                          .thumbnailUrl ??
-                                                      '')
-                                                  : "$contentImageUrl${contentItem!.mediaList[index].thumbnailUrl ?? ''}")
-                                              : (contentItem!
-                                                      .mediaList[index].mediaUrl
-                                                      .startsWith('http')
-                                                  ? contentItem!
-                                                      .mediaList[index].mediaUrl
-                                                  : "$contentImageUrl${contentItem!.mediaList[index].mediaUrl}"),
+                                              ? getMediaImageUrl(
+                                                  contentItem!.mediaList[index]
+                                                      .thumbnailUrl,
+                                                  isVideo: true)
+                                              : getMediaImageUrl(contentItem!
+                                                  .mediaList[index].mediaUrl),
                                           width: double.infinity,
                                           height: size.width * numD50,
                                           fit: BoxFit.cover,
@@ -1167,9 +1154,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
       return Stack(
         children: [
           VideoThumbnailWidget(
-            videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
-                ? item.mediaUrl
-                : "$contentImageUrl${item.mediaUrl}"),
+            videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
             thumbnailUrl:
                 item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
             width: double.infinity,
@@ -1201,9 +1186,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                 playerLoadingFallback: Stack(
                   children: [
                     VideoThumbnailWidget(
-                      videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
-                          ? item.mediaUrl
-                          : "$contentImageUrl${item.mediaUrl}"),
+                      videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
                       thumbnailUrl: item.thumbnailUrl != null
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
@@ -1225,9 +1208,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                 playerLoadingFallback: Stack(
                   children: [
                     VideoThumbnailWidget(
-                      videoUrl: fixS3Url(item.mediaUrl.startsWith('http')
-                          ? item.mediaUrl
-                          : "$contentImageUrl${item.mediaUrl}"),
+                      videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
                       thumbnailUrl: item.thumbnailUrl != null
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
@@ -1346,22 +1327,16 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   void initialController() {
     if (contentItem?.mediaList[_currentMediaIndex].mediaType == "audio") {
-      var url = (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
-              .startsWith('http')
-          ? (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
-          : contentImageUrl +
-              (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "");
+      var url =
+          getMediaImageUrl(contentItem?.mediaList[_currentMediaIndex].mediaUrl);
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
       initWaveData(url);
     } else if (contentItem?.mediaList[_currentMediaIndex].mediaType ==
         "video") {
-      var url = fixS3Url(
-          (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
-                  .startsWith('http')
-              ? (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? "")
-              : contentImageUrl +
-                  (contentItem?.mediaList[_currentMediaIndex].mediaUrl ?? ""));
+      var url = getMediaImageUrl(
+          contentItem?.mediaList[_currentMediaIndex].mediaUrl,
+          isVideo: true);
       debugPrint("Video Player URL: $url");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(

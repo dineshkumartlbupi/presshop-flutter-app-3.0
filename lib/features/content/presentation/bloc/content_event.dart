@@ -11,12 +11,17 @@ class FetchMyContentEvent extends ContentEvent {
   final int page;
   final int limit;
   final Map<String, dynamic> params;
+  final bool isRefresh;
 
-  const FetchMyContentEvent(
-      {this.page = 1, this.limit = 20, this.params = const {}});
+  const FetchMyContentEvent({
+    this.page = 1,
+    this.limit = 20,
+    this.params = const {},
+    this.isRefresh = false,
+  });
 
   @override
-  List<Object> get props => [page, limit, params];
+  List<Object> get props => [page, limit, params, isRefresh];
 }
 
 class PublishContentEvent extends ContentEvent {
