@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
@@ -77,9 +77,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
       return;
     }
 
-    final url = "$googleMapURL"
+    final url = "${ApiConstantsNew.config.googleMapURL}"
         "?input=$input"
-        "&key=$googleMapAPiKey"
+        "&key=${ApiConstantsNew.config.googleMapApiKey}"
         "&types=geocode";
 
     final response = await http.get(Uri.parse(url));
@@ -117,9 +117,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
     String description, {
     bool isOrigin = false,
   }) async {
-    final url = "$googlePlaceDetailsURL"
+    final url = "${ApiConstantsNew.config.googlePlaceDetailsURL}"
         "?place_id=$placeId"
-        "&key=$googleMapAPiKey";
+        "&key=${ApiConstantsNew.config.googleMapApiKey}";
 
     final response = await http.get(Uri.parse(url));
 

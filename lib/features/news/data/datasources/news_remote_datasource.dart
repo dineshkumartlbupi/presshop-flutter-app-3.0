@@ -1,4 +1,4 @@
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
@@ -50,7 +50,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
     try {
       final response = await client.post(
-        getAggregatedNewsUrl,
+        ApiConstantsNew.content.aggregatedNews,
         data: body,
       );
 
@@ -78,7 +78,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
     try {
       final response = await client.post(
-        getAggregatedNewsDetailUrl,
+        ApiConstantsNew.content.aggregatedNewsDetail,
         data: body,
       );
 
@@ -117,7 +117,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
     try {
       final response = await client.post(
-        getAggregatedNewsCommentsUrl,
+        ApiConstantsNew.content.aggregatedNewsComments,
         data: body,
       );
 

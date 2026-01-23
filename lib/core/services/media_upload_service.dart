@@ -6,7 +6,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/api/api_client.dart';
 
@@ -66,7 +65,7 @@ class MediaUploadService {
 
     try {
       log("Upload started: ${DateTime.now()}");
-      debugPrint("Upload URL: ${baseUrl + endUrl}");
+      debugPrint("Upload URL: $endUrl");
       // debugPrint("Upload Headers: ${dio.options.headers}"); // Headers handled by ApiClient
       debugPrint(
           "Upload Files: ${formData.files.map((e) => "${e.key}: ${e.value.filename}").toList()}");

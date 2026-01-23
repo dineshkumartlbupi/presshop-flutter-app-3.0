@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions.dart';
 import 'package:presshop/core/constants/string_constants.dart';

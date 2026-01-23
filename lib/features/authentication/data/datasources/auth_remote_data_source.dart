@@ -38,7 +38,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> login(String username, String password) async {
     try {
       final response = await apiClient.post(
-        loginUrl,
+        ApiConstantsNew.auth.login,
         data: {
           "userNameOrPhone": username,
           "password": password,
@@ -94,7 +94,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String email, String name, String photoUrl) async {
     try {
       final response = await apiClient.post(
-        socialExistUrl,
+        ApiConstantsNew.auth.socialLogin,
         data: {
           "social_type": socialType,
           "social_id": socialId,
@@ -162,12 +162,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ));
 
         response = await apiClient.multipartPost(
-          registerUrl,
+          ApiConstantsNew.auth.register,
           formData: formData,
         );
       } else {
         response = await apiClient.post(
-          registerUrl,
+          ApiConstantsNew.auth.register,
           data: data,
         );
       }
@@ -216,7 +216,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> sendOtp(Map<String, dynamic> data) async {
     try {
       final response = await apiClient.post(
-        ApiConstants.auth.sendOtp,
+        ApiConstantsNew.auth.sendOtp,
         data: data,
       );
 
@@ -248,7 +248,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       final response = await apiClient.get(
-        myProfileUrl,
+        ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
       );
 
@@ -273,7 +273,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> verifyOtp(Map<String, dynamic> data) async {
     try {
       final response = await apiClient.post(
-        ApiConstants.auth.verifyOtp,
+        ApiConstantsNew.auth.verifyOtp,
         data: data,
       );
 
@@ -297,7 +297,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> checkUserName(String userName) async {
     try {
-      final url = checkUserNameUrl.replaceAll(":username", userName);
+      final url = ApiConstantsNew.auth.checkUserName.replaceAll(":username", userName);
       final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
@@ -332,7 +332,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> checkEmail(String email) async {
     try {
-      final url = checkEmailUrl.replaceAll(":email", email);
+      final url = ApiConstantsNew.auth.checkEmail.replaceAll(":email", email);
       final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
@@ -362,7 +362,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> checkPhone(String phone) async {
     try {
-      final url = checkPhoneUrl.replaceAll(":phone", phone);
+      final url = ApiConstantsNew.auth.checkPhone.replaceAll(":phone", phone);
       final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
@@ -396,7 +396,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<List<AvatarModel>> getAvatars() async {
     try {
-      final response = await apiClient.get(getAvatarsUrl);
+      final response = await apiClient.get(ApiConstantsNew.profile.getAvatars);
       if (response.statusCode == 200) {
         final data = response.data;
         print("🔵 GET AVATARS RESPONSE: $data");
@@ -414,7 +414,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<Map<String, dynamic>> verifyReferralCode(String code) async {
     try {
       final response =
-          await apiClient.post(referralUrl, data: {"referral_code": code});
+          await apiClient.post(ApiConstantsNew.auth.verifyReferral, data: {"referral_code": code});
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -428,7 +428,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> socialExists(Map<String, dynamic> params) async {
     try {
-      final response = await apiClient.post(socialExistUrl, data: params);
+      final response = await apiClient.post(ApiConstantsNew.auth.socialLogin, data: params);
       final data = response.data;
       if (data['code'] == 200 && data['token'] != null) {
         return true;
@@ -457,11 +457,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           await MultipartFile.fromFile(imagePath),
         ));
 
-        response = await apiClient.multipartPost(socialLoginRegisterUrl,
+        response = await apiClient.multipartPost(ApiConstantsNew.auth.socialRegister,
             formData: formData);
       } else {
         // Normal JSON request
-        response = await apiClient.post(socialLoginRegisterUrl, data: data);
+        response = await apiClient.post(ApiConstantsNew.auth.socialRegister, data: data);
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -507,7 +507,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<Either<Failure, String>> forgotPassword(String email) async {
     try {
       final response = await apiClient.post(
-        forgotPasswordUrl,
+        ApiConstantsNew.auth.forgotPassword,
         data: {"email": email},
       );
 
@@ -567,7 +567,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> verifyForgotPasswordOtp(String email, String otp) async {
     try {
       final response = await apiClient
-          .post(verifyForgotPasswordOTPUrl, data: {"email": email, "otp": otp});
+          .post(ApiConstantsNew.auth.verifyForgotOtp, data: {"email": email, "otp": otp});
       if (response.statusCode == 200) {
         final data = response.data;
         print("Verify OTP Response: $data");
@@ -600,7 +600,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<bool> resetPassword(String email, String password) async {
     try {
       final response = await apiClient
-          .post(resetPasswordUrl, data: {"email": email, "password": password});
+          .post(ApiConstantsNew.auth.resetPassword, data: {"email": email, "password": password});
       if (response.statusCode == 200) {
         final data = response.data;
         print("Reset Password Response: $data");

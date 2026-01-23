@@ -1,5 +1,5 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/failures.dart';
 import '../models/tutorials_model.dart';
@@ -22,7 +22,7 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
       String category, int offset, int limit) async {
     try {
       final response = await apiClient.get(
-        getAllCmsUrl,
+        ApiConstantsNew.misc.generalMgmt,
         queryParameters: {
           "type": 'videos',
           "offset": offset.toString(),
@@ -64,7 +64,7 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
   Future<List<CategoryDataModel>> getCategories() async {
     try {
       final response = await apiClient.get(
-        getHopperCategory,
+        ApiConstantsNew.content.hopperCategory,
         queryParameters: {
           "type": 'tutorial',
         },
@@ -118,7 +118,7 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
       // Let's stick to what's visible. I'll omit it for now or pass empty string if I don't have access.
       // Ideally I should inject SharedPreferences to DS if needed.
 
-      await apiClient.post(addViewCountAPI, data: {
+      await apiClient.post(ApiConstantsNew.content.mostViewed, data: {
         "type": "tutorial",
         'tutorial_id': tutorialId,
         // "user_id": ... // Skipping for now, assuming token is enough or will fix if needed. A lot of legacy code passes explicit UserID unnecessarily.

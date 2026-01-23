@@ -9,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/services/location_service.dart';
 

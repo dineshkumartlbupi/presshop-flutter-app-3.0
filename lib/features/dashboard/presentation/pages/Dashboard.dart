@@ -717,16 +717,7 @@ class DashboardState extends State<Dashboard>
                           AssetImage("${iconsPath}ic_news1.png"),
                         ),
                         label: "News"),
-                    // BottomNavigationBarItem(
-                    //     icon: ImageIcon(
-                    //       AssetImage("${iconsPath}ic_chat.png"),
-                    //     ),
-                    //     label: chatText),
-                    // BottomNavigationBarItem(
-                    //     icon: ImageIcon(
-                    //       AssetImage("${iconsPath}ic_menu.png"),
-                    //     ),
-                    //     label: menuText),
+
                     BottomNavigationBarItem(
                         icon: ImageIcon(
                           AssetImage("${iconsPath}ic_map1.png"),
@@ -734,17 +725,6 @@ class DashboardState extends State<Dashboard>
                         label: "Map"),
                   ],
                 ),
-                // body: Stack(
-                //   children: [
-                //     Center(child: Text("This is the center Text for popup")),
-                //     Visibility(
-                //       visible: !isGetLatLong,
-                //       replacement: showLoader(isForLocation: false),
-                //       child: bottomNavigationScreens[currentIndex],
-                //       //  )
-                //     ),
-                //   ],
-                // )),
                 body: Stack(
                   children: [
                     // Background text (optional)
@@ -791,36 +771,13 @@ class DashboardState extends State<Dashboard>
       },
     );
 
-    // localNotificationService.flutterLocalNotificationsPlugin
-    //     .getNotificationAppLaunchDetails()
-    //     .then((notificationDetail) async {
-    //   await Future.delayed(const Duration(seconds: 1));
-    //   if (notificationDetail != null &&
-    //       notificationDetail.didNotificationLaunchApp &&
-    //       context.mounted) {
-    //     if (notificationDetail.notificationResponse != null &&
-    //         notificationDetail.notificationResponse!.payload != null) {
-    //       var taskDetail =
-    //           jsonDecode(notificationDetail.notificationResponse!.payload!);
-    //       if (taskDetail["notification_type"].toString() ==
-    //           "media_house_tasks") {
-    //         callTaskDetailApi(taskDetail["broadCast_id"].toString());
-    //       }
-    //     }
-    //   }
-    // });
-
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint("Fi1rebaseMessage: ${message.data}");
 
       if (message.data.isNotEmpty &&
           message.data["notification_type"].toString() == "media_house_tasks") {
         debugPrint("Inside Task Assigned notification");
-        // localNotificationService.showFlutterNotificationWithSound(message);
 
-        /// --------------------------------------------------------------------
-        /// --------------------------------------------------------------------
-        /// SAVE THE CURRENT PUBLISH CONTENT DATA IN DRAFTS IF DIALOG SHOWS SO USER CAN CONTINUE EDITING IT IN FUTURE
         if (mounted) {
           if (dashBoardInterface != null) {
             dashBoardInterface!.saveDraft();
@@ -1007,73 +964,7 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-// rajesh
-  // void proceedWithLocation(lc.LocationData? locationData) async {
-  //   if (locationData != null) {
-  //     debugPrint("NotNull");
-  //     if (locationData.latitude != null) {
-  //       latitude = locationData.latitude!;
-  //       longitude = locationData.longitude!;
-  //       GeoData data = await Geocoder2.getDataFromCoordinates(
-  //           latitude: latitude,
-  //           longitude: longitude,
-  //           googleMapApiKey: Platform.isIOS ? appleMapAPiKey : googleMapAPiKey);
-
-  //       debugPrint("address=====> ${data.address}");
-  //       sharedPreferences!.setDouble(currentLat, latitude);
-  //       sharedPreferences!.setDouble(currentLon, longitude);
-  //       sharedPreferences!.setString(currentAddress, data.address);
-  //       sharedPreferences!.setString(currentCountry, data.country);
-  //       sharedPreferences!.setString(currentState, data.state);
-  //       sharedPreferences!.setString(currentCity, data.city);
-
-  //       isGetLatLong = false;
-  //       callUpdateCurrentData();
-  //       setState(() {});
-  //       if (alertDialog != null) {
-  //         alertDialog = null;
-  //         Navigator.of(navigatorKey.currentContext!).pop();
-  //       }
-  //     }
-  //   } else {
-  //     debugPrint("Null-ll");
-  //     showSnackBar("Location Error", "nullLocationText", Colors.black);
-  //   }
-  // }
-
-/*  void _onBottomBarItemTapped(int index) {
-    currentIndex = index;
-
-    if(index==1){
-      Fluttertoast.showToast(
-        msg: "Launching soon",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: lightGrey,
-        textColor: Colors.black,
-        fontSize: 16.0,
-      );
-    }
-    setState(() {});
-  }*/
-
   void _onBottomBarItemTapped(int index) {
-    /*  if (index == 1) {
-      Fluttertoast.showToast(
-        msg: "Launching soon",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: lightGrey,
-        textColor: Colors.black,
-        fontSize: 16.0,
-      );
-      return;
-    }*/
-
-// rajesh
-
     if (index == 2) {
       // Turn camera ON
       _cameraKey.currentState?.resumeCamera();
@@ -1082,9 +973,6 @@ class DashboardState extends State<Dashboard>
       _cameraKey.currentState?.closeCamera();
     }
 
-/////
-
-    // Track tab switches
     trackAction(ActionNames.tabSwitch, parameters: {
       'from_tab': currentIndex.toString(),
       'to_tab': index.toString(),
@@ -1156,7 +1044,6 @@ class DashboardState extends State<Dashboard>
     _dashboardBloc.add(CheckAppVersionEvent());
   }
 
-  /// Get BroadCast task Detail
   void callTaskDetailApi(String id) {
     _dashboardBloc.add(FetchTaskDetailEvent(id));
   }

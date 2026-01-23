@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 
 dynamic numberFormatting(dynamic number) {
   String value = number.toString();
@@ -52,10 +52,10 @@ String getMediaImageUrl(String? url,
   }
 
   String baseUrl = isTask
-      ? taskMediaUrl
+      ? ApiConstantsNew.config.taskMediaUrl
       : isVideo
-          ? mediaThumbnailUrl
-          : contentImageUrl;
+          ? ApiConstantsNew.config.mediaThumbnailUrl
+          : ApiConstantsNew.config.contentImageUrl;
 
   return fixS3Url("$baseUrl$trimmedUrl");
 }

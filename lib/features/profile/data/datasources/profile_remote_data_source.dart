@@ -25,7 +25,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     print("🔍 DEBUG: getProfile called with userId: '$userId'");
     try {
       final response = await apiClient.get(
-        myProfileUrl,
+        ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
       );
       print("🔍 DEBUG: API Response Status: ${response.statusCode}");
@@ -63,11 +63,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           "profile_image",
           await MultipartFile.fromFile(imagePath),
         ));
-        response = await apiClient.multipartPost(editProfileUrl,
+        response = await apiClient.multipartPost(ApiConstantsNew.profile.editProfile,
             formData: formData, options: options);
       } else {
         response =
-            await apiClient.post(editProfileUrl, data: data, options: options);
+            await apiClient.post(ApiConstantsNew.profile.editProfile, data: data, options: options);
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -95,7 +95,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       String userId = apiClient.sharedPreferences.getString(hopperIdKey) ?? "";
       Options options = Options(headers: {"x-user-id": userId});
 
-      final response = await apiClient.multipartPost(editProfileUrl,
+      final response = await apiClient.multipartPost(ApiConstantsNew.profile.editProfile,
           formData: formData, options: options);
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
@@ -119,7 +119,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> changePassword(String oldPassword, String newPassword) async {
     try {
       final response = await apiClient.post(
-        changePasswordUrl,
+        ApiConstantsNew.profile.changePassword,
         data: {
           'old_password': oldPassword,
           'new_password': newPassword,
@@ -143,7 +143,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<bool> checkUserName(String username) async {
     try {
-      final response = await apiClient.get("$checkUserNameUrl$username");
+      final response = await apiClient.get("${ApiConstantsNew.auth.checkUserName}$username");
       if (response.statusCode == 200) {
         final data = response.data;
         return data['userNameExist'] ?? false;
@@ -157,7 +157,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<List<AvatarModel>> getAvatars() async {
     try {
-      final response = await apiClient.get(getAvatarsUrl);
+      final response = await apiClient.get(ApiConstantsNew.profile.getAvatars);
       if (response.statusCode == 200) {
         final data = response.data;
         final List list = data['data'] ?? [];

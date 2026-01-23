@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/splash/data/models/version_model.dart';
 
@@ -17,7 +17,7 @@ class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
   @override
   Future<VersionModel> checkAppVersion() async {
     try {
-      final response = await apiClient.get(getLatestVersionUrl);
+      final response = await apiClient.get(ApiConstantsNew.auth.getLatestVersion);
       if (response.statusCode == 200) {
         final data = response.data;
         final Map<String, dynamic> responseMap =

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:presshop/core/api/api_constant.dart' as ApiConstants;
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart' hide AdminDetailModel;
 import 'package:presshop/core/api/api_client.dart';
@@ -29,7 +28,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<List<AdminDetailModel>> getActiveAdmins() async {
     try {
-      final response = await apiClient.get(getAdminListUrl);
+      final response = await apiClient.get(ApiConstantsNew.misc.adminList);
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is String) {
@@ -44,7 +43,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       } else {
         throw ServerFailure(message: '');
       }
-
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -53,27 +51,24 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<void> updateLocation(Map<String, dynamic> params) async {
     try {
-      final response =
-          await apiClient.post(ApiConstants.updateLocation, data: params);
+      final response = await apiClient.post(ApiConstantsNew.profile.updateLocation,
+          data: params, showLoader: false);
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerFailure(message: '');
       }
-
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
   }
 
-
   @override
   Future<void> addDevice(Map<String, dynamic> params) async {
-    debugPrint("🚀 Add Device API Request Body: $params"); 
+    debugPrint("🚀 Add Device API Request Body: $params");
     try {
-      final response = await apiClient.post(addDeviceUrl, data: params);
+      final response = await apiClient.post(ApiConstantsNew.profile.addDevice, data: params);
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerFailure(message: '');
       }
-
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -82,7 +77,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<TaskDetailModel> getTaskDetail(String id) async {
     try {
-      final response = await apiClient.get("$taskDetailUrl$id");
+      final response = await apiClient.get("${ApiConstantsNew.tasks.assignedTaskDetail}$id");
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is String) {
@@ -93,7 +88,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       } else {
         throw ServerFailure(message: '');
       }
-
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -102,9 +96,9 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getRoomId(Map<String, dynamic> params) async {
     try {
-      debugPrint("🚀 Calling Create Room API: $getRoomIdUrl");
+      debugPrint("🚀 Calling Create Room API: ${ApiConstantsNew.chat.createRoom}");
       debugPrint("📤 Create Room API Request Body: $params");
-      final response = await apiClient.post(getRoomIdUrl, data: params);
+      final response = await apiClient.post(ApiConstantsNew.chat.createRoom, data: params);
       debugPrint("📩 Create Room API Response Status: ${response.statusCode}");
       debugPrint("📦 Create Room API Response Body: ${response.data}");
 
@@ -132,18 +126,19 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<Map<String, dynamic>> checkAppVersion() async {
     try {
-      final response = await apiClient.get(getLatestVersionUrl);
+      final response = await apiClient.get(ApiConstantsNew.auth.getLatestVersion);
       if (response.statusCode == 200) {
         final data = response.data;
-        final Map<String, dynamic> responseMap = 
+        final Map<String, dynamic> responseMap =
             data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
-        
+
         if (responseMap['success'] == true && responseMap['data'] != null) {
           return responseMap['data'];
         }
         return responseMap;
       } else {
-        throw ServerFailure(message: 'Failed to check app version: ${response.statusCode}');
+        throw ServerFailure(
+            message: 'Failed to check app version: ${response.statusCode}');
       }
     } catch (e) {
       throw ApiErrorHandler.handle(e);
@@ -153,14 +148,15 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<Map<String, dynamic>> activateStudentBeans() async {
     try {
-      final response = await apiClient.post(studentBeansActivationUrl);
-      print("🚀 Activate Student Beans API Response Status: ${response.statusCode}");
+      final response = await apiClient.post(ApiConstantsNew.profile.studentBeansActivation);
+      print(
+          "🚀 Activate Student Beans API Response Status: ${response.statusCode}");
       print("📦 Activate Student Beans API Response Body: ${response.data}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
-        final responseMap = 
+        final responseMap =
             data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
-            
+
         if (responseMap['success'] == true && responseMap['data'] != null) {
           return responseMap['data'];
         }
@@ -168,7 +164,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       } else {
         throw ServerFailure(message: '');
       }
-
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -177,12 +172,12 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<Map<String, dynamic>> checkStudentBeans() async {
     try {
-      final response = await apiClient.get(myProfileUrl);
+      final response = await apiClient.get(ApiConstantsNew.profile.myProfile);
       if (response.statusCode == 200) {
         final data = response.data;
-        final responseMap = 
+        final responseMap =
             data is String ? jsonDecode(data) : Map<String, dynamic>.from(data);
-            
+
         if (responseMap['success'] == true && responseMap['data'] != null) {
           return responseMap['data'];
         }
@@ -201,23 +196,19 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       await apiClient.sharedPreferences.setBool(sourceDataIsClickKey, true);
       await apiClient.sharedPreferences.setBool(sourceDataIsOpenedKey, true);
     } catch (e) {
-       // Should we handle?
+      // Should we handle?
     }
   }
 
   @override
   Future<void> removeDevice(Map<String, dynamic> params) async {
     try {
-      final response = await apiClient.post(removeDeviceUrl, data: params);
+      final response = await apiClient.post(ApiConstantsNew.profile.removeDevice, data: params);
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerFailure(message: '');
       }
-
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
   }
-
-
-
 }

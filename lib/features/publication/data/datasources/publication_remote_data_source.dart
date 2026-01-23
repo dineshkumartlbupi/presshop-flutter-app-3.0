@@ -1,5 +1,5 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
@@ -22,7 +22,7 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
   Future<PublicationEarningStats> getEarningStats(String type) async {
     try {
       final Map<String, dynamic> params = {'type': type};
-      final response = await apiClient.get(getEarningDataAPI, queryParameters: params);
+      final response = await apiClient.get(ApiConstantsNew.payments.earnings, queryParameters: params);
       
       final data = response.data;
       final earningData = EarningProfileDataModel.fromJson(data);
@@ -40,7 +40,7 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
   @override
   Future<List<MediaHouseModel>> getMediaHouses() async {
     try {
-      final response = await apiClient.get(getMediaHouseDetailAPI);
+      final response = await apiClient.get(ApiConstantsNew.tasks.mediaHouseList);
       final List<dynamic> dataList = response.data['data'];
       return dataList.map((e) => MediaHouseModel.fromJson(e)).toList();
     } catch (e) {
@@ -51,7 +51,7 @@ class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
   @override
   Future<PublicationTransactionsResult> getPublicationTransactions(Map<String, dynamic> params) async {
     try {
-       final response = await apiClient.get(getPublicationTransactionAPI, queryParameters: params);
+       final response = await apiClient.get(ApiConstantsNew.payments.publicationTransaction, queryParameters: params);
        
        final List<dynamic> dataList = response.data['data'];
        final String publicationCount = response.data['countofmediahouse'].toString();

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
   late IO.Socket socket;
-  final String _socketUrl = socketUrl;
+  final String _socketUrl = ApiConstantsNew.config.socketUrl;
   Function(dynamic)? onIncidentNew;
   Function(dynamic)? onIncidentUpdated;
   Function(dynamic)? onIncidentCreated;

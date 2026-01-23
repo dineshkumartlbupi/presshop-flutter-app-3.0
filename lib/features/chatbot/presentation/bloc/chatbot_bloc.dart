@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 
 part 'chatbot_event.dart';
@@ -40,7 +40,7 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
       FetchMessagesEvent event, Emitter<ChatbotState> emit) async {
     emit(ChatbotLoading());
     try {
-      final response = await apiClient.get(getMessageApiUrl);
+      final response = await apiClient.get(ApiConstantsNew.chat.getChatbotMessages);
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -201,7 +201,7 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
         "is_user": isUser,
       };
 
-      final response = await apiClient.post(addMessageApiUrl, data: map);
+      final response = await apiClient.post(ApiConstantsNew.chat.addChatbotMessage, data: map);
 
       if (response.statusCode == 200) {
         var data = response.data;

@@ -1,7 +1,7 @@
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import '../../../../core/api/api_constant.dart';
+import '../../../../core/api/api_constant_new.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<Map<String, dynamic>> getNotifications(int limit, int offset);
@@ -18,7 +18,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   Future<Map<String, dynamic>> getNotifications(int limit, int offset) async {
     try {
       final response = await apiClient.get(
-        notificationListAPI,
+        ApiConstantsNew.chat.notificationList,
         queryParameters: {'limit': limit, 'offset': offset},
       );
       return response.data;
@@ -30,7 +30,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   @override
   Future<void> markNotificationsAsRead() async {
     try {
-      await apiClient.patch(notificationReadAPI);
+      await apiClient.patch(ApiConstantsNew.chat.notificationRead);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -39,7 +39,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   @override
   Future<void> clearAllNotifications() async {
     try {
-      await apiClient.patch(clearNotification);
+      await apiClient.patch(ApiConstantsNew.chat.clearNotification);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }

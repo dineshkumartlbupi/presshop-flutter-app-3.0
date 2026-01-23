@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -1422,7 +1423,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   Future<void> checkUserNameApi() async {
     try {
       final response = await sl<ApiClient>().get(
-        "$checkUserNameUrl${userNameController.text.trim().toLowerCase()}",
+        "${ApiConstantsNew.auth.checkUserName}${userNameController.text.trim().toLowerCase()}",
       );
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1445,7 +1446,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   Future<void> checkEmailApi() async {
     try {
       final response = await sl<ApiClient>().get(
-        "$checkEmailUrl${emailAddressController.text.trim()}",
+        "${ApiConstantsNew.auth.checkEmail}${emailAddressController.text.trim()}",
       );
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1468,7 +1469,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   Future<void> checkPhoneApi() async {
     try {
       final response = await sl<ApiClient>().get(
-        "$checkPhoneUrl${phoneNumberController.text.trim()}",
+        "${ApiConstantsNew.auth.checkPhone}${phoneNumberController.text.trim()}",
       );
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1490,7 +1491,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Future<void> getAvatarsApi() async {
     try {
-      final response = await sl<ApiClient>().get(getAvatarsUrl);
+      final response =
+          await sl<ApiClient>().get(ApiConstantsNew.profile.getAvatars);
       if (response.statusCode == 200) {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
@@ -1509,7 +1511,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     print("🔴 DEBUG: Fetching Profile for userId: '$userId'");
     try {
       final response = await sl<ApiClient>().get(
-        myProfileUrl,
+        ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
       );
       print("myProfileUrl: $myProfileUrl");
@@ -1631,7 +1633,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       };
 
       final response = await sl<ApiClient>().post(
-        editProfileUrl,
+        ApiConstantsNew.profile.editProfile,
         data: params,
       );
 

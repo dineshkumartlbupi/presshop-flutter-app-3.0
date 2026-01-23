@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:video_player/video_player.dart';
+import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:presshop/core/core_export.dart';
 

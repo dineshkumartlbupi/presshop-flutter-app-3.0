@@ -17,6 +17,7 @@ import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/main.dart';

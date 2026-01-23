@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import 'package:presshop/core/api/api_constant.dart' as api_const;
-import 'package:presshop/core/api/api_constant.dart'
-    hide getTaskTransactionDetails;
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/features/dashboard/data/models/task_detail_model.dart';
 import 'package:presshop/core/common_models_export.dart' hide TaskDetailModel;
 import 'package:presshop/features/earning/data/models/earning_model.dart';
@@ -45,7 +43,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<TaskDetailModel> getTaskDetail(String taskId) async {
     try {
       final response = await apiClient.get(
-        "$taskDetailUrl$taskId",
+        "${ApiConstantsNew.tasks.assignedTaskDetail}$taskId",
       );
 
       final data = response.data;
@@ -78,7 +76,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       required String mediaHouseId,
       required String status}) async {
     try {
-      final response = await apiClient.post(taskAcceptRejectRequestUrl, data: {
+      final response = await apiClient.post(ApiConstantsNew.tasks.acceptRejectTask, data: {
         "task_id": taskId,
         "media_house_id": mediaHouseId,
         "task_status": status
@@ -98,7 +96,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       String roomId, String type, String contentId) async {
     try {
       final response = await apiClient.post(
-        getOfferPaymentChat,
+        ApiConstantsNew.chat.getOfferPaymentChat,
         data: {"content_id": contentId},
       );
 
@@ -123,7 +121,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<Map<String, dynamic>> uploadTaskMedia(FormData data) async {
     try {
       final response = await apiClient.multipartPost(
-        uploadTaskMediaUrl,
+        ApiConstantsNew.tasks.uploadTaskMedia,
         formData: data,
       );
       if (response.data["success"] == true) {
@@ -149,7 +147,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       };
 
       final response = await apiClient.post(
-        getRoomIdUrl,
+        ApiConstantsNew.chat.createRoom,
         data: map,
       );
 
@@ -168,7 +166,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<String> getHopperAcceptedCount(String taskId) async {
     try {
       final response = await apiClient.get(
-        "$getHopperAcceptedCountUrl?task_id=$taskId",
+        "${ApiConstantsNew.tasks.acceptedHopperCount}?task_id=$taskId",
       );
 
       if (response.data["code"] == 200) {
@@ -188,7 +186,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       String transactionId) async {
     try {
       final response = await apiClient.post(
-        api_const.getTaskTransactionDetails,
+        ApiConstantsNew.tasks.transactionDetails,
         data: {"transaction_id": transactionId},
       );
 
@@ -214,7 +212,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       String roomId, String mediaHouseId) async {
     try {
       final response = await apiClient.post(
-        getDetailsById,
+        ApiConstantsNew.misc.getDetailsById,
         data: {"content_id": roomId, "media_house_id": mediaHouseId},
       );
 
@@ -250,7 +248,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       }
 
       final response = await apiClient.post(
-        getAllTaskUrl,
+        ApiConstantsNew.tasks.allTasks,
         data: map,
       );
 
@@ -287,7 +285,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<List<Task>> getLocalTasks(Map<String, dynamic> filterParams) async {
     try {
       final response = await apiClient.post(
-        getAllMyTaskUrl,
+        ApiConstantsNew.tasks.myTasks,
         data: filterParams,
       );
 

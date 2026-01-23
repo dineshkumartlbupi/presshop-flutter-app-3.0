@@ -1,5 +1,8 @@
-class ApiConstants {
-  ApiConstants._();
+import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class ApiConstantsNew {
+  ApiConstantsNew._();
   static const Config config = Config();
   static const Auth auth = Auth();
   static const Profile profile = Profile();
@@ -13,9 +16,35 @@ class ApiConstants {
 class Config {
   const Config();
   static const int env = 2;
+
   String get baseUrl => env == 2
-      ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api"
+      ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/"
       : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+
+  String get adminBaseUrl => "https://dev-api.presshop.news:5020/";
+  String get mediaBaseUrl => "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+  String get socketUrl => "https://dev-api.presshop.news:3005";
+
+  // External Services
+  String get googleMapURL => "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+  String get googlePlaceDetailsURL => "https://maps.googleapis.com/maps/api/place/details/json";
+
+  // Media Paths
+  String get profileImageUrl => "${mediaBaseUrl}userImages/";
+  String get docImageUrl => "${mediaBaseUrl}docToBecomePro/";
+  String get adminProfileUrl => "${mediaBaseUrl}adminImages/";
+  String get contentImageUrl => "https://dev-cdn.presshop.news/public/contentData/";
+  String get imageUrlBefore => "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
+  String get taskMediaUrl => "https://dev-cdn.presshop.news/public/uploadContent/";
+  String get mediaThumbnailUrl => "https://dev-cdn.presshop.news/public/thumbnail/";
+
+  // API Keys
+  String get googleMapApiKey => dotenv.get('GOOGLE_MAP_API_KEY', fallback: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI');
+  String get appleMapApiKey => dotenv.get('APPLE_MAP_API_KEY', fallback: '');
+
+  String get appUrl => Platform.isAndroid
+      ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
+      : 'https://apps.apple.com/in/app/presshop/id6744651614';
 }
 
 class Auth {
@@ -33,6 +62,11 @@ class Auth {
   final String verifyReferral = "auth/hopper/verifyReferralCode";
   final String verifyReferredCode = "auth/hopper/verifyReferredCode";
   final String getLatestVersion = "auth/getLatestVersion";
+  final String checkUserName = "admin/checkIfUserNameExist/:username";
+  final String checkEmail = "admin/checkIfEmailExist/:email";
+  final String checkPhone = "admin/checkIfPhoneExist/:phone";
+  final String checkAppInstallFirstTime = "auth/isDeviceExist?device_id=";
+  final String checkAppVersion = "hopper/check/version";
 }
 
 class Profile {
@@ -49,8 +83,11 @@ class Profile {
   final String getUkBankList = "hopper/getUkbankList";
 
   final String uploadDocument = "hopper/uploadDocToBecomePro";
+  final String uploadDocNew = "hopper/uploadDocToBecomeProNew";
   final String getUploadedDocs = "hopper/getuploadedDocumentList";
   final String deleteDocument = "hopper/deleteDocument";
+  final String deleteCertificate = "hopper/deleteuploadDocToBecomePro";
+  final String getAvatars = "admin/getAvatars";
 
   final String updateLocation = "hopper/updatelocation";
   final String addDevice = "hopper/add/fcm/token";
@@ -59,6 +96,7 @@ class Profile {
   final String deleteAccount = "hopper/verifyAndDeleteAccount";
   final String onboardingStatus = "hopper/checkOnboardingCompleteOrNot";
   final String appSettings = "hopper/appSettings";
+  final String studentBeansActivation = "hopper/studentBeansActivation";
 }
 
 class Content {
@@ -77,6 +115,7 @@ class Content {
 
   final String feedList = "hopper/getfeeds";
   final String likeFeed = "hopper/updatefeed";
+  final String getAllRating = "hopper/getallrating";
   final String mostViewed = "hopper/mostviewed";
 
   final String aggregatedNews = "hopper/getAggregatedNews";
@@ -126,12 +165,18 @@ class Chat {
   final String chatList = "hopper/getAllchat";
   final String notificationList = "hopper/getNotification";
   final String notificationRead = "hopper/updatenotification";
+  final String sendPushNotification = "hopper/sendPustNotificationByHopper";
   final String clearNotification = "hopper/updateNotificationforClearAll";
   final String broadcastRoomList = "hopper/get/broadcast/room";
   final String broadcastRoomDetail = "hopper/get/broadcast/group/chat";
   final String createRoom = "hopper/create/room";
   final String sendAdminMessage = "hopper/send/admin/broadcast/chat";
   final String readAdminMessage = "hopper/read/admin/broadcast/chat/";
+  final String addChatbotMessage = "hopper/addchatbot";
+  final String getChatbotMessages = "hopper/getchatbotMessages";
+  final String getOfferPaymentChat = "hopper/get-offer-payment-chat";
+  final String sendChatInitToAdmin = "hopper/sendChatInitiatedMailToAdmin";
+  final String allAlerts = "hopper/getHopperAlertList?";
 }
 
 class Misc {
@@ -140,7 +185,11 @@ class Misc {
   final String cms = "users/getCMSForHopper";
   final String generalMgmt = "hopper/getGenralMgmtApp?";
   final String adminDetails = "hopper/adminDetails";
+  final String signupLegal = "hopper/legal";
+  final String getDetailsById = "hopper/getdetailsbyid";
   final String leaderboard = "hopper/getLeaderboardList";
   final String adminList = "hopper/adminlist";
   final String charityList = "hopper/listofcharity?";
+  final String onDeeplinkCallback = "admin/onDeeplinkCallback";
+  final String onAppInstallCallback = "admin/onAppInstallCallback";
 }

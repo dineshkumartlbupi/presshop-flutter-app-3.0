@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/authentication/data/datasources/verification_remote_datasource.dart';
 import 'package:presshop/features/authentication/data/models/document_data_model.dart';
@@ -16,7 +16,7 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   Future<List<DocumentInstructionModel>> getDocumentInstructions() async {
     try {
       final response = await apiClient.get(
-        getAllCmsUrl,
+        ApiConstantsNew.misc.generalMgmt,
         queryParameters: {'type': 'doc'},
       );
       final data = response.data['status'] as List;
@@ -29,7 +29,7 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   @override
   Future<List<DocumentDataModel>> getUploadedDocuments() async {
     try {
-      final response = await apiClient.get(getUploadDocUrl);
+      final response = await apiClient.get(ApiConstantsNew.profile.getUploadedDocs);
       final data = response.data['data'] as List;
       return data.map((e) => DocumentDataModel.fromJson(e)).toList();
     } catch (e) {
@@ -48,7 +48,7 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
         ));
       }
       await apiClient.multipartPost(
-        uploadDocUrl,
+        ApiConstantsNew.profile.uploadDocNew,
         formData: formData,
         options: Options(method: "PATCH"),
       );
@@ -61,7 +61,7 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   Future<void> deleteDocument(String documentId) async {
     try {
       await apiClient.post(
-        deleteDocUrl,
+        ApiConstantsNew.profile.deleteDocument,
         data: {'document_id': documentId},
       );
     } catch (e) {

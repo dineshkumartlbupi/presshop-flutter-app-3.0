@@ -1,5 +1,5 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 
@@ -19,7 +19,7 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       String year, String month) async {
     try {
       final response = await apiClient.get(
-        getEarningDataAPI,
+        ApiConstantsNew.payments.earnings,
         queryParameters: {"year": year, "month": month},
       );
       final data = response.data;
@@ -34,7 +34,7 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       Map<String, dynamic> params) async {
     try {
       final response = await apiClient.get(
-        getAllEarningTransactionAPI,
+        ApiConstantsNew.payments.earningTransactions,
         queryParameters: params,
       );
       return response.data;
@@ -48,7 +48,7 @@ class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
       Map<String, dynamic> params) async {
     try {
       final response = await apiClient.get(
-        commissionGetUrl,
+        ApiConstantsNew.payments.commission,
         queryParameters: params,
       );
 

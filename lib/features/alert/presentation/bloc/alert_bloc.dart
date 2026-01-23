@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/api_client.dart';
 import '../../data/models/alert_model.dart';
@@ -93,7 +94,8 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
         }
       }
 
-      PermissionStatus permissionGranted = await Location.instance.hasPermission();
+      PermissionStatus permissionGranted =
+          await Location.instance.hasPermission();
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await Location.instance.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
@@ -103,7 +105,8 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
 
       LocationData loc = await Location.instance.getLocation();
       if (loc.latitude != null && loc.longitude != null) {
-        emit(state.copyWith(currentLocation: LatLng(loc.latitude!, loc.longitude!)));
+        emit(state.copyWith(
+            currentLocation: LatLng(loc.latitude!, loc.longitude!)));
       }
     } catch (e) {
       // Handle location error silently or emit failure if critical

@@ -13,7 +13,7 @@ import 'package:presshop/core/widgets/global_loader.dart';
 
 class ApiClient {
   ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {
-    _dio.options.baseUrl = baseUrl;
+    _dio.options.baseUrl = ApiConstantsNew.config.baseUrl;
     _dio.options.connectTimeout = const Duration(minutes: 2);
     _dio.options.receiveTimeout = const Duration(minutes: 2);
 
@@ -90,7 +90,7 @@ class ApiClient {
     if (ApiErrorHandler.isUnauthenticated(err)) {
       /*
       /// Token refresh logic
-      if (err.requestOptions.path.contains(appRefreshTokenUrl)) {
+      if (err.requestOptions.path.contains(ApiConstantsNew.auth.refreshToken)) {
         final failure = ApiErrorHandler.handle(err);
         final sanitized = DioException(
           requestOptions: err.requestOptions,
@@ -123,7 +123,7 @@ class ApiClient {
       if (refreshToken != null && refreshToken.isNotEmpty) {
         try {
           final refreshDio = Dio();
-          refreshDio.options.baseUrl = baseUrl;
+          refreshDio.options.baseUrl = ApiConstantsNew.config.baseUrl;
 
           // Match TokenRefreshManager headers
           refreshDio.options.headers[headerDeviceIdKey] =
@@ -139,7 +139,7 @@ class ApiClient {
 
           debugPrint("🔄 Attempting Token Refresh (ApiClient)...");
           // Send empty body as per TokenRefreshManager
-          final response = await refreshDio.get(appRefreshTokenUrl);
+          final response = await refreshDio.get(ApiConstantsNew.auth.refreshToken);
 
           if (response.statusCode == 200) {
             final data = response.data;
