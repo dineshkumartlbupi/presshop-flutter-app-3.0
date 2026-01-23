@@ -4,9 +4,8 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/dashboard_repository.dart';
 
 class GetRoomId implements UseCase<Map<String, dynamic>, Map<String, dynamic>> {
-  final DashboardRepository repository;
-
   GetRoomId(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, Map<String, dynamic>>> call(

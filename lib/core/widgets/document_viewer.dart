@@ -5,9 +5,8 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 
 class DocumentView extends StatefulWidget {
-  String path = '';
-
   DocumentView({super.key, required this.path});
+  String path = '';
 
   @override
   State<DocumentView> createState() => _DocumentViewState();

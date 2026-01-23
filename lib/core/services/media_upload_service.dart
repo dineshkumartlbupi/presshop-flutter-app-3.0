@@ -69,14 +69,14 @@ class MediaUploadService {
       debugPrint("Upload URL: ${baseUrl + endUrl}");
       // debugPrint("Upload Headers: ${dio.options.headers}"); // Headers handled by ApiClient
       debugPrint(
-          "Upload Files: ${formData.files.map((e) => e.key + ": " + e.value.filename.toString()).toList()}");
+          "Upload Files: ${formData.files.map((e) => "${e.key}: ${e.value.filename}").toList()}");
 
       // Use ApiClient.post with custom timeouts via Options if needed, though ApiClient has defaults.
       // If stricter timeouts needed, pass Options.
       Response response = await apiClient.post(
         endUrl,
         data: formData,
-        onSendProgress: (int sent, int total) {
+        onSendProgress: (sent, total) {
           _handleUploadProgress(sent, total, jsonBody);
         },
         options: Options(

@@ -4,9 +4,8 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/dashboard_repository.dart';
 
 class CheckAppVersion implements UseCase<Map<String, dynamic>, NoParams> {
-  final DashboardRepository repository;
-
   CheckAppVersion(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, Map<String, dynamic>>> call(NoParams params) async {

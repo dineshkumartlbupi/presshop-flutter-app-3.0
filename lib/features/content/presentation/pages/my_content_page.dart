@@ -20,23 +20,21 @@ import '../../../../core/widgets/common_filter_sheet.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 
 class MyContentPage extends StatelessWidget {
-  final bool hideLeading;
-
   const MyContentPage({super.key, required this.hideLeading});
+  final bool hideLeading;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ContentBloc>()..add(const FetchMyContentEvent()),
+    return BlocProvider.value(
+      value: sl<ContentBloc>(),
       child: MyContentView(hideLeading: hideLeading),
     );
   }
 }
 
 class MyContentView extends StatefulWidget {
-  final bool hideLeading;
-
   const MyContentView({super.key, required this.hideLeading});
+  final bool hideLeading;
 
   @override
   State<MyContentView> createState() => _MyContentViewState();
@@ -76,8 +74,26 @@ class _MyContentViewState extends State<MyContentView>
       }
     });
 
-    // Initial load will happen via BlocProvider creation for MyContent
-    // TODO: Separate AllContent logic or integrate into same Bloc
+    // Trigger initial load only if bloc doesn't have cached data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final bloc = context.read<ContentBloc>();
+        // Only load if we don't have cached data (state is not MyContentLoaded or has empty content)
+        if (bloc.state is! MyContentLoaded ||
+            (bloc.state is MyContentLoaded &&
+                (bloc.state as MyContentLoaded).content.isEmpty)) {
+          bloc.add(const FetchMyContentEvent());
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshController.dispose();
+    _allRefreshController.dispose();
+    super.dispose();
   }
 
   void initializeFilter() {
@@ -115,6 +131,8 @@ class _MyContentViewState extends State<MyContentView>
   }
 
   void _loadMyContent(bool isRefresh) {
+    if (!mounted) return;
+
     if (isRefresh) {
       page = 1;
       myContentList.clear();
@@ -168,11 +186,21 @@ class _MyContentViewState extends State<MyContentView>
       }
     }
 
-    context.read<ContentBloc>().add(FetchMyContentEvent(
-        page: page, limit: limit, params: params, isRefresh: isRefresh));
+    try {
+      final bloc = context.read<ContentBloc>();
+      if (!bloc.isClosed) {
+        bloc.add(FetchMyContentEvent(
+            page: page, limit: limit, params: params, isRefresh: isRefresh));
+      }
+    } catch (e) {
+      // Bloc is closed or context is no longer valid, silently handle
+      debugPrint('Error adding event to ContentBloc: $e');
+    }
   }
 
   void _loadAllContent(bool isRefresh) {
+    if (!mounted) return;
+
     if (isRefresh) {
       page = 1;
       myContentList.clear();
@@ -185,11 +213,21 @@ class _MyContentViewState extends State<MyContentView>
     // Assuming "All Content" means all my content without specific filters
     Map<String, dynamic> params = {};
 
-    context.read<ContentBloc>().add(FetchMyContentEvent(
-        page: page, limit: limit, params: params, isRefresh: isRefresh));
+    try {
+      final bloc = context.read<ContentBloc>();
+      if (!bloc.isClosed) {
+        bloc.add(FetchMyContentEvent(
+            page: page, limit: limit, params: params, isRefresh: isRefresh));
+      }
+    } catch (e) {
+      // Bloc is closed or context is no longer valid, silently handle
+      debugPrint('Error adding event to ContentBloc: $e');
+    }
   }
 
   void _onRefresh() {
+    if (!mounted) return;
+
     if (_selectedTabbar == 0) {
       _loadAllContent(true);
     } else {
@@ -198,6 +236,8 @@ class _MyContentViewState extends State<MyContentView>
   }
 
   void _onLoading() {
+    if (!mounted) return;
+
     if (_selectedTabbar == 0) {
       _loadAllContent(false);
     } else {
@@ -216,7 +256,7 @@ class _MyContentViewState extends State<MyContentView>
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * numD06,
@@ -623,8 +663,13 @@ class _MyContentViewState extends State<MyContentView>
         }
       },
       builder: (context, state) {
+        // Populate myContentList from state if it's MyContentLoaded
+        if (state is MyContentLoaded && myContentList.isEmpty) {
+          myContentList = state.content;
+        }
+
         if (state is ContentLoading && page == 1 && myContentList.isEmpty) {
-          // return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (myContentList.isEmpty && state is! ContentLoading) {
@@ -649,8 +694,9 @@ class _MyContentViewState extends State<MyContentView>
                 crossAxisSpacing: size.width * numD04,
               ),
               itemBuilder: (context, index) {
-                if (index >= myContentList.length)
+                if (index >= myContentList.length) {
                   return const SizedBox.shrink();
+                }
                 return InkWell(
                     onTap: () {
                       var item = myContentList[index];
@@ -670,7 +716,10 @@ class _MyContentViewState extends State<MyContentView>
                                         item.purchasedMediahouseCount,
                                     offerCount: item.totalOffer,
                                   )))
-                          .then((value) => _onRefresh());
+                          .then((value) {
+                        // Don't refresh on back navigation - just let cached data show
+                        // _onRefresh();
+                      });
                     },
                     child: _buildContentWidget(myContentList[index]));
               },

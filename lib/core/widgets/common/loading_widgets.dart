@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class LoadingOverlay extends StatelessWidget {
-  final bool isLoading;
-  final Widget child;
-  final String? message;
-  final Color? backgroundColor;
-
   const LoadingOverlay({
     super.key,
     required this.isLoading,
@@ -13,6 +8,10 @@ class LoadingOverlay extends StatelessWidget {
     this.message,
     this.backgroundColor,
   });
+  final bool isLoading;
+  final Widget child;
+  final String? message;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +48,15 @@ class LoadingOverlay extends StatelessWidget {
 }
 
 class CustomLoadingIndicator extends StatelessWidget {
-  final String? message;
-  final Color? color;
-  final double? size;
-
   const CustomLoadingIndicator({
     super.key,
     this.message,
     this.color,
     this.size,
   });
+  final String? message;
+  final Color? color;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +88,6 @@ class CustomLoadingIndicator extends StatelessWidget {
 }
 
 class EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final Widget? action;
-
   const EmptyState({
     super.key,
     required this.icon,
@@ -102,6 +95,10 @@ class EmptyState extends StatelessWidget {
     this.subtitle,
     this.action,
   });
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -149,16 +146,15 @@ class EmptyState extends StatelessWidget {
 }
 
 class ErrorState extends StatelessWidget {
-  final String message;
-  final VoidCallback? onRetry;
-  final IconData? icon;
-
   const ErrorState({
     super.key,
     required this.message,
     this.onRetry,
     this.icon,
   });
+  final String message;
+  final VoidCallback? onRetry;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {

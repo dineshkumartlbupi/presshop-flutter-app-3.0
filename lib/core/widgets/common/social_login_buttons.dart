@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 
 class SocialLoginButton extends StatelessWidget {
-  final String text;
-  final String? iconPath;
-  final IconData? icon;
-  final VoidCallback onPressed;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final Color? borderColor;
-  final double? height;
-  final double? borderRadius;
-
   const SocialLoginButton({
     super.key,
     required this.text,
@@ -23,6 +13,15 @@ class SocialLoginButton extends StatelessWidget {
     this.height,
     this.borderRadius,
   });
+  final String text;
+  final String? iconPath;
+  final IconData? icon;
+  final VoidCallback onPressed;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final Color? borderColor;
+  final double? height;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +76,11 @@ class SocialLoginButton extends StatelessWidget {
 }
 
 class GoogleSignInButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
   const GoogleSignInButton({
     super.key,
     required this.onPressed,
   });
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +94,11 @@ class GoogleSignInButton extends StatelessWidget {
 }
 
 class FacebookSignInButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
   const FacebookSignInButton({
     super.key,
     required this.onPressed,
   });
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -116,12 +113,11 @@ class FacebookSignInButton extends StatelessWidget {
 }
 
 class AppleSignInButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
   const AppleSignInButton({
     super.key,
     required this.onPressed,
   });
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

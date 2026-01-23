@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
-  final String videoUrl;
   const VideoPlayerScreen({super.key, required this.videoUrl});
+  final String videoUrl;
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -17,7 +17,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   void initState() {
     super.initState();
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl)),
+      videoPlayerController:
+          VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl)),
     );
   }
 

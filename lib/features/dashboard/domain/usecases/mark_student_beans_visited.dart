@@ -4,9 +4,8 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/dashboard_repository.dart';
 
 class MarkStudentBeansVisited implements UseCase<void, NoParams> {
-  final DashboardRepository repository;
-
   MarkStudentBeansVisited(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, void>> call(NoParams params) async {

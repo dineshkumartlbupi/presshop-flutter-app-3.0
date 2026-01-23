@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class WavePainter extends CustomPainter {
+  WavePainter(this.animationValue,
+      {this.waveColor = Colors.black,
+      this.waveThickness = 2.0,
+      this.waveData = const []});
   final double animationValue;
   final Color waveColor;
   final double waveThickness;
   final List<double> waveData;
-
-  WavePainter(this.animationValue,
-      {this.waveColor = Colors.black,
-        this.waveThickness = 2.0,
-        this.waveData = const []});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -35,11 +34,12 @@ class WavePainter extends CustomPainter {
       }
     } else {
       // Increased the number of points for smoother wave
-      for (double x = 0; x < size.width + 20; x += 2) { // Increased resolution
+      for (double x = 0; x < size.width + 20; x += 2) {
+        // Increased resolution
         // Reduced the amplitude of the sine waves to fit within the container
         double y = size.height / 2 +
-            sin((x + xOffset) / 15) * 10 +  // Adjusted frequency and amplitude
-            sin((x + xOffset) / 8) * 5;    // Adjusted frequency and amplitude
+            sin((x + xOffset) / 15) * 10 + // Adjusted frequency and amplitude
+            sin((x + xOffset) / 8) * 5; // Adjusted frequency and amplitude
         points.add(Offset(x, y));
       }
     }
@@ -59,14 +59,14 @@ class WavePainter extends CustomPainter {
 }
 
 class HeartbeatWave extends StatefulWidget {
+  const HeartbeatWave(
+      {super.key,
+      this.waveColor = Colors.black,
+      this.waveThickness = 2.0,
+      this.waveData = const []});
   final Color waveColor;
   final double waveThickness;
   final List<double> waveData;
-
-  const HeartbeatWave(
-      {super.key, this.waveColor = Colors.black,
-        this.waveThickness = 2.0,
-        this.waveData = const []});
 
   @override
   _HeartbeatWaveState createState() => _HeartbeatWaveState();

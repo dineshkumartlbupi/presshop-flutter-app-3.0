@@ -7,12 +7,11 @@ import 'package:video_player/video_player.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class VideoWidget extends StatefulWidget {
-  MediaData? mediaData;
-
   VideoWidget({
     super.key,
     required this.mediaData,
   });
+  MediaData? mediaData;
 
   @override
   VideoWidgetState createState() => VideoWidgetState();

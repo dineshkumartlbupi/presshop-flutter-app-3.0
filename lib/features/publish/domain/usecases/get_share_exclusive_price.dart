@@ -4,9 +4,8 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/publish_repository.dart';
 
 class GetShareExclusivePrice implements UseCase<Map<String, String>, NoParams> {
-  final PublishRepository repository;
-
   GetShareExclusivePrice(this.repository);
+  final PublishRepository repository;
 
   @override
   Future<Either<Failure, Map<String, String>>> call(NoParams params) async {

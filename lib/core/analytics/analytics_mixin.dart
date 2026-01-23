@@ -99,11 +99,6 @@ mixin AnalyticsPageMixin<T extends StatefulWidget> on State<T> {
 /// )
 /// ```
 class AnalyticsWrapper extends StatefulWidget {
-  final String pageName;
-  final String? pageClass;
-  final Map<String, Object>? parameters;
-  final Widget child;
-
   const AnalyticsWrapper({
     super.key,
     required this.pageName,
@@ -111,6 +106,10 @@ class AnalyticsWrapper extends StatefulWidget {
     this.parameters,
     required this.child,
   });
+  final String pageName;
+  final String? pageClass;
+  final Map<String, Object>? parameters;
+  final Widget child;
 
   @override
   State<AnalyticsWrapper> createState() => _AnalyticsWrapperState();

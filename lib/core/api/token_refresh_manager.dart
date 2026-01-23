@@ -13,9 +13,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 
 class TokenRefreshManager {
-  static final TokenRefreshManager _instance = TokenRefreshManager._internal();
   factory TokenRefreshManager() => _instance;
   TokenRefreshManager._internal();
+  static final TokenRefreshManager _instance = TokenRefreshManager._internal();
 
   bool _isRefreshing = false;
   final List<Future<void> Function()> _pendingRequests = [];

@@ -1,23 +1,6 @@
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final bool isLoading;
-  final bool enabled;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final Color? disabledBackgroundColor;
-  final Color? disabledTextColor;
-  final double? height;
-  final double? width;
-  final double? borderRadius;
-  final EdgeInsetsGeometry? padding;
-  final double? fontSize;
-  final FontWeight? fontWeight;
-  final Widget? icon;
-  final double? elevation;
-
   const PrimaryButton({
     super.key,
     required this.text,
@@ -37,6 +20,22 @@ class PrimaryButton extends StatelessWidget {
     this.icon,
     this.elevation,
   });
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final bool enabled;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final Color? disabledBackgroundColor;
+  final Color? disabledTextColor;
+  final double? height;
+  final double? width;
+  final double? borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  final Widget? icon;
+  final double? elevation;
 
   @override
   Widget build(BuildContext context) {
@@ -98,17 +97,6 @@ class PrimaryButton extends StatelessWidget {
 }
 
 class SecondaryButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final bool isLoading;
-  final bool enabled;
-  final Color? borderColor;
-  final Color? textColor;
-  final double? height;
-  final double? width;
-  final double? borderRadius;
-  final Widget? icon;
-
   const SecondaryButton({
     super.key,
     required this.text,
@@ -122,6 +110,16 @@ class SecondaryButton extends StatelessWidget {
     this.borderRadius,
     this.icon,
   });
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final bool enabled;
+  final Color? borderColor;
+  final Color? textColor;
+  final double? height;
+  final double? width;
+  final double? borderRadius;
+  final Widget? icon;
 
   @override
   Widget build(BuildContext context) {

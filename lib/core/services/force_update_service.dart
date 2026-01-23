@@ -36,7 +36,7 @@ class ForceUpdateService {
     bool allowCancel,
   ) {
     final size = MediaQuery.of(context).size;
-    
+
     return showDialog(
       context: context,
       barrierDismissible: allowCancel,
@@ -47,7 +47,7 @@ class ForceUpdateService {
           contentPadding: EdgeInsets.zero,
           insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
           content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
+            builder: (context, setState) {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -77,7 +77,7 @@ class ForceUpdateService {
                         ],
                       ),
                     ),
-                    
+
                     // Divider
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -88,9 +88,9 @@ class ForceUpdateService {
                         thickness: 0.5,
                       ),
                     ),
-                    
+
                     SizedBox(height: size.width * numD02),
-                    
+
                     // Content
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -118,9 +118,9 @@ class ForceUpdateService {
                               ),
                             ),
                           ),
-                          
+
                           SizedBox(width: size.width * numD04),
-                          
+
                           // Message
                           Expanded(
                             child: Text(
@@ -135,9 +135,9 @@ class ForceUpdateService {
                         ],
                       ),
                     ),
-                    
+
                     SizedBox(height: size.width * numD08),
-                    
+
                     // Update button
                     SizedBox(
                       height: size.width * numD12,
@@ -150,7 +150,7 @@ class ForceUpdateService {
                         openStore,
                       ),
                     ),
-                    
+
                     SizedBox(height: size.width * numD05),
                   ],
                 ),

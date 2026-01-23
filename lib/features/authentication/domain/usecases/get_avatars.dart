@@ -5,9 +5,8 @@ import '../repositories/auth_repository.dart';
 import '../entities/avatar.dart';
 
 class GetAvatars implements UseCase<List<Avatar>, NoParams> {
-  final AuthRepository repository;
-
   GetAvatars(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, List<Avatar>>> call(NoParams params) async {

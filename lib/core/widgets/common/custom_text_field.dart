@@ -2,27 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String? hint;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final Widget? suffixIcon;
-  final Widget? prefixIcon;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final int? maxLines;
-  final bool enabled;
-  final TextInputAction? textInputAction;
-  final List<TextInputFormatter>? inputFormatters;
-  final int? maxLength;
-  final bool readOnly;
-  final VoidCallback? onTap;
-  final FocusNode? focusNode;
-  final Color? fillColor;
-  final Color? borderColor;
-  final double? borderRadius;
-
   const CustomTextField({
     super.key,
     required this.controller,
@@ -46,6 +25,26 @@ class CustomTextField extends StatelessWidget {
     this.borderColor,
     this.borderRadius,
   });
+  final TextEditingController controller;
+  final String label;
+  final String? hint;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final int? maxLines;
+  final bool enabled;
+  final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final FocusNode? focusNode;
+  final Color? fillColor;
+  final Color? borderColor;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) {

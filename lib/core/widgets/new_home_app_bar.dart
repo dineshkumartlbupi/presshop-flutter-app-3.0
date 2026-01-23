@@ -7,12 +7,6 @@ import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final Size size;
-  final bool hideLeading;
-  final Function()? onFilterTap;
-  final bool showFilter;
-  final PreferredSizeWidget? bottom;
-
   const NewHomeAppBar({
     Key? key,
     required this.size,
@@ -21,6 +15,11 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showFilter = true,
     this.bottom,
   }) : super(key: key);
+  final Size size;
+  final bool hideLeading;
+  final Function()? onFilterTap;
+  final bool showFilter;
+  final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context) {

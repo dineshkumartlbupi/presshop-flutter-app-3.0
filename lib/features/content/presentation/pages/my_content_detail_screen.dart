@@ -93,10 +93,26 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   void initState() {
     super.initState();
     _contentBloc = sl<ContentBloc>();
-    _contentBloc.add(FetchContentDetailEvent(widget.contentId));
-    _contentBloc.add(FetchMediaHouseOffersEvent(widget.contentId));
-    _contentBloc.add(FetchContentTransactionsEvent(
-        contentId: widget.contentId, limit: 10, offset: 0));
+
+    debugPrint(
+        '🔍 ContentDetailScreen initState - contentId: ${widget.contentId}');
+    debugPrint('🔍 Bloc isClosed: ${_contentBloc.isClosed}');
+    debugPrint('🔍 Bloc current state: ${_contentBloc.state}');
+
+    // Add events with safety checks
+    try {
+      if (!_contentBloc.isClosed) {
+        debugPrint('✅ Adding FetchContentDetailEvent for ${widget.contentId}');
+        _contentBloc.add(FetchContentDetailEvent(widget.contentId));
+        _contentBloc.add(FetchMediaHouseOffersEvent(widget.contentId));
+        _contentBloc.add(FetchContentTransactionsEvent(
+            contentId: widget.contentId, limit: 10, offset: 0));
+      } else {
+        debugPrint('❌ Bloc is closed, cannot add events');
+      }
+    } catch (e) {
+      debugPrint('❌ Error adding events to ContentBloc in initState: $e');
+    }
   }
 
   void _checkOwnershipAndStartTimer() async {
@@ -159,7 +175,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   @override
   void dispose() {
-    _contentBloc.close();
+    // Don't close _contentBloc here since it's a singleton from the service locator
+    // Closing it would affect all other screens using the same instance
     controller.dispose();
     if (flickManager != null) {
       flickManager?.dispose();
@@ -172,11 +189,14 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return BlocProvider(
-      create: (_) => _contentBloc,
+    return BlocProvider.value(
+      value: _contentBloc,
       child: BlocListener<ContentBloc, ContentState>(
         listener: (context, state) {
+          debugPrint('📡 BlocListener received state: ${state.runtimeType}');
+
           if (state is ContentDetailLoaded) {
+            debugPrint('✅ ContentDetailLoaded - Setting isLoading = false');
             setState(() {
               contentItem = state.content;
               isLoading = false;
@@ -184,21 +204,22 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               _checkOwnershipAndStartTimer();
             });
           } else if (state is MediaHouseOffersLoaded) {
+            debugPrint('✅ MediaHouseOffersLoaded');
             setState(() {
               _mediaHouseList.clear();
               _mediaHouseList.addAll(state.offers);
               isMediaOffer = state.offers.any((element) => !element.paidStatus);
             });
           } else if (state is ContentTransactionsLoaded) {
+            debugPrint('✅ ContentTransactionsLoaded');
             setState(() {
               publicationTransactionList = state.transactions;
             });
           } else if (state is ContentError) {
+            debugPrint('❌ ContentError: ${state.message}');
             setState(() {
               isLoading = false;
             });
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: Scaffold(
@@ -361,18 +382,30 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                       .then((value) {
                                                     shouldRestartAnimation =
                                                         true;
-                                                    _contentBloc.add(
-                                                        FetchContentDetailEvent(
-                                                            widget.contentId));
-                                                    _contentBloc.add(
-                                                        FetchMediaHouseOffersEvent(
-                                                            widget.contentId));
-                                                    _contentBloc.add(
-                                                        FetchContentTransactionsEvent(
-                                                            contentId: widget
-                                                                .contentId,
-                                                            limit: 10,
-                                                            offset: 0));
+
+                                                    // Add events with safety checks
+                                                    try {
+                                                      if (!_contentBloc
+                                                          .isClosed) {
+                                                        _contentBloc.add(
+                                                            FetchContentDetailEvent(
+                                                                widget
+                                                                    .contentId));
+                                                        _contentBloc.add(
+                                                            FetchMediaHouseOffersEvent(
+                                                                widget
+                                                                    .contentId));
+                                                        _contentBloc.add(
+                                                            FetchContentTransactionsEvent(
+                                                                contentId: widget
+                                                                    .contentId,
+                                                                limit: 10,
+                                                                offset: 0));
+                                                      }
+                                                    } catch (e) {
+                                                      debugPrint(
+                                                          'Error adding events to ContentBloc after navigation: \$e');
+                                                    }
                                                   });
                                                 },
                                               ),

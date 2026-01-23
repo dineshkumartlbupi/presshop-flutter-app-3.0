@@ -8,9 +8,8 @@ abstract class LeaderboardEvent extends Equatable {
 }
 
 class GetLeaderboard extends LeaderboardEvent {
-  final String countryCode;
-
   const GetLeaderboard(this.countryCode);
+  final String countryCode;
 
   @override
   List<Object> get props => [countryCode];

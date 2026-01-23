@@ -34,19 +34,6 @@ import 'package:presshop/core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
-  int initialPosition = 2;
-  String? broadCastId;
-  String? taskStatus = "";
-  bool openChatScreen = false;
-  bool openNotification = false;
-  bool openBeansActivation = false;
-  String? sourceDataType = "";
-  bool? sourceDataIsOpened = false;
-  String? sourceDataUrl = "";
-  String? sourceDataHeading = "";
-  String? sourceDataDescription = "";
-  bool? isClick = false;
-
   Dashboard(
       {super.key,
       required this.initialPosition,
@@ -61,6 +48,18 @@ class Dashboard extends StatefulWidget {
       this.sourceDataHeading = "",
       this.sourceDataDescription = "",
       this.isClick = false});
+  int initialPosition = 2;
+  String? broadCastId;
+  String? taskStatus = "";
+  bool openChatScreen = false;
+  bool openNotification = false;
+  bool openBeansActivation = false;
+  String? sourceDataType = "";
+  bool? sourceDataIsOpened = false;
+  String? sourceDataUrl = "";
+  String? sourceDataHeading = "";
+  String? sourceDataDescription = "";
+  bool? isClick = false;
 
   @override
   State<StatefulWidget> createState() {
@@ -261,7 +260,7 @@ class DashboardState extends State<Dashboard>
   }
 
   /// An implementation using a link Amit
-  initPlatformStateForStringUniLinks() async {
+  Future<void> initPlatformStateForStringUniLinks() async {
     debugPrint("initPlatformStateForStringUniLinks=======>Enter");
 
     ///Attach a listener to the links stream
@@ -339,7 +338,7 @@ class DashboardState extends State<Dashboard>
     showDialog(
         barrierDismissible: false,
         context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -347,7 +346,7 @@ class DashboardState extends State<Dashboard>
               insetPadding:
                   EdgeInsets.symmetric(horizontal: size.width * numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -534,7 +533,7 @@ class DashboardState extends State<Dashboard>
                   }
                 });
               } else if (state is DashboardRoomIdLoaded) {
-                var data = (state as DashboardRoomIdLoaded).roomData;
+                var data = (state).roomData;
                 debugPrint("📦 Dashboard Received Room Data: $data");
 
                 String roomId = "";
@@ -551,7 +550,7 @@ class DashboardState extends State<Dashboard>
                   debugPrint("❌ Room Id NOT found in response");
                 }
               } else if (state is DashboardAppVersionChecked) {
-                var map = (state as DashboardAppVersionChecked).versionData;
+                var map = (state).versionData;
                 if (map["code"] == 200) {
                   var versionData = map["data"];
                   sharedPreferences!.setInt(
@@ -564,7 +563,7 @@ class DashboardState extends State<Dashboard>
                   showSnackBar(map["message"], "error", Colors.red);
                 }
               } else if (state is DashboardTaskDetailLoaded) {
-                var task = (state as DashboardTaskDetailLoaded).taskDetail;
+                var task = (state).taskDetail;
                 var broadCastedData = TaskDetailModel(
                   id: task.id,
                   deadLine: task.deadLine,
@@ -615,7 +614,7 @@ class DashboardState extends State<Dashboard>
                   },
                 );
               } else if (state is StudentBeansActivated) {
-                var map = (state as StudentBeansActivated).data;
+                var map = (state).data;
                 var studentBeansResponseUrl = map["url"];
 
                 if (studentBeansResponseUrl != null &&
@@ -640,14 +639,14 @@ class DashboardState extends State<Dashboard>
               } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
                 // Visited state updated on server
               } else if (state is DashboardMyProfileLoaded) {
-                var user = (state as DashboardMyProfileLoaded).user;
+                var user = (state).user;
                 if (user.avatar != null && user.avatar!.isNotEmpty) {
                   sharedPreferences!.setString(avatarKey, user.avatar!);
                 }
                 setState(() {});
               } else if (state is DashboardTabChanged) {
                 setState(() {
-                  currentIndex = (state as DashboardTabChanged).index;
+                  currentIndex = (state).index;
                 });
               } else if (state is DashboardError) {
                 // Optional
@@ -875,9 +874,9 @@ class DashboardState extends State<Dashboard>
               );
             }
           });
-        } else if ((message.data.isNotEmpty &&
+        } else if (message.data.isNotEmpty &&
             message.data["image"] != null &&
-            message.data["image"].isNotEmpty)) {
+            message.data["image"].isNotEmpty) {
           Navigator.push(
             context,
             MaterialPageRoute(

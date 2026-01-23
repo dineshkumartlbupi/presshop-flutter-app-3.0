@@ -122,7 +122,7 @@ Future<String?> commonDatePicker({String? date}) async {
 }
 
 /// FilterIcon
-commonFilterIcon(Size size) {
+Container commonFilterIcon(Size size) {
   return Container(
       padding: EdgeInsets.all(size.width * (isIpad ? numD008 : numD043)),
       child: Image.asset(

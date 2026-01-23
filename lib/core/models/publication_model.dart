@@ -1,12 +1,5 @@
 /// Publication List
 class PublicationDataModel {
-  String id = "";
-  String publicationName = "";
-  String companyName = "";
-  String role = "";
-  String companyProfile = "";
-  String status = "";
-
   PublicationDataModel.fromJson(Map<String, dynamic> json) {
     id = json["_id"] ?? "";
     companyName = json['companyName'] ?? json['company_name'] ?? '';
@@ -19,4 +12,10 @@ class PublicationDataModel {
     status = json["status"] ?? "";
     companyProfile = json['profile_image'] ?? json['companyProfile'] ?? '';
   }
+  String id = "";
+  String publicationName = "";
+  String companyName = "";
+  String role = "";
+  String companyProfile = "";
+  String status = "";
 }

@@ -1,15 +1,4 @@
-
 class AdminDetailModel {
-  String id = "";
-  String name = "";
-  String profilePic = "";
-  String lastMessageTime = "";
-  String lastMessage = "";
-  String roomId = "";
-  String senderId = "";
-  String receiverId = "";
-  String roomType = "";
-
   AdminDetailModel({
     required this.id,
     required this.name,
@@ -37,4 +26,13 @@ class AdminDetailModel {
     roomType =
         json["room_details"] != null ? json["room_details"]['room_type'] : '';
   }
+  String id = "";
+  String name = "";
+  String profilePic = "";
+  String lastMessageTime = "";
+  String lastMessage = "";
+  String roomId = "";
+  String senderId = "";
+  String receiverId = "";
+  String roomType = "";
 }

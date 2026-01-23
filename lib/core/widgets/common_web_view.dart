@@ -10,11 +10,6 @@ import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class CommonWebView extends StatefulWidget {
-  final String webUrl;
-  final String title;
-  final String accountId;
-  final String type;
-
   const CommonWebView({
     super.key,
     required this.webUrl,
@@ -22,6 +17,10 @@ class CommonWebView extends StatefulWidget {
     required this.accountId,
     required this.type,
   });
+  final String webUrl;
+  final String title;
+  final String accountId;
+  final String type;
 
   @override
   _CommonWebViewState createState() => _CommonWebViewState();
@@ -42,23 +41,23 @@ class _CommonWebViewState extends State<CommonWebView> {
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
-          onProgress: (int progress) {
+          onProgress: (progress) {
             debugPrint("onProgress :: $progress");
           },
-          onPageStarted: (String url) {
+          onPageStarted: (url) {
             debugPrint("onPageStarted :: $url");
           },
-          onPageFinished: (String url) {
+          onPageFinished: (url) {
             debugPrint("onPageFinished :: $url");
             isPageLoad = false;
             if (mounted) {
               setState(() {});
             }
           },
-          onWebResourceError: (WebResourceError error) {
+          onWebResourceError: (error) {
             debugPrint("onWebResourceError :: $error");
           },
-          onNavigationRequest: (NavigationRequest request) {
+          onNavigationRequest: (request) {
             if (request.url.contains("status=1")) {
               showToast(
                 "Your request has been submitted successfully.",
@@ -105,7 +104,7 @@ class _CommonWebViewState extends State<CommonWebView> {
               children: [
                 isPageLoad
                     ? showLoader()
-                    : Builder(builder: (BuildContext context) {
+                    : Builder(builder: (context) {
                         return WebViewWidget(
                           controller: controller,
                         );

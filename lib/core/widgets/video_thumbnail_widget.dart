@@ -5,12 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideoThumbnailWidget extends StatefulWidget {
-  final String videoUrl;
-  final String? thumbnailUrl;
-  final double? width;
-  final double? height;
-  final BoxFit? fit;
-
   const VideoThumbnailWidget({
     Key? key,
     required this.videoUrl,
@@ -19,6 +13,11 @@ class VideoThumbnailWidget extends StatefulWidget {
     this.height,
     this.fit,
   }) : super(key: key);
+  final String videoUrl;
+  final String? thumbnailUrl;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
 
   @override
   State<VideoThumbnailWidget> createState() => _VideoThumbnailWidgetState();

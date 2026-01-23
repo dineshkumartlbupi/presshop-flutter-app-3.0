@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
@@ -6,9 +5,8 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class PermissionErrorScreen extends StatefulWidget {
-  Map<Permission, bool> permissionsStatus;
-
   PermissionErrorScreen({super.key, required this.permissionsStatus});
+  Map<Permission, bool> permissionsStatus;
   @override
   _PermissionErrorScreenState createState() =>
       _PermissionErrorScreenState(permissionsStatus);
@@ -16,8 +14,8 @@ class PermissionErrorScreen extends StatefulWidget {
 
 class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     with WidgetsBindingObserver {
-  Map<Permission, bool> permissionsStatus;
   _PermissionErrorScreenState(this.permissionsStatus);
+  Map<Permission, bool> permissionsStatus;
 
   @override
   void initState() {

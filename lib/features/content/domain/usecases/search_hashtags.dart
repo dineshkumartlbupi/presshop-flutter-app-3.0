@@ -5,9 +5,8 @@ import '../entities/hashtag.dart';
 import '../repositories/content_repository.dart';
 
 class SearchHashtags implements UseCase<List<Hashtag>, String> {
-  final ContentRepository repository;
-
   SearchHashtags(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, List<Hashtag>>> call(String query) async {

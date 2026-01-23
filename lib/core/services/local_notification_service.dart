@@ -154,8 +154,7 @@ class LocalNotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) {
+      onDidReceiveNotificationResponse: (notificationResponse) {
         debugPrint(":::: Inside Local Notification When App Background ::::");
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:

@@ -4,9 +4,8 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/content_repository.dart';
 
 class DeleteContent implements UseCase<void, String> {
-  final ContentRepository repository;
-
   DeleteContent(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, void>> call(String contentId) async {

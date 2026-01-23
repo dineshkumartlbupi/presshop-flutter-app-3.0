@@ -1,4 +1,3 @@
-
 const walk1Title1Text = "CONNECT DIRECTLY";
 const walk1Title2Text = "WITH THE PRESS";
 const walk1DescriptionText =
@@ -452,7 +451,7 @@ const dummyNewsDes =
 
 const chooseCurrencyText = "Choose currency";
 
-get referInviteText =>
+String get referInviteText =>
     "wants you to join the PressHop revolution.🤳\n\n📱Welcome to the world’s most powerful citizen journalism app where everyday people like us, can earn real money by selling  stories, photos and videos anonymously to the press🛵.\n\n👀All you need is your phone and a sharp eye — no degrees, licences, or investment. Just point, shoot, and start earning cash💸.\n\n👇 Download the app now and get started: \$appUrl\n\n 🪖Use this referral code when signing up:";
 
 /*------------*/

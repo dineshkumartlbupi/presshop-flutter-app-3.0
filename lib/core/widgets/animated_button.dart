@@ -3,16 +3,16 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class AnimatedButtonWidget extends StatefulWidget {
-  VoidCallback onPressed;
-  String buttonText;
-  Size size;
-  bool shouldRestartAnimation = false;
   AnimatedButtonWidget(
       {super.key,
       required this.onPressed,
       required this.buttonText,
       required this.shouldRestartAnimation,
       required this.size});
+  VoidCallback onPressed;
+  String buttonText;
+  Size size;
+  bool shouldRestartAnimation = false;
 
   @override
   _AnimatedButtonState createState() => _AnimatedButtonState();

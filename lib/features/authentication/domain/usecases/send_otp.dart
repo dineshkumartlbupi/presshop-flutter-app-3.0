@@ -5,9 +5,8 @@ import '../repositories/auth_repository.dart';
 import 'register_user.dart'; // Reuse RegisterParams for data
 
 class SendOtp implements UseCase<bool, RegisterParams> {
-  final AuthRepository repository;
-
   SendOtp(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(RegisterParams params) async {

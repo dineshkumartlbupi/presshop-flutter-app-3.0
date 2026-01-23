@@ -5,9 +5,8 @@ import '../entities/profile_data.dart';
 import '../repositories/profile_repository.dart';
 
 class GetProfileData implements UseCase<ProfileData, NoParams> {
-  final ProfileRepository repository;
-
   GetProfileData(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, ProfileData>> call(NoParams params) async {

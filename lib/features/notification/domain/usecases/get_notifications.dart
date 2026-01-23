@@ -4,11 +4,11 @@ import '../entities/notification_entity.dart';
 import '../repositories/notification_repository.dart';
 
 class GetNotifications {
+  GetNotifications(this.repository);
   final NotificationRepository repository;
 
-  GetNotifications(this.repository);
-
-  Future<Either<Failure, NotificationsResult>> call({int limit = 10, int offset = 0}) async {
+  Future<Either<Failure, NotificationsResult>> call(
+      {int limit = 10, int offset = 0}) async {
     return await repository.getNotifications(limit, offset);
   }
 }

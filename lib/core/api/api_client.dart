@@ -12,10 +12,6 @@ import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 
 class ApiClient {
-  final Dio _dio;
-  final SharedPreferences _sharedPreferences;
-  final FlutterSecureStorage _secureStorage;
-
   ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {
     _dio.options.baseUrl = baseUrl;
     _dio.options.connectTimeout = const Duration(minutes: 2);
@@ -35,6 +31,9 @@ class ApiClient {
       _dio.interceptors.add(PrettyDioLogger());
     }
   }
+  final Dio _dio;
+  final SharedPreferences _sharedPreferences;
+  final FlutterSecureStorage _secureStorage;
 
   SharedPreferences get sharedPreferences => _sharedPreferences;
 

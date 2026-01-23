@@ -4,9 +4,8 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
 class CheckPhone implements UseCase<bool, String> {
-  final AuthRepository repository;
-
   CheckPhone(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(String phone) async {

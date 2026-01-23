@@ -4,9 +4,8 @@ import 'package:presshop/features/authentication/domain/entities/document_data.d
 import 'package:presshop/features/authentication/domain/repositories/verification_repository.dart';
 
 class GetUploadedDocuments {
-  final VerificationRepository repository;
-
   GetUploadedDocuments(this.repository);
+  final VerificationRepository repository;
 
   Future<Either<Failure, List<DocumentData>>> call() async {
     return await repository.getUploadedDocuments();

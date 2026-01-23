@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 
 class FilterModel {
-  
+  FilterModel({
+    required this.name,
+    required this.icon,
+    required this.isSelected,
+    this.fromDate,
+    this.toDate,
+    this.id,
+    this.value,
+  });
+
   String name = "";
   String icon = "";
   bool isSelected = false;
@@ -10,24 +19,9 @@ class FilterModel {
   String? toDate;
   String? id;
   String? value;
-
-  FilterModel({
-    required this.name,
-    required this.icon,
-    required this.isSelected,
-    this.fromDate,
-    this.toDate, 
-    this.id,
-    this.value,
-  });
 }
 
 class CommonFilterSheet extends StatefulWidget {
-  final List<FilterModel> sortList;
-  final List<FilterModel> filterList;
-  final Function(List<FilterModel>, List<FilterModel>) onApply;
-  final VoidCallback onClear;
-
   const CommonFilterSheet({
     super.key,
     required this.sortList,
@@ -35,6 +29,10 @@ class CommonFilterSheet extends StatefulWidget {
     required this.onApply,
     required this.onClear,
   });
+  final List<FilterModel> sortList;
+  final List<FilterModel> filterList;
+  final Function(List<FilterModel>, List<FilterModel>) onApply;
+  final VoidCallback onClear;
 
   @override
   State<CommonFilterSheet> createState() => _CommonFilterSheetState();
@@ -96,7 +94,7 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
               return FilterChip(
                 label: Text(item.name),
                 selected: item.isSelected,
-                onSelected: (bool selected) {
+                onSelected: (selected) {
                   setState(() {
                     for (var element in widget.sortList) {
                       element.isSelected = false;
@@ -135,10 +133,10 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
               return FilterChip(
                 label: Text(item.name),
                 selected: item.isSelected,
-                onSelected: (bool selected) {
+                onSelected: (selected) {
                   setState(() {
                     // For radio-like behavior in filter list if needed, or multi-select
-                     for (var element in widget.filterList) {
+                    for (var element in widget.filterList) {
                       element.isSelected = false;
                     }
                     item.isSelected = selected;
@@ -168,7 +166,8 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                     Navigator.pop(context);
                   },
                   style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: size.width * numD035),
+                    padding:
+                        EdgeInsets.symmetric(vertical: size.width * numD035),
                     side: const BorderSide(color: Colors.black),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(size.width * numD02),
@@ -191,7 +190,8 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: size.width * numD035),
+                    padding:
+                        EdgeInsets.symmetric(vertical: size.width * numD035),
                     backgroundColor: colorThemePink,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(size.width * numD02),

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ValidationIndicator extends StatelessWidget {
-  final bool? isValid;
-  final String? message;
-  final Color? validColor;
-  final Color? invalidColor;
-
   const ValidationIndicator({
     super.key,
     this.isValid,
@@ -13,6 +8,10 @@ class ValidationIndicator extends StatelessWidget {
     this.validColor,
     this.invalidColor,
   });
+  final bool? isValid;
+  final String? message;
+  final Color? validColor;
+  final Color? invalidColor;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,9 @@ class ValidationIndicator extends StatelessWidget {
           Icon(
             isValid! ? Icons.check_circle : Icons.cancel,
             size: 16,
-            color: isValid! ? (validColor ?? Colors.green) : (invalidColor ?? Colors.red),
+            color: isValid!
+                ? (validColor ?? Colors.green)
+                : (invalidColor ?? Colors.red),
           ),
           const SizedBox(width: 4),
           if (message != null)
@@ -34,7 +35,9 @@ class ValidationIndicator extends StatelessWidget {
                 message!,
                 style: TextStyle(
                   fontSize: 12,
-                  color: isValid! ? (validColor ?? Colors.green) : (invalidColor ?? Colors.red),
+                  color: isValid!
+                      ? (validColor ?? Colors.green)
+                      : (invalidColor ?? Colors.red),
                 ),
               ),
             ),
@@ -45,19 +48,18 @@ class ValidationIndicator extends StatelessWidget {
 }
 
 class PasswordStrengthIndicator extends StatelessWidget {
-  final String password;
-  final bool showText;
-
   const PasswordStrengthIndicator({
     super.key,
     required this.password,
     this.showText = true,
   });
+  final String password;
+  final bool showText;
 
   PasswordStrength _getStrength() {
     if (password.isEmpty) return PasswordStrength.none;
     if (password.length < 6) return PasswordStrength.weak;
-    
+
     int strength = 0;
     if (password.length >= 8) strength++;
     if (RegExp(r'[A-Z]').hasMatch(password)) strength++;

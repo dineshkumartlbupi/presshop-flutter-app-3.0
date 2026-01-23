@@ -16,6 +16,23 @@ enum CountDownTimerFormat {
 }
 
 class TimerCountdown extends StatefulWidget {
+  const TimerCountdown({
+    super.key,
+    required this.endTime,
+    this.format = CountDownTimerFormat.daysHoursMinutesSeconds,
+    this.enableDescriptions = true,
+    this.onEnd,
+    this.timeTextStyle,
+    this.colonsTextStyle,
+    this.descriptionTextStyle,
+    this.daysDescription = "Days",
+    this.hoursDescription = "Hours",
+    this.minutesDescription = "Minutes",
+    this.secondsDescription = "Seconds",
+    this.spacerWidth = 10,
+    this.countDownFormatter,
+  });
+
   /// Format for the timer coundtown, choose between different `CountDownTimerFormat`s
   final CountDownTimerFormat format;
 
@@ -53,23 +70,6 @@ class TimerCountdown extends StatefulWidget {
   final double spacerWidth;
 
   final Function? countDownFormatter;
-
-  const TimerCountdown({
-    super.key,
-    required this.endTime,
-    this.format = CountDownTimerFormat.daysHoursMinutesSeconds,
-    this.enableDescriptions = true,
-    this.onEnd,
-    this.timeTextStyle,
-    this.colonsTextStyle,
-    this.descriptionTextStyle,
-    this.daysDescription = "Days",
-    this.hoursDescription = "Hours",
-    this.minutesDescription = "Minutes",
-    this.secondsDescription = "Seconds",
-    this.spacerWidth = 10,
-    this.countDownFormatter,
-  });
 
   @override
   _TimerCountdownState createState() => _TimerCountdownState();

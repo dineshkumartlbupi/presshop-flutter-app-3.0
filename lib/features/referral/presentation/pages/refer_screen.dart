@@ -84,7 +84,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(size.width * numD04),
-            child: (Column(
+            child: Column(
               children: [
                 Center(
                   child: Text(
@@ -219,8 +219,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            Clipboard.setData(
-                                ClipboardData(text: refrralCode));
+                            Clipboard.setData(ClipboardData(text: refrralCode));
                             showToast("Referral code copied to clipboard");
                           },
                           child: Row(
@@ -324,7 +323,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                   ),
                 )
               ],
-            )),
+            ),
           ),
         ),
       ),

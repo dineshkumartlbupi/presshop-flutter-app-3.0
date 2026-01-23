@@ -13,7 +13,7 @@ class ApiConstants {
 class Config {
   const Config();
   static const int env = 2;
-  String get baseUrl => env == 1
+  String get baseUrl => env == 2
       ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api"
       : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
 }

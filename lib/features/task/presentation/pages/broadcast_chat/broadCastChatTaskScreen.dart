@@ -45,11 +45,10 @@ import 'package:location/location.dart' as lc;
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
 class BroadCastChatTaskScreen extends StatefulWidget {
-  final TaskDetail? taskDetail;
-  final String roomId;
-
   const BroadCastChatTaskScreen(
       {super.key, required this.taskDetail, required this.roomId});
+  final TaskDetail? taskDetail;
+  final String roomId;
 
   @override
   State<BroadCastChatTaskScreen> createState() =>
@@ -640,8 +639,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             visible: item.messageType == "media",
                             child: ListView.separated(
                                 physics: const NeverScrollableScrollPhysics(),
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
+                                separatorBuilder: (context, index) {
                                   return SizedBox(
                                     height: size.width * numD035,
                                   );
@@ -746,7 +744,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       );
                     },
                     itemCount: chatList.length,
-                    separatorBuilder: (BuildContext context, int index) {
+                    separatorBuilder: (context, index) {
                       return SizedBox(
                         height: size.width * numD035,
                       );
@@ -1228,7 +1226,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     child: ClipOval(
                         clipBehavior: Clip.antiAlias,
                         child: Image.network(
-                          (sharedPreferences!.getString(avatarKey) ?? ""),
+                          sharedPreferences!.getString(avatarKey) ?? "",
                           fit: BoxFit.cover,
                           height: size.width * numD09,
                           width: size.width * numD09,
@@ -1384,7 +1382,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
-                            (sharedPreferences!.getString(avatarKey) ?? ""),
+                            sharedPreferences!.getString(avatarKey) ?? "",
                             fit: BoxFit.cover,
                             height: size.width * numD09,
                             width: size.width * numD09,
@@ -1502,8 +1500,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             imageUrl,
                             height: size.height / 3,
                             fit: BoxFit.cover,
-                            errorBuilder: (BuildContext context,
-                                Object exception, StackTrace? stackTrace) {
+                            errorBuilder: (context, exception, stackTrace) {
                               return Center(
                                 child: Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
@@ -1561,9 +1558,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                   .toString(),
                               height: size.width * numD09,
                               width: size.width * numD09,
-                              fit: BoxFit.cover, errorBuilder:
-                                  (BuildContext context, Object exception,
-                                      StackTrace? stackTrace) {
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, exception, stackTrace) {
                             return Center(
                               child: Image.asset(
                                 "${commonImagePath}rabbitLogo.png",
@@ -2432,8 +2428,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 fit: BoxFit.contain,
                                 height: size.width * numD20,
                                 width: size.width * numD20,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (context, exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,
@@ -2842,8 +2837,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     height: size.width * numD018,
                   ),
                   Wrap(
-                      children:
-                          List<Widget>.generate(intList.length, (int index) {
+                      children: List<Widget>.generate(intList.length, (index) {
                     return Container(
                       margin: EdgeInsets.only(
                           left: size.width * 0.02, right: size.width * 0.02),
@@ -2853,7 +2847,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             color: dataList.contains(intList[index])
                                 ? Colors.white
                                 : colorGrey6),
-                        onSelected: (bool selected) {
+                        onSelected: (selected) {
                           if (selected) {
                             for (int i = 0; i < intList.length; i++) {
                               if (intList[i] == intList[index] &&
@@ -3530,18 +3524,17 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 }
 
 class MediaModel {
-  XFile? mediaFile;
-  String mimetype = "";
-
   MediaModel({
     required this.mediaFile,
     required this.mimetype,
   });
+  XFile? mediaFile;
+  String mimetype = "";
 }
 
 class LoadingDialogContent extends StatefulWidget {
-  final double progress;
   const LoadingDialogContent({super.key, required this.progress});
+  final double progress;
 
   @override
   State<LoadingDialogContent> createState() => _LoadingDialogContentState();
