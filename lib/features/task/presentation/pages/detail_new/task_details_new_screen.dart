@@ -927,10 +927,26 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     SizedBox(
                       height: size.width * numD1,
                     ),
-                    if (isOwner)
-                      widget.taskStatus != "rejected"
-                          ? GestureDetector(
-                              onTap: () {
+                    // if (isOwner)
+                    widget.taskStatus != "rejected"
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          BroadCastChatTaskScreen(
+                                            taskDetail: taskDetail!,
+                                            roomId: roomId,
+                                          )))
+                                  .then((value) => context
+                                      .read<TaskBloc>()
+                                      .add(GetTaskDetailEvent(widget.taskId)));
+                            },
+                            child: AnimatedButtonWidget(
+                              shouldRestartAnimation: shouldRestartAnimation,
+                              size: size,
+                              buttonText: manageTaskText,
+                              onPressed: () {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (context) =>
@@ -938,66 +954,49 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                               taskDetail: taskDetail!,
                                               roomId: roomId,
                                             )))
-                                    .then((value) => context
-                                        .read<TaskBloc>()
-                                        .add(
-                                            GetTaskDetailEvent(widget.taskId)));
+                                    .then((value) {
+                                  shouldRestartAnimation = true;
+                                  context
+                                      .read<TaskBloc>()
+                                      .add(GetTaskDetailEvent(widget.taskId));
+                                });
                               },
-                              child: AnimatedButtonWidget(
-                                shouldRestartAnimation: shouldRestartAnimation,
-                                size: size,
-                                buttonText: manageTaskText,
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              BroadCastChatTaskScreen(
-                                                taskDetail: taskDetail!,
-                                                roomId: roomId,
-                                              )))
-                                      .then((value) {
-                                    shouldRestartAnimation = true;
-                                    context
-                                        .read<TaskBloc>()
-                                        .add(GetTaskDetailEvent(widget.taskId));
-                                  });
-                                },
-                              ),
-                            )
-                          : Container(
-                              width: size.width,
-                              height: size.width * numD14,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD04),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04))),
-                                  onPressed: () {},
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        youHaveEarnedText,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD035,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      Text(
-                                        "${currencySymbol}0",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD065,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                    ],
-                                  )),
                             ),
+                          )
+                        : Container(
+                            width: size.width,
+                            height: size.width * numD14,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: size.width * numD04),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * numD04))),
+                                onPressed: () {},
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      youHaveEarnedText,
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD035,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Text(
+                                      "${currencySymbol}0",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD065,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ],
+                                )),
+                          ),
 
                     SizedBox(
                       height: size.width * numD02,

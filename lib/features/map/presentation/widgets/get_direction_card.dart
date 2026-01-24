@@ -52,6 +52,14 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
         });
       }
     });
+
+    // Auto-populate current location
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = context.read<MapBloc>().state;
+      if (state.myLocation != null) {
+        _useCurrentLocation();
+      }
+    });
   }
 
   @override
@@ -179,13 +187,13 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
     }
   }
 
-/*
   Future<void> _useCurrentLocation() async {
-     final state = context.read<MapBloc>().state;
+    final state = context.read<MapBloc>().state;
     if (state.myLocation != null) {
       setState(() {
-        _currentLocationController.text = 'Current Location';
-        _selectedOrigin = null; // Use null to signify current location
+        _currentLocationController.text =
+            state.myLocationAddress ?? 'Current Location';
+        _selectedOrigin = state.myLocation;
         _currentLocationFocusNode.unfocus();
       });
 
@@ -194,7 +202,6 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
       }
     }
   }
-*/
 
   void _handleMapSelectedLocation(MapState state) {
     // Only process if we have a new selection that hasn't been processed
@@ -247,6 +254,15 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
             state.mapSelectedIsOrigin != null &&
             state.mapSelectedLocation != _lastProcessedMapLocation) {
           _handleMapSelectedLocation(state);
+        }
+
+        // Auto-update address if we are using current location
+        if (state.myLocationAddress != null &&
+            _selectedOrigin == state.myLocation &&
+            _currentLocationController.text == 'Current Location') {
+          setState(() {
+            _currentLocationController.text = state.myLocationAddress!;
+          });
         }
       },
       child: BlocBuilder<MapBloc, MapState>(
@@ -346,6 +362,47 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                         width: 1.2,
                                       ),
                                     ),
+                                    suffixIcon: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.my_location,
+                                            size: size.width *
+                                                numD048, // Adjusted size logic
+                                          ),
+                                          onPressed: _useCurrentLocation,
+                                          tooltip: 'Use Current Location',
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.map,
+                                              size: size.width * numD048),
+                                          onPressed: () {
+                                            context.read<MapBloc>().add(
+                                                SetDestinationSelectionModeEvent(
+                                                    isSelectionMode: true,
+                                                    isOrigin: true));
+                                            // Close card? Or keep open? User request implies selecting on map.
+                                            // Usually we minimize card or just let user tap.
+                                            // The logic in MapPage handles tap.
+                                            // We probably want to hide the card so user can see map?
+                                            // Logic in MapBloc _onSetDestinationSelectionMode doesn't hide card automatically.
+                                            // Let's hide it manually if needed, or rely on user tapping "Toggle" button.
+                                            // Actually, MapPage has ToggleGetDirectionCardEvent.
+                                            // Better UX: Temporarily hide card or make it transparent?
+                                            // The user code didn't explicitely hide it.
+                                            // But MapPage ignores pointer if ignoring: !state.showGetDirectionCard
+                                            // So if we are in this card, it's visible.
+                                            // If we select on map, we might need to hide this card to tap on map underneath?
+                                            // Yes. Let's send ToggleGetDirectionCardEvent too, or handled by SelectionMode?
+                                            context.read<MapBloc>().add(
+                                                ToggleGetDirectionCardEvent());
+                                            _currentLocationFocusNode.unfocus();
+                                          },
+                                          tooltip: 'Select on Map',
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -383,6 +440,21 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                         color: colorThemePink,
                                         width: 1.2,
                                       ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(Icons.map,
+                                          size: size.width * numD048),
+                                      onPressed: () {
+                                        context.read<MapBloc>().add(
+                                            SetDestinationSelectionModeEvent(
+                                                isSelectionMode: true,
+                                                isOrigin: false));
+                                        context
+                                            .read<MapBloc>()
+                                            .add(ToggleGetDirectionCardEvent());
+                                        _destinationFocusNode.unfocus();
+                                      },
+                                      tooltip: 'Select on Map',
                                     ),
                                   ),
                                 ),

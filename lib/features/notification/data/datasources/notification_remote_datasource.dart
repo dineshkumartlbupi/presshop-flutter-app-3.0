@@ -20,6 +20,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       final response = await apiClient.get(
         ApiConstantsNew.chat.notificationList,
         queryParameters: {'limit': limit, 'offset': offset},
+        showLoader: false,
       );
       return response.data;
     } catch (e) {

@@ -120,7 +120,6 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     debugPrint("class name :::$runtimeType");
     super.initState();
     socketConnectionFunc();
-    socketConnectionFunc();
     context
         .read<TaskBloc>()
         .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
@@ -3116,9 +3115,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     debugPrint("Emit Socket : $map");
     debugPrint(" Socket=====>  : $socketEvent");
     socket.emit(socketEvent, map);
-    context
-        .read<TaskBloc>()
-        .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+    if (mounted) {
+      context.read<TaskBloc>().add(
+          GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+    }
   }
 
   void socketConnectionFunc() {
@@ -3138,9 +3138,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
     debugPrint("Socket connected : ${socket.connected}");
 
-    void refreshChat(data) => context
-        .read<TaskBloc>()
-        .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+    void refreshChat(data) {
+      if (mounted) {
+        context.read<TaskBloc>().add(
+            GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+      }
+    }
 
     socket.on("chat message", refreshChat);
     socket.on("getallchat", refreshChat);
@@ -3230,7 +3233,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           }
         }
         await previewBottomSheet();
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       } else {
         debugPrint("No videos selected.");
       }

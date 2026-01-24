@@ -5,6 +5,7 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_data_source.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/domain/entities/map_marker.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class MapRepositoryImpl implements MapRepository {
@@ -58,7 +59,7 @@ class MapRepositoryImpl implements MapRepository {
   }
 
   @override
-  Future<Either<Failure, List<MapMarker>>> getIncidents() async {
+  Future<Either<Failure, List<Incident>>> getIncidents() async {
     try {
       final result = await remoteDataSource.getIncidents();
       return Right(result);
@@ -73,6 +74,17 @@ class MapRepositoryImpl implements MapRepository {
     try {
       await remoteDataSource.reportIncident(data);
       return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getAddressFromCoordinates(
+      LatLng position) async {
+    try {
+      final result = await remoteDataSource.getAddressFromCoordinates(position);
+      return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

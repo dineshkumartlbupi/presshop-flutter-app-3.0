@@ -250,6 +250,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await apiClient.get(
         ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
+        showLoader: false,
       );
 
       final resData = response.data;
@@ -297,7 +298,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> checkUserName(String userName) async {
     try {
-      final url = ApiConstantsNew.auth.checkUserName.replaceAll(":username", userName);
+      final url =
+          ApiConstantsNew.auth.checkUserName.replaceAll(":username", userName);
       final response = await apiClient.get(url, showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
@@ -413,8 +415,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> verifyReferralCode(String code) async {
     try {
-      final response =
-          await apiClient.post(ApiConstantsNew.auth.verifyReferral, data: {"referral_code": code});
+      final response = await apiClient.post(ApiConstantsNew.auth.verifyReferral,
+          data: {"referral_code": code});
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -428,7 +430,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> socialExists(Map<String, dynamic> params) async {
     try {
-      final response = await apiClient.post(ApiConstantsNew.auth.socialLogin, data: params);
+      final response =
+          await apiClient.post(ApiConstantsNew.auth.socialLogin, data: params);
       final data = response.data;
       if (data['code'] == 200 && data['token'] != null) {
         return true;
@@ -457,11 +460,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           await MultipartFile.fromFile(imagePath),
         ));
 
-        response = await apiClient.multipartPost(ApiConstantsNew.auth.socialRegister,
+        response = await apiClient.multipartPost(
+            ApiConstantsNew.auth.socialRegister,
             formData: formData);
       } else {
         // Normal JSON request
-        response = await apiClient.post(ApiConstantsNew.auth.socialRegister, data: data);
+        response = await apiClient.post(ApiConstantsNew.auth.socialRegister,
+            data: data);
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -566,8 +571,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> verifyForgotPasswordOtp(String email, String otp) async {
     try {
-      final response = await apiClient
-          .post(ApiConstantsNew.auth.verifyForgotOtp, data: {"email": email, "otp": otp});
+      final response = await apiClient.post(
+          ApiConstantsNew.auth.verifyForgotOtp,
+          data: {"email": email, "otp": otp});
       if (response.statusCode == 200) {
         final data = response.data;
         print("Verify OTP Response: $data");
@@ -599,8 +605,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<bool> resetPassword(String email, String password) async {
     try {
-      final response = await apiClient
-          .post(ApiConstantsNew.auth.resetPassword, data: {"email": email, "password": password});
+      final response = await apiClient.post(ApiConstantsNew.auth.resetPassword,
+          data: {"email": email, "password": password});
       if (response.statusCode == 200) {
         final data = response.data;
         print("Reset Password Response: $data");

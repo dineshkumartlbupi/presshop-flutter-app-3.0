@@ -41,18 +41,31 @@ class ApiClient {
       RequestOptions options, RequestInterceptorHandler handler) async {
     // Default to true if not specified
     bool showLoader = options.extra['show_loader'] ?? true;
-    if (showLoader) {
-      GlobalLoader.show();
+    final path = options.uri.path;
+    if (path.contains('getAvatars') ||
+        path.contains('getUserProfile') ||
+        path.contains('add/fcm/token') ||
+        path.contains('updatelocation') ||
+        path.contains('getLatestVersion') ||
+        path.contains('adminlist') ||
+        path.contains('check/version') ||
+        path.contains('create/room') ||
+        path.contains('studentBeansActivation') ||
+        path.contains('assignedTaskDetail')) {
+      showLoader = false;
     }
-    String? token = await _secureStorage.read(key: tokenKey);
 
-    /// Fallback to SharedPreferences if SecureStorage fails (common on some Android versions)
+    if (showLoader) {
+      debugPrint("🚨 BLOCKED LOADER FOR: ${options.uri.path}");
+      // GlobalLoader.show();
+    }
+    // Prioritize SharedPreferences for speed and stability
+    String? token = _sharedPreferences.getString(tokenKey);
     if (token == null || token.isEmpty) {
-      token = _sharedPreferences.getString(tokenKey);
+      token = await _secureStorage.read(key: tokenKey);
       if (token != null && token.isNotEmpty) {
-        debugPrint("DEBUG: ApiClient Token retrieved from SharedPreferences");
-        // Sync back to SecureStorage if it was empty
-        await _secureStorage.write(key: tokenKey, value: token);
+        // Sync back to SharedPreferences if found in SecureStorage
+        await _sharedPreferences.setString(tokenKey, token);
       }
     }
 

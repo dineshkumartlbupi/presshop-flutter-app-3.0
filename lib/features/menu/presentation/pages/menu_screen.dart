@@ -11,6 +11,7 @@ import 'package:presshop/features/authentication/presentation/pages/LoginScreen.
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
+import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:presshop/features/account_settings/presentation/pages/change_password_screen.dart';
@@ -406,6 +407,10 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
         classWidget: const MyContentPage(
           hideLeading: false,
         )));
+    menuList.add(MenuData(
+        name: feedText,
+        icon: "${iconsPath}ic_feed.png",
+        classWidget: const FeedScreen()));
 
     menuList.add(MenuData(
         name: "News",

@@ -1,1187 +1,1369 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-import 'package:presshop/core/api/api_constant.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'dart:async';
+// import 'package:flutter/material.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:location/location.dart';
+// import 'package:presshop/core/api/api_constant.dart';
+// import 'package:presshop/core/widgets/common_widgets.dart';
+// import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
+// import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
-import 'package:presshop/features/task/presentation/bloc/task_event.dart';
-import 'package:presshop/features/task/presentation/bloc/task_state.dart';
-import 'package:presshop/core/di/injection_container.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
+// import 'package:presshop/features/task/presentation/bloc/task_event.dart';
+// import 'package:presshop/features/task/presentation/bloc/task_state.dart';
+// import 'package:presshop/core/di/injection_container.dart';
+// import 'package:presshop/core/widgets/animated_button.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:presshop/main.dart';
-import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/imagePreview.dart';
-import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+// import 'package:presshop/main.dart';
+// import 'package:presshop/core/core_export.dart';
+// import 'package:presshop/core/widgets/common_app_bar.dart';
+// import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
+// import 'package:presshop/features/camera/presentation/pages/imagePreview.dart';
+// import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
+// import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+// import 'package:presshop/features/task/domain/entities/task_detail.dart';
 
-// ignore: must_be_immutable
-class TaskDetailScreen extends StatefulWidget {
-  String taskStatus = "";
-  String taskId = "";
-  String totalEarning = "";
+// // ignore: must_be_immutable
+// class TaskDetailScreen extends StatefulWidget {
+//   String taskStatus = "";
+//   String taskId = "";
+//   String totalEarning = "";
 
-  TaskDetailScreen(
-      {super.key,
-      required this.taskStatus,
-      required this.taskId,
-      required this.totalEarning});
+//   TaskDetailScreen(
+//       {super.key,
+//       required this.taskStatus,
+//       required this.taskId,
+//       required this.totalEarning});
 
-  @override
-  State<StatefulWidget> createState() {
-    return TaskDetailScreenState();
-  }
-}
+//   @override
+//   State<StatefulWidget> createState() {
+//     return TaskDetailScreenState();
+//   }
+// }
 
-class TaskDetailScreenState extends State<TaskDetailScreen> {
-  late Size size;
-  TaskDetail? taskDetail;
-  String roomId = "";
-  BitmapDescriptor? mapIcon;
-  final Set<Marker> marker = {};
+// class TaskDetailScreenState extends State<TaskDetailScreen> {
+//   late Size size;
+//   TaskDetail? taskDetail;
+//   String roomId = "";
+//   BitmapDescriptor? mapIcon;
+//   final Set<Marker> marker = {};
 
-  LatLng? _latLng;
-  bool isDirection = false;
+//   LatLng? _latLng;
+//   bool isDirection = false;
+//   bool isExtraTime = false;
+//   bool isOwner = false;
+//   bool shouldRestartAnimation = false;
 
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+//   final Completer<GoogleMapController> _controller =
+//       Completer<GoogleMapController>();
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+//   static const CameraPosition _kGooglePlex = CameraPosition(
+//     target: LatLng(37.42796133580664, -122.085749655962),
+//     zoom: 14.4746,
+//   );
 
-  // static const CameraPosition _kLake = CameraPosition(
-  //     bearing: 192.8334901395799,
-  //     target: LatLng(37.43296265331129, -122.08832357078792),
-  //     tilt: 59.440717697143555,
-  //     zoom: 19.151926040649414);
+//   // static const CameraPosition _kLake = CameraPosition(
+//   //     bearing: 192.8334901395799,
+//   //     target: LatLng(37.43296265331129, -122.08832357078792),
+//   //     tilt: 59.440717697143555,
+//   //     zoom: 19.151926040649414);
 
-  @override
-  void initState() {
-    getAllIcons();
-    getCurrentLocation();
-    super.initState();
+//   @override
+//   void initState() {
+//     getAllIcons();
+//     getCurrentLocation();
+//     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _fetchTaskDetails();
-    });
-    debugPrint("TaskDetailScreen: Running");
-  }
+//     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+//       _fetchTaskDetails();
+//     });
+//     debugPrint("TaskDetailScreen: Running");
+//   }
 
-  void _fetchTaskDetails() {
-    context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));
-  }
+//   void _fetchTaskDetails() {
+//     context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CommonAppBar(
-        elevation: 0,
-        hideLeading: false,
-        title: Text(
-          taskDetailText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        size: size,
-        showActions: true,
-        leadingFxn: () {
-          Navigator.pop(context);
-        },
-        actionWidget: [
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
-            },
-            child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
-            ),
-          ),
-          SizedBox(
-            width: size.width * numD04,
-          )
-        ],
-      ),
-      body: BlocConsumer<TaskBloc, TaskState>(
-        listener: (context, state) {
-          if (state is TaskDetailLoaded) {
-            setState(() {
-              taskDetail = state.taskDetail;
-              roomId = state.taskDetail.roomId;
-              _updateGoogleMap(
-                  LatLng(taskDetail!.latitude, taskDetail!.longitude));
-            });
+//   @override
+//   Widget build(BuildContext context) {
+//     size = MediaQuery.of(context).size;
+//     return Scaffold(
+//       appBar: CommonAppBar(
+//         elevation: 0,
+//         hideLeading: false,
+//         title: Text(
+//           taskDetailText,
+//           style: TextStyle(
+//               color: Colors.black,
+//               fontWeight: FontWeight.bold,
+//               fontSize: size.width * appBarHeadingFontSize),
+//         ),
+//         centerTitle: false,
+//         titleSpacing: 0,
+//         size: size,
+//         showActions: true,
+//         leadingFxn: () {
+//           Navigator.pop(context);
+//         },
+//         actionWidget: [
+//           InkWell(
+//             onTap: () {
+//               Navigator.of(context).pushAndRemoveUntil(
+//                   MaterialPageRoute(
+//                       builder: (context) => Dashboard(initialPosition: 2)),
+//                   (route) => false);
+//             },
+//             child: Image.asset(
+//               "${commonImagePath}rabbitLogo.png",
+//               height: size.width * numD07,
+//               width: size.width * numD07,
+//             ),
+//           ),
+//           SizedBox(
+//             width: size.width * numD04,
+//           )
+//         ],
+//       ),
+//       body: BlocConsumer<TaskBloc, TaskState>(
+//         listener: (context, state) {
+//           if (state is TaskDetailLoaded) {
+//             setState(() {
+//               taskDetail = state.taskDetail;
+//               roomId = state.taskDetail.roomId;
+//               _updateGoogleMap(
+//                   LatLng(taskDetail!.latitude, taskDetail!.longitude));
 
-            // Original logic: Show broadcast dialog on success
-            // NOTE: Only if needed. The original code showed it unconditionally on success.
-            // If this is annoying, we might want to check a flag or similar.
-            // For now, replicating strict behavior.
-            broadcastDialog(
-              size: MediaQuery.of(context).size,
-              taskDetail: taskDetail!,
-              onTapView: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BroadCastScreen(
-                          taskId: taskDetail!.id,
-                          mediaHouseId: taskDetail!.mediaHouseId,
-                        )));
-              },
-            );
-          } else if (state is TaskError) {
-            showSnackBar("Error", state.message, Colors.red);
-          }
-        },
-        builder: (context, state) {
-          if (state is TaskLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+//               /// Check Ownership
+//               SharedPreferences.getInstance().then((input) {
+//                 var myId = input.getString(hopperIdKey) ?? "";
+//                 if (taskDetail!.acceptedBy.contains(myId)) {
+//                   isOwner = true;
+//                 } else {
+//                   isOwner = false;
+//                 }
+//                 if (mounted) {
+//                   setState(() {});
+//                 }
+//               });
+//             });
 
-          // Show content if taskDetail is available (either from state or previously loaded)
-          if (taskDetail != null) {
-            return SafeArea(
-                child: SingleChildScrollView(
-                    child: Container(
-                        margin: EdgeInsets.only(top: size.width * numD04),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /// Status Or Media House Name
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD01,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        taskDetail!.mediaHouseName,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        widget.totalEarning == "0" &&
-                                                widget.taskStatus == "accepted"
-                                            ? widget.taskStatus.toUpperCase()
-                                            : "COMPLETED",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color:
-                                                widget.taskStatus == "rejected"
-                                                    ? Colors.black
-                                                    : colorThemePink,
-                                            fontWeight: FontWeight.w500),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.width * numD02,
-                                ),
+//             // Original logic: Show broadcast dialog on success
+//             // NOTE: Only if needed. The original code showed it unconditionally on success.
+//             // If this is annoying, we might want to check a flag or similar.
+//             // For now, replicating strict behavior.
+//             broadcastDialog(
+//               size: MediaQuery.of(context).size,
+//               taskDetail: taskDetail!,
+//               onTapView: () {
+//                 Navigator.pop(context);
+//                 Navigator.pop(context);
+//                 Navigator.of(context).push(MaterialPageRoute(
+//                     builder: (context) => BroadCastScreen(
+//                           taskId: taskDetail!.id,
+//                           mediaHouseId: taskDetail!.mediaHouseId,
+//                         )));
+//               },
+//             );
+//           } else if (state is TaskError) {
+//             showSnackBar("Error", state.message, Colors.red);
+//           }
+//         },
+//         builder: (context, state) {
+//           if (state is TaskLoading) {
+//             return const Center(child: CircularProgressIndicator());
+//           }
 
-                                /// Map or Timer
-                                widget.taskStatus != "rejected"
-                                    ? Row(
-                                        children: [
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: size.width * numD35,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      width: 1,
-                                                      color: Colors.black),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * numD04),
-                                                ),
-                                                child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD04),
-                                                    child: Stack(
-                                                      children: [
-                                                        GoogleMap(
-                                                          scrollGesturesEnabled:
-                                                              false,
-                                                          mapType:
-                                                              MapType.normal,
-                                                          initialCameraPosition:
-                                                              _kGooglePlex,
-                                                          markers: marker
-                                                              .map((e) => e)
-                                                              .toSet(),
-                                                          onMapCreated:
-                                                              (GoogleMapController
-                                                                  controller) {
-                                                            _controller
-                                                                .complete(
-                                                                    controller);
-                                                          },
-                                                          compassEnabled: false,
-                                                          mapToolbarEnabled:
-                                                              false,
-                                                          zoomControlsEnabled:
-                                                              false,
-                                                          zoomGesturesEnabled:
-                                                              false,
-                                                        ),
-                                                        Positioned.fill(
-                                                            child: InkWell(
-                                                          onTap: () {
-                                                            isDirection = false;
-                                                            setState(() {});
-                                                            openUrl();
-                                                          },
-                                                        ))
-                                                      ],
-                                                    )),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD05,
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              height: size.width * numD35,
-                                              decoration: BoxDecoration(
-                                                  color: colorGrey5,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * numD04)),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                      padding: EdgeInsets.all([
-                                                        "accepted",
-                                                        "Delayed"
-                                                      ].contains(
-                                                              widget.taskStatus)
-                                                          ? 0
-                                                          : size.width *
-                                                              numD04),
-                                                      decoration: BoxDecoration(
-                                                          color: ["accepted", "Delayed"].contains(widget.taskStatus)
-                                                              ? Colors
-                                                                  .transparent
-                                                              : colorThemePink,
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  size.width *
-                                                                      numD04)),
-                                                      child:
-                                                          widget.taskStatus == "Delayed" ||
-                                                                  widget.taskStatus == "accepted" &&
-                                                                      widget.totalEarning == "0"
-                                                              ? TimerCountdown(
-                                                                  endTime:
-                                                                      taskDetail!
-                                                                          .deadLine,
-                                                                  spacerWidth:
-                                                                      3,
-                                                                  enableDescriptions:
-                                                                      false,
-                                                                  countDownFormatter:
-                                                                      (day,
-                                                                          hour,
-                                                                          min,
-                                                                          sec) {
-                                                                    if (taskDetail!
-                                                                            .deadLine
-                                                                            .difference(DateTime
-                                                                                .now())
-                                                                            .inDays >
-                                                                        0) {
-                                                                      //return "$day:$hour:$min:$sec";
-                                                                      return "${day}d:${hour}h:${min}m";
-                                                                    } else if (taskDetail!
-                                                                            .deadLine
-                                                                            .difference(DateTime.now())
-                                                                            .inHours >
-                                                                        0) {
-                                                                      return "${hour}h:${min}m:${sec}s";
-                                                                    } else {
-                                                                      return "$min:$sec";
-                                                                    }
-                                                                  },
-                                                                  format: CountDownTimerFormat
-                                                                      .customFormats,
-                                                                  timeTextStyle:
-                                                                      commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: /*!taskDetail!
-                                                                      .deadLine
-                                                                      .difference(
-                                                                          DateTime
-                                                                              .now())
-                                                                      .inDays >
-                                                                  0
-                                                              ? size.width *
-                                                                  numD07
-                                                              :*/
-                                                                              size.width *
-                                                                                  numD055,
-                                                                          color: widget.taskStatus == "accepted"
-                                                                              ? colorOnlineGreen
-                                                                              : colorThemePink,
-                                                                          fontWeight:
-                                                                              FontWeight.w600),
-                                                                ) /*Text(
-                                                CountD,
-                                                style: commonTextStyle(
-                                                    size: size,
-                                                    fontSize:
-                                                        size.width * numD095,
-                                                    color: widget.taskStatus ==
-                                                            "accepted"
-                                                        ? Colors.green
-                                                        : colorThemePink,
-                                                    fontWeight: FontWeight.w600),
-                                              )*/
-                                                              : Container(
-                                                                  padding: EdgeInsets
-                                                                      .all(size
-                                                                              .width *
-                                                                          numD02),
-                                                                  decoration: BoxDecoration(
-                                                                      color:
-                                                                          colorThemePink,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(size.width *
-                                                                              numD02)),
-                                                                  child: Icon(
-                                                                    Icons.check,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    size: size
-                                                                            .width *
-                                                                        numD09,
-                                                                  ),
-                                                                )),
-                                                  SizedBox(
-                                                    height: widget.taskStatus ==
-                                                            "Delayed"
-                                                        ? 0
-                                                        : size.width * numD02,
-                                                  ),
-                                                  Text(
-                                                    widget.taskStatus ==
-                                                            "Delayed"
-                                                        ? "delay"
-                                                        : widget.taskStatus ==
-                                                                    "accepted" &&
-                                                                widget.totalEarning ==
-                                                                    '0'
-                                                            ? "time remaining"
-                                                            : "On time",
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize: size.width *
-                                                            numD035,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: widget.taskStatus != "rejected"
-                                      ? size.width * numD04
-                                      : 0,
-                                ),
+//           // Show content if taskDetail is available (either from state or previously loaded)
+//           if (taskDetail != null) {
+//             return SafeArea(
+//                 child: SingleChildScrollView(
+//                     child: Container(
+//                         margin: EdgeInsets.only(top: size.width * numD04),
+//                         child: Padding(
+//                           padding: EdgeInsets.symmetric(
+//                               horizontal: size.width * numD04),
+//                           child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 /// Status Or Media House Name
+//                                 Padding(
+//                                   padding: EdgeInsets.symmetric(
+//                                     horizontal: size.width * numD01,
+//                                   ),
+//                                   child: Row(
+//                                     mainAxisAlignment:
+//                                         MainAxisAlignment.spaceBetween,
+//                                     children: [
+//                                       Text(
+//                                         taskDetail!.mediaHouseName,
+//                                         style: commonTextStyle(
+//                                             size: size,
+//                                             fontSize: size.width * numD036,
+//                                             color: Colors.black,
+//                                             fontWeight: FontWeight.w500),
+//                                       ),
+//                                       Text(
+//                                         widget.totalEarning == "0" &&
+//                                                 widget.taskStatus == "accepted"
+//                                             ? widget.taskStatus.toUpperCase()
+//                                             : "COMPLETED",
+//                                         style: commonTextStyle(
+//                                             size: size,
+//                                             fontSize: size.width * numD036,
+//                                             color:
+//                                                 widget.taskStatus == "rejected"
+//                                                     ? Colors.black
+//                                                     : colorThemePink,
+//                                             fontWeight: FontWeight.w500),
+//                                       )
+//                                     ],
+//                                   ),
+//                                 ),
+//                                 SizedBox(
+//                                   height: size.width * numD02,
+//                                 ),
 
-                                /// Location
-                                widget.taskStatus != "rejected"
-                                    ? Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Image.asset(
-                                                      "${iconsPath}ic_location.png",
-                                                      height:
-                                                          size.width * numD05,
-                                                      color: colorTextFieldIcon,
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          size.width * numD02,
-                                                    ),
-                                                    Text(
-                                                      locationText,
-                                                      style: commonTextStyle(
-                                                          size: size,
-                                                          fontSize: size.width *
-                                                              numD035,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    )
-                                                  ],
-                                                ),
+//                                 /// Map or Timer
+//                                 widget.taskStatus != "rejected"
+//                                     ? Row(
+//                                         children: [
+//                                           Expanded(
+//                                             child: SizedBox(
+//                                               height: size.width * numD35,
+//                                               child: Container(
+//                                                 decoration: BoxDecoration(
+//                                                   border: Border.all(
+//                                                       width: 1,
+//                                                       color: Colors.black),
+//                                                   borderRadius:
+//                                                       BorderRadius.circular(
+//                                                           size.width * numD04),
+//                                                 ),
+//                                                 child: ClipRRect(
+//                                                     borderRadius:
+//                                                         BorderRadius.circular(
+//                                                             size.width *
+//                                                                 numD04),
+//                                                     child: Stack(
+//                                                       alignment: Alignment
+//                                                           .bottomCenter,
+//                                                       children: [
+//                                                         GoogleMap(
+//                                                           scrollGesturesEnabled:
+//                                                               false,
+//                                                           mapType:
+//                                                               MapType.normal,
+//                                                           initialCameraPosition:
+//                                                               _kGooglePlex,
+//                                                           markers: marker
+//                                                               .map((e) => e)
+//                                                               .toSet(),
+//                                                           onMapCreated:
+//                                                               (GoogleMapController
+//                                                                   controller) {
+//                                                             _controller
+//                                                                 .complete(
+//                                                                     controller);
+//                                                           },
+//                                                           compassEnabled: false,
+//                                                           mapToolbarEnabled:
+//                                                               false,
+//                                                           zoomControlsEnabled:
+//                                                               false,
+//                                                           zoomGesturesEnabled:
+//                                                               false,
+//                                                         ),
+//                                                         Padding(
+//                                                           padding:
+//                                                               EdgeInsets.all(
+//                                                                   size.width *
+//                                                                       numD07),
+//                                                           child: Image.asset(
+//                                                             "${commonImagePath}ic_cover_radius.png",
+//                                                           ),
+//                                                         ),
+//                                                         InkWell(
+//                                                           splashColor: Colors
+//                                                               .transparent,
+//                                                           highlightColor: Colors
+//                                                               .transparent,
+//                                                           onTap: () {
+//                                                             isDirection = false;
+//                                                             setState(() {});
+//                                                             openUrl();
+//                                                           },
+//                                                           child: Container(
+//                                                             width:
+//                                                                 double.infinity,
+//                                                             padding: EdgeInsets.symmetric(
+//                                                                 horizontal:
+//                                                                     size.width *
+//                                                                         numD06,
+//                                                                 vertical: size
+//                                                                         .width *
+//                                                                     numD018),
+//                                                             decoration:
+//                                                                 BoxDecoration(
+//                                                                     color:
+//                                                                         colorThemePink,
+//                                                                     borderRadius:
+//                                                                         BorderRadius
+//                                                                             .only(
+//                                                                       bottomLeft:
+//                                                                           Radius.circular(size.width *
+//                                                                               numD01),
+//                                                                       bottomRight:
+//                                                                           Radius.circular(size.width *
+//                                                                               numD02),
+//                                                                     )),
+//                                                             child: Text(
+//                                                               "Click the Map & GO",
+//                                                               style: commonTextStyle(
+//                                                                   size: size,
+//                                                                   fontSize: size
+//                                                                           .width *
+//                                                                       numD032,
+//                                                                   color: Colors
+//                                                                       .white,
+//                                                                   fontWeight:
+//                                                                       FontWeight
+//                                                                           .bold),
+//                                                             ),
+//                                                           ),
+//                                                         )
+//                                                       ],
+//                                                     )),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                           SizedBox(
+//                                             width: size.width * numD05,
+//                                           ),
+//                                           Expanded(
+//                                             child: Stack(
+//                                               alignment: Alignment.bottomCenter,
+//                                               children: [
+//                                                 Container(
+//                                                   height: size.width * numD35,
+//                                                   width: double.infinity,
+//                                                   decoration: BoxDecoration(
+//                                                       color: colorGrey5,
+//                                                       borderRadius:
+//                                                           BorderRadius.circular(
+//                                                               size.width *
+//                                                                   numD04)),
+//                                                   child: Column(
+//                                                     children: [
+//                                                       SizedBox(
+//                                                         height:
+//                                                             size.width * numD03,
+//                                                       ),
+//                                                       Text(
+//                                                         isExtraTime
+//                                                             ? "Extra time added"
+//                                                             : isTimeOver()
+//                                                                 ? "Time over"
+//                                                                 : "Time remaining",
+//                                                         style: commonTextStyle(
+//                                                             size: size,
+//                                                             fontSize:
+//                                                                 size.width *
+//                                                                     numD035,
+//                                                             color: Colors.white,
+//                                                             fontWeight:
+//                                                                 FontWeight
+//                                                                     .bold),
+//                                                       ),
+//                                                       Container(
+//                                                           padding:
+//                                                               EdgeInsets.all([
+//                                                             "accepted",
+//                                                             "Delayed"
+//                                                           ].contains(widget
+//                                                                       .taskStatus)
+//                                                                   ? 0
+//                                                                   : size.width *
+//                                                                       numD04),
+//                                                           decoration: BoxDecoration(
+//                                                               color: [
+//                                                                 "accepted",
+//                                                                 "Delayed"
+//                                                               ].contains(
+//                                                                       widget.taskStatus)
+//                                                                   ? Colors.transparent
+//                                                                   : colorThemePink,
+//                                                               borderRadius: BorderRadius.circular(size.width * numD04)),
+//                                                           child: widget.taskStatus == "Delayed" || widget.taskStatus == "accepted" && widget.totalEarning == "0"
+//                                                               ? TimerCountdown(
+//                                                                   endTime:
+//                                                                       taskDetail!
+//                                                                           .deadLine,
+//                                                                   spacerWidth:
+//                                                                       3,
+//                                                                   enableDescriptions:
+//                                                                       false,
+//                                                                   countDownFormatter:
+//                                                                       (day,
+//                                                                           hour,
+//                                                                           min,
+//                                                                           sec) {
+//                                                                     if (taskDetail!
+//                                                                             .deadLine
+//                                                                             .difference(DateTime
+//                                                                                 .now())
+//                                                                             .inDays >
+//                                                                         0) {
+//                                                                       //return "$day:$hour:$min:$sec";
+//                                                                       return "${day}d:${hour}h:${min}m";
+//                                                                     } else if (taskDetail!
+//                                                                             .deadLine
+//                                                                             .difference(DateTime.now())
+//                                                                             .inHours >
+//                                                                         0) {
+//                                                                       return "${hour}h:${min}m:${sec}s";
+//                                                                     } else {
+//                                                                       return "$min:$sec";
+//                                                                     }
+//                                                                   },
+//                                                                   format: CountDownTimerFormat
+//                                                                       .customFormats,
+//                                                                   timeTextStyle:
+//                                                                       commonTextStyle(
+//                                                                           size:
+//                                                                               size,
+//                                                                           fontSize: /*!taskDetail!
+//                                                                       .deadLine
+//                                                                       .difference(
+//                                                                           DateTime
+//                                                                               .now())
+//                                                                       .inDays >
+//                                                                   0
+//                                                               ? size.width *
+//                                                                   numD07
+//                                                               :*/
+//                                                                               size.width *
+//                                                                                   numD055,
+//                                                                           color: widget.taskStatus == "accepted"
+//                                                                               ? colorOnlineGreen
+//                                                                               : colorThemePink,
+//                                                                           fontWeight:
+//                                                                               FontWeight.w600),
+//                                                                 ) /*Text(
+//                                                 CountD,
+//                                                 style: commonTextStyle(
+//                                                     size: size,
+//                                                     fontSize:
+//                                                         size.width * numD095,
+//                                                     color: widget.taskStatus ==
+//                                                             "accepted"
+//                                                         ? Colors.green
+//                                                         : colorThemePink,
+//                                                     fontWeight: FontWeight.w600),
+//                                               )*/
+//                                                               : Container(
+//                                                                   padding: EdgeInsets
+//                                                                       .all(size
+//                                                                               .width *
+//                                                                           numD02),
+//                                                                   decoration: BoxDecoration(
+//                                                                       color:
+//                                                                           colorThemePink,
+//                                                                       borderRadius:
+//                                                                           BorderRadius.circular(size.width *
+//                                                                               numD02)),
+//                                                                   child: Icon(
+//                                                                     Icons.check,
+//                                                                     color: Colors
+//                                                                         .black,
+//                                                                     size: size
+//                                                                             .width *
+//                                                                         numD09,
+//                                                                   ),
+//                                                                 )),
+//                                                       SizedBox(
+//                                                         height:
+//                                                             widget.taskStatus ==
+//                                                                     "Delayed"
+//                                                                 ? 0
+//                                                                 : size.width *
+//                                                                     numD02,
+//                                                       ),
+//                                                       Text(
+//                                                         widget.taskStatus ==
+//                                                                 "Delayed"
+//                                                             ? "delay"
+//                                                             : widget.taskStatus ==
+//                                                                         "accepted" &&
+//                                                                     widget.totalEarning ==
+//                                                                         '0'
+//                                                                 ? "time remaining"
+//                                                                 : "On time",
+//                                                         style: commonTextStyle(
+//                                                             size: size,
+//                                                             fontSize:
+//                                                                 size.width *
+//                                                                     numD035,
+//                                                             color: Colors.white,
+//                                                             fontWeight:
+//                                                                 FontWeight
+//                                                                     .w500),
+//                                                       )
+//                                                     ],
+//                                                   ),
+//                                                 ),
+//                                                 Container(
+//                                                   width: double.infinity,
+//                                                   padding: EdgeInsets.symmetric(
+//                                                       horizontal:
+//                                                           size.width * numD07,
+//                                                       vertical:
+//                                                           size.width * numD018),
+//                                                   decoration: BoxDecoration(
+//                                                       color: colorThemePink,
+//                                                       borderRadius:
+//                                                           BorderRadius.only(
+//                                                         bottomLeft:
+//                                                             Radius.circular(
+//                                                                 size.width *
+//                                                                     numD04),
+//                                                         bottomRight:
+//                                                             Radius.circular(
+//                                                                 size.width *
+//                                                                     numD04),
+//                                                       )),
+//                                                   child: Center(
+//                                                     child: Text(
+//                                                       "Deadline ${dateTimeFormatter(dateTime: taskDetail!.deadLine.toString(), format: "hh:mm a").toLowerCase()}",
+//                                                       style: commonTextStyle(
+//                                                           size: size,
+//                                                           fontSize: size.width *
+//                                                               numD032,
+//                                                           color: Colors.white,
+//                                                           fontWeight:
+//                                                               FontWeight.bold),
+//                                                     ),
+//                                                   ),
+//                                                 )
+//                                               ],
+//                                             ),
+//                                           )
+//                                         ],
+//                                       )
+//                                     : Container(),
+//                                 SizedBox(
+//                                   height: size.width * numD04,
+//                                 ),
+//                                 Row(
+//                                   crossAxisAlignment: CrossAxisAlignment.start,
+//                                   children: [
+//                                     Expanded(
+//                                       child: Column(
+//                                         crossAxisAlignment:
+//                                             CrossAxisAlignment.start,
+//                                         children: [
+//                                           /// Time Date
+//                                           Row(
+//                                             children: [
+//                                               Icon(
+//                                                 Icons.access_time,
+//                                                 size: size.width * numD045,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD018,
+//                                               ),
+//                                               Text(
+//                                                   dateTimeFormatter(
+//                                                       dateTime:
+//                                                           taskDetail!.createdAt,
+//                                                       format: "hh:mm a"),
+//                                                   style: commonTextStyle(
+//                                                       size: size,
+//                                                       fontSize:
+//                                                           size.width * numD03,
+//                                                       color: colorHint,
+//                                                       fontWeight:
+//                                                           FontWeight.w500)),
+//                                               SizedBox(
+//                                                 width: size.width * numD02,
+//                                               ),
+//                                               Icon(
+//                                                 Icons.calendar_month,
+//                                                 size: size.width * numD045,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD018,
+//                                               ),
+//                                               Text(
+//                                                   dateTimeFormatter(
+//                                                       dateTime:
+//                                                           taskDetail!.createdAt,
+//                                                       format: "dd MMM yyyy"),
+//                                                   style: commonTextStyle(
+//                                                       size: size,
+//                                                       fontSize:
+//                                                           size.width * numD03,
+//                                                       color: colorHint,
+//                                                       fontWeight:
+//                                                           FontWeight.w500)),
+//                                             ],
+//                                           ),
+//                                           SizedBox(
+//                                             height: size.width * numD025,
+//                                           ),
 
-                                                /// Location
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: size.width * numD01,
-                                                      left:
-                                                          size.width * numD01),
-                                                  child: Text(
-                                                    taskDetail!.location,
-                                                    style: commonTextStyle(
-                                                        size: size,
-                                                        fontSize:
-                                                            size.width * numD03,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                    textAlign: TextAlign.start,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD05,
-                                          ),
+//                                           /// Location
+//                                           Row(
+//                                             mainAxisAlignment:
+//                                                 MainAxisAlignment.start,
+//                                             crossAxisAlignment:
+//                                                 CrossAxisAlignment.start,
+//                                             children: [
+//                                               Icon(
+//                                                 Icons.location_on_outlined,
+//                                                 size: size.width * numD045,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD02,
+//                                               ),
+//                                               Expanded(
+//                                                 child: Text(
+//                                                   taskDetail!.location,
+//                                                   style: commonTextStyle(
+//                                                       size: size,
+//                                                       fontSize:
+//                                                           size.width * numD028,
+//                                                       color: colorHint,
+//                                                       fontWeight:
+//                                                           FontWeight.w500),
+//                                                 ),
+//                                               )
+//                                             ],
+//                                           ),
+//                                           SizedBox(
+//                                             height: size.width * numD025,
+//                                           ),
+//                                           Row(
+//                                             children: [
+//                                               Icon(
+//                                                 Icons.location_on_outlined,
+//                                                 size: size.width * numD045,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD02,
+//                                               ),
+//                                               Text(
+//                                                 "${taskDetail!.miles} miles",
+//                                                 overflow: TextOverflow.ellipsis,
+//                                                 style: commonTextStyle(
+//                                                     size: size,
+//                                                     fontSize:
+//                                                         size.width * numD028,
+//                                                     color: colorHint,
+//                                                     fontWeight:
+//                                                         FontWeight.w500),
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD018,
+//                                               ),
+//                                               Container(
+//                                                 width: 1,
+//                                                 height: size.width * numD04,
+//                                                 color: Colors.grey,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD02,
+//                                               ),
+//                                               Icon(
+//                                                 Icons.directions_walk_rounded,
+//                                                 size: size.width * numD045,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD01,
+//                                               ),
+//                                               Text(
+//                                                 "${taskDetail!.byFeet} mins",
+//                                                 overflow: TextOverflow.ellipsis,
+//                                                 style: commonTextStyle(
+//                                                     size: size,
+//                                                     fontSize:
+//                                                         size.width * numD028,
+//                                                     color: colorHint,
+//                                                     fontWeight:
+//                                                         FontWeight.w500),
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD01,
+//                                               ),
+//                                               Container(
+//                                                 width: 1,
+//                                                 height: size.width * numD04,
+//                                                 color: Colors.grey,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD02,
+//                                               ),
+//                                               Icon(
+//                                                 Icons.directions_car,
+//                                                 size: size.width * numD045,
+//                                               ),
+//                                               SizedBox(
+//                                                 width: size.width * numD01,
+//                                               ),
+//                                               Text(
+//                                                 "${taskDetail!.byCar} mins",
+//                                                 style: commonTextStyle(
+//                                                     size: size,
+//                                                     fontSize:
+//                                                         size.width * numD028,
+//                                                     color: colorHint,
+//                                                     fontWeight:
+//                                                         FontWeight.w500),
+//                                               ),
+//                                             ],
+//                                           ),
+//                                           SizedBox(
+//                                             height: size.width * numD02,
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                     SizedBox(
+//                                       width: size.width * numD075,
+//                                     ),
+//                                   ],
+//                                 ),
+//                                 SizedBox(
+//                                   height: size.width * numD04,
+//                                 ),
+//                                 Text(
+//                                   "HEADING",
+//                                   style: commonTextStyle(
+//                                       size: size,
+//                                       fontSize: size.width * numD03,
+//                                       color: colorThemePink,
+//                                       fontWeight: FontWeight.bold),
+//                                 ),
+//                                 SizedBox(
+//                                   height: size.width * numD02,
+//                                 ),
+//                                 Text(
+//                                   taskDetail!.title,
+//                                   style: commonTextStyle(
+//                                       size: size,
+//                                       fontSize: size.width * numD04,
+//                                       color: Colors.black,
+//                                       lineHeight: 1.5,
+//                                       fontWeight: FontWeight.w700),
+//                                 ),
 
-                                          /*  commonElevatedButton(
-                                "Go",
-                                size,
-                                commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
-                                    () {
+//                                 SizedBox(
+//                                   height: size.width * numD06,
+//                                 ),
+//                                 Text(
+//                                   "DESCRIPTION",
+//                                   style: commonTextStyle(
+//                                       size: size,
+//                                       fontSize: size.width * numD03,
+//                                       color: colorThemePink,
+//                                       fontWeight: FontWeight.bold),
+//                                 ),
+//                                 SizedBox(
+//                                   height: size.width * numD02,
+//                                 ),
+//                                 Text(
+//                                   taskDetail!.description,
+//                                   style: commonTextStyle(
+//                                       size: size,
+//                                       fontSize: size.width * numD03,
+//                                       color: Colors.black,
+//                                       lineHeight: 2,
+//                                       fontWeight: FontWeight.normal),
+//                                 ),
 
-                                }),*/
-                                          Expanded(
-                                            child: widget.taskStatus ==
-                                                        "accepted" &&
-                                                    widget.totalEarning == "0"
-                                                ? SizedBox(
-                                                    height: size.width * numD1,
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        isDirection = true;
-                                                        setState(() {});
-                                                        openUrl();
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              colorThemePink,
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius
-                                                                  .circular(size
-                                                                          .width *
-                                                                      numD04))),
-                                                      child: Text(
-                                                        'Go',
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                                size.width *
-                                                                    numD033),
-                                                      ),
-                                                    ))
-                                                : Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                size.width *
-                                                                    numD06,
-                                                            vertical:
-                                                                size.width *
-                                                                    numD01),
-                                                    decoration: BoxDecoration(
-                                                        color: colorLightGrey,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(size
-                                                                        .width *
-                                                                    numD03)),
-                                                    child: Column(
-                                                      children: [
-                                                        Text(
-                                                          youHaveEarnedText,
-                                                          maxLines: 4,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: commonTextStyle(
-                                                              size: size,
-                                                              fontSize:
-                                                                  size.width *
-                                                                      numD035,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal),
-                                                        ),
-                                                        Text(
-                                                          "$currencySymbol${widget.totalEarning}",
-                                                          maxLines: 4,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: commonTextStyle(
-                                                              size: size,
-                                                              fontSize:
-                                                                  size.width *
-                                                                      numD06,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                          )
-                                        ],
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: widget.taskStatus != "rejected"
-                                      ? size.width * numD04
-                                      : 0,
-                                ),
-                                widget.taskStatus != "rejected"
-                                    ? const Divider(
-                                        color: colorGrey1,
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: widget.taskStatus != "rejected"
-                                      ? size.width * numD04
-                                      : 0,
-                                ),
+//                                 SizedBox(
+//                                   height: taskDetail!.specialReq.isNotEmpty
+//                                       ? size.width * numD06
+//                                       : 0,
+//                                 ),
+//                                 Visibility(
+//                                   visible: taskDetail!.specialReq.isNotEmpty,
+//                                   child: Text(
+//                                     "SPECIAL REQUIREMENTS",
+//                                     style: commonTextStyle(
+//                                         size: size,
+//                                         fontSize: size.width * numD03,
+//                                         color: colorThemePink,
+//                                         fontWeight: FontWeight.bold),
+//                                   ),
+//                                 ),
+//                                 SizedBox(
+//                                   height: taskDetail!.specialReq.isNotEmpty
+//                                       ? size.width * numD02
+//                                       : 0,
+//                                 ),
+//                                 Visibility(
+//                                   visible: taskDetail!.specialReq.isNotEmpty,
+//                                   child: Text(
+//                                     taskDetail!.specialReq,
+//                                     style: commonTextStyle(
+//                                         size: size,
+//                                         fontSize: size.width * numD03,
+//                                         color: Colors.black,
+//                                         lineHeight: 2,
+//                                         fontWeight: FontWeight.normal),
+//                                   ),
+//                                 ),
+//                                 SizedBox(
+//                                   height: taskDetail!.specialReq.isNotEmpty
+//                                       ? size.width * numD08
+//                                       : 0,
+//                                 ),
 
-                                /// Title
-                                Text(
-                                  taskDetail!.title,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD04,
-                                      color: Colors.black,
-                                      lineHeight: 1.5,
-                                      fontWeight: FontWeight.w600),
-                                ),
+//                                 /// Price Offer
+//                                 Visibility(
+//                                     visible: widget.taskStatus != "rejected",
+//                                     child: priceOfferWidget()),
 
-                                SizedBox(
-                                  height: size.width * numD02,
-                                ),
+//                                 SizedBox(
+//                                   height: size.width * numD04,
+//                                 ),
 
-                                /// Description
-                                Text(
-                                  taskDetail!.description,
-                                  textAlign: TextAlign.justify,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      lineHeight: 2,
-                                      fontWeight: FontWeight.normal),
-                                ),
+//                                 /// Uploaded Content
+//                                 widget.taskStatus != "rejected" &&
+//                                         widget.taskStatus != "Delayed" &&
+//                                         taskDetail!.mediaList.isNotEmpty
+//                                     ? Container(
+//                                         padding: EdgeInsets.symmetric(
+//                                             horizontal: size.width * numD04,
+//                                             vertical: size.width * numD04),
+//                                         decoration: BoxDecoration(
+//                                             color: colorLightGrey,
+//                                             borderRadius: BorderRadius.circular(
+//                                                 size.width * numD04)),
+//                                         child: Column(
+//                                           children: [
+//                                             Text(
+//                                               uploadedContentText,
+//                                               style: commonTextStyle(
+//                                                   size: size,
+//                                                   fontSize:
+//                                                       size.width * numD035,
+//                                                   color: Colors.black,
+//                                                   fontWeight: FontWeight.w600),
+//                                             ),
+//                                             SizedBox(
+//                                               height: size.width * numD04,
+//                                             ),
+//                                             GridView.builder(
+//                                               shrinkWrap: true,
+//                                               physics:
+//                                                   const NeverScrollableScrollPhysics(),
+//                                               gridDelegate:
+//                                                   SliverGridDelegateWithFixedCrossAxisCount(
+//                                                       crossAxisCount: 4,
+//                                                       mainAxisSpacing:
+//                                                           size.width * numD04,
+//                                                       crossAxisSpacing:
+//                                                           size.width * numD04),
+//                                               itemBuilder: (context, index) {
+//                                                 var item = taskDetail!
+//                                                     .mediaList[index];
+//                                                 return InkWell(
+//                                                   onTap: () {
+//                                                     if (item.type == "video") {
+//                                                       Navigator.push(
+//                                                           context,
+//                                                           MaterialPageRoute(
+//                                                               builder: (context) =>
+//                                                                   MediaViewScreen(
+//                                                                     mediaFile:
+//                                                                         taskMediaUrl +
+//                                                                             item.imageVideoUrl,
+//                                                                     type: MediaTypeEnum
+//                                                                         .video,
+//                                                                   )));
+//                                                     } else if (item.type ==
+//                                                         "audio") {
+//                                                       Navigator.push(
+//                                                           context,
+//                                                           MaterialPageRoute(
+//                                                               builder: (context) =>
+//                                                                   MediaViewScreen(
+//                                                                     mediaFile:
+//                                                                         taskMediaUrl +
+//                                                                             item.imageVideoUrl,
+//                                                                     type: MediaTypeEnum
+//                                                                         .audio,
+//                                                                   )));
+//                                                     } else {
+//                                                       Navigator.push(
+//                                                           context,
+//                                                           MaterialPageRoute(
+//                                                               builder: (context) =>
+//                                                                   ImagePreview(
+//                                                                     imageURL:
+//                                                                         taskMediaUrl +
+//                                                                             item.imageVideoUrl,
+//                                                                   )));
+//                                                     }
+//                                                   },
+//                                                   child: Stack(
+//                                                     children: [
+//                                                       ClipRRect(
+//                                                         borderRadius:
+//                                                             BorderRadius
+//                                                                 .circular(
+//                                                                     size.width *
+//                                                                         numD04),
+//                                                         child: item.type ==
+//                                                                 "audio"
+//                                                             ? Container(
+//                                                                 height:
+//                                                                     size.width *
+//                                                                         0.2,
+//                                                                 decoration:
+//                                                                     BoxDecoration(
+//                                                                   border: Border
+//                                                                       .all(
+//                                                                           color:
+//                                                                               colorGreyNew),
+//                                                                   borderRadius:
+//                                                                       BorderRadius.circular(
+//                                                                           size.width *
+//                                                                               numD04),
+//                                                                 ),
+//                                                                 child: Icon(
+//                                                                   Icons
+//                                                                       .play_circle,
+//                                                                   color:
+//                                                                       colorThemePink,
+//                                                                   size:
+//                                                                       size.width *
+//                                                                           0.17,
+//                                                                 ))
+//                                                             : Image.network(
+//                                                                 (item.type ==
+//                                                                         "video"
+//                                                                     ? mediaThumbnailUrl +
+//                                                                         item
+//                                                                             .imageVideoUrl
+//                                                                     : taskMediaUrl +
+//                                                                         item.imageVideoUrl),
+//                                                                 width:
+//                                                                     size.width /
+//                                                                         2,
+//                                                                 height: double
+//                                                                     .infinity,
+//                                                                 fit: BoxFit
+//                                                                     .cover,
+//                                                                 errorBuilder:
+//                                                                     (context,
+//                                                                         error,
+//                                                                         stackTrace) {
+//                                                                   return Image
+//                                                                       .asset(
+//                                                                     "${commonImagePath}rabbitLogo.png",
+//                                                                     width:
+//                                                                         size.width /
+//                                                                             2,
+//                                                                     height: double
+//                                                                         .infinity,
+//                                                                     fit: BoxFit
+//                                                                         .cover,
+//                                                                   );
+//                                                                 },
+//                                                               ),
+//                                                       ),
+//                                                       Positioned(
+//                                                         right:
+//                                                             size.width * numD02,
+//                                                         top:
+//                                                             size.width * numD02,
+//                                                         child: Container(
+//                                                             padding: EdgeInsets.symmetric(
+//                                                                 horizontal: size
+//                                                                         .width *
+//                                                                     numD01,
+//                                                                 vertical: size
+//                                                                         .width *
+//                                                                     0.002),
+//                                                             decoration: BoxDecoration(
+//                                                                 color: colorLightGreen
+//                                                                     .withOpacity(
+//                                                                         0.8),
+//                                                                 borderRadius: BorderRadius
+//                                                                     .circular(size
+//                                                                             .width *
+//                                                                         numD015)),
+//                                                             child: Icon(
+//                                                               item.type ==
+//                                                                       "audio"
+//                                                                   ? Icons
+//                                                                       .audiotrack
+//                                                                   : item.type ==
+//                                                                           "video"
+//                                                                       ? Icons
+//                                                                           .videocam_outlined
+//                                                                       : Icons
+//                                                                           .camera_alt_outlined,
+//                                                               size: size.width *
+//                                                                   numD05,
+//                                                               color:
+//                                                                   Colors.white,
+//                                                             )),
+//                                                       ),
+//                                                     ],
+//                                                   ),
+//                                                 );
+//                                               },
+//                                               itemCount:
+//                                                   taskDetail!.mediaList.length,
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       )
+//                                     : Container(),
 
-                                SizedBox(
-                                  height: taskDetail!.specialReq.isNotEmpty
-                                      ? size.width * numD01
-                                      : 0,
-                                ),
+//                                 SizedBox(
+//                                   height: size.width * numD1,
+//                                 ),
 
-                                /// Special Requirement
-                                Text(
-                                  taskDetail!.specialReq,
-                                  textAlign: TextAlign.justify,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      lineHeight: 2,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                SizedBox(
-                                  height: taskDetail!.specialReq.isNotEmpty
-                                      ? size.width * numD09
-                                      : 0,
-                                ),
+//                                 widget.taskStatus == 'accepted'
+//                                     ? Padding(
+//                                         padding: EdgeInsets.symmetric(
+//                                             horizontal: size.width * numD04,
+//                                             vertical: size.width * numD04),
+//                                         child: AnimatedButtonWidget(
+//                                           buttonText: manageTaskText,
+//                                           shouldRestartAnimation: false,
+//                                           size: size,
+//                                           onPressed: () {
+//                                             Navigator.push(
+//                                                 context,
+//                                                 MaterialPageRoute(
+//                                                     builder: (context) =>
+//                                                         BlocProvider(
+//                                                           create: (_) =>
+//                                                               sl<TaskBloc>(),
+//                                                           child:
+//                                                               ManageTaskScreen(
+//                                                             taskDetail:
+//                                                                 taskDetail!,
+//                                                             roomId: roomId,
+//                                                             type:
+//                                                                 'task_content',
+//                                                           ),
+//                                                         ))).then((value) => {
+//                                                   if (mounted)
+//                                                     _fetchTaskDetails()
+//                                                 });
+//                                           },
+//                                         ),
+//                                       )
+//                                     : Container(
+//                                         width: size.width,
+//                                         height: size.width * numD14,
+//                                         margin: EdgeInsets.symmetric(
+//                                             horizontal: size.width * numD04),
+//                                         child: ElevatedButton(
+//                                             style: ElevatedButton.styleFrom(
+//                                                 backgroundColor: Colors.black,
+//                                                 shape: RoundedRectangleBorder(
+//                                                     borderRadius:
+//                                                         BorderRadius.circular(
+//                                                             size.width *
+//                                                                 numD04))),
+//                                             onPressed: () {},
+//                                             child: Column(
+//                                               mainAxisSize: MainAxisSize.min,
+//                                               children: [
+//                                                 Text(
+//                                                   youHaveEarnedText,
+//                                                   style: commonTextStyle(
+//                                                       size: size,
+//                                                       fontSize:
+//                                                           size.width * numD035,
+//                                                       color: Colors.white,
+//                                                       fontWeight:
+//                                                           FontWeight.w700),
+//                                                 ),
+//                                                 Text(
+//                                                   "${currencySymbol}0",
+//                                                   style: commonTextStyle(
+//                                                       size: size,
+//                                                       fontSize:
+//                                                           size.width * numD065,
+//                                                       color: Colors.white,
+//                                                       fontWeight:
+//                                                           FontWeight.w700),
+//                                                 ),
+//                                               ],
+//                                             )),
+//                                       ),
 
-                                /// Price Offer
-                                Visibility(
-                                    visible: widget.taskStatus != "rejected",
-                                    child: priceOfferWidget()),
+//                                 SizedBox(
+//                                   height: size.width * numD02,
+//                                 ),
+//                                 Align(
+//                                   alignment: Alignment.center,
+//                                   child: TextButton(
+//                                       onPressed: () {
+//                                         Navigator.of(context).push(
+//                                             MaterialPageRoute(
+//                                                 builder: (context) =>
+//                                                     MyEarningScreen(
+//                                                       openDashboard: false,
+//                                                       initialTapPosition: 0,
+//                                                     )));
+//                                       },
+//                                       child: Text(
+//                                         viewYourEarnings,
+//                                         style: commonTextStyle(
+//                                             size: size,
+//                                             fontSize: size.width * numD036,
+//                                             color: colorThemePink,
+//                                             fontWeight: FontWeight.w500),
+//                                       )),
+//                                 ),
+//                               ]),
+//                         ))));
+//           }
+//           return const SizedBox.shrink();
+//         },
+//       ),
+//     );
+//   }
 
-                                SizedBox(
-                                  height: size.width * numD04,
-                                ),
+//   /// Price Offer widget
+//   Widget priceOfferWidget() {
+//     return Column(
+//       children: [
+//         const Divider(
+//           color: colorGrey1,
+//         ),
+//         SizedBox(
+//           height: size.width * numD05,
+//         ),
 
-                                /// Uploaded Content
-                                widget.taskStatus != "rejected" &&
-                                        widget.taskStatus != "Delayed" &&
-                                        taskDetail!.mediaList.isNotEmpty
-                                    ? Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD04,
-                                            vertical: size.width * numD04),
-                                        decoration: BoxDecoration(
-                                            color: colorLightGrey,
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04)),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              uploadedContentText,
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD035,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            SizedBox(
-                                              height: size.width * numD04,
-                                            ),
-                                            GridView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              gridDelegate:
-                                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                                      crossAxisCount: 4,
-                                                      mainAxisSpacing:
-                                                          size.width * numD04,
-                                                      crossAxisSpacing:
-                                                          size.width * numD04),
-                                              itemBuilder: (context, index) {
-                                                var item = taskDetail!
-                                                    .mediaList[index];
-                                                return InkWell(
-                                                  onTap: () {
-                                                    if (item.type == "video") {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  MediaViewScreen(
-                                                                    mediaFile:
-                                                                        taskMediaUrl +
-                                                                            item.imageVideoUrl,
-                                                                    type: MediaTypeEnum
-                                                                        .video,
-                                                                  )));
-                                                    } else if (item.type ==
-                                                        "audio") {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  MediaViewScreen(
-                                                                    mediaFile:
-                                                                        taskMediaUrl +
-                                                                            item.imageVideoUrl,
-                                                                    type: MediaTypeEnum
-                                                                        .audio,
-                                                                  )));
-                                                    } else {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  ImagePreview(
-                                                                    imageURL:
-                                                                        taskMediaUrl +
-                                                                            item.imageVideoUrl,
-                                                                  )));
-                                                    }
-                                                  },
-                                                  child: Stack(
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    size.width *
-                                                                        numD04),
-                                                        child: item.type ==
-                                                                "audio"
-                                                            ? Container(
-                                                                height:
-                                                                    size.width *
-                                                                        0.2,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border
-                                                                      .all(
-                                                                          color:
-                                                                              colorGreyNew),
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          size.width *
-                                                                              numD04),
-                                                                ),
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .play_circle,
-                                                                  color:
-                                                                      colorThemePink,
-                                                                  size:
-                                                                      size.width *
-                                                                          0.17,
-                                                                ))
-                                                            : Image.network(
-                                                                (item.type ==
-                                                                        "video"
-                                                                    ? mediaThumbnailUrl +
-                                                                        item
-                                                                            .imageVideoUrl
-                                                                    : taskMediaUrl +
-                                                                        item.imageVideoUrl),
-                                                                width:
-                                                                    size.width /
-                                                                        2,
-                                                                height: double
-                                                                    .infinity,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                errorBuilder:
-                                                                    (context,
-                                                                        error,
-                                                                        stackTrace) {
-                                                                  return Image
-                                                                      .asset(
-                                                                    "${commonImagePath}rabbitLogo.png",
-                                                                    width:
-                                                                        size.width /
-                                                                            2,
-                                                                    height: double
-                                                                        .infinity,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  );
-                                                                },
-                                                              ),
-                                                      ),
-                                                      Positioned(
-                                                        right:
-                                                            size.width * numD02,
-                                                        top:
-                                                            size.width * numD02,
-                                                        child: Container(
-                                                            padding: EdgeInsets.symmetric(
-                                                                horizontal: size
-                                                                        .width *
-                                                                    numD01,
-                                                                vertical: size
-                                                                        .width *
-                                                                    0.002),
-                                                            decoration: BoxDecoration(
-                                                                color: colorLightGreen
-                                                                    .withOpacity(
-                                                                        0.8),
-                                                                borderRadius: BorderRadius
-                                                                    .circular(size
-                                                                            .width *
-                                                                        numD015)),
-                                                            child: Icon(
-                                                              item.type ==
-                                                                      "audio"
-                                                                  ? Icons
-                                                                      .audiotrack
-                                                                  : item.type ==
-                                                                          "video"
-                                                                      ? Icons
-                                                                          .videocam_outlined
-                                                                      : Icons
-                                                                          .camera_alt_outlined,
-                                                              size: size.width *
-                                                                  numD05,
-                                                              color:
-                                                                  Colors.white,
-                                                            )),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                              itemCount:
-                                                  taskDetail!.mediaList.length,
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : Container(),
+//         /// Price Offer
+//         Row(
+//           children: [
+//             Expanded(
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     taskDetail!.isNeedPhoto
+//                         ? "$currencySymbol${taskDetail!.photoPrice}"
+//                         : "-",
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * numD06,
+//                         color: colorThemePink,
+//                         fontWeight: FontWeight.w700),
+//                   ),
+//                   Text(
+//                     offeredText,
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * numD035,
+//                         color: colorHint,
+//                         fontWeight: FontWeight.w700),
+//                   ),
+//                   SizedBox(
+//                     height: size.width * numD04,
+//                   ),
+//                   Container(
+//                     padding: EdgeInsets.symmetric(
+//                         horizontal: size.width * numD04,
+//                         vertical: size.width * numD02),
+//                     decoration: BoxDecoration(
+//                         color: colorLightGrey,
+//                         borderRadius:
+//                             BorderRadius.circular(size.width * numD02)),
+//                     child: Text(
+//                       photoText,
+//                       style: commonTextStyle(
+//                           size: size,
+//                           fontSize: size.width * numD035,
+//                           color: Colors.black,
+//                           fontWeight: FontWeight.w700),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Expanded(
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     taskDetail!.isNeedInterview
+//                         ? "$currencySymbol${taskDetail!.interviewPrice}"
+//                         : "-",
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * numD06,
+//                         color: colorThemePink,
+//                         fontWeight: FontWeight.w700),
+//                   ),
+//                   Text(
+//                     offeredText,
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * numD035,
+//                         color: colorHint,
+//                         fontWeight: FontWeight.w700),
+//                   ),
+//                   SizedBox(
+//                     height: size.width * numD04,
+//                   ),
+//                   Container(
+//                     padding: EdgeInsets.symmetric(
+//                         horizontal: size.width * numD04,
+//                         vertical: size.width * numD02),
+//                     decoration: BoxDecoration(
+//                         color: colorLightGrey,
+//                         borderRadius:
+//                             BorderRadius.circular(size.width * numD02)),
+//                     child: Text(
+//                       interviewText,
+//                       style: commonTextStyle(
+//                           size: size,
+//                           fontSize: size.width * numD035,
+//                           color: Colors.black,
+//                           fontWeight: FontWeight.w700),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Expanded(
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     taskDetail!.isNeedVideo
+//                         ? "$currencySymbol${taskDetail!.videoPrice}"
+//                         : "-",
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * numD06,
+//                         color: colorThemePink,
+//                         fontWeight: FontWeight.w700),
+//                   ),
+//                   Text(
+//                     offeredText,
+//                     style: commonTextStyle(
+//                         size: size,
+//                         fontSize: size.width * numD035,
+//                         color: colorHint,
+//                         fontWeight: FontWeight.w700),
+//                   ),
+//                   SizedBox(
+//                     height: size.width * numD04,
+//                   ),
+//                   Container(
+//                     padding: EdgeInsets.symmetric(
+//                         horizontal: size.width * numD04,
+//                         vertical: size.width * numD02),
+//                     decoration: BoxDecoration(
+//                         color: colorLightGrey,
+//                         borderRadius:
+//                             BorderRadius.circular(size.width * numD02)),
+//                     child: Text(
+//                       videoText,
+//                       style: commonTextStyle(
+//                           size: size,
+//                           fontSize: size.width * numD035,
+//                           color: Colors.black,
+//                           fontWeight: FontWeight.w700),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             )
+//           ],
+//         ),
 
-                                SizedBox(
-                                  height: size.width * numD1,
-                                ),
+//         SizedBox(
+//           height: size.width * numD05,
+//         ),
 
-                                widget.taskStatus != "rejected"
-                                    ? Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD05),
-                                        child: commonElevatedButton(
-                                            manageTaskText,
-                                            size,
-                                            commonButtonTextStyle(size),
-                                            commonButtonStyle(
-                                                size, Colors.black), () {
-                                          debugPrint(
-                                              "taskDetail:::::::${taskDetail!.title}");
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BlocProvider<TaskBloc>(
-                                                        create: (_) =>
-                                                            sl<TaskBloc>(),
-                                                        child: ManageTaskScreen(
-                                                          taskDetail:
-                                                              taskDetail!,
-                                                          roomId: roomId,
-                                                          type: 'task_content',
-                                                        ),
-                                                      )))
-                                              .then((value) => {
-                                                    if (mounted)
-                                                      _fetchTaskDetails()
-                                                  });
-                                        }),
-                                      )
-                                    : Container(
-                                        width: size.width,
-                                        height: size.width * numD14,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD04),
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.black,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD04))),
-                                            onPressed: () {},
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  youHaveEarnedText,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD035,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                                ),
-                                                Text(
-                                                  "${currencySymbol}0",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD065,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                                ),
-                                              ],
-                                            )),
-                                      ),
+//         const Divider(
+//           color: colorGrey1,
+//         ),
+//       ],
+//     );
+//   }
 
-                                SizedBox(
-                                  height: size.width * numD02,
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MyEarningScreen(
-                                                      openDashboard: false,
-                                                      initialTapPosition: 0,
-                                                    )));
-                                      },
-                                      child: Text(
-                                        viewYourEarnings,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD036,
-                                            color: colorThemePink,
-                                            fontWeight: FontWeight.w500),
-                                      )),
-                                ),
-                              ]),
-                        ))));
-          }
-          return const SizedBox.shrink();
-        },
-      ),
-    );
-  }
+//   /// Initialize Map icon
+//   void getAllIcons() async {
+//     mapIcon = await BitmapDescriptor.fromAssetImage(
+//         const ImageConfiguration(size: Size(5, 5)),
+//         "${commonImagePath}ic_cover_radius.png");
+//   }
 
-  /// Price Offer widget
-  Widget priceOfferWidget() {
-    return Column(
-      children: [
-        const Divider(
-          color: colorGrey1,
-        ),
-        SizedBox(
-          height: size.width * numD05,
-        ),
+//   /// Update Map Location
+//   Future<void> _updateGoogleMap(LatLng latLng) async {
+//     final GoogleMapController controller = await _controller.future;
+//     marker.add(Marker(
+//       markerId: const MarkerId("1"),
+//       position: latLng,
+//       icon: mapIcon!,
+//     ));
+//     controller.animateCamera(CameraUpdate.newLatLngZoom(
+//         LatLng(latLng.latitude, latLng.longitude), 14));
+//     setState(() {});
+//   }
 
-        /// Price Offer
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    taskDetail!.isNeedPhoto
-                        ? "$currencySymbol${taskDetail!.photoPrice}"
-                        : "-",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD06,
-                        color: colorThemePink,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    offeredText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: colorHint,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD02),
-                    decoration: BoxDecoration(
-                        color: colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD02)),
-                    child: Text(
-                      photoText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    taskDetail!.isNeedInterview
-                        ? "$currencySymbol${taskDetail!.interviewPrice}"
-                        : "-",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD06,
-                        color: colorThemePink,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    offeredText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: colorHint,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD02),
-                    decoration: BoxDecoration(
-                        color: colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD02)),
-                    child: Text(
-                      interviewText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    taskDetail!.isNeedVideo
-                        ? "$currencySymbol${taskDetail!.videoPrice}"
-                        : "-",
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD06,
-                        color: colorThemePink,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    offeredText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: colorHint,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD02),
-                    decoration: BoxDecoration(
-                        color: colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD02)),
-                    child: Text(
-                      videoText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+//   /// Current Lat Lng
+//   void getCurrentLocation() async {
+//     bool serviceEnable = await checkGps();
+//     bool locationEnable = await locationPermission();
+//     if (serviceEnable && locationEnable) {
+//       LocationData loc = await Location.instance.getLocation();
+//       setState(() {
+//         _latLng = LatLng(loc.latitude!, loc.longitude!);
+//         debugPrint("_longitude: $_latLng");
+//       });
+//     } else {
+//       showSnackBar(
+//           "Permission Denied", "Please Allow Location permission", Colors.red);
+//     }
+//   }
 
-        SizedBox(
-          height: size.width * numD05,
-        ),
+//   openUrl() async {
+//     String googleUrl = isDirection
+//         ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
+//             '${_latLng!.longitude}&destination=${taskDetail!.latitude},'
+//             '${taskDetail!.longitude}&travelmode=driving&dir_action=navigate'
+//         : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.latitude},${taskDetail!.longitude}';
 
-        const Divider(
-          color: colorGrey1,
-        ),
-      ],
-    );
-  }
+//     String appleUrl = isDirection
+//         ? 'http://maps.apple.com/maps?saddr=${_latLng!.latitude},'
+//             '${_latLng!.longitude}&daddr=${taskDetail!.latitude},'
+//             '${taskDetail!.longitude}'
+//         : 'http://maps.apple.com/?q=${taskDetail!.latitude},'
+//             '${taskDetail!.longitude}';
+//     if (await canLaunchUrl(Uri.parse(googleUrl))) {
+//       debugPrint('launching com googleUrl');
+//       await launchUrl(Uri.parse(googleUrl),
+//           mode: LaunchMode.externalApplication);
+//     } else if (await canLaunchUrl(Uri.parse(appleUrl))) {
+//       debugPrint('launching apple url');
+//       await launchUrl(Uri.parse(appleUrl),
+//           mode: LaunchMode.externalApplication);
+//     } else {
+//       throw 'Could not launch url';
+//     }
+//   }
 
-  /// Initialize Map icon
-  void getAllIcons() async {
-    mapIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)),
-        "${commonImagePath}ic_cover_radius.png");
-  }
-
-  /// Update Map Location
-  Future<void> _updateGoogleMap(LatLng latLng) async {
-    final GoogleMapController controller = await _controller.future;
-    marker.add(Marker(
-      markerId: const MarkerId("1"),
-      position: latLng,
-      icon: mapIcon!,
-    ));
-    controller.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(latLng.latitude, latLng.longitude), 14));
-    setState(() {});
-  }
-
-  /// Current Lat Lng
-  void getCurrentLocation() async {
-    bool serviceEnable = await checkGps();
-    bool locationEnable = await locationPermission();
-    if (serviceEnable && locationEnable) {
-      LocationData loc = await Location.instance.getLocation();
-      setState(() {
-        _latLng = LatLng(loc.latitude!, loc.longitude!);
-        debugPrint("_longitude: $_latLng");
-      });
-    } else {
-      showSnackBar(
-          "Permission Denied", "Please Allow Location permission", Colors.red);
-    }
-  }
-
-  openUrl() async {
-    String googleUrl = isDirection
-        ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
-            '${_latLng!.longitude}&destination=${taskDetail!.latitude},'
-            '${taskDetail!.longitude}&travelmode=driving&dir_action=navigate'
-        : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.latitude},${taskDetail!.longitude}';
-
-    String appleUrl = isDirection
-        ? 'http://maps.apple.com/maps?saddr=${_latLng!.latitude},'
-            '${_latLng!.longitude}&daddr=${taskDetail!.latitude},'
-            '${taskDetail!.longitude}'
-        : 'http://maps.apple.com/?q=${taskDetail!.latitude},'
-            '${taskDetail!.longitude}';
-    if (await canLaunchUrl(Uri.parse(googleUrl))) {
-      debugPrint('launching com googleUrl');
-      await launchUrl(Uri.parse(googleUrl),
-          mode: LaunchMode.externalApplication);
-    } else if (await canLaunchUrl(Uri.parse(appleUrl))) {
-      debugPrint('launching apple url');
-      await launchUrl(Uri.parse(appleUrl),
-          mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch url';
-    }
-  }
-}
+//   bool isTimeOver() {
+//     var extraTime = taskDetail!.deadLine.add(const Duration(hours: 3));
+//     if (extraTime.difference(DateTime.now()).inSeconds < 0) {
+//       return true;
+//     }
+//     return false;
+//   }
+// }

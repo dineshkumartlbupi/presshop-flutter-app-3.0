@@ -157,30 +157,30 @@ class _NewsPageState extends State<NewsPage> {
                 ),
               ),
             ),
-            // Most Viewed Badge (assuming isMostViewed is not in News entity, using viewCount logic or omitting)
-            // if (item.viewCount != null && item.viewCount! > 1000) // Example logic
-            //   Positioned(
-            //     left: size.width * numD03,
-            //     bottom: size.width * numD03,
-            //     child: Container(
-            //       padding: EdgeInsets.symmetric(
-            //           horizontal: size.width * numD03,
-            //           vertical: size.width * numD015),
-            //       decoration: BoxDecoration(
-            //         color: colorThemePink,
-            //         borderRadius: BorderRadius.circular(size.width * numD05),
-            //       ),
-            //       child: Text(
-            //         "Most viewed",
-            //         style: TextStyle(
-            //           color: Colors.white,
-            //           fontSize: size.width * numD03,
-            //           fontWeight: FontWeight.w600,
-            //           fontFamily: "AirbnbCereal",
-            //         ),
-            //       ),
-            //     ),
-            //   ),
+            // Most Viewed Badge
+            if (item.isMostViewed ?? false)
+              Positioned(
+                left: size.width * numD03,
+                bottom: size.width * numD03,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * numD03,
+                      vertical: size.width * numD015),
+                  decoration: BoxDecoration(
+                    color: colorThemePink,
+                    borderRadius: BorderRadius.circular(size.width * numD05),
+                  ),
+                  child: Text(
+                    "Most viewed",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: size.width * numD03,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "AirbnbCereal",
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
         SizedBox(height: size.width * numD03),
@@ -469,27 +469,31 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   void _showFilterBottomSheet(BuildContext context, Size size) {
+    final newsBloc = context.read<NewsBloc>();
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
-        return _FilterBottomSheetContent(
-          size: size,
-          initialAlertType: 'Alert',
-          initialDistance: '2 miles',
-          initialCategory: 'Category',
-          onApply: (alertType, distance, category) {
-            double km = _convertDistanceToKm(distance);
-            context.read<NewsBloc>().add(GetAggregatedNewsEvent(
-                  lat: 0, // TODO: Use real location
-                  lng: 0,
-                  km: km,
-                  category: category == 'Category' ? 'all' : category,
-                  alertType: alertType == 'Alert' ? null : alertType,
-                ));
-            Navigator.pop(context);
-          },
+        return BlocProvider.value(
+          value: newsBloc,
+          child: _FilterBottomSheetContent(
+            size: size,
+            initialAlertType: 'Alert',
+            initialDistance: '2 miles',
+            initialCategory: 'Category',
+            onApply: (alertType, distance, category) {
+              double km = _convertDistanceToKm(distance);
+              newsBloc.add(GetAggregatedNewsEvent(
+                lat: 0, // TODO: Use real location
+                lng: 0,
+                km: km,
+                category: category == 'Category' ? 'all' : category,
+                alertType: alertType == 'Alert' ? null : alertType,
+              ));
+              Navigator.pop(context);
+            },
+          ),
         );
       },
     );

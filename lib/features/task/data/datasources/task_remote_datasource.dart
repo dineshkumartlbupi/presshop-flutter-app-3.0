@@ -76,7 +76,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       required String mediaHouseId,
       required String status}) async {
     try {
-      final response = await apiClient.post(ApiConstantsNew.tasks.acceptRejectTask, data: {
+      final response = await apiClient
+          .post(ApiConstantsNew.tasks.acceptRejectTask, data: {
         "task_id": taskId,
         "media_house_id": mediaHouseId,
         "task_status": status

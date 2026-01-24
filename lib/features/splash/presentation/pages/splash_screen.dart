@@ -98,6 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
           if (state is SplashAuthenticated) {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
+                settings: const RouteSettings(name: '/dashboard'),
                 builder: (_) => Dashboard(
                   initialPosition: 2,
                   openChatScreen: openChatScreen,
@@ -108,12 +109,16 @@ class _SplashScreenState extends State<SplashScreen>
             );
           } else if (state is SplashUnauthenticated) {
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              MaterialPageRoute(
+                  settings: const RouteSettings(name: '/login'),
+                  builder: (_) => const LoginScreen()),
               (route) => false,
             );
           } else if (state is SplashNavigateToOnboarding) {
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const Walkthrough()),
+              MaterialPageRoute(
+                  settings: const RouteSettings(name: '/walkthrough'),
+                  builder: (_) => const Walkthrough()),
               (route) => false,
             );
           } else if (state is SplashForceUpdate) {

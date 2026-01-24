@@ -142,3 +142,33 @@ class StartNavigationEvent extends MapEvent {}
 class StopNavigationEvent extends MapEvent {}
 
 class ToggleGetDirectionCardEvent extends MapEvent {}
+
+class SetDestinationSelectionModeEvent extends MapEvent {
+  final bool isSelectionMode;
+  final bool isOrigin;
+
+  const SetDestinationSelectionModeEvent({
+    required this.isSelectionMode,
+    this.isOrigin = false,
+  });
+
+  @override
+  List<Object> get props => [isSelectionMode, isOrigin];
+}
+
+class ClearRouteEvent extends MapEvent {}
+
+class UpdatePulseCircleEvent extends MapEvent {
+  final double radiusMultiplier;
+  final double opacity;
+  final double zoomLevel;
+
+  const UpdatePulseCircleEvent({
+    required this.radiusMultiplier,
+    required this.opacity,
+    required this.zoomLevel,
+  });
+
+  @override
+  List<Object> get props => [radiusMultiplier, opacity, zoomLevel];
+}

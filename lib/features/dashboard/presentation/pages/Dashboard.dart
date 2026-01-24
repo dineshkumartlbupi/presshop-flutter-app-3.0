@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
@@ -118,6 +119,7 @@ class DashboardState extends State<Dashboard>
   @override
   @override
   void initState() {
+    GlobalLoader.forceHide();
     _dashboardBloc = sl<DashboardBloc>();
     myProfileApi();
 
@@ -560,7 +562,9 @@ class DashboardState extends State<Dashboard>
                       : (versionData['iOSshouldForceUpdate'] ?? false);
                   if (shouldUpdate) forceUpdateCheck();
                 } else {
-                  showSnackBar(map["message"], "error", Colors.red);
+                  debugPrint("Version check failed: ${map["message"]}");
+                  // showSnackBar(
+                  //    map["message"] ?? "Unknown error", "error", Colors.red);
                 }
               } else if (state is DashboardTaskDetailLoaded) {
                 var task = (state).taskDetail;

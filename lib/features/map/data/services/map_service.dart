@@ -103,4 +103,18 @@ class MapService {
     final duration = MapUtils.calculateDuration(distance);
     return '${distance.toStringAsFixed(2)} km • $duration';
   }
+
+  Future<String> getAddressFromCoordinates(LatLng position) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$googleApiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+        return data['results'][0]['formatted_address'] as String;
+      }
+    }
+    return '${position.latitude.toStringAsFixed(6)}, ${position.longitude.toStringAsFixed(6)}';
+  }
 }

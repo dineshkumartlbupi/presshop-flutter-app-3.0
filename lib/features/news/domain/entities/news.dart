@@ -13,6 +13,7 @@ class News extends Equatable {
   final int? sharesCount;
   final int? viewCount;
   final bool? isLiked;
+  final bool? isMostViewed;
   final String? userImage;
   final String? userName;
   final double? latitude;
@@ -31,6 +32,7 @@ class News extends Equatable {
     this.sharesCount,
     this.viewCount,
     this.isLiked,
+    this.isMostViewed,
     this.userImage,
     this.userName,
     this.latitude,
@@ -50,6 +52,7 @@ class News extends Equatable {
     int? sharesCount,
     int? viewCount,
     bool? isLiked,
+    bool? isMostViewed,
     String? userImage,
     String? userName,
   }) {
@@ -66,6 +69,7 @@ class News extends Equatable {
       sharesCount: sharesCount ?? this.sharesCount,
       viewCount: viewCount ?? this.viewCount,
       isLiked: isLiked ?? this.isLiked,
+      isMostViewed: isMostViewed ?? this.isMostViewed,
       userImage: userImage ?? this.userImage,
       userName: userName ?? this.userName,
     );
@@ -85,6 +89,7 @@ class News extends Equatable {
         sharesCount,
         viewCount,
         isLiked,
+        isMostViewed,
         userImage,
         userName,
       ];

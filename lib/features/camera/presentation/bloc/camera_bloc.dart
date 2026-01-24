@@ -119,13 +119,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       final controller = CameraController(
         cameraDescription,
-        ResolutionPreset.high, // Changed from max to high to fix buffer issues
+        ResolutionPreset.medium, // Changed to medium for compatibility
         imageFormatGroup: ImageFormatGroup.jpeg,
         enableAudio: true,
       );
 
       try {
         await controller.initialize();
+        // Explicitly start preview to avoid black screen on some devices
+        await controller.resumePreview();
+
         emit(state.copyWith(
           status: CameraStatus.ready,
           cameraController: controller,
@@ -146,7 +149,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
 
     // Load Gallery
-    add(LoadGalleryMediaEvent());
+    if (!isClosed) {
+      add(LoadGalleryMediaEvent());
+    }
   }
 
   Future<void> _onLifecycleEvent(

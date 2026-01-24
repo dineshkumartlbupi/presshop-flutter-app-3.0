@@ -15,32 +15,54 @@ class ApiConstantsNew {
 
 class Config {
   const Config();
-  static const int env = 2;
-
-  String get baseUrl => env == 2
-      ? "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/"
-      : "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
+  static const int env = 1;
+  String get baseUrl =>
+      "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev/api/";
+  // String get baseUrl =>
+  //     "https://funnellike-subangular-sulema.ngrok-free.dev/api/";
 
   String get adminBaseUrl => "https://dev-api.presshop.news:5020/";
-  String get mediaBaseUrl => "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+  String get mediaBaseUrl =>
+      "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
   String get socketUrl => "https://dev-api.presshop.news:3005";
 
   // External Services
-  String get googleMapURL => "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-  String get googlePlaceDetailsURL => "https://maps.googleapis.com/maps/api/place/details/json";
+  String get googleMapURL =>
+      "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+  String get googlePlaceDetailsURL =>
+      "https://maps.googleapis.com/maps/api/place/details/json";
 
   // Media Paths
   String get profileImageUrl => "${mediaBaseUrl}userImages/";
   String get docImageUrl => "${mediaBaseUrl}docToBecomePro/";
   String get adminProfileUrl => "${mediaBaseUrl}adminImages/";
-  String get contentImageUrl => "https://dev-cdn.presshop.news/public/contentData/";
-  String get imageUrlBefore => "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
-  String get taskMediaUrl => "https://dev-cdn.presshop.news/public/uploadContent/";
-  String get mediaThumbnailUrl => "https://dev-cdn.presshop.news/public/thumbnail/";
+  String get contentImageUrl =>
+      "https://dev-cdn.presshop.news/public/contentData/";
+  String get imageUrlBefore =>
+      "https://dev-api.presshop.news/presshop_rest_apis/public/contentData/";
+  String get taskMediaUrl =>
+      "https://dev-cdn.presshop.news/public/uploadContent/";
+  String get mediaThumbnailUrl =>
+      "https://dev-cdn.presshop.news/public/thumbnail/";
 
   // API Keys
-  String get googleMapApiKey => dotenv.get('GOOGLE_MAP_API_KEY', fallback: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI');
-  String get appleMapApiKey => dotenv.get('APPLE_MAP_API_KEY', fallback: '');
+  String get googleMapApiKey {
+    try {
+      return dotenv.get('GOOGLE_MAP_API_KEY',
+          fallback: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI');
+    } catch (_) {
+      return 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI';
+    }
+  }
+
+  String get appleMapApiKey {
+    try {
+      return dotenv.get('APPLE_MAP_API_KEY',
+          fallback: 'AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw');
+    } catch (_) {
+      return 'AIzaSyA0ZDsoYkDf4Dkh_jOCBzWBAIq5w6sk8gw';
+    }
+  }
 
   String get appUrl => Platform.isAndroid
       ? 'https://play.google.com/store/apps/details?id=com.presshop.app'
@@ -177,6 +199,7 @@ class Chat {
   final String getOfferPaymentChat = "hopper/get-offer-payment-chat";
   final String sendChatInitToAdmin = "hopper/sendChatInitiatedMailToAdmin";
   final String allAlerts = "hopper/getHopperAlertList?";
+  final String getAlertIncidents = "hopper/getAlertIncidents";
 }
 
 class Misc {

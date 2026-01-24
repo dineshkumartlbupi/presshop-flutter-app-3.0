@@ -13,7 +13,7 @@ class ForceUpdateRepository {
 
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: baseUrl,
+      baseUrl: ApiConstantsNew.config.baseUrl,
       connectTimeout: Duration(seconds: 20),
       receiveTimeout: Duration(seconds: 20),
     ),

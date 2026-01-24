@@ -5,14 +5,19 @@ import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/domain/entities/map_marker.dart';
+import 'package:presshop/features/map/data/models/marker_model.dart';
+import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 abstract class MapRemoteDataSource {
   Future<RouteInfo> getRoute(LatLng start, LatLng end);
   Future<List<Map<String, dynamic>>> getPlaceSuggestions(String input);
   Future<LatLng> getPlaceDetails(String placeId);
   Future<LatLng> getCurrentLocation();
-  Future<List<MapMarker>> getIncidents();
+  Future<List<Incident>> getIncidents();
   Future<void> reportIncident(Map<String, dynamic> data);
+  Future<String> getAddressFromCoordinates(LatLng position);
 }
 
 class MapRemoteDataSourceImpl implements MapRemoteDataSource {
@@ -80,13 +85,37 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
   }
 
   @override
-  Future<List<MapMarker>> getIncidents() async {
-    // Mock implementation
-    return [];
+  Future<List<Incident>> getIncidents() async {
+    try {
+      final response = await apiClient.get(
+        ApiConstantsNew
+            .chat.getAlertIncidents, // Use Chat class where we added it
+      );
+
+      final List<dynamic> data = response.data;
+      return data.map((json) => Incident.fromJson(json)).toList();
+    } catch (e) {
+      throw ApiErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<void> reportIncident(Map<String, dynamic> data) async {
     // Mock implementation
+  }
+
+  @override
+  Future<String> getAddressFromCoordinates(LatLng position) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$googleApiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+        return data['results'][0]['formatted_address'] as String;
+      }
+    }
+    return "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
   }
 }

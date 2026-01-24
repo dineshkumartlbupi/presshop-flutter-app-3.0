@@ -62,18 +62,17 @@ class SocketService {
 
     // Listen for incident events
     socket.on("incident:new", (data) {
-      debugPrint("Socket: incident:new received");
+      debugPrint("Socket: incident:new received $data");
       onIncidentNew?.call(data);
     });
 
     socket.on("incident:updated", (data) {
-      debugPrint("Socket: incident:updated received");
+      debugPrint("Socket: incident:updated received $data");
       onIncidentUpdated?.call(data);
     });
 
     socket.on("incident:created", (data) {
-      debugPrint("Socket: incident:created receisdfdsved");
-      debugPrint("incident:created: $data");
+      debugPrint("Socket: incident:created received $data");
 
       onIncidentCreated?.call(data);
     });
@@ -104,6 +103,7 @@ class SocketService {
     required String alertType,
     required LatLng position,
     String message = "",
+    String address = "",
     required String userId,
   }) {
     debugPrint(":::: Inside Socket Emit Alert :::::");
@@ -115,6 +115,7 @@ class SocketService {
       "lat": position.latitude,
       "lng": position.longitude,
       "severity": "low",
+      "address": address,
     };
 
     debugPrint("Emit Socket Alert : $data");

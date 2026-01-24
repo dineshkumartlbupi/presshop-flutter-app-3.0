@@ -26,7 +26,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   Future<void> _onAppStarted(
       AppStarted event, Emitter<SplashState> emit) async {
     emit(SplashLoading());
-    await Future.delayed(const Duration(seconds: 2));
 
     // Check App Version
     final versionResult = await checkAppVersion(NoParams());

@@ -12,6 +12,7 @@ class MapState extends Equatable {
   final Set<Circle> circles;
   final bool showAlertPanel;
   final bool showGetDirectionCard;
+  final String? myLocationAddress;
   final LatLng? destination;
   final RouteInfo? routeInfo;
   final Incident? selectedIncident;
@@ -49,6 +50,7 @@ class MapState extends Equatable {
     this.circles = const {},
     this.showAlertPanel = false,
     this.showGetDirectionCard = false,
+    this.myLocationAddress,
     this.destination,
     this.routeInfo,
     this.selectedIncident,
@@ -86,6 +88,7 @@ class MapState extends Equatable {
     Set<Circle>? circles,
     bool? showAlertPanel,
     bool? showGetDirectionCard,
+    String? myLocationAddress,
     LatLng? destination,
     RouteInfo? routeInfo,
     Incident? selectedIncident,
@@ -134,6 +137,7 @@ class MapState extends Equatable {
       circles: circles ?? this.circles,
       showAlertPanel: showAlertPanel ?? this.showAlertPanel,
       showGetDirectionCard: showGetDirectionCard ?? this.showGetDirectionCard,
+      myLocationAddress: myLocationAddress ?? this.myLocationAddress,
       destination: clearDestination ? null : (destination ?? this.destination),
       routeInfo: clearRouteInfo ? null : (routeInfo ?? this.routeInfo),
       selectedIncident: clearSelectedIncident
@@ -199,6 +203,7 @@ class MapState extends Equatable {
         circles,
         showAlertPanel,
         showGetDirectionCard,
+        myLocationAddress,
         destination,
         routeInfo,
         selectedIncident,

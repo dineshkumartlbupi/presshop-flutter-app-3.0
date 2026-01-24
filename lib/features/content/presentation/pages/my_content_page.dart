@@ -669,7 +669,7 @@ class _MyContentViewState extends State<MyContentView>
         }
 
         if (state is ContentLoading && page == 1 && myContentList.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          // return const Center(child: CircularProgressIndicator());
         }
 
         if (myContentList.isEmpty && state is! ContentLoading) {

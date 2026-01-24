@@ -7,6 +7,8 @@ class GlobalLoader {
   static bool _isLoading = false;
 
   static void show() {
+    debugPrint(
+        "🐰 GlobalLoader.show() called from:\n${StackTrace.current.toString().split('\n').take(3).join('\n')}");
     _requestCount++;
     if (!_isLoading) {
       _isLoading = true;

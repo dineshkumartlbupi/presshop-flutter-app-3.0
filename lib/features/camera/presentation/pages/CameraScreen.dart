@@ -136,6 +136,13 @@ class CameraScreenState extends State<CameraScreen>
               _minAvailableZoom =
                   await state.cameraController!.getMinZoomLevel();
               if (mounted) setState(() {});
+
+              // Force resume preview on UI side to prevent black screen
+              try {
+                await state.cameraController!.resumePreview();
+              } catch (e) {
+                debugPrint("Error resuming preview in UI: $e");
+              }
             } catch (e) {
               debugPrint("Error getting camera info: $e");
             }
@@ -509,6 +516,30 @@ class CameraScreenState extends State<CameraScreen>
 
   Widget _buildCameraPreview(
       BuildContext context, CameraState state, Size size) {
+    if (state.status == CameraStatus.failure) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 50, color: Colors.grey),
+            const SizedBox(height: 10),
+            Text(
+                state.errorMessage.isNotEmpty
+                    ? state.errorMessage
+                    : "Camera not found",
+                style: const TextStyle(color: Colors.black)),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                context.read<CameraBloc>().add(CameraInitializeEvent());
+              },
+              child: const Text("Retry"),
+            )
+          ],
+        ),
+      );
+    }
+
     if (state.status == CameraStatus.loading ||
         state.cameraController == null ||
         !state.cameraController!.value.isInitialized) {

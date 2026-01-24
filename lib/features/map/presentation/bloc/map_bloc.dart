@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
@@ -53,6 +54,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<StartNavigationEvent>(_onStartNavigation);
     on<StopNavigationEvent>(_onStopNavigation);
     on<ToggleGetDirectionCardEvent>(_onToggleGetDirectionCard);
+    on<UpdatePulseCircleEvent>(_onUpdatePulseCircle);
+    on<SetDestinationSelectionModeEvent>(_onSetDestinationSelectionMode);
+    on<ClearRouteEvent>(_onClearRoute);
 
     _initSocket();
   }
@@ -90,9 +94,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (state.markers.any((m) => m.markerId.value == incident.id)) {
         return;
       }
-      // Logic to add marker... needs to be implemented or moved to a helper
-      // For now, just adding to state if possible, but marker creation requires async bitmap generation
-      // This might need to be done in the event handler
+
+      BitmapDescriptor icon;
+      if (incident.markerType == 'content') {
+        icon = await markerService.createContentMarker(incident.image ?? '');
+      } else {
+        String assetPath = markerService.markerIcons[incident.type] ??
+            markerService.markerIcons['accident']!;
+        icon = await markerService.bitmapResize(assetPath, width: 90);
+      }
+
+      final marker = Marker(
+        markerId: MarkerId(incident.id),
+        position: incident.position,
+        icon: icon,
+        infoWindow: InfoWindow(title: incident.title ?? 'New Incident'),
+        onTap: () {
+          add(SetSelectedIncidentEvent(incident));
+        },
+      );
+
+      emit(state.copyWith(
+        markers: {...state.markers, marker},
+      ));
     } catch (e) {
       print("Error handling new incident: $e");
     }
@@ -104,7 +128,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     try {
       final incident = Incident.fromJson(event.data);
-      // Update logic
+
+      BitmapDescriptor icon;
+      if (incident.markerType == 'content') {
+        icon = await markerService.createContentMarker(incident.image ?? '');
+      } else {
+        String assetPath = markerService.markerIcons[incident.type] ??
+            markerService.markerIcons['accident']!;
+        icon = await markerService.bitmapResize(assetPath, width: 90);
+      }
+
+      final marker = Marker(
+        markerId: MarkerId(incident.id),
+        position: incident.position,
+        icon: icon,
+        infoWindow: InfoWindow(title: incident.title ?? 'Updated Incident'),
+        onTap: () {
+          add(SetSelectedIncidentEvent(incident));
+        },
+      );
+
+      final updatedMarkers =
+          state.markers.where((m) => m.markerId.value != incident.id).toSet();
+      updatedMarkers.add(marker);
+
+      emit(state.copyWith(
+        markers: updatedMarkers,
+      ));
     } catch (e) {
       print("Error handling updated incident: $e");
     }
@@ -116,15 +166,60 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     // emit(state.copyWith(isLoadingNews: true)); // Example loading state
     final result = await getCurrentLocation(NoParams());
-    result.fold(
-      (failure) => emit(state.copyWith(errorMessage: "Failed to get location")),
-      (location) {
+    await result.fold(
+      (failure) async {
+        // Fallback to a default location (e.g., London or previous known location)
+        // so the map can load even if location fails.
+        final defaultLocation = const LatLng(51.5074, -0.1278); // London
+        print("Using default location due to error: ${failure.message}");
+
+        emit(state.copyWith(
+          errorMessage: failure.message,
+          myLocation: defaultLocation,
+          initialCamera: CameraPosition(target: defaultLocation, zoom: 14),
+        ));
+        add(FetchNewsEvent(
+            lat: defaultLocation.latitude,
+            lng: defaultLocation.longitude,
+            km: 10));
+      },
+      (location) async {
+        final profileImage = sharedPreferences.getString(profileImageKey) ?? '';
+        BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+
+        if (profileImage.isNotEmpty) {
+          icon = await markerService.createAvatarMarker(profileImage);
+        } else {
+          icon = await markerService.createCircularAssetMarker(
+              "assets/markers/avatar.png",
+              size: const Size(100, 100));
+        }
+
+        final meMarker = Marker(
+          markerId: const MarkerId('my_custom_location'),
+          position: location,
+          icon: icon,
+          anchor: const Offset(0.5, 0.5),
+        );
+
+        // Fetch address
+        String? address;
+        final addressResult =
+            await repository.getAddressFromCoordinates(location);
+        addressResult.fold(
+          (failure) => print("Failed to get address: ${failure.message}"),
+          (addr) => address = addr,
+        );
+
         emit(state.copyWith(
           myLocation: location,
+          myLocationAddress: address,
           initialCamera: CameraPosition(target: location, zoom: 14),
+          markers: {...state.markers, meMarker},
         ));
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
+        _fetchInitialIncidents(emit);
       },
     );
   }
@@ -279,12 +374,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               incidents.map((incident) async {
             BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
-            if (incident.markerType == 'news') {
+            if (incident.markerType == 'news' ||
+                incident.markerType == 'content') {
               try {
-                // Try to load custom image
-                // print("DEBUG: Loading image for ${incident.id}: ${incident.image}");
-                icon = await markerService.bitmapFromUrl(incident.image ?? '',
-                    defaultAsset: "assets/markers/bg-removed-content.png");
+                icon = await markerService
+                    .createContentMarker(incident.image ?? '');
               } catch (e) {
                 print(
                     "DEBUG: Failed to load image for marker ${incident.id}, using default. Error: $e");
@@ -389,16 +483,24 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     AddAlertMarkerEvent event,
     Emitter<MapState> emit,
   ) async {
-    // Logic to add alert marker
-    // This typically involves calling a service to create the marker icon and then updating state
-    // For now, we'll just add a basic marker
-    final marker = Marker(
-      markerId: MarkerId('alert_${DateTime.now().millisecondsSinceEpoch}'),
-      position: event.position,
-      infoWindow: InfoWindow(title: event.type),
-      // icon: ... // Need to generate icon
-    );
-    emit(state.copyWith(markers: {...state.markers, marker}));
+    final userId = sharedPreferences.getString(hopperIdKey) ?? '';
+    if (userId.isEmpty) {
+      print("Cannot emit alert: userId is empty");
+      return;
+    }
+
+    try {
+      socketService.emitAlert(
+        alertType: event.type,
+        position: event.position,
+        address: state.myLocationAddress ?? "",
+        userId: userId,
+      );
+      // We rely on the socket 'incident:created'/'incident:new' event to add the marker back to the map.
+      // This ensures we have the correct server-generated ID and data.
+    } catch (e) {
+      print("Error emitting alert: $e");
+    }
   }
 
   void _onSetPreviewAlertMarker(
@@ -415,6 +517,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     SetSelectedIncidentEvent event,
     Emitter<MapState> emit,
   ) {
+    // If in destination selection mode, use this incident's location
+    if (state.isDestinationSelectionMode) {
+      add(SetMapSelectedLocationEvent(
+        position: event.incident.position,
+        address: event.incident.address ??
+            "${event.incident.position.latitude}, ${event.incident.position.longitude}",
+        isOrigin: state.isSelectingOrigin,
+      ));
+      add(SetDestinationSelectionModeEvent(isSelectionMode: false));
+      // Don't select incident detail
+      return;
+    }
+
     emit(state.copyWith(
       selectedIncident: event.incident,
       selectedPosition: event.incident.position,
@@ -423,15 +538,26 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ));
   }
 
-  void _onSetMapSelectedLocation(
+  Future<void> _onSetMapSelectedLocation(
     SetMapSelectedLocationEvent event,
     Emitter<MapState> emit,
-  ) {
+  ) async {
+    final markerId =
+        event.isOrigin ? 'start_selection' : 'destination_selection';
+    final marker = Marker(
+      markerId: MarkerId(markerId),
+      position: event.position,
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+          event.isOrigin ? BitmapDescriptor.hueGreen : BitmapDescriptor.hueRed),
+      infoWindow: InfoWindow(title: event.address ?? 'Selected Location'),
+    );
+
     emit(state.copyWith(
       mapSelectedLocation: event.position,
       mapSelectedAddress: event.address,
       mapSelectedIsOrigin: event.isOrigin,
       clearMapSelectedLocation: false,
+      markers: {...state.markers, marker},
     ));
   }
 
@@ -464,5 +590,114 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       isNavigating: false,
       clearCurrentNavigationPosition: true,
     ));
+  }
+
+  void _onUpdatePulseCircle(
+    UpdatePulseCircleEvent event,
+    Emitter<MapState> emit,
+  ) {
+    if (state.myLocation == null) return;
+
+    final double baseRadiusAtZoom14 = 400.0;
+    final double safeZoom = event.zoomLevel.roundToDouble();
+    final double scaleFactor = math.pow(2, 14 - safeZoom).toDouble();
+    final double dynamicRadius = baseRadiusAtZoom14 * scaleFactor;
+    final double radius = dynamicRadius * event.radiusMultiplier;
+
+    final pulseCircle = Circle(
+      circleId: const CircleId('my_location_pulse'),
+      center: state.myLocation!,
+      radius: radius,
+      fillColor: const Color.fromARGB(255, 247, 70, 70)
+          .withOpacity(event.opacity * 0.5),
+      strokeColor:
+          const Color.fromARGB(255, 255, 84, 84).withOpacity(event.opacity),
+      strokeWidth: 1,
+    );
+
+    emit(state.copyWith(
+      circles: {
+        ...state.circles.where((c) => c.circleId.value != 'my_location_pulse'),
+        pulseCircle,
+      },
+    ));
+  }
+
+  void _onSetDestinationSelectionMode(
+    SetDestinationSelectionModeEvent event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      isDestinationSelectionMode: event.isSelectionMode,
+      isSelectingOrigin: event.isOrigin,
+    ));
+  }
+
+  void _onClearRoute(
+    ClearRouteEvent event,
+    Emitter<MapState> emit,
+  ) {
+    final updatedMarkers = state.markers
+        .where((m) =>
+            m.markerId.value != 'destination' && m.markerId.value != 'start')
+        .toSet();
+
+    emit(state.copyWith(
+      polylines: {},
+      clearDestination: true,
+      clearRouteInfo: true,
+      isNavigating: false,
+      showGetDirectionCard: false,
+      isDestinationSelectionMode: false,
+      clearMapSelectedLocation: true,
+      clearMapSelectedAddress: true,
+      clearMapSelectedIsOrigin: true,
+      markers: updatedMarkers,
+    ));
+  }
+
+  Future<void> _fetchInitialIncidents(Emitter<MapState> emit) async {
+    final result = await repository.getIncidents();
+    await result.fold(
+      (failure) async {
+        print("Failed to fetch initial incidents: ${failure.message}");
+      },
+      (incidents) async {
+        print("Fetched ${incidents.length} initial incidents");
+
+        final List<Future<Marker>> markerFutures =
+            incidents.map((incident) async {
+          BitmapDescriptor icon;
+          if (incident.markerType == 'content') {
+            icon =
+                await markerService.createContentMarker(incident.image ?? '');
+          } else {
+            String assetPath = markerService.markerIcons[incident.type] ??
+                markerService.markerIcons['accident']!;
+            // Using generic resize for now, respecting the new 90px size
+            icon = await markerService.bitmapResize(assetPath, width: 90);
+          }
+
+          return Marker(
+            markerId: MarkerId(incident.id),
+            position: incident.position,
+            icon: icon,
+            infoWindow: InfoWindow(
+                title: incident.title ?? incident.type ?? 'Incident'),
+            onTap: () {
+              add(SetSelectedIncidentEvent(incident));
+            },
+          );
+        }).toList();
+
+        final List<Marker> newMarkersList = await Future.wait(markerFutures);
+        final Set<Marker> newMarkers = newMarkersList.toSet();
+
+        // We use state.markers to keep existing markers (like myLocation)
+        emit(state.copyWith(
+          markers: {...state.markers, ...newMarkers},
+        ));
+      },
+    );
   }
 }

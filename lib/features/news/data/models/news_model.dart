@@ -14,6 +14,7 @@ class NewsModel extends News {
     int? sharesCount,
     int? viewCount,
     bool? isLiked,
+    bool? isMostViewed,
     String? userImage,
     String? userName,
     double? latitude,
@@ -31,6 +32,7 @@ class NewsModel extends News {
           sharesCount: sharesCount,
           viewCount: viewCount,
           isLiked: isLiked,
+          isMostViewed: isMostViewed,
           userImage: userImage,
           userName: userName,
           latitude: latitude,
@@ -51,6 +53,7 @@ class NewsModel extends News {
       sharesCount: json['sharesCount'] ?? json['shares_count'],
       viewCount: json['viewCount'] ?? json['view_count'],
       isLiked: json['isLiked'] ?? json['is_liked'],
+      isMostViewed: json['isMostViewed'] ?? json['is_most_viewed'],
       userImage: json['user_id'] != null && json['user_id'] is Map
           ? json['user_id']['profile_image']
           : null,
@@ -84,6 +87,7 @@ class NewsModel extends News {
       'sharesCount': sharesCount,
       'viewCount': viewCount,
       'isLiked': isLiked,
+      'isMostViewed': isMostViewed,
     };
   }
 }
