@@ -213,6 +213,8 @@ import 'package:presshop/features/publish/domain/repositories/tutorials_reposito
 import 'package:presshop/features/publish/data/repositories/tutorials_repository_impl.dart';
 import 'package:presshop/features/publish/data/datasources/tutorials_remote_datasource.dart';
 
+import 'package:presshop/core/services/location_service.dart';
+
 final sl = GetIt.instance; // sl = Service Locator
 
 Future<void> init() async {
@@ -227,6 +229,7 @@ Future<void> init() async {
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => ApiClient(sl(), sl(), sl()));
+  sl.registerLazySingleton(() => LocationService());
 
   //! Data Sources - Register first
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -750,6 +753,7 @@ Future<void> init() async {
     () => MapRemoteDataSourceImpl(
       apiClient: sl(),
       googleApiKey: 'AIzaSyClF12i0eHy7Nrig6EYu8Z4U5DA2zC09OI',
+      locationService: sl(),
     ),
   );
 

@@ -128,8 +128,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
 
   @override
   void initState() {
-    debugPrint("Class name :::::: $runtimeType::::::${widget.type}");
-    debugPrint("ContentId ${widget.myContentData?.id}");
+    debugPrint(
+        "🚀 ManageTaskScreen: initState type=${widget.type} roomId=${widget.roomId}");
+    debugPrint(
+        "🚀 ManageTaskScreen: contentId=${widget.contentId} taskDetailId=${widget.taskDetail?.id}");
     super.initState();
 
     socketConnectionFunc();
@@ -270,142 +272,149 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                     )
                   ],
                 ),
-                body: isDataLoaded
-                    ? SafeArea(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: SmartRefresher(
-                                controller: _refreshController,
-                                onRefresh: _onRefresh,
-                                onLoading: _onLoad,
-                                enablePullUp: false,
-                                enablePullDown: true,
-                                child: SingleChildScrollView(
-                                  controller: scrollController,
-                                  child: Column(
-                                    children: [
-                                      widget.contentMedia != null &&
-                                              widget.contentHeader != null
-                                          ? contentDetailWidget()
-                                          : const SizedBox.shrink(),
-                                      widget.taskDetail != null
-                                          ? showTaskPriceWidget()
-                                          : const SizedBox.shrink(),
+                body:
+                    (state is TaskLoading && !isDataLoaded) ||
+                            (state is TaskInitial && !isDataLoaded)
+                        ? Center(child: showLoader())
+                        : SafeArea(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: SmartRefresher(
+                                    controller: _refreshController,
+                                    onRefresh: _onRefresh,
+                                    onLoading: _onLoad,
+                                    enablePullUp: false,
+                                    enablePullDown: true,
+                                    child: SingleChildScrollView(
+                                      controller: scrollController,
+                                      child: Column(
+                                        children: [
+                                          widget.contentMedia != null &&
+                                                  widget.contentHeader != null
+                                              ? contentDetailWidget()
+                                              : const SizedBox.shrink(),
+                                          widget.taskDetail != null
+                                              ? showTaskPriceWidget()
+                                              : const SizedBox.shrink(),
 
-                                      widget.taskDetail != null
-                                          ? Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      size.width * numD04),
-                                              child: uploadMediaInfoWidget(""),
-                                            )
-                                          : Container(),
+                                          widget.taskDetail != null
+                                              ? Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal:
+                                                          size.width * numD04),
+                                                  child:
+                                                      uploadMediaInfoWidget(""),
+                                                )
+                                              : Container(),
 
-                                      /// This is fab
-                                      widget.type != "content"
-                                          ? Container()
-                                          : Column(
-                                              children: [
-                                                // chatBubbleSpacer(),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                          /// This is fab
+                                          widget.type != "content"
+                                              ? Container()
+                                              : Column(
                                                   children: [
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: size.width *
-                                                                numD04),
-                                                        decoration:
-                                                            BoxDecoration(
+                                                    // chatBubbleSpacer(),
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                            margin: EdgeInsets.only(
+                                                                left:
+                                                                    size.width *
+                                                                        numD04),
+                                                            decoration: BoxDecoration(
                                                                 color: Colors
                                                                     .black,
                                                                 shape: BoxShape
                                                                     .circle,
                                                                 boxShadow: [
-                                                              BoxShadow(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade300,
-                                                                  spreadRadius:
-                                                                      2)
-                                                            ]),
-                                                        child: ClipOval(
-                                                          clipBehavior:
-                                                              Clip.antiAlias,
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    size.width *
+                                                                  BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .shade300,
+                                                                      spreadRadius:
+                                                                          2)
+                                                                ]),
+                                                            child: ClipOval(
+                                                              clipBehavior: Clip
+                                                                  .antiAlias,
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .all(size
+                                                                            .width *
                                                                         numD01),
-                                                            child: Image.asset(
-                                                              "${commonImagePath}ic_black_rabbit.png",
-                                                              color:
-                                                                  Colors.white,
-                                                              width:
-                                                                  size.width *
+                                                                child:
+                                                                    Image.asset(
+                                                                  "${commonImagePath}ic_black_rabbit.png",
+                                                                  color: Colors
+                                                                      .white,
+                                                                  width: size
+                                                                          .width *
                                                                       numD07,
-                                                              height:
-                                                                  size.width *
+                                                                  height: size
+                                                                          .width *
                                                                       numD07,
-                                                            ),
-                                                          ),
-                                                        )),
-                                                    SizedBox(
-                                                      width:
-                                                          size.width * numD025,
-                                                    ),
-                                                    Expanded(
-                                                        child: Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 0,
-                                                          right: size.width *
-                                                              numD04),
-                                                      padding: EdgeInsets
-                                                          .symmetric(
-                                                              horizontal:
+                                                                ),
+                                                              ),
+                                                            )),
+                                                        SizedBox(
+                                                          width: size.width *
+                                                              numD025,
+                                                        ),
+                                                        Expanded(
+                                                            child: Container(
+                                                          margin: EdgeInsets.only(
+                                                              top: 0,
+                                                              right:
                                                                   size.width *
-                                                                      numD05,
-                                                              vertical:
-                                                                  size.width *
+                                                                      numD04),
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      size.width *
+                                                                          numD05,
+                                                                  vertical: size
+                                                                          .width *
                                                                       numD02),
-                                                      width: size.width,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          border: Border.all(
-                                                              color:
-                                                                  colorGoogleButtonBorder),
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topRight:
-                                                                Radius.circular(
+                                                          width: size.width,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  border: Border
+                                                                      .all(
+                                                                          color:
+                                                                              colorGoogleButtonBorder),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .only(
+                                                                    topRight: Radius.circular(
+                                                                        size.width *
+                                                                            numD04),
+                                                                    bottomLeft: Radius.circular(
+                                                                        size.width *
+                                                                            numD04),
+                                                                    bottomRight:
+                                                                        Radius.circular(size.width *
+                                                                            numD04),
+                                                                  )),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              SizedBox(
+                                                                height:
                                                                     size.width *
-                                                                        numD04),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    size.width *
-                                                                        numD04),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    size.width *
-                                                                        numD04),
-                                                          )),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SizedBox(
-                                                            height: size.width *
-                                                                numD01,
-                                                          ),
-                                                          contentPurchased !=
-                                                                  "0"
-                                                              ? RichText(
-                                                                  text:
-                                                                      TextSpan(
-                                                                          style:
-                                                                              TextStyle(
+                                                                        numD01,
+                                                              ),
+                                                              contentPurchased !=
+                                                                      "0"
+                                                                  ? RichText(
+                                                                      text: TextSpan(
+                                                                          style: TextStyle(
                                                                             color:
                                                                                 Colors.white,
                                                                             fontSize:
@@ -416,56 +425,46 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                                 FontWeight.bold,
                                                                           ),
                                                                           children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            "This is fab. Your content was ",
-                                                                        style: commonTextStyle(
-                                                                            size:
-                                                                                size,
-                                                                            fontSize: size.width *
-                                                                                numD036,
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontWeight: FontWeight.normal),
-                                                                      ),
-                                                                      int.parse(contentView) <
-                                                                              2
-                                                                          ? TextSpan(
-                                                                              text: int.parse(contentView) > 2 ? 'viewed by $contentView publications' : 'viewed by $contentView publication',
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
-                                                                            )
-                                                                          : TextSpan(
-                                                                              text: int.parse(contentView) < 10 ? 'viewed by $contentView publications' : 'viewed by $contentView publications',
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
-                                                                            ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            " and ",
-                                                                        style: commonTextStyle(
-                                                                            size:
-                                                                                size,
-                                                                            fontSize: size.width *
-                                                                                numD036,
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontWeight: FontWeight.normal),
-                                                                      ),
-                                                                      int.parse(contentPurchased) <
-                                                                              2
-                                                                          ? TextSpan(
-                                                                              text: int.parse(contentPurchased) < 2 ? 'purchased by $contentPurchased publication' : 'purchased by $contentPurchased publications',
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
-                                                                            )
-                                                                          : TextSpan(
-                                                                              text: int.parse(contentPurchased) < 10 ? 'purchased by $contentPurchased publications' : 'purchased by $contentPurchased publications',
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
-                                                                            ),
-                                                                    ]))
-                                                              : int.parse(contentView) <
-                                                                      1
-                                                                  ? RichText(
-                                                                      text: TextSpan(
-                                                                          children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                "This is fab. Your content was ",
+                                                                            style: commonTextStyle(
+                                                                                size: size,
+                                                                                fontSize: size.width * numD036,
+                                                                                color: Colors.black,
+                                                                                fontWeight: FontWeight.normal),
+                                                                          ),
+                                                                          int.parse(contentView) < 2
+                                                                              ? TextSpan(
+                                                                                  text: int.parse(contentView) > 2 ? 'viewed by $contentView publications' : 'viewed by $contentView publication',
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                )
+                                                                              : TextSpan(
+                                                                                  text: int.parse(contentView) < 10 ? 'viewed by $contentView publications' : 'viewed by $contentView publications',
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                " and ",
+                                                                            style: commonTextStyle(
+                                                                                size: size,
+                                                                                fontSize: size.width * numD036,
+                                                                                color: Colors.black,
+                                                                                fontWeight: FontWeight.normal),
+                                                                          ),
+                                                                          int.parse(contentPurchased) < 2
+                                                                              ? TextSpan(
+                                                                                  text: int.parse(contentPurchased) < 2 ? 'purchased by $contentPurchased publication' : 'purchased by $contentPurchased publications',
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                )
+                                                                              : TextSpan(
+                                                                                  text: int.parse(contentPurchased) < 10 ? 'purchased by $contentPurchased publications' : 'purchased by $contentPurchased publications',
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                        ]))
+                                                                  : int.parse(contentView) < 1
+                                                                      ? RichText(
+                                                                          text: TextSpan(children: [
                                                                           TextSpan(
                                                                             text:
                                                                                 "You’re officially a newsmaker!  Your content has been ",
@@ -503,9 +502,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                                 fontWeight: FontWeight.w600),
                                                                           ),
                                                                         ]))
-                                                                  : RichText(
-                                                                      text: TextSpan(
-                                                                          children: [
+                                                                      : RichText(
+                                                                          text: TextSpan(children: [
                                                                           TextSpan(
                                                                             text:
                                                                                 "This is fab. Your content was ",
@@ -526,265 +524,1010 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                                 fontWeight: FontWeight.w600),
                                                                           ),
                                                                         ])),
-                                                          SizedBox(
-                                                            height: contentPurchased !=
-                                                                    "0"
-                                                                ? size.width *
-                                                                    numD05
-                                                                : size.width *
-                                                                    numD01,
-                                                          ),
-                                                          contentPurchased !=
-                                                                  "0"
-                                                              ? SizedBox(
-                                                                  height: size
-                                                                          .width *
-                                                                      numD13,
-                                                                  width: size
-                                                                      .width,
-                                                                  child: commonElevatedButton(
-                                                                      "View My Earnings",
-                                                                      size,
-                                                                      commonButtonTextStyle(
-                                                                          size),
-                                                                      commonButtonStyle(
+                                                              SizedBox(
+                                                                height: contentPurchased !=
+                                                                        "0"
+                                                                    ? size.width *
+                                                                        numD05
+                                                                    : size.width *
+                                                                        numD01,
+                                                              ),
+                                                              contentPurchased !=
+                                                                      "0"
+                                                                  ? SizedBox(
+                                                                      height: size
+                                                                              .width *
+                                                                          numD13,
+                                                                      width: size
+                                                                          .width,
+                                                                      child: commonElevatedButton(
+                                                                          "View My Earnings",
                                                                           size,
-                                                                          colorThemePink),
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .push(MaterialPageRoute(
+                                                                          commonButtonTextStyle(
+                                                                              size),
+                                                                          commonButtonStyle(
+                                                                              size,
+                                                                              colorThemePink),
+                                                                          () {
+                                                                        Navigator.of(context).push(MaterialPageRoute(
                                                                             builder: (context) => MyEarningScreen(
                                                                                   openDashboard: false,
                                                                                   initialTapPosition: 2,
                                                                                 )));
-                                                                  }),
-                                                                )
-                                                              : Container(),
-                                                          SizedBox(
-                                                            height:
-                                                                size.height *
-                                                                    numD01,
+                                                                      }),
+                                                                    )
+                                                                  : Container(),
+                                                              SizedBox(
+                                                                height:
+                                                                    size.height *
+                                                                        numD01,
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                    )),
+                                                        )),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          size.width * numD025,
+                                                    ),
+                                                    // widgetDivider()
+                                                    chatDividerSpacer()
                                                   ],
                                                 ),
-                                                SizedBox(
-                                                  height: size.width * numD025,
-                                                ),
-                                                // widgetDivider()
-                                                chatDividerSpacer()
-                                              ],
-                                            ),
 
-                                      SizedBox(
-                                        height: size.height * numD01,
-                                      ),
-
-                                      ListView.separated(
-                                          separatorBuilder: (context, index) {
-                                            return SizedBox(
-                                              height: size.height * numD02,
-                                            );
-                                          },
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD04,
+                                          SizedBox(
+                                            height: size.height * numD01,
                                           ),
-                                          itemBuilder: (context, index) {
-                                            var item = chatList[index];
-                                            if (item.messageType == "media") {
-                                              if (item.media!.type == "video") {
-                                                return Column(
-                                                  children: [
-                                                    rightVideoChatWidget(
-                                                        item.media!.thumbnail,
-                                                        item.media!
-                                                            .imageVideoUrl),
-                                                    SizedBox(
-                                                      height:
-                                                          size.width * numD03,
-                                                    ),
-                                                    thanksToUploadMediaWidget(
-                                                        "video"),
-                                                    SizedBox(
-                                                      height:
-                                                          size.width * numD03,
-                                                    ),
-                                                  ],
-                                                );
-                                              } else if (item.media!.type ==
-                                                  "audio") {
-                                                return Column(
-                                                  children: [
-                                                    rightAudioChatWidget(item
-                                                        .media!.imageVideoUrl),
-                                                    SizedBox(
-                                                      height:
-                                                          size.width * numD03,
-                                                    ),
-                                                    thanksToUploadMediaWidget(
-                                                        "audio"),
-                                                    SizedBox(
-                                                      height:
-                                                          size.width * numD03,
-                                                    ),
-                                                  ],
-                                                );
-                                              } else {
-                                                return Column(
-                                                  children: [
-                                                    rightImageChatWidget(
-                                                      item.media!
-                                                                  .type ==
-                                                              "video"
-                                                          ? item
-                                                              .media!.thumbnail
-                                                          : item.media!
-                                                              .imageVideoUrl,
-                                                      item.createdAtTime,
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          size.width * numD03,
-                                                    ),
-                                                    thanksToUploadMediaWidget(
-                                                        "photo"),
-                                                    SizedBox(
-                                                      height:
-                                                          size.width * numD03,
-                                                    ),
-                                                  ],
-                                                );
-                                              }
-                                            } else if (item.messageType ==
-                                                "Payment") {
-                                              return paymentReceivedWidget(
-                                                  item);
-                                            } else if (item.messageType ==
-                                                "request_more_content") {
-                                              return moreContentReqWidget(item);
-                                            } else if (item.messageType ==
-                                                "contentupload") {
-                                              return Column(
-                                                children: [
-                                                  uploadMediaInfoWidget(
-                                                      "request_more_content"),
-                                                  SizedBox(
-                                                    height: size.width * numD03,
-                                                  ),
-                                                ],
-                                              );
-                                            } else if (item.messageType ==
-                                                "NocontentUpload") {
-                                              return uploadNoContentWidget();
-                                            } else if (item.messageType ==
-                                                "Offered") {
-                                              return mediaHouseOfferWidget(
-                                                  item,
-                                                  item.messageType ==
-                                                      "Mediahouse_initial_offer");
-                                            } else if (item.messageType ==
-                                                "hopper_counter_offer") {
-                                              return counterFieldWidget(item);
-                                            }
-                                            // else if (item.messageType == "rating_hopper") {
-                                            //   return ratingWidget(item);
-                                            // }
-                                            else if (item.messageType ==
-                                                "MakeOverPrice") {
-                                              return makeOverPriceWidget(
-                                                  item.hopperPrice,
-                                                  item.amount);
-                                            } else {
-                                              return SizedBox.shrink();
-                                            }
-                                          },
-                                          itemCount: chatList.length),
 
-                                      ///  Rating Widget
-                                      widget.type != "content"
-                                          ? Container()
-                                          : int.parse(contentPurchased) > 0
-                                              ? Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      height:
-                                                          size.height * numD01,
-                                                    ),
-                                                    chatDividerSpacer(),
-                                                    SizedBox(
-                                                      height:
-                                                          size.height * numD01,
-                                                    ),
-                                                    Stack(
-                                                      alignment:
-                                                          Alignment.center,
+                                          ListView.separated(
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return SizedBox(
+                                                  height: size.height * numD02,
+                                                );
+                                              },
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: size.width * numD04,
+                                              ),
+                                              itemBuilder: (context, index) {
+                                                var item = chatList[index];
+                                                if (item.messageType ==
+                                                    "media") {
+                                                  if (item.media!.type ==
+                                                      "video") {
+                                                    return Column(
                                                       children: [
-                                                        Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                        rightVideoChatWidget(
+                                                            item.media!
+                                                                .thumbnail,
+                                                            item.media!
+                                                                .imageVideoUrl),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              numD03,
+                                                        ),
+                                                        thanksToUploadMediaWidget(
+                                                            "video"),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              numD03,
+                                                        ),
+                                                      ],
+                                                    );
+                                                  } else if (item.media!.type ==
+                                                      "audio") {
+                                                    return Column(
+                                                      children: [
+                                                        rightAudioChatWidget(
+                                                            item.media!
+                                                                .imageVideoUrl),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              numD03,
+                                                        ),
+                                                        thanksToUploadMediaWidget(
+                                                            "audio"),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              numD03,
+                                                        ),
+                                                      ],
+                                                    );
+                                                  } else {
+                                                    return Column(
+                                                      children: [
+                                                        rightImageChatWidget(
+                                                          item.media!
+                                                                      .type ==
+                                                                  "video"
+                                                              ? item.media!
+                                                                  .thumbnail
+                                                              : item.media!
+                                                                  .imageVideoUrl,
+                                                          item.createdAtTime,
+                                                        ),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              numD03,
+                                                        ),
+                                                        thanksToUploadMediaWidget(
+                                                            "photo"),
+                                                        SizedBox(
+                                                          height: size.width *
+                                                              numD03,
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                                } else if (item.messageType ==
+                                                    "Payment") {
+                                                  return paymentReceivedWidget(
+                                                      item);
+                                                } else if (item.messageType ==
+                                                    "request_more_content") {
+                                                  return moreContentReqWidget(
+                                                      item);
+                                                } else if (item.messageType ==
+                                                    "contentupload") {
+                                                  return Column(
+                                                    children: [
+                                                      uploadMediaInfoWidget(
+                                                          "request_more_content"),
+                                                      SizedBox(
+                                                        height:
+                                                            size.width * numD03,
+                                                      ),
+                                                    ],
+                                                  );
+                                                } else if (item.messageType ==
+                                                    "NocontentUpload") {
+                                                  return uploadNoContentWidget();
+                                                } else if (item.messageType ==
+                                                    "Offered") {
+                                                  return mediaHouseOfferWidget(
+                                                      item,
+                                                      item.messageType ==
+                                                          "Mediahouse_initial_offer");
+                                                } else if (item.messageType ==
+                                                    "hopper_counter_offer") {
+                                                  return counterFieldWidget(
+                                                      item);
+                                                }
+                                                // else if (item.messageType == "rating_hopper") {
+                                                //   return ratingWidget(item);
+                                                // }
+                                                else if (item.messageType ==
+                                                    "MakeOverPrice") {
+                                                  return makeOverPriceWidget(
+                                                      item.hopperPrice,
+                                                      item.amount);
+                                                } else {
+                                                  return SizedBox.shrink();
+                                                }
+                                              },
+                                              itemCount: chatList.length),
+
+                                          ///  Rating Widget
+                                          widget.type != "content"
+                                              ? Container()
+                                              : int.parse(contentPurchased) > 0
+                                                  ? Column(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: size.height *
+                                                              numD01,
+                                                        ),
+                                                        chatDividerSpacer(),
+                                                        SizedBox(
+                                                          height: size.height *
+                                                              numD01,
+                                                        ),
+                                                        Stack(
+                                                          alignment:
+                                                              Alignment.center,
                                                           children: [
-                                                            Container(
-                                                                margin: EdgeInsets.only(
-                                                                    left: size
-                                                                            .width *
-                                                                        numD04),
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    shape: BoxShape.circle,
-                                                                    boxShadow: [
-                                                                      BoxShadow(
+                                                            Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        left: size.width *
+                                                                            numD04),
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        shape: BoxShape.circle,
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                              color: Colors.grey.shade300,
+                                                                              spreadRadius: 2)
+                                                                        ]),
+                                                                    child:
+                                                                        ClipOval(
+                                                                      clipBehavior:
+                                                                          Clip.antiAlias,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(size.width *
+                                                                                numD01),
+                                                                        child: Image
+                                                                            .asset(
+                                                                          "${commonImagePath}ic_black_rabbit.png",
+                                                                          color:
+                                                                              Colors.white,
+                                                                          width:
+                                                                              size.width * numD07,
+                                                                          height:
+                                                                              size.width * numD07,
+                                                                        ),
+                                                                      ),
+                                                                    )),
+                                                                SizedBox(
+                                                                  width: size
+                                                                          .width *
+                                                                      numD025,
+                                                                ),
+                                                                Expanded(
+                                                                    child:
+                                                                        Container(
+                                                                  margin: EdgeInsets.only(
+                                                                      right: size
+                                                                              .width *
+                                                                          numD04),
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          size.width *
+                                                                              numD04,
+                                                                      vertical:
+                                                                          size.width *
+                                                                              numD02),
+                                                                  width: size
+                                                                      .width,
+                                                                  decoration:
+                                                                      BoxDecoration(
                                                                           color: Colors
-                                                                              .grey
-                                                                              .shade300,
-                                                                          spreadRadius:
-                                                                              2)
-                                                                    ]),
-                                                                child: ClipOval(
-                                                                  clipBehavior:
-                                                                      Clip.antiAlias,
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets.all(
-                                                                        size.width *
-                                                                            numD01),
-                                                                    child: Image
-                                                                        .asset(
-                                                                      "${commonImagePath}ic_black_rabbit.png",
-                                                                      color: Colors
-                                                                          .white,
-                                                                      width: size
-                                                                              .width *
-                                                                          numD07,
-                                                                      height: size
-                                                                              .width *
-                                                                          numD07,
-                                                                    ),
+                                                                              .white,
+                                                                          border: Border.all(
+                                                                              color:
+                                                                                  colorGoogleButtonBorder),
+                                                                          borderRadius:
+                                                                              BorderRadius.only(
+                                                                            topRight:
+                                                                                Radius.circular(size.width * numD04),
+                                                                            bottomLeft:
+                                                                                Radius.circular(size.width * numD04),
+                                                                            bottomRight:
+                                                                                Radius.circular(size.width * numD04),
+                                                                          )),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: size.height *
+                                                                            numD01,
+                                                                      ),
+                                                                      RichText(
+                                                                          text: TextSpan(
+                                                                              children: [
+                                                                            TextSpan(
+                                                                              text: "Rate your experience with PressHop",
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w600),
+                                                                            ),
+                                                                          ])),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD04,
+                                                                      ),
+                                                                      RatingBar(
+                                                                        glowRadius:
+                                                                            0,
+                                                                        ratingWidget:
+                                                                            RatingWidget(
+                                                                          empty:
+                                                                              Image.asset("${iconsPath}emptystar.png"),
+                                                                          full:
+                                                                              Image.asset("${iconsPath}star.png"),
+                                                                          half:
+                                                                              Image.asset("${iconsPath}ic_half_star.png"),
+                                                                        ),
+                                                                        onRatingUpdate:
+                                                                            (value) {
+                                                                          ratings =
+                                                                              value;
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                        itemSize:
+                                                                            size.width *
+                                                                                numD09,
+                                                                        itemCount:
+                                                                            5,
+                                                                        initialRating:
+                                                                            ratings,
+                                                                        allowHalfRating:
+                                                                            true,
+                                                                        itemPadding:
+                                                                            EdgeInsets.only(left: size.width * numD03),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            0.04,
+                                                                      ),
+                                                                      const Text(
+                                                                        "Tell us what you liked about the App",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.black,
+                                                                            fontWeight: FontWeight.w700),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD018,
+                                                                      ),
+                                                                      Wrap(
+                                                                          spacing:
+                                                                              0.2,
+                                                                          runSpacing:
+                                                                              0.1,
+                                                                          children: List<Widget>.generate(
+                                                                              intList.length,
+                                                                              (int index) {
+                                                                            return Container(
+                                                                              margin: EdgeInsets.only(left: size.width * 0.012, right: size.width * 0.012),
+                                                                              child: ChoiceChip(
+                                                                                label: Text(intList[index]),
+                                                                                labelStyle: TextStyle(color: dataList.contains(intList[index]) ? Colors.white : colorGrey6),
+                                                                                onSelected: (bool selected) {
+                                                                                  if (selected) {
+                                                                                    for (int i = 0; i < intList.length; i++) {
+                                                                                      if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
+                                                                                        dataList.add(intList[i]);
+                                                                                        indexList.add(i);
+                                                                                      }
+                                                                                    }
+                                                                                  } else {
+                                                                                    for (int i = 0; i < intList.length; i++) {
+                                                                                      if (intList[i] == intList[index] && dataList.contains(intList[i])) {
+                                                                                        dataList.remove(intList[i]);
+                                                                                        indexList.remove(i);
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                  setState(() {});
+                                                                                },
+                                                                                selectedColor: colorThemePink,
+                                                                                disabledColor: colorGreyChat.withOpacity(.3),
+                                                                                selected: dataList.contains(intList[index]) ? true : false,
+                                                                              ),
+                                                                            );
+                                                                          })),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD02,
+                                                                      ),
+                                                                      Stack(
+                                                                        children: [
+                                                                          TextFormField(
+                                                                            controller:
+                                                                                ratingReviewController1,
+                                                                            cursorColor:
+                                                                                colorTextFieldIcon,
+                                                                            keyboardType:
+                                                                                TextInputType.multiline,
+                                                                            maxLines:
+                                                                                6,
+                                                                            readOnly:
+                                                                                false,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.black,
+                                                                              fontSize: size.width * numD035,
+                                                                            ),
+                                                                            onChanged:
+                                                                                (v) {
+                                                                              onTextChanged();
+                                                                            },
+                                                                            decoration:
+                                                                                InputDecoration(
+                                                                              hintText: textData,
+                                                                              contentPadding: EdgeInsets.only(left: size.width * numD08, right: size.width * numD02, top: size.width * numD075),
+                                                                              hintStyle: TextStyle(color: Colors.grey.shade400, wordSpacing: 2, fontSize: size.width * numD035),
+                                                                              disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: BorderSide(width: 1, color: Colors.grey.shade300)),
+                                                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: BorderSide(width: 1, color: Colors.grey.shade300)),
+                                                                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                                                              errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: BorderSide(width: 1, color: Colors.grey.shade300)),
+                                                                              focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: const BorderSide(width: 1, color: Colors.grey)),
+                                                                              alignLabelWithHint: false,
+                                                                            ),
+                                                                            autovalidateMode:
+                                                                                AutovalidateMode.onUserInteraction,
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(top: size.width * numD038, left: size.width * numD014),
+                                                                            child:
+                                                                                Image.asset(
+                                                                              "${iconsPath}docs.png",
+                                                                              width: size.width * 0.06,
+                                                                              height: size.width * 0.07,
+                                                                              color: Colors.grey.shade400,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              size.width * numD017),
+                                                                      ratingReviewController1
+                                                                              .text
+                                                                              .isEmpty
+                                                                          ? const Text(
+                                                                              "Required",
+                                                                              style: TextStyle(fontSize: 11, color: colorThemePink, fontWeight: FontWeight.w400),
+                                                                            )
+                                                                          : Container(),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              size.width * numD04),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD13,
+                                                                        width: size
+                                                                            .width,
+                                                                        child: commonElevatedButton(
+                                                                            isRatingGiven ? "Thanks a Ton" : submitText,
+                                                                            size,
+                                                                            isRatingGiven ? TextStyle(color: Colors.black, fontSize: size.width * numD037, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold) : commonButtonTextStyle(size),
+                                                                            commonButtonStyle(size, isRatingGiven ? Colors.grey : colorThemePink),
+                                                                            !isRatingGiven
+                                                                                ? () {
+                                                                                    if (ratingReviewController1.text.isNotEmpty) {
+                                                                                      var map = {
+                                                                                        // "chat_id": item.id,
+                                                                                        "rating": ratings,
+                                                                                        "review": ratingReviewController1.text,
+                                                                                        "features": dataList,
+                                                                                        "image_id": widget.type == "content" ? widget.contentId : imageId,
+                                                                                        "type": "content",
+                                                                                        "sender_type": "hopper"
+                                                                                      };
+                                                                                      debugPrint("map function $map");
+                                                                                      socketEmitFunc(socketEvent: "rating", messageType: "rating_for_hopper", dataMap: map);
+                                                                                      showSnackBar("Rating & Review", "Thanks for the love! Your feedback makes all the difference ❤️", Colors.green);
+                                                                                      showCelebration = true;
+                                                                                      Future.delayed(const Duration(seconds: 3), () {
+                                                                                        showCelebration = false;
+                                                                                      });
+                                                                                      setState(() {});
+                                                                                    } else {
+                                                                                      showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
+                                                                                    }
+                                                                                  }
+                                                                                : () {
+                                                                                    debugPrint("already rated:::;");
+                                                                                  }),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              size.width * 0.02),
+                                                                      RichText(
+                                                                          text: TextSpan(
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                              children: [
+                                                                            TextSpan(
+                                                                              text: "Please refer to our ",
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                            ),
+                                                                            TextSpan(
+                                                                                text: "Terms & Conditions. ",
+                                                                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w400),
+                                                                                recognizer: TapGestureRecognizer()
+                                                                                  ..onTap = () {
+                                                                                    Navigator.of(context).push(MaterialPageRoute(
+                                                                                        builder: (context) => TermCheckScreen(
+                                                                                              type: 'legal',
+                                                                                            )));
+                                                                                  }),
+                                                                            TextSpan(
+                                                                              text: "The price of your content can be automatically adjusted in order to increase sales. If you have any questions, please ",
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                            ),
+                                                                            TextSpan(
+                                                                                text: "contact ",
+                                                                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w400),
+                                                                                recognizer: TapGestureRecognizer()
+                                                                                  ..onTap = () {
+                                                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
+                                                                                  }),
+                                                                            TextSpan(
+                                                                              text: "our helpful teams who are available 24x7 to assist you. Thank you",
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                            ),
+                                                                          ])),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            0.01,
+                                                                      ),
+
+                                                                      /*Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                              child: SizedBox(
+                                                                                height: size.width * numD13,
+                                                                                width: size.width,
+                                                                                child: ElevatedButton(
+                                                                                  onPressed: () {
+                                                                                        if (item.requestStatus.isEmpty &&
+                                                !item.isMakeCounterOffer) {
+                                              var map1 = {
+                                                "chat_id": item.id,
+                                                "status": false,
+                                              };
+                                                
+                                              socketEmitFunc(
+                                                  socketEvent: "reqstatus",
+                                                  messageType: "",
+                                                  dataMap: map1);
+                                                
+                                              socketEmitFunc(
+                                                socketEvent: "chat message",
+                                                messageType: "reject_mediaHouse_offer",
+                                              );
+                                                
+                                              socketEmitFunc(
+                                                socketEvent: "chat message",
+                                                messageType: "rating_hopper",
+                                              );
+                                                
+                                              socketEmitFunc(
+                                                socketEvent: "chat message",
+                                                messageType: "rating_mediaHouse",
+                                              );
+                                              showRejectBtn = true;
+                                                                                        }
+                                                                                        setState(() {});
+                                                                                  },
+                                                                                  style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              backgroundColor: item.requestStatus.isEmpty &&
+                                                  !item.isMakeCounterOffer
+                                                  ? Colors.black
+                                                  : item.requestStatus == "false"
+                                                  ? Colors.grey
+                                                  : Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(size.width * numD04),
+                                                  side: (item.requestStatus == "false" ||
+                                                      item.requestStatus.isEmpty) &&
+                                                      !item.isMakeCounterOffer
+                                                      ? BorderSide.none
+                                                      : const BorderSide(
+                                                      color: Colors.black, width: 1))),
+                                                                                  child: Text(
+                                                                                        rejectText,
+                                                                                        style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD037,
+                                                color: (item.requestStatus == "false" ||
+                                                    item.requestStatus.isEmpty) &&
+                                                    !item.isMakeCounterOffer
+                                                    ? Colors.white
+                                                    : colorLightGreen,
+                                                fontWeight: FontWeight.w500),
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                      SizedBox(
+                                                                        width: size.width * numD04,
+                                                                      ),
+                                                                      Expanded(
+                                                                              child: SizedBox(
+                                                                                height: size.width * numD13,
+                                                                                width: size.width,
+                                                                                child: ElevatedButton(
+                                                                                  onPressed: () {
+                                                                                        //aditya accept btn
+                                                                                        if (item.requestStatus.isEmpty &&
+                                                !item.isMakeCounterOffer) {
+                                              debugPrint("tapppppp:::::$showAcceptBtn");
+                                              showAcceptBtn = true;
+                                              var map1 = {
+                                                "chat_id": item.id,
+                                                "status": true,
+                                              };
+                                                
+                                              socketEmitFunc(
+                                                  socketEvent: "reqstatus",
+                                                  messageType: "",
+                                                  dataMap: map1);
+                                                
+                                              socketEmitFunc(
+                                                  socketEvent: "chat message",
+                                                  messageType: "accept_mediaHouse_offer",
+                                                  dataMap: {
+                                                    "amount": isMakeCounter
+                                                        ? item.initialOfferAmount
+                                                        : item.finalCounterAmount,
+                                                    "image_id": widget.contentId!,
+                                                  });
+                                                                                        }
+                                                                                        setState(() {});
+                                                                                  },
+                                                                                  style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              backgroundColor: item.requestStatus.isEmpty &&
+                                                  !item.isMakeCounterOffer
+                                                  ? colorThemePink
+                                                  : item.requestStatus == "true"
+                                                  ? Colors.grey
+                                                  : Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(size.width * numD04),
+                                                  side: (item.requestStatus == "true" ||
+                                                      item.requestStatus.isEmpty) &&
+                                                      !item.isMakeCounterOffer
+                                                      ? BorderSide.none
+                                                      : const BorderSide(
+                                                      color: Colors.black, width: 1))),
+                                                                                  child: Text(
+                                                                                        acceptText,
+                                                                                        style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD037,
+                                                color: (item.requestStatus == "true" ||
+                                                    item.requestStatus.isEmpty) &&
+                                                    !item.isMakeCounterOffer
+                                                    ? Colors.white
+                                                    : colorLightGreen,
+                                                fontWeight: FontWeight.w500),
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                
+                                                                      */
+                                                                      /* Expanded(
+                                                                              child: SizedBox(
+                                                                                height: size.width * numD13,
+                                                                                width: size.width,
+                                                                                child: ElevatedButton(
+                                                                                  onPressed: () {
+                                                                                        if(item.requestStatus.isEmpty){
+                                                
+                                              var map1 = {
+                                                "chat_id" : item.id,
+                                                "status" : true,
+                                              };
+                                                
+                                              socketEmitFunc(
+                                                  socketEvent: "reqstatus",
+                                                  messageType: "",
+                                                  dataMap: map1
+                                              );
+                                                
+                                              socketEmitFunc(
+                                                  socketEvent: "chat message",
+                                                  messageType: "contentupload",
+                                              );
+                                                                                        }
+                                                                                  },
+                                                                                  style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                              item.requestStatus.isEmpty
+                                                  ? colorThemePink
+                                                  :item.requestStatus == "true"
+                                                  ?  Colors.grey
+                                                  :  Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    size.width * numD04),
+                                                  side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
+                                                      color: colorGrey1, width: 2)
+                                              )),
+                                                                                  child: Text(
+                                                                                        yesText,
+                                                                                        style: commonTextStyle(
+                                                size: size,
+                                                fontSize: size.width * numD04,
+                                                color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
+                                                fontWeight: FontWeight.w500),
+                                                                                  ),
+                                                                                ),
+                                                                              )),*/
+                                                                      /*
+                                                                    ],
+                                                                  ),*/
+                                                                    ],
                                                                   ),
                                                                 )),
-                                                            SizedBox(
-                                                              width:
-                                                                  size.width *
-                                                                      numD025,
+                                                              ],
                                                             ),
-                                                            Expanded(
+                                                            showCelebration
+                                                                ? Lottie.asset(
+                                                                    "assets/lottieFiles/celebrate.json",
+                                                                  )
+                                                                : Container(),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Container(),
+
+                                          widget.type == "task_content"
+                                              ? (widget.taskDetail!
+                                                          .paidStatus ==
+                                                      "paid"
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: size.width *
+                                                              numD04,
+                                                          right: size.width *
+                                                              numD04),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin: EdgeInsets.only(
+                                                                top: size
+                                                                        .width *
+                                                                    numD013),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .shade300,
+                                                                      spreadRadius:
+                                                                          2)
+                                                                ]),
+                                                            child: ClipOval(
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .all(size
+                                                                            .width *
+                                                                        numD01),
                                                                 child:
-                                                                    Container(
-                                                              margin: EdgeInsets.only(
-                                                                  right: size
+                                                                    Image.asset(
+                                                                  "${commonImagePath}ic_black_rabbit.png",
+                                                                  width: size
                                                                           .width *
-                                                                      numD04),
+                                                                      numD075,
+                                                                  height: size
+                                                                          .width *
+                                                                      numD075,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: size.width *
+                                                                numD04,
+                                                          ),
+                                                          Expanded(
+                                                            child: Container(
                                                               padding: EdgeInsets.symmetric(
                                                                   horizontal:
                                                                       size.width *
-                                                                          numD04,
+                                                                          numD05,
+                                                                  vertical: size
+                                                                          .width *
+                                                                      numD02),
+                                                              width: size.width,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .shade400),
+                                                                      borderRadius:
+                                                                          BorderRadius
+                                                                              .only(
+                                                                        topRight:
+                                                                            Radius.circular(size.width *
+                                                                                numD04),
+                                                                        bottomLeft:
+                                                                            Radius.circular(size.width *
+                                                                                numD04),
+                                                                        bottomRight:
+                                                                            Radius.circular(size.width *
+                                                                                numD04),
+                                                                      )),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: size
+                                                                            .width *
+                                                                        numD01,
+                                                                  ),
+                                                                  RichText(
+                                                                      text: TextSpan(
+                                                                          style: const TextStyle(
+                                                                            fontFamily:
+                                                                                "AirbnbCereal",
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                          children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "Congratulations, ",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: Colors.black,
+                                                                              fontWeight: FontWeight.normal),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text: widget
+                                                                              .taskDetail!
+                                                                              .mediaHouseName,
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: colorThemePink,
+                                                                              fontWeight: FontWeight.w600),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              " has purchased your content for ",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: Colors.black,
+                                                                              fontWeight: FontWeight.normal),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: colorThemePink,
+                                                                              fontWeight: FontWeight.w600),
+                                                                        ),
+                                                                      ])),
+                                                                  SizedBox(
+                                                                    height: size
+                                                                            .width *
+                                                                        numD03,
+                                                                  ),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD13,
+                                                                        width: size
+                                                                            .width,
+                                                                        child: commonElevatedButton(
+                                                                            "View Transaction Details task",
+                                                                            size,
+                                                                            commonButtonTextStyle(
+                                                                                size),
+                                                                            commonButtonStyle(size,
+                                                                                colorThemePink),
+                                                                            () {
+                                                                          callDetailApi(widget
+                                                                              .taskDetail!
+                                                                              .mediaHouseId);
+                                                                        }),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD01,
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Container())
+                                              : Container(),
+
+                                          SizedBox(
+                                            height: size.width * numD04,
+                                          ),
+                                          widget.type == "task_content"
+                                              ? (widget.taskDetail!
+                                                          .paidStatus ==
+                                                      "paid"
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: size.width *
+                                                              numD04,
+                                                          right: size.width *
+                                                              numD04),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin: EdgeInsets.only(
+                                                                top: size
+                                                                        .width *
+                                                                    numD013),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .shade300,
+                                                                      spreadRadius:
+                                                                          2)
+                                                                ]),
+                                                            child: ClipOval(
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .all(size
+                                                                            .width *
+                                                                        numD01),
+                                                                child:
+                                                                    Image.asset(
+                                                                  "${commonImagePath}ic_black_rabbit.png",
+                                                                  width: size
+                                                                          .width *
+                                                                      numD075,
+                                                                  height: size
+                                                                          .width *
+                                                                      numD075,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: size.width *
+                                                                numD04,
+                                                          ),
+                                                          Expanded(
+                                                            child: Container(
+                                                              padding: EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      size.width *
+                                                                          numD05,
                                                                   vertical: size
                                                                           .width *
                                                                       numD02),
@@ -816,18 +1559,429 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                 children: [
                                                                   SizedBox(
                                                                     height: size
-                                                                            .height *
+                                                                            .width *
                                                                         numD01,
                                                                   ),
                                                                   RichText(
                                                                       text: TextSpan(
+                                                                          style: TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontSize:
+                                                                                size.width * numD037,
+                                                                            fontFamily:
+                                                                                "AirbnbCereal",
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                          children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "Woohoo! We have paid ",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: Colors.black,
+                                                                              fontWeight: FontWeight.normal),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: colorThemePink,
+                                                                              fontWeight: FontWeight.w600),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              " into your bank account. Please visit ",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: Colors.black,
+                                                                              fontWeight: FontWeight.normal),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "My Earnings",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: colorThemePink,
+                                                                              fontWeight: FontWeight.w600),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              " to view your transaction ",
+                                                                          style: commonTextStyle(
+                                                                              size: size,
+                                                                              fontSize: size.width * numD036,
+                                                                              color: Colors.black,
+                                                                              fontWeight: FontWeight.normal),
+                                                                        )
+                                                                      ])),
+                                                                  SizedBox(
+                                                                    height: size
+                                                                            .width *
+                                                                        numD025,
+                                                                  ),
+                                                                  /*Row(
+                            children: [
+                              Expanded(
+                                    child: SizedBox(
+                                      height: size.width * numD13,
+                                      width: size.width,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          if (item.requestStatus.isEmpty &&
+                                              !item.isMakeCounterOffer) {
+                                            var map1 = {
+                                              "chat_id": item.id,
+                                              "status": false,
+                                            };
+                                                
+                                            socketEmitFunc(
+                                                socketEvent: "reqstatus",
+                                                messageType: "",
+                                                dataMap: map1);
+                                                
+                                            socketEmitFunc(
+                                              socketEvent: "chat message",
+                                              messageType: "reject_mediaHouse_offer",
+                                            );
+                                                
+                                            socketEmitFunc(
+                                              socketEvent: "chat message",
+                                              messageType: "rating_hopper",
+                                            );
+                                                
+                                            socketEmitFunc(
+                                              socketEvent: "chat message",
+                                              messageType: "rating_mediaHouse",
+                                            );
+                                            showRejectBtn = true;
+                                          }
+                                          setState(() {});
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: item.requestStatus.isEmpty &&
+                                                !item.isMakeCounterOffer
+                                                ? Colors.black
+                                                : item.requestStatus == "false"
+                                                ? Colors.grey
+                                                : Colors.transparent,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(size.width * numD04),
+                                                side: (item.requestStatus == "false" ||
+                                                    item.requestStatus.isEmpty) &&
+                                                    !item.isMakeCounterOffer
+                                                    ? BorderSide.none
+                                                    : const BorderSide(
+                                                    color: Colors.black, width: 1))),
+                                        child: Text(
+                                          rejectText,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD037,
+                                              color: (item.requestStatus == "false" ||
+                                                  item.requestStatus.isEmpty) &&
+                                                  !item.isMakeCounterOffer
+                                                  ? Colors.white
+                                                  : colorLightGreen,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    )),
+                              SizedBox(
+                                width: size.width * numD04,
+                              ),
+                              Expanded(
+                                    child: SizedBox(
+                                      height: size.width * numD13,
+                                      width: size.width,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          //aditya accept btn
+                                          if (item.requestStatus.isEmpty &&
+                                              !item.isMakeCounterOffer) {
+                                            debugPrint("tapppppp:::::$showAcceptBtn");
+                                            showAcceptBtn = true;
+                                            var map1 = {
+                                              "chat_id": item.id,
+                                              "status": true,
+                                            };
+                                                
+                                            socketEmitFunc(
+                                                socketEvent: "reqstatus",
+                                                messageType: "",
+                                                dataMap: map1);
+                                                
+                                            socketEmitFunc(
+                                                socketEvent: "chat message",
+                                                messageType: "accept_mediaHouse_offer",
+                                                dataMap: {
+                                                  "amount": isMakeCounter
+                                                      ? item.initialOfferAmount
+                                                      : item.finalCounterAmount,
+                                                  "image_id": widget.contentId!,
+                                                });
+                                          }
+                                          setState(() {});
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: item.requestStatus.isEmpty &&
+                                                !item.isMakeCounterOffer
+                                                ? colorThemePink
+                                                : item.requestStatus == "true"
+                                                ? Colors.grey
+                                                : Colors.transparent,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(size.width * numD04),
+                                                side: (item.requestStatus == "true" ||
+                                                    item.requestStatus.isEmpty) &&
+                                                    !item.isMakeCounterOffer
+                                                    ? BorderSide.none
+                                                    : const BorderSide(
+                                                    color: Colors.black, width: 1))),
+                                        child: Text(
+                                          acceptText,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD037,
+                                              color: (item.requestStatus == "true" ||
+                                                  item.requestStatus.isEmpty) &&
+                                                  !item.isMakeCounterOffer
+                                                  ? Colors.white
+                                                  : colorLightGreen,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    )),
+                                                
+                              */
+                                                                  /* Expanded(
+                                    child: SizedBox(
+                                      height: size.width * numD13,
+                                      width: size.width,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          if(item.requestStatus.isEmpty){
+                                                
+                                            var map1 = {
+                                              "chat_id" : item.id,
+                                              "status" : true,
+                                            };
+                                                
+                                            socketEmitFunc(
+                                                socketEvent: "reqstatus",
+                                                messageType: "",
+                                                dataMap: map1
+                                            );
+                                                
+                                            socketEmitFunc(
+                                                socketEvent: "chat message",
+                                                messageType: "contentupload",
+                                            );
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                            item.requestStatus.isEmpty
+                                                ? colorThemePink
+                                                :item.requestStatus == "true"
+                                                ?  Colors.grey
+                                                :  Colors.transparent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  size.width * numD04),
+                                                side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
+                                                    color: colorGrey1, width: 2)
+                                            )),
+                                        child: Text(
+                                          yesText,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD04,
+                                              color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    )),*/ /*
+                            ],
+                                                    ),*/
+                                                                  SizedBox(
+                                                                    height: size
+                                                                            .width *
+                                                                        numD03,
+                                                                  ),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD13,
+                                                                        width: size
+                                                                            .width,
+                                                                        child: commonElevatedButton(
+                                                                            "View My Earnings",
+                                                                            size,
+                                                                            commonButtonTextStyle(
+                                                                                size),
+                                                                            commonButtonStyle(size,
+                                                                                colorThemePink),
+                                                                            () {
+                                                                          Navigator.of(context).push(MaterialPageRoute(
+                                                                              builder: (context) => MyEarningScreen(
+                                                                                    openDashboard: false,
+                                                                                    initialTapPosition: 2,
+                                                                                  )));
+                                                                        }),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: size.width *
+                                                                            numD01,
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Container())
+                                              : Container(),
+                                          SizedBox(
+                                            height: size.width * numD04,
+                                          ),
+
+                                          widget.type == "task_content"
+                                              ? (widget.taskDetail!
+                                                          .paidStatus ==
+                                                      "paid"
+                                                  ? Stack(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      children: [
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Container(
+                                                              margin: EdgeInsets.only(
+                                                                  left: size
+                                                                          .width *
+                                                                      numD04),
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade300,
+                                                                        spreadRadius:
+                                                                            2)
+                                                                  ]),
+                                                              child: ClipOval(
+                                                                child: Padding(
+                                                                  padding: EdgeInsets
+                                                                      .all(size
+                                                                              .width *
+                                                                          numD01),
+                                                                  child: Image
+                                                                      .asset(
+                                                                    "${commonImagePath}ic_black_rabbit.png",
+                                                                    width: size
+                                                                            .width *
+                                                                        numD075,
+                                                                    height: size
+                                                                            .width *
+                                                                        numD075,
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.width *
+                                                                      numD04,
+                                                            ),
+                                                            Expanded(
+                                                                child:
+                                                                    Container(
+                                                              margin: EdgeInsets.only(
+                                                                  right: size
+                                                                          .width *
+                                                                      numD04,
+                                                                  bottom: size
+                                                                          .width *
+                                                                      numD06),
+                                                              padding: EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      size.width *
+                                                                          numD05,
+                                                                  vertical: size
+                                                                          .width *
+                                                                      numD02),
+                                                              width: size.width,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .shade400),
+                                                                      borderRadius:
+                                                                          BorderRadius
+                                                                              .only(
+                                                                        topRight:
+                                                                            Radius.circular(size.width *
+                                                                                numD04),
+                                                                        bottomLeft:
+                                                                            Radius.circular(size.width *
+                                                                                numD04),
+                                                                        bottomRight:
+                                                                            Radius.circular(size.width *
+                                                                                numD04),
+                                                                      )),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: size
+                                                                            .width *
+                                                                        numD04,
+                                                                  ),
+                                                                  RichText(
+                                                                      text: TextSpan(
+                                                                          style: const TextStyle(
+                                                                            fontFamily:
+                                                                                "AirbnbCereal",
+                                                                          ),
                                                                           children: [
                                                                         TextSpan(
                                                                           text:
                                                                               "Rate your experience with PressHop",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * numD035,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
@@ -878,13 +2032,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                             .width *
                                                                         0.04,
                                                                   ),
-                                                                  const Text(
+                                                                  Text(
                                                                     "Tell us what you liked about the App",
                                                                     style: TextStyle(
                                                                         fontSize:
-                                                                            14,
+                                                                            size.width *
+                                                                                numD035,
                                                                         color: Colors
                                                                             .black,
+                                                                        fontFamily:
+                                                                            "AirbnbCereal",
                                                                         fontWeight:
                                                                             FontWeight.w700),
                                                                   ),
@@ -894,55 +2051,63 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                         numD018,
                                                                   ),
                                                                   Wrap(
-                                                                      spacing:
-                                                                          0.2,
-                                                                      runSpacing:
-                                                                          0.1,
                                                                       children: List<
                                                                               Widget>.generate(
                                                                           intList
                                                                               .length,
                                                                           (int
                                                                               index) {
-                                                                        return Container(
-                                                                          margin: EdgeInsets.only(
-                                                                              left: size.width * 0.012,
-                                                                              right: size.width * 0.012),
-                                                                          child:
-                                                                              ChoiceChip(
-                                                                            label:
-                                                                                Text(intList[index]),
-                                                                            labelStyle:
-                                                                                TextStyle(color: dataList.contains(intList[index]) ? Colors.white : colorGrey6),
-                                                                            onSelected:
-                                                                                (bool selected) {
-                                                                              if (selected) {
-                                                                                for (int i = 0; i < intList.length; i++) {
-                                                                                  if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
-                                                                                    dataList.add(intList[i]);
-                                                                                    indexList.add(i);
-                                                                                  }
-                                                                                }
-                                                                              } else {
-                                                                                for (int i = 0; i < intList.length; i++) {
-                                                                                  if (intList[i] == intList[index] && dataList.contains(intList[i])) {
-                                                                                    dataList.remove(intList[i]);
-                                                                                    indexList.remove(i);
-                                                                                  }
-                                                                                }
+                                                                    return Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          left: size.width *
+                                                                              0.02,
+                                                                          right:
+                                                                              size.width * 0.02),
+                                                                      child:
+                                                                          ChoiceChip(
+                                                                        label: Text(
+                                                                            intList[index]),
+                                                                        labelStyle: TextStyle(
+                                                                            color: dataList.contains(intList[index])
+                                                                                ? Colors.white
+                                                                                : colorGrey6,
+                                                                            fontFamily: "AirbnbCereal",
+                                                                            fontSize: size.width * numD035),
+                                                                        onSelected:
+                                                                            (bool
+                                                                                selected) {
+                                                                          if (selected) {
+                                                                            for (int i = 0;
+                                                                                i < intList.length;
+                                                                                i++) {
+                                                                              if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
+                                                                                dataList.add(intList[i]);
+                                                                                indexList.add(i);
                                                                               }
-                                                                              setState(() {});
-                                                                            },
-                                                                            selectedColor:
-                                                                                colorThemePink,
-                                                                            disabledColor:
-                                                                                colorGreyChat.withOpacity(.3),
-                                                                            selected: dataList.contains(intList[index])
-                                                                                ? true
-                                                                                : false,
-                                                                          ),
-                                                                        );
-                                                                      })),
+                                                                            }
+                                                                          } else {
+                                                                            for (int i = 0;
+                                                                                i < intList.length;
+                                                                                i++) {
+                                                                              if (intList[i] == intList[index] && dataList.contains(intList[i])) {
+                                                                                dataList.remove(intList[i]);
+                                                                                indexList.remove(i);
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                        selectedColor:
+                                                                            colorThemePink,
+                                                                        disabledColor:
+                                                                            colorGreyChat.withOpacity(.3),
+                                                                        selected: dataList.contains(intList[index])
+                                                                            ? true
+                                                                            : false,
+                                                                      ),
+                                                                    );
+                                                                  })),
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
@@ -1086,22 +2251,18 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                   SizedBox(
                                                                       height: size
                                                                               .width *
-                                                                          0.02),
+                                                                          0.01),
                                                                   RichText(
                                                                       text: TextSpan(
-                                                                          style: commonTextStyle(
-                                                                              size: size,
-                                                                              fontSize: size.width * numD03,
-                                                                              color: Colors.black,
-                                                                              fontWeight: FontWeight.w400),
                                                                           children: [
                                                                         TextSpan(
                                                                           text:
                                                                               "Please refer to our ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD03,
+                                                                              fontSize: size.width * numD036,
                                                                               color: Colors.black,
+                                                                              lineHeight: 1.2,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         TextSpan(
@@ -1109,9 +2270,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                                 "Terms & Conditions. ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD03,
+                                                                                fontSize: size.width * numD036,
                                                                                 color: colorThemePink,
-                                                                                fontWeight: FontWeight.w400),
+                                                                                lineHeight: 2,
+                                                                                fontWeight: FontWeight.w600),
                                                                             recognizer: TapGestureRecognizer()
                                                                               ..onTap = () {
                                                                                 Navigator.of(context).push(MaterialPageRoute(
@@ -1121,10 +2283,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                               }),
                                                                         TextSpan(
                                                                           text:
-                                                                              "The price of your content can be automatically adjusted in order to increase sales. If you have any questions, please ",
+                                                                              "If you have any questions, please ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD03,
+                                                                              fontSize: size.width * numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
@@ -1133,9 +2295,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                                 "contact ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD03,
+                                                                                fontSize: size.width * numD036,
                                                                                 color: colorThemePink,
-                                                                                fontWeight: FontWeight.w400),
+                                                                                fontWeight: FontWeight.w600),
                                                                             recognizer: TapGestureRecognizer()
                                                                               ..onTap = () {
                                                                                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
@@ -1145,8 +2307,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                               "our helpful teams who are available 24x7 to assist you. Thank you",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD03,
+                                                                              fontSize: size.width * numD036,
                                                                               color: Colors.black,
+                                                                              lineHeight: 1.4,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                       ])),
@@ -1155,196 +2318,6 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                                             .width *
                                                                         0.01,
                                                                   ),
-
-                                                                  /*Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                              child: SizedBox(
-                                                                                height: size.width * numD13,
-                                                                                width: size.width,
-                                                                                child: ElevatedButton(
-                                                                                  onPressed: () {
-                                                                                        if (item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer) {
-                                              var map1 = {
-                                                "chat_id": item.id,
-                                                "status": false,
-                                              };
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "reqstatus",
-                                                  messageType: "",
-                                                  dataMap: map1);
-                                                
-                                              socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "reject_mediaHouse_offer",
-                                              );
-                                                
-                                              socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "rating_hopper",
-                                              );
-                                                
-                                              socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "rating_mediaHouse",
-                                              );
-                                              showRejectBtn = true;
-                                                                                        }
-                                                                                        setState(() {});
-                                                                                  },
-                                                                                  style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              backgroundColor: item.requestStatus.isEmpty &&
-                                                  !item.isMakeCounterOffer
-                                                  ? Colors.black
-                                                  : item.requestStatus == "false"
-                                                  ? Colors.grey
-                                                  : Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(size.width * numD04),
-                                                  side: (item.requestStatus == "false" ||
-                                                      item.requestStatus.isEmpty) &&
-                                                      !item.isMakeCounterOffer
-                                                      ? BorderSide.none
-                                                      : const BorderSide(
-                                                      color: Colors.black, width: 1))),
-                                                                                  child: Text(
-                                                                                        rejectText,
-                                                                                        style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD037,
-                                                color: (item.requestStatus == "false" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? Colors.white
-                                                    : colorLightGreen,
-                                                fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                      SizedBox(
-                                                                        width: size.width * numD04,
-                                                                      ),
-                                                                      Expanded(
-                                                                              child: SizedBox(
-                                                                                height: size.width * numD13,
-                                                                                width: size.width,
-                                                                                child: ElevatedButton(
-                                                                                  onPressed: () {
-                                                                                        //aditya accept btn
-                                                                                        if (item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer) {
-                                              debugPrint("tapppppp:::::$showAcceptBtn");
-                                              showAcceptBtn = true;
-                                              var map1 = {
-                                                "chat_id": item.id,
-                                                "status": true,
-                                              };
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "reqstatus",
-                                                  messageType: "",
-                                                  dataMap: map1);
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "chat message",
-                                                  messageType: "accept_mediaHouse_offer",
-                                                  dataMap: {
-                                                    "amount": isMakeCounter
-                                                        ? item.initialOfferAmount
-                                                        : item.finalCounterAmount,
-                                                    "image_id": widget.contentId!,
-                                                  });
-                                                                                        }
-                                                                                        setState(() {});
-                                                                                  },
-                                                                                  style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              backgroundColor: item.requestStatus.isEmpty &&
-                                                  !item.isMakeCounterOffer
-                                                  ? colorThemePink
-                                                  : item.requestStatus == "true"
-                                                  ? Colors.grey
-                                                  : Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(size.width * numD04),
-                                                  side: (item.requestStatus == "true" ||
-                                                      item.requestStatus.isEmpty) &&
-                                                      !item.isMakeCounterOffer
-                                                      ? BorderSide.none
-                                                      : const BorderSide(
-                                                      color: Colors.black, width: 1))),
-                                                                                  child: Text(
-                                                                                        acceptText,
-                                                                                        style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD037,
-                                                color: (item.requestStatus == "true" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? Colors.white
-                                                    : colorLightGreen,
-                                                fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                
-                                                                      */
-                                                                  /* Expanded(
-                                                                              child: SizedBox(
-                                                                                height: size.width * numD13,
-                                                                                width: size.width,
-                                                                                child: ElevatedButton(
-                                                                                  onPressed: () {
-                                                                                        if(item.requestStatus.isEmpty){
-                                                
-                                              var map1 = {
-                                                "chat_id" : item.id,
-                                                "status" : true,
-                                              };
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "reqstatus",
-                                                  messageType: "",
-                                                  dataMap: map1
-                                              );
-                                                
-                                              socketEmitFunc(
-                                                  socketEvent: "chat message",
-                                                  messageType: "contentupload",
-                                              );
-                                                                                        }
-                                                                                  },
-                                                                                  style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                              item.requestStatus.isEmpty
-                                                  ? colorThemePink
-                                                  :item.requestStatus == "true"
-                                                  ?  Colors.grey
-                                                  :  Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    size.width * numD04),
-                                                  side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                                      color: colorGrey1, width: 2)
-                                              )),
-                                                                                  child: Text(
-                                                                                        yesText,
-                                                                                        style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD04,
-                                                color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
-                                                fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              )),*/
-                                                                  /*
-                                                                    ],
-                                                                  ),*/
                                                                 ],
                                                               ),
                                                             )),
@@ -1356,1361 +2329,189 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
                                                               )
                                                             : Container(),
                                                       ],
-                                                    ),
-                                                  ],
-                                                )
+                                                    )
+                                                  : Container())
                                               : Container(),
 
-                                      widget.type == "task_content"
-                                          ? (widget.taskDetail!.paidStatus ==
-                                                  "paid"
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: size.width * numD04,
-                                                      right:
-                                                          size.width * numD04),
+                                          !showAcceptBtn || !showRejectBtn
+                                              ? Container()
+                                              : Padding(
+                                                  padding: EdgeInsets.all(
+                                                      size.width * numD03),
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: size.width *
-                                                                numD013),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                boxShadow: [
-                                                              BoxShadow(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade300,
-                                                                  spreadRadius:
-                                                                      2)
-                                                            ]),
-                                                        child: ClipOval(
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    size.width *
-                                                                        numD01),
-                                                            child: Image.asset(
-                                                              "${commonImagePath}ic_black_rabbit.png",
-                                                              width:
-                                                                  size.width *
-                                                                      numD075,
-                                                              height:
-                                                                  size.width *
-                                                                      numD075,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
+                                                      profilePicWidget(),
                                                       SizedBox(
                                                         width:
                                                             size.width * numD04,
                                                       ),
                                                       Expanded(
-                                                        child: Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
-                                                                  vertical: size
-                                                                          .width *
-                                                                      numD02),
-                                                          width: size.width,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade400),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topRight: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomLeft: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomRight:
-                                                                        Radius.circular(size.width *
-                                                                            numD04),
-                                                                  )),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD01,
-                                                              ),
-                                                              RichText(
-                                                                  text: TextSpan(
-                                                                      style: const TextStyle(
-                                                                        fontFamily:
-                                                                            "AirbnbCereal",
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                      ),
-                                                                      children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Congratulations, ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.normal),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: widget
-                                                                          .taskDetail!
-                                                                          .mediaHouseName,
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color:
-                                                                              colorThemePink,
-                                                                          fontWeight:
-                                                                              FontWeight.w600),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          " has purchased your content for ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.normal),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color:
-                                                                              colorThemePink,
-                                                                          fontWeight:
-                                                                              FontWeight.w600),
-                                                                    ),
-                                                                  ])),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD03,
-                                                              ),
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    height: size
-                                                                            .width *
-                                                                        numD13,
-                                                                    width: size
-                                                                        .width,
-                                                                    child: commonElevatedButton(
-                                                                        "View Transaction Details task",
-                                                                        size,
-                                                                        commonButtonTextStyle(
-                                                                            size),
-                                                                        commonButtonStyle(
-                                                                            size,
-                                                                            colorThemePink),
-                                                                        () {
-                                                                      callDetailApi(widget
-                                                                          .taskDetail!
-                                                                          .mediaHouseId);
-                                                                    }),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: size
-                                                                            .width *
-                                                                        numD01,
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : Container())
-                                          : Container(),
-
-                                      SizedBox(
-                                        height: size.width * numD04,
-                                      ),
-                                      widget.type == "task_content"
-                                          ? (widget.taskDetail!.paidStatus ==
-                                                  "paid"
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: size.width * numD04,
-                                                      right:
-                                                          size.width * numD04),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: size.width *
-                                                                numD013),
-                                                        decoration:
-                                                            BoxDecoration(
+                                                          child: Container(
+                                                        padding: EdgeInsets.all(
+                                                            size.width *
+                                                                numD02),
+                                                        width: size.width,
+                                                        decoration: BoxDecoration(
+                                                            color:
+                                                                colorLightGrey,
+                                                            border: Border.all(
                                                                 color: Colors
-                                                                    .white,
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                boxShadow: [
-                                                              BoxShadow(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade300,
-                                                                  spreadRadius:
-                                                                      2)
-                                                            ]),
-                                                        child: ClipOval(
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
+                                                                    .black),
+                                                            borderRadius: BorderRadius.only(
+                                                                topRight: Radius.circular(
                                                                     size.width *
-                                                                        numD01),
-                                                            child: Image.asset(
-                                                              "${commonImagePath}ic_black_rabbit.png",
-                                                              width:
-                                                                  size.width *
-                                                                      numD075,
+                                                                        numD04),
+                                                                bottomLeft: Radius.circular(
+                                                                    size.width *
+                                                                        numD04),
+                                                                bottomRight:
+                                                                    Radius.circular(
+                                                                        size.width *
+                                                                            numD04))),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
                                                               height:
-                                                                  size.width *
-                                                                      numD075,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width:
-                                                            size.width * numD04,
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
-                                                                  vertical: size
-                                                                          .width *
-                                                                      numD02),
-                                                          width: size.width,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  border: Border
-                                                                      .all(
-                                                                          color:
-                                                                              colorGoogleButtonBorder),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topRight: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomLeft: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomRight:
-                                                                        Radius.circular(size.width *
-                                                                            numD04),
-                                                                  )),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD01,
-                                                              ),
-                                                              RichText(
-                                                                  text: TextSpan(
-                                                                      style: TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontSize:
-                                                                            size.width *
-                                                                                numD037,
-                                                                        fontFamily:
-                                                                            "AirbnbCereal",
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                      ),
-                                                                      children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Woohoo! We have paid ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.normal),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color:
-                                                                              colorThemePink,
-                                                                          fontWeight:
-                                                                              FontWeight.w600),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          " into your bank account. Please visit ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.normal),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "My Earnings",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color:
-                                                                              colorThemePink,
-                                                                          fontWeight:
-                                                                              FontWeight.w600),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          " to view your transaction ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.normal),
-                                                                    )
-                                                                  ])),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD025,
-                                                              ),
-                                                              /*Row(
-                            children: [
-                              Expanded(
-                                    child: SizedBox(
-                                      height: size.width * numD13,
-                                      width: size.width,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if (item.requestStatus.isEmpty &&
-                                              !item.isMakeCounterOffer) {
-                                            var map1 = {
-                                              "chat_id": item.id,
-                                              "status": false,
-                                            };
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "reqstatus",
-                                                messageType: "",
-                                                dataMap: map1);
-                                                
-                                            socketEmitFunc(
-                                              socketEvent: "chat message",
-                                              messageType: "reject_mediaHouse_offer",
-                                            );
-                                                
-                                            socketEmitFunc(
-                                              socketEvent: "chat message",
-                                              messageType: "rating_hopper",
-                                            );
-                                                
-                                            socketEmitFunc(
-                                              socketEvent: "chat message",
-                                              messageType: "rating_mediaHouse",
-                                            );
-                                            showRejectBtn = true;
-                                          }
-                                          setState(() {});
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer
-                                                ? Colors.black
-                                                : item.requestStatus == "false"
-                                                ? Colors.grey
-                                                : Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(size.width * numD04),
-                                                side: (item.requestStatus == "false" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? BorderSide.none
-                                                    : const BorderSide(
-                                                    color: Colors.black, width: 1))),
-                                        child: Text(
-                                          rejectText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD037,
-                                              color: (item.requestStatus == "false" ||
-                                                  item.requestStatus.isEmpty) &&
-                                                  !item.isMakeCounterOffer
-                                                  ? Colors.white
-                                                  : colorLightGreen,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    )),
-                              SizedBox(
-                                width: size.width * numD04,
-                              ),
-                              Expanded(
-                                    child: SizedBox(
-                                      height: size.width * numD13,
-                                      width: size.width,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          //aditya accept btn
-                                          if (item.requestStatus.isEmpty &&
-                                              !item.isMakeCounterOffer) {
-                                            debugPrint("tapppppp:::::$showAcceptBtn");
-                                            showAcceptBtn = true;
-                                            var map1 = {
-                                              "chat_id": item.id,
-                                              "status": true,
-                                            };
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "reqstatus",
-                                                messageType: "",
-                                                dataMap: map1);
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "accept_mediaHouse_offer",
-                                                dataMap: {
-                                                  "amount": isMakeCounter
-                                                      ? item.initialOfferAmount
-                                                      : item.finalCounterAmount,
-                                                  "image_id": widget.contentId!,
-                                                });
-                                          }
-                                          setState(() {});
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: item.requestStatus.isEmpty &&
-                                                !item.isMakeCounterOffer
-                                                ? colorThemePink
-                                                : item.requestStatus == "true"
-                                                ? Colors.grey
-                                                : Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(size.width * numD04),
-                                                side: (item.requestStatus == "true" ||
-                                                    item.requestStatus.isEmpty) &&
-                                                    !item.isMakeCounterOffer
-                                                    ? BorderSide.none
-                                                    : const BorderSide(
-                                                    color: Colors.black, width: 1))),
-                                        child: Text(
-                                          acceptText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD037,
-                                              color: (item.requestStatus == "true" ||
-                                                  item.requestStatus.isEmpty) &&
-                                                  !item.isMakeCounterOffer
-                                                  ? Colors.white
-                                                  : colorLightGreen,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    )),
-                                                
-                              */
-                                                              /* Expanded(
-                                    child: SizedBox(
-                                      height: size.width * numD13,
-                                      width: size.width,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if(item.requestStatus.isEmpty){
-                                                
-                                            var map1 = {
-                                              "chat_id" : item.id,
-                                              "status" : true,
-                                            };
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "reqstatus",
-                                                messageType: "",
-                                                dataMap: map1
-                                            );
-                                                
-                                            socketEmitFunc(
-                                                socketEvent: "chat message",
-                                                messageType: "contentupload",
-                                            );
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                            item.requestStatus.isEmpty
-                                                ? colorThemePink
-                                                :item.requestStatus == "true"
-                                                ?  Colors.grey
-                                                :  Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  size.width * numD04),
-                                                side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                                    color: colorGrey1, width: 2)
-                                            )),
-                                        child: Text(
-                                          yesText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD04,
-                                              color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    )),*/ /*
-                            ],
-                                                    ),*/
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD03,
-                                                              ),
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    height: size
-                                                                            .width *
-                                                                        numD13,
-                                                                    width: size
-                                                                        .width,
-                                                                    child: commonElevatedButton(
-                                                                        "View My Earnings",
-                                                                        size,
-                                                                        commonButtonTextStyle(
-                                                                            size),
-                                                                        commonButtonStyle(
-                                                                            size,
-                                                                            colorThemePink),
-                                                                        () {
-                                                                      Navigator.of(context).push(MaterialPageRoute(
-                                                                          builder: (context) => MyEarningScreen(
-                                                                                openDashboard: false,
-                                                                                initialTapPosition: 2,
-                                                                              )));
-                                                                    }),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: size
-                                                                            .width *
-                                                                        numD01,
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              : Container())
-                                          : Container(),
-                                      SizedBox(
-                                        height: size.width * numD04,
-                                      ),
-
-                                      widget.type == "task_content"
-                                          ? (widget.taskDetail!.paidStatus ==
-                                                  "paid"
-                                              ? Stack(
-                                                  alignment: Alignment.center,
-                                                  children: [
-                                                    Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          margin: EdgeInsets.only(
-                                                              left: size.width *
-                                                                  numD04),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  boxShadow: [
-                                                                BoxShadow(
-                                                                    color: Colors
-                                                                        .grey
-                                                                        .shade300,
-                                                                    spreadRadius:
-                                                                        2)
-                                                              ]),
-                                                          child: ClipOval(
-                                                            child: Padding(
-                                                              padding: EdgeInsets
-                                                                  .all(size
-                                                                          .width *
-                                                                      numD01),
-                                                              child:
-                                                                  Image.asset(
-                                                                "${commonImagePath}ic_black_rabbit.png",
-                                                                width:
-                                                                    size.width *
-                                                                        numD075,
-                                                                height:
-                                                                    size.width *
-                                                                        numD075,
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: size.width *
-                                                              numD04,
-                                                        ),
-                                                        Expanded(
-                                                            child: Container(
-                                                          margin: EdgeInsets.only(
-                                                              right:
                                                                   size.width *
                                                                       numD04,
-                                                              bottom:
-                                                                  size.width *
-                                                                      numD06),
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
-                                                                  vertical: size
+                                                            ),
+                                                            Text(
+                                                              showRejectBtn
+                                                                  ? " The offer is rejected by you."
+                                                                  : "Well done, the offer is now accepted",
+                                                              style: commonTextStyle(
+                                                                  size: size,
+                                                                  fontSize: size
                                                                           .width *
-                                                                      numD02),
-                                                          width: size.width,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade400),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topRight: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomLeft: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomRight:
-                                                                        Radius.circular(size.width *
-                                                                            numD04),
-                                                                  )),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD04,
-                                                              ),
-                                                              RichText(
-                                                                  text: TextSpan(
-                                                                      style: const TextStyle(
-                                                                        fontFamily:
-                                                                            "AirbnbCereal",
-                                                                      ),
-                                                                      children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Rate your experience with PressHop",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD035,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.w600),
-                                                                    ),
-                                                                  ])),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD04,
-                                                              ),
-                                                              RatingBar(
-                                                                glowRadius: 0,
-                                                                ratingWidget:
-                                                                    RatingWidget(
-                                                                  empty: Image
-                                                                      .asset(
-                                                                          "${iconsPath}emptystar.png"),
-                                                                  full: Image.asset(
-                                                                      "${iconsPath}star.png"),
-                                                                  half: Image.asset(
-                                                                      "${iconsPath}ic_half_star.png"),
-                                                                ),
-                                                                onRatingUpdate:
-                                                                    (value) {
-                                                                  ratings =
-                                                                      value;
-                                                                  setState(
-                                                                      () {});
-                                                                },
-                                                                itemSize:
-                                                                    size.width *
-                                                                        numD09,
-                                                                itemCount: 5,
-                                                                initialRating:
-                                                                    ratings,
-                                                                allowHalfRating:
-                                                                    true,
-                                                                itemPadding: EdgeInsets.only(
-                                                                    left: size
-                                                                            .width *
-                                                                        numD03),
-                                                              ),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        0.04,
-                                                              ),
-                                                              Text(
-                                                                "Tell us what you liked about the App",
-                                                                style: TextStyle(
-                                                                    fontSize: size
-                                                                            .width *
-                                                                        numD035,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        "AirbnbCereal",
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700),
-                                                              ),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD018,
-                                                              ),
-                                                              Wrap(
-                                                                  children: List<
-                                                                          Widget>.generate(
-                                                                      intList
-                                                                          .length,
-                                                                      (int
-                                                                          index) {
-                                                                return Container(
-                                                                  margin: EdgeInsets.only(
-                                                                      left: size
-                                                                              .width *
-                                                                          0.02,
-                                                                      right: size
-                                                                              .width *
-                                                                          0.02),
-                                                                  child:
-                                                                      ChoiceChip(
-                                                                    label: Text(
-                                                                        intList[
-                                                                            index]),
-                                                                    labelStyle: TextStyle(
-                                                                        color: dataList.contains(intList[index])
-                                                                            ? Colors
-                                                                                .white
-                                                                            : colorGrey6,
-                                                                        fontFamily:
-                                                                            "AirbnbCereal",
-                                                                        fontSize:
-                                                                            size.width *
-                                                                                numD035),
-                                                                    onSelected:
-                                                                        (bool
-                                                                            selected) {
-                                                                      if (selected) {
-                                                                        for (int i =
-                                                                                0;
-                                                                            i < intList.length;
-                                                                            i++) {
-                                                                          if (intList[i] == intList[index] &&
-                                                                              !dataList.contains(intList[i])) {
-                                                                            dataList.add(intList[i]);
-                                                                            indexList.add(i);
-                                                                          }
-                                                                        }
-                                                                      } else {
-                                                                        for (int i =
-                                                                                0;
-                                                                            i < intList.length;
-                                                                            i++) {
-                                                                          if (intList[i] == intList[index] &&
-                                                                              dataList.contains(intList[i])) {
-                                                                            dataList.remove(intList[i]);
-                                                                            indexList.remove(i);
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                      setState(
-                                                                          () {});
-                                                                    },
-                                                                    selectedColor:
-                                                                        colorThemePink,
-                                                                    disabledColor:
-                                                                        colorGreyChat
-                                                                            .withOpacity(.3),
-                                                                    selected: dataList
-                                                                            .contains(intList[index])
-                                                                        ? true
-                                                                        : false,
-                                                                  ),
-                                                                );
-                                                              })),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD02,
-                                                              ),
-                                                              Stack(
-                                                                children: [
-                                                                  TextFormField(
-                                                                    controller:
-                                                                        ratingReviewController1,
-                                                                    cursorColor:
-                                                                        colorTextFieldIcon,
-                                                                    keyboardType:
-                                                                        TextInputType
-                                                                            .multiline,
-                                                                    maxLines: 6,
-                                                                    readOnly:
-                                                                        false,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize:
-                                                                          size.width *
-                                                                              numD035,
-                                                                    ),
-                                                                    onChanged:
-                                                                        (v) {
-                                                                      onTextChanged();
-                                                                    },
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      hintText:
-                                                                          textData,
-                                                                      contentPadding: EdgeInsets.only(
-                                                                          left: size.width *
-                                                                              numD08,
-                                                                          right: size.width *
-                                                                              numD02,
-                                                                          top: size.width *
-                                                                              numD075),
-                                                                      hintStyle: TextStyle(
-                                                                          color: Colors
-                                                                              .grey
-                                                                              .shade400,
-                                                                          wordSpacing:
-                                                                              2,
-                                                                          fontSize:
-                                                                              size.width * numD035),
-                                                                      disabledBorder: OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(size.width *
-                                                                              0.03),
-                                                                          borderSide: BorderSide(
-                                                                              width: 1,
-                                                                              color: Colors.grey.shade300)),
-                                                                      focusedBorder: OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(size.width *
-                                                                              0.03),
-                                                                          borderSide: BorderSide(
-                                                                              width: 1,
-                                                                              color: Colors.grey.shade300)),
-                                                                      enabledBorder: OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(size.width *
-                                                                              0.03),
-                                                                          borderSide: const BorderSide(
-                                                                              width: 1,
-                                                                              color: Colors.black)),
-                                                                      errorBorder: OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(size.width *
-                                                                              0.03),
-                                                                          borderSide: BorderSide(
-                                                                              width: 1,
-                                                                              color: Colors.grey.shade300)),
-                                                                      focusedErrorBorder: OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(size.width *
-                                                                              0.03),
-                                                                          borderSide: const BorderSide(
-                                                                              width: 1,
-                                                                              color: Colors.grey)),
-                                                                      alignLabelWithHint:
-                                                                          false,
-                                                                    ),
-                                                                    autovalidateMode:
-                                                                        AutovalidateMode
-                                                                            .onUserInteraction,
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        top: size.width *
-                                                                            numD038,
-                                                                        left: size.width *
-                                                                            numD014),
-                                                                    child: Image
-                                                                        .asset(
-                                                                      "${iconsPath}docs.png",
-                                                                      width: size
-                                                                              .width *
-                                                                          0.06,
-                                                                      height: size
-                                                                              .width *
-                                                                          0.07,
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade400,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                  height: size
-                                                                          .width *
-                                                                      numD017),
-                                                              ratingReviewController1
-                                                                      .text
-                                                                      .isEmpty
-                                                                  ? const Text(
-                                                                      "Required",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              11,
-                                                                          color:
-                                                                              colorThemePink,
-                                                                          fontWeight:
-                                                                              FontWeight.w400),
-                                                                    )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                  height: size
-                                                                          .width *
-                                                                      numD04),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD13,
-                                                                width:
-                                                                    size.width,
-                                                                child:
-                                                                    commonElevatedButton(
-                                                                        isRatingGiven
-                                                                            ? "Thanks a Ton"
-                                                                            : submitText,
-                                                                        size,
-                                                                        isRatingGiven
-                                                                            ? TextStyle(
-                                                                                color: Colors.black,
-                                                                                fontSize: size.width * numD037,
-                                                                                fontFamily: "AirbnbCereal",
-                                                                                fontWeight: FontWeight.bold)
-                                                                            : commonButtonTextStyle(size),
-                                                                        commonButtonStyle(size, isRatingGiven ? Colors.grey : colorThemePink),
-                                                                        !isRatingGiven
-                                                                            ? () {
-                                                                                if (ratingReviewController1.text.isNotEmpty) {
-                                                                                  var map = {
-                                                                                    // "chat_id": item.id,
-                                                                                    "rating": ratings,
-                                                                                    "review": ratingReviewController1.text,
-                                                                                    "features": dataList,
-                                                                                    "image_id": widget.type == "content" ? widget.contentId : imageId,
-                                                                                    "type": "content",
-                                                                                    "sender_type": "hopper"
-                                                                                  };
-                                                                                  debugPrint("map function $map");
-                                                                                  socketEmitFunc(socketEvent: "rating", messageType: "rating_for_hopper", dataMap: map);
-                                                                                  showSnackBar("Rating & Review", "Thanks for the love! Your feedback makes all the difference ❤️", Colors.green);
-                                                                                  showCelebration = true;
-                                                                                  Future.delayed(const Duration(seconds: 3), () {
-                                                                                    showCelebration = false;
-                                                                                  });
-                                                                                  setState(() {});
-                                                                                } else {
-                                                                                  showSnackBar("Required *", "Please enter some review for mediahouse", Colors.red);
-                                                                                }
-                                                                              }
-                                                                            : () {
-                                                                                debugPrint("already rated:::;");
-                                                                              }),
-                                                              ),
-                                                              SizedBox(
-                                                                  height:
-                                                                      size.width *
-                                                                          0.01),
-                                                              RichText(
-                                                                  text: TextSpan(
-                                                                      children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Please refer to our ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          lineHeight:
-                                                                              1.2,
-                                                                          fontWeight:
-                                                                              FontWeight.w400),
-                                                                    ),
-                                                                    TextSpan(
-                                                                        text:
-                                                                            "Terms & Conditions. ",
-                                                                        style: commonTextStyle(
-                                                                            size:
-                                                                                size,
-                                                                            fontSize: size.width *
-                                                                                numD036,
-                                                                            color:
-                                                                                colorThemePink,
-                                                                            lineHeight:
-                                                                                2,
-                                                                            fontWeight:
-                                                                                FontWeight.w600),
-                                                                        recognizer: TapGestureRecognizer()
-                                                                          ..onTap = () {
-                                                                            Navigator.of(context).push(MaterialPageRoute(
-                                                                                builder: (context) => TermCheckScreen(
-                                                                                      type: 'legal',
-                                                                                    )));
-                                                                          }),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "If you have any questions, please ",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight:
-                                                                              FontWeight.w400),
-                                                                    ),
-                                                                    TextSpan(
-                                                                        text:
-                                                                            "contact ",
-                                                                        style: commonTextStyle(
-                                                                            size:
-                                                                                size,
-                                                                            fontSize: size.width *
-                                                                                numD036,
-                                                                            color:
-                                                                                colorThemePink,
-                                                                            fontWeight:
-                                                                                FontWeight.w600),
-                                                                        recognizer: TapGestureRecognizer()
-                                                                          ..onTap = () {
-                                                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
-                                                                          }),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "our helpful teams who are available 24x7 to assist you. Thank you",
-                                                                      style: commonTextStyle(
-                                                                          size:
-                                                                              size,
-                                                                          fontSize: size.width *
-                                                                              numD036,
-                                                                          color: Colors
-                                                                              .black,
-                                                                          lineHeight:
-                                                                              1.4,
-                                                                          fontWeight:
-                                                                              FontWeight.w400),
-                                                                    ),
-                                                                  ])),
-                                                              SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        0.01,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )),
-                                                      ],
-                                                    ),
-                                                    showCelebration
-                                                        ? Lottie.asset(
-                                                            "assets/lottieFiles/celebrate.json",
-                                                          )
-                                                        : Container(),
-                                                  ],
-                                                )
-                                              : Container())
-                                          : Container(),
-
-                                      !showAcceptBtn || !showRejectBtn
-                                          ? Container()
-                                          : Padding(
-                                              padding: EdgeInsets.all(
-                                                  size.width * numD03),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  profilePicWidget(),
-                                                  SizedBox(
-                                                    width: size.width * numD04,
-                                                  ),
-                                                  Expanded(
-                                                      child: Container(
-                                                    padding: EdgeInsets.all(
-                                                        size.width * numD02),
-                                                    width: size.width,
-                                                    decoration: BoxDecoration(
-                                                        color: colorLightGrey,
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.black),
-                                                        borderRadius: BorderRadius.only(
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    size.width *
-                                                                        numD04),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    size.width *
-                                                                        numD04),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    size.width *
-                                                                        numD04))),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SizedBox(
-                                                          height: size.width *
-                                                              numD04,
-                                                        ),
-                                                        Text(
-                                                          showRejectBtn
-                                                              ? " The offer is rejected by you."
-                                                              : "Well done, the offer is now accepted",
-                                                          style: commonTextStyle(
-                                                              size: size,
-                                                              fontSize:
-                                                                  size.width *
                                                                       numD035,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal),
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  size.width *
+                                                                      numD04,
+                                                            ),
+                                                          ],
                                                         ),
-                                                        SizedBox(
-                                                          height: size.width *
-                                                              numD04,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ))
-                                                ],
-                                              ),
+                                                      ))
+                                                    ],
+                                                  ),
+                                                ),
+                                          widgetDivider(),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: size.height * numD01),
+                                            child: Text(
+                                              "Please refresh to view more offers.",
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize:
+                                                      size.width * numD035,
+                                                  color: Colors.black,
+                                                  lineHeight: 1.2,
+                                                  fontWeight: FontWeight.w400),
                                             ),
-                                      widgetDivider(),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: size.height * numD01),
-                                        child: Text(
-                                          "Please refresh to view more offers.",
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD035,
-                                              color: Colors.black,
-                                              lineHeight: 1.2,
-                                              fontWeight: FontWeight.w400),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: (widget.type != "content"),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: size.width * numD04,
+                                              vertical: size.width * numD02),
+                                          height: size.width * numD18,
+                                          child: commonElevatedButton(
+                                              galleryText,
+                                              size,
+                                              commonButtonTextStyle(size),
+                                              commonButtonStyle(
+                                                  size, Colors.black), () {
+                                            getImage(ImageSource.gallery);
+                                          }),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: size.width * numD04,
+                                              vertical: size.width * numD02),
+                                          margin: EdgeInsets.only(bottom: 8),
+                                          height: size.width * numD18,
+                                          child: commonElevatedButton(
+                                              cameraText,
+                                              size,
+                                              commonButtonTextStyle(size),
+                                              commonButtonStyle(
+                                                  size, colorThemePink), () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const CameraScreen(
+                                                          picAgain: true,
+                                                          previousScreen:
+                                                              ScreenNameEnum
+                                                                  .manageTaskScreen,
+                                                        ))).then((value) {
+                                              if (value != null) {
+                                                debugPrint("value:::::$value");
+                                                List<CameraData> cameraData =
+                                                    value;
+
+                                                if (cameraData.first.mimeType ==
+                                                    "video") {
+                                                  generateVideoThumbnail(
+                                                      cameraData.first.path);
+                                                } else if (cameraData
+                                                        .first.mimeType ==
+                                                    "audio") {
+                                                  Map<String, String> mediaMap =
+                                                      {
+                                                    "imageAndVideo":
+                                                        cameraData.first.path,
+                                                  };
+                                                  callUploadMediaApi(
+                                                      mediaMap, "audio");
+                                                } else {
+                                                  Map<String, String> mediaMap =
+                                                      {
+                                                    "imageAndVideo":
+                                                        cameraData.first.path,
+                                                  };
+                                                  callUploadMediaApi(
+                                                      mediaMap, "image");
+                                                }
+                                              }
+                                            });
+                                          }),
                                         ),
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            Visibility(
-                              visible: (widget.type != "content"),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD04,
-                                          vertical: size.width * numD02),
-                                      height: size.width * numD18,
-                                      child: commonElevatedButton(
-                                          galleryText,
-                                          size,
-                                          commonButtonTextStyle(size),
-                                          commonButtonStyle(size, Colors.black),
-                                          () {
-                                        getImage(ImageSource.gallery);
-                                      }),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD04,
-                                          vertical: size.width * numD02),
-                                      margin: EdgeInsets.only(bottom: 8),
-                                      height: size.width * numD18,
-                                      child: commonElevatedButton(
-                                          cameraText,
-                                          size,
-                                          commonButtonTextStyle(size),
-                                          commonButtonStyle(
-                                              size, colorThemePink), () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const CameraScreen(
-                                                      picAgain: true,
-                                                      previousScreen:
-                                                          ScreenNameEnum
-                                                              .manageTaskScreen,
-                                                    ))).then((value) {
-                                          if (value != null) {
-                                            debugPrint("value:::::$value");
-                                            List<CameraData> cameraData = value;
-
-                                            if (cameraData.first.mimeType ==
-                                                "video") {
-                                              generateVideoThumbnail(
-                                                  cameraData.first.path);
-                                            } else if (cameraData
-                                                    .first.mimeType ==
-                                                "audio") {
-                                              Map<String, String> mediaMap = {
-                                                "imageAndVideo":
-                                                    cameraData.first.path,
-                                              };
-                                              callUploadMediaApi(
-                                                  mediaMap, "audio");
-                                            } else {
-                                              Map<String, String> mediaMap = {
-                                                "imageAndVideo":
-                                                    cameraData.first.path,
-                                              };
-                                              callUploadMediaApi(
-                                                  mediaMap, "image");
-                                            }
-                                          }
-                                        });
-                                      }),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Center(child: showLoader())));
+                          )));
       },
     );
   }
@@ -6762,6 +6563,12 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
   }
 
   void initialController() {
+    if (widget.myContentData == null ||
+        widget.myContentData!.contentMediaList.isEmpty) {
+      debugPrint("🚀 initialController: myContentData is null or empty");
+      return;
+    }
+
     if (widget.myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
         "audio") {
       var url = getMediaImageUrl(
@@ -6965,9 +6772,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
   /// Get Listing
   void callGetManageTaskListingApi() {
     if (!mounted) return;
+    final contentId = (widget.contentId == null || widget.contentId!.isEmpty)
+        ? (widget.taskDetail?.id ?? "")
+        : widget.contentId!;
+
+    debugPrint(
+        "🚀 callGetManageTaskListingApi: effective contentId='$contentId'");
+
     context.read<TaskBloc>().add(GetTaskChatEvent(
-        roomId: widget.roomId,
-        type: widget.type,
-        contentId: widget.contentId ?? ""));
+        roomId: widget.roomId, type: widget.type, contentId: contentId));
   }
 }

@@ -80,6 +80,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   void initState() {
     getAllIcons();
     debugPrint("Class Name : $runtimeType");
+    debugPrint(
+        "🚀 BroadCastScreen initialized with taskId: '${widget.taskId}'");
     getCurrentLocation();
     //requestContactsPermission();
     context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));

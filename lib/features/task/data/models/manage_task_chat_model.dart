@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/features/task/data/models/task_models.dart';
@@ -51,7 +50,7 @@ class ManageTaskChatModel {
     if (json["media"] != null) {
       var data = json["media"] as List;
       mediaListTem = data.map((e) => TaskVideoModel.fromJson(e)).toList();
-      debugPrint("mediaListTem Length::::: ${mediaList.length}");
+      debugPrint("mediaListTem Length::::: ${mediaListTem.length}");
     }
 
     id = (json["_id"] ?? "").toString();
@@ -76,18 +75,47 @@ class ManageTaskChatModel {
     paidStatus = json['paid_status'] ?? false;
     isRatingGiven = json["review"] != null;
     mediaList = mediaListTem;
-    imageCount = json["imageCount"] ?? "0";
-    videoCount = json["videoCount"] ?? "0";
-    audioCount = json["audioCount"] ?? "0";
-    Map<String, dynamic> mediaHouseDetailMap = json["receiver_id"] ?? {};
-    mediaHouseId = (mediaHouseDetailMap["_id"] ?? "").toString();
-    mediaHouseName = json["message_type"] == "PaymentIntent"
-        ? json["user_info"] != null
-            ? json["user_info"]["company_name"]
-            : ""
-        : (mediaHouseDetailMap["company_name"] ?? "").toString();
-    mediaHouseImage = (mediaHouseDetailMap["profile_image"] ?? "").toString();
+
+    // Handle media counts if not provided by API
+    if (json["imageCount"] != null) {
+      imageCount = json["imageCount"].toString();
+      videoCount = json["videoCount"].toString();
+      audioCount = json["audioCount"].toString();
+    } else if (mediaList.isNotEmpty) {
+      int imgC = 0, vidC = 0, audC = 0;
+      for (var m in mediaList) {
+        if (m.type.contains("video")) {
+          vidC++;
+        } else if (m.type.contains("audio")) {
+          audC++;
+        } else {
+          imgC++;
+        }
+      }
+      imageCount = imgC.toString();
+      videoCount = vidC.toString();
+      audioCount = audC.toString();
+    } else {
+      imageCount = "0";
+      videoCount = "0";
+      audioCount = "0";
+    }
+
+    // Handle receiver_id: can be String or Map
+    var receiverData = json["receiver_id"] ?? json["sender_id"];
+    if (receiverData is Map) {
+      mediaHouseId = (receiverData["_id"] ?? "").toString();
+      mediaHouseName = json["message_type"] == "PaymentIntent"
+          ? json["user_info"] != null
+              ? json["user_info"]["company_name"]
+              : ""
+          : (receiverData["company_name"] ?? "").toString();
+      mediaHouseImage = (receiverData["profile_image"] ?? "").toString();
+    } else {
+      mediaHouseId = receiverData.toString();
+      mediaHouseName = "";
+      mediaHouseImage = "";
+    }
     transactionId = json["transaction_id"] ?? "";
-    // }
   }
 }

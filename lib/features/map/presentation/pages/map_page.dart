@@ -31,15 +31,34 @@ import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 
-class MapPage extends StatelessWidget {
+class MapPage extends StatefulWidget {
   final bool hideLeading;
   const MapPage({Key? key, this.hideLeading = false}) : super(key: key);
 
   @override
+  State<MapPage> createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+  late MapBloc _mapBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapBloc = sl<MapBloc>()..add(GetCurrentLocationEvent());
+  }
+
+  @override
+  void dispose() {
+    _mapBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<MapBloc>()..add(GetCurrentLocationEvent()),
-      child: _MapPageContent(hideLeading: hideLeading),
+    return BlocProvider.value(
+      value: _mapBloc,
+      child: _MapPageContent(hideLeading: widget.hideLeading),
     );
   }
 }
@@ -134,15 +153,20 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   Future<void> _goToCurrentLocation() async {
-    final mapCtrl = await _controller.future;
-    final state = context.read<MapBloc>().state;
-    if (state.myLocation != null) {
-      _currentZoom = 17.0; // Zoom in when going to current location
-      mapCtrl.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: state.myLocation!, zoom: _currentZoom),
-        ),
-      );
+    try {
+      final mapCtrl = await _controller.future;
+      if (!mounted) return;
+      final state = context.read<MapBloc>().state;
+      if (state.myLocation != null) {
+        _currentZoom = 17.0; // Zoom in when going to current location
+        await mapCtrl.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: state.myLocation!, zoom: _currentZoom),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error going to current location: $e");
     }
   }
 
@@ -212,15 +236,25 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   Future<void> _zoomIn() async {
-    _currentZoom += 1;
-    final mapCtrl = await _controller.future;
-    mapCtrl.animateCamera(CameraUpdate.zoomTo(_currentZoom));
+    try {
+      _currentZoom += 1;
+      final mapCtrl = await _controller.future;
+      if (!mounted) return;
+      await mapCtrl.animateCamera(CameraUpdate.zoomTo(_currentZoom));
+    } catch (e) {
+      debugPrint("Error zooming in: $e");
+    }
   }
 
   Future<void> _zoomOut() async {
-    _currentZoom -= 1;
-    final mapCtrl = await _controller.future;
-    mapCtrl.animateCamera(CameraUpdate.zoomTo(_currentZoom));
+    try {
+      _currentZoom -= 1;
+      final mapCtrl = await _controller.future;
+      if (!mounted) return;
+      await mapCtrl.animateCamera(CameraUpdate.zoomTo(_currentZoom));
+    } catch (e) {
+      debugPrint("Error zooming out: $e");
+    }
   }
 
   void _updateParticles() {
@@ -287,67 +321,89 @@ class _MapPageContentState extends State<_MapPageContent>
   }
 
   Future<void> _updateInfoWindow() async {
+    if (!mounted) return;
     final state = context.read<MapBloc>().state;
-    if (state.selectedPosition != null) {
-      final controller = await _controller.future;
-      final screen = await controller.getScreenCoordinate(
-        state.selectedPosition!,
-      );
 
-      setState(() {
-        _infoOffset = Offset(screen.x.toDouble(), screen.y.toDouble());
-      });
-    }
+    try {
+      if (state.selectedPosition != null) {
+        final controller = await _controller.future;
+        if (!mounted) return;
+        final screen = await controller.getScreenCoordinate(
+          state.selectedPosition!,
+        );
 
-    if (state.selectedPolygonPosition != null) {
-      final controller = await _controller.future;
-      final screen = await controller.getScreenCoordinate(
-        state.selectedPolygonPosition!,
-      );
-
-      setState(() {
-        _polygonInfoOffset = Offset(screen.x.toDouble(), screen.y.toDouble());
-      });
-    }
-
-    if (state.routeMidpoint != null) {
-      final controller = await _controller.future;
-      final screen = await controller.getScreenCoordinate(state.routeMidpoint!);
-
-      setState(() {
-        _routeInfoOffset = Offset(screen.x.toDouble(), screen.y.toDouble());
-      });
-      if (_routeInfoOffset != null) {
-        setState(() {
-          _routeInfoOffset = null;
-        });
+        if (mounted) {
+          setState(() {
+            _infoOffset = Offset(screen.x.toDouble(), screen.y.toDouble());
+          });
+        }
       }
+
+      if (state.selectedPolygonPosition != null) {
+        final controller = await _controller.future;
+        if (!mounted) return;
+        final screen = await controller.getScreenCoordinate(
+          state.selectedPolygonPosition!,
+        );
+
+        if (mounted) {
+          setState(() {
+            _polygonInfoOffset =
+                Offset(screen.x.toDouble(), screen.y.toDouble());
+          });
+        }
+      }
+
+      if (state.routeMidpoint != null) {
+        final controller = await _controller.future;
+        if (!mounted) return;
+        final screen =
+            await controller.getScreenCoordinate(state.routeMidpoint!);
+
+        if (mounted) {
+          setState(() {
+            _routeInfoOffset = Offset(screen.x.toDouble(), screen.y.toDouble());
+          });
+          if (_routeInfoOffset != null) {
+            setState(() {
+              _routeInfoOffset = null;
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error updating info window: $e");
     }
   }
 
   Future<void> _fitBounds(List<LatLng> points) async {
     if (points.isEmpty) return;
-    final controller = await _controller.future;
+    try {
+      final controller = await _controller.future;
+      if (!mounted) return;
 
-    double minLat = points.first.latitude;
-    double maxLat = points.first.latitude;
-    double minLng = points.first.longitude;
-    double maxLng = points.first.longitude;
+      double minLat = points.first.latitude;
+      double maxLat = points.first.latitude;
+      double minLng = points.first.longitude;
+      double maxLng = points.first.longitude;
 
-    for (var point in points) {
-      if (point.latitude < minLat) minLat = point.latitude;
-      if (point.latitude > maxLat) maxLat = point.latitude;
-      if (point.longitude < minLng) minLng = point.longitude;
-      if (point.longitude > maxLng) maxLng = point.longitude;
+      for (var point in points) {
+        if (point.latitude < minLat) minLat = point.latitude;
+        if (point.latitude > maxLat) maxLat = point.latitude;
+        if (point.longitude < minLng) minLng = point.longitude;
+        if (point.longitude > maxLng) maxLng = point.longitude;
+      }
+
+      await controller.animateCamera(CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(minLat, minLng),
+          northeast: LatLng(maxLat, maxLng),
+        ),
+        50,
+      ));
+    } catch (e) {
+      debugPrint("Error fitting bounds: $e");
     }
-
-    controller.animateCamera(CameraUpdate.newLatLngBounds(
-      LatLngBounds(
-        southwest: LatLng(minLat, minLng),
-        northeast: LatLng(maxLat, maxLng),
-      ),
-      50,
-    ));
   }
 
   void _showLocationPermissionDialog() {
@@ -397,23 +453,36 @@ class _MapPageContentState extends State<_MapPageContent>
 
         // Listen for selection changes to update info window position
         if (state.selectedPosition != null) {
-          _controller.future.then((ctrl) {
-            ctrl.animateCamera(CameraUpdate.newLatLng(state.selectedPosition!));
+          _controller.future.then((ctrl) async {
+            try {
+              if (mounted) {
+                await ctrl.animateCamera(
+                    CameraUpdate.newLatLng(state.selectedPosition!));
+                _updateInfoWindow();
+              }
+            } catch (e) {
+              debugPrint("Error moving camera to selected position: $e");
+            }
           });
-          _updateInfoWindow();
         }
 
         // Handle Navigation Camera
         if (state.isNavigating && state.myLocation != null) {
-          _controller.future.then((ctrl) {
-            ctrl.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: state.myLocation!,
-                zoom: 19,
-                tilt: 60,
-                bearing: 0,
-              ),
-            ));
+          _controller.future.then((ctrl) async {
+            try {
+              if (mounted) {
+                await ctrl.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: state.myLocation!,
+                    zoom: 19,
+                    tilt: 60,
+                    bearing: 0,
+                  ),
+                ));
+              }
+            } catch (e) {
+              debugPrint("Error moving camera for navigation: $e");
+            }
           });
         }
 

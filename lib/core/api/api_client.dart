@@ -401,9 +401,10 @@ class PrettyDioLogger extends Interceptor {
     debugPrint(
       '''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-➡️ API REQUEST
+➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ API REQUEST ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️ ➡️
 METHOD : ${options.method}
 URL    : ${options.uri}
+TIME   : ${_getFormattedTime()}
 HEADERS: ${_maskHeaders(options.headers)}
 QUERY  : ${options.queryParameters}
 BODY   : ${_prettyJson(options.data)}
@@ -421,9 +422,10 @@ BODY   : ${_prettyJson(options.data)}
     debugPrint(
       '''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ API RESPONSE
+✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ API RESPONSE ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅
 STATUS : ${response.statusCode}
 URL    : ${response.realUri}
+TIME   : ${_getFormattedTime()}
 DATA   : ${_prettyJson(response.data)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''',
@@ -439,9 +441,10 @@ DATA   : ${_prettyJson(response.data)}
     debugPrint(
       '''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-❌ API ERROR
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ API ERROR ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌
 STATUS : ${err.response?.statusCode}
 URL    : ${err.requestOptions.uri}
+TIME   : ${_getFormattedTime()}
 ERROR  : ${err.message}
 DATA   : ${_prettyJson(err.response?.data)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -459,6 +462,30 @@ DATA   : ${_prettyJson(err.response?.data)}
       print("Token masked final: ${masked[headerKey]}");
     }
     return masked;
+  }
+
+  String _getFormattedTime() {
+    final now = DateTime.now();
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String amPm = now.hour >= 12 ? "PM" : "AM";
+    int hour12 =
+        now.hour > 12 ? now.hour - 12 : (now.hour == 0 ? 12 : now.hour);
+
+    return "${twoDigits(now.day)}${months[now.month - 1]} ${now.year} ${twoDigits(hour12)}:${twoDigits(now.minute)}:${twoDigits(now.second)} $amPm";
   }
 
   String _prettyJson(dynamic data) {

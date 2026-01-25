@@ -11,6 +11,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
@@ -68,6 +69,34 @@ class MyTaskScreenState extends State<MyTaskScreen>
   ScrollController listController = ScrollController();
   DateTime nowDate = DateTime.now();
 
+  Position? _currentPosition;
+
+  Future<void> _fetchLocationAndLoadTasks(TaskBloc bloc) async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium);
+        _currentPosition = position;
+
+        bloc.add(FetchAllTasksEvent(offset: 0, filterParams: {
+          "latitude": position.latitude,
+          "longitude": position.longitude
+        }));
+      } else {
+        bloc.add(FetchAllTasksEvent(offset: 0));
+      }
+    } catch (e) {
+      debugPrint("Error getting location: $e");
+      bloc.add(FetchAllTasksEvent(offset: 0));
+    }
+  }
+
   @override
   void initState() {
     debugPrint("class:::::::$runtimeType");
@@ -113,8 +142,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
     return BlocProvider(
       create: (context) {
         final bloc = di.sl<TaskBloc>();
-        // Initial Fetch
-        bloc.add(FetchAllTasksEvent(offset: 0));
+        // Initial Fetch with Location
+        _fetchLocationAndLoadTasks(bloc);
 
         if (widget.broadCastId != null) {
           bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
@@ -199,11 +228,18 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         ),
                       ],
                       onTap: (index) {
-                        if (index == 1) {
-                          // Trigger local task fetch if empty, but accessing bloc context here is tricky if not wrapping body.
-                          // Since we wrapped Scaffold, we can access using Context if we split widgets or Use Builder.
-                          // Or just let _tabController listener handle it but it needs context.
-                          // Better: use Builder below BlocProvider. I included BlocProvider in key changes.
+                        if (index == 0) {
+                          context.read<TaskBloc>().add(FetchAllTasksEvent(
+                              offset: 0,
+                              filterParams: _currentPosition != null
+                                  ? {
+                                      "latitude": _currentPosition!.latitude,
+                                      "longitude": _currentPosition!.longitude
+                                    }
+                                  : null));
+                        } else if (index == 1) {
+                          context.read<TaskBloc>().add(FetchLocalTasksEvent(
+                              filterParams: getFilterParams()));
                         }
                       },
                     ),
@@ -1349,7 +1385,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
   void _onRefresh(BuildContext context) async {
     if (_tabController.index == 0) {
       _allTaskOffset = 0;
-      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: 0));
+      Map<String, dynamic> params = {};
+      if (_currentPosition != null) {
+        params["latitude"] = _currentPosition!.latitude;
+        params["longitude"] = _currentPosition!.longitude;
+      }
+      context
+          .read<TaskBloc>()
+          .add(FetchAllTasksEvent(offset: 0, filterParams: params));
     } else {
       context
           .read<TaskBloc>()
@@ -1360,7 +1403,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
   void _onLoading(BuildContext context) async {
     if (_tabController.index == 0) {
       _allTaskOffset += allTaskLimit;
-      context.read<TaskBloc>().add(FetchAllTasksEvent(offset: _allTaskOffset));
+      Map<String, dynamic> params = {};
+      if (_currentPosition != null) {
+        params["latitude"] = _currentPosition!.latitude;
+        params["longitude"] = _currentPosition!.longitude;
+      }
+      context.read<TaskBloc>().add(
+          FetchAllTasksEvent(offset: _allTaskOffset, filterParams: params));
     } else {
       // Local tasks pagination if applicable
       _refreshController.loadComplete();

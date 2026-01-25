@@ -142,7 +142,7 @@ class DashboardState extends State<Dashboard>
     ];
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    _locationService = LocationService();
+    _locationService = sl<LocationService>();
 
     // forceUpdateCheck();
     _dashboardBloc.add(CheckAppVersionEvent());

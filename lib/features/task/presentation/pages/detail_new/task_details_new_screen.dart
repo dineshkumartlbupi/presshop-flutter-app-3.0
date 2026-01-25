@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
@@ -817,15 +816,17 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => MediaViewScreen(
-                                                mediaFile: taskMediaUrl +
+                                                mediaFile: getMediaImageUrl(
                                                     item.imageVideoUrl,
+                                                    isTask: true),
                                                 type: MediaTypeEnum.audio,
                                               )));
                                 } else {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => MediaViewScreen(
-                                            mediaFile: taskMediaUrl +
+                                            mediaFile: getMediaImageUrl(
                                                 item.imageVideoUrl,
+                                                isTask: true),
                                             type: MediaTypeEnum.image,
                                           )));
                                 }
@@ -850,8 +851,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                         ))
                                     : item.type == "video"
                                         ? Image.network(
-                                            mediaThumbnailUrl +
-                                                item.imageVideoUrl,
+                                            getMediaImageUrl(item.imageVideoUrl,
+                                                isVideo: true, isTask: true),
                                             width: size.width / 2,
                                             height: double.infinity,
                                             fit: BoxFit.cover,
@@ -866,7 +867,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                             },
                                           )
                                         : Image.network(
-                                            taskMediaUrl + item.imageVideoUrl,
+                                            getMediaImageUrl(item.imageVideoUrl,
+                                                isTask: true),
                                             width: size.width / 2,
                                             height: double.infinity,
                                             fit: BoxFit.cover,

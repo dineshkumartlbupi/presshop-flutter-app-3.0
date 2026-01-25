@@ -5,21 +5,34 @@ import 'package:permission_handler/permission_handler.dart';
 
 class LocationService {
   final Location _location = Location();
+  Future<bool>? _currentRequest;
 
   // Check and request location permission
   Future<bool> _requestLocationPermission(
       BuildContext context, bool shouldShowSettingPopup) async {
+    if (_currentRequest != null) {
+      debugPrint(
+          "🚀 LocationService: Permission request already in progress, waiting...");
+      return _currentRequest!;
+    }
+
+    _currentRequest = _executeRequest();
+    try {
+      return await _currentRequest!;
+    } finally {
+      _currentRequest = null;
+    }
+  }
+
+  Future<bool> _executeRequest() async {
     var status = await Permission.location.request();
     if (status.isGranted) {
       return true;
     } else if (status.isDenied) {
       return false;
     } else if (status.isPermanentlyDenied) {
-      if (shouldShowSettingPopup) {
-        await openAppSettings();
-      } else {
-        return false;
-      }
+      await openAppSettings();
+      return false;
     }
     return false;
   }

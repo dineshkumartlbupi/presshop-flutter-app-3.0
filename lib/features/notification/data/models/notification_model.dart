@@ -100,7 +100,7 @@ class NotificationModel extends NotificationEntity {
       imageUrl: json['image_url'] ?? "",
 
       videoUrl: json['video_url'] ?? "",
-      messageType: json['message_type'] ?? "",
+      messageType: json['message_type'] ?? json['type'] ?? "",
       time: json['createdAt'] ?? "",
 
       contentId:

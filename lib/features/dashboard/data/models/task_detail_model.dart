@@ -1,4 +1,7 @@
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/data/models/task_models.dart'
+    show TaskDetailMediaModel;
+import 'package:presshop/features/task/domain/entities/task_media.dart';
 import 'package:flutter/foundation.dart';
 
 class TaskDetailModel extends TaskDetail {
@@ -35,13 +38,23 @@ class TaskDetailModel extends TaskDetail {
     super.miles,
     super.byFeet,
     super.byCar,
+    super.mediaList = const [],
     super.broadcastLocation,
     super.roomId,
+    super.minimumPriceRange = "",
+    super.maximumPriceRange = "",
   });
 
   factory TaskDetailModel.fromJson(Map<String, dynamic> json,
       {String? roomId}) {
     Map<String, dynamic> mediaHouseDetailMap = json["mediahouse_id"] ?? {};
+
+    List<TaskMedia> mediaList = [];
+    if (json["content"] != null) {
+      var uploadedMedia = json["content"] as List;
+      mediaList =
+          uploadedMedia.map((e) => TaskDetailMediaModel.fromJson(e)).toList();
+    }
 
     double lat = 0.0;
     double lng = 0.0;
@@ -50,8 +63,6 @@ class TaskDetailModel extends TaskDetail {
       if (json["address_location"]["coordinates"] != null) {
         var coordinator = json["address_location"]["coordinates"] as List;
         if (coordinator.isNotEmpty) {
-          // Assuming numberFormatting is available via Common.dart or handle safely here
-          // Using basic parsing for safety if numberFormatting isn't readily available without import issues
           try {
             lat = double.parse(coordinator.first.toString());
             lng = double.parse(coordinator.last.toString());
@@ -60,6 +71,18 @@ class TaskDetailModel extends TaskDetail {
           }
         }
       }
+    }
+
+    String minPrice = "";
+    String maxPrice = "";
+    if (mediaHouseDetailMap['admin_rignts'] != null &&
+        mediaHouseDetailMap['admin_rignts']['price_range'] != null) {
+      maxPrice = mediaHouseDetailMap['admin_rignts']['price_range']
+              ['maximum_price']
+          .toString();
+      minPrice = mediaHouseDetailMap['admin_rignts']['price_range']
+              ['minimum_price']
+          .toString();
     }
 
     return TaskDetailModel(
@@ -97,11 +120,10 @@ class TaskDetailModel extends TaskDetail {
       categoryId: (json["category_id"] ?? "").toString(),
       userId: (json["user_id"] ?? "").toString(),
       createdAt: (json["createdAt"] ?? "").toString(),
-      miles:
-          "", // Logic for calculation not carried over to fromJson, should be done in Bloc or separate util
-      byFeet: "",
-      byCar: "",
+      mediaList: mediaList,
       roomId: roomId ?? "",
+      minimumPriceRange: minPrice,
+      maximumPriceRange: maxPrice,
     );
   }
 }

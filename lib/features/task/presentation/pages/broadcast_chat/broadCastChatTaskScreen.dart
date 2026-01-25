@@ -120,9 +120,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     debugPrint("class name :::$runtimeType");
     super.initState();
     socketConnectionFunc();
-    context
-        .read<TaskBloc>()
-        .add(GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+    context.read<TaskBloc>().add(GetTaskChatEvent(
+        roomId: widget.roomId,
+        type: "task_content",
+        contentId: widget.taskDetail?.id ?? ""));
     getCurrentLocation();
   }
 
@@ -255,6 +256,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ),
             );
           }
+        } else if (state is TaskMediaUploaded) {
+          showSnackBar("Success", "Media uploaded successfully", Colors.green);
+          if (mounted) {
+            context.read<TaskBloc>().add(GetTaskChatEvent(
+                roomId: widget.roomId,
+                type: "task_content",
+                contentId: widget.taskDetail?.id ?? ""));
+          }
         } else if (state is TaskError) {
           showSnackBar("Error", state.message, Colors.red);
         }
@@ -297,7 +306,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               )
             ],
           ),
-          bottomNavigationBar: !isLoading
+          bottomNavigationBar: isLoading
               ? showLoader()
               : Padding(
                   padding: EdgeInsets.only(bottom: size.height * numD03),
@@ -636,7 +645,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       return Column(
                         children: [
                           Visibility(
-                            visible: item.messageType == "media",
+                            visible: item.messageType == "media" ||
+                                item.messageType == "task_content",
                             child: ListView.separated(
                                 physics: const NeverScrollableScrollPhysics(),
                                 separatorBuilder: (context, index) {
@@ -647,7 +657,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 shrinkWrap: true,
                                 itemBuilder: (context, idx) {
                                   var item1 = item.mediaList[idx];
-                                  if (item.messageType == "media") {
+                                  if (item.messageType == "media" ||
+                                      item.messageType == "task_content") {
                                     if (item1.type == "video") {
                                       return rightVideoChatWidget(
                                           item1.thumbnail,
@@ -663,7 +674,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           item1.address);
                                     } else {
                                       return rightImageChatWidget(
-                                          taskMediaUrl + item1.imageVideoUrl,
+                                          getMediaImageUrl(item1.imageVideoUrl,
+                                              isTask: true),
                                           item.createdAtTime,
                                           size,
                                           item1.address);
@@ -1162,7 +1174,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          mediaThumbnailUrl + videoUrl,
+                          getMediaImageUrl(videoUrl,
+                              isVideo: true, isTask: true),
                           height: size.height / 3,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -3116,8 +3129,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     debugPrint(" Socket=====>  : $socketEvent");
     socket.emit(socketEvent, map);
     if (mounted) {
-      context.read<TaskBloc>().add(
-          GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+      context.read<TaskBloc>().add(GetTaskChatEvent(
+          roomId: widget.roomId,
+          type: "task_content",
+          contentId: widget.taskDetail?.id ?? ""));
     }
   }
 
@@ -3140,8 +3155,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
     void refreshChat(data) {
       if (mounted) {
-        context.read<TaskBloc>().add(
-            GetTaskChatEvent(roomId: widget.roomId, type: "", contentId: ""));
+        context.read<TaskBloc>().add(GetTaskChatEvent(
+            roomId: widget.roomId,
+            type: "task_content",
+            contentId: widget.taskDetail?.id ?? ""));
       }
     }
 

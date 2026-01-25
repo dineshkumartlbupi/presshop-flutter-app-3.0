@@ -37,19 +37,17 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
- // Moved logic to Bloc
+  // Moved logic to Bloc
 
   @override
   void initState() {
     debugPrint('class::::::::sdfsdf $runtimeType');
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) => callNotificationList()); 
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) => callNotificationList());
     // Handled by BlocProvider create
-    
+
     // Check update logic - handled by CheckStudentBeansEvent
     super.initState();
   }
-
-
 
   void _showForceUpdateDialog(Size size,
       {String? sourceDataHeading,
@@ -193,7 +191,6 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                     try {
                                       bloc.add(StudentBeansActivationEvent());
                                       Navigator.pop(context);
-
                                     } catch (e) {
                                       debugPrint("Error launching URL: $e");
                                     }
@@ -342,11 +339,13 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                 sourceDataDescription: state.studentBeansDescription,
                 bloc: context.read<NotificationBloc>());
           }
-           if (state.studentBeansActivationUrl != null) {
+          if (state.studentBeansActivationUrl != null) {
             final uri = Uri.parse(state.studentBeansActivationUrl!);
             if (await canLaunchUrl(uri)) {
-               await launchUrl(uri, mode: LaunchMode.externalApplication);
-               context.read<NotificationBloc>().add(MarkStudentBeansVisitedEvent());
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+              context
+                  .read<NotificationBloc>()
+                  .add(MarkStudentBeansVisitedEvent());
             }
           }
         },
@@ -460,7 +459,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () {
-                        deleteNotificationDialog(context.read<NotificationBloc>());
+                        deleteNotificationDialog(
+                            context.read<NotificationBloc>());
                       },
                       child: Align(
                         alignment: Alignment.topRight,
@@ -491,7 +491,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * numD045),
                                 itemBuilder: (context, index) {
-                                  if (index >= state.notifications.length) return Container();
+                                  if (index >= state.notifications.length)
+                                    return Container();
                                   final item = state.notifications[index];
                                   return InkWell(
                                     onTap: () {
@@ -548,7 +549,13 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                         transactionData: item
                                                             .transactionDetailData!)));
                                       } else if (item.messageType ==
-                                          "new_task_posted") {
+                                              "new_task_posted" ||
+                                          item.messageType ==
+                                              "media_house_tasks") {
+                                        debugPrint(
+                                            "Clicked media_house_tasks/new_task_posted");
+                                        debugPrint(
+                                            "BroadcastID: '${item.broadcastId}'");
                                         if (item.broadcastId.isNotEmpty) {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
@@ -557,6 +564,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                           hideLeading: false,
                                                           broadCastId: item
                                                               .broadcastId)));
+                                        } else {
+                                          debugPrint("BroadcastID is empty");
                                         }
                                       } else if (item.messageType ==
                                           "task_accepted") {
@@ -617,8 +626,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                   shape: BoxShape.circle,
                                                   boxShadow: [
                                                     BoxShadow(
-                                                        color: Colors.grey
-                                                            .shade300,
+                                                        color: Colors
+                                                            .grey.shade300,
                                                         spreadRadius: 2)
                                                   ]),
                                               child: ClipOval(
@@ -645,8 +654,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                                   MainAxisAlignment.start,
                                               children: [
                                                 Align(
-                                                  alignment:
-                                                      Alignment.topRight,
+                                                  alignment: Alignment.topRight,
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -770,7 +778,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                 },
                                 itemCount: state.notifications.length),
                           )
-                        : (state.status == NotificationStatus.empty || state.status == NotificationStatus.success)
+                        : (state.status == NotificationStatus.empty ||
+                                state.status == NotificationStatus.success)
                             ? errorMessageWidget("No new notifications")
                             : showLoader(),
                   ),
@@ -784,7 +793,9 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
   }
 
   void _onRefresh(BuildContext context) {
-    context.read<NotificationBloc>().add(const FetchNotificationsEvent(offset: 0));
+    context
+        .read<NotificationBloc>()
+        .add(const FetchNotificationsEvent(offset: 0));
     _refreshController.refreshCompleted();
   }
 
@@ -799,4 +810,3 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
     }
   }
 }
-

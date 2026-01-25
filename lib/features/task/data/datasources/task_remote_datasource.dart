@@ -1,9 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
-import 'package:presshop/features/dashboard/data/models/task_detail_model.dart';
-import 'package:presshop/core/common_models_export.dart' hide TaskDetailModel;
+import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/task/data/models/all_task_model.dart';
@@ -59,8 +59,13 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         if (responseData["resp"] != null) {
           roomId = (responseData["resp"]["room_id"] ?? "").toString();
         }
-        return TaskDetailModel.fromJson(responseData["task"] ?? {},
-            roomId: roomId);
+
+        if (responseData["task"] == null) {
+          throw ServerException(
+              responseData["message"] ?? "Task details not found");
+        }
+
+        return TaskDetailModel.fromJson(responseData["task"], roomId: roomId);
       } else {
         throw ServerException(
             responseData["message"] ?? "Failed to load task details");
@@ -83,9 +88,18 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         "task_status": status
       });
 
-      if (response.statusCode != 200) {
+      final rawData = response.data;
+      final bool isSuccess = rawData["success"] == true ||
+          rawData["code"] == 200 ||
+          (rawData["status"]?.toString().toLowerCase() == "success");
+
+      if (isSuccess ||
+          response.statusCode == 200 ||
+          response.statusCode == 201) {
+        return;
+      } else {
         throw ServerException(
-            response.data["message"] ?? "Failed to accept/reject task");
+            rawData["message"] ?? "Failed to accept/reject task");
       }
     } catch (e) {
       throw ApiErrorHandler.handle(e);
@@ -96,24 +110,67 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<List<ManageTaskChatModel>> getTaskChat(
       String roomId, String type, String contentId) async {
     try {
-      final response = await apiClient.post(
-        ApiConstantsNew.chat.getOfferPaymentChat,
-        data: {"content_id": contentId},
-      );
+      debugPrint(
+          "🚀 getTaskChat: type='$type', contentId='$contentId', roomId='$roomId'");
 
-      if (response.data["code"] == 200) {
+      final bool isTaskContent = type == "task_content";
+      final String url = isTaskContent
+          ? ApiConstantsNew.chat.chatList
+          : ApiConstantsNew.chat.getOfferPaymentChat;
+
+      final Map<String, dynamic> body = isTaskContent
+          ? {"room_id": roomId, "type": "task_content"}
+          : {"content_id": contentId};
+
+      final response = await apiClient.post(url, data: body);
+
+      debugPrint("🚀 getTaskChat Response Status: ${response.statusCode}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
         List<ManageTaskChatModel> chatList = [];
-        if (response.data["chat"] != null) {
-          response.data["chat"].forEach((v) {
+        final rawData = response.data;
+
+        // Handle List response directly (common for getAllchat)
+        if (rawData["response"] != null && rawData["response"] is List) {
+          for (var v in rawData["response"]) {
             chatList.add(ManageTaskChatModel.fromJson(v));
-          });
+          }
+          return chatList;
         }
+
+        // Try to find the data object which contains 'chat' (common for get-offer-payment-chat)
+        Map<String, dynamic>? dataObj;
+
+        if (rawData["response"] != null && rawData["response"] is Map) {
+          dataObj = rawData["response"];
+        } else if (rawData["resposne"] != null && rawData["resposne"] is Map) {
+          dataObj = rawData["resposne"];
+        } else if (rawData["data"] != null && rawData["data"] is Map) {
+          final nested = rawData["data"];
+          dataObj = nested["response"] ??
+              nested["resposne"] ??
+              (nested is Map ? nested : null);
+        } else {
+          dataObj = rawData is Map<String, dynamic> ? rawData : null;
+        }
+
+        if (dataObj != null && dataObj["chat"] != null) {
+          debugPrint(
+              "🚀 getTaskChat Found Chat List Length: ${(dataObj["chat"] as List).length}");
+          for (var v in dataObj["chat"]) {
+            chatList.add(ManageTaskChatModel.fromJson(v));
+          }
+        } else if (dataObj != null) {
+          debugPrint(
+              "🚀 getTaskChat: No 'chat' key found, check if it's already a list or has other keys");
+        }
+
         return chatList;
       } else {
         throw ServerException(
-            response.data["message"] ?? "Failed to load chats");
+            response.data["message"] ?? "Failed to load chat");
       }
     } catch (e) {
+      debugPrint("🚀 getTaskChat Exception: $e");
       throw ApiErrorHandler.handle(e);
     }
   }
@@ -125,11 +182,18 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         ApiConstantsNew.tasks.uploadTaskMedia,
         formData: data,
       );
-      if (response.data["success"] == true) {
-        return response.data;
+
+      final rawData = response.data;
+      final bool isSuccess = rawData["success"] == true ||
+          rawData["code"] == 200 ||
+          (rawData["status"]?.toString().toLowerCase() == "success");
+
+      if (isSuccess ||
+          response.statusCode == 200 ||
+          response.statusCode == 201) {
+        return rawData;
       } else {
-        throw ServerException(
-            response.data["message"] ?? "Failed to upload media");
+        throw ServerException(rawData["message"] ?? "Failed to upload media");
       }
     } catch (e) {
       throw ApiErrorHandler.handle(e);
@@ -152,8 +216,10 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         data: map,
       );
 
-      if (response.data["code"] == 200 && response.data["resp"] != null) {
-        return (response.data["resp"]["room_id"] ?? "").toString();
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          (response.data["details"] != null || response.data["resp"] != null)) {
+        final data = response.data["details"] ?? response.data["resp"];
+        return (data["room_id"] ?? "").toString();
       } else {
         throw ServerException(
             response.data["message"] ?? "Failed to get room ID");
@@ -173,8 +239,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       if (response.data["code"] == 200) {
         return (response.data["count"] ?? "0").toString();
       } else {
-        // Graceful fail or throw? Original code just ignores if error?
-        // Let's return 0 or existing logic
         return "0";
       }
     } catch (e) {
@@ -240,17 +304,20 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       required int offset,
       Map<String, dynamic>? filterParams}) async {
     try {
-      Map<String, dynamic> map = {
+      Map<String, dynamic> queryParams = {
         "limit": limit,
         "offset": offset,
       };
       if (filterParams != null) {
-        map.addAll(filterParams);
+        queryParams.addAll(filterParams);
       }
 
-      final response = await apiClient.post(
-        ApiConstantsNew.tasks.allTasks,
-        data: map,
+      // Changed to GET as per Mobile Integration Guide
+      // URL: /api/hopper/tasks/assigned/by/mediaHouse
+      // Query Params: latitude, longitude
+      final response = await apiClient.get(
+        ApiConstantsNew.tasks.allTasks, // Base URL for assigned tasks
+        queryParameters: queryParams,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -290,23 +357,25 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         data: filterParams,
       );
 
-      if (response.data["code"] == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         List<Task> list = [];
-        // Parsing logic based on MyTaskScreen usage (mix of Pending/Broadcast and Accepted/Completed)
-        // Assuming keys based on common pattern or guess.
-        // If "tasks" contains my tasks (accepted/completed)
-        if (response.data["tasks"] != null) {
-          response.data["tasks"].forEach((v) {
-            list.add(MyTaskModel.fromJson(v));
-          });
-        }
-        // If "broadcast_tasks" contains pending broadcast tasks
-        // NOTE: Key guess based on context. Likely 'broadcast_tasks' or similar.
-        // Checking `getAllMyTaskUrl` usually returns `tasks` and `broadcast_tasks`.
-        if (response.data['broadcast_tasks'] != null) {
-          response.data['broadcast_tasks'].forEach((v) {
-            list.add(PendingTask.fromJson(v));
-          });
+        final data = response.data["data"];
+
+        if (data != null) {
+          // Parsing My Tasks (Accepted/Completed)
+          if (data["data"] != null && data["data"] is List) {
+            for (var v in data["data"]) {
+              list.add(MyTaskModel.fromJson(v));
+            }
+          }
+
+          // Parsing Pending Tasks
+          if (data["pending_unaccepted"] != null &&
+              data["pending_unaccepted"] is List) {
+            for (var v in data["pending_unaccepted"]) {
+              list.add(PendingTask.fromJson(v));
+            }
+          }
         }
 
         return list;

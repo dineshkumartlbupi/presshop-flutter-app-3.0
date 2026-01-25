@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:presshop/features/task/domain/usecases/accept_reject_task.dart';
 import 'package:presshop/features/task/domain/usecases/get_hopper_accepted_count.dart';
 import 'package:presshop/features/task/domain/usecases/get_room_id.dart';
@@ -122,6 +123,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onGetHopperAcceptedCount(
       GetHopperAcceptedCountEvent event, Emitter<TaskState> emit) async {
+    debugPrint(
+        "🚀 TaskBloc: Getting Hopper Accepted Count for taskId: '${event.taskId}'");
     final result = await getHopperAcceptedCount(event.taskId);
     result.fold(
       (failure) => emit(TaskError(failure.message)),

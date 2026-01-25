@@ -1,4 +1,3 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
@@ -9,6 +8,8 @@ import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:presshop/core/services/location_service.dart';
+import 'package:presshop/main.dart';
 
 abstract class MapRemoteDataSource {
   Future<RouteInfo> getRoute(LatLng start, LatLng end);
@@ -23,9 +24,13 @@ abstract class MapRemoteDataSource {
 class MapRemoteDataSourceImpl implements MapRemoteDataSource {
   final ApiClient apiClient;
   final String googleApiKey;
+  final LocationService locationService;
 
-  MapRemoteDataSourceImpl(
-      {required this.apiClient, required this.googleApiKey});
+  MapRemoteDataSourceImpl({
+    required this.apiClient,
+    required this.googleApiKey,
+    required this.locationService,
+  });
 
   @override
   Future<RouteInfo> getRoute(LatLng start, LatLng end) async {
@@ -55,30 +60,25 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
   @override
   Future<LatLng> getCurrentLocation() async {
     try {
-      bool serviceEnabled;
-      LocationPermission permission;
-
-      serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        throw LocationException('Location services are disabled.');
+      final context = navigatorKey.currentContext;
+      if (context == null) {
+        throw LocationException('Navigator context not available');
       }
 
-      permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw LocationException('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        throw LocationException(
-            'Location permissions are permanently denied, we cannot request permissions.');
-      }
-      final pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+      final locationData = await locationService.getCurrentLocation(
+        context,
+        shouldShowSettingPopup: false,
       );
-      return LatLng(pos.latitude, pos.longitude);
+
+      if (locationData == null) {
+        throw LocationException('Failed to get current location');
+      }
+
+      if (locationData.latitude == null || locationData.longitude == null) {
+        throw LocationException('Location data is incomplete');
+      }
+
+      return LatLng(locationData.latitude!, locationData.longitude!);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }

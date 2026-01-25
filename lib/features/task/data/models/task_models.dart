@@ -29,10 +29,14 @@ class TaskVideoModel {
       this.address = ""});
 
   TaskVideoModel.fromJson(Map<String, dynamic> json) {
-    id = (json["_id"] ?? "").toString();
+    id = (json["_id"] ?? json["image_id"] ?? "").toString();
     type = (json["mime"] ?? "").toString();
-    thumbnail = json["thumbnail"] ?? "";
-    imageVideoUrl = json["name"] ?? "";
+    thumbnail = (json["thumbnail_url"] ??
+            json["watermarkimage_url"] ??
+            json["thumbnail"] ??
+            "")
+        .toString();
+    imageVideoUrl = (json["url"] ?? json["name"] ?? "").toString();
     paidStatus = json["paid_status"] ?? false;
     amount = json["amount"].toString();
     paidStatusToHopper = json["paid_status_to_hopper"] ?? false;
@@ -59,10 +63,10 @@ class TaskDetailMediaModel extends TaskMedia {
 
   factory TaskDetailMediaModel.fromJson(Map<String, dynamic> json) {
     return TaskDetailMediaModel(
-      id: (json["_id"] ?? "").toString(),
+      id: (json["_id"] ?? json["image_id"] ?? "").toString(),
       type: (json["media_type"] ?? "").toString(),
-      thumbnail: json["thumbnail"] ?? "",
-      imageVideoUrl: json["media"] ?? "",
+      thumbnail: (json["watermark"] ?? json["thumbnail"] ?? "").toString(),
+      imageVideoUrl: (json["media"] ?? "").toString(),
       paidStatus: json["paid_status"] ?? false,
       amount: json["amount_paid"].toString(),
       paidStatusToHopper: json["paid_status_to_hopper"] ?? false,
@@ -162,14 +166,29 @@ class TaskDetailModel extends TaskDetail {
       }
     }
 
+    final bool isSuccess = json["code"] == 200 ||
+        json["success"] == true ||
+        (json["status"]?.toString().toLowerCase() == "success");
+
+    if (!isSuccess) {
+      debugPrint(
+          "🚀 TaskDetailModel: Attempting to parse despite missing success/code flag");
+    }
+
     return TaskDetailModel(
       id: (json["_id"] ?? "").toString(),
       isNeedPhoto:
-          (json["need_photos"] ?? "").toString().toLowerCase() == "true",
+          (json["need_photos"] ?? "").toString().toLowerCase() == "true" ||
+              (json["hopper_photo_price"] != null &&
+                  json["hopper_photo_price"].toString() != "0"),
       isNeedVideo:
-          (json["need_videos"] ?? "").toString().toLowerCase() == "true",
+          (json["need_videos"] ?? "").toString().toLowerCase() == "true" ||
+              (json["hopper_videos_price"] != null &&
+                  json["hopper_videos_price"].toString() != "0"),
       isNeedInterview:
-          (json["need_interview"] ?? "").toString().toLowerCase() == "true",
+          (json["need_interview"] ?? "").toString().toLowerCase() == "true" ||
+              (json["hopper_interview_price"] != null &&
+                  json["hopper_interview_price"].toString() != "0"),
       mode: (json["mode"] ?? "").toString(),
       type: (json["type"] ?? "").toString(),
       status: (json["status"] ?? "").toString(),
@@ -199,10 +218,14 @@ class TaskDetailModel extends TaskDetail {
           : [],
       specialReq: (json["any_spcl_req"] ?? "").toString(),
       location: (json["location"] ?? "").toString(),
-      photoPrice: (json["photo_price"] ?? "").toString(),
-      videoPrice: (json["videos_price"] ?? "").toString(),
+      photoPrice:
+          (json["hopper_photo_price"] ?? json["photo_price"] ?? "").toString(),
+      videoPrice: (json["hopper_videos_price"] ?? json["videos_price"] ?? "")
+          .toString(),
       createdAt: (json["createdAt"] ?? "").toString(),
-      interviewPrice: (json["interview_price"] ?? "").toString(),
+      interviewPrice:
+          (json["hopper_interview_price"] ?? json["interview_price"] ?? "")
+              .toString(),
       receivedAmount: (json["received_amount"] ?? "").toString(),
       role: (json["role"] ?? "").toString(),
       categoryId: (json["category_id"] ?? "").toString(),

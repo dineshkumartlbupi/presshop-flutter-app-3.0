@@ -377,7 +377,11 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    taskDetail.isNeedPhoto
+                                    taskDetail.isNeedPhoto &&
+                                            (double.tryParse(taskDetail
+                                                        .photoPrice) ??
+                                                    0) >
+                                                0
                                         ? "$currencySymbol${formatDouble(double.parse(taskDetail.photoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
@@ -421,7 +425,11 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    taskDetail.isNeedInterview
+                                    taskDetail.isNeedInterview &&
+                                            (double.tryParse(taskDetail
+                                                        .interviewPrice) ??
+                                                    0) >
+                                                0
                                         ? "$currencySymbol${formatDouble(double.parse(taskDetail.interviewPrice))}"
                                         : "-",
                                     style: commonTextStyle(
@@ -465,7 +473,11 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    taskDetail.isNeedVideo
+                                    taskDetail.isNeedVideo &&
+                                            (double.tryParse(taskDetail
+                                                        .videoPrice) ??
+                                                    0) >
+                                                0
                                         ? "$currencySymbol${formatDouble(double.parse(taskDetail.videoPrice))}"
                                         : "-",
                                     style: commonTextStyle(

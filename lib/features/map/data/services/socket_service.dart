@@ -14,10 +14,7 @@ class SocketService {
   Function(dynamic)? onCommentLike;
   Function(dynamic)? onNewsShare;
   Function(dynamic)? onNewsLike;
-  void initSocket({
-    required String userId,
-    required String joinAs,
-  }) {
+  void initSocket({required String userId, required String joinAs}) {
     debugPrint(":::: Inside Socket Func :::::");
     debugPrint("socketUrl:::::$_socketUrl");
 
@@ -159,34 +156,20 @@ class SocketService {
     socket.emit("add:aggregated:comment:like", data);
   }
 
-  void likeNews({
-    required String userId,
-    required String contentId,
-  }) {
-    final data = {
-      "user_id": userId,
-      "contentId": contentId,
-    };
+  void likeNews({required String userId, required String contentId}) {
+    final data = {"user_id": userId, "contentId": contentId};
     debugPrint("Socket: Emitting add:aggregated:news:like: $data");
     socket.emit("add:aggregated:news:like", data);
   }
 
-  void viewNews({
-    required String contentId,
-  }) {
-    final data = {
-      "contentId": contentId,
-    };
+  void viewNews({required String contentId}) {
+    final data = {"contentId": contentId};
     debugPrint("Socket: Emitting add:aggregated:news:view: $data");
     socket.emit("add:aggregated:news:view", data);
   }
 
-  void shareNews({
-    required String contentId,
-  }) {
-    final data = {
-      "contentId": contentId,
-    };
+  void shareNews({required String contentId}) {
+    final data = {"contentId": contentId};
     debugPrint("Socket: Emitting add:aggregated:news:share: $data");
     socket.emit("add:aggregated:news:share", data);
   }
