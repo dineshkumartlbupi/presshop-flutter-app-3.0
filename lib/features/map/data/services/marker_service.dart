@@ -23,7 +23,7 @@ class MarkerService {
 
   Future<BitmapDescriptor> bitmapResize(
     String assetPath, {
-    int width = 160,
+    int width = 50,
   }) async {
     final byteData = await rootBundle.load(assetPath);
     final uint8list = byteData.buffer.asUint8List();
@@ -52,7 +52,7 @@ class MarkerService {
 
   Future<BitmapDescriptor> bitmapFromUrl(
     String url, {
-    int width = 120,
+    int width = 70,
     String defaultAsset = "assets/markers/bg-removed-content.png",
   }) async {
     try {
@@ -81,7 +81,7 @@ class MarkerService {
 
   Future<BitmapDescriptor> createAvatarMarker(
     String url, {
-    Size size = const Size(120, 120),
+    Size size = const Size(60, 60),
   }) async {
     try {
       final response = await http.get(Uri.parse(url));
@@ -134,7 +134,7 @@ class MarkerService {
 
   Future<BitmapDescriptor> createCircularAssetMarker(
     String assetPath, {
-    Size size = const Size(120, 120),
+    Size size = const Size(60, 60),
   }) async {
     try {
       final byteData = await rootBundle.load(assetPath);
@@ -184,7 +184,7 @@ class MarkerService {
 
   Future<BitmapDescriptor> createContentMarker(
     String url, {
-    int size = 120,
+    int size = 70,
     String defaultAsset = "assets/markers/bg-removed-content.png",
   }) async {
     try {

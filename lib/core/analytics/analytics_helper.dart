@@ -1,5 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'dart:io';
 
 /// Firebase Analytics Helper Class
 ///
@@ -18,12 +20,17 @@ import 'package:flutter/foundation.dart';
 /// AnalyticsHelper.trackEvent('content_published', {'content_type': 'photo'});
 /// ```
 class AnalyticsHelper {
-  static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
-  static final FirebaseAnalyticsObserver _observer =
-      FirebaseAnalyticsObserver(analytics: _analytics);
+  static final bool _isTest = Platform.environment.containsKey('FLUTTER_TEST');
+
+  static final FirebaseAnalytics? _analytics =
+      _isTest ? null : FirebaseAnalytics.instance;
+
+  static final NavigatorObserver _observer = _isTest
+      ? RouteObserver<PageRoute<dynamic>>()
+      : FirebaseAnalyticsObserver(analytics: _analytics!);
 
   /// Get the Firebase Analytics Observer for routing
-  static FirebaseAnalyticsObserver get observer => _observer;
+  static NavigatorObserver get observer => _observer;
 
   /// Track page/screen visits
   ///
@@ -43,7 +50,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logScreenView(
+      await _analytics?.logScreenView(
         screenName: pageName,
         screenClass: className ?? pageName,
         parameters: eventParams,
@@ -75,7 +82,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'user_action',
         parameters: eventParams,
       );
@@ -105,7 +112,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: eventName,
         parameters: eventParams,
       );
@@ -139,7 +146,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'content_interaction',
         parameters: eventParams,
       );
@@ -173,7 +180,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'task_interaction',
         parameters: eventParams,
       );
@@ -204,7 +211,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'chat_interaction',
         parameters: eventParams,
       );
@@ -240,7 +247,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'navigation',
         parameters: eventParams,
       );
@@ -274,7 +281,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: success ? 'login_success' : 'login_failed',
         parameters: eventParams,
       );
@@ -309,7 +316,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'app_error',
         parameters: eventParams,
       );
@@ -335,12 +342,12 @@ class AnalyticsHelper {
   }) async {
     try {
       if (userId != null) {
-        await _analytics.setUserId(id: userId);
+        await _analytics?.setUserId(id: userId);
       }
 
       if (properties != null) {
         for (final entry in properties.entries) {
-          await _analytics.setUserProperty(
+          await _analytics?.setUserProperty(
             name: entry.key,
             value: entry.value,
           );
@@ -374,7 +381,7 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics.logEvent(
+      await _analytics?.logEvent(
         name: 'app_lifecycle',
         parameters: eventParams,
       );

@@ -27,7 +27,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
           return const Left(CacheFailure(message: "User ID not found"));
         }
         final profile = await remoteDataSource.getProfile(userId);
-        return Right(profile);
+        return Right(profile.toEntity());
       } on Failure catch (failure) {
         return Left(failure);
       } catch (e) {
@@ -44,7 +44,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     if (await networkInfo.isConnected) {
       try {
         final profile = await remoteDataSource.updateProfile(data);
-        return Right(profile);
+        return Right(profile.toEntity());
       } on Failure catch (failure) {
         return Left(failure);
       } catch (e) {
@@ -108,7 +108,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Either<Failure, List<Avatar>>> getAvatars() async {
     if (await networkInfo.isConnected) {
       try {
-        final avatars = await remoteDataSource.getAvatars();
+        final List<Avatar> avatars = await remoteDataSource.getAvatars();
         return Right(avatars);
       } on Failure catch (failure) {
         return Left(failure);

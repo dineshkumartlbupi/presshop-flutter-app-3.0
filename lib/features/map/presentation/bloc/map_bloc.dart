@@ -101,7 +101,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       } else {
         String assetPath = markerService.markerIcons[incident.type] ??
             markerService.markerIcons['accident']!;
-        icon = await markerService.bitmapResize(assetPath, width: 90);
+        icon = await markerService.bitmapResize(assetPath, width: 50);
       }
 
       final marker = Marker(
@@ -135,7 +135,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       } else {
         String assetPath = markerService.markerIcons[incident.type] ??
             markerService.markerIcons['accident']!;
-        icon = await markerService.bitmapResize(assetPath, width: 90);
+        icon = await markerService.bitmapResize(assetPath, width: 50);
       }
 
       final marker = Marker(
@@ -188,11 +188,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
         if (profileImage.isNotEmpty) {
-          icon = await markerService.createAvatarMarker(profileImage);
+          icon = await markerService.createAvatarMarker(profileImage,
+              size: const Size(150, 150));
         } else {
           icon = await markerService.createCircularAssetMarker(
               "assets/markers/avatar.png",
-              size: const Size(100, 100));
+              size: const Size(150, 150));
         }
 
         final meMarker = Marker(
@@ -264,11 +265,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         try {
           startIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/starting_markers.png",
-            100,
+            60,
           );
           endIcon = await markerService.bitmapFromIncidentAsset(
             "assets/markers/destination-marker.png",
-            100,
+            60,
           );
         } catch (e) {
           print("Error loading route markers: $e");
@@ -674,8 +675,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           } else {
             String assetPath = markerService.markerIcons[incident.type] ??
                 markerService.markerIcons['accident']!;
-            // Using generic resize for now, respecting the new 90px size
-            icon = await markerService.bitmapResize(assetPath, width: 90);
+            // Using generic resize for now, respecting the new 50px size
+            icon = await markerService.bitmapResize(assetPath, width: 50);
           }
 
           return Marker(
