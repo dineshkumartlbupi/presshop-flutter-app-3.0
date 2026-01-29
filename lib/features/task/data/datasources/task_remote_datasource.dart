@@ -10,9 +10,10 @@ import 'package:presshop/features/task/data/models/all_task_model.dart';
 import 'package:presshop/features/task/data/models/my_task_model.dart';
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
+import 'package:presshop/features/task/data/models/task_assigned_response_model.dart';
 
 abstract class TaskRemoteDataSource {
-  Future<TaskDetailModel> getTaskDetail(String taskId);
+  Future<TaskAssignedResponseModel> getTaskDetail(String taskId);
   Future<void> acceptRejectTask(
       {required String taskId,
       required String mediaHouseId,
@@ -40,7 +41,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   TaskRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<TaskDetailModel> getTaskDetail(String taskId) async {
+  Future<TaskAssignedResponseModel> getTaskDetail(String taskId) async {
     try {
       final response = await apiClient.get(
         "${ApiConstantsNew.tasks.assignedTaskDetail}$taskId",
@@ -50,22 +51,14 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       var responseData = data;
 
       // Handle nested structure: data['data']
-      if (data['data'] != null && data['data'] is Map) {
-        responseData = data['data'];
+      if (data != null) {
+        if (data is Map && data.containsKey('data')) {
+          responseData = data; //Pass the whole response as the model expects
+        }
       }
 
-      if (responseData["code"] == 200) {
-        String roomId = "";
-        if (responseData["resp"] != null) {
-          roomId = (responseData["resp"]["room_id"] ?? "").toString();
-        }
-
-        if (responseData["task"] == null) {
-          throw ServerException(
-              responseData["message"] ?? "Task details not found");
-        }
-
-        return TaskDetailModel.fromJson(responseData["task"], roomId: roomId);
+      if (response.statusCode == 200) {
+        return TaskAssignedResponseModel.fromJson(responseData);
       } else {
         throw ServerException(
             responseData["message"] ?? "Failed to load task details");

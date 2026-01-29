@@ -43,12 +43,12 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:location/location.dart' as lc;
 
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 
 class BroadCastChatTaskScreen extends StatefulWidget {
   const BroadCastChatTaskScreen(
       {super.key, required this.taskDetail, required this.roomId});
-  final TaskDetail? taskDetail;
+  final TaskAssignedEntity? taskDetail;
   final String roomId;
 
   @override
@@ -123,7 +123,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     context.read<TaskBloc>().add(GetTaskChatEvent(
         roomId: widget.roomId,
         type: "task_content",
-        contentId: widget.taskDetail?.id ?? ""));
+        contentId: widget.taskDetail?.task.id ?? ""));
     getCurrentLocation();
   }
 
@@ -262,7 +262,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             context.read<TaskBloc>().add(GetTaskChatEvent(
                 roomId: widget.roomId,
                 type: "task_content",
-                contentId: widget.taskDetail?.id ?? ""));
+                contentId: widget.taskDetail?.task.id ?? ""));
           }
         } else if (state is TaskError) {
           showSnackBar("Error", state.message, Colors.red);
@@ -428,7 +428,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                     ]),
                                 child: ClipOval(
                                   child: Image.network(
-                                    widget.taskDetail!.mediaHouseImage
+                                    widget.taskDetail!.task.mediaHouse
+                                        .profileImage
                                         .toString(),
                                     height: size.width * numD10,
                                     width: size.width * numD10,
@@ -450,7 +451,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             height: size.width * numD03,
                           ),
                           Text(
-                            "${widget.taskDetail?.title}",
+                            "${widget.taskDetail?.task.heading}",
                             style: TextStyle(
                               fontSize: size.width * numD035,
                               color: Colors.black,
@@ -467,8 +468,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      widget.taskDetail!.isNeedPhoto
-                                          ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.photoPrice) ?? 0.0)}"
+                                      false
+                                          ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
                                           : "-",
                                       style: commonTextStyle(
                                           size: size,
@@ -515,8 +516,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      widget.taskDetail!.isNeedInterview
-                                          ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
+                                      false
+                                          ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
                                           : "-",
                                       style: commonTextStyle(
                                           size: size,
@@ -563,8 +564,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      widget.taskDetail!.isNeedVideo
-                                          ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.videoPrice) ?? 0.0)}"
+                                      false
+                                          ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
                                           : "-",
                                       style: commonTextStyle(
                                           size: size,
@@ -762,7 +763,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       );
                     },
                   ),
-                  widget.taskDetail!.paidStatus == "paid"
+                  widget.taskDetail!.task.paidStatus == "paid"
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -833,8 +834,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 fontWeight: FontWeight.normal),
                                           ),
                                           TextSpan(
-                                            text: widget
-                                                .taskDetail!.mediaHouseName,
+                                            text:
+                                                "${widget.taskDetail!.task.mediaHouse.firstName} ${widget.taskDetail!.task.mediaHouse.lastName}",
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width * numD036,
@@ -851,9 +852,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 fontWeight: FontWeight.normal),
                                           ),
                                           TextSpan(
-                                            text: widget.taskDetail!
-                                                    .interviewPrice.isNotEmpty
-                                                ? "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}"
+                                            text: true
+                                                ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
                                                 : "-",
                                             style: commonTextStyle(
                                                 size: size,
@@ -883,7 +883,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                     roomId: widget.roomId,
                                                     mediaHouseId: widget
                                                         .taskDetail!
-                                                        .mediaHouseId));
+                                                        .task
+                                                        .mediaHouse
+                                                        .id));
                                           }),
                                         ),
                                         SizedBox(
@@ -899,11 +901,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         )
                       : Container(),
                   SizedBox(
-                    height: widget.taskDetail!.paidStatus == "paid"
+                    height: widget.taskDetail!.task.paidStatus == "paid"
                         ? size.width * numD035
                         : 0,
                   ),
-                  widget.taskDetail!.paidStatus == "paid"
+                  widget.taskDetail!.task.paidStatus == "paid"
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -977,7 +979,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           ),
                                           TextSpan(
                                             text:
-                                                "$currencySymbol${formatDouble(double.tryParse(widget.taskDetail!.interviewPrice) ?? 0.0)}",
+                                                "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}",
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width * numD036,
@@ -1047,7 +1049,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           ],
                         )
                       : Container(),
-                  widget.taskDetail!.paidStatus == "paid"
+                  widget.taskDetail!.task.paidStatus == "paid"
                       ? ratingReview(size, widget.taskDetail!)
                       : Container()
                 ]),
@@ -2103,7 +2105,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         child: ClipOval(
           clipBehavior: Clip.antiAlias,
           child: Image.network(
-            widget.taskDetail?.mediaHouseImage ?? "",
+            widget.taskDetail?.task.mediaHouse.profileImage ?? "",
             width: size.width * numD09,
             height: size.width * numD09,
             fit: BoxFit.contain,
@@ -2755,7 +2757,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     );
   }
 
-  Widget ratingReview(var size, TaskDetail item) {
+  Widget ratingReview(Size size, TaskAssignedEntity taskDetail) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -3112,7 +3114,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
     Map<String, dynamic> map = {
       "message_type": messageType,
-      "receiver_id": widget.taskDetail?.mediaHouseId ?? "5",
+      "receiver_id": widget.taskDetail?.task.mediaHouse.id ?? "5",
       "sender_id": _senderId,
       "message": "",
       "primary_room_id": "",
@@ -3132,7 +3134,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       context.read<TaskBloc>().add(GetTaskChatEvent(
           roomId: widget.roomId,
           type: "task_content",
-          contentId: widget.taskDetail?.id ?? ""));
+          contentId: widget.taskDetail?.task.id ?? ""));
     }
   }
 
@@ -3143,7 +3145,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         socketUrl, IO.OptionBuilder().setTransports(['websocket']).build());
 
     debugPrint("Socket Disconnect : ${socket.connected}");
-    debugPrint("Socket Disconnect : ${widget.taskDetail?.mediaHouseId}");
+    debugPrint("Socket Disconnect : ${widget.taskDetail?.task.mediaHouse.id}");
 
     socket.connect();
 
@@ -3158,7 +3160,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         context.read<TaskBloc>().add(GetTaskChatEvent(
             roomId: widget.roomId,
             type: "task_content",
-            contentId: widget.taskDetail?.id ?? ""));
+            contentId: widget.taskDetail?.task.id ?? ""));
       }
     }
 
@@ -3289,7 +3291,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         selectMultipleMediaList.map((e) => e.mediaPath).toList();
 
     FormData formData = FormData.fromMap({
-      'task_id': widget.taskDetail!.id,
+      'task_id': widget.taskDetail!.task.id,
       "latitude": latitude.toString(),
       "longitude": longitude.toString(),
       "address": address,

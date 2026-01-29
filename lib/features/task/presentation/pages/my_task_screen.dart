@@ -153,7 +153,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
       child: BlocListener<TaskBloc, TaskState>(
         listener: (context, state) {
           debugPrint(
-              "🚀 UI: TaskBloc State Changed. TaskDetail: ${state.taskDetail?.title}");
+              "🚀 UI: TaskBloc State Changed. TaskDetail: ${state.taskDetail?.task.heading}");
           if (state.taskDetail != null) {
             debugPrint("🚀 UI: Showing Broadcast Dialog");
             // Handle broadcast dialog
@@ -168,8 +168,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => BroadCastScreen(
-                            taskId: state.taskDetail!.id,
-                            mediaHouseId: state.taskDetail!.mediaHouseId,
+                            taskId: state.taskDetail!.task.id,
+                            mediaHouseId: state.taskDetail!.task.mediaHouse.id,
                           )));
                 },
               );

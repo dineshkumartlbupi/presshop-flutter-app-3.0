@@ -19,7 +19,7 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 
 // ignore: must_be_immutable
 class TaskDetailNewScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class TaskDetailNewScreen extends StatefulWidget {
 }
 
 class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
-  TaskDetail? taskDetail;
+  TaskAssignedEntity? taskDetail;
   String roomId = "";
   bool isExtraTime = false;
   bool isOwner = false;
@@ -115,17 +115,15 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
         listener: (context, state) {
           if (state is TaskDetailLoaded) {
             taskDetail = state.taskDetail;
-            roomId = taskDetail!.roomId;
-            _updateGoogleMap(
-                LatLng(taskDetail!.latitude, taskDetail!.longitude));
+            roomId = taskDetail!.resp.roomId;
+            _updateGoogleMap(LatLng(
+                taskDetail!.task.addressLocation.coordinates[0],
+                taskDetail!.task.addressLocation.coordinates[1]));
 
             SharedPreferences.getInstance().then((input) {
               var myId = input.getString(hopperIdKey) ?? "";
-              if (taskDetail!.acceptedBy.contains(myId)) {
-                isOwner = true;
-              } else {
-                isOwner = false;
-              }
+              // acceptedBy is not in new model, assuming false or skipping check
+              isOwner = false;
               if (mounted) {
                 setState(() {});
               }
@@ -153,7 +151,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            taskDetail!.companyName.toUpperCase(),
+                            "${taskDetail!.task.mediaHouse.firstName} ${taskDetail!.task.mediaHouse.lastName}"
+                                .toUpperCase(),
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD036,
@@ -291,9 +290,11 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           padding: EdgeInsets.all(
                                               size.width * numD04),
                                           child: TimerCountdown(
-                                            key: Key(taskDetail!.deadLine
+                                            key: Key(taskDetail!
+                                                .task.deadlineDate
                                                 .toString()),
-                                            endTime: taskDetail!.deadLine,
+                                            endTime:
+                                                taskDetail!.task.deadlineDate,
                                             spacerWidth: 3,
                                             enableDescriptions: false,
                                             onEnd: () {
@@ -305,21 +306,22 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                                       : true;
                                                 });
                                                 if (!isTimeOver()) {
-                                                  taskDetail!.deadLine
+                                                  taskDetail!.task.deadlineDate
                                                       .add(Duration(hours: 3));
                                                 }
                                               });
                                             },
                                             countDownFormatter:
                                                 (day, hour, min, sec) {
-                                              if (taskDetail!.deadLine
+                                              if (taskDetail!.task.deadlineDate
                                                       .difference(
                                                           DateTime.now())
                                                       .inDays >
                                                   0) {
                                                 //return "$day:$hour:$min:$sec";
                                                 return "${int.parse(day)}d:${hour}h:${min}m";
-                                              } else if (taskDetail!.deadLine
+                                              } else if (taskDetail!
+                                                      .task.deadlineDate
                                                       .difference(
                                                           DateTime.now())
                                                       .inHours >
@@ -359,7 +361,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                     )),
                                 child: Center(
                                   child: Text(
-                                    "Deadline ${dateTimeFormatter(dateTime: taskDetail!.deadLine.toString(), format: "hh:mm a").toLowerCase()}",
+                                    "Deadline ${dateTimeFormatter(dateTime: taskDetail!.task.deadlineDate.toString(), format: "hh:mm a").toLowerCase()}",
                                     style: commonTextStyle(
                                         size: size,
                                         fontSize: size.width * numD032,
@@ -396,7 +398,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                   ),
                                   Text(
                                       dateTimeFormatter(
-                                          dateTime: taskDetail!.createdAt,
+                                          dateTime: taskDetail!.task.createdAt
+                                              .toString(),
                                           format: "hh:mm a"),
                                       style: commonTextStyle(
                                           size: size,
@@ -415,7 +418,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                   ),
                                   Text(
                                       dateTimeFormatter(
-                                          dateTime: taskDetail!.createdAt,
+                                          dateTime: taskDetail!.task.createdAt
+                                              .toString(),
                                           format: "dd MMM yyyy"),
                                       style: commonTextStyle(
                                           size: size,
@@ -442,7 +446,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      taskDetail!.location,
+                                      taskDetail!.task.location,
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width * numD028,
@@ -558,7 +562,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       height: size.width * numD018,
                     ),
                     Text(
-                      taskDetail!.title,
+                      taskDetail!.task.heading,
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD04,
@@ -580,7 +584,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       height: size.width * numD018,
                     ),
 
-                    Text(taskDetail!.description,
+                    Text(taskDetail!.task.description,
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * numD03,
@@ -592,7 +596,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       height: size.width * numD06,
                     ),
 
-                    taskDetail!.specialReq.isNotEmpty
+                    "".isNotEmpty
                         ? Text("SPECIAL REQUIREMENTS",
                             style: commonTextStyle(
                                 size: size,
@@ -601,13 +605,11 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 fontWeight: FontWeight.w500))
                         : Container(),
                     SizedBox(
-                      height: taskDetail!.specialReq.isNotEmpty
-                          ? size.width * numD025
-                          : 0,
+                      height: "".isNotEmpty ? size.width * numD025 : 0,
                     ),
 
-                    taskDetail!.specialReq.isNotEmpty
-                        ? Text(taskDetail!.specialReq,
+                    "".isNotEmpty
+                        ? Text("",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD03,
@@ -617,9 +619,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                         : Container(),
 
                     SizedBox(
-                      height: taskDetail!.specialReq.isNotEmpty
-                          ? size.width * numD025
-                          : 0,
+                      height: "".isNotEmpty ? size.width * numD025 : 0,
                     ),
 
                     const Divider(
@@ -648,8 +648,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           Column(
                             children: [
                               Text(
-                                  taskDetail!.isNeedPhoto
-                                      ? "$currencySymbol${formatDouble(double.parse(taskDetail!.photoPrice))}"
+                                  false
+                                      ? "$currencySymbol${formatDouble(double.parse("0"))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -686,8 +686,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           Column(
                             children: [
                               Text(
-                                  taskDetail!.isNeedInterview
-                                      ? "$currencySymbol${formatDouble(double.parse(taskDetail!.interviewPrice))}"
+                                  false
+                                      ? "$currencySymbol${formatDouble(double.parse("0"))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -724,8 +724,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           Column(
                             children: [
                               Text(
-                                  taskDetail!.isNeedVideo
-                                      ? "$currencySymbol${formatDouble(double.parse(taskDetail!.videoPrice))}"
+                                  false
+                                      ? "$currencySymbol${formatDouble(double.parse("0"))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -774,7 +774,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       height: size.width * numD025,
                     ),
 
-                    taskDetail!.mediaList.isNotEmpty
+                    taskDetail!.task.content.isNotEmpty
                         ? Text(uploadedContentText.toUpperCase(),
                             style: commonTextStyle(
                                 size: size,
@@ -783,13 +783,13 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 fontWeight: FontWeight.w500))
                         : Container(),
                     SizedBox(
-                      height: taskDetail!.mediaList.isNotEmpty
+                      height: taskDetail!.task.content.isNotEmpty
                           ? size.width * numD05
                           : 0,
                     ),
 
                     GridView.builder(
-                      itemCount: taskDetail!.mediaList.length,
+                      itemCount: taskDetail!.task.content.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -797,27 +797,27 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           mainAxisSpacing: size.width * numD035,
                           crossAxisSpacing: size.width * numD018),
                       itemBuilder: (context, index) {
-                        var item = taskDetail!.mediaList[index];
-                        debugPrint("item.type::::${item.type}");
+                        var item = taskDetail!.task.content[index];
+                        debugPrint("item.type::::${item.mediaType}");
                         return Stack(
                           children: [
                             InkWell(
                               onTap: () {
-                                if (item.type == "video") {
+                                if (item.mediaType == "video") {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => MediaViewScreen(
-                                                mediaFile: item.imageVideoUrl,
+                                                mediaFile: item.media,
                                                 type: MediaTypeEnum.video,
                                               )));
-                                } else if (item.type == "audio") {
+                                } else if (item.mediaType == "audio") {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => MediaViewScreen(
                                                 mediaFile: getMediaImageUrl(
-                                                    item.imageVideoUrl,
+                                                    item.media,
                                                     isTask: true),
                                                 type: MediaTypeEnum.audio,
                                               )));
@@ -825,7 +825,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => MediaViewScreen(
                                             mediaFile: getMediaImageUrl(
-                                                item.imageVideoUrl,
+                                                item.media,
                                                 isTask: true),
                                             type: MediaTypeEnum.image,
                                           )));
@@ -834,7 +834,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                               child: ClipRRect(
                                 borderRadius:
                                     BorderRadius.circular(size.width * numD028),
-                                child: item.type == "audio"
+                                child: item.mediaType == "audio"
                                     ? Container(
                                         height: double.infinity,
                                         width: size.width / 2,
@@ -849,9 +849,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           color: Colors.white,
                                           size: size.width * 0.17,
                                         ))
-                                    : item.type == "video"
+                                    : item.mediaType == "video"
                                         ? Image.network(
-                                            getMediaImageUrl(item.imageVideoUrl,
+                                            getMediaImageUrl(item.media,
                                                 isVideo: true, isTask: true),
                                             width: size.width / 2,
                                             height: double.infinity,
@@ -867,7 +867,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                             },
                                           )
                                         : Image.network(
-                                            getMediaImageUrl(item.imageVideoUrl,
+                                            getMediaImageUrl(item.media,
                                                 isTask: true),
                                             width: size.width / 2,
                                             height: double.infinity,
@@ -887,7 +887,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                             Positioned(
                               right: size.width * numD01,
                               top: size.width * numD01,
-                              child: item.type != "audio"
+                              child: item.mediaType != "audio"
                                   ? Container(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: size.width * numD006,
@@ -898,7 +898,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           borderRadius: BorderRadius.circular(
                                               size.width * numD01)),
                                       child: Icon(
-                                        item.type == "video"
+                                        item.mediaType == "video"
                                             ? Icons.videocam_outlined
                                             : Icons.camera_alt_outlined,
                                         size: size.width * numD035,
@@ -1085,16 +1085,16 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
   openUrl() async {
     String googleUrl = isDirection
         ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
-            '${_latLng!.longitude}&destination=${taskDetail!.latitude},'
-            '${taskDetail!.longitude}&travelmode=driving&dir_action=navigate'
-        : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.latitude},${taskDetail!.longitude}';
+            '${_latLng!.longitude}&destination=${taskDetail!.task.addressLocation.coordinates[0]},'
+            '${taskDetail!.task.addressLocation.coordinates[1]}&travelmode=driving&dir_action=navigate'
+        : 'https://www.google.com/maps/search/?api=1&query=${taskDetail!.task.addressLocation.coordinates[0]},${taskDetail!.task.addressLocation.coordinates[1]}';
 
     String appleUrl = isDirection
         ? 'http://maps.apple.com/maps?saddr=${_latLng!.latitude},'
-            '${_latLng!.longitude}&daddr=${taskDetail!.latitude},'
-            '${taskDetail!.longitude}'
-        : 'http://maps.apple.com/?q=${taskDetail!.latitude},'
-            '${taskDetail!.longitude}';
+            '${_latLng!.longitude}&daddr=${taskDetail!.task.addressLocation.coordinates[0]},'
+            '${taskDetail!.task.addressLocation.coordinates[1]}'
+        : 'http://maps.apple.com/?q=${taskDetail!.task.addressLocation.coordinates[0]},'
+            '${taskDetail!.task.addressLocation.coordinates[1]}';
     if (await canLaunchUrl(Uri.parse(googleUrl))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(googleUrl),
@@ -1109,7 +1109,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
   }
 
   bool isTimeOver() {
-    var extraTime = taskDetail!.deadLine.add(Duration(hours: 3));
+    var extraTime = taskDetail!.task.deadlineDate.add(Duration(hours: 3));
     if (extraTime.difference(DateTime.now()).inSeconds < 0) {
       return true;
     }

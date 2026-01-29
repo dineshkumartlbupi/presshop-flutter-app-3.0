@@ -13,8 +13,8 @@ import 'package:presshop/features/publish/data/models/category_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:presshop/core/api/api_constant.dart';
-
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
+
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import '../../../../core/di/injection_container.dart';
@@ -883,115 +883,3 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   }
 }
 
-class MyDraftData {
-  String textValue = "";
-  String time = "";
-  String location = "";
-  String latitude = "";
-  String longitude = "";
-  String amount = "";
-  bool exclusive = false;
-  bool showVideo = false;
-  List<ContentMediaData> contentMediaList = [];
-  List<HashTagData> hashTagList = [];
-  CategoryDataModel? categoryData;
-  String completionPercent = "";
-  int leftPercent = 0;
-
-  MyDraftData.fromJson(json) {
-    exclusive = json["type"] == "shared" ? false : true;
-    time = dateTimeFormatter(
-        dateTime: (json["timestamp"] ?? "").toString(),
-        format: "HH:mm, dd MMM, yyyy",
-        utc: true);
-    textValue = json["description"];
-    location = json["location"];
-    latitude = json["latitude"].toString();
-    longitude = json["longitude"].toString();
-    amount = json["original_ask_price"].toString();
-
-    if (json["content"] != null) {
-      var contentList = json["content"] as List;
-      contentMediaList =
-          contentList.map((e) => ContentMediaData.fromJson(e)).toList();
-    }
-
-    if (json["tagData"] != null) {
-      var tagList = json["tagData"] as List;
-      hashTagList = tagList.map((e) => HashTagData.fromJson(e)).toList();
-    }
-    if (json["categoryData"] != null) {
-      categoryData = CategoryDataModel.fromJson(json["categoryData"]);
-    }
-
-    int count = 0;
-
-    if (textValue.trim().isNotEmpty) {
-      count += 1;
-    }
-    if (time.trim().isNotEmpty) {
-      count += 1;
-    }
-
-    if (location.trim().isNotEmpty) {
-      count += 1;
-    }
-
-    if (amount.trim().isNotEmpty) {
-      count += 1;
-    }
-
-    if (contentMediaList.isNotEmpty) {
-      count += 1;
-    }
-
-    if (hashTagList.isNotEmpty) {
-      count += 1;
-    }
-
-    if (categoryData != null) {
-      count += 1;
-    }
-    completionPercent = ((count * 14.286) / 100).round().toString();
-    leftPercent = ((7 - count) * 14.286).round();
-  }
-}
-
-class ContentMediaData {
-  String id = "";
-  String media = "";
-  String mediaType = "";
-  String thumbNail = "";
-  String waterMark = "";
-
-  ContentMediaData(
-      this.id, this.media, this.mediaType, this.thumbNail, this.waterMark);
-
-  ContentMediaData.fromJson(json) {
-    id = (json["_id"] ?? json["id"] ?? "").toString();
-    media = json["media"];
-    mediaType = json["media_type"] ?? "";
-    thumbNail = (json["thumbnail"] ?? json["media"]).toString();
-    waterMark =
-        (json["watermark"] ?? json["watermarked_media"] ?? "").toString();
-    // if (mediaType == "video") {
-    //   getVideoThumbNail(media).then((value) {
-    //     debugPrint("TValue: $value");
-
-    //     thumbNail = value;
-    //   });
-    // }
-  }
-
-  Future<String> getVideoThumbNail(String path) async {
-    debugPrint("MediaIs:::::: $path");
-    final thumbnail = await vt.VideoThumbnail.thumbnailFile(
-      video: path,
-      thumbnailPath: (await getTemporaryDirectory()).path,
-      imageFormat: vt.ImageFormat.PNG,
-      maxHeight: 500,
-      quality: 100,
-    );
-    return thumbnail ?? "";
-  }
-}

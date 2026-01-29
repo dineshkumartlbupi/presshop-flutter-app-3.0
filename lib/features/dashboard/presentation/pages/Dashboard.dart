@@ -568,40 +568,13 @@ class DashboardState extends State<Dashboard>
                 }
               } else if (state is DashboardTaskDetailLoaded) {
                 var task = (state).taskDetail;
-                var broadCastedData = TaskDetailModel(
-                  id: task.id,
-                  deadLine: task.deadLine,
-                  mediaHouseId: task.mediaHouseId,
-                  mediaHouseImage: task.mediaHouseImage,
-                  mediaHouseName: task.mediaHouseName,
-                  companyName: task.companyName,
-                  title: task.title,
-                  description: task.description,
-                  acceptedBy: task.acceptedBy,
-                  specialReq: task.specialReq,
-                  location: task.location,
-                  photoPrice: task.photoPrice,
-                  videoPrice: task.videoPrice,
-                  interviewPrice: task.interviewPrice,
-                  receivedAmount: task.receivedAmount,
-                  latitude: task.latitude,
-                  longitude: task.longitude,
-                  role: task.role,
-                  categoryId: task.categoryId,
-                  userId: task.userId,
-                  createdAt: task.createdAt,
-                  miles: task.miles,
-                  byFeet: task.byFeet,
-                  byCar: task.byCar,
-                );
-
                 player.play(
                   AssetSource('audio/task_sound.mp3'),
                   volume: 1,
                 );
                 broadcastDialog(
                   size: MediaQuery.of(context).size,
-                  taskDetail: broadCastedData,
+                  taskDetail: task,
                   onTapView: () {
                     if (mounted) {
                       if (dashBoardInterface != null) {
@@ -612,8 +585,8 @@ class DashboardState extends State<Dashboard>
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => BroadCastScreen(
-                              taskId: broadCastedData.id,
-                              mediaHouseId: broadCastedData.mediaHouseId,
+                              taskId: task.task.id,
+                              mediaHouseId: task.task.mediaHouse.id,
                             )));
                   },
                 );

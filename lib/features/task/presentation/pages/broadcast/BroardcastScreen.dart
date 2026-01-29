@@ -25,6 +25,7 @@ import 'package:fast_contacts/fast_contacts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 
 // ignore: must_be_immutable
 class BroadCastScreen extends StatefulWidget {
@@ -114,7 +115,36 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
         if (state is TaskDetailLoaded) {
-          taskDetail = state.taskDetail;
+          TaskAssignedEntity assignedEntity = state.taskDetail;
+          taskDetail = TaskDetail(
+            id: assignedEntity.task.id,
+            deadLine: assignedEntity.task.deadlineDate,
+            title: assignedEntity.task.heading,
+            description: assignedEntity.task.description,
+            location: assignedEntity.task.location,
+            mediaHouseId: assignedEntity.task.mediaHouse.id,
+            mediaHouseImage: assignedEntity.task.mediaHouse.profileImage,
+            mediaHouseName:
+                "${assignedEntity.task.mediaHouse.firstName} ${assignedEntity.task.mediaHouse.lastName}",
+            latitude:
+                (assignedEntity.task.addressLocation.coordinates.length >= 2)
+                    ? assignedEntity.task.addressLocation.coordinates[1]
+                    : 0.0,
+            longitude:
+                (assignedEntity.task.addressLocation.coordinates.isNotEmpty)
+                    ? assignedEntity.task.addressLocation.coordinates[0]
+                    : 0.0,
+            status: assignedEntity.task.status,
+            paidStatus: assignedEntity.task.paidStatus,
+            createdAt: assignedEntity.task.createdAt.toIso8601String(),
+            // Map other fields as needed or leave defaults for missing ones
+            isNeedPhoto: false, // Default or infer if possible
+            isNeedVideo: false,
+            isNeedInterview: false,
+            photoPrice: "0",
+            videoPrice: "0",
+            interviewPrice: "0",
+          );
           if (taskDetail != null) {
             _updateGoogleMap(
                 LatLng(taskDetail!.latitude, taskDetail!.longitude));

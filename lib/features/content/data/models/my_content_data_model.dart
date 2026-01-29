@@ -1,41 +1,147 @@
-import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
-import 'package:presshop/features/publish/data/models/category_data_model.dart';
-import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
-// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:presshop/core/utils/date_time_utils.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as vt;
+import '../../domain/entities/content_item.dart';
+import 'category_data_model.dart';
+import 'content_metadata_model.dart';
+
+class MyContentResponseModel {
+  final int code;
+  final List<MyContentItemModel> data;
+  final int count;
+
+  MyContentResponseModel({
+    required this.code,
+    required this.data,
+    required this.count,
+  });
+
+  factory MyContentResponseModel.fromJson(Map<String, dynamic> json) {
+    return MyContentResponseModel(
+      code: json['code'],
+      data: (json['data'] as List)
+          .map((e) => MyContentItemModel.fromJson(e))
+          .toList(),
+      count: json['count'],
+    );
+  }
+}
+
+class MyContentItemModel extends ContentItem {
+  const MyContentItemModel({
+    required super.id,
+    required super.description,
+    required super.location,
+    required super.latitude,
+    required super.longitude,
+    required super.categoryId,
+    required super.hopperId,
+    super.type,
+    required super.askPrice,
+    required super.isDraft,
+    required super.isCharity,
+    required super.images,
+    required super.videos,
+    required super.createdAt,
+    required super.status,
+    required super.contentMetadata,
+    required super.productId,
+    required super.priceOriginal,
+    required super.convertedAskPrice,
+    required super.currencyOriginal,
+    required super.priceBase,
+    required super.currencyBase,
+    required super.imageCount,
+    required super.videoCount,
+    required super.audioCount,
+    required super.otherCount,
+    required super.contentUnderOffer,
+    required super.paidStatus,
+    required super.contentViewCount, // Mapped to viewCount from input
+    required super.isFavourite,
+    required super.isLiked,
+    required super.isEmoji,
+    required super.isClap,
+    required super.updatedAt,
+    required super.categoryData,
+  });
+
+  factory MyContentItemModel.fromJson(Map<String, dynamic> json) {
+    return MyContentItemModel(
+      id: json['id'],
+      description: json['description'] ?? '',
+      location: json['location'] ?? '',
+      latitude: json['latitude'] ?? '',
+      longitude: json['longitude'] ?? '',
+      categoryId: json['category_id'],
+      hopperId: json['hopper_id'],
+      type: json['type'],
+      askPrice: json['ask_price'],
+      isDraft: json['is_draft'] == "true",
+      isCharity: json['is_charity'] == "true",
+      images: List<String>.from(json['images']),
+      videos: List<dynamic>.from(json['videos']),
+      createdAt: json['created_at'],
+      status: json['status'],
+      contentMetadata: (json['content_metadata'] as List)
+          .map((e) => ContentMetadataModel.fromJson(e))
+          .toList(),
+      productId: json['product_id'],
+      priceOriginal: json['price_original'],
+      convertedAskPrice: json['converted_ask_price'],
+      currencyOriginal: json['currency_original'],
+      priceBase: json['price_base'],
+      currencyBase: json['currency_base'],
+      imageCount: json['image_count'],
+      videoCount: json['video_count'],
+      audioCount: json['audio_count'],
+      otherCount: json['other_count'],
+      contentUnderOffer: json['content_under_offer'],
+      paidStatus: json['paid_status'],
+      contentViewCount: json['content_view_count_by_marketplace_for_app'],
+      isFavourite: json['is_favourite'],
+      isLiked: json['is_liked'],
+      isEmoji: json['is_emoji'],
+      isClap: json['is_clap'],
+      updatedAt: json['updated_at'],
+      categoryData: CategoryDataModel.fromJson(json['categoryData']),
+    );
+  }
+}
 
 class MyContentData {
-  String id = "";
-  String title = "";
-  String textValue = "";
-  String time = "";
-  String location = "";
-  String latitude = "";
-  String longitude = "";
-  String amount = "";
-  String originalAmount = "";
-  String totalEarning = "";
-  String status = "";
-  String soldStatus = "";
-  String paidStatus = "";
-  String contentType = "";
-  String dateTime = "";
-  bool isPaidStatusToHopper = false;
-  bool exclusive = false;
-  bool showVideo = false;
-  String audioDescription = '';
-  String audioDuration = '';
-  List<ContentMediaData> contentMediaList = [];
-  List<HashTagData> hashTagList = [];
+  String id;
+  String title;
+  String textValue;
+  String time;
+  String location;
+  String latitude;
+  String longitude;
+  String amount;
+  String originalAmount;
+  String status;
+  String soldStatus;
+  String paidStatus;
+  String contentType;
+  String dateTime;
+  bool isPaidStatusToHopper;
+  bool exclusive;
+  bool showVideo;
+  String audioDescription;
+  String audioDuration;
+  List<ContentMediaData> contentMediaList;
+  List<dynamic> hashTagList;
   CategoryDataModel? categoryData;
-  String completionPercent = "";
-  String discountPercent = "";
-  int leftPercent = 0;
-  int offerCount = 0;
-  String mediaHouseName = '';
-  String categoryId = '';
-  int contentView = 0;
-  int purchasedMediahouseCount = 0;
-  String userId = "";
+  String completionPercent;
+  String discountPercent;
+  int leftPercent;
+  int offerCount;
+  String mediaHouseName;
+  String categoryId;
+  int contentView;
+  int purchasedMediahouseCount;
+  String totalEarning;
 
   MyContentData({
     required this.id,
@@ -59,7 +165,7 @@ class MyContentData {
     required this.audioDuration,
     required this.contentMediaList,
     required this.hashTagList,
-    required this.categoryData,
+    this.categoryData,
     required this.completionPercent,
     required this.discountPercent,
     required this.leftPercent,
@@ -71,171 +177,111 @@ class MyContentData {
     required this.totalEarning,
   });
 
-  MyContentData.fromJson(json) {
-    id = (json['_id'] ?? json['id'] ?? "").toString();
-    title = (json["heading"] ?? json["description"] ?? "").toString();
-    textValue = (json["description"] ?? "").toString();
-    exclusive = json["type"] == "shared" ? false : true;
-    dateTime = json["timestamp"].toString();
+  factory MyContentData.fromJson(Map<String, dynamic> json) {
+    bool exclusive = json["type"] == "shared" ? false : true;
+    String time = dateTimeFormatter(
+        dateTime: (json["timestamp"] ?? "").toString(),
+        format: "HH:mm, dd MMM, yyyy",
+        utc: true);
+    String textValue = json["description"] ?? "";
+    String location = json["location"] ?? "";
+    String latitude = (json["latitude"] ?? "0.0").toString();
+    String longitude = (json["longitude"] ?? "0.0").toString();
+    String amount = (json["original_ask_price"] ?? "0").toString();
 
-    if (json["purchased_mediahouse"] != null &&
-        json["purchased_mediahouse"] is List) {
-      purchasedMediahouseCount = (json["purchased_mediahouse"] as List).length;
-    } else {
-      purchasedMediahouseCount = 0;
-    }
-
-    latitude = (json["latitude"] ?? "").toString();
-    longitude = (json["longitude"] ?? "").toString();
-
-    amount =
-        (json["original_ask_price"] ?? json["ask_price"] ?? "0").toString();
-    originalAmount =
-        (json["original_ask_price"] ?? json["price_original"] ?? "0")
-            .toString();
-
-    totalEarning = (json["total_earnings"] ?? "0").toString();
-    contentView = json["content_view_count_by_marketplace_for_app"] ?? 0;
-    status = (json["status"] ?? "").toString();
-    discountPercent = (json["discount_percent"] ?? "").toString();
-    soldStatus = (json["sale_status"] ?? "").toString();
-
-    paidStatus = (json["paid_status"] ?? "").toString();
-
-    isPaidStatusToHopper = json["paid_status_to_hopper"] ?? false;
-    contentType = (json['type'] ?? '').toString();
-    offerCount = json['offer_content_size'] ?? 0;
-
-    if (json['purchased_publication_details'] != null) {
-      mediaHouseName =
-          json['purchased_publication_details']['company_name'] ?? "";
-    } else {
-      mediaHouseName = "";
-    }
-
-    audioDescription = (json['audio_description'] ?? '').toString();
-    audioDuration = (json['audio_description_duration'] ?? '').toString();
-    categoryId = (json['category_id'] ?? '').toString();
-
+    List<ContentMediaData> contentMediaList = [];
     if (json["content"] != null) {
       var contentList = json["content"] as List;
       contentMediaList =
           contentList.map((e) => ContentMediaData.fromJson(e)).toList();
-    } else if (json["content_metadata"] != null) {
-      var contentList = json["content_metadata"] as List;
-      contentMediaList =
-          contentList.map((e) => ContentMediaData.fromJson(e)).toList();
     }
 
+    List<dynamic> hashTagList = [];
     if (json["tagData"] != null) {
-      var tagList = json["tagData"] as List;
-      hashTagList = tagList.map((e) => HashTagData.fromJson(e)).toList();
+      hashTagList = json["tagData"] as List;
     }
+
+    CategoryDataModel? categoryData;
     if (json["categoryData"] != null) {
       categoryData = CategoryDataModel.fromJson(json["categoryData"]);
     }
 
     int count = 0;
+    if (textValue.trim().isNotEmpty) count += 1;
+    if (time.trim().isNotEmpty) count += 1;
+    if (location.trim().isNotEmpty) count += 1;
+    if (amount.trim().isNotEmpty) count += 1;
+    if (contentMediaList.isNotEmpty) count += 1;
+    if (hashTagList.isNotEmpty) count += 1;
+    if (categoryData != null) count += 1;
 
-    if (textValue.trim().isNotEmpty) {
-      count += 1;
-    }
-    if (time.trim().isNotEmpty) {
-      count += 1;
-    }
+    String completionPercent = ((count * 14.286) / 100).round().toString();
+    int leftPercent = ((7 - count) * 14.286).round();
 
-    if (location.trim().isNotEmpty) {
-      count += 1;
-    } else {
-      location = (json["location"] ?? "").toString();
-      if (location.trim().isNotEmpty) {
-        count += 1;
-      }
-    }
+    return MyContentData(
+      id: (json["_id"] ?? json["id"] ?? "").toString(),
+      title: json["title"] ?? "",
+      textValue: textValue,
+      time: time,
+      location: location,
+      latitude: latitude,
+      longitude: longitude,
+      amount: amount,
+      originalAmount: amount,
+      status: json["status"] ?? "",
+      soldStatus: json["sale_status"] ?? "",
+      paidStatus: json["paid_status"] ?? "",
+      contentType: json["media_type"] ?? "",
+      dateTime: (json["created_at"] ?? "").toString(),
+      isPaidStatusToHopper: false,
+      exclusive: exclusive,
+      showVideo: false,
+      audioDescription: "",
+      audioDuration: "",
+      contentMediaList: contentMediaList,
+      hashTagList: hashTagList,
+      categoryData: categoryData,
+      completionPercent: completionPercent,
+      discountPercent: "0",
+      leftPercent: leftPercent,
+      offerCount: json["total_offer"] ?? 0,
+      mediaHouseName: "",
+      categoryId: categoryData?.id ?? "",
+      contentView: 0,
+      purchasedMediahouseCount: 0,
+      totalEarning: "0",
+    );
+  }
+}
 
-    if (amount.trim().isNotEmpty) {
-      count += 1;
-    }
+class ContentMediaData {
+  String id = "";
+  String media = "";
+  String mediaType = "";
+  String thumbNail = "";
+  String waterMark = "";
 
-    if (contentMediaList.isNotEmpty) {
-      count += 1;
-    }
+  ContentMediaData(
+      this.id, this.media, this.mediaType, this.thumbNail, this.waterMark);
 
-    if (hashTagList.isNotEmpty) {
-      count += 1;
-    }
-
-    if (categoryData != null) {
-      count += 1;
-    }
-
-    completionPercent = ((count * 14.286) / 100).round().toString();
-    leftPercent = ((7 - count) * 14.286).round();
+  ContentMediaData.fromJson(json) {
+    id = (json["_id"] ?? json["id"] ?? "").toString();
+    media = json["media"];
+    mediaType = json["media_type"] ?? "";
+    thumbNail = (json["thumbnail"] ?? json["media"]).toString();
+    waterMark =
+        (json["watermark"] ?? json["watermarked_media"] ?? "").toString();
   }
 
-  MyContentData copyWith({
-    String? id,
-    String? title,
-    String? textValue,
-    String? time,
-    String? location,
-    String? latitude,
-    String? longitude,
-    String? amount,
-    String? originalAmount,
-    String? totalEarning,
-    String? status,
-    String? soldStatus,
-    String? paidStatus,
-    String? contentType,
-    String? dateTime,
-    bool? isPaidStatusToHopper,
-    bool? exclusive,
-    bool? showVideo,
-    String? audioDescription,
-    String? audioDuration,
-    List<ContentMediaData>? contentMediaList,
-    List<HashTagData>? hashTagList,
-    CategoryDataModel? categoryData,
-    String? completionPercent,
-    String? discountPercent,
-    int? leftPercent,
-    int? offerCount,
-    String? mediaHouseName,
-    String? categoryId,
-    int? contentView,
-  }) {
-    return MyContentData(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        textValue: textValue ?? this.textValue,
-        time: time ?? this.time,
-        location: location ?? this.location,
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude,
-        amount: amount ?? this.amount,
-        originalAmount: originalAmount ?? this.originalAmount,
-        status: status ?? this.status,
-        soldStatus: soldStatus ?? this.soldStatus,
-        paidStatus: paidStatus ?? this.paidStatus,
-        contentType: contentType ?? this.contentType,
-        dateTime: dateTime ?? this.dateTime,
-        isPaidStatusToHopper: isPaidStatusToHopper ?? this.isPaidStatusToHopper,
-        exclusive: exclusive ?? this.exclusive,
-        showVideo: showVideo ?? this.showVideo,
-        audioDescription: audioDescription ?? this.audioDescription,
-        audioDuration: audioDuration ?? this.audioDuration,
-        contentMediaList: contentMediaList ?? List.from(this.contentMediaList),
-        hashTagList: hashTagList ?? List.from(this.hashTagList),
-        categoryData: categoryData ?? this.categoryData,
-        completionPercent: completionPercent ?? this.completionPercent,
-        discountPercent: discountPercent ?? this.discountPercent,
-        leftPercent: leftPercent ?? this.leftPercent,
-        offerCount: offerCount ?? this.offerCount,
-        mediaHouseName: mediaHouseName ?? this.mediaHouseName,
-        categoryId: categoryId ?? this.categoryId,
-        contentView: contentView ?? this.contentView,
-        purchasedMediahouseCount: purchasedMediahouseCount,
-        totalEarning: totalEarning ?? this.totalEarning);
+  Future<String> getVideoThumbNail(String path) async {
+    debugPrint("MediaIs:::::: $path");
+    final thumbnail = await vt.VideoThumbnail.thumbnailFile(
+      video: path,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: vt.ImageFormat.PNG,
+      maxHeight: 500,
+      quality: 100,
+    );
+    return thumbnail ?? "";
   }
 }

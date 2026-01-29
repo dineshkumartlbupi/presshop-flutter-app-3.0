@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/admin_detail.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:presshop/features/dashboard/domain/entities/student_beans_info.dart';
 import '../../../authentication/domain/entities/user.dart';
 
@@ -29,7 +29,7 @@ class DashboardLocationUpdated extends DashboardState {}
 class DashboardDeviceAdded extends DashboardState {}
 
 class DashboardTaskDetailLoaded extends DashboardState {
-  final TaskDetail taskDetail;
+  final TaskAssignedEntity taskDetail;
 
   const DashboardTaskDetailLoaded(this.taskDetail);
 
@@ -101,4 +101,3 @@ class DashboardStudentBeansInfoLoaded extends DashboardState {
 }
 
 class DashboardMarkStudentBeansVisitedLoaded extends DashboardState {}
-

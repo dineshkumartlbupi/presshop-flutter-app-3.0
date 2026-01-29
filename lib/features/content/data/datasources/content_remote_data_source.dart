@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart';
-import '../models/content_item_model.dart';
+import '../models/all_content_model.dart';
 import '../models/hashtag_model.dart';
 import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';

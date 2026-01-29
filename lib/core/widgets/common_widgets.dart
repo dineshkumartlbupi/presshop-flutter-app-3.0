@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/main.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -16,7 +17,7 @@ Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
 /// common amountFormater
 
 /// Show Text If No Data Found
-Widget errorMessageWidget(message) {
+Widget errorMessageWidget(String message) {
   return Center(
     child: Container(
       alignment: Alignment.center,
@@ -36,7 +37,7 @@ Widget errorMessageWidget(message) {
 
 /// Smart Refresh
 
-Widget commonRefresherFooter(context, mode) {
+Widget commonRefresherFooter(BuildContext context, LoadStatus? mode) {
   Widget body;
   if (mode == LoadStatus.idle) {
     body = const Text("pull up load");
@@ -88,7 +89,7 @@ Widget showLoader({bool isForLocation = false}) {
   );
 }
 
-Widget showAnimatedLoader(var size) {
+Widget showAnimatedLoader(Size size) {
   return Center(
       child: Lottie.asset("assets/lottieFiles/loader_new.json",
           height: size.width * numD25, width: size.width * numD25));
@@ -212,6 +213,7 @@ List<Widget> getMediaCount(List<ContentMediaData> contentMediaList, Size size) {
   return widgetList;
 }
 
+/// Takes List<dynamic> which can be List<FeedContent> or List<ContentDataModel>
 List<Widget> getMediaCount2(List<dynamic> contentMediaList, Size size) {
   final imageCount =
       contentMediaList.where((item) => item.mediaType == "image").length;

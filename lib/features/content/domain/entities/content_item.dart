@@ -1,93 +1,141 @@
 import 'package:equatable/equatable.dart';
-import 'content_media.dart';
+import 'category_data.dart';
+import 'content_metadata.dart';
 
 class ContentItem extends Equatable {
   final String id;
-  final String title;
   final String description;
-  final String? mediaType; // photo, video, interview
-  final List<String> mediaUrls;
-  final List<ContentMedia> mediaList;
-  final List<String> hashtags;
-  final String? location;
-  final String? latitude;
-  final String? longitude;
-  final String? price;
-  final String status; //draft, published, pending, approved, rejected
-  final String? categoryId;
-  final DateTime? createdAt;
-  final DateTime? publishedAt;
-  final bool? isExclusive;
-  final String? watermark;
-  final int totalSold;
-  final int totalOffer;
-  final int totalView;
-  final String? paidStatus;
+  final String location;
+  final String latitude;
+  final String longitude;
+  final String categoryId;
+  final String hopperId;
+  final String? type; // Added
+  final String askPrice;
+  final bool isDraft;
+  final bool isCharity;
+  final List<String> images;
+  final List<dynamic> videos;
+  final String createdAt;
+  final String status;
+  final List<ContentMetadata> contentMetadata;
+  final String productId;
+  final String priceOriginal;
+  final String convertedAskPrice; // Added
+  final String currencyOriginal;
+  final String? priceBase; // Added
+  final String? currencyBase; // Added
+  final int imageCount;
+  final int videoCount;
+  final int? audioCount; // Added
+  final int? otherCount; // Added
+  final bool contentUnderOffer;
+  final bool paidStatus;
+  final int contentViewCount; // mapped to viewCount
+  final bool isFavourite;
+  final bool isLiked;
+  final bool? isEmoji; // Added
+  final bool? isClap; // Added
+  final String? updatedAt; // Added
+  final CategoryData categoryData;
   final int purchasedMediahouseCount;
-  final String? saleStatus;
-  final String? discountPercent;
-  final String? mediaHouseName;
+  final int totalOffer;
+  final bool? isExclusive;
   final bool isPaidStatusToHopper;
-  final String? userId;
 
   const ContentItem({
     required this.id,
-    required this.title,
     required this.description,
-    this.mediaType,
-    required this.mediaUrls,
-    this.mediaList = const [],
-    required this.hashtags,
-    this.location,
-    this.latitude,
-    this.longitude,
-    this.price,
+    required this.location,
+    required this.latitude,
+    required this.longitude,
+    required this.categoryId,
+    required this.hopperId,
+    this.type,
+    required this.askPrice,
+    required this.isDraft,
+    required this.isCharity,
+    required this.images,
+    required this.videos,
+    required this.createdAt,
     required this.status,
-    this.categoryId,
-    this.createdAt,
-    this.publishedAt,
-    this.isExclusive,
-    this.watermark,
-    this.totalSold = 0,
-    this.totalOffer = 0,
-    this.totalView = 0,
-    this.paidStatus,
+    required this.contentMetadata,
+    required this.productId,
+    required this.priceOriginal,
+    this.convertedAskPrice = "",
+    required this.currencyOriginal,
+    this.priceBase,
+    this.currencyBase,
+    required this.imageCount,
+    required this.videoCount,
+    this.audioCount,
+    this.otherCount,
+    required this.contentUnderOffer,
+    required this.paidStatus,
+    required this.contentViewCount,
+    required this.isFavourite,
+    required this.isLiked,
+    this.isEmoji,
+    this.isClap,
+    this.updatedAt,
+    required this.categoryData,
     this.purchasedMediahouseCount = 0,
-    this.saleStatus,
-    this.discountPercent,
-    this.mediaHouseName,
+    this.totalOffer = 0,
+    this.isExclusive,
     this.isPaidStatusToHopper = false,
-    this.userId,
   });
+
+  // Getters for UI compatibility
+  int get totalView => contentViewCount;
+  List<ContentMetadata> get mediaList => contentMetadata;
+  String? get mediaType => type;
+  List<String> get mediaUrls => images.isNotEmpty
+      ? images
+      : (videos.isNotEmpty ? videos.map((e) => e.toString()).toList() : []);
+  String get totalSold => "0";
+  String get title => description.isNotEmpty ? description : "No Title";
+  String? get price => askPrice.isNotEmpty ? askPrice : priceOriginal;
 
   @override
   List<Object?> get props => [
         id,
-        title,
         description,
-        mediaType,
-        mediaUrls,
-        mediaList,
-        hashtags,
         location,
         latitude,
         longitude,
-        price,
-        status,
         categoryId,
+        hopperId,
+        type,
+        askPrice,
+        isDraft,
+        isCharity,
+        images,
+        videos,
         createdAt,
-        publishedAt,
-        isExclusive,
-        watermark,
-        totalSold,
-        totalOffer,
-        totalView,
+        status,
+        contentMetadata,
+        productId,
+        priceOriginal,
+        convertedAskPrice,
+        currencyOriginal,
+        priceBase,
+        currencyBase,
+        imageCount,
+        videoCount,
+        audioCount,
+        otherCount,
+        contentUnderOffer,
         paidStatus,
+        contentViewCount,
+        isFavourite,
+        isLiked,
+        isEmoji,
+        isClap,
+        updatedAt,
+        categoryData,
         purchasedMediahouseCount,
-        saleStatus,
-        discountPercent,
-        mediaHouseName,
+        totalOffer,
+        isExclusive,
         isPaidStatusToHopper,
-        userId,
       ];
 }

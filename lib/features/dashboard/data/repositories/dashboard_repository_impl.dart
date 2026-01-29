@@ -3,7 +3,7 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/api/network_info.dart';
 import '../../domain/entities/admin_detail.dart';
 import '../../domain/entities/student_beans_info.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../datasources/dashboard_remote_data_source.dart';
@@ -61,7 +61,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<Either<Failure, TaskDetail>> getTaskDetail(String id) async {
+  Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String id) async {
     if (await networkInfo.isConnected) {
       try {
         final taskDetail = await remoteDataSource.getTaskDetail(id);
