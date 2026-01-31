@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:presshop/main.dart'; // For navigatorKey
+import 'package:presshop/main.dart';
 
 class GlobalLoader {
   static int _requestCount = 0;
@@ -20,11 +20,11 @@ class GlobalLoader {
           barrierColor: Colors.black.withOpacity(0.5),
           builder: (context) {
             return WillPopScope(
-              onWillPop: () async => false, // Prevent back button dismissal
+              onWillPop: () async => false,
               child: Center(
                 child: SizedBox(
-                  width: 150,
-                  height: 150,
+                  width: 120,
+                  height: 120,
                   child: Lottie.asset("assets/lottieFiles/emily_loader.json"),
                 ),
               ),

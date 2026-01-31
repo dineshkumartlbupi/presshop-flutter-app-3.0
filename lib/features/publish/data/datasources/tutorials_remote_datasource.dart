@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
@@ -20,6 +22,8 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
   @override
   Future<List<TutorialsModel>> getTutorials(
       String category, int offset, int limit) async {
+    final box = Hive.box<TutorialsModel>('tutorials_box');
+
     try {
       final response = await apiClient.get(
         ApiConstantsNew.misc.generalMgmt,
@@ -29,15 +33,11 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
           "limit": limit.toString(),
           "category": category,
         },
+        showLoader: false,
       );
 
       if (response.statusCode == 200) {
-        // According to TutorialsScreen.dart:
-        // var data = jsonDecode(response);
-        // var dataModel = data["status"] as List;
         final data = response.data;
-        print("🔍 DEBUG: getTutorials API Data: $data");
-
         List<dynamic>? list;
         if (data['data'] != null) {
           if (data['data'] is List) {
@@ -50,41 +50,101 @@ class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
         }
 
         final List<dynamic> dataModel = list ?? [];
-        return dataModel.map((e) => TutorialsModel.fromJson(e)).toList();
+        final tutorials =
+            dataModel.map((e) => TutorialsModel.fromJson(e)).toList();
+
+        debugPrint(
+            "💾 Hive: Saving ${tutorials.length} tutorials for offset $offset");
+
+        if (offset == 0) {
+          for (var t in tutorials) {
+            box.put(t.id, t);
+          }
+          debugPrint("✅ Hive: Cache updated. Box size: ${box.length}");
+        }
+
+        return tutorials;
       } else {
         throw ServerFailure(
             message: "Failed to fetch tutorials: ${response.statusMessage}");
       }
     } catch (e) {
+      debugPrint("🚨 Hive: Fetch tutorials failed: $e. Attempting fallback...");
+      // If network fails, try to return from cache
+      if (offset == 0 && box.isNotEmpty) {
+        debugPrint(
+            "📦 Hive: Box has ${box.length} items. Filtering for category name: '$category'");
+
+        String categoryId = category;
+        if (category.isNotEmpty) {
+          final catBox = Hive.box<CategoryDataModel>('categories_box');
+          final matchingCat = catBox.values.firstWhere(
+            (c) => c.name.trim().toLowerCase() == category.trim().toLowerCase(),
+            orElse: () => CategoryDataModel(
+                id: '', name: '', type: '', percentage: '', selected: false),
+          );
+          if (matchingCat.id.isNotEmpty) {
+            categoryId = matchingCat.id;
+            debugPrint(
+                "🔍 Hive: Resolved category name '$category' to ID '$categoryId'");
+          }
+        }
+
+        final cached = box.values.where((t) {
+          final match = category.isEmpty || t.category == categoryId;
+          return match;
+        }).toList();
+
+        debugPrint(
+            "🔍 Hive: Found ${cached.length} cached items matching category ID '$categoryId'");
+        if (cached.isNotEmpty) return cached;
+      }
       throw ApiErrorHandler.handle(e);
     }
   }
 
   @override
   Future<List<CategoryDataModel>> getCategories() async {
+    final box = Hive.box<CategoryDataModel>('categories_box');
+
     try {
       final response = await apiClient.get(
         ApiConstantsNew.content.hopperCategory,
         queryParameters: {
           "type": 'tutorial',
         },
+        showLoader: false,
       );
 
       if (response.statusCode == 200) {
-        // According to TutorialsScreen.dart:
-        // var data = jsonDecode(response);
-        // var dataList = data['categories'] as List;
         final data = response.data;
         final list = data['data'] != null
             ? data['data']['categories']
             : data['categories'];
         final List<dynamic> dataList = list ?? [];
-        return dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
+        final categories =
+            dataList.map((e) => CategoryDataModel.fromJson(e)).toList();
+
+        debugPrint("💾 Hive: Saving ${categories.length} categories");
+
+        // Update Cache
+        box.clear();
+        box.addAll(categories);
+        debugPrint("✅ Hive: Categories cache updated. Box size: ${box.length}");
+
+        return categories;
       } else {
         throw ServerFailure(
             message: "Failed to fetch categories: ${response.statusMessage}");
       }
     } catch (e) {
+      debugPrint(
+          "🚨 Hive: Fetch categories failed: $e. Attempting fallback...");
+      // Return from cache if network fails
+      if (box.isNotEmpty) {
+        debugPrint("📦 Hive: Returning ${box.length} cached categories");
+        return box.values.toList();
+      }
       throw ApiErrorHandler.handle(e);
     }
   }

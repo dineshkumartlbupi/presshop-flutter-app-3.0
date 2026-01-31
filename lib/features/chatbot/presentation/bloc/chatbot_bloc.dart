@@ -38,9 +38,9 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
 
   Future<void> _onFetchMessages(
       FetchMessagesEvent event, Emitter<ChatbotState> emit) async {
-    emit(ChatbotLoading());
     try {
-      final response = await apiClient.get(ApiConstantsNew.chat.getChatbotMessages);
+      final response =
+          await apiClient.get(ApiConstantsNew.chat.getChatbotMessages);
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -201,7 +201,10 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
         "is_user": isUser,
       };
 
-      final response = await apiClient.post(ApiConstantsNew.chat.addChatbotMessage, data: map);
+      final response = await apiClient.post(
+          ApiConstantsNew.chat.addChatbotMessage,
+          data: map,
+          showLoader: false);
 
       if (response.statusCode == 200) {
         var data = response.data;

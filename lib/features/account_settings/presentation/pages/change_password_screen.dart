@@ -51,22 +51,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       child: BlocListener<AccountSettingsBloc, AccountSettingsState>(
         listener: (context, state) {
           if (state is AccountSettingsLoading) {
-            // Show loading indicator if needed? Actually generic button loader is better or overlay.
-            // Using a simple barrier or just relying on fast interaction.
-            // For now, let's show a global loader or nothing if the button handles state.
-            // Since we don't have a button loader ready, we can show a dialog or snackbar?
-            // Usually we show an overlay.
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  const Center(child: CircularProgressIndicator()),
-            );
+            // showDialog(
+            //   context: context,
+            //   barrierDismissible: false,
+            //   builder: (context) =>
+            //       const Center(child: CircularProgressIndicator()),
+            // );
           } else if (state is AccountSettingsError) {
             Navigator.pop(context); // Close loading dialog
             showSnackBar("Error", state.message, Colors.red);
           } else if (state is PasswordChangedSuccess) {
-            Navigator.pop(context); // Close loading
             _newPasswordController.clear();
             _currentPasswordController.clear();
             _confirmNewPasswordController.clear();

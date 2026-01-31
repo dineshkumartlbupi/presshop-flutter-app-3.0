@@ -20,6 +20,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   StreamSubscription? _messagesSubscription;
   StreamSubscription? _chatListSubscription;
   StreamSubscription? _typingSubscription;
+  StreamSubscription? _onlineStatusSubscription;
 
   ChatBloc() : super(const ChatState()) {
     on<LoadChatListEvent>(_onLoadChatList);
@@ -32,6 +33,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<StartAudioRecordingEvent>(_onStartAudioRecording);
     on<StopAudioRecordingEvent>(_onStopAudioRecording);
     on<UpdateAppLifecycleEvent>(_onUpdateAppLifecycle);
+    on<OtherUserTypingUpdatedEvent>(_onOtherUserTypingUpdated);
+    on<OtherUserOnlineStatusUpdatedEvent>(_onOtherUserOnlineStatusUpdated);
+    on<ChatListUpdatedEvent>(_onChatListUpdated);
   }
 
   @override
@@ -39,17 +43,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     _messagesSubscription?.cancel();
     _chatListSubscription?.cancel();
     _typingSubscription?.cancel();
+    _onlineStatusSubscription?.cancel();
     _audioRecorder.dispose();
     return super.close();
   }
 
   Future<void> _onLoadChatList(
       LoadChatListEvent event, Emitter<ChatState> emit) async {
-    // Existing UI used StreamBuilder directly.
-    // We will do the same in the UI for simplicity or migrate to a Stream subscription here if we want to filter in BLoC.
-    // For now, let's keep the UI driven by StreamBuilder for the list,
-    // OR we can stream it and emit state. Let's emit state to be pure BLoC.
-
     emit(state.copyWith(status: ChatStatus.loading));
     try {
       _chatListSubscription?.cancel();
@@ -58,24 +58,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .orderBy('date', descending: true)
           .snapshots()
           .listen((snapshot) {
-        // In a real app we'd map this to a model. Here we keep DocumentSnapshot.
-        // We can emit a new state with this list.
-        // Since we can't emit inside listen easily without a custom event loop or `add`,
-        // we usually add an internal event `_ChatListUpdated`.
-        // However, for this refactor, I will just emit loaded and let UI use StreamBuilder for the list itself
-        // to minimize risk of breaking the complex list logic (search/filter).
-        // But search IS handled here.
-
-        // Let's rely on standard BLoC pattern:
-        // Subscribing in BLoC is fine if we use `emit` correctly (via `add`).
-        // But `add` is async.
-        // I will modify this to just set status to loaded.
+        add(ChatListUpdatedEvent(snapshot.docs));
       });
-      emit(state.copyWith(status: ChatStatus.loaded));
     } catch (e) {
       emit(state.copyWith(
           status: ChatStatus.failure, errorMessage: e.toString()));
     }
+  }
+
+  void _onChatListUpdated(ChatListUpdatedEvent event, Emitter<ChatState> emit) {
+    emit(state.copyWith(status: ChatStatus.loaded, chatList: event.chatList));
   }
 
   Future<void> _onSearchUser(
@@ -95,6 +87,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     await _messagesSubscription?.cancel();
     await _typingSubscription?.cancel();
+    await _onlineStatusSubscription?.cancel();
 
     // Subscribe to messages
     _messagesSubscription = _firestore
@@ -117,18 +110,36 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .snapshots()
           .listen((snapshot) {
         if (snapshot.exists) {
-          // bool isTyping = snapshot.data()?['isTyping'] ?? false;
-          // specific event or just emit? Can't emit. Need event.
-          // I'll reuse UpdateTypingStatusEvent IS WRONG (that's for self).
-          // I need `ReceiverTypingUpdatedEvent`.
-          // Ideally I put this in `ChatState`.
-          // For now, let's assume valid state update.
-          // I'll add `_ReceiverTypingEvent` internally?
-          // No, I'll allow `ReceiveMessageEvent` to carry typing info? No.
-          // I will skip typing indicator update from Bloc for this moment to save time,
-          // or add a public event for it.
+          bool isTyping = snapshot.data()?['isTyping'] ?? false;
+          add(OtherUserTypingUpdatedEvent(isTyping));
         }
       });
+
+      // Listen to online status of receiver
+      _onlineStatusSubscription = _firestore
+          .collection('OnlineOffline')
+          .doc(event.receiverId)
+          .snapshots()
+          .listen((snapshot) {
+        if (snapshot.exists) {
+          bool isOnline = snapshot.data()?['isOnline'] ?? false;
+          add(OtherUserOnlineStatusUpdatedEvent(isOnline));
+        }
+      });
+    }
+
+    // Mark messages as read
+    final unreadQuery = await _firestore
+        .collection('Chat2')
+        .doc(event.roomId)
+        .collection('Messages')
+        .where('receiverId',
+            isEqualTo: sharedPreferences!.getString(hopperIdKey))
+        .where('readStatus', isEqualTo: 'unread')
+        .get();
+
+    for (var doc in unreadQuery.docs) {
+      doc.reference.update({'readStatus': 'read'});
     }
 
     emit(state.copyWith(status: ChatStatus.loaded));
@@ -142,12 +153,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       LeaveChatRoomEvent event, Emitter<ChatState> emit) async {
     await _messagesSubscription?.cancel();
     await _typingSubscription?.cancel();
+    await _onlineStatusSubscription?.cancel();
     emit(state.copyWith(messages: [], currentRoomId: ''));
   }
 
   Future<void> _onSendMessage(
       SendMessageEvent event, Emitter<ChatState> emit) async {
-    // emit(state.copyWith(status: ChatStatus.sending)); // Optional: optimistic UI
+    emit(state.copyWith(status: ChatStatus.sending)); // Optional: optimistic UI
 
     final senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
     final senderName =
@@ -238,11 +250,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // ChatScreen: .doc() -> Autogenerated ID
       await docRef.set(map);
 
-      // Update Room Details (Last Message)
+      // Update Room Details (Last Message) - Use merge to avoid overwriting metadata
       DocumentReference roomRef =
           _firestore.collection('Chat2').doc(state.currentRoomId);
-      await roomRef
-          .set(map); // Sets last message details to the room doc itself
+      await roomRef.set(map, SetOptions(merge: true));
 
       emit(state.copyWith(status: ChatStatus.loaded));
     } catch (e) {
@@ -281,19 +292,29 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final path = await _audioRecorder.stop();
     emit(state.copyWith(isRecording: false));
     if (path != null) {
-      // Should we auto-send? ChatScreen usually requires manual send or verify.
-      // User can decide. For now, we won't auto-send. We'll emit a "RecordingFinished" state or similar?
-      // Or just leave it to the UI to know it stopped.
-      // Actually, `StopAudioRecording` event could trigger send if we want.
-      // Let's assume the UI handles the file path if returned, but here `path` is local.
-      // I'll emit the path in a specialized state or just Auto-Send for simplicity if that's the standard behavior.
-      // ChatScreen.dart: `_audioRecorder.stop().then((path) { ... commonValues(...) })`. It AUTO SENDS.
       add(SendMessageEvent(message: "", messageType: "audio", filePath: path));
     }
   }
 
   Future<void> _onUpdateAppLifecycle(
       UpdateAppLifecycleEvent event, Emitter<ChatState> emit) async {
-    // Logic for Online/Offline
+    final senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
+    if (senderId.isNotEmpty) {
+      await _firestore.collection('OnlineOffline').doc(senderId).set({
+        'isOnline': event.isOnline,
+        'last_seen': DateTime.now().toUtc().toLocal(),
+        'roomId': event.roomId,
+      }, SetOptions(merge: true));
+    }
+  }
+
+  void _onOtherUserTypingUpdated(
+      OtherUserTypingUpdatedEvent event, Emitter<ChatState> emit) {
+    emit(state.copyWith(isTyping: event.isTyping));
+  }
+
+  void _onOtherUserOnlineStatusUpdated(
+      OtherUserOnlineStatusUpdatedEvent event, Emitter<ChatState> emit) {
+    emit(state.copyWith(isOnline: event.isOnline));
   }
 }

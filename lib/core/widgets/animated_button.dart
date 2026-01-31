@@ -24,7 +24,6 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
   late AnimationController _controller;
   late Animation<double> _revealAnimation;
   late Animation<double> _opacityAnimation;
-  final bool _isVisible = true;
 
   @override
   void initState() {

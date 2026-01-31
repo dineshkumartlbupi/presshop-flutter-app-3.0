@@ -19,14 +19,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
   });
 
   @override
-  Future<Either<Failure, ProfileData>> getProfile() async {
+  Future<Either<Failure, ProfileData>> getProfile(
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
         final userId = await localDataSource.getUserId();
         if (userId == null) {
           return const Left(CacheFailure(message: "User ID not found"));
         }
-        final profile = await remoteDataSource.getProfile(userId);
+        final profile =
+            await remoteDataSource.getProfile(userId, showLoader: showLoader);
         return Right(profile.toEntity());
       } on Failure catch (failure) {
         return Left(failure);

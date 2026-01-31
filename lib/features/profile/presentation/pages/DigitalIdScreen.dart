@@ -101,7 +101,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => sl<ProfileBloc>()..add(FetchProfileEvent()),
+      create: (context) =>
+          sl<ProfileBloc>()..add(const FetchProfileEvent(showLoader: false)),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileLoaded) {
@@ -593,6 +594,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
               "https://dev-cdn.presshop.news/public/avatarImages/";
           userImage = "$cdnAvatarUrl${profile.profileImage}";
         }
+        sharedPreferences!.setString(profileImageKey, userImage);
       }
     });
   }

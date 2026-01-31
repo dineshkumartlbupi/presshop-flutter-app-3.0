@@ -132,7 +132,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
             builder: (context, state) {
               if (state.categories.isEmpty &&
                   state.status == FAQStatus.loading) {
-                return const Center(child: CircularProgressIndicator());
+                return const SizedBox.shrink();
               }
 
               return SmartRefresher(
@@ -388,10 +388,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               },
                               itemCount: state.items.length)
                           : state.status == FAQStatus.loading
-                              ? const Center(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(20),
-                                      child: CircularProgressIndicator()))
+                              ? const SizedBox.shrink()
                               : errorMessageWidget(widget.priceTipsSelected
                                   ? "No Price Tips Found"
                                   : "No FAQ found"),

@@ -137,7 +137,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
               if (state.status == RatingStatus.initial ||
                   (state.status == RatingStatus.loading &&
                       state.reviews.isEmpty)) {
-                return showLoader();
+                return const SizedBox.shrink();
               }
 
               return Column(

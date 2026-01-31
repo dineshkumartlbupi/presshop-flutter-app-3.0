@@ -46,8 +46,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     FetchProfileEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
-    final result = await getProfileData(NoParams());
+    if (event.showLoader) {
+      emit(ProfileLoading());
+    }
+    final result =
+        await getProfileData(GetProfileParams(showLoader: event.showLoader));
     result.fold(
       (failure) => emit(ProfileError(failure.message)),
       (profile) => emit(ProfileLoaded(profile)),
@@ -59,7 +62,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     emit(ProfileLoading());
-    final result = await updateProfileData(UpdateProfileParams(data: event.data));
+    final result =
+        await updateProfileData(UpdateProfileParams(data: event.data));
     result.fold(
       (failure) => emit(ProfileError(failure.message)),
       (profile) => emit(ProfileUpdated(profile)),
@@ -99,7 +103,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     CheckUserNameEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    final result = await checkUserName(CheckUserNameParams(username: event.username));
+    final result =
+        await checkUserName(CheckUserNameParams(username: event.username));
     result.fold(
       (failure) => emit(ProfileError(failure.message)),
       (isAvailable) => emit(UserNameChecked(isAvailable)),

@@ -32,6 +32,7 @@ void main() async {
 
   await AppInitializationService.loadEnvironment();
   await AppInitializationService.initializeDI();
+  await AppInitializationService.initializeHive();
   AppInitializationService.logAppOpenEvent();
   AppInitializationService.setSystemUIPreferences();
   await AppInitializationService.initializeFirebase();

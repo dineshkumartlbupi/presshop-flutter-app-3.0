@@ -115,3 +115,27 @@ class UpdateAppLifecycleEvent extends ChatEvent {
   @override
   List<Object> get props => [isOnline, roomId];
 }
+
+class OtherUserTypingUpdatedEvent extends ChatEvent {
+  final bool isTyping;
+  const OtherUserTypingUpdatedEvent(this.isTyping);
+
+  @override
+  List<Object> get props => [isTyping];
+}
+
+class ChatListUpdatedEvent extends ChatEvent {
+  final List<DocumentSnapshot> chatList;
+  const ChatListUpdatedEvent(this.chatList);
+
+  @override
+  List<Object> get props => [chatList];
+}
+
+class OtherUserOnlineStatusUpdatedEvent extends ChatEvent {
+  final bool isOnline;
+  const OtherUserOnlineStatusUpdatedEvent(this.isOnline);
+
+  @override
+  List<Object> get props => [isOnline];
+}

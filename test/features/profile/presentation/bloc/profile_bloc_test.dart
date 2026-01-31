@@ -3,7 +3,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_email.dart';
 import 'package:presshop/features/authentication/domain/usecases/check_phone.dart';
 import 'package:presshop/features/profile/domain/entities/profile_data.dart';
@@ -140,7 +139,7 @@ void main() {
     blocTest<ProfileBloc, ProfileState>(
       'emits [ProfileLoading, ProfileLoaded] when fetching profile passes',
       build: () {
-        when(() => mockGetProfileData(NoParams()))
+        when(() => mockGetProfileData(const GetProfileParams()))
             .thenAnswer((_) async => Right(tStrictProfileData));
         return bloc;
       },
@@ -150,14 +149,14 @@ void main() {
         ProfileLoaded(tStrictProfileData),
       ],
       verify: (_) {
-        verify(() => mockGetProfileData(NoParams())).called(1);
+        verify(() => mockGetProfileData(const GetProfileParams())).called(1);
       },
     );
 
     blocTest<ProfileBloc, ProfileState>(
       'emits [ProfileLoading, ProfileError] when fetching profile fails',
       build: () {
-        when(() => mockGetProfileData(NoParams())).thenAnswer(
+        when(() => mockGetProfileData(const GetProfileParams())).thenAnswer(
             (_) async => const Left(ServerFailure(message: 'Server Failure')));
         return bloc;
       },
@@ -167,7 +166,7 @@ void main() {
         const ProfileError('Server Failure'),
       ],
       verify: (_) {
-        verify(() => mockGetProfileData(NoParams())).called(1);
+        verify(() => mockGetProfileData(const GetProfileParams())).called(1);
       },
     );
   });
