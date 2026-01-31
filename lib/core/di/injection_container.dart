@@ -457,7 +457,7 @@ Future<void> init() async {
         getCommissions: sl(),
       ));
   sl.registerFactory(() => AlertBloc(apiClient: sl()));
-  sl.registerFactory(() => CameraBloc());
+  sl.registerFactory(() => CameraBloc(sl()));
   sl.registerFactory(() => ChatBloc());
   sl.registerFactory(() => FeedBloc(
         getFeeds: sl(),

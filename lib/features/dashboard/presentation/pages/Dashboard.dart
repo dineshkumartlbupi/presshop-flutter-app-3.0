@@ -126,20 +126,7 @@ class DashboardState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
-    bottomNavigationScreens = <Widget>[
-      MyContentPage(hideLeading: true),
-      // AllTaskDemo(),
-      MyTaskScreen(hideLeading: true),
-      CameraScreen(
-        key: _cameraKey,
-        picAgain: false,
-        previousScreen: ScreenNameEnum.dashboardScreen,
-        autoInitialize: widget.initialPosition == 2,
-      ),
-      // ChatBotScreen(),
-      NewsPage(hideLeading: true),
-      MapPage(hideLeading: true)
-    ];
+    _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     _locationService = sl<LocationService>();
@@ -218,6 +205,25 @@ class DashboardState extends State<Dashboard>
   void dispose() {
     _dashboardBloc.close();
     super.dispose();
+  }
+
+  void _updateBottomNavigationScreens() {
+    bottomNavigationScreens = <Widget>[
+      MyContentPage(hideLeading: true),
+      MyTaskScreen(hideLeading: true),
+      CameraScreen(
+        key: _cameraKey,
+        picAgain: false,
+        previousScreen: ScreenNameEnum.dashboardScreen,
+        autoInitialize: widget.initialPosition == 2,
+      ),
+      NewsPage(
+        hideLeading: true,
+        latitude: latitude,
+        longitude: longitude,
+      ),
+      MapPage(hideLeading: true)
+    ];
   }
 
   void myProfileApi() {
@@ -920,6 +926,7 @@ class DashboardState extends State<Dashboard>
 
             isGetLatLong = false;
             callUpdateCurrentData1();
+            _updateBottomNavigationScreens();
             setState(() {});
 
             if (alertDialog != null) {

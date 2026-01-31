@@ -9,6 +9,7 @@ import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
+import 'package:presshop/core/error/failures.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetAggregatedNews getAggregatedNews;
@@ -48,8 +49,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     GetAggregatedNewsEvent event,
     Emitter<NewsState> emit,
   ) async {
-    // ... existing method body ...
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, isProcessing: false));
     final result = await getAggregatedNews(GetAggregatedNewsParams(
       lat: event.lat,
       lng: event.lng,
@@ -61,13 +61,22 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     ));
 
     result.fold(
-      (failure) => emit(state.copyWith(
-          isLoading: false, errorMessage: "Failed to fetch news")),
-      (newsList) => emit(state.copyWith(isLoading: false, newsList: newsList)),
+      (failure) {
+        if (failure is ProcessingFailure) {
+          emit(state
+              .copyWith(isLoading: false, isProcessing: true, newsList: []));
+        } else {
+          emit(state.copyWith(
+              isLoading: false,
+              isProcessing: false,
+              errorMessage: "Failed to fetch news"));
+        }
+      },
+      (newsList) => emit(state.copyWith(
+          isLoading: false, isProcessing: false, newsList: newsList)),
     );
   }
 
-// ... rest of existing methods ...
   Future<void> _onGetNewsDetail(
     GetNewsDetailEvent event,
     Emitter<NewsState> emit,
@@ -104,7 +113,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   ) {
     final updatedComments = List<Comment>.from(state.comments);
     if (event.parentId != null) {
-      // Find parent and add reply
       final parentIndex =
           updatedComments.indexWhere((c) => c.id == event.parentId);
       if (parentIndex != -1) {
@@ -123,28 +131,16 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     UpdateLikeLocalEvent event,
     Emitter<NewsState> emit,
   ) {
-    final updatedComments = state.comments.map((c) {
-      if (c.id == event.commentId) {
-        // return c.copyWith(likes: event.count); // Assuming copyWith exists
-        return c; // Placeholder until Comment entity has copyWith
-      }
-      return c;
-    }).toList();
-    emit(state.copyWith(comments: updatedComments));
+    // Placeholder as Comment entity doesn't have copyWith easily accessible here
+    emit(state);
   }
 
   void _onToggleLikeStatus(
     ToggleLikeStatusEvent event,
     Emitter<NewsState> emit,
   ) {
-    final updatedComments = state.comments.map((c) {
-      if (c.id == event.commentId) {
-        // return c.copyWith(isLiked: event.isLiked);
-        return c;
-      }
-      return c;
-    }).toList();
-    emit(state.copyWith(comments: updatedComments));
+    // Placeholder
+    emit(state);
   }
 
   void _onIncrementViewCount(
@@ -178,7 +174,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     if (userId.isNotEmpty) {
       socketService.likeNews(userId: userId, contentId: event.contentId);
 
-      // Optimistic Update
       final updatedList = state.newsList.map((news) {
         if (news.id == event.contentId) {
           final isLiked = !(news.isLiked ?? false);

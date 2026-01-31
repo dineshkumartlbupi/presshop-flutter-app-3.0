@@ -23,7 +23,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
-import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
@@ -242,12 +241,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
-    // ambiguate(WidgetsBinding.instance)?.addPostFrameCallback((_) {
-    //   categoryApi();
-    //   callCharityListApi();
-    //   callGetShareExclusivePrice();
-    // });
-
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   categoryApi();
     //   callCharityListApi();
@@ -319,12 +312,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
           if (state.charities.isNotEmpty) {
             allCharityList = state.charities;
+            setState(() {});
           }
           if (state.prices.isNotEmpty) {
             sharedPrice = state.prices['shared'] ?? sharedPrice;
             exclusivePrice = state.prices['exclusive'] ?? exclusivePrice;
-            // If selected category is Shared or Exclusive, update controller?
-            // The UI uses 'sharedPrice' and 'exclusivePrice' variables in Text widgets, valid.
+            setState(() {});
           }
         },
         builder: (context, state) {
@@ -519,18 +512,41 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         "video",
                                                 child: widget.publishData !=
                                                         null
-                                                    ? Image.file(
-                                                        File(widget
-                                                            .publishData!
-                                                            .mediaList
-                                                            .first
-                                                            .thumbnail),
-                                                        width:
-                                                            size.width * numD30,
-                                                        height:
-                                                            size.width * numD35,
-                                                        fit: BoxFit.cover,
-                                                      )
+                                                    ? (widget
+                                                                .publishData!
+                                                                .mediaList
+                                                                .first
+                                                                .thumbnail
+                                                                .isNotEmpty &&
+                                                            File(widget
+                                                                    .publishData!
+                                                                    .mediaList
+                                                                    .first
+                                                                    .thumbnail)
+                                                                .existsSync())
+                                                        ? Image.file(
+                                                            File(widget
+                                                                .publishData!
+                                                                .mediaList
+                                                                .first
+                                                                .thumbnail),
+                                                            width: size.width *
+                                                                numD30,
+                                                            height: size.width *
+                                                                numD35,
+                                                            fit: BoxFit.cover,
+                                                          )
+                                                        : Container(
+                                                            width: size.width *
+                                                                numD30,
+                                                            height: size.width *
+                                                                numD35,
+                                                            color: Colors.black,
+                                                            child: const Icon(
+                                                                Icons.videocam,
+                                                                color: Colors
+                                                                    .white),
+                                                          )
                                                     : Image.network(
                                                         contentImageUrl +
                                                             widget
@@ -1862,6 +1878,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                 .country
                                                             : '',
                                                     tagData: hashtagList,
+                                                    initialSelectedHashTags:
+                                                        selectedHashtagList,
                                                     countryTagId: hashtagList
                                                             .isNotEmpty
                                                         ? hashtagList.first.id
@@ -1951,67 +1969,59 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                   fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
-                            selectedCategory != null
-                                ? InkWell(
-                                    onTap: () {
-                                      int selectedPos = categoryList.indexWhere(
-                                          (element) => element.selected);
-                                      if (selectedPos > 0) {
-                                        categoryList.swap(0, selectedPos);
-                                      }
-                                      //showCategoryDialogBox(context, size);
-                                      showCategoryBottomSheet(
-                                          size, context.read<PublishBloc>());
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          selectedCategory!.name
-                                              .toCapitalized(),
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD03,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: Colors.black,
-                                          size: size.width * numD06,
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
+                            BlocBuilder<PublishBloc, PublishState>(
+                              builder: (context, state) {
+                                final currentSelected = state.selectedCategory;
+                                final categories = state.categories;
+                                debugPrint(
+                                    "DEBUG: UI categories count: ${categories.length}");
+                                debugPrint(
+                                    "DEBUG: UI selectedCategory: ${currentSelected?.name}");
 
-                            /*selectedCategory != null
-                          ? DropdownButton<CategoryData>(
-                              underline: Container(),
-                              value: selectedCategory,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedCategory = value!;
-                                  dropDownValue = value.name;
-                                });
+                                final isLoading = categories.isEmpty;
+
+                                return DropdownButtonHideUnderline(
+                                  child: DropdownButton<ContentCategory>(
+                                    hint: Text(
+                                      isLoading ? "Loading..." : "Select",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width * numD03,
+                                          color: colorHint,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    value: currentSelected,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context
+                                            .read<PublishBloc>()
+                                            .add(SelectCategoryEvent(value.id));
+                                        setState(() {
+                                          selectedCategory = value;
+                                        });
+                                      }
+                                    },
+                                    items: categories
+                                        .map<DropdownMenuItem<ContentCategory>>(
+                                            (ContentCategory e) {
+                                      return DropdownMenuItem<ContentCategory>(
+                                          value: e,
+                                          child: Text(e.name.toCapitalized()));
+                                    }).toList(),
+                                    icon: Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      color: Colors.black,
+                                      size: size.width * numD06,
+                                    ),
+                                  ),
+                                );
                               },
-                              items: categoryList
-                                  .map<DropdownMenuItem<CategoryData>>(
-                                      (CategoryData e) {
-                                return DropdownMenuItem<CategoryData>(
-                                    value: e, child: Text(e.name));
-                              }).toList(),
-                              icon: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: Colors.black,
-                                size: size.width * numD06,
-                              ),
-                            )
-                          : Container()*/
+                            ),
                           ],
                         ),
                       ),
@@ -2147,7 +2157,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 child: Text(
                                                   sharedPrice,
                                                   style: TextStyle(
-                                                      color: Colors.white,
+                                                      color: selectedSellType ==
+                                                              sharedText
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                       fontSize:
                                                           size.width * numD03,
                                                       fontWeight:
@@ -2273,7 +2286,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 child: Text(
                                                   exclusivePrice,
                                                   style: TextStyle(
-                                                      color: Colors.white,
+                                                      color: selectedSellType ==
+                                                              exclusiveText
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                       fontSize:
                                                           size.width * numD03,
                                                       fontWeight:
@@ -2388,7 +2404,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () {
-                          chooseCharityBottomSheet(context, size);
+                          chooseCharityBottomSheet(
+                              context, size, context.read<PublishBloc>());
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -2413,7 +2430,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 onChanged: (val) {
                                   setState(() {
                                     _checkCharityBoxVal = val!;
-                                    chooseCharityBottomSheet(context, size);
+                                    chooseCharityBottomSheet(context, size,
+                                        context.read<PublishBloc>());
                                   });
                                 },
                               ),
@@ -2759,7 +2777,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           crossAxisSpacing: size.width * numD04,
                         ),
                         itemBuilder: (context, index) {
-                          String selectedCat = selectedCategory!.name;
+                          String selectedCat = selectedCategory?.name ?? "";
                           return InkWell(
                             onTap: () {
                               context.read<PublishBloc>().add(
@@ -2807,7 +2825,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   /// choose charity bottom sheet
-  void chooseCharityBottomSheet(BuildContext context, Size size) {
+  void chooseCharityBottomSheet(
+      BuildContext context, Size size, PublishBloc bloc) {
     showModalBottomSheet(
       isScrollControlled: true,
       useSafeArea: true,
@@ -2821,256 +2840,298 @@ class PublishContentScreenState extends State<PublishContentScreen>
         ),
       ),
       builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, StateSetter stateSetter) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(size.width * numD07),
-                    topRight: Radius.circular(size.width * numD07),
-                  ), // Optional: for rounded border
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD045,
+        return BlocProvider.value(
+          value: bloc,
+          child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(size.width * numD07),
+                      topRight: Radius.circular(size.width * numD07),
+                    ), // Optional: for rounded border
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          SizedBox(height: size.width * numD035),
-                          Row(
-                            children: [
-                              ...[
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * numD045,
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            SizedBox(height: size.width * numD035),
+                            Row(
+                              children: [
+                                ...[
+                                  Text(
+                                    chooseYourCharityText,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD045,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  SizedBox(width: size.width * numD015),
+                                  Image.asset(
+                                    'assets/icons/ic_charity.png',
+                                    height: size.width * numD06,
+                                  ),
+                                ],
+                                const Spacer(),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _checkCharityBoxVal = false;
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(Icons.close),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              color: Colors.black,
+                              thickness: 1.3,
+                            ),
+                            SizedBox(height: size.width * numD035),
+                            Expanded(
+                              child: BlocBuilder<PublishBloc, PublishState>(
+                                  builder: (context, state) {
+                                final charities = state.charities;
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    ListView.separated(
+                                      itemCount: charities.length,
+                                      itemBuilder: (context, index) {
+                                        var item = charities[index];
+                                        return InkWell(
+                                          splashColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () {
+                                            context.read<PublishBloc>().add(
+                                                SelectCharityEvent(item.id));
+                                            _checkCharityBoxVal = true;
+                                            organisationNumber =
+                                                item.organisationNumber;
+                                            debugPrint(
+                                                "organisationNumber:::$organisationNumber");
+                                            setState(() {});
+                                            stateSetter(() {});
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: item.isSelectCharity
+                                                    ? colorGreyChat
+                                                    : Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        size.width * numD03),
+                                                border: Border.all(
+                                                    color:
+                                                        Colors.grey.shade300)),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: size.width * numD02,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical:
+                                                        size.width * numD02,
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width *
+                                                                numD02),
+                                                    child: item.charityImage
+                                                            .isNotEmpty
+                                                        ? Image.network(
+                                                            item.charityImage,
+                                                            height: size.width *
+                                                                numD11,
+                                                            width: size.width *
+                                                                numD11,
+                                                            fit: BoxFit.contain,
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stackTrace) {
+                                                              return Icon(
+                                                                Icons
+                                                                    .image_not_supported,
+                                                                size:
+                                                                    size.width *
+                                                                        numD11,
+                                                                color:
+                                                                    Colors.grey,
+                                                              );
+                                                            },
+                                                          )
+                                                        : Icon(
+                                                            Icons
+                                                                .image_not_supported,
+                                                            size: size.width *
+                                                                numD11,
+                                                            color: Colors.grey,
+                                                          ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: size.width * numD02,
+                                                ),
+                                                Expanded(
+                                                    child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        size.width * numD01,
+                                                  ),
+                                                  child: Text(
+                                                    item.charityName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: size.width *
+                                                            numD034),
+                                                  ),
+                                                )),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return SizedBox(
+                                          height: size.width * numD02,
+                                        );
+                                      },
+                                    ),
+                                    showCelebration
+                                        ? Lottie.asset(
+                                            "assets/lottieFiles/celebrate.json",
+                                          )
+                                        : Container(),
+                                  ],
+                                );
+                              }),
+                            ),
+                            SizedBox(height: size.width * numD05),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  "${iconsPath}ic_donation.png",
+                                  height: size.width * numD06,
+                                  width: size.width * numD06,
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(width: size.width * numD02),
                                 Text(
-                                  chooseYourCharityText,
+                                  "Choose your donation ${formatDouble(currentSliderValue)}%",
                                   style: commonTextStyle(
                                       size: size,
                                       fontSize: size.width * numD045,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700),
                                 ),
-                                SizedBox(width: size.width * numD015),
-                                Image.asset(
-                                  'assets/icons/ic_charity.png',
-                                  height: size.width * numD06,
-                                ),
-                              ],
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _checkCharityBoxVal = false;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.close),
-                              ),
-                            ],
-                          ),
-                          const Divider(
-                            color: Colors.black,
-                            thickness: 1.3,
-                          ),
-                          SizedBox(height: size.width * numD035),
-                          Expanded(
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                ListView.separated(
-                                  itemCount: allCharityList.length,
-                                  itemBuilder: (context, index) {
-                                    var item = allCharityList[index];
-                                    return InkWell(
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () {
-                                        context
-                                            .read<PublishBloc>()
-                                            .add(SelectCharityEvent(item.id));
-                                        _checkCharityBoxVal = true;
-                                        organisationNumber =
-                                            item.organisationNumber;
-                                        debugPrint(
-                                            "organisationNumber:::$organisationNumber");
-                                        setState(() {});
-                                        stateSetter(() {});
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: item.isSelectCharity
-                                                ? colorGreyChat
-                                                : Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD03),
-                                            border: Border.all(
-                                                color: Colors.grey.shade300)),
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: size.width * numD02,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: size.width * numD02,
-                                              ),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width * numD02),
-                                                child: Image.network(
-                                                  item.charityImage,
-                                                  height: size.width * numD11,
-                                                  width: size.width * numD11,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: size.width * numD02,
-                                            ),
-                                            Expanded(
-                                                child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: size.width * numD01,
-                                              ),
-                                              child: Text(
-                                                item.charityName,
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize:
-                                                        size.width * numD034),
-                                              ),
-                                            )),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                    return SizedBox(
-                                      height: size.width * numD02,
-                                    );
-                                  },
-                                ),
-                                showCelebration
-                                    ? Lottie.asset(
-                                        "assets/lottieFiles/celebrate.json",
-                                      )
-                                    : Container(),
                               ],
                             ),
-                          ),
-                          SizedBox(height: size.width * numD05),
-                          Row(
-                            children: [
-                              Image.asset(
-                                "${iconsPath}ic_donation.png",
-                                height: size.width * numD06,
-                                width: size.width * numD06,
-                                fit: BoxFit.cover,
-                              ),
-                              SizedBox(width: size.width * numD02),
-                              Text(
-                                "Choose your donation ${formatDouble(currentSliderValue)}%",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD045,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ],
-                          ),
-                          Slider(
-                            value: currentSliderValue,
-                            max: 100,
-                            activeColor: colorThemePink,
-                            inactiveColor: colorGreyChat,
-                            divisions: 100,
-                            label: currentSliderValue.round().toString(),
-                            onChanged: (double value) {
-                              currentSliderValue = value;
-                              debugPrint("value:::::::$value");
-                              setState(() {});
-                              stateSetter(() {});
-                            },
-                          ),
-                          SizedBox(height: size.width * numD05),
-                          SizedBox(
-                            width: size.width,
-                            height: size.width * numD13,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorThemePink,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03),
-                                ),
-                              ),
-                              onPressed: () {
-                                bool isAnyCharitySelected = allCharityList
-                                    .any((charity) => charity.isSelectCharity);
-                                if (isAnyCharitySelected) {
-                                  showCelebration = true;
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () {
-                                    Navigator.pop(context);
-                                    showCelebration = false;
-                                  });
-                                  setState(() {});
-                                  stateSetter(() {});
-                                } else {
-                                  showSnackBar("Charity",
-                                      "Please select a charity!", Colors.red);
-                                }
+                            Slider(
+                              value: currentSliderValue,
+                              max: 100,
+                              activeColor: colorThemePink,
+                              inactiveColor: colorGreyChat,
+                              divisions: 100,
+                              label: currentSliderValue.round().toString(),
+                              onChanged: (double value) {
+                                currentSliderValue = value;
+                                debugPrint("value:::::::$value");
+                                setState(() {});
+                                stateSetter(() {});
                               },
-                              child: Text(
-                                'Well Done',
-                                style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD04,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                            ),
+                            SizedBox(height: size.width * numD05),
+                            SizedBox(
+                              width: size.width,
+                              height: size.width * numD13,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorThemePink,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * numD03),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  final charities = context
+                                      .read<PublishBloc>()
+                                      .state
+                                      .charities;
+                                  bool isAnyCharitySelected = charities.any(
+                                      (charity) => charity.isSelectCharity);
+                                  if (isAnyCharitySelected) {
+                                    showCelebration = true;
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      Navigator.pop(context);
+                                      showCelebration = false;
+                                    });
+                                    setState(() {});
+                                    stateSetter(() {});
+                                  } else {
+                                    showSnackBar("Charity",
+                                        "Please select a charity!", Colors.red);
+                                  }
+                                },
+                                child: Text(
+                                  'Well Done',
+                                  style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD04,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: size.width * numD05),
-                          Text(
-                            thankYouForDonatingCharityText,
-                            textAlign: TextAlign.center,
-                            style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD032,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
+                            SizedBox(height: size.width * numD05),
+                            Text(
+                              thankYouForDonatingCharityText,
+                              textAlign: TextAlign.center,
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD032,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: size.width * numD05),
-                        ],
-                      ),
-                    ],
+                            SizedBox(height: size.width * numD05),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              showCelebration
-                  ? Lottie.asset(
-                      "assets/lottieFiles/celebrate.json",
-                    )
-                  : Container(),
-            ],
-          );
-        });
+                showCelebration
+                    ? Lottie.asset(
+                        "assets/lottieFiles/celebrate.json",
+                      )
+                    : Container(),
+              ],
+            );
+          }),
+        );
       },
     );
   }

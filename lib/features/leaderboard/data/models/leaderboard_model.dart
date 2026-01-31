@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../../domain/entities/leaderboard_entity.dart';
 
 class LeaderboardModel extends LeaderboardEntity {
@@ -7,17 +8,80 @@ class LeaderboardModel extends LeaderboardEntity {
     required super.memberList,
   });
 
-  factory LeaderboardModel.fromJson(Map<String, dynamic> json) {
+  factory LeaderboardModel.fromJson(dynamic json) {
+    debugPrint(
+        "DEBUG: LeaderboardModel.fromJson starting with type: ${json.runtimeType}");
+
+    List<dynamic> memberListRaw = [];
+    List<dynamic> countryListRaw = [];
+    int totalMember = 0;
+
+    if (json is Map<String, dynamic>) {
+      debugPrint(
+          "DEBUG: LeaderboardModel.fromJson JSON keys: ${json.keys.toList()}");
+      Map<String, dynamic> dataMap = json;
+
+      if (json['data'] != null) {
+        if (json['data'] is Map<String, dynamic>) {
+          dataMap = json['data'];
+          debugPrint(
+              "DEBUG: LeaderboardModel.fromJson using 'data' Map with keys: ${dataMap.keys.toList()}");
+        } else if (json['data'] is List) {
+          memberListRaw = json['data'];
+          debugPrint(
+              "DEBUG: LeaderboardModel.fromJson using 'data' List as memberListRaw, length: ${memberListRaw.length}");
+        }
+      }
+
+      if (memberListRaw.isEmpty) {
+        final raw = dataMap['memberList'] ??
+            dataMap['members'] ??
+            dataMap['member'] ??
+            dataMap['leaderboard'] ??
+            dataMap['list'] ??
+            dataMap['membersList'] ??
+            dataMap['topMembers'] ??
+            dataMap['data'];
+        if (raw is List) {
+          memberListRaw = raw;
+        }
+      }
+
+      final countries = dataMap['countryList'] ?? dataMap['countries'];
+      if (countries is List) {
+        countryListRaw = countries;
+      }
+
+      totalMember =
+          dataMap['totalMember'] ?? dataMap['count'] ?? memberListRaw.length;
+    } else if (json is List) {
+      memberListRaw = json;
+      totalMember = json.length;
+      debugPrint(
+          "DEBUG: LeaderboardModel.fromJson JSON is a List, length: ${json.length}");
+    }
+
+    // Ensure "Global" is at the start if countryListRaw is not empty
+    if (countryListRaw.isNotEmpty) {
+      bool hasGlobal = countryListRaw.any((c) => (c is Map &&
+          (c['country_code'] == '' ||
+              c['countryCode'] == '' ||
+              c['country'] == 'Global')));
+      if (!hasGlobal) {
+        countryListRaw.insert(0, {'country': 'Global', 'country_code': ''});
+        debugPrint("DEBUG: LeaderboardModel.fromJson Prepended Global country");
+      }
+    }
+
     return LeaderboardModel(
-      totalMember: json['totalMember'] ?? 0,
-      countryList: (json['countryList'] as List<dynamic>?)
-              ?.map((item) => LeaderboardCountryModel.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [],
-      memberList: (json['memberList'] as List<dynamic>?)
-              ?.map((item) => MemberModel.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [],
+      totalMember: totalMember,
+      countryList: countryListRaw
+          .map((item) =>
+              LeaderboardCountryModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      memberList: memberListRaw
+          .map((item) => MemberModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
     );
   }
 }
@@ -30,8 +94,9 @@ class LeaderboardCountryModel extends LeaderboardCountryEntity {
 
   factory LeaderboardCountryModel.fromJson(Map<String, dynamic> json) {
     return LeaderboardCountryModel(
-      country: json['country'] ?? '',
-      countryCode: json['country_code'] ?? '',
+      country: (json['country'] ?? '').toString(),
+      countryCode:
+          (json['country_code'] ?? json['countryCode'] ?? '').toString(),
     );
   }
 
@@ -54,16 +119,28 @@ class MemberModel extends MemberEntity {
   });
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
+    String userName = json['user_name'] ?? '';
+    if (userName.isEmpty) {
+      userName =
+          "${json['first_name'] ?? ''} ${json['last_name'] ?? ''}".trim();
+    }
+    if (userName.isEmpty) {
+      userName = json['userName'] ?? '';
+    }
+
     return MemberModel(
-      id: json['_id'] ?? '',
-      userName: json['user_name'] ?? '',
-      country: json['country'] ?? '',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
+      userName: userName,
+      country: (json['country'] ?? '').toString(),
+      createdAt: json['createdAt'] != null || json['created_at'] != null
+          ? DateTime.parse((json['createdAt'] ?? json['created_at']).toString())
           : DateTime.now(),
-      totalEarnings: double.parse((json['totalEarnings'] ?? 0).toString())
-          .toStringAsFixed(2),
-      avatar: json['avatar'] ?? '',
+      totalEarnings: double.tryParse(
+                  (json['totalEarnings'] ?? json['total_earnings'] ?? 0)
+                      .toString())
+              ?.toStringAsFixed(2) ??
+          '0.00',
+      avatar: (json['avatar'] ?? json['profile_image'] ?? '').toString(),
     );
   }
 }

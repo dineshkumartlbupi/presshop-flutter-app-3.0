@@ -48,34 +48,51 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
 
       if (response.statusCode == 200) {
         var data = response.data;
+        debugPrint("DEBUG: getMyContent data: $data");
+
+        List contentList = [];
 
         // Handle nested structure from recent logs
         if (data['data'] != null && data['data'] is Map) {
           final innerData = data['data'];
           if (innerData['code'] == 200) {
-            final List contentList = innerData['contentList'] ??
+            contentList = innerData['contentList'] ??
                 innerData['content'] ??
                 innerData['data'] ??
                 [];
             debugPrint(
                 "DEBUG: getMyContent list length (nested): ${contentList.length}");
-            return contentList
-                .map((e) => ContentItemModel.fromJson(e))
-                .toList();
+          }
+        } else if (data['code'] == 200) {
+          contentList =
+              data['contentList'] ?? data['content'] ?? data['data'] ?? [];
+          debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
+        }
+
+        if (contentList.isNotEmpty) {
+          try {
+            return contentList.map((e) {
+              try {
+                return ContentItemModel.fromJson(e);
+              } catch (err) {
+                debugPrint(
+                    "DEBUG: Error parsing individual content item: $err");
+                debugPrint("DEBUG: Problematic item data: $e");
+                rethrow;
+              }
+            }).toList();
+          } catch (e) {
+            debugPrint("DEBUG: Error in list mapping: $e");
+            rethrow;
           }
         }
 
-        // Fallback or original structure
-        if (data['code'] == 200) {
-          final List contentList =
-              data['contentList'] ?? data['content'] ?? data['data'] ?? [];
-          debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
-          return contentList.map((e) => ContentItemModel.fromJson(e)).toList();
+        if (data['code'] != 200 &&
+            (data['data'] is! Map || data['data']['code'] != 200)) {
+          debugPrint("DEBUG: getMyContent failed code or no data matched");
         }
 
-        debugPrint("DEBUG: getMyContent failed code: ${data['code']}");
-        throw ServerFailure(
-            message: data['message'] ?? 'Failed to load content');
+        return [];
       }
       throw ServerFailure(message: 'Failed to load content');
     } catch (e) {

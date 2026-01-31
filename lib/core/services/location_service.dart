@@ -7,16 +7,15 @@ class LocationService {
   final Location _location = Location();
   Future<bool>? _currentRequest;
 
-  // Check and request location permission
-  Future<bool> _requestLocationPermission(
-      BuildContext context, bool shouldShowSettingPopup) async {
+  // Check and request any permission safely
+  Future<bool> requestPermission(Permission permission) async {
     if (_currentRequest != null) {
       debugPrint(
-          "🚀 LocationService: Permission request already in progress, waiting...");
+          "🚀 LocationService: Another Permission request already in progress, waiting...");
       return _currentRequest!;
     }
 
-    _currentRequest = _executeRequest();
+    _currentRequest = _executePermissionRequest(permission);
     try {
       return await _currentRequest!;
     } finally {
@@ -24,8 +23,8 @@ class LocationService {
     }
   }
 
-  Future<bool> _executeRequest() async {
-    var status = await Permission.location.request();
+  Future<bool> _executePermissionRequest(Permission permission) async {
+    var status = await permission.request();
     if (status.isGranted) {
       return true;
     } else if (status.isDenied) {
@@ -35,6 +34,12 @@ class LocationService {
       return false;
     }
     return false;
+  }
+
+  // Legacy compatibility for location (internal)
+  Future<bool> _requestLocationPermission(
+      BuildContext context, bool shouldShowSettingPopup) async {
+    return requestPermission(Permission.location);
   }
 
   // Show dialog if location permission is denied

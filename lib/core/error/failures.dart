@@ -32,3 +32,7 @@ class UserNotRegisteredFailure extends Failure {
 class LocationFailure extends Failure {
   const LocationFailure({required super.message});
 }
+
+class ProcessingFailure extends Failure {
+  const ProcessingFailure({required super.message});
+}

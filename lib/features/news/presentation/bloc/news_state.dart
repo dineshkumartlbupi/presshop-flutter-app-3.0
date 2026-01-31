@@ -7,6 +7,7 @@ class NewsState extends Equatable {
   final News? selectedNews;
   final List<Comment> comments;
   final bool isLoading;
+  final bool isProcessing;
   final String? errorMessage;
 
   const NewsState({
@@ -14,6 +15,7 @@ class NewsState extends Equatable {
     this.selectedNews,
     this.comments = const [],
     this.isLoading = false,
+    this.isProcessing = false,
     this.errorMessage,
   });
 
@@ -22,6 +24,7 @@ class NewsState extends Equatable {
     News? selectedNews,
     List<Comment>? comments,
     bool? isLoading,
+    bool? isProcessing,
     String? errorMessage,
   }) {
     return NewsState(
@@ -29,6 +32,7 @@ class NewsState extends Equatable {
       selectedNews: selectedNews ?? this.selectedNews,
       comments: comments ?? this.comments,
       isLoading: isLoading ?? this.isLoading,
+      isProcessing: isProcessing ?? this.isProcessing,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -39,6 +43,7 @@ class NewsState extends Equatable {
         selectedNews,
         comments,
         isLoading,
+        isProcessing,
         errorMessage,
       ];
 }

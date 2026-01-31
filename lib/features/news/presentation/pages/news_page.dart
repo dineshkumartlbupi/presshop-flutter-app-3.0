@@ -24,7 +24,11 @@ import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget
 
 class NewsPage extends StatefulWidget {
   final bool hideLeading;
-  const NewsPage({Key? key, this.hideLeading = false}) : super(key: key);
+  final double? latitude;
+  final double? longitude;
+  const NewsPage(
+      {Key? key, this.hideLeading = false, this.latitude, this.longitude})
+      : super(key: key);
 
   @override
   State<NewsPage> createState() => _NewsPageState();
@@ -40,9 +44,9 @@ class _NewsPageState extends State<NewsPage> {
 
     return BlocProvider(
       create: (_) => sl<NewsBloc>()
-        ..add(const GetAggregatedNewsEvent(
-          lat: 0, // TODO: Get actual location
-          lng: 0,
+        ..add(GetAggregatedNewsEvent(
+          lat: widget.latitude ?? 0.0,
+          lng: widget.longitude ?? 0.0,
           km: 50,
         )),
       child: BlocConsumer<NewsBloc, NewsState>(
@@ -76,20 +80,27 @@ class _NewsPageState extends State<NewsPage> {
                   enablePullDown: true,
                   enablePullUp: false,
                   onRefresh: () {
-                    context.read<NewsBloc>().add(const GetAggregatedNewsEvent(
-                          lat: 0, // TODO: Get actual location
-                          lng: 0,
+                    context.read<NewsBloc>().add(GetAggregatedNewsEvent(
+                          lat: widget.latitude ?? 0.0,
+                          lng: widget.longitude ?? 0.0,
                           km: 50,
                         ));
                   },
                   header: const WaterDropHeader(),
                   child: newsList.isEmpty && !state.isLoading
                       ? Center(
-                          child: Text(
-                            "No news found",
-                            style: TextStyle(
-                              fontSize: size.width * numD04,
-                              color: Colors.black,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * numD05),
+                            child: Text(
+                              state.isProcessing
+                                  ? "News is being aggregated for your location. Please pull down to refresh in a few moments."
+                                  : "No news found",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: size.width * numD04,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         )
@@ -485,8 +496,8 @@ class _NewsPageState extends State<NewsPage> {
             onApply: (alertType, distance, category) {
               double km = _convertDistanceToKm(distance);
               newsBloc.add(GetAggregatedNewsEvent(
-                lat: 0, // TODO: Use real location
-                lng: 0,
+                lat: widget.latitude ?? 0.0,
+                lng: widget.longitude ?? 0.0,
                 km: km,
                 category: category == 'Category' ? 'all' : category,
                 alertType: alertType == 'Alert' ? null : alertType,

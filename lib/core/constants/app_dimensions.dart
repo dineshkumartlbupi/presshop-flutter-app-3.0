@@ -1,4 +1,3 @@
-
 /*-----------Common Numbers---------*/
 const numD002 = 0.002;
 const numD003 = 0.003;
