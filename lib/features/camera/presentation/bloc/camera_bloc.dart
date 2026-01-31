@@ -32,11 +32,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   // double _currentZoom = 1.0;
 
   // Location
-  final LocationService _locationService = LocationService();
+  final LocationService _locationService;
   double _latitude = 0;
   double _longitude = 0;
 
-  CameraBloc() : super(const CameraState()) {
+  CameraBloc(this._locationService) : super(const CameraState()) {
     on<CameraInitializeEvent>(_onInitialize);
     on<CameraSwitchEvent>(_onSwitchCamera);
     on<CameraFlashToggleEvent>(_onToggleFlash);
@@ -102,6 +102,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
         ..sampleRate = 44100
         ..bitRate = 48000;
+    }
+
+    // Safe Camera Permission Check before availableCameras()
+    bool hasCameraPermission =
+        await _locationService.requestPermission(Permission.camera);
+    if (!hasCameraPermission) {
+      emit(state.copyWith(
+          status: CameraStatus.failure,
+          errorMessage: "Camera permission denied",
+          recorderController: recorderController));
+      return;
     }
 
     // Init Camera
@@ -295,22 +306,36 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       XFile file = await controller.stopVideoRecording();
       _stopTimer();
 
+      File recordedFile = File(file.path);
+      if (!await recordedFile.exists() || await recordedFile.length() == 0) {
+        debugPrint("DEBUG: Video file is empty or missing: ${file.path}");
+        emit(state.copyWith(
+            isRecording: false,
+            status: CameraStatus.failure,
+            errorMessage: "Recording failed: Video file is empty."));
+        return;
+      }
+
       String dir = (await getTemporaryDirectory()).path;
       String newPath = "$dir/${DateTime.now().millisecondsSinceEpoch}.mp4";
-      File recordedFile = File(file.path);
       File renamedFile = await recordedFile.rename(newPath);
 
       await ImageGallerySaverPlus.saveFile(renamedFile.path);
 
       await controller.pausePreview();
 
-      final String? thumbnail = await VideoThumbnail.thumbnailFile(
-        video: renamedFile.path,
-        thumbnailPath: (await getTemporaryDirectory()).path,
-        imageFormat: vt.ImageFormat.PNG,
-        maxWidth: 128,
-        quality: 25,
-      );
+      String? thumbnail;
+      try {
+        thumbnail = await VideoThumbnail.thumbnailFile(
+          video: renamedFile.path,
+          thumbnailPath: (await getTemporaryDirectory()).path,
+          imageFormat: vt.ImageFormat.PNG,
+          maxWidth: 128,
+          quality: 25,
+        );
+      } catch (e) {
+        debugPrint("DEBUG: Video thumbnail generation failed: $e");
+      }
 
       final data = CameraData(
         path: renamedFile.path,
@@ -332,6 +357,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           status: CameraStatus.success,
           recordingTime: "00:00:00"));
     } catch (e) {
+      debugPrint("DEBUG: _onStopVideoRecording exception: $e");
       emit(state.copyWith(
           status: CameraStatus.failure, errorMessage: e.toString()));
     }
@@ -342,8 +368,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     final recController = state.recorderController;
     if (recController == null) return;
 
-    var status = await Permission.microphone.request();
-    if (status.isGranted) {
+    var status =
+        await _locationService.requestPermission(Permission.microphone);
+    if (status) {
       Directory appFolder = await getApplicationDocumentsDirectory();
       final filepath =
           '${appFolder.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
@@ -466,14 +493,23 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Future<void> _onLoadGalleryMedia(
       LoadGalleryMediaEvent event, Emitter<CameraState> emit) async {
     try {
-      final PermissionState ps = await PhotoManager.requestPermissionExtend();
-      if (ps.isAuth) {
-        List<AssetPathEntity> albums =
-            await PhotoManager.getAssetPathList(onlyAll: true);
-        if (albums.isNotEmpty) {
-          List<AssetEntity> media =
-              await albums[0].getAssetListPaged(page: 0, size: 1);
-          emit(state.copyWith(galleryMedia: media));
+      // Use the safe request lock even for gallery to avoid concurrent PlatformException
+      // Note: We don't necessarily need to request a specific permission via LocationService
+      // if we just want to wait for other requests to finish.
+      // But PhotoManager has its own logic. Let's just use it safely.
+      final bool status =
+          await _locationService.requestPermission(Permission.photos);
+
+      if (status) {
+        final PermissionState ps = await PhotoManager.requestPermissionExtend();
+        if (ps.isAuth) {
+          List<AssetPathEntity> albums =
+              await PhotoManager.getAssetPathList(onlyAll: true);
+          if (albums.isNotEmpty) {
+            List<AssetEntity> media =
+                await albums[0].getAssetListPaged(page: 0, size: 1);
+            emit(state.copyWith(galleryMedia: media));
+          }
         }
       }
     } catch (e) {

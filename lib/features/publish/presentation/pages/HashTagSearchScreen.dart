@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:equatable/equatable.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/api/api_constant.dart';
@@ -11,14 +12,16 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class HashTagSearchScreen extends StatefulWidget {
-  String country = "";
-  String countryTagId = "";
-  List<HashTagData> tagData = [];
+  final String country;
+  final String countryTagId;
+  final List<HashTagData> tagData;
+  final List<HashTagData> initialSelectedHashTags;
 
   HashTagSearchScreen(
       {super.key,
       required this.country,
       required this.tagData,
+      required this.initialSelectedHashTags,
       required this.countryTagId});
 
   @override
@@ -37,6 +40,28 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   @override
   void initState() {
     super.initState();
+    selectedHashTagList = List.from(widget.initialSelectedHashTags);
+    if (widget.tagData.isNotEmpty) {
+      hashtagSearchList = List.from(widget.tagData);
+      syncSelectionState();
+    } else {
+      searchHashTagsApi("");
+    }
+  }
+
+  void syncSelectionState() {
+    for (var i = 0; i < hashtagSearchList.length; i++) {
+      bool isSelected = selectedHashTagList.contains(hashtagSearchList[i]);
+      hashtagSearchList[i] =
+          hashtagSearchList[i].copyWith(selected: isSelected);
+    }
+  }
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    hashTagController.dispose();
+    super.dispose();
   }
 
   @override
@@ -150,173 +175,58 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
               SizedBox(
                 height: size.width * numD035,
               ),
-              /*   Wrap(
-               // spacing: size.width * numD02,
-                children: List.generate(hashtagList.length, (index) {
-                  return Stack(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          hashtagList[index].selected =
-                              !hashtagList[index].selected;
-                          setState(() {});
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(right: size.width * numD02),
-                          child: Chip(
-                            label: Text(
-                              "#${hashtagList[index].name}",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: hashtagList[index].selected
-                                      ? Colors.white
-                                      : colorHint,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            backgroundColor: hashtagList[index].selected
-                                ? Colors.black
-                                : colorLightGrey,
-                          ),
-                        ),
-                      ),
-                      hashtagList[index].selected
-                          ? Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () {
-                                  */
-              /*int pos = hashtagSearchList.indexWhere((element) => element.id == hashtagList[index].id);
-                                  debugPrint("dh dy $pos");
-                                  if (pos >= 0) {
-                                    hashtagList.removeAt(index);
-                                    hashtagSearchList[pos].selected = false;
-                                  }
-                                  hashtagSearchList[pos].selected = true;*/
-              /*
-                                  hashtagList.removeAt(index);
-                                  setState(() {});
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical:size.width * numD018,horizontal:size.width * numD01 ),
-                                  child: Icon(
-                                    Icons.cancel_outlined,
-                                    color: colorThemePink,
-                                    size: size.width * numD04,
-                                  ),
-                                ),
-                              ))
-                          : Container(
-                              width: 0,
-                            )
-                    ],
-                  );
-                }),
-              ),*/
-              Wrap(
-                children: List.generate(selectedHashTagList.length, (index) {
-                  return true
-                      ? Container(
-                          margin: EdgeInsets.only(right: size.width * numD02),
-                          child: Chip(
-                              label: Text(
-                                "#${selectedHashTagList[index].name}",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              deleteIcon: Icon(
-                                Icons.close,
+              if (selectedHashTagList.isNotEmpty)
+                Wrap(
+                  children: List.generate(selectedHashTagList.length, (index) {
+                    return Container(
+                      margin: EdgeInsets.only(right: size.width * numD02),
+                      child: Chip(
+                          label: Text(
+                            "#${selectedHashTagList[index].name}",
+                            style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
                                 color: Colors.white,
-                                size: size.width * numD045,
-                              ),
-                              onDeleted: () {
-                                hashtagSearchList[index].selected = false;
-                                if (index >= 0 &&
-                                    index < selectedHashTagList.length) {
-                                  var hashtagToRemove =
-                                      selectedHashTagList[index];
-                                  selectedHashTagList.removeAt(index);
-                                  int searchListIndex = hashtagSearchList
-                                      .indexOf(hashtagToRemove);
-                                  debugPrint(
-                                      "searchListIndex::::$searchListIndex");
-                                  if (searchListIndex >= 0) {
-                                    hashtagSearchList[searchListIndex]
-                                        .selected = false;
-                                    debugPrint(
-                                        "hashtagSearchList value::::::${hashtagSearchList[searchListIndex].selected}");
-                                  }
-                                }
-                                setState(() {});
-                              },
-                              backgroundColor: Colors.black),
-                        )
-                      : Container();
-                  // : Stack(
-                  //     children: [
-                  //       InkWell(
-                  //         onTap: () {
-                  //           /* selectedHashTagList[index].selected =
-                  //     !selectedHashTagList[index].selected;
-                  //     setState(() {});*/
-                  //         },
-                  //         child: Container(
-                  //           margin:
-                  //               EdgeInsets.only(right: size.width * numD02),
-                  //           child: Chip(
-                  //             label: Text(
-                  //               "#${selectedHashTagList[index].name}",
-                  //               style: commonTextStyle(
-                  //                   size: size,
-                  //                   fontSize: size.width * numD03,
-                  //                   color:
-                  //                       selectedHashTagList[index].selected
-                  //                           ? Colors.white
-                  //                           : colorHint,
-                  //                   fontWeight: FontWeight.normal),
-                  //             ),
-                  //             deleteIcon: Icon(
-                  //               Icons.close,
-                  //             ),
-                  //             backgroundColor:
-                  //                 selectedHashTagList[index].selected
-                  //                     ? Colors.black
-                  //                     : colorLightGrey,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       /*   Positioned(
-                  //         top: 0,
-                  //         right: 0,
-                  //         child: InkWell(
-                  //           onTap: () {
-                  //             int pos = hashtagSearchList.indexWhere((element) => element.id == selectedHashTagList[index].id);
-                  //             debugPrint("dh dy $pos");
-                  //             if (pos >= 0) {
-                  //               selectedHashTagList.removeAt(index);
-                  //               hashtagSearchList[pos].selected = false;
-                  //             }
-                  //             debugPrint("hashtagSearchList value::::::${hashtagSearchList[index].selected}");
-                  //             setState(() {});
+                                fontWeight: FontWeight.normal),
+                          ),
+                          deleteIcon: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: size.width * numD045,
+                          ),
+                          onDeleted: () {
+                            final removedTag = selectedHashTagList[index];
+                            selectedHashTagList.removeAt(index);
 
-                  //           },
-                  //           child: Container(
-                  //             padding: EdgeInsets.symmetric(vertical:size.width * numD018,horizontal:size.width * numD01 ),
-                  //             child: Icon(
-                  //               Icons.cancel_outlined,
-                  //               color: Colors.white,
-                  //               size: size.width * numD04,
-                  //             ),
-                  //           ),
-                  //         ))*/
-                  //     ],
-                  //   );
-                }),
+                            final searchIdx =
+                                hashtagSearchList.indexOf(removedTag);
+                            if (searchIdx != -1) {
+                              hashtagSearchList[searchIdx] =
+                                  hashtagSearchList[searchIdx]
+                                      .copyWith(selected: false);
+                            }
+                            setState(() {});
+                          },
+                          backgroundColor: Colors.black),
+                    );
+                  }),
+                ),
+              SizedBox(
+                height: size.width * numD04,
               ),
+              if (hashTagController.text.isEmpty &&
+                  hashtagSearchList.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(bottom: size.width * numD02),
+                  child: Text(
+                    "Suggested Tags",
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * numD035,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
               SizedBox(
                 height: size.width * numD04,
               ),
@@ -325,20 +235,20 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            if (hashtagSearchList[index].id.isNotEmpty) {
-                              if (!hashtagSearchList[index].selected) {
-                                hashtagSearchList[index].selected = true;
-                                if (!selectedHashTagList
-                                    .contains(hashtagSearchList[index])) {
+                            final tag = hashtagSearchList[index];
+                            if (tag.id.isNotEmpty) {
+                              if (!tag.selected) {
+                                hashtagSearchList[index] =
+                                    tag.copyWith(selected: true);
+                                if (!selectedHashTagList.contains(tag)) {
                                   selectedHashTagList
                                       .add(hashtagSearchList[index]);
-                                } else {
-                                  debugPrint(
-                                      'This hashtag is already selected.');
                                 }
+                              } else {
+                                hashtagSearchList[index] =
+                                    tag.copyWith(selected: false);
+                                selectedHashTagList.remove(tag);
                               }
-                              debugPrint(
-                                  "selectedHashTagList:::::${selectedHashTagList.length}");
                               setState(() {});
                             }
                           },
@@ -425,15 +335,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
                     commonButtonStyle(size, colorThemePink), () {
-                  List<HashTagData> list = [];
-
-                  for (var element in selectedHashTagList) {
-                    if (element.selected) {
-                      list.add(element);
-                    }
-                  }
-
-                  Navigator.pop(context, list);
+                  Navigator.pop(context, selectedHashTagList);
                 }),
               ),
               SizedBox(
@@ -445,8 +347,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       ),
     );
   }
-
-  ///--------Apis Section------------
 
   ///--------Apis Section------------
 
@@ -476,20 +376,11 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
         }
 
         debugPrint("GetHashTags: $response");
-        hashtagSearchList = tags.map((e) => HashTagData.fromJson(e)).toList();
+        final List<HashTagData> fetchedTags =
+            tags.map((e) => HashTagData.fromJson(e)).toList();
 
-        if (hashtagSearchList.isNotEmpty) {
-          var tageName = hashtagSearchList.first.name;
-          for (var element in widget.tagData) {
-            if (element.name == tageName) {
-              hashtagSearchList.add(HashTagData(
-                  id: element.id, name: element.name, selected: true));
-            } else {
-              hashtagSearchList.add(HashTagData(
-                  id: element.id, name: element.name, selected: false));
-            }
-          }
-        }
+        hashtagSearchList = fetchedTags;
+        syncSelectionState();
         setState(() {});
       }
     } catch (e) {
@@ -522,25 +413,23 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
         }
 
         debugPrint("SearchHashTags: $response");
-        hashtagSearchList = tags.map((e) => HashTagData.fromJson(e)).toList();
+        final List<HashTagData> fetchedTags =
+            tags.map((e) => HashTagData.fromJson(e)).toList();
+
+        hashtagSearchList = fetchedTags;
         if (hashtagSearchList.isEmpty &&
             hashTagController.text.trim().isNotEmpty) {
           addNew = true;
         } else {
           addNew = false;
         }
-        if (hashtagSearchList.isEmpty) {
+        if (hashtagSearchList.isEmpty &&
+            hashTagController.text.trim().isNotEmpty) {
           debugPrint("add new:::::::");
           hashtagSearchList.add(HashTagData(
               id: '', name: hashTagController.text.trim(), selected: false));
         }
-        for (var i = 0; i < hashtagSearchList.length; i++) {
-          bool isSelected = selectedHashTagList.any(
-              (selectedItem) => selectedItem.id == hashtagSearchList[i].id);
-          if (isSelected) {
-            hashtagSearchList[i].selected = true;
-          }
-        }
+        syncSelectionState();
 
         if (mounted) {
           setState(() {});
@@ -567,19 +456,17 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
         if (map is String) map = jsonDecode(map);
 
         if (map["id"] != null) {
-          var newTag = HashTagData.fromJson(map);
-          hashtagSearchList.add(newTag..selected = true);
-          selectedHashTagList.add(newTag..selected = true);
+          var newTag = HashTagData.fromJson(map).copyWith(selected: true);
+          hashtagSearchList.add(newTag);
+          selectedHashTagList.add(newTag);
         } else if (map["code"] == 200 && map['tag'] != null) {
           // Fallback to original if wrapped
-          hashtagSearchList.add(HashTagData(
+          final newTag = HashTagData(
               id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
               name: map['tag']['name'],
-              selected: true));
-          selectedHashTagList.add(HashTagData(
-              id: map['tag']["id"] ?? map['tag']["_id"] ?? '',
-              name: map['tag']['name'],
-              selected: true));
+              selected: true);
+          hashtagSearchList.add(newTag);
+          selectedHashTagList.add(newTag);
         }
         setState(() {});
       }
@@ -589,10 +476,10 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
   }
 }
 
-class HashTagData {
-  String id = "";
-  String name = "";
-  bool selected = false;
+class HashTagData extends Equatable {
+  final String id;
+  final String name;
+  final bool selected;
 
   HashTagData({
     required this.id,
@@ -600,10 +487,25 @@ class HashTagData {
     required this.selected,
   });
 
+  HashTagData copyWith({
+    String? id,
+    String? name,
+    bool? selected,
+  }) {
+    return HashTagData(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      selected: selected ?? this.selected,
+    );
+  }
+
   factory HashTagData.fromJson(Map<String, dynamic> json) {
     return HashTagData(
         id: json["id"] ?? json["_id"] ?? '',
         name: json["name"] ?? '',
         selected: false);
   }
+
+  @override
+  List<Object?> get props => [id, name];
 }

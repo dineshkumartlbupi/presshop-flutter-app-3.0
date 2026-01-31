@@ -31,13 +31,14 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
     try {
       final response = await apiClient.get(categoryUrl);
       debugPrint("DEBUG: getContentCategories response: ${response.data}");
-
       if (response.data is List) {
         final data = response.data as List;
         debugPrint(
             "DEBUG: getContentCategories parsed list length: ${data.length}");
         return data.map((e) => CategoryModel.fromJson(e)).toList();
       } else if (response.data is Map<String, dynamic>) {
+        debugPrint(
+            "DEBUG: getContentCategories response keys: ${response.data.keys}");
         if (response.data['categories'] != null) {
           final data = response.data['categories'] as List;
           return data.map((e) => CategoryModel.fromJson(e)).toList();
@@ -46,7 +47,6 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
           return data.map((e) => CategoryModel.fromJson(e)).toList();
         }
       }
-
       debugPrint(
           "DEBUG: getContentCategories response format unknown: ${response.data.runtimeType}");
       throw ServerException(response.data.toString());
@@ -79,17 +79,11 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       };
       final response =
           await apiClient.get(allCharityUrl, queryParameters: params);
-      if (response.data is! Map<String, dynamic>) {
-        throw ServerException(response.data.toString());
+      final data = response.data['data'];
+      if (data is List) {
+        return data.map((e) => CharityModel.fromJson(e)).toList();
       }
-
-      if (response.data['data'] is Map &&
-          (response.data['data'] as Map).isEmpty) {
-        return [];
-      }
-
-      final data = response.data['data'] as List;
-      return data.map((e) => CharityModel.fromJson(e)).toList();
+      return [];
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -138,20 +132,21 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       };
       final response =
           await apiClient.get(getAllCmsUrl, queryParameters: params);
-      if (response.data is! Map<String, dynamic>) {
-        throw ServerException(response.data.toString());
-      }
-
-      final data = response.data['status'] ?? response.data['data'];
+      final data = (response.data is Map)
+          ? (response.data['status'] ?? response.data['data'])
+          : null;
 
       if (data == null || (data is Map && data.isEmpty)) {
         return {"shared": "", "exclusive": ""};
       }
 
-      return {
-        "shared": data['shared']?.toString() ?? "",
-        "exclusive": data['exclusive']?.toString() ?? "",
-      };
+      if (data is Map) {
+        return {
+          "shared": data['shared']?.toString() ?? "",
+          "exclusive": data['exclusive']?.toString() ?? "",
+        };
+      }
+      return {"shared": "", "exclusive": ""};
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }

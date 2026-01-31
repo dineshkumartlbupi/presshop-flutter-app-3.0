@@ -43,13 +43,27 @@ class PublishBloc extends Bloc<PublishEvent, PublishState> {
     // Simpler sequential handling for now
     List<dynamic> results = [failureOrCategories, failureOrPrices];
 
-    failureOrCategories.fold(
-        (failure) => emit(state.copyWith(
-            status: PublishStatus.failure,
-            errorMessage: failure.message)), (categories) {
-      // Select first by default if available?
-      final selected = categories.isNotEmpty ? categories.first : null;
-      emit(state.copyWith(categories: categories, selectedCategory: selected));
+    failureOrCategories.fold((failure) {
+      debugPrint(
+          "DEBUG: PublishBloc categories fetch FAILED: ${failure.message}");
+      emit(state.copyWith(
+          status: PublishStatus.failure, errorMessage: failure.message));
+    }, (categories) {
+      debugPrint("DEBUG: PublishBloc categories fetched: ${categories.length}");
+      for (var cat in categories) {
+        debugPrint("DEBUG: Category: ${cat.id} - ${cat.name}");
+      }
+      // Select first by default if available and map selection state
+      if (categories.isNotEmpty) {
+        final mappedCategories = categories.map((c) {
+          return c.copyWith(selected: c.id == categories.first.id);
+        }).toList();
+        final selected = mappedCategories.first;
+        emit(state.copyWith(
+            categories: mappedCategories, selectedCategory: selected));
+      } else {
+        emit(state.copyWith(categories: categories, selectedCategory: null));
+      }
     });
 
     failureOrPrices.fold(

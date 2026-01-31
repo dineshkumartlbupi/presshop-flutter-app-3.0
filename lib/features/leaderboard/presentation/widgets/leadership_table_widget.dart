@@ -19,7 +19,8 @@ class LeadershipTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // print('👥 memberList count: ${memberList.length}');
 
-    final activeList = memberList; // Removed dummyMembers for now, or I can recreate instances of MemberEntity
+    final activeList =
+        memberList; // Removed dummyMembers for now, or I can recreate instances of MemberEntity
 
     final safeList = List<MemberEntity?>.generate(
       3,
@@ -120,59 +121,65 @@ class LeadershipTableWidget extends StatelessWidget {
         alignment: Alignment.centerLeft,
         children: [
           Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  hasData
-                      ? formatCurrency(earnings, currencySymbol)
-                      : formatCurrency(0, currencySymbol),
-                  style: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * numD04,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    hasData
+                        ? formatCurrency(earnings, currencySymbol)
+                        : formatCurrency(0, currencySymbol),
+                    style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD04,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: size.height * numD005),
-                Container(
-                  padding: EdgeInsets.all(size.width * numD01),
-                  height: size.width * numD24,
-                  width: size.width * numD24,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: ClipOval(
-                    clipBehavior: Clip.antiAlias,
-                    child: hasData && avatar.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: avatar,
-                            errorWidget: (context, url, error) {
-                              return Image.asset(
-                                "${commonImagePath}rabbitLogo.png",
-                                height: size.width * numD06,
-                                width: size.width * numD06,
-                              );
-                            },
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            "${commonImagePath}rabbitLogo.png",
-                            height: size.width * numD06,
-                            width: size.width * numD06,
-                            fit: BoxFit.cover,
-                          ),
+                  SizedBox(height: size.height * numD005),
+                  Container(
+                    padding: EdgeInsets.all(size.width * numD01),
+                    height: size.width * numD24,
+                    width: size.width * numD24,
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: ClipOval(
+                      clipBehavior: Clip.antiAlias,
+                      child: hasData && avatar.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: avatar,
+                              errorWidget: (context, url, error) {
+                                return Image.asset(
+                                  "${commonImagePath}rabbitLogo.png",
+                                  height: size.width * numD06,
+                                  width: size.width * numD06,
+                                );
+                              },
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              "${commonImagePath}rabbitLogo.png",
+                              height: size.width * numD06,
+                              width: size.width * numD06,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
-                ),
-                SizedBox(height: size.height * numD005),
-                Text(
-                  name,
-                  style: commonTextStyle(
-                    size: size,
-                    fontSize: size.width * numD035,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
+                  SizedBox(height: size.height * numD005),
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 

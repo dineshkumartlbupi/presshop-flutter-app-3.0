@@ -22,8 +22,7 @@ class LeaderboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          sl<LeaderboardBloc>()..add(const GetLeaderboard("global")),
+      create: (context) => sl<LeaderboardBloc>()..add(const GetLeaderboard("")),
       child: const LeaderboardView(),
     );
   }
@@ -38,7 +37,7 @@ class LeaderboardView extends StatefulWidget {
 
 class _LeaderboardViewState extends State<LeaderboardView> {
   late Size size;
-  String selectedCountryCode = "global";
+  String selectedCountryCode = "";
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -148,11 +147,14 @@ class _LeaderboardViewState extends State<LeaderboardView> {
       ),
       body: BlocBuilder<LeaderboardBloc, LeaderboardState>(
         builder: (context, state) {
+          debugPrint("DEBUG: LeaderboardView state: $state");
           if (state is LeaderboardLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is LeaderboardError) {
             return Center(child: Text(state.message));
           } else if (state is LeaderboardLoaded) {
+            debugPrint(
+                "DEBUG: LeaderboardLoaded memberCount: ${state.leaderboard.memberList.length}");
             return _buildBody(state.leaderboard);
           }
           return const SizedBox.shrink();
@@ -246,9 +248,13 @@ class _LeaderboardViewState extends State<LeaderboardView> {
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: leaderboard.memberList.length,
+                itemCount: leaderboard.memberList.length > 3
+                    ? leaderboard.memberList.length - 3
+                    : 0,
                 itemBuilder: (context, index) {
-                  var memberItem = leaderboard.memberList[index];
+                  var memberItem = leaderboard.memberList[index + 3];
+                  debugPrint(
+                      "DEBUG: Rendering list item $index: ${memberItem.userName} (${memberItem.country})");
                   return Padding(
                     padding: EdgeInsets.only(bottom: size.height * numD02),
                     child: Row(

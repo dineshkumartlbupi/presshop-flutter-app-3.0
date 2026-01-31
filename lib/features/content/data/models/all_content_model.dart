@@ -66,40 +66,45 @@ class ContentItemModel extends ContentItem {
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
     return ContentItemModel(
-      id: json['id'],
+      id: json['id'] ?? json['_id'] ?? '',
       description: json['description'] ?? '',
       location: json['location'] ?? '',
-      latitude: json['latitude'] ?? '',
-      longitude: json['longitude'] ?? '',
-      categoryId: json['category_id'],
-      hopperId: json['hopper_id'],
-      askPrice: json['ask_price'],
-      isDraft: json['is_draft'] == "true",
-      isCharity: json['is_charity'] == "true",
-      images: List<String>.from(json['images']),
-      videos: List<dynamic>.from(json['videos']),
-      createdAt: json['created_at'],
-      status: json['status'],
-      contentMetadata: (json['content_metadata'] as List)
-          .map((e) => ContentMetadataModel.fromJson(e))
-          .toList(),
-      productId: json['product_id'],
-      priceOriginal: json['price_original'],
-      currencyOriginal: json['currency_original'],
-      imageCount: json['image_count'],
-      videoCount: json['video_count'],
-      contentUnderOffer: json['content_under_offer'],
-      paidStatus: json['paid_status'],
-      contentViewCount: json['content_view_count_by_marketplace_for_app'],
-      isFavourite: json['is_favourite'],
-      isLiked: json['is_liked'],
-      categoryData: CategoryDataModel.fromJson(json['categoryData']),
+      latitude: json['latitude']?.toString() ?? '',
+      longitude: json['longitude']?.toString() ?? '',
+      categoryId: json['category_id'] ?? '',
+      hopperId: json['hopper_id'] ?? '',
+      askPrice: json['ask_price']?.toString() ?? '0',
+      isDraft: json['is_draft'] == "true" || json['is_draft'] == true,
+      isCharity: json['is_charity'] == "true" || json['is_charity'] == true,
+      images: json['images'] != null ? List<String>.from(json['images']) : [],
+      videos: json['videos'] != null ? List<dynamic>.from(json['videos']) : [],
+      createdAt: json['created_at'] ?? '',
+      status: json['status'] ?? '',
+      contentMetadata: json['content_metadata'] != null
+          ? (json['content_metadata'] as List)
+              .map((e) => ContentMetadataModel.fromJson(e))
+              .toList()
+          : [],
+      productId: json['product_id'] ?? '',
+      priceOriginal: json['price_original']?.toString() ?? '0',
+      currencyOriginal: json['currency_original'] ?? '',
+      imageCount: json['image_count'] ?? 0,
+      videoCount: json['video_count'] ?? 0,
+      contentUnderOffer: json['content_under_offer'] == true,
+      paidStatus: json['paid_status'] == true || json['paid_status'] == "paid",
+      contentViewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
+      isFavourite: json['is_favourite'] == true,
+      isLiked: json['is_liked'] == true,
+      categoryData: json['categoryData'] != null
+          ? CategoryDataModel.fromJson(json['categoryData'])
+          : const CategoryDataModel(id: '', name: '', percentage: '', type: ''),
       purchasedMediahouseCount: json['purchased_mediahouse'] != null
           ? (json['purchased_mediahouse'] as List).length
           : 0,
       totalOffer: json['offer_content_size'] ?? 0,
       isExclusive: json['is_exclusive'] ?? (json['type'] != 'shared'),
-      isPaidStatusToHopper: json['paid_status_to_hopper'] ?? false,
+      isPaidStatusToHopper: json['paid_status_to_hopper'] == true ||
+          json['paid_status_to_hopper'] == "paid",
     );
   }
 

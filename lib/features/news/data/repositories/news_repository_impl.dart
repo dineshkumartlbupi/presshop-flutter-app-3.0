@@ -34,6 +34,8 @@ class NewsRepositoryImpl implements NewsRepository {
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
+    } on ProcessingException catch (e) {
+      return Left(ProcessingFailure(message: e.message));
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

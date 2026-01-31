@@ -136,7 +136,7 @@ flutter:
     - assets/markers/bg-removed/
     - assets/rabbits/
     - assets/chatIcons/
-    - assets/dialog_flow_auth.json
+#    - assets/dialog_flow_auth.json
 
   fonts:
     - family: AirbnbCereal

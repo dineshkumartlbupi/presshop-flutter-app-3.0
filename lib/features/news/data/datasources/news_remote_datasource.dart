@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
@@ -49,17 +50,35 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
     };
 
     try {
+      debugPrint("DEBUG: getAggregatedNews body: $body");
       final response = await client.post(
         ApiConstantsNew.content.aggregatedNews,
         data: body,
       );
+      debugPrint(
+          "DEBUG: getAggregatedNews response keys: ${response.data is Map ? (response.data as Map).keys.toList() : 'Not a Map'}");
+      debugPrint("DEBUG: getAggregatedNews response data: ${response.data}");
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 202) {
+        if (response.statusCode == 202) {
+          debugPrint(
+              "DEBUG: getAggregatedNews status is 202 (Accepted/Processing)");
+          throw ProcessingException("News aggregation in progress");
+        }
         final data = response.data;
         if (data['data'] != null && data['data']['news'] != null) {
           final List<dynamic> newsList = data['data']['news'];
           if (newsList.isNotEmpty) {
-            print("DEBUG: Raw News Item [0]: ${newsList[0]}");
+            debugPrint(
+                "DEBUG: getAggregatedNews first news item: ${newsList[0]}");
+            if (newsList[0] is Map) {
+              debugPrint(
+                  "DEBUG: first news item keys: ${(newsList[0] as Map).keys.toList()}");
+            }
+          } else {
+            debugPrint("DEBUG: getAggregatedNews news list is EMPTY");
           }
           return newsList.map((item) => NewsModel.fromJson(item)).toList();
         }

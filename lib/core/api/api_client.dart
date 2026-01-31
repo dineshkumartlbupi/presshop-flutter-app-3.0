@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 

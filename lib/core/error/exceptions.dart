@@ -12,3 +12,8 @@ class LocationException implements Exception {
   LocationException(this.message);
   final String message;
 }
+
+class ProcessingException implements Exception {
+  ProcessingException(this.message);
+  final String message;
+}

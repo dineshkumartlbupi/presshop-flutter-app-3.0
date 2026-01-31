@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import '../../domain/usecases/get_my_content.dart';
@@ -71,8 +72,14 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           page: event.page, limit: event.limit, params: event.params),
     );
     result.fold(
-      (failure) => emit(ContentError(failure.message)),
+      (failure) {
+        debugPrint(
+            "DEBUG: ContentBloc FetchMyContent failure: ${failure.message}");
+        emit(ContentError(failure.message));
+      },
       (content) {
+        debugPrint(
+            "DEBUG: ContentBloc FetchMyContent success, items: ${content.length}");
         List<ContentItem> updatedContent = [];
         if (state is MyContentLoaded && event.page > 1) {
           updatedContent = List.from((state as MyContentLoaded).content);
