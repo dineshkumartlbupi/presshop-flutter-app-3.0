@@ -4,51 +4,51 @@ class ProfileData extends Equatable {
   final String id;
   final String firstName;
   final String lastName;
-  final String userName;
   final String email;
   final String phone;
-  final String? profileImage;
-  final String? address;
-  final String? city;
-  final String? country;
-  final String? postalCode;
-  final String? latitude;
-  final String? longitude;
-  final String? dob;
-  final String? bio;
-  final String? currencySymbol;
-  final String? totalEarnings;
-  final String? apartment;
-  final String? countryCode;
-  final String? avatarId;
-  final Map<String, dynamic>? sourceMap;
-  final String? joinedDate;
-  final String? avatarUrl;
+  final String userName;
+  final String role;
+  final String status;
+  final String hopperStatus;
+  final String chatStatus;
+  final String profileImage;
+  final bool isVerified;
+  final bool isOnboard;
+  final bool isDeleted;
+  final double latitude;
+  final double longitude;
+  final int totalEarnings;
+  final int totalHopperArmy;
+  final Location location;
+  final PreferredCurrencySign preferredCurrencySign;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime lastLogin;
 
   const ProfileData({
     required this.id,
     required this.firstName,
     required this.lastName,
-    required this.userName,
     required this.email,
     required this.phone,
-    this.profileImage,
-    this.address,
-    this.city,
-    this.country,
-    this.postalCode,
-    this.latitude,
-    this.longitude,
-    this.dob,
-    this.bio,
-    this.currencySymbol,
-    this.totalEarnings,
-    this.apartment,
-    this.countryCode,
-    this.avatarId,
-    this.sourceMap,
-    this.joinedDate,
-    this.avatarUrl,
+    required this.userName,
+    required this.role,
+    required this.status,
+    required this.hopperStatus,
+    required this.chatStatus,
+    required this.profileImage,
+    required this.isVerified,
+    required this.isOnboard,
+    required this.isDeleted,
+    required this.latitude,
+    required this.longitude,
+    required this.totalEarnings,
+    required this.totalHopperArmy,
+    required this.location,
+    required this.preferredCurrencySign,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.lastLogin,
   });
 
   @override
@@ -56,25 +56,66 @@ class ProfileData extends Equatable {
         id,
         firstName,
         lastName,
-        userName,
         email,
         phone,
+        userName,
+        role,
+        status,
+        hopperStatus,
+        chatStatus,
         profileImage,
-        address,
-        city,
-        country,
-        postalCode,
+        isVerified,
+        isOnboard,
+        isDeleted,
         latitude,
         longitude,
-        dob,
-        bio,
-        currencySymbol,
         totalEarnings,
-        apartment,
+        totalHopperArmy,
+        location,
+        preferredCurrencySign,
+        createdAt,
+        updatedAt,
+        lastLogin,
+      ];
+}
+
+class Location extends Equatable {
+  final String type;
+  final List<double> coordinates;
+
+  const Location({
+    required this.type,
+    required this.coordinates,
+  });
+
+  @override
+  List<Object?> get props => [type, coordinates];
+}
+
+class PreferredCurrencySign extends Equatable {
+  final String symbol;
+  final String code;
+  final String name;
+  final String countryName;
+  final String countryCode;
+  final String dialCode;
+
+  const PreferredCurrencySign({
+    required this.symbol,
+    required this.code,
+    required this.name,
+    required this.countryName,
+    required this.countryCode,
+    required this.dialCode,
+  });
+
+  @override
+  List<Object?> get props => [
+        symbol,
+        code,
+        name,
+        countryName,
         countryCode,
-        avatarId,
-        sourceMap,
-        joinedDate,
-        avatarUrl,
+        dialCode,
       ];
 }

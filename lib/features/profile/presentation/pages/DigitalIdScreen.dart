@@ -578,14 +578,15 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
 
   void _updateUserProfile(ProfileData profile) {
     setState(() {
-      userName = profile.userName ?? profile.firstName ?? "Hopper";
-      String firstName = profile.firstName ?? "Hopper";
-      String lastName = profile.lastName ?? "";
+      userName =
+          profile.userName.isNotEmpty ? profile.userName : profile.firstName;
+      String firstName = profile.firstName;
+      String lastName = profile.lastName;
       fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
 
-      if (profile.profileImage != null && profile.profileImage!.isNotEmpty) {
-        if (profile.profileImage!.startsWith("http")) {
-          userImage = profile.profileImage!;
+      if (profile.profileImage.isNotEmpty) {
+        if (profile.profileImage.startsWith("http")) {
+          userImage = profile.profileImage;
         } else {
           // Use the correct CDN URL as per user instruction/logs
           const String cdnAvatarUrl =

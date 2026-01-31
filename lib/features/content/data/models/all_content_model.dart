@@ -1,122 +1,141 @@
-class AllContentData {
-  String id = "";
-  String type = "";
-  String status = "";
-  List<AllContentMediaModel> content = [];
-  String heading = "";
-  String description = "";
-  String location = "";
-  String categoryId = "";
-  String categoryName = "";
-  int totalView = 0;
-  int totalSold = 0;
-  int totalOffer = 0;
-  String displayPrice = "";
-  String time = "";
+import '../../domain/entities/content_item.dart';
+import 'category_data_model.dart';
+import 'content_metadata_model.dart';
 
-  /// 🔥 Added New Field
-  String hopperId = "";
+class ContentListResponseModel {
+  final int code;
+  final List<ContentItemModel> data;
+  final int count;
 
-  AllContentData({
-    this.id = "",
-    this.type = "",
-    this.status = "",
-    this.content = const [],
-    this.heading = "",
-    this.description = "",
-    this.location = "",
-    this.categoryId = "",
-    this.categoryName = "",
-    this.totalView = 0,
-    this.totalSold = 0,
-    this.totalOffer = 0,
-    this.displayPrice = "",
-    this.time = "",
-    this.hopperId = "", // added
+  ContentListResponseModel({
+    required this.code,
+    required this.data,
+    required this.count,
   });
 
-  AllContentData.fromJson(Map<String, dynamic> json) {
-    id = (json['_id'] ?? "").toString();
-    type = (json['type'] ?? "").toString();
-    status = (json['status'] ?? "").toString();
-
-    /// 🔥 hopperId from API
-    hopperId = (json['hopper_id'] ?? "").toString();
-
-    if (json['content'] != null) {
-      content = <AllContentMediaModel>[];
-      for (var v in json['content']) {
-        content.add(AllContentMediaModel.fromJson(v));
-      }
-    }
-
-    heading = (json['heading'] ?? "").toString();
-    description = (json['description'] ?? "").toString();
-    location = (json['location'] ?? "").toString();
-
-    if (json['category_id'] != null && json['category_id'] is Map) {
-      categoryId = (json['category_id']['_id'] ?? "").toString();
-      categoryName = (json['category_id']['name'] ?? "").toString();
-    }
-
-    totalView = json['totalView'] ?? 0;
-    totalSold = json['totalSold'] ?? 0;
-    totalOffer = json['offer_content_size'] ?? 0;
-    displayPrice = (json['display_price'] ?? "").toString();
-    time = (json['createdAt'] ?? "").toString();
+  factory ContentListResponseModel.fromJson(Map<String, dynamic> json) {
+    return ContentListResponseModel(
+      code: json['code'],
+      data: (json['data'] as List)
+          .map((e) => ContentItemModel.fromJson(e))
+          .toList(),
+      count: json['count'],
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'code': code,
+        'data': data.map((e) => e.toJson()).toList(),
+        'count': count,
+      };
 }
 
-class AllContentMediaModel {
-  String media = "";
-  String mediaType = "";
-  String thumbnail = "";
-
-  AllContentMediaModel({
-    this.media = "",
-    this.mediaType = "",
-    this.thumbnail = "",
+class ContentItemModel extends ContentItem {
+  const ContentItemModel({
+    required super.id,
+    required super.description,
+    required super.location,
+    required super.latitude,
+    required super.longitude,
+    required super.categoryId,
+    required super.hopperId,
+    required super.askPrice,
+    required super.isDraft,
+    required super.isCharity,
+    required super.images,
+    required super.videos,
+    required super.createdAt,
+    required super.status,
+    required super.contentMetadata,
+    required super.productId,
+    required super.priceOriginal,
+    required super.currencyOriginal,
+    required super.imageCount,
+    required super.videoCount,
+    required super.contentUnderOffer,
+    required super.paidStatus,
+    required super.contentViewCount,
+    required super.isFavourite,
+    required super.isLiked,
+    required super.categoryData,
+    super.purchasedMediahouseCount = 0,
+    super.totalOffer = 0,
+    super.isExclusive,
+    super.isPaidStatusToHopper = false,
   });
 
-  AllContentMediaModel.fromJson(Map<String, dynamic> json) {
-    media = (json['media'] ?? "").toString();
-    mediaType = (json['media_type'] ?? "").toString();
-    thumbnail = (json['thumbnail'] ?? "").toString();
+  factory ContentItemModel.fromJson(Map<String, dynamic> json) {
+    return ContentItemModel(
+      id: json['id'],
+      description: json['description'] ?? '',
+      location: json['location'] ?? '',
+      latitude: json['latitude'] ?? '',
+      longitude: json['longitude'] ?? '',
+      categoryId: json['category_id'],
+      hopperId: json['hopper_id'],
+      askPrice: json['ask_price'],
+      isDraft: json['is_draft'] == "true",
+      isCharity: json['is_charity'] == "true",
+      images: List<String>.from(json['images']),
+      videos: List<dynamic>.from(json['videos']),
+      createdAt: json['created_at'],
+      status: json['status'],
+      contentMetadata: (json['content_metadata'] as List)
+          .map((e) => ContentMetadataModel.fromJson(e))
+          .toList(),
+      productId: json['product_id'],
+      priceOriginal: json['price_original'],
+      currencyOriginal: json['currency_original'],
+      imageCount: json['image_count'],
+      videoCount: json['video_count'],
+      contentUnderOffer: json['content_under_offer'],
+      paidStatus: json['paid_status'],
+      contentViewCount: json['content_view_count_by_marketplace_for_app'],
+      isFavourite: json['is_favourite'],
+      isLiked: json['is_liked'],
+      categoryData: CategoryDataModel.fromJson(json['categoryData']),
+      purchasedMediahouseCount: json['purchased_mediahouse'] != null
+          ? (json['purchased_mediahouse'] as List).length
+          : 0,
+      totalOffer: json['offer_content_size'] ?? 0,
+      isExclusive: json['is_exclusive'] ?? (json['type'] != 'shared'),
+      isPaidStatusToHopper: json['paid_status_to_hopper'] ?? false,
+    );
   }
-}
 
-class AllContentMedia {
-  String mediaType = "";
-  bool isWatermarked = false;
-  bool isNsfw = false;
-  bool deepFake = false;
-  bool isAdult = false;
-  bool wasConverted = false;
-  String id = "";
-  String media = "";
-  String originalFileName = "";
-
-  AllContentMedia({
-    required this.mediaType,
-    required this.isWatermarked,
-    required this.isNsfw,
-    required this.deepFake,
-    required this.isAdult,
-    required this.wasConverted,
-    required this.id,
-    required this.media,
-    required this.originalFileName,
-  });
-
-  AllContentMedia.fromJson(Map<String, dynamic> json) {
-    mediaType = json['media_type'] ?? "";
-    isWatermarked = json['is_watermarked'] ?? false;
-    isNsfw = json['is_nsfw'] ?? false;
-    deepFake = json['deep_fake'] ?? false;
-    isAdult = json['isAdult'] ?? false;
-    wasConverted = json['wasConverted'] ?? false;
-    id = json['_id'] ?? "";
-    media = json['media'] ?? "";
-    originalFileName = json['originalFileName'] ?? "";
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'description': description,
+        'location': location,
+        'latitude': latitude,
+        'longitude': longitude,
+        'category_id': categoryId,
+        'hopper_id': hopperId,
+        'ask_price': askPrice,
+        'is_draft': isDraft,
+        'is_charity': isCharity,
+        'images': images,
+        'videos': videos,
+        'created_at': createdAt,
+        'status': status,
+        'content_metadata': contentMetadata
+            .map((e) => (e as ContentMetadataModel).toJson())
+            .toList(),
+        'product_id': productId,
+        'price_original': priceOriginal,
+        'currency_original': currencyOriginal,
+        'image_count': imageCount,
+        'video_count': videoCount,
+        'content_under_offer': contentUnderOffer,
+        'paid_status': paidStatus,
+        'content_view_count_by_marketplace_for_app': contentViewCount,
+        'is_favourite': isFavourite,
+        'is_liked': isLiked,
+        'categoryData': (categoryData as CategoryDataModel).toJson(),
+        'purchased_mediahouse':
+            [], // Placeholder for toJson as we only store count
+        'offer_content_size': totalOffer,
+        'is_exclusive': isExclusive,
+        'paid_status_to_hopper': isPaidStatusToHopper,
+      };
 }

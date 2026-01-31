@@ -36,7 +36,7 @@ import '../bloc/content_bloc.dart';
 import '../bloc/content_event.dart';
 import '../bloc/content_state.dart';
 import '../../domain/entities/content_item.dart';
-import '../../domain/entities/content_media.dart';
+import '../../domain/entities/content_metadata.dart';
 import '../../../../core/di/injection_container.dart';
 
 import '../../domain/mappers/content_item_mapper.dart';
@@ -121,7 +121,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     String currentUserId = prefs.getString("_id") ?? "";
 
     if (contentItem != null) {
-      isOwner = currentUserId == (contentItem!.userId ?? widget.hopperID);
+      isOwner = currentUserId == (contentItem!.id ?? widget.hopperID);
     } else {
       isOwner = currentUserId == widget.hopperID;
     }
@@ -133,7 +133,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   void _startTimer() {
     if (contentItem == null || contentItem!.createdAt == null) return;
-    DateTime createdTime = contentItem!.createdAt!;
+    DateTime createdTime = DateTime.parse(contentItem!.createdAt);
     DateTime endTime = createdTime.add(const Duration(hours: 24));
 
     if (DateTime.now().isAfter(endTime)) {
@@ -762,7 +762,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                           width: size.width * numD012,
                         ),
                         Text(
-                          DateFormat('hh:mm a').format(contentItem!.createdAt!),
+                          DateFormat('hh:mm a')
+                              .format(DateTime.parse(contentItem!.createdAt)),
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD028,
@@ -782,7 +783,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                         ),
                         Text(
                           DateFormat("dd MMM yyyy")
-                              .format(contentItem!.createdAt!),
+                              .format(DateTime.parse(contentItem!.createdAt)),
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * numD028,
@@ -1106,7 +1107,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
-                            "$currencySymbol${amountFormat(item.initialOfferAmount)}",
+                            "$currencySymbol${numberFormatting(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
@@ -1262,7 +1263,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     );
   }
 
-  List<Widget> getMediaCount(List<ContentMedia> mediaList, Size size) {
+  List<Widget> getMediaCount(List<ContentMetadata> mediaList, Size size) {
     if (mediaList.isEmpty) return [];
     return [
       Container(

@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart' hide Task;
 import 'package:dio/dio.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/error/exceptions.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import 'package:presshop/features/task/domain/repositories/task_repository.dart';
 import 'package:presshop/features/task/data/datasources/task_remote_datasource.dart';
 import 'package:presshop/core/common_models_export.dart';
@@ -11,6 +10,8 @@ import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/api/network_info.dart';
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
+import 'package:presshop/features/task/domain/mappers/task_assigned_mapper.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource remoteDataSource;
@@ -22,11 +23,12 @@ class TaskRepositoryImpl implements TaskRepository {
   });
 
   @override
-  Future<Either<Failure, TaskDetail>> getTaskDetail(String taskId) async {
+  Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(
+      String taskId) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteTask = await remoteDataSource.getTaskDetail(taskId);
-        return Right(remoteTask);
+        return Right(remoteTask.data.toEntity());
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

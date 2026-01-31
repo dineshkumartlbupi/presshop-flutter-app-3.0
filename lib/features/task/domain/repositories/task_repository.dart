@@ -1,14 +1,14 @@
 import 'package:dartz/dartz.dart' hide Task;
 import 'package:dio/dio.dart';
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
 import 'package:presshop/core/common_models_export.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 
 abstract class TaskRepository {
-  Future<Either<Failure, TaskDetail>> getTaskDetail(String taskId);
+  Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String taskId);
   Future<Either<Failure, void>> acceptRejectTask(
       {required String taskId,
       required String mediaHouseId,

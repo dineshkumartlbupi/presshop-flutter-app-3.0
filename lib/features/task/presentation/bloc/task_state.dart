@@ -3,7 +3,7 @@ import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 
 enum TaskStatus { initial, loading, success, failure }
 
@@ -13,7 +13,7 @@ abstract class TaskState extends Equatable {
   @override
   List<Object?> get props => [];
 
-  TaskDetail? get taskDetail => null;
+  TaskAssignedEntity? get taskDetail => null;
   List<TaskAll> get allTasks => [];
   List<Task> get localTasks => [];
   TaskStatus get allTasksStatus => TaskStatus.initial;
@@ -25,7 +25,7 @@ class TaskInitial extends TaskState {}
 class TaskLoading extends TaskState {}
 
 class TaskDetailLoaded extends TaskState {
-  final TaskDetail taskDetail;
+  final TaskAssignedEntity taskDetail;
   const TaskDetailLoaded(this.taskDetail);
   @override
   List<Object> get props => [taskDetail];

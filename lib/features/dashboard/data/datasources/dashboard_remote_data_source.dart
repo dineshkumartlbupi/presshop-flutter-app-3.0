@@ -6,12 +6,13 @@ import 'package:presshop/core/core_export.dart' hide AdminDetailModel;
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import '../models/admin_detail_model.dart';
+import 'package:presshop/features/task/data/models/task_assigned_response_model.dart';
 
 abstract class DashboardRemoteDataSource {
   Future<List<AdminDetailModel>> getActiveAdmins();
   Future<void> updateLocation(Map<String, dynamic> params);
   Future<void> addDevice(Map<String, dynamic> params);
-  Future<TaskDetailModel> getTaskDetail(String id);
+  Future<TaskAssignedResponseModel> getTaskDetail(String id);
   Future<Map<String, dynamic>> getRoomId(Map<String, dynamic> params);
   Future<Map<String, dynamic>> checkAppVersion();
   Future<Map<String, dynamic>> activateStudentBeans();
@@ -79,7 +80,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   }
 
   @override
-  Future<TaskDetailModel> getTaskDetail(String id) async {
+  Future<TaskAssignedResponseModel> getTaskDetail(String id) async {
     try {
       final response = await apiClient.get(
           "${ApiConstantsNew.tasks.assignedTaskDetail}$id",
@@ -88,9 +89,9 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         final data = response.data;
         if (data is String) {
           final decoded = jsonDecode(data);
-          return TaskDetailModel.fromJson(decoded['task']);
+          return TaskAssignedResponseModel.fromJson(decoded);
         }
-        return TaskDetailModel.fromJson(data['task']);
+        return TaskAssignedResponseModel.fromJson(data);
       } else {
         throw ServerFailure(message: '');
       }

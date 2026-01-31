@@ -191,7 +191,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           name: cat.name,
           type: cat.type,
           percentage: cat.percentage,
-          selected: cat.selected);
+          selected: true);
     }
     setState(() {});
   }
@@ -3085,7 +3085,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
           format: "hh:mm a, dd MMM yyyy",
           utc: true);
       descriptionController.text = widget.myContentData!.textValue;
-      selectedHashtagList.addAll(widget.myContentData!.hashTagList);
+      selectedHashtagList.addAll(widget.myContentData!.hashTagList
+          .map((e) => HashTagData.fromJson(e))
+          .toList());
       debugPrint("priceValuee=====> ${widget.myContentData!.amount}");
       priceController.text = widget.myContentData!.amount.isNotEmpty
           ? "$currencySymbol${widget.myContentData!.amount}"
@@ -3097,7 +3099,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
             name: cat.name,
             type: cat.type,
             percentage: cat.percentage,
-            selected: cat.selected);
+            selected: true);
       }
       selectedSellType =
           widget.myContentData!.exclusive ? exclusiveText : sharedText;

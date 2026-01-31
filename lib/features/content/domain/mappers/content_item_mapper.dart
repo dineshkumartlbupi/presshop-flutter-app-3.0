@@ -1,6 +1,7 @@
+import '../../../../core/constants/string_constants.dart';
 import '../../domain/entities/content_item.dart';
 import '../../data/models/my_content_data_model.dart';
-import '../../presentation/pages/my_draft_screen.dart'; // For ContentMediaData
+import '../../data/models/category_data_model.dart';
 
 extension ContentItemMapper on ContentItem {
   MyContentData toMyContentData() {
@@ -8,18 +9,17 @@ extension ContentItemMapper on ContentItem {
       id: id,
       title: title,
       textValue: description,
-      time: createdAt?.toIso8601String() ?? "",
-      location: location ?? "",
-      latitude: latitude ?? "0.0",
-      longitude: longitude ?? "0.0",
+      time: createdAt,
+      location: location,
+      latitude: latitude,
+      longitude: longitude,
       amount: price ?? "0",
       originalAmount: price ?? "0",
       status: status,
-      soldStatus: saleStatus ?? "",
-      paidStatus: paidStatus ?? "",
+      soldStatus: "", // ContentItem doesn't track sale status string directly
+      paidStatus: paidStatus ? paidText : unPaidText,
       contentType: mediaType ?? "",
-      dateTime:
-          createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      dateTime: createdAt,
       isPaidStatusToHopper: isPaidStatusToHopper,
       exclusive: isExclusive ?? false,
       showVideo: false,
@@ -27,23 +27,29 @@ extension ContentItemMapper on ContentItem {
       audioDuration: "",
       contentMediaList: mediaList
           .map((m) => ContentMediaData(
-              "", // id
+              "", // id - not available in ContentMetadata
               m.mediaUrl,
               m.mediaType,
-              m.thumbnailUrl ?? "",
-              m.watermarkUrl ?? ""))
+              m.thumbnailUrl,
+              m.watermarkUrl))
           .toList(),
       hashTagList: [],
-      categoryData: null,
+      categoryData: CategoryDataModel(
+        id: categoryData.id,
+        name: categoryData.name,
+        icon: categoryData.icon,
+        percentage: categoryData.percentage,
+        type: categoryData.type,
+      ),
       completionPercent: "0",
-      discountPercent: discountPercent ?? "0",
+      discountPercent: "0",
       leftPercent: 0,
       offerCount: totalOffer,
-      mediaHouseName: mediaHouseName ?? "",
-      categoryId: categoryId ?? "",
+      mediaHouseName: "",
+      categoryId: categoryId,
       contentView: totalView,
       purchasedMediahouseCount: purchasedMediahouseCount,
-      totalEarning: totalSold.toString(),
+      totalEarning: "0",
     );
   }
 }

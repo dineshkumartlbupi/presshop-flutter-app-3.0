@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
+// ignore: must_be_immutable
 class AnimatedButtonWidget extends StatefulWidget {
   AnimatedButtonWidget(
       {super.key,

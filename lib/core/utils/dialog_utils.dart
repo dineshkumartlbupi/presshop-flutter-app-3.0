@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 AlertDialog? alertDialog;
@@ -74,7 +74,7 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
 
 void broadcastDialog({
   required Size size,
-  required TaskDetail taskDetail,
+  required TaskAssignedEntity taskDetail,
   required VoidCallback onTapView,
 }) {
   showDialog(
@@ -168,7 +168,7 @@ void broadcastDialog({
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: Image.network(
-                                      taskDetail.mediaHouseImage,
+                                      taskDetail.task.mediaHouse.profileImage,
                                       height: size.width * numD20,
                                       width: size.width * numD20,
                                       fit: BoxFit.cover,
@@ -199,7 +199,7 @@ void broadcastDialog({
 
                                     /// Heading
                                     Text(
-                                      taskDetail.title,
+                                      taskDetail.task.heading,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -210,7 +210,7 @@ void broadcastDialog({
 
                                     /// Description
                                     Text(
-                                      taskDetail.description,
+                                      taskDetail.task.description,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -280,12 +280,13 @@ void broadcastDialog({
                                             top: size.width * numD01,
                                           ),
                                           child: TimerCountdown(
-                                            endTime: taskDetail.deadLine,
+                                            endTime:
+                                                taskDetail.task.deadlineDate,
                                             spacerWidth: 3,
                                             enableDescriptions: false,
                                             countDownFormatter:
                                                 (day, hour, min, sec) {
-                                              if (taskDetail.deadLine
+                                              if (taskDetail.task.deadlineDate
                                                       .difference(
                                                           DateTime.now())
                                                       .inDays >
@@ -353,7 +354,7 @@ void broadcastDialog({
                                           top: size.width * numD01,
                                         ),
                                         child: Text(
-                                          taskDetail.location,
+                                          taskDetail.task.location,
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
                                           style: commonTextStyle(
@@ -377,12 +378,8 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    taskDetail.isNeedPhoto &&
-                                            (double.tryParse(taskDetail
-                                                        .photoPrice) ??
-                                                    0) >
-                                                0
-                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.photoPrice))}"
+                                    false && (double.tryParse("0") ?? 0) > 0
+                                        ? "$currencySymbol${formatDouble(double.parse("0"))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -425,12 +422,8 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    taskDetail.isNeedInterview &&
-                                            (double.tryParse(taskDetail
-                                                        .interviewPrice) ??
-                                                    0) >
-                                                0
-                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.interviewPrice))}"
+                                    false && (double.tryParse("0") ?? 0) > 0
+                                        ? "$currencySymbol${formatDouble(double.parse("0"))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -473,12 +466,8 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    taskDetail.isNeedVideo &&
-                                            (double.tryParse(taskDetail
-                                                        .videoPrice) ??
-                                                    0) >
-                                                0
-                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.videoPrice))}"
+                                    false && (double.tryParse("0") ?? 0) > 0
+                                        ? "$currencySymbol${formatDouble(double.parse("0"))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,

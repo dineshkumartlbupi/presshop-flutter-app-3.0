@@ -58,7 +58,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final result = await getTaskDetail(event.taskId);
     result.fold(
       (failure) => emit(TaskError(failure.message)),
-      (taskDetail) => emit(TaskDetailLoaded(taskDetail)),
+      (taskAssignedEntity) => emit(TaskDetailLoaded(taskAssignedEntity)),
     );
   }
 
@@ -231,7 +231,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final result = await getTaskDetail(event.taskId);
     result.fold(
       (failure) => emit(TaskError(failure.message)),
-      (taskDetail) => emit(TaskDetailLoaded(taskDetail)),
+      (taskAssignedEntity) => emit(TaskDetailLoaded(taskAssignedEntity)),
     );
   }
 }

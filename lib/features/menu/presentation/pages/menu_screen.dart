@@ -417,10 +417,10 @@ class MenuScreenState extends State<MenuScreen> with AnalyticsPageMixin {
         icon: "${iconsPath}ic_newspaper.png",
         classWidget: const NewsPage()));
 
-    menuList.add(MenuData(
-        name: "Map",
-        icon: "${iconsPath}map.png",
-        classWidget: const MapPage()));
+    // menuList.add(MenuData(
+    //     name: "Map",
+    //     icon: "${iconsPath}map.png",
+    //     classWidget: const MapPage()));
 
     menuList.add(MenuData(
         name: "My tasks",
