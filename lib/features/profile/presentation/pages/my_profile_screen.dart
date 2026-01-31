@@ -140,12 +140,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       myProfileData!.address = cachedAddress;
 
       if (cachedAvatar.isNotEmpty) {
-        if (cachedAvatar.startsWith("http")) {
-          myProfileData!.avatarImage = cachedAvatar;
-        } else {
-          myProfileData!.avatarImage =
-              "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$cachedAvatar";
-        }
+        myProfileData!.avatarImage = cachedAvatar;
         myProfileData!.avatarImage = fixS3Url(myProfileData!.avatarImage);
       }
     }
@@ -1525,62 +1520,56 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             userData = userData['data'];
           }
           myProfileData = MyProfileData.fromJson(userData);
-          if (userData[firstNameKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(firstNameKey, userData[firstNameKey]);
-          }
-          if (userData[lastNameKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(lastNameKey, userData[lastNameKey]);
-          }
-          if (userData[emailKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(emailKey, userData[emailKey]);
-          }
-          if (userData[countryCodeKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(countryCodeKey, userData[countryCodeKey]);
-          }
-          if (userData[phoneKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(phoneKey, userData[phoneKey].toString());
-            debugPrint("phoneNumber======> ${userData[phoneKey]}");
-          }
-          if (userData[addressKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(addressKey, userData[addressKey]);
-          }
-          if (userData[cityKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(cityKey, userData[cityKey]);
-          }
-          if (userData[countryKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(countryKey, userData[countryKey]);
-          }
-          if (userData[apartmentKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(apartmentKey, userData[apartmentKey]);
-          }
-          if (userData[postCodeKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(postCodeKey, userData[postCodeKey]);
+
+          void updateKey(String key, dynamic value) {
+            if (value != null && value.toString().isNotEmpty) {
+              sharedPreferences?.setString(key, value.toString());
+            }
           }
 
-          if (userData[latitudeKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(latitudeKey, userData[latitudeKey].toString());
+          updateKey(
+              firstNameKey, userData[firstNameKey] ?? userData['firstName']);
+          updateKey(lastNameKey, userData[lastNameKey] ?? userData['lastName']);
+          updateKey(emailKey, userData[emailKey]);
+          updateKey(countryCodeKey,
+              userData[countryCodeKey] ?? userData['countryCode']);
+          updateKey(phoneKey, userData[phoneKey] ?? userData['mobile_number']);
+          updateKey(addressKey, userData[addressKey]);
+          updateKey(cityKey, userData[cityKey] ?? userData['city']);
+          updateKey(countryKey, userData[countryKey] ?? userData['country']);
+          updateKey(
+              apartmentKey, userData[apartmentKey] ?? userData['appartment']);
+          updateKey(postCodeKey, userData[postCodeKey] ?? userData['postCode']);
+
+          if (userData[latitudeKey] != null) {
+            updateKey(latitudeKey, userData[latitudeKey]);
           }
-          if (userData[longitudeKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(longitudeKey, userData[longitudeKey].toString());
+          if (userData[longitudeKey] != null) {
+            updateKey(longitudeKey, userData[longitudeKey]);
           }
-          if (userData[avatarIdKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(avatarIdKey, userData[avatarIdKey].toString());
+          if (userData[avatarIdKey] != null) {
+            updateKey(avatarIdKey, userData[avatarIdKey]);
           }
-          if (userData["totalEarnings"] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(
-                totalIncomeKey, userData["totalEarnings"].toString());
+          if (userData["totalEarnings"] != null) {
+            updateKey(totalIncomeKey, userData["totalEarnings"]);
           }
 
           if (userData['avatarData'] != null &&
               userData['avatarData'][avatarKey] != null &&
               sharedPreferences != null) {
-            sharedPreferences!
-                .setString(avatarKey, userData['avatarData'][avatarKey]);
+            String av = userData['avatarData'][avatarKey].toString();
+            if (av.isNotEmpty) {
+              sharedPreferences!.setString(avatarKey, av);
+              // Also update profileImageKey for other screens like DigitalId
+              if (av.startsWith("http")) {
+                sharedPreferences!.setString(profileImageKey, fixS3Url(av));
+              } else {
+                const String cdnAvatarUrl =
+                    "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
+                sharedPreferences!
+                    .setString(profileImageKey, fixS3Url("$cdnAvatarUrl$av"));
+              }
+            }
           }
 
           final src1 = userData["source"];
@@ -1886,7 +1875,7 @@ class MyProfileData {
   MyProfileData.fromJson(json) {
     firstName = json[firstNameKey] ?? json['firstName'] ?? "";
     lastName = json[lastNameKey] ?? json['lastName'] ?? "";
-    userName = json[userNameKey] ?? json['username'] ?? "";
+    userName = json[userNameKey] ?? json['username'] ?? json['userName'] ?? "";
     countryCode = json[countryCodeKey] ?? json['countryCode'] ?? "";
     phoneNumber = (json[phoneKey] ?? "").toString();
     debugPrint("MyPhone: $phoneNumber");
@@ -1914,8 +1903,10 @@ class MyProfileData {
     }
 
     if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
+      // Robust folder check
+      final String folder = tempAvatar.contains("/") ? "" : "avatarImages/";
       avatarImage =
-          "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$tempAvatar";
+          "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$folder$tempAvatar";
     } else {
       avatarImage = tempAvatar;
     }

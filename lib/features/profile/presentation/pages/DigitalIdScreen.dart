@@ -579,20 +579,24 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
 
   void _updateUserProfile(ProfileData profile) {
     setState(() {
-      userName =
-          profile.userName.isNotEmpty ? profile.userName : profile.firstName;
-      String firstName = profile.firstName;
-      String lastName = profile.lastName;
-      fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
+      if (profile.userName.isNotEmpty || profile.firstName.isNotEmpty) {
+        userName =
+            profile.userName.isNotEmpty ? profile.userName : profile.firstName;
+      }
+      if (profile.firstName.isNotEmpty) {
+        String firstName = profile.firstName;
+        String lastName = profile.lastName;
+        fullName = firstName + (lastName.isNotEmpty ? " $lastName" : "");
+      }
 
       if (profile.profileImage.isNotEmpty) {
         if (profile.profileImage.startsWith("http")) {
-          userImage = profile.profileImage;
+          userImage = fixS3Url(profile.profileImage);
         } else {
-          // Use the correct CDN URL as per user instruction/logs
+          // Use the correct CDN URL
           const String cdnAvatarUrl =
-              "https://dev-cdn.presshop.news/public/avatarImages/";
-          userImage = "$cdnAvatarUrl${profile.profileImage}";
+              "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
+          userImage = fixS3Url("$cdnAvatarUrl${profile.profileImage}");
         }
         sharedPreferences!.setString(profileImageKey, userImage);
       }
@@ -602,11 +606,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   void _updateUserImage(String imageUrl) {
     setState(() {
       if (imageUrl.startsWith("http")) {
-        userImage = imageUrl;
+        userImage = fixS3Url(imageUrl);
       } else {
         const String cdnAvatarUrl =
-            "https://dev-cdn.presshop.news/public/avatarImages/";
-        userImage = "$cdnAvatarUrl$imageUrl";
+            "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
+        userImage = fixS3Url("$cdnAvatarUrl$imageUrl");
       }
       sharedPreferences!.setString(profileImageKey, userImage);
     });
