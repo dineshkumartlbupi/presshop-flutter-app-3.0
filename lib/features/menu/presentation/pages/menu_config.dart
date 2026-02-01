@@ -13,7 +13,6 @@ import 'package:presshop/features/content/presentation/pages/my_draft_screen.dar
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
-import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
 import 'package:presshop/features/profile/presentation/pages/DigitalIdScreen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
@@ -33,7 +32,7 @@ enum MenuAction {
   myDrafts,
   myContent,
   feed,
-  news,
+
   myTasks,
   myEarnings,
   notification,
@@ -55,7 +54,7 @@ class MenuData {
   final String icon;
   final String title;
   final MenuAction action;
-  final Widget? page;
+  final Widget Function(BuildContext)? pageBuilder;
   final bool showAlertBadge;
   final bool isContactBrand;
   final bool isVisible;
@@ -64,7 +63,7 @@ class MenuData {
     required this.icon,
     required this.title,
     required this.action,
-    this.page,
+    this.pageBuilder,
     this.showAlertBadge = false,
     this.isContactBrand = false,
     this.isVisible = true,
@@ -76,14 +75,14 @@ List<MenuData> buildMenu() => [
         title: digitalIdText,
         icon: "${iconsPath}ic_id.png",
         action: MenuAction.digitalId,
-        page: const DigitalIdScreen(),
+        pageBuilder: (context) => const DigitalIdScreen(),
       ),
       MenuData(
         title: myProfileText,
         icon: "${iconsPath}ic_my_profile.png",
         action: MenuAction.myProfile,
-        page: MyProfile(
-          editProfileScreen: true,
+        pageBuilder: (context) => MyProfile(
+          editProfileScreen: false,
           screenType: myProfileText,
         ),
       ),
@@ -91,7 +90,7 @@ List<MenuData> buildMenu() => [
         title: editProfileText,
         icon: "${iconsPath}ic_edit_profile.png",
         action: MenuAction.editProfile,
-        page: MyProfile(
+        pageBuilder: (context) => MyProfile(
           editProfileScreen: true,
           screenType: editProfileText,
         ),
@@ -100,32 +99,32 @@ List<MenuData> buildMenu() => [
         title: "Chat",
         icon: "${iconsPath}ic_chat.png",
         action: MenuAction.chat,
-        page: ChatBotScreen(),
+        pageBuilder: (context) => ChatBotScreen(),
       ),
       MenuData(
         title: "$contactText PressHop",
         icon: "${iconsPath}ic_contact_us.png",
         action: MenuAction.contact,
-        page: const ContactUsScreen(),
+        pageBuilder: (context) => const ContactUsScreen(),
         isContactBrand: true,
       ),
       MenuData(
         title: leaderboardText,
         icon: "${iconsPath}ic_ranking.png",
         action: MenuAction.leaderboard,
-        page: const LeaderboardPage(),
+        pageBuilder: (context) => const LeaderboardPage(),
       ),
       MenuData(
         title: paymentMethodText,
         icon: "${iconsPath}ic_payment_method.png",
         action: MenuAction.paymentMethod,
-        page: const MyBanksPage(),
+        pageBuilder: (context) => const MyBanksPage(),
       ),
       MenuData(
         title: myDraftText,
         icon: "${iconsPath}ic_my_draft.png",
         action: MenuAction.myDrafts,
-        page: MyDraftScreen(
+        pageBuilder: (context) => MyDraftScreen(
           publishedContent: false,
           screenType: '',
         ),
@@ -134,7 +133,7 @@ List<MenuData> buildMenu() => [
         title: myContentText,
         icon: "${iconsPath}ic_content.png",
         action: MenuAction.myContent,
-        page: const MyContentPage(
+        pageBuilder: (context) => const MyContentPage(
           hideLeading: false,
         ),
       ),
@@ -142,25 +141,19 @@ List<MenuData> buildMenu() => [
         title: feedText,
         icon: "${iconsPath}ic_feed.png",
         action: MenuAction.feed,
-        page: const FeedScreen(),
-      ),
-      MenuData(
-        title: "News",
-        icon: "${iconsPath}ic_newspaper.png",
-        action: MenuAction.news,
-        page: const NewsPage(),
+        pageBuilder: (context) => const FeedScreen(),
       ),
       MenuData(
         title: "My tasks",
         icon: "${iconsPath}ic_task.png",
         action: MenuAction.myTasks,
-        page: MyTaskScreen(hideLeading: false),
+        pageBuilder: (context) => MyTaskScreen(hideLeading: false),
       ),
       MenuData(
         title: "My earnings",
         icon: "${iconsPath}ic_earning.png",
         action: MenuAction.myEarnings,
-        page: MyEarningScreen(
+        pageBuilder: (context) => MyEarningScreen(
           openDashboard: false,
           initialTapPosition: 0,
         ),
@@ -169,27 +162,27 @@ List<MenuData> buildMenu() => [
         title: notificationText,
         icon: "${iconsPath}ic_feed.png",
         action: MenuAction.notification,
-        page: const MyNotificationScreen(
+        pageBuilder: (context) => const MyNotificationScreen(
             count: 0), // Count now handled by BlocSelector
       ),
       MenuData(
         title: "$ratingText & ${reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
         action: MenuAction.ratingReview,
-        page: const RatingReviewScreen(),
+        pageBuilder: (context) => const RatingReviewScreen(),
         showAlertBadge: true,
       ),
       MenuData(
         title: "Refer a Hopper",
         icon: "${iconsPath}gift.png",
         action: MenuAction.referHopper,
-        page: const ReferScreen(),
+        pageBuilder: (context) => const ReferScreen(),
       ),
       MenuData(
         title: uploadDocsHeadingText,
         icon: "${iconsPath}ic_upload_documents.png",
         action: MenuAction.uploadDocs,
-        page: const UploadDocumentsScreen(
+        pageBuilder: (context) => const UploadDocumentsScreen(
           menuScreen: true,
           hideLeading: false,
         ),
@@ -198,7 +191,7 @@ List<MenuData> buildMenu() => [
         title: faqText,
         icon: "${iconsPath}ic_faq.png",
         action: MenuAction.faq,
-        page: FAQScreen(
+        pageBuilder: (context) => FAQScreen(
           priceTipsSelected: false,
           type: 'faq',
           index: 0,
@@ -208,7 +201,7 @@ List<MenuData> buildMenu() => [
         title: "$legalText $tcText",
         icon: "${iconsPath}ic_legal.png",
         action: MenuAction.legal,
-        page: TermCheckScreen(
+        pageBuilder: (context) => TermCheckScreen(
           type: 'legal',
         ),
       ),
@@ -216,7 +209,7 @@ List<MenuData> buildMenu() => [
         title: "Privacy policy",
         icon: "${iconsPath}ic_privacy.png",
         action: MenuAction.privacy,
-        page: TermCheckScreen(
+        pageBuilder: (context) => TermCheckScreen(
           type: 'privacy_policy',
         ),
       ),
@@ -224,7 +217,7 @@ List<MenuData> buildMenu() => [
         title: "Price tips",
         icon: "${iconsPath}ic_price_tips.png",
         action: MenuAction.priceTips,
-        page: FAQScreen(
+        pageBuilder: (context) => FAQScreen(
           priceTipsSelected: true,
           type: 'price_tips',
           index: 0,
@@ -234,19 +227,19 @@ List<MenuData> buildMenu() => [
         title: tutorialsText,
         icon: "${iconsPath}ic_tutorials.png",
         action: MenuAction.tutorials,
-        page: const TutorialsScreen(),
+        pageBuilder: (context) => const TutorialsScreen(),
       ),
       MenuData(
         title: changePasswordText,
         icon: "${iconsPath}ic_change_password.png",
         action: MenuAction.changePassword,
-        page: const ChangePasswordScreen(),
+        pageBuilder: (context) => const ChangePasswordScreen(),
       ),
       MenuData(
         title: accountSettingText,
         icon: "${iconsPath}ic_my_profile.png",
         action: MenuAction.accountSettings,
-        page: const AccountSetting(),
+        pageBuilder: (context) => const AccountSetting(),
       ),
       MenuData(
         title: "Choose currency",

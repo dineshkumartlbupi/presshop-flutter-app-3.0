@@ -21,6 +21,8 @@ class NewsModel extends News {
     String? userName,
     double? latitude,
     double? longitude,
+    String? type,
+    String? markerType,
   }) : super(
           id: id,
           title: title,
@@ -39,6 +41,8 @@ class NewsModel extends News {
           userName: userName,
           latitude: latitude,
           longitude: longitude,
+          type: type,
+          markerType: markerType,
         );
 
   factory NewsModel.fromJson(Map<String, dynamic> json) {
@@ -117,6 +121,8 @@ class NewsModel extends News {
               ? json['position']['lng']
               : double.tryParse(json['position']['lng'].toString()))
           : null,
+      type: json['type'],
+      markerType: json['markerType'],
     );
   }
 

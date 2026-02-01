@@ -41,22 +41,33 @@ class ApiClient {
     // Default to true if not specified
     bool showLoader = options.extra['show_loader'] ?? true;
     final path = options.uri.path;
-    if (path.contains('getAvatars') ||
-        path.contains('getUserProfile') ||
-        path.contains('add/fcm/token') ||
-        path.contains('updatelocation') ||
-        path.contains('getLatestVersion') ||
-        path.contains('adminlist') ||
-        path.contains('check/version') ||
-        path.contains('create/room') ||
-        path.contains('studentBeansActivation') ||
-        path.contains('assignedTaskDetail')) {
+
+    // Hardcoded exclusions (can be overridden by show_loader: true in extra)
+    final hardcodedExclusions = [
+      'getUserProfile',
+      'getAvatars',
+      'checkIfUserNameExist',
+      'checkIfEmailExist',
+      'checkIfPhoneExist',
+      'updatelocation',
+      'add/fcm/token',
+      'getLatestVersion',
+      'adminlist',
+      'check/version',
+      'create/room',
+      'studentBeansActivation',
+      'assignedTaskDetail',
+    ];
+
+    bool isExcluded = hardcodedExclusions.any((p) => path.contains(p));
+
+    if (isExcluded && options.extra['show_loader'] == null) {
       showLoader = false;
     }
 
     if (showLoader) {
       debugPrint("🚨 BLOCKED LOADER FOR: ${options.uri.path}");
-      // GlobalLoader.show();
+      GlobalLoader.show();
     }
     // Prioritize SharedPreferences for speed and stability
     String? token = _sharedPreferences.getString(tokenKey);
@@ -270,12 +281,19 @@ class ApiClient {
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
-    bool showLoader = true,
+    Options? options,
+    bool? showLoader,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
+
     return _dio.get(
       path,
       queryParameters: queryParameters,
-      options: Options(extra: {'show_loader': showLoader}),
+      options: options,
     );
   }
 
@@ -286,11 +304,13 @@ class ApiClient {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    bool showLoader = true,
+    bool? showLoader,
   }) async {
     options ??= Options();
     options.extra ??= {};
-    options.extra!['show_loader'] = showLoader;
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
 
     return _dio.post(
       path,
@@ -309,11 +329,13 @@ class ApiClient {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    bool showLoader = true,
+    bool? showLoader,
   }) async {
     options ??= Options();
     options.extra ??= {};
-    options.extra!['show_loader'] = showLoader;
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
 
     return _dio.put(
       path,
@@ -332,11 +354,13 @@ class ApiClient {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    bool showLoader = true,
+    bool? showLoader,
   }) async {
     options ??= Options();
     options.extra ??= {};
-    options.extra!['show_loader'] = showLoader;
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
 
     return _dio.patch(
       path,
@@ -352,13 +376,20 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    bool showLoader = true,
+    Options? options,
+    bool? showLoader,
   }) async {
+    options ??= Options();
+    options.extra ??= {};
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
+
     return _dio.delete(
       path,
       data: data,
       queryParameters: queryParameters,
-      options: Options(extra: {'show_loader': showLoader}),
+      options: options,
     );
   }
 
@@ -367,11 +398,13 @@ class ApiClient {
     required FormData formData,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    bool showLoader = true,
+    bool? showLoader,
   }) async {
     options ??= Options();
     options.extra ??= {};
-    options.extra!['show_loader'] = showLoader;
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
 
     return _dio.post(path,
         data: formData, queryParameters: queryParameters, options: options);
@@ -381,11 +414,13 @@ class ApiClient {
     Uri uri, {
     dynamic data,
     Options? options,
-    bool showLoader = true,
+    bool? showLoader,
   }) async {
     options ??= Options();
     options.extra ??= {};
-    options.extra!['show_loader'] = showLoader;
+    if (showLoader != null) {
+      options.extra!['show_loader'] = showLoader;
+    }
 
     return _dio.postUri(uri, data: data, options: options);
   }

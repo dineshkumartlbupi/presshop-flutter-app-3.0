@@ -18,6 +18,8 @@ class News extends Equatable {
   final String? userName;
   final double? latitude;
   final double? longitude;
+  final String? type;
+  final String? markerType;
 
   const News({
     required this.id,
@@ -37,6 +39,8 @@ class News extends Equatable {
     this.userName,
     this.latitude,
     this.longitude,
+    this.type,
+    this.markerType,
   });
 
   News copyWith({
@@ -55,6 +59,8 @@ class News extends Equatable {
     bool? isMostViewed,
     String? userImage,
     String? userName,
+    String? type,
+    String? markerType,
   }) {
     return News(
       id: id ?? this.id,
@@ -72,6 +78,10 @@ class News extends Equatable {
       isMostViewed: isMostViewed ?? this.isMostViewed,
       userImage: userImage ?? this.userImage,
       userName: userName ?? this.userName,
+      type: type ?? this.type,
+      markerType: markerType ?? this.markerType,
+      latitude: latitude,
+      longitude: longitude,
     );
   }
 
@@ -92,5 +102,9 @@ class News extends Equatable {
         isMostViewed,
         userImage,
         userName,
+        type,
+        markerType,
+        latitude,
+        longitude,
       ];
 }

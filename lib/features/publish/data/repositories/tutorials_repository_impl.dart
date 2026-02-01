@@ -16,34 +16,26 @@ class TutorialsRepositoryImpl implements TutorialsRepository {
   @override
   Future<Either<Failure, List<TutorialsModel>>> getTutorials(
       String category, int offset, int limit) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteTutorials =
-            await remoteDataSource.getTutorials(category, offset, limit);
-        return Right(remoteTutorials);
-      } on Failure catch (failure) {
-        return Left(failure);
-      } catch (e) {
-        return Left(ServerFailure(message: e.toString()));
-      }
-    } else {
-      return const Left(NetworkFailure());
+    try {
+      final remoteTutorials =
+          await remoteDataSource.getTutorials(category, offset, limit);
+      return Right(remoteTutorials);
+    } on Failure catch (failure) {
+      return Left(failure);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
   @override
   Future<Either<Failure, List<CategoryDataModel>>> getCategories() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteCategories = await remoteDataSource.getCategories();
-        return Right(remoteCategories);
-      } on Failure catch (failure) {
-        return Left(failure);
-      } catch (e) {
-        return Left(ServerFailure(message: e.toString()));
-      }
-    } else {
-      return const Left(NetworkFailure());
+    try {
+      final remoteCategories = await remoteDataSource.getCategories();
+      return Right(remoteCategories);
+    } on Failure catch (failure) {
+      return Left(failure);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 

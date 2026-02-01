@@ -5,18 +5,11 @@ import 'package:presshop/features/content/data/models/my_content_data_model.dart
 import 'package:presshop/main.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/core/core_export.dart';
 export 'package:presshop/core/core_export.dart';
 
 Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
 
-///:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-///:::::::::::::::::::::::: BROAD CAST DIALOG ::::::::::::::::::::::::::::::::
-
-/// common amountFormater
-
-/// Show Text If No Data Found
 Widget errorMessageWidget(String message) {
   return Center(
     child: Container(
@@ -58,7 +51,6 @@ Widget commonRefresherFooter(BuildContext context, LoadStatus? mode) {
   );
 }
 
-/// Show Loader
 Widget showLoader({bool isForLocation = false}) {
   var size = MediaQuery.of(navigatorKey.currentContext!).size;
   return Column(

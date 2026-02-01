@@ -226,16 +226,14 @@ class _MyBanksViewState extends State<MyBanksView> {
         },
         builder: (context, state) {
           if (state is BankLoading && state is! BanksLoaded) {
-            return showLoader();
+            return const SizedBox.shrink();
           } else if (state is BanksLoaded) {
             final banks = state.banks;
             return banks.isNotEmpty
                 ? _upliftAccountsPaymentDesign(context, size, banks)
                 : _upliftNoAccountsPaymentDesign(context, size);
           } else {
-            // Fallback or initial load
-            // trigger load if not loading?
-            return showLoader();
+            return const SizedBox.shrink();
           }
         },
       ),

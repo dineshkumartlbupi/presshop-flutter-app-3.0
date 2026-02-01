@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:presshop/core/utils/common_utils.dart';
 import '../../domain/entities/leaderboard_entity.dart';
 
 class LeaderboardModel extends LeaderboardEntity {
@@ -128,6 +129,15 @@ class MemberModel extends MemberEntity {
       userName = json['userName'] ?? '';
     }
 
+    String avatar = (json['avatar'] ?? json['profile_image'] ?? '').toString();
+    if (avatar.isNotEmpty && !avatar.startsWith("http")) {
+      const String mediaBaseUrl =
+          "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+      // Try to guess folder
+      final String folder = avatar.contains("/") ? "" : "avatarImages/";
+      avatar = "$mediaBaseUrl$folder$avatar";
+    }
+
     return MemberModel(
       id: (json['id'] ?? json['_id'] ?? '').toString(),
       userName: userName,
@@ -140,7 +150,7 @@ class MemberModel extends MemberEntity {
                       .toString())
               ?.toStringAsFixed(2) ??
           '0.00',
-      avatar: (json['avatar'] ?? json['profile_image'] ?? '').toString(),
+      avatar: avatar.isEmpty ? "" : fixS3Url(avatar),
     );
   }
 }

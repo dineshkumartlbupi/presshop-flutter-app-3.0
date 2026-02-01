@@ -1,3 +1,4 @@
+import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/features/profile/domain/entities/profile_data.dart'
     as entity;
 
@@ -13,10 +14,16 @@ class UserProfileResponse {
   });
 
   factory UserProfileResponse.fromJson(Map<String, dynamic> json) {
+    var userData = json['data'] ?? json['userData'] ?? {};
+    if (userData is Map &&
+        userData.containsKey('data') &&
+        userData['data'] is Map) {
+      userData = userData['data'];
+    }
     return UserProfileResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: UserProfileModel.fromJson(json['data'] ?? {}),
+      data: UserProfileModel.fromJson(userData),
     );
   }
 
@@ -81,6 +88,31 @@ class UserProfileModel {
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+    String extractImage(Map<String, dynamic> json) {
+      String tempAvatar = "";
+      if (json["avatarData"] is Map) {
+        tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
+      } else if (json["avatarData"] is String &&
+          json["avatarData"].toString().startsWith("http")) {
+        tempAvatar = json["avatarData"];
+      }
+
+      if (tempAvatar.isEmpty) {
+        tempAvatar = json["avatar"]?.toString() ??
+            json["profile_image"]?.toString() ??
+            json["profileImage"]?.toString() ??
+            "";
+      }
+
+      if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
+        const String mediaBaseUrl =
+            "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
+        final String folder = tempAvatar.contains("/") ? "" : "avatarImages/";
+        tempAvatar = "$mediaBaseUrl$folder$tempAvatar";
+      }
+      return fixS3Url(tempAvatar);
+    }
+
     return UserProfileModel(
       id: json['id'] ?? json['_id'] ?? '',
       firstName: json['first_name'] ?? json['firstName'] ?? '',
@@ -92,7 +124,7 @@ class UserProfileModel {
       status: json['status'] ?? '',
       hopperStatus: json['hopperStatus'] ?? '',
       chatStatus: json['chat_status'] ?? '',
-      profileImage: json['profile_image'] ?? '',
+      profileImage: extractImage(json),
       isVerified: json['isVerified'] ?? false,
       isOnboard: json['is_onboard'] ?? false,
       isDeleted: json['is_deleted'] ?? false,

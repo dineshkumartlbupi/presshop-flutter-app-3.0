@@ -249,7 +249,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
             builder: (context, state) {
               if (state.status == EarningStatus.loading &&
                   state.earningData == null) {
-                return const Center(child: CircularProgressIndicator());
+                return const SizedBox.shrink();
               }
 
               final earningData = state.earningData;
@@ -654,9 +654,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     )
                                   : state.transactionStatus ==
                                           EarningStatus.loading
-                                      ? const Padding(
-                                          padding: EdgeInsets.all(20),
-                                          child: CircularProgressIndicator())
+                                      ? const SizedBox.shrink()
                                       : Column(
                                           children: [
                                             SizedBox(
@@ -713,9 +711,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 )
                               else if (state.commissionStatus ==
                                   EarningStatus.loading)
-                                const Padding(
-                                    padding: EdgeInsets.all(20),
-                                    child: CircularProgressIndicator())
+                                const SizedBox.shrink()
                               else
                                 ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),

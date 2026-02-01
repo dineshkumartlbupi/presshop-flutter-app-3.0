@@ -186,6 +186,7 @@ class MarkerService {
     String url, {
     int size = 70,
     String defaultAsset = "assets/markers/bg-removed-content.png",
+    String? overlayIcon,
   }) async {
     try {
       Uint8List bytes;
@@ -227,6 +228,35 @@ class MarkerService {
       final srcRect = _centerCrop(srcSize, dstSize);
 
       canvas.drawImageRect(img, srcRect, rect, Paint());
+
+      // Draw grey border (from old code)
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..color = const Color.fromARGB(170, 158, 158, 158)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = size * 0.15, // Proportionate to size (20 for 120)
+      );
+
+      // Draw Overlay Icon if provided
+      if (overlayIcon != null && overlayIcon.isNotEmpty) {
+        try {
+          final overlayByteData = await rootBundle.load(overlayIcon);
+          final overlayUint8List = overlayByteData.buffer.asUint8List();
+          final overlayCodec = await ui.instantiateImageCodec(overlayUint8List,
+              targetWidth: (size * 0.33).toInt()); // ~40 for 120
+          final overlayFrame = await overlayCodec.getNextFrame();
+          final ui.Image overlayImg = overlayFrame.image;
+
+          final overlayOffset = Offset(
+            (size - overlayImg.width) / 2,
+            (size - overlayImg.height) / 2,
+          );
+          canvas.drawImage(overlayImg, overlayOffset, Paint());
+        } catch (e) {
+          debugPrint("Error loading overlay icon $overlayIcon: $e");
+        }
+      }
 
       final picture = recorder.endRecording();
       final finalImage = await picture.toImage(size, size);

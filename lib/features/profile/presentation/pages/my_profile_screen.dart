@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -98,14 +99,50 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     debugPrint("class:::: $runtimeType");
     super.initState();
     debugPrint("editStatus::::::: ${widget.editProfileScreen}");
+    _loadCachedData();
     setUserNameListener();
     setPhoneListener();
     setEmailListener();
-    Future.delayed(Duration.zero, () {
-      myProfileApi();
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) {
+        myProfileApi();
+        if (widget.editProfileScreen) {
+          getAvatarsApi();
+        }
+      }
     });
-    if (widget.editProfileScreen) {
-      getAvatarsApi();
+  }
+
+  void _loadCachedData() {
+    userNameController.text = sharedPreferences?.getString(userNameKey) ?? "";
+    firstNameController.text = sharedPreferences?.getString(firstNameKey) ?? "";
+    lastNameController.text = sharedPreferences?.getString(lastNameKey) ?? "";
+    emailAddressController.text = sharedPreferences?.getString(emailKey) ?? "";
+    phoneNumberController.text = sharedPreferences?.getString(phoneKey) ?? "";
+    addressController.text = sharedPreferences?.getString(addressKey) ?? "";
+    postCodeController.text = sharedPreferences?.getString(postCodeKey) ?? "";
+    selectedCountryCode = sharedPreferences?.getString(countryCodeKey) ?? "+44";
+    cityNameController.text = sharedPreferences?.getString(cityKey) ?? "";
+    countryNameController.text = sharedPreferences?.getString(countryKey) ?? "";
+    apartmentAndHouseNameController.text =
+        sharedPreferences?.getString(apartmentKey) ?? "";
+
+    // Partially initialize myProfileData for the top card
+    String cachedAvatar = sharedPreferences?.getString(avatarKey) ?? "";
+    String cachedUsername = sharedPreferences?.getString(userNameKey) ?? "";
+    String cachedIncome = sharedPreferences?.getString(totalIncomeKey) ?? "0";
+    String cachedAddress = sharedPreferences?.getString(addressKey) ?? "";
+
+    if (cachedUsername.isNotEmpty) {
+      myProfileData = MyProfileData();
+      myProfileData!.userName = cachedUsername;
+      myProfileData!.totalIncome = cachedIncome;
+      myProfileData!.address = cachedAddress;
+
+      if (cachedAvatar.isNotEmpty) {
+        myProfileData!.avatarImage = cachedAvatar;
+        myProfileData!.avatarImage = fixS3Url(myProfileData!.avatarImage);
+      }
     }
   }
 
@@ -278,702 +315,63 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (isLoading)
+                      const LinearProgressIndicator(
+                        backgroundColor: colorLightGrey,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(colorThemePink),
+                      ),
                     topProfileWidget(),
                     SizedBox(
                       height: size.width * numD06,
                     ),
-                    Text("${userText.toTitleCase()} $nameText",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD032,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-                    CommonTextField(
-                      size: size,
-                      maxLines: 1,
-                      textInputFormatters: null,
-                      borderColor: colorTextFieldBorder,
-                      controller: userNameController,
-                      hintText:
-                          "${enterText.toTitleCase()} $userText $nameText",
-                      prefixIcon: Container(
-                        margin: EdgeInsets.only(left: size.width * numD015),
-                        child: Image.asset(
-                          "${iconsPath}ic_user.png",
-                        ),
-                      ),
-                      prefixIconHeight: size.width * numD04,
-                      hidePassword: false,
-                      keyboardType: TextInputType.text,
-                      validator: null /*userNameValidator*/,
-                      enableValidations: false,
-                      filled: true,
-                      filledColor: widget.editProfileScreen
-                          ? colorLightGrey
-                          : colorLightGrey,
-                      autofocus: userNameAutoFocus,
-                      readOnly: true,
-                      onChanged: _onUserNameChanged,
-                      suffixIconIconHeight: size.width * numD04,
-                      suffixIcon: null,
-                    ),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-                    Text("${firstText.toTitleCase()} $nameText",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD032,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-                    CommonTextField(
-                      size: size,
-                      maxLines: 1,
-                      textInputFormatters: null,
-                      borderColor: colorTextFieldBorder,
-                      controller: firstNameController,
-                      hintText:
-                          "${enterText.toTitleCase()} $firstText $nameText",
-                      prefixIcon: Container(
-                        margin: EdgeInsets.only(left: size.width * numD015),
-                        child: Image.asset(
-                          "${iconsPath}ic_user.png",
-                        ),
-                      ),
-                      prefixIconHeight: size.width * numD04,
-                      suffixIconIconHeight: 0,
-                      suffixIcon: null,
-                      hidePassword: false,
-                      keyboardType: TextInputType.text,
-                      validator: firstNameValidator,
-                      enableValidations: true,
-                      filled: true,
-                      filledColor: widget.editProfileScreen
-                          ? Colors.white
-                          : colorLightGrey,
-                      autofocus: false,
-                      readOnly: widget.editProfileScreen ? false : true,
-                    ),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-                    Text("${lastText.toTitleCase()} $nameText",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD032,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-                    CommonTextField(
-                      size: size,
-                      maxLines: 1,
-                      textInputFormatters: null,
-                      borderColor: colorTextFieldBorder,
-                      controller: lastNameController,
-                      hintText:
-                          "${enterText.toTitleCase()} $lastText $nameText",
-                      prefixIcon: Container(
-                        margin: EdgeInsets.only(left: size.width * numD015),
-                        child: Image.asset(
-                          "${iconsPath}ic_user.png",
-                        ),
-                      ),
-                      prefixIconHeight: size.width * numD04,
-                      suffixIconIconHeight: 0,
-                      suffixIcon: null,
-                      hidePassword: false,
-                      keyboardType: TextInputType.text,
-                      validator: lastNameValidator,
-                      enableValidations: true,
-                      filled: true,
-                      filledColor: widget.editProfileScreen
-                          ? Colors.white
-                          : colorLightGrey,
-                      autofocus: false,
-                      readOnly: widget.editProfileScreen ? false : true,
-                    ),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-                    Text("${phoneText.toTitleCase()} $numberText",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD032,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-                    CommonTextField(
-                      size: size,
-                      maxLines: 1,
-                      borderColor: colorTextFieldBorder,
-                      controller: phoneNumberController,
-                      hintText: phoneHintText,
-                      textInputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-                        LengthLimitingTextInputFormatter(
-                            _getMaxPhoneLength()), // This line enforces max length
-                      ],
-                      prefixIcon: InkWell(
-                        onTap: () {
-                          openCountryCodePicker();
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.call_outlined),
-                            SizedBox(
-                              width: size.width * numD01,
-                            ),
-                            Text(
-                              selectedCountryCode,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: size.width * numD07,
-                            )
-                          ],
-                        ),
-                      ),
-                      prefixIconHeight: size.width * numD06,
-                      suffixIconIconHeight: size.width * numD085,
-                      suffixIcon: phoneNumberController.text.trim().length >= 7
-                          ? phoneAlreadyExists
-                              ? const Icon(
-                                  Icons.highlight_remove,
-                                  color: Colors.red,
-                                )
-                              : const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                )
-                          : null,
-                      hidePassword: false,
-                      keyboardType: const TextInputType.numberWithOptions(
-                          decimal: false, signed: true),
-                      validator: checkSignupPhoneValidator,
-                      enableValidations: true,
-                      filled: false,
-                      filledColor: Colors.transparent,
-                      autofocus: false,
-                    ),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-                    Text(emailAddressText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD032,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-                    CommonTextField(
-                      size: size,
-                      maxLines: 1,
-                      textInputFormatters: null,
-                      borderColor: colorTextFieldBorder,
-                      controller: emailAddressController,
-                      hintText: "${enterText.toTitleCase()} $emailAddressText",
-                      prefixIcon: Container(
-                        margin: EdgeInsets.only(left: size.width * numD015),
-                        child: Image.asset(
-                          "${iconsPath}ic_email.png",
-                        ),
-                      ),
-                      prefixIconHeight: size.width * numD038,
-                      suffixIconIconHeight: 0,
-                      suffixIcon: null,
-                      hidePassword: false,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: null /*checkSignupEmailValidator*/,
-                      enableValidations: false,
-                      filled: true,
-                      filledColor: widget.editProfileScreen
-                          ? colorLightGrey
-                          : colorLightGrey,
-                      autofocus: false,
-                      readOnly: true,
-                    ),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-
-                    /// Apartment Number and House Number
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(apartmentNoHintText,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD032,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal)),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-                        SizedBox(
-                          height: size.width * numD12,
-                        )
-                      ],
-                    ),
-                    showApartmentNumberError &&
-                            apartmentAndHouseNameController.text.trim().isEmpty
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD01),
-                            child: Text(
-                              requiredText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: Colors.red.shade700,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          )
-                        : Container(),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-                    Text(postalCodeText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD032,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)),
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-
-                    widget.editProfileScreen
-                        ? SizedBox(
-                            height: size.width * numD12,
-                            child: GooglePlaceAutoCompleteTextField(
-                              textEditingController: postCodeController,
-                              //   googleAPIKey: "AIzaSyAzccAqyrfD-V43gI9eBXqLf0qpqlm0Gu0",
-                              googleAPIKey: Platform.isIOS
-                                  ? appleMapAPiKey
-                                  : googleMapAPiKey,
-                              isCrossBtnShown: false,
-                              boxDecoration: BoxDecoration(
-                                  color: widget.editProfileScreen
-                                      ? Colors.white
-                                      : colorLightGrey,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.03),
-                                  border: Border.all(
-                                      color: colorTextFieldBorder, width: 1)),
-                              textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * numD032,
-                                  fontFamily: 'AirbnbCereal_W_Md'),
-                              inputDecoration: InputDecoration(
-                                border: InputBorder.none,
-                                filled: false,
-                                contentPadding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD038,
-                                ),
-                                hintText:
-                                    "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
-                                hintStyle: TextStyle(
-                                    color: colorHint,
-                                    fontSize: size.width * numD035,
-                                    fontFamily: 'AirbnbCereal_W_Md'),
-                                prefixIcon: Container(
-                                  margin: EdgeInsets.only(
-                                      right: size.width * numD02, left: 12),
-                                  child: Image.asset(
-                                    "${iconsPath}ic_location.png",
-                                  ),
-                                ),
-                                suffixIcon: InkWell(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () {
-                                    postCodeController.clear();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Icon(
-                                      Icons.close,
-                                      color: Colors.black,
-                                      size: size.width * numD058,
-                                    ),
-                                  ),
-                                ),
-                                prefixIconConstraints: BoxConstraints(
-                                    maxHeight: size.width * numD045),
-                                suffixIconConstraints: BoxConstraints(
-                                  maxHeight: size.width * numD07,
-                                ),
-                                prefixIconColor: colorTextFieldIcon,
-                              ),
-                              debounceTime: 200,
-                              countries: const ["uk", "in"],
-                              isLatLngRequired: true,
-
-                              getPlaceDetailWithLatLng:
-                                  (Prediction prediction) {
-                                latitude = prediction.lat.toString();
-                                longitude = prediction.lng.toString();
-                                debugPrint("placeDetails :: ${prediction.lng}");
-                                debugPrint("placeDetails :: ${prediction.lat}");
-                                getCurrentLocationFxn(prediction.lat ?? "",
-                                        prediction.lng ?? "")
-                                    .then((value) {
-                                  if (value.isNotEmpty) {
-                                    cityNameController.text =
-                                        value.first.locality ?? '';
-                                    countryNameController.text =
-                                        value.first.country ?? '';
-                                  }
-                                });
-                                showAddressError = false;
-                                setState(() {});
-                              },
-
-                              itemClick: (Prediction prediction) {
-                                addressController.text =
-                                    prediction.description ?? "";
-                                latitude = prediction.lat ?? "";
-                                longitude = prediction.lng ?? "";
-
-                                String postalCode =
-                                    prediction.structuredFormatting?.mainText ??
-                                        '';
-                                debugPrint("postalCode=======> $postalCode");
-                                postCodeController.text = postalCode;
-                                addressController.selection =
-                                    TextSelection.fromPosition(TextPosition(
-                                        offset: prediction.description != null
-                                            ? prediction.description!.length
-                                            : 0));
-                              },
-                            ),
-                          )
-                        : CommonTextField(
-                            size: size,
-                            maxLines: 1,
-                            textInputFormatters: null,
-                            borderColor: colorTextFieldBorder,
-                            controller: postCodeController,
-                            hintText:
-                                "${enterText.toTitleCase()} $postalCodeText",
-                            prefixIcon: Image.asset(
-                              "${iconsPath}ic_location.png",
-                            ),
-                            prefixIconHeight: size.width * numD045,
-                            suffixIconIconHeight: 0,
-                            suffixIcon: null,
-                            hidePassword: false,
-                            keyboardType: TextInputType.text,
-                            validator: checkRequiredValidator,
-                            enableValidations: true,
-                            filled: true,
-                            filledColor: widget.editProfileScreen
-                                ? Colors.white
-                                : colorLightGrey,
-                            autofocus: false,
-                            readOnly: true,
-                          ),
-
-                    showAddressError && addressController.text.trim().isEmpty
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD01),
-                            child: Text(
-                              requiredText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: Colors.red.shade700,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          )
-                        : Container(),
-                    SizedBox(
-                      height: size.width * numD06,
-                    ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(addressText,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD032,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal)),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-
-                        ///Address
-                        widget.editProfileScreen
-                            ? SizedBox(
-                                height: size.width * numD12,
-                                child: GooglePlaceAutoCompleteTextField(
-                                  textEditingController: addressController,
-                                  //googleAPIKey: "AIzaSyAzccAqyrfD-V43gI9eBXqLf0qpqlm0Gu0",
-                                  googleAPIKey: Platform.isIOS
-                                      ? appleMapAPiKey
-                                      : googleMapAPiKey,
-                                  isCrossBtnShown: false,
-                                  boxDecoration: BoxDecoration(
-                                      color: widget.editProfileScreen
-                                          ? Colors.white
-                                          : colorLightGrey,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * 0.03),
-                                      border: Border.all(
-                                          color: colorTextFieldBorder,
-                                          width: 1)),
-                                  textStyle: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: size.width * numD032,
-                                      fontFamily: 'AirbnbCereal_W_Md'),
-                                  inputDecoration: InputDecoration(
-                                    helperMaxLines: 5,
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: size.width * numD038),
-                                    filled: false,
-                                    hintText:
-                                        "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
-                                    hintStyle: TextStyle(
-                                        color: colorHint,
-                                        fontSize: size.width * numD035,
-                                        fontFamily: 'AirbnbCereal_W_Md'),
-                                    prefixIcon: Container(
-                                      margin: EdgeInsets.only(
-                                          right: size.width * numD02, left: 12),
-                                      child: Image.asset(
-                                        "${iconsPath}ic_location.png",
-                                      ),
-                                    ),
-                                    suffixIcon: InkWell(
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () {
-                                        addressController.clear();
-                                      },
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8),
-                                        child: Icon(
-                                          Icons.close,
-                                          color: Colors.black,
-                                          size: size.width * numD058,
-                                        ),
-                                      ),
-                                    ),
-                                    prefixIconConstraints: BoxConstraints(
-                                        maxHeight: size.width * numD045),
-                                    suffixIconConstraints: BoxConstraints(
-                                      maxHeight: size.width * numD07,
-                                    ),
-                                    prefixIconColor: colorTextFieldIcon,
-                                  ),
-                                  debounceTime: 600,
-                                  // default 600 ms,
-                                  countries: const ["uk", "in"],
-                                  // optional by default null is set
-                                  isLatLngRequired: true,
-                                  // if you required coordinates from place detail
-                                  getPlaceDetailWithLatLng:
-                                      (Prediction prediction) {
-                                    latitude = prediction.lat.toString();
-                                    longitude = prediction.lng.toString();
-                                    debugPrint(
-                                        "placeDetails :: ${prediction.lng}");
-                                    debugPrint(
-                                        "placeDetails :: ${prediction.lat}");
-                                    getCurrentLocationFxn(prediction.lat ?? "",
-                                            prediction.lng ?? "")
-                                        .then((value) {
-                                      if (value.isNotEmpty) {
-                                        cityNameController.text =
-                                            value.first.locality ?? '';
-                                        countryNameController.text =
-                                            value.first.country ?? '';
-                                      }
-                                    });
-                                    showAddressError = false;
-                                    setState(() {});
-                                  },
-                                  // this callback is called when isLatLngRequired is true
-
-                                  itemClick: (Prediction prediction) {
-                                    addressController.text =
-                                        prediction.description ?? "";
-                                    latitude = prediction.lat ?? "";
-                                    longitude = prediction.lng ?? "";
-
-                                    String postalCode = prediction
-                                            .structuredFormatting?.mainText ??
-                                        '';
-                                    debugPrint(
-                                        "postalCode=======> $postalCode");
-
-                                    //postCodeController.text = postalCode;
-                                    addressController.selection =
-                                        TextSelection.fromPosition(TextPosition(
-                                            offset: prediction.description !=
-                                                    null
-                                                ? prediction.description!.length
-                                                : 0));
-                                  },
-                                ),
-                              )
-                            : CommonTextField(
-                                size: size,
-                                maxLines: 3,
-                                textInputFormatters: null,
-                                borderColor: colorTextFieldBorder,
-                                controller: addressController,
-                                hintText:
-                                    "${enterText.toTitleCase()} $addressText",
-                                prefixIcon: Image.asset(
-                                  "${iconsPath}ic_location.png",
-                                ),
-                                prefixIconHeight: size.width * numD045,
-                                suffixIconIconHeight: 0,
-                                suffixIcon: null,
-                                hidePassword: false,
-                                keyboardType: TextInputType.text,
-                                validator: checkRequiredValidator,
-                                enableValidations: true,
-                                filled: true,
-                                filledColor: widget.editProfileScreen
-                                    ? Colors.white
-                                    : colorLightGrey,
-                                autofocus: false,
-                                readOnly:
-                                    widget.editProfileScreen ? false : true,
-                              ),
-                      ],
-                    ),
-
-                    showPostalCodeError &&
-                            postCodeController.text.trim().isEmpty &&
-                            addressController.text.isNotEmpty
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD01),
-                            child: Text(
-                              requiredText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: Colors.red.shade700,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          )
-                        : Container(),
-
+                    _buildUserNameField(),
                     SizedBox(height: size.width * numD06),
-
-                    /// Country
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(countryText,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD032,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal)),
-                        SizedBox(
-                          height: size.width * numD02,
-                        ),
-                        CommonTextField(
-                          size: size,
-                          maxLines: 1,
-                          textInputFormatters: null,
-                          borderColor: colorTextFieldBorder,
-                          controller: countryNameController,
-                          hintText: countryText,
-                          prefixIcon: Container(
-                            margin: EdgeInsets.only(left: size.width * numD01),
-                            child: Image.asset(
-                              "${iconsPath}ic_location.png",
-                            ),
-                          ),
-                          prefixIconHeight: size.width * numD045,
-                          suffixIconIconHeight: 0,
-                          suffixIcon: null,
-                          hidePassword: false,
-                          keyboardType: TextInputType.text,
-                          validator: null,
-                          enableValidations: true,
-                          filled: true,
-                          filledColor: widget.editProfileScreen
-                              ? Colors.white
-                              : colorLightGrey,
-                          autofocus: false,
-                          readOnly: widget.editProfileScreen ? false : true,
-                        ),
-                      ],
-                    ),
-
+                    _buildFirstNameField(),
+                    SizedBox(height: size.width * numD06),
+                    _buildLastNameField(),
+                    SizedBox(height: size.width * numD06),
+                    _buildPhoneField(),
+                    SizedBox(height: size.width * numD06),
+                    _buildEmailField(),
+                    SizedBox(height: size.width * numD06),
+                    _buildAddressSection(),
+                    SizedBox(height: size.width * numD06),
+                    _buildCityCountryFields(),
+                    SizedBox(height: size.width * numD09),
                     SizedBox(
-                      height: size.width * numD09,
+                      width: double.infinity,
+                      height: size.width * numD14,
+                      child: commonElevatedButton(
+                          widget.editProfileScreen
+                              ? saveText.toTitleCase()
+                              : editProfileText.toTitleCase(),
+                          size,
+                          commonTextStyle(
+                              size: size,
+                              fontSize: size.width * numD035,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          commonButtonStyle(size, colorThemePink), () {
+                        if (!widget.editProfileScreen) {
+                          widget.editProfileScreen = !widget.editProfileScreen;
+                          scrollController.animateTo(
+                              scrollController.position.minScrollExtent,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut);
+                          userNameAutoFocus = true;
+                        } else {
+                          scrollController.animateTo(
+                              scrollController.position.minScrollExtent,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut);
+                          if (formKey.currentState!.validate()) {
+                            editProfileApi();
+                          }
+                        }
+                        setState(() {});
+                      }),
                     ),
-                    widget.editProfileScreen
-                        ? SizedBox(
-                            width: double.infinity,
-                            height: size.width * numD14,
-                            //  padding: EdgeInsets.symmetric(horizontal: size.width * numD08),
-                            child: commonElevatedButton(
-                                widget.editProfileScreen
-                                    ? saveText.toTitleCase()
-                                    : editProfileText.toTitleCase(),
-                                size,
-                                commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700),
-                                commonButtonStyle(size, colorThemePink), () {
-                              if (!widget.editProfileScreen) {
-                                widget.editProfileScreen =
-                                    !widget.editProfileScreen;
-                                scrollController.animateTo(
-                                    scrollController.position.minScrollExtent,
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.easeInOut);
-                                userNameAutoFocus = true;
-                              } else {
-                                scrollController.animateTo(
-                                    scrollController.position.minScrollExtent,
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.easeInOut);
-                                if (formKey.currentState!.validate()) {
-                                  editProfileApi();
-                                }
-                              }
-                              setState(() {});
-                            }),
-                          )
-                        : Container(),
                     SizedBox(
                       height: size.width * numD04,
                     ),
@@ -1003,10 +401,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(size.width * numD04),
                       bottomLeft: Radius.circular(size.width * numD04)),
-                  child: Image.network(
-                    myProfileData != null ? myProfileData!.avatarImage : "",
-                    errorBuilder: (context, exception, stacktrace) {
-                      return Padding(
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        myProfileData != null ? myProfileData!.avatarImage : "",
+                    placeholder: (context, url) => Center(
+                      child: Padding(
                         padding: EdgeInsets.all(size.width * numD04),
                         child: Image.asset(
                           "${commonImagePath}rabbitLogo.png",
@@ -1014,8 +413,17 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           width: size.width * numD35,
                           height: size.width * numD35,
                         ),
-                      );
-                    },
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Padding(
+                      padding: EdgeInsets.all(size.width * numD04),
+                      child: Image.asset(
+                        "${commonImagePath}rabbitLogo.png",
+                        fit: BoxFit.contain,
+                        width: size.width * numD35,
+                        height: size.width * numD35,
+                      ),
+                    ),
                     fit: BoxFit.cover,
                     width: size.width * numD37,
                     height: size.width * numD35,
@@ -1245,15 +653,18 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void setEmailListener() {
     emailAddressController.addListener(() {
       if (widget.editProfileScreen) {
-        debugPrint("Emil:${emailAddressController.text}");
-        if (emailAddressController.text.trim().isNotEmpty) {
-          debugPrint("notsuccess");
-          checkEmailApi();
-        } else {
-          emailAlreadyExists = false;
-        }
-
-        setState(() {});
+        if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          debugPrint("Email:${emailAddressController.text}");
+          if (emailAddressController.text.trim().isNotEmpty &&
+              emailExpression.hasMatch(emailAddressController.text.trim()) &&
+              emailAddressController.text.trim() != myProfileData?.email) {
+            checkEmailApi();
+          } else {
+            emailAlreadyExists = false;
+          }
+          setState(() {});
+        });
       }
     });
   }
@@ -1261,17 +672,18 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   void setPhoneListener() {
     phoneNumberController.addListener(() {
       if (widget.editProfileScreen) {
-        debugPrint("Phone:${phoneNumberController.text}");
-        if (phoneNumberController.text.trim().isNotEmpty &&
-            phoneNumberController.text.trim().length > 7 &&
-            phoneNumberController.text != myProfileData!.phoneNumber) {
-          debugPrint("notsuccess");
-          checkPhoneApi();
-        } else {
-          phoneAlreadyExists = false;
-        }
-
-        setState(() {});
+        if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          debugPrint("Phone:${phoneNumberController.text}");
+          if (phoneNumberController.text.trim().isNotEmpty &&
+              phoneNumberController.text.trim().length > 7 &&
+              phoneNumberController.text.trim() != myProfileData?.phoneNumber) {
+            checkPhoneApi();
+          } else {
+            phoneAlreadyExists = false;
+          }
+          setState(() {});
+        });
       }
     });
   }
@@ -1369,6 +781,578 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     );
   }
 
+  Widget _buildUserNameField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("${userText.toTitleCase()} $nameText",
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: userNameController,
+          hintText: "${enterText.toTitleCase()} $userText $nameText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_user.png"),
+          ),
+          prefixIconHeight: size.width * numD04,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: null,
+          enableValidations: false,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          autofocus: userNameAutoFocus,
+          readOnly: widget.editProfileScreen ? false : true,
+          onChanged: _onUserNameChanged,
+          suffixIconIconHeight: size.width * numD04,
+          suffixIcon: null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFirstNameField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("${firstText.toTitleCase()} $nameText",
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: firstNameController,
+          hintText: "${enterText.toTitleCase()} $firstText $nameText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_user.png"),
+          ),
+          prefixIconHeight: size.width * numD04,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: firstNameValidator,
+          enableValidations: true,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLastNameField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("${lastText.toTitleCase()} $nameText",
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: lastNameController,
+          hintText: "${enterText.toTitleCase()} $lastText $nameText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_user.png"),
+          ),
+          prefixIconHeight: size.width * numD04,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: lastNameValidator,
+          enableValidations: true,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("${phoneText.toTitleCase()} $numberText",
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          borderColor: colorTextFieldBorder,
+          controller: phoneNumberController,
+          hintText: phoneHintText,
+          textInputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+            LengthLimitingTextInputFormatter(_getMaxPhoneLength()),
+          ],
+          prefixIcon: InkWell(
+            onTap: widget.editProfileScreen ? openCountryCodePicker : null,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.call_outlined),
+                SizedBox(width: size.width * numD01),
+                Text(
+                  selectedCountryCode,
+                  style: commonTextStyle(
+                      size: size,
+                      fontSize: size.width * numD035,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal),
+                ),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: size.width * numD07,
+                )
+              ],
+            ),
+          ),
+          prefixIconHeight: size.width * numD06,
+          suffixIconIconHeight: size.width * numD085,
+          suffixIcon: phoneNumberController.text.trim().length >= 7
+              ? phoneAlreadyExists
+                  ? const Icon(Icons.highlight_remove, color: Colors.red)
+                  : const Icon(Icons.check_circle, color: Colors.green)
+              : null,
+          hidePassword: false,
+          keyboardType: const TextInputType.numberWithOptions(
+              decimal: false, signed: true),
+          validator: checkSignupPhoneValidator,
+          enableValidations: true,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          autofocus: false,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmailField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(emailAddressText,
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: emailAddressController,
+          hintText: "${enterText.toTitleCase()} $emailAddressText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_email.png"),
+          ),
+          prefixIconHeight: size.width * numD038,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.emailAddress,
+          validator: null,
+          enableValidations: false,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          autofocus: false,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddressSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildApartmentField(),
+        SizedBox(height: size.width * numD06),
+        _buildPostCodeField(),
+        SizedBox(height: size.width * numD06),
+        _buildAddressField(),
+      ],
+    );
+  }
+
+  Widget _buildApartmentField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(apartmentNoHintText,
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: apartmentAndHouseNameController,
+          hintText: "${enterText.toTitleCase()} $apartmentNoHintText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_location.png"),
+          ),
+          prefixIconHeight: size.width * numD04,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: checkRequiredValidator,
+          enableValidations: true,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPostCodeField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(postalCodeText,
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        widget.editProfileScreen
+            ? SizedBox(
+                height: size.width * numD12,
+                child: GooglePlaceAutoCompleteTextField(
+                  textEditingController: postCodeController,
+                  googleAPIKey:
+                      Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                  isCrossBtnShown: false,
+                  boxDecoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(size.width * 0.03),
+                      border:
+                          Border.all(color: colorTextFieldBorder, width: 1)),
+                  textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.width * numD032,
+                      fontFamily: 'AirbnbCereal_W_Md'),
+                  inputDecoration: InputDecoration(
+                    border: InputBorder.none,
+                    filled: false,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: size.width * numD038),
+                    hintText:
+                        "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
+                    hintStyle: TextStyle(
+                        color: colorHint,
+                        fontSize: size.width * numD035,
+                        fontFamily: 'AirbnbCereal_W_Md'),
+                    prefixIcon: Container(
+                      margin:
+                          EdgeInsets.only(right: size.width * numD02, left: 12),
+                      child: Image.asset("${iconsPath}ic_location.png"),
+                    ),
+                    suffixIcon: InkWell(
+                      onTap: () => postCodeController.clear(),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Icon(Icons.close,
+                            color: Colors.black, size: size.width * numD058),
+                      ),
+                    ),
+                    prefixIconConstraints:
+                        BoxConstraints(maxHeight: size.width * numD045),
+                    suffixIconConstraints:
+                        BoxConstraints(maxHeight: size.width * numD07),
+                    prefixIconColor: colorTextFieldIcon,
+                  ),
+                  debounceTime: 200,
+                  countries: const ["uk", "in"],
+                  isLatLngRequired: true,
+                  getPlaceDetailWithLatLng: (Prediction prediction) {
+                    latitude = prediction.lat.toString();
+                    longitude = prediction.lng.toString();
+                    getCurrentLocationFxn(
+                            prediction.lat ?? "", prediction.lng ?? "")
+                        .then((value) {
+                      if (value.isNotEmpty) {
+                        cityNameController.text = value.first.locality ?? '';
+                        countryNameController.text = value.first.country ?? '';
+                      }
+                    });
+                    showAddressError = false;
+                    setState(() {});
+                  },
+                  itemClick: (Prediction prediction) {
+                    addressController.text = prediction.description ?? "";
+                    latitude = prediction.lat ?? "";
+                    longitude = prediction.lng ?? "";
+                    String postalCode =
+                        prediction.structuredFormatting?.mainText ?? '';
+                    postCodeController.text = postalCode;
+                    addressController.selection = TextSelection.fromPosition(
+                        TextPosition(
+                            offset: prediction.description != null
+                                ? prediction.description!.length
+                                : 0));
+                  },
+                ),
+              )
+            : CommonTextField(
+                size: size,
+                maxLines: 1,
+                textInputFormatters: null,
+                borderColor: colorTextFieldBorder,
+                controller: postCodeController,
+                hintText: "${enterText.toTitleCase()} $postalCodeText",
+                prefixIcon: Image.asset("${iconsPath}ic_location.png"),
+                prefixIconHeight: size.width * numD045,
+                suffixIconIconHeight: 0,
+                suffixIcon: null,
+                hidePassword: false,
+                keyboardType: TextInputType.text,
+                enableValidations: false,
+                validator: null,
+                filled: true,
+                filledColor: colorLightGrey,
+                readOnly: true,
+              ),
+      ],
+    );
+  }
+
+  Widget _buildAddressField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(addressText,
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        widget.editProfileScreen
+            ? SizedBox(
+                height: size.width * numD12,
+                child: GooglePlaceAutoCompleteTextField(
+                  textEditingController: addressController,
+                  googleAPIKey:
+                      Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                  isCrossBtnShown: false,
+                  boxDecoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(size.width * 0.03),
+                      border:
+                          Border.all(color: colorTextFieldBorder, width: 1)),
+                  textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.width * numD032,
+                      fontFamily: 'AirbnbCereal_W_Md'),
+                  inputDecoration: InputDecoration(
+                    border: InputBorder.none,
+                    filled: false,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: size.width * numD038),
+                    hintText:
+                        "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
+                    hintStyle: TextStyle(
+                        color: colorHint,
+                        fontSize: size.width * numD035,
+                        fontFamily: 'AirbnbCereal_W_Md'),
+                    prefixIcon: Container(
+                      margin:
+                          EdgeInsets.only(right: size.width * numD02, left: 12),
+                      child: Image.asset("${iconsPath}ic_location.png"),
+                    ),
+                    suffixIcon: InkWell(
+                      onTap: () => addressController.clear(),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Icon(Icons.close,
+                            color: Colors.black, size: size.width * numD058),
+                      ),
+                    ),
+                    prefixIconConstraints:
+                        BoxConstraints(maxHeight: size.width * numD045),
+                    suffixIconConstraints:
+                        BoxConstraints(maxHeight: size.width * numD07),
+                    prefixIconColor: colorTextFieldIcon,
+                  ),
+                  debounceTime: 200,
+                  countries: const ["uk", "in"],
+                  isLatLngRequired: true,
+                  getPlaceDetailWithLatLng: (Prediction prediction) {
+                    latitude = prediction.lat.toString();
+                    longitude = prediction.lng.toString();
+                    getCurrentLocationFxn(
+                            prediction.lat ?? "", prediction.lng ?? "")
+                        .then((value) {
+                      if (value.isNotEmpty) {
+                        cityNameController.text = value.first.locality ?? '';
+                        countryNameController.text = value.first.country ?? '';
+                      }
+                    });
+                    showAddressError = false;
+                    setState(() {});
+                  },
+                  itemClick: (Prediction prediction) {
+                    addressController.text = prediction.description ?? "";
+                    latitude = prediction.lat ?? "";
+                    longitude = prediction.lng ?? "";
+                    addressController.selection = TextSelection.fromPosition(
+                        TextPosition(
+                            offset: prediction.description != null
+                                ? prediction.description!.length
+                                : 0));
+                  },
+                ),
+              )
+            : CommonTextField(
+                size: size,
+                maxLines: 1,
+                textInputFormatters: null,
+                borderColor: colorTextFieldBorder,
+                controller: addressController,
+                hintText: "${enterText.toTitleCase()} $addressText",
+                prefixIcon: Image.asset("${iconsPath}ic_location.png"),
+                prefixIconHeight: size.width * numD045,
+                suffixIconIconHeight: 0,
+                suffixIcon: null,
+                hidePassword: false,
+                keyboardType: TextInputType.text,
+                enableValidations: false,
+                validator: null,
+                filled: true,
+                filledColor: colorLightGrey,
+                readOnly: true,
+              ),
+      ],
+    );
+  }
+
+  Widget _buildCityCountryFields() {
+    return Column(
+      children: [
+        _buildCityField(),
+        SizedBox(height: size.width * numD06),
+        _buildCountryField(),
+      ],
+    );
+  }
+
+  Widget _buildCityField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(cityText.toTitleCase(),
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: cityNameController,
+          hintText: "${enterText.toTitleCase()} $cityText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_location.png"),
+          ),
+          prefixIconHeight: size.width * numD04,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: checkRequiredValidator,
+          enableValidations: true,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCountryField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(countryText.toTitleCase(),
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: colorTextFieldBorder,
+          controller: countryNameController,
+          hintText: "${enterText.toTitleCase()} $countryText",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * numD015),
+            child: Image.asset("${iconsPath}ic_location.png"),
+          ),
+          prefixIconHeight: size.width * numD04,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: checkRequiredValidator,
+          enableValidations: true,
+          filled: true,
+          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          readOnly: widget.editProfileScreen ? false : true,
+        ),
+      ],
+    );
+  }
+
   Future<List<Placemark>> getCurrentLocationFxn(
       String latitude, longitude) async {
     try {
@@ -1424,6 +1408,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     try {
       final response = await sl<ApiClient>().get(
         "${ApiConstantsNew.auth.checkUserName}${userNameController.text.trim().toLowerCase()}",
+        showLoader: false,
       );
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1447,6 +1432,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     try {
       final response = await sl<ApiClient>().get(
         "${ApiConstantsNew.auth.checkEmail}${emailAddressController.text.trim()}",
+        showLoader: false,
       );
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1470,6 +1456,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     try {
       final response = await sl<ApiClient>().get(
         "${ApiConstantsNew.auth.checkPhone}${phoneNumberController.text.trim()}",
+        showLoader: false,
       );
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1491,8 +1478,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Future<void> getAvatarsApi() async {
     try {
-      final response =
-          await sl<ApiClient>().get(ApiConstantsNew.profile.getAvatars);
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.profile.getAvatars, showLoader: false);
       if (response.statusCode == 200) {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
@@ -1509,10 +1496,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   Future<void> myProfileApi() async {
     String userId = sharedPreferences!.getString(hopperIdKey) ?? "";
     print("🔴 DEBUG: Fetching Profile for userId: '$userId'");
+    setState(() {
+      isLoading = true;
+    });
     try {
       final response = await sl<ApiClient>().get(
         ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
+        showLoader: false,
       );
       print("myProfileUrl: $myProfileUrl");
 
@@ -1529,53 +1520,56 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             userData = userData['data'];
           }
           myProfileData = MyProfileData.fromJson(userData);
-          if (userData[firstNameKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(firstNameKey, userData[firstNameKey]);
-          }
-          if (userData[lastNameKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(lastNameKey, userData[lastNameKey]);
-          }
-          if (userData[emailKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(emailKey, userData[emailKey]);
-          }
-          if (userData[countryCodeKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(countryCodeKey, userData[countryCodeKey]);
-          }
-          if (userData[phoneKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(phoneKey, userData[phoneKey].toString());
-            debugPrint("phoneNumber======> ${userData[phoneKey]}");
-          }
-          if (userData[addressKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(addressKey, userData[addressKey]);
-          }
-          if (userData[postCodeKey] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(addressKey, userData[postCodeKey]);
+
+          void updateKey(String key, dynamic value) {
+            if (value != null && value.toString().isNotEmpty) {
+              sharedPreferences?.setString(key, value.toString());
+            }
           }
 
-          if (userData[latitudeKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(latitudeKey, userData[latitudeKey].toString());
+          updateKey(
+              firstNameKey, userData[firstNameKey] ?? userData['firstName']);
+          updateKey(lastNameKey, userData[lastNameKey] ?? userData['lastName']);
+          updateKey(emailKey, userData[emailKey]);
+          updateKey(countryCodeKey,
+              userData[countryCodeKey] ?? userData['countryCode']);
+          updateKey(phoneKey, userData[phoneKey] ?? userData['mobile_number']);
+          updateKey(addressKey, userData[addressKey]);
+          updateKey(cityKey, userData[cityKey] ?? userData['city']);
+          updateKey(countryKey, userData[countryKey] ?? userData['country']);
+          updateKey(
+              apartmentKey, userData[apartmentKey] ?? userData['appartment']);
+          updateKey(postCodeKey, userData[postCodeKey] ?? userData['postCode']);
+
+          if (userData[latitudeKey] != null) {
+            updateKey(latitudeKey, userData[latitudeKey]);
           }
-          if (userData[longitudeKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(longitudeKey, userData[longitudeKey].toString());
+          if (userData[longitudeKey] != null) {
+            updateKey(longitudeKey, userData[longitudeKey]);
           }
-          if (userData[avatarIdKey] != null && sharedPreferences != null) {
-            sharedPreferences!
-                .setString(avatarIdKey, userData[avatarIdKey].toString());
+          if (userData[avatarIdKey] != null) {
+            updateKey(avatarIdKey, userData[avatarIdKey]);
           }
-          if (userData["totalEarnings"] != null && sharedPreferences != null) {
-            sharedPreferences!.setString(
-                totalIncomeKey, userData["totalEarnings"].toString());
+          if (userData["totalEarnings"] != null) {
+            updateKey(totalIncomeKey, userData["totalEarnings"]);
           }
 
           if (userData['avatarData'] != null &&
               userData['avatarData'][avatarKey] != null &&
               sharedPreferences != null) {
-            sharedPreferences!
-                .setString(avatarKey, userData['avatarData'][avatarKey]);
+            String av = userData['avatarData'][avatarKey].toString();
+            if (av.isNotEmpty) {
+              sharedPreferences!.setString(avatarKey, av);
+              // Also update profileImageKey for other screens like DigitalId
+              if (av.startsWith("http")) {
+                sharedPreferences!.setString(profileImageKey, fixS3Url(av));
+              } else {
+                const String cdnAvatarUrl =
+                    "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
+                sharedPreferences!
+                    .setString(profileImageKey, fixS3Url("$cdnAvatarUrl$av"));
+              }
+            }
           }
 
           final src1 = userData["source"];
@@ -1595,19 +1589,19 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 size, sourceDataHeading, sourceDataDescription);
           }
 
-          isLoading = true;
           setProfileData();
-          setState(() {});
         } else {
-          isLoading = true;
-          setState(() {});
           debugPrint("MyProfileError: ${map["message"]}");
         }
       }
     } catch (e) {
       debugPrint("$e");
-      isLoading = true;
-      setState(() {});
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -1855,6 +1849,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 }
 
 class MyProfileData {
+  MyProfileData();
   String firstName = "";
   String lastName = "";
   String userName = "";
@@ -1880,7 +1875,7 @@ class MyProfileData {
   MyProfileData.fromJson(json) {
     firstName = json[firstNameKey] ?? json['firstName'] ?? "";
     lastName = json[lastNameKey] ?? json['lastName'] ?? "";
-    userName = json[userNameKey] ?? json['username'] ?? "";
+    userName = json[userNameKey] ?? json['username'] ?? json['userName'] ?? "";
     countryCode = json[countryCodeKey] ?? json['countryCode'] ?? "";
     phoneNumber = (json[phoneKey] ?? "").toString();
     debugPrint("MyPhone: $phoneNumber");
@@ -1908,8 +1903,10 @@ class MyProfileData {
     }
 
     if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
+      // Robust folder check
+      final String folder = tempAvatar.contains("/") ? "" : "avatarImages/";
       avatarImage =
-          "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$tempAvatar";
+          "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$folder$tempAvatar";
     } else {
       avatarImage = tempAvatar;
     }

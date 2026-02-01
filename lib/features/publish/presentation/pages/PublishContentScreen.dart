@@ -1972,52 +1972,28 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             BlocBuilder<PublishBloc, PublishState>(
                               builder: (context, state) {
                                 final currentSelected = state.selectedCategory;
-                                final categories = state.categories;
-                                debugPrint(
-                                    "DEBUG: UI categories count: ${categories.length}");
-                                debugPrint(
-                                    "DEBUG: UI selectedCategory: ${currentSelected?.name}");
-
-                                final isLoading = categories.isEmpty;
-
-                                return DropdownButtonHideUnderline(
-                                  child: DropdownButton<ContentCategory>(
-                                    hint: Text(
-                                      isLoading ? "Loading..." : "Select",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorHint,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    value: currentSelected,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD03,
+                                return InkWell(
+                                  onTap: () {
+                                    showCategoryBottomSheet(
+                                        size, context.read<PublishBloc>());
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        currentSelected?.name.toCapitalized() ??
+                                            "Select",
+                                        style: commonTextStyle(
+                                            size: size,
+                                            fontSize: size.width * numD03,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Icon(
+                                        Icons.keyboard_arrow_down_rounded,
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w600),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        context
-                                            .read<PublishBloc>()
-                                            .add(SelectCategoryEvent(value.id));
-                                        setState(() {
-                                          selectedCategory = value;
-                                        });
-                                      }
-                                    },
-                                    items: categories
-                                        .map<DropdownMenuItem<ContentCategory>>(
-                                            (ContentCategory e) {
-                                      return DropdownMenuItem<ContentCategory>(
-                                          value: e,
-                                          child: Text(e.name.toCapitalized()));
-                                    }).toList(),
-                                    icon: Icon(
-                                      Icons.keyboard_arrow_down_rounded,
-                                      color: Colors.black,
-                                      size: size.width * numD06,
-                                    ),
+                                        size: size.width * numD06,
+                                      ),
+                                    ],
                                   ),
                                 );
                               },
@@ -2768,45 +2744,63 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       ),
                     ),
                     Flexible(
-                      child: GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: size.width * numD04,
-                        ),
-                        itemBuilder: (context, index) {
-                          String selectedCat = selectedCategory?.name ?? "";
-                          return InkWell(
-                            onTap: () {
-                              context.read<PublishBloc>().add(
-                                  SelectCategoryEvent(categoryList[index].id));
+                      child: BlocBuilder<PublishBloc, PublishState>(
+                        builder: (context, state) {
+                          final categories = state.categories;
+                          final currentSelected = state.selectedCategory;
 
-                              if (categoryList[index].name == "Shared" ||
-                                  categoryList[index].name == "Exclusive") {
-                                selectedSellType = categoryList[index].name;
-                              }
-                              Navigator.pop(context);
-                            },
-                            child: Chip(
-                              label: Text(
-                                categoryList[index].name,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: categoryList[index].selected
-                                        ? Colors.white
-                                        : colorHint,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              backgroundColor: categoryList[index].selected
-                                  ? Colors.black
-                                  : colorLightGrey,
+                          return GridView.builder(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * numD04),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: size.width * numD04,
                             ),
+                            itemBuilder: (context, index) {
+                              final category = categories[index];
+                              final isSelected =
+                                  category.id == currentSelected?.id;
+
+                              return InkWell(
+                                onTap: () {
+                                  context
+                                      .read<PublishBloc>()
+                                      .add(SelectCategoryEvent(category.id));
+
+                                  if (category.name == "Shared" ||
+                                      category.name == "Exclusive") {
+                                    selectedSellType = category.name;
+                                  }
+
+                                  // Local update for immediate feedback if needed
+                                  setState(() {
+                                    selectedCategory = category;
+                                  });
+
+                                  Navigator.pop(context);
+                                },
+                                child: Chip(
+                                  label: Text(
+                                    category.name,
+                                    style: commonTextStyle(
+                                        size: size,
+                                        fontSize: size.width * numD03,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : colorHint,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  backgroundColor: isSelected
+                                      ? Colors.black
+                                      : colorLightGrey,
+                                ),
+                              );
+                            },
+                            itemCount: categories.length,
                           );
                         },
-                        itemCount: categoryList.length,
                       ),
                     ),
                   ],

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/authentication/data/datasources/verification_remote_datasource.dart';
 import 'package:presshop/features/authentication/data/models/document_data_model.dart';
@@ -29,7 +30,13 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   @override
   Future<List<DocumentDataModel>> getUploadedDocuments() async {
     try {
-      final response = await apiClient.get(ApiConstantsNew.profile.getUploadedDocs);
+      final String hopperId =
+          apiClient.sharedPreferences.getString(hopperIdKey) ?? '';
+      final response = await apiClient.get(
+        ApiConstantsNew.profile.getUploadedDocs,
+        queryParameters: {'hopper_id': hopperId},
+        options: Options(headers: {"x-user-id": hopperId}),
+      );
       final data = response.data['data'] as List;
       return data.map((e) => DocumentDataModel.fromJson(e)).toList();
     } catch (e) {
@@ -47,10 +54,12 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
           await MultipartFile.fromFile(file.path),
         ));
       }
+      final String hopperId =
+          apiClient.sharedPreferences.getString(hopperIdKey) ?? '';
       await apiClient.multipartPost(
         ApiConstantsNew.profile.uploadDocNew,
         formData: formData,
-        options: Options(method: "PATCH"),
+        options: Options(method: "PATCH", headers: {"x-user-id": hopperId}),
       );
     } catch (e) {
       throw ApiErrorHandler.handle(e);
@@ -60,9 +69,12 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   @override
   Future<void> deleteDocument(String documentId) async {
     try {
+      final String hopperId =
+          apiClient.sharedPreferences.getString(hopperIdKey) ?? '';
       await apiClient.post(
         ApiConstantsNew.profile.deleteDocument,
         data: {'document_id': documentId},
+        options: Options(headers: {"x-user-id": hopperId}),
       );
     } catch (e) {
       throw ApiErrorHandler.handle(e);

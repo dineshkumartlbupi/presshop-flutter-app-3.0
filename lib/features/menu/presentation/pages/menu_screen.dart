@@ -13,23 +13,45 @@ import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
 import 'package:presshop/features/menu/presentation/widgets/currency_selector_sheet.dart';
 import 'package:presshop/core/extensions/context_extensions.dart';
 
-class MenuScreen extends StatelessWidget {
-  MenuScreen({super.key});
+class MenuScreen extends StatefulWidget {
+  const MenuScreen({super.key});
 
-  final List<MenuData> menuList = buildMenu();
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  late final List<MenuData> menuList;
+  late final MenuBloc _menuBloc;
+  late final MenuUiCubit _uiCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    menuList = buildMenu();
+    _menuBloc = sl<MenuBloc>()..add(MenuLoadCounts());
+    _uiCubit = MenuUiCubit();
+  }
+
+  @override
+  void dispose() {
+    _menuBloc.close();
+    _uiCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => sl<MenuBloc>()..add(MenuLoadCounts())),
-        BlocProvider(create: (context) => MenuUiCubit()),
+        BlocProvider.value(value: _menuBloc),
+        BlocProvider.value(value: _uiCubit),
       ],
       child: AnalyticsWrapper(
         pageName: PageNames.menu,
         parameters: const {'page': 'menu_screen'},
         child: BlocListener<MenuBloc, MenuState>(
+          bloc: _menuBloc,
           listener: (context, state) {
             if (state.logoutStatus == MenuLogoutStatus.success) {
               _navigateToLogin(context);
@@ -60,9 +82,10 @@ class MenuScreen extends StatelessWidget {
         _showCurrencyBottomSheet(context);
         break;
       default:
-        if (item.page != null) {
+        if (item.pageBuilder != null) {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => item.page!))
+              .push(MaterialPageRoute(
+                  builder: (context) => item.pageBuilder!(context)))
               .then((value) {
             context.read<MenuBloc>().add(MenuLoadCounts());
           });

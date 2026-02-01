@@ -364,11 +364,6 @@ class _MapPageContentState extends State<_MapPageContent>
           setState(() {
             _routeInfoOffset = Offset(screen.x.toDouble(), screen.y.toDouble());
           });
-          if (_routeInfoOffset != null) {
-            setState(() {
-              _routeInfoOffset = null;
-            });
-          }
         }
       }
     } catch (e) {
@@ -456,8 +451,21 @@ class _MapPageContentState extends State<_MapPageContent>
           _controller.future.then((ctrl) async {
             try {
               if (mounted) {
-                await ctrl.animateCamera(
-                    CameraUpdate.newLatLng(state.selectedPosition!));
+                // Calculate adjusted position to counter the bottom padding and popup space
+                // Moving camera HIGHER (latitude) puts the marker LOWER on the screen.
+                double zoom = _currentZoom;
+                double lat = state.selectedPosition!.latitude;
+                double cosLat = cos(lat * pi / 180);
+                double metersPerPixel = 156543.03392 * cosLat / pow(2, zoom);
+                double metersPerDegreeLat = 111319.49;
+
+                // Shift camera focus UP by 220 pixels to move marker DOWN on screen
+                double pixels = 220;
+                double deltaLat = pixels * metersPerPixel / metersPerDegreeLat;
+                LatLng adjusted =
+                    LatLng(lat + deltaLat, state.selectedPosition!.longitude);
+
+                await ctrl.animateCamera(CameraUpdate.newLatLng(adjusted));
                 _updateInfoWindow();
               }
             } catch (e) {
@@ -597,15 +605,19 @@ class _MapPageContentState extends State<_MapPageContent>
               if (_infoOffset != null && state.selectedIncident != null)
                 Positioned(
                   left: _infoOffset!.dx -
-                      (state.selectedIncident!.markerType == 'content'
+                      ((state.selectedIncident!.markerType == 'content' ||
+                              state.selectedIncident!.markerType == 'news')
                           ? 32
                           : 140),
                   top: _infoOffset!.dy -
-                      (state.selectedIncident!.markerType == 'content'
-                          ? 260
-                          : 195),
-                  child: state.selectedIncident!.markerType == 'content'
+                      ((state.selectedIncident!.markerType == 'content' ||
+                              state.selectedIncident!.markerType == 'news')
+                          ? 245 // Reduced from 260
+                          : 180), // Reduced from 195
+                  child: (state.selectedIncident!.markerType == 'content' ||
+                          state.selectedIncident!.markerType == 'news')
                       ? ContentMarkerPopup(
+                          key: ValueKey('info_${state.selectedIncident!.id}'),
                           incident: state.selectedIncident!,
                           onViewPressed: () {
                             Navigator.push(
@@ -619,6 +631,7 @@ class _MapPageContentState extends State<_MapPageContent>
                           },
                         )
                       : CustomInfoWindow(
+                          key: ValueKey('info_${state.selectedIncident!.id}'),
                           incident: state.selectedIncident!,
                           onPressed: () {},
                         ),
@@ -657,101 +670,83 @@ class _MapPageContentState extends State<_MapPageContent>
                   ),
                 ),
 
-              // ======================= Search + Filter Bar =======================
               Positioned(
                 top: 10,
                 left: 0,
                 right: 0,
-                child: SizedBox(
-                  height: 390,
-                  child: Stack(
-                    children: [
-                      SearchAndFilterBar(
-                        searchController: _searchController,
-                        searchFocusNode: _searchFocusNode,
-                        onPressedOnNavigation: () {
-                          context
-                              .read<MapBloc>()
-                              .add(ToggleGetDirectionCardEvent());
-                        },
-                        // We need to implement the callback in build:
-                        // onPressedOnNavigation: () { context.read<MapBloc>().add(ToggleGetDirectionCardEvent()); }
-                        // But wait, there is no ToggleGetDirectionCardEvent in my lookup.
-                        // There is _onStartNavigation but that's for after.
-                        // I should probably add an event 'ShowGetDirectionCardEvent' or similar.
-                        // Checking MapBloc again... no specific event for showing it solely.
-                        // But MapController had `toggleGetDirectionCard`.
-                        // I'll stick to what I have. If logic is missing in BLoC, I'll add it later.
-                        // For now, I'll just leave the callback empty or log it.
-                        onChange: (value) {
-                          _searchPlaces(value);
-                        },
-                        selectedAlertType: state.selectedAlertType,
-                        selectedDistance: state.selectedDistance,
-                        selectedCategory: state.selectedCategory,
-                        onAlertTypeChanged: (value) {
-                          context.read<MapBloc>().add(UpdateFiltersEvent(
-                                alertType: value,
-                                distance: state.selectedDistance,
-                                category: state.selectedCategory,
-                              ));
-                        },
-                        onDistanceChanged: (value) {
-                          context.read<MapBloc>().add(UpdateFiltersEvent(
-                                alertType: state.selectedAlertType,
-                                distance: value,
-                                category: state.selectedCategory,
-                              ));
-                        },
-                        onCategoryChanged: (value) {
-                          context.read<MapBloc>().add(UpdateFiltersEvent(
-                                alertType: state.selectedAlertType,
-                                distance: state.selectedDistance,
-                                category: value,
-                              ));
-                        },
-                      ),
-                      // Dropdown overlaps filters and starts right under the search bar
-                      if (_showDropdown && _predictions.isNotEmpty)
-                        Positioned(
-                          left: 12,
-                          right: 55,
-                          top: 50,
-                          child: Material(
-                            elevation: 4,
-                            borderRadius: BorderRadius.circular(8),
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxHeight: 200),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                itemCount: _predictions.length,
-                                itemBuilder: (context, index) {
-                                  final prediction = _predictions[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      _selectPlace(
-                                        prediction['place_id'],
-                                        prediction['description'],
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 8,
-                                      ),
-                                      child: Text(prediction['description']),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
+                child: SearchAndFilterBar(
+                  searchController: _searchController,
+                  searchFocusNode: _searchFocusNode,
+                  onPressedOnNavigation: () {
+                    context.read<MapBloc>().add(ToggleGetDirectionCardEvent());
+                  },
+                  onChange: (value) {
+                    _searchPlaces(value);
+                  },
+                  selectedAlertType: state.selectedAlertType,
+                  selectedDistance: state.selectedDistance,
+                  selectedCategory: state.selectedCategory,
+                  onAlertTypeChanged: (value) {
+                    context.read<MapBloc>().add(UpdateFiltersEvent(
+                          alertType: value,
+                          distance: state.selectedDistance,
+                          category: state.selectedCategory,
+                        ));
+                  },
+                  onDistanceChanged: (value) {
+                    context.read<MapBloc>().add(UpdateFiltersEvent(
+                          alertType: state.selectedAlertType,
+                          distance: value,
+                          category: state.selectedCategory,
+                        ));
+                  },
+                  onCategoryChanged: (value) {
+                    context.read<MapBloc>().add(UpdateFiltersEvent(
+                          alertType: state.selectedAlertType,
+                          distance: state.selectedDistance,
+                          category: value,
+                        ));
+                  },
                 ),
               ),
+
+              // Dropdown overlaps filters and starts right under the search bar
+              if (_showDropdown && _predictions.isNotEmpty)
+                Positioned(
+                  left: 12,
+                  right: 55,
+                  top: 60, // Adjusted to start below search bar
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(8),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: _predictions.length,
+                        itemBuilder: (context, index) {
+                          final prediction = _predictions[index];
+                          return InkWell(
+                            onTap: () {
+                              _selectPlace(
+                                prediction['place_id'],
+                                prediction['description'],
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              child: Text(prediction['description']),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
 
               // ======================= Get Direction Card =======================
               Positioned(

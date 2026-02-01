@@ -1,12 +1,27 @@
+import 'package:hive/hive.dart';
 import '../../domain/entities/content_category.dart';
 
+part 'category_data_model.g.dart';
+
+@HiveType(typeId: 1)
 class CategoryDataModel extends ContentCategory {
+  @HiveField(0)
+  final String id;
+  @HiveField(1)
+  final String name;
+  @HiveField(2)
+  final String type;
+  @HiveField(3)
+  final String percentage;
+  @HiveField(4)
+  final bool selected;
+
   CategoryDataModel({
-    required String id,
-    required String name,
-    required String type,
-    required String percentage,
-    bool selected = false,
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.percentage,
+    this.selected = false,
   }) : super(
             id: id,
             name: name,

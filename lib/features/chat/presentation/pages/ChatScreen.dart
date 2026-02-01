@@ -98,14 +98,15 @@ class _ConversationScreenState extends State<ConversationScreen>
   String roomId = "";
   String typingCheckSenderID = "";
 
-  bool isLoading = false;
   bool isOnline = false;
   bool isTyping = false;
   bool isRecordingLongPress = false;
   bool isPlayOrPause = false;
   bool isShowSendButton = false;
   bool? keyboardIsOpened;
-  bool audioPlaying = false, draftSelected = false;
+  bool audioPlaying = false,
+      draftSelected = false,
+      _isInitialMessageSent = false;
   FocusNode inputNode = FocusNode();
 
   Stream? chatStream;
@@ -140,13 +141,24 @@ class _ConversationScreenState extends State<ConversationScreen>
     _chatBloc = sl<ChatBloc>();
     isFirstTime = true;
     debugPrint('Class Name: $runtimeType');
-    debugPrint('hopperName====>: ${sharedPreferences!.getString(avatarKey)}');
-    debugPrint(
-        'hopperProfile====>: ${sharedPreferences!.getString(avatarKey)}');
+
+    _receiverId = sharedPreferences!.getString(adminIdKey) ?? '';
+    _receiverName = sharedPreferences!.getString(adminNameKey) ?? '';
+    _receiverProfilePic = sharedPreferences!.getString(adminImageKey) ?? '';
+    roomId = sharedPreferences!.getString(adminRoomIdKey) ?? '';
+    _showData = true;
+
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    addOnlineOffline(true, sharedPreferences!.getString(adminRoomIdKey) ?? '');
-    _initializeData();
+    if (roomId.isNotEmpty) {
+      addOnlineOffline(true, roomId);
+    }
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        _initializeData();
+      }
+    });
   }
 
   @override
@@ -197,7 +209,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       value: _chatBloc,
       child: BlocBuilder<ChatBloc, ChatState>(
         builder: (context, state) {
-          return _showData && roomId.isNotEmpty
+          return _showData
               ? Scaffold(
                   appBar: CommonAppBar(
                     elevation: 0,
@@ -287,54 +299,72 @@ class _ConversationScreenState extends State<ConversationScreen>
                   body: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if ((state.status == ChatStatus.loading &&
+                              state.messages.isNotEmpty) ||
+                          state.status == ChatStatus.sending)
+                        const LinearProgressIndicator(
+                          backgroundColor: colorLightGrey,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(colorThemePink),
+                        ),
                       Expanded(
-                        child: state.messages.isNotEmpty
-                            ? ListView.separated(
-                                padding: EdgeInsets.all(size.width * numD018),
-                                separatorBuilder: (context, index) {
-                                  return const SizedBox(
-                                    height: 10,
-                                  );
-                                },
-                                itemBuilder: (context, index) {
-                                  var document = state.messages[index];
+                        child: (state.status == ChatStatus.loading ||
+                                    state.status == ChatStatus.initial) &&
+                                state.messages.isEmpty
+                            ? showLoader()
+                            : state.messages.isNotEmpty
+                                ? ListView.separated(
+                                    padding:
+                                        EdgeInsets.all(size.width * numD018),
+                                    separatorBuilder: (context, index) {
+                                      return const SizedBox(
+                                        height: 10,
+                                      );
+                                    },
+                                    itemBuilder: (context, index) {
+                                      var document = state.messages[index];
 
-                                  typingCheckSenderID =
-                                      document.get('senderId');
+                                      typingCheckSenderID =
+                                          document.get('senderId');
 
-                                  return Column(
-                                    children: [
-                                      document.get('senderId') == _senderId ||
-                                              document.get('receiverId') ==
-                                                  _senderId
-                                          ? Container(
-                                              color: Colors.transparent,
-                                              alignment: Alignment.centerRight,
-                                              padding: EdgeInsets.only(
-                                                  right: size.width * numD03,
-                                                  left: size.width * numD03,
-                                                  top: size.width * numD03),
-                                              child: messageWidget(
-                                                  document, "sender", size),
-                                            )
-                                          : Container(
-                                              color: Colors.transparent,
-                                              alignment: Alignment.centerLeft,
-                                              padding: EdgeInsets.only(
-                                                  right: size.width * numD03,
-                                                  left: size.width * numD03,
-                                                  top: size.width * numD03),
-                                              child: messageWidget(
-                                                  document, "receiver", size),
-                                            ),
-                                    ],
-                                  );
-                                },
-                                reverse: true,
-                                shrinkWrap: true,
-                                itemCount: state.messages.length,
-                              )
-                            : showLoader(),
+                                      return Column(
+                                        children: [
+                                          document.get('senderId') ==
+                                                      _senderId ||
+                                                  document.get('receiverId') ==
+                                                      _senderId
+                                              ? Container(
+                                                  color: Colors.transparent,
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          size.width * numD03,
+                                                      left: size.width * numD03,
+                                                      top: size.width * numD03),
+                                                  child: messageWidget(
+                                                      document, "sender", size),
+                                                )
+                                              : Container(
+                                                  color: Colors.transparent,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          size.width * numD03,
+                                                      left: size.width * numD03,
+                                                      top: size.width * numD03),
+                                                  child: messageWidget(document,
+                                                      "receiver", size),
+                                                ),
+                                        ],
+                                      );
+                                    },
+                                    reverse: true,
+                                    shrinkWrap: true,
+                                    itemCount: state.messages.length,
+                                  )
+                                : Container(),
                       ),
                       Visibility(
                         visible: isTyping,
@@ -3119,19 +3149,22 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("room id Initialize Func: $roomId");
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      seeFirstMsg();
-      if (widget.message.isNotEmpty) {
-        commonValues(
-            messageType: "text",
-            messageInput: widget.message.trim(),
-            duration: '',
-            isAudioSelected: false);
-      }
       if (roomId.isEmpty) {
         debugPrint(":::::::::Inside Call Get Room Id Api:::::::::::");
         callGetRoomIdApi();
       } else {
         debugPrint(":::::::::Inside Room Id Exist:::::::::::");
+
+        seeFirstMsg();
+        if (widget.message.isNotEmpty && !_isInitialMessageSent) {
+          _isInitialMessageSent = true;
+          debugPrint("::::: Sending Initial Message :::::");
+          commonValues(
+              messageType: "text",
+              messageInput: widget.message.trim(),
+              duration: '',
+              isAudioSelected: false);
+        }
 
         _chatBloc.add(EnterChatRoomEvent(
             roomId: roomId,
@@ -3166,7 +3199,9 @@ class _ConversationScreenState extends State<ConversationScreen>
       }
     });
 
-    _showData = true;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   /// **************************
@@ -3498,37 +3533,15 @@ class _ConversationScreenState extends State<ConversationScreen>
   ///OnlineOffline-->
   void addOnlineOffline(bool isOnline, String myRoomId) {
     debugPrint("OnLine-->$isOnline");
+    if (_senderId.isEmpty) return;
 
-    FirebaseFirestore.instance.collection('OnlineOffline').get().then((value) {
-      debugPrint("OnlineOfflineData-->$value");
-      if (value.size == 0 || value.size > 0) {
-        debugPrint("InsideAddOnLine--Add-->");
-
-        FirebaseFirestore.instance
-            .collection('OnlineOffline')
-            .doc(_senderId)
-            .set({
-          'isOnline': isOnline,
-          'last_seen': DateTime.now().toUtc().toLocal(),
-          'userName': _senderName,
-          'senderImage': _senderProfilePic,
-          'roomId': myRoomId,
-        });
-      } else {
-        debugPrint("InsideAddOnLine--Update-->${value.size}");
-
-        FirebaseFirestore.instance
-            .collection('OnlineOffline')
-            .doc(_senderId)
-            .update({
-          'isOnline': isOnline,
-          'last_seen': DateTime.now().toUtc().toLocal(),
-          'userName': _senderName,
-          'senderImage': _senderProfilePic,
-          'roomId': myRoomId,
-        });
-      }
-    });
+    FirebaseFirestore.instance.collection('OnlineOffline').doc(_senderId).set({
+      'isOnline': isOnline,
+      'last_seen': DateTime.now().toUtc().toLocal(),
+      'userName': _senderName,
+      'senderImage': _senderProfilePic,
+      'roomId': myRoomId,
+    }, SetOptions(merge: true));
   }
 
   Future<void> seeMsg() async {

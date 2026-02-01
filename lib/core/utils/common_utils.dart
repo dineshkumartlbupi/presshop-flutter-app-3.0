@@ -32,11 +32,32 @@ bool isKeyEmptyMap(Map<String, dynamic> data, String key) {
 }
 
 String fixS3Url(String url) {
+  try {
+    Uri uri = Uri.parse(url);
+    String host = uri.host;
+
+    if (host.contains(".s3.") && host.contains("amazonaws.com")) {
+      final hostParts = host.split(".s3.");
+      if (hostParts.length == 2) {
+        final bucketName = hostParts[0];
+        final regionAndDomain = hostParts[1];
+
+        if (bucketName.contains('.')) {
+          // Convert to path-style: host = s3.region.amazonaws.com, path = /bucket/...
+          String newHost = "s3.$regionAndDomain";
+          String newPath = "/$bucketName${uri.path}";
+          return uri.replace(host: newHost, path: newPath).toString();
+        }
+      }
+    }
+  } catch (e) {
+    debugPrint("Error in fixS3Url: $e");
+  }
+
+  // Legacy/Specific fix
   if (url.contains("presshop3.0.s3.eu-west-2.amazonaws.com")) {
     return url.replaceFirst("presshop3.0.s3.eu-west-2.amazonaws.com",
         "s3.eu-west-2.amazonaws.com/presshop3.0");
-  } else if (url.contains("s3.eu-west-2.amazonaws.com/presshop3.0")) {
-    return url;
   }
   return url;
 }

@@ -30,13 +30,13 @@ class LeadershipTableWidget extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return SizedBox(
-      height: size.height * numD25,
+      height: size.height * numD30,
       width: double.infinity,
       child: Stack(
         children: [
           // LEFT (2nd place)
           Positioned(
-            top: size.height * numD045,
+            top: size.height * numD02,
             left: 0,
             child: profileImageWidget(
               isLeader: false,
@@ -79,7 +79,7 @@ class LeadershipTableWidget extends StatelessWidget {
 
           // RIGHT (3rd place)
           Positioned(
-            top: size.height * numD08,
+            top: size.height * numD05,
             right: 0,
             child: profileImageWidget(
               isLeader: false,

@@ -108,7 +108,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markerId: MarkerId(incident.id),
         position: incident.position,
         icon: icon,
-        infoWindow: InfoWindow(title: incident.title ?? 'New Incident'),
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
@@ -142,7 +141,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markerId: MarkerId(incident.id),
         position: incident.position,
         icon: icon,
-        infoWindow: InfoWindow(title: incident.title ?? 'Updated Incident'),
         onTap: () {
           add(SetSelectedIncidentEvent(incident));
         },
@@ -164,12 +162,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     GetCurrentLocationEvent event,
     Emitter<MapState> emit,
   ) async {
-    // emit(state.copyWith(isLoadingNews: true)); // Example loading state
     final result = await getCurrentLocation(NoParams());
     await result.fold(
       (failure) async {
-        // Fallback to a default location (e.g., London or previous known location)
-        // so the map can load even if location fails.
         final defaultLocation = const LatLng(51.5074, -0.1278); // London
         print("Using default location due to error: ${failure.message}");
 
@@ -246,17 +241,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           geodesic: true,
         );
 
-        // Calculate midpoint
         LatLng? midpoint;
         if (routeInfo.points.isNotEmpty) {
           final midIndex = routeInfo.points.length ~/ 2;
           midpoint = routeInfo.points[midIndex];
         }
-
-        // Create Markers
-        // Note: For now using default markers to simplify migration.
-        // Ideally should use markerService.bitmapFromIncidentAsset like Controller did.
-        // If markerService is available, we can try to use it.
 
         BitmapDescriptor startIcon = BitmapDescriptor.defaultMarker;
         BitmapDescriptor endIcon =
@@ -278,17 +267,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         final startMarker = Marker(
           markerId: const MarkerId('start'),
           position: event.start,
-          infoWindow: const InfoWindow(title: 'Start Location'),
           icon: startIcon,
         );
 
         final destinationMarker = Marker(
           markerId: const MarkerId('destination'),
           position: event.end,
-          infoWindow: InfoWindow(
-            title: 'Destination',
-            snippet: routeInfo.formattedInfo,
-          ),
           icon: endIcon,
         );
 
@@ -359,8 +343,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
             return Incident(
                 id: news.id,
-                markerType: 'news', // or appropriate type
-                type: 'news',
+                markerType: news.markerType ?? 'news',
+                type: news.type ?? 'news',
                 position: LatLng(lat, lng),
                 address: news.location,
                 time: news.createdAt,
@@ -368,18 +352,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 alertType: 'News',
                 image: news.mediaUrl,
                 description: news.description,
-                title: news.title);
+                title: news.title,
+                mediaType: news.mediaType);
           }).toList();
 
           final List<Future<Marker>> markerFutures =
               incidents.map((incident) async {
             BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
-            if (incident.markerType == 'news' ||
+            if (incident.markerType == 'icon') {
+              String assetPath = markerService.markerIcons[incident.type] ??
+                  markerService.markerIcons['accident']!;
+              icon = await markerService.bitmapResize(assetPath, width: 50);
+            } else if (incident.markerType == 'news' ||
                 incident.markerType == 'content') {
               try {
-                icon = await markerService
-                    .createContentMarker(incident.image ?? '');
+                String overlayIcon = incident.mediaType == 'video'
+                    ? 'assets/markers/video-icon.png'
+                    : 'assets/markers/image-icon.png';
+                icon = await markerService.createContentMarker(
+                  incident.image ?? '',
+                  size: 110, // Slightly smaller than 120 for better fit
+                  overlayIcon: overlayIcon,
+                );
               } catch (e) {
                 print(
                     "DEBUG: Failed to load image for marker ${incident.id}, using default. Error: $e");
@@ -392,7 +387,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               markerId: MarkerId(incident.id),
               position: incident.position,
               icon: icon,
-              infoWindow: InfoWindow(title: incident.title ?? 'News'),
               onTap: () {
                 add(SetSelectedIncidentEvent(incident));
               },
@@ -550,7 +544,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       position: event.position,
       icon: BitmapDescriptor.defaultMarkerWithHue(
           event.isOrigin ? BitmapDescriptor.hueGreen : BitmapDescriptor.hueRed),
-      infoWindow: InfoWindow(title: event.address ?? 'Selected Location'),
     );
 
     emit(state.copyWith(
@@ -683,8 +676,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             markerId: MarkerId(incident.id),
             position: incident.position,
             icon: icon,
-            infoWindow: InfoWindow(
-                title: incident.title ?? incident.type ?? 'Incident'),
             onTap: () {
               add(SetSelectedIncidentEvent(incident));
             },

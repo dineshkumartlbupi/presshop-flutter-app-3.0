@@ -8,7 +8,7 @@ import '../../domain/entities/avatar.dart';
 import '../models/user_profile_response.dart';
 
 abstract class ProfileRemoteDataSource {
-  Future<UserProfileModel> getProfile(String userId);
+  Future<UserProfileModel> getProfile(String userId, {bool showLoader = true});
   Future<UserProfileModel> updateProfile(Map<String, dynamic> data);
   Future<String> uploadProfileImage(String imagePath);
   Future<void> changePassword(String oldPassword, String newPassword);
@@ -22,12 +22,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   ProfileRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<UserProfileModel> getProfile(String userId) async {
+  Future<UserProfileModel> getProfile(String userId,
+      {bool showLoader = true}) async {
     print("🔍 DEBUG: getProfile called with userId: '$userId'");
     try {
       final response = await apiClient.get(
         ApiConstantsNew.profile.myProfile,
         queryParameters: {"userId": userId},
+        showLoader: showLoader,
       );
       print("🔍 DEBUG: API Response Status: ${response.statusCode}");
       print("🔍 DEBUG: API Response Data: ${response.data}");
@@ -130,9 +132,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
-        if (data['code'] == 200) {
+        if (data['code'] == 200 || data['success'] == true) {
           return;
         }
         throw ServerFailure(
@@ -147,8 +149,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<bool> checkUserName(String username) async {
     try {
-      final response =
-          await apiClient.get("${ApiConstantsNew.auth.checkUserName}$username");
+      final response = await apiClient.get(
+        "${ApiConstantsNew.auth.checkUserName}$username",
+        showLoader: false,
+      );
       if (response.statusCode == 200) {
         final data = response.data;
         return data['userNameExist'] ?? false;
@@ -162,7 +166,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<List<AvatarModel>> getAvatars() async {
     try {
-      final response = await apiClient.get(ApiConstantsNew.profile.getAvatars);
+      final response = await apiClient.get(ApiConstantsNew.profile.getAvatars,
+          showLoader: false);
       if (response.statusCode == 200) {
         final data = response.data;
         final List list = data['data'] ?? [];

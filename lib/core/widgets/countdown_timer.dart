@@ -449,6 +449,7 @@ class _TimerCountdownState extends State<TimerCountdown> {
             _seconds(context),
           ],
         );
+      // ignore: unreachable_switch_default
       default:
         return Row(
           mainAxisSize: MainAxisSize.min,

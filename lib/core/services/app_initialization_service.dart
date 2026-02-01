@@ -16,6 +16,9 @@ import 'package:presshop/core/services/local_notification_service.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/firebase_options.dart';
 import 'package:presshop/main.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:presshop/features/publish/data/models/tutorials_model.dart';
+import 'package:presshop/features/publish/data/models/category_data_model.dart';
 
 /// Service for handling app initialization tasks
 class AppInitializationService {
@@ -198,6 +201,25 @@ class AppInitializationService {
       debugPrint("✅ App open event logged");
     } catch (e) {
       debugPrint("❌ Facebook event logging error: $e");
+    }
+  }
+
+  /// Initialize Hive local database
+  static Future<void> initializeHive() async {
+    try {
+      await Hive.initFlutter();
+
+      // Register Adapters
+      Hive.registerAdapter(TutorialsModelAdapter());
+      Hive.registerAdapter(CategoryDataModelAdapter());
+
+      // Open Boxes
+      await Hive.openBox<TutorialsModel>('tutorials_box');
+      await Hive.openBox<CategoryDataModel>('categories_box');
+
+      debugPrint("✅ Hive initialized and boxes opened");
+    } catch (e) {
+      debugPrint("❌ Hive initialization error: $e");
     }
   }
 }

@@ -28,6 +28,10 @@ class Incident {
   final int? commentsCount;
   final int? sharesCount;
   final bool? isLiked;
+  final String? mediaType;
+  final String? temperature;
+  final String? wind;
+  final String? heading;
 
   Incident({
     required this.id,
@@ -57,6 +61,10 @@ class Incident {
     this.commentsCount,
     this.sharesCount,
     this.isLiked,
+    this.mediaType,
+    this.temperature,
+    this.wind,
+    this.heading,
   });
 
   factory Incident.fromMap(Map<String, dynamic> map) {
@@ -89,6 +97,10 @@ class Incident {
       commentsCount: map['commentsCount'],
       sharesCount: map['sharesCount'],
       isLiked: map['isLiked'],
+      mediaType: map['mediaType'],
+      temperature: map['temperature'],
+      wind: map['wind'],
+      heading: map['heading'],
     );
   }
 
@@ -133,6 +145,10 @@ class Incident {
       commentsCount: json['commentsCount'] ?? json['comments'],
       sharesCount: json['shares'] ?? json['shareCount'],
       isLiked: json['isLiked'] ?? json['is_liked'] ?? false,
+      mediaType: json['mediaType'] ?? json['media_type'],
+      temperature: json['temperature']?.toString(),
+      wind: json['wind']?.toString(),
+      heading: json['heading']?.toString(),
     );
   }
 
@@ -164,6 +180,10 @@ class Incident {
     int? commentsCount,
     int? sharesCount,
     bool? isLiked,
+    String? mediaType,
+    String? temperature,
+    String? wind,
+    String? heading,
   }) {
     return Incident(
       id: id ?? this.id,
@@ -193,6 +213,10 @@ class Incident {
       commentsCount: commentsCount ?? this.commentsCount,
       sharesCount: sharesCount ?? this.sharesCount,
       isLiked: isLiked ?? this.isLiked,
+      mediaType: mediaType ?? this.mediaType,
+      temperature: temperature ?? this.temperature,
+      wind: wind ?? this.wind,
+      heading: heading ?? this.heading,
     );
   }
 }

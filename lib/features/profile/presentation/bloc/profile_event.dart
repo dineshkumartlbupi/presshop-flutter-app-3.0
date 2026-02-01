@@ -7,7 +7,14 @@ abstract class ProfileEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchProfileEvent extends ProfileEvent {}
+class FetchProfileEvent extends ProfileEvent {
+  final bool showLoader;
+
+  const FetchProfileEvent({this.showLoader = true});
+
+  @override
+  List<Object> get props => [showLoader];
+}
 
 class UpdateProfileEvent extends ProfileEvent {
   final Map<String, dynamic> data;

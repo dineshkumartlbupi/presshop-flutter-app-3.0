@@ -93,7 +93,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               if (state.status == UploadDocumentsStatus.loading &&
                   state.instructions.isEmpty &&
                   state.uploadedDocuments.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
+                return const SizedBox.shrink();
               }
 
               return SafeArea(
