@@ -27,6 +27,8 @@ import 'package:presshop/features/content/data/models/my_content_data_model.dart
 import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 import 'package:presshop/core/api/api_client.dart';
 // import 'package:presshop/core/di/injection_container.dart';
@@ -61,7 +63,7 @@ class PublishContentScreen extends StatefulWidget {
 }
 
 class PublishContentScreenState extends State<PublishContentScreen>
-    with SingleTickerProviderStateMixin
+    with SingleTickerProviderStateMixin, AnalyticsPageMixin
     implements DashBoardInterface {
   var formKey = GlobalKey<FormState>();
   PlayerController controller = PlayerController(); // Initialise
@@ -194,6 +196,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
     setState(() {});
   }
+
+  @override
+  String get pageName => PageNames.publishContent;
 
   /// init-state
   @override

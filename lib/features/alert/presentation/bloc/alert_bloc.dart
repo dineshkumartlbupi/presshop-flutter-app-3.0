@@ -11,11 +11,14 @@ import 'alert_state.dart';
 
 class AlertBloc extends Bloc<AlertEvent, AlertState> {
   final ApiClient apiClient;
+  final Location location;
   int _limit = 10;
   int _offset = 0;
   bool _isFetching = false;
 
-  AlertBloc({required this.apiClient}) : super(const AlertState()) {
+  AlertBloc({required this.apiClient, Location? location})
+      : location = location ?? Location.instance,
+        super(const AlertState()) {
     on<FetchAlertsEvent>(_onFetchAlerts);
     on<RefreshAlertsEvent>(_onRefreshAlerts);
     on<LoadMoreAlertsEvent>(_onLoadMoreAlerts);
@@ -86,24 +89,23 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
   Future<void> _onGetCurrentLocation(
       GetCurrentLocationEvent event, Emitter<AlertState> emit) async {
     try {
-      bool serviceEnable = await Location.instance.serviceEnabled();
+      bool serviceEnable = await location.serviceEnabled();
       if (!serviceEnable) {
-        serviceEnable = await Location.instance.requestService();
+        serviceEnable = await location.requestService();
         if (!serviceEnable) {
           return;
         }
       }
 
-      PermissionStatus permissionGranted =
-          await Location.instance.hasPermission();
+      PermissionStatus permissionGranted = await location.hasPermission();
       if (permissionGranted == PermissionStatus.denied) {
-        permissionGranted = await Location.instance.requestPermission();
+        permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
           return;
         }
       }
 
-      LocationData loc = await Location.instance.getLocation();
+      LocationData loc = await location.getLocation();
       if (loc.latitude != null && loc.longitude != null) {
         emit(state.copyWith(
             currentLocation: LatLng(loc.latitude!, loc.longitude!)));

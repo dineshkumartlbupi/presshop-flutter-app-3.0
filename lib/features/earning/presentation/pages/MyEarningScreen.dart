@@ -19,6 +19,8 @@ import 'package:presshop/main.dart';
 import '../../../../features/account_settings/presentation/pages/contact_us_screen.dart';
 import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
 import '../../../../core/widgets/video_player_screen.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MyEarningScreen extends StatefulWidget {
   final bool openDashboard;
@@ -31,7 +33,7 @@ class MyEarningScreen extends StatefulWidget {
 }
 
 class _MyEarningScreenState extends State<MyEarningScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AnalyticsPageMixin {
   late Size size;
   TabController? _tabController;
   int _selectedTabbar = 0;
@@ -41,6 +43,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   String fromDate = "";
   String toDate = "";
+
+  @override
+  String get pageName => PageNames.myEarnings;
 
   @override
   void initState() {

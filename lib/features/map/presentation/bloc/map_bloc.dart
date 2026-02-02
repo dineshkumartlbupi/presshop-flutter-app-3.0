@@ -215,7 +215,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ));
         add(FetchNewsEvent(
             lat: location.latitude, lng: location.longitude, km: 10));
-        _fetchInitialIncidents(emit);
+        await _fetchInitialIncidents(emit);
       },
     );
   }
@@ -276,19 +276,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           icon: endIcon,
         );
 
+        final updatedMarkers = Set<Marker>.from(state.markers);
+        updatedMarkers.removeWhere((m) =>
+            m.markerId.value == 'destination' || m.markerId.value == 'start');
+        updatedMarkers.add(startMarker);
+        updatedMarkers.add(destinationMarker);
+
         emit(state.copyWith(
           routeInfo: routeInfo,
           polylines: {polyline},
           destination: event.end,
           routeMidpoint: midpoint,
-          markers: {
-            ...state.markers
-              ..removeWhere((m) =>
-                  m.markerId.value == 'destination' ||
-                  m.markerId.value == 'start'),
-            startMarker,
-            destinationMarker,
-          },
+          markers: updatedMarkers,
         ));
       },
     );

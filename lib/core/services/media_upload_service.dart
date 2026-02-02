@@ -8,6 +8,8 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/utils/app_logger.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
@@ -64,6 +66,7 @@ class MediaUploadService {
     }
 
     try {
+      AppLogger.info("Media upload started to $endUrl");
       log("Upload started: ${DateTime.now()}");
       debugPrint("Upload URL: $endUrl");
       // debugPrint("Upload Headers: ${dio.options.headers}"); // Headers handled by ApiClient
@@ -93,6 +96,11 @@ class MediaUploadService {
           localNotificationService.flutterLocalNotificationsPlugin,
           isDraft: jsonBody?['is_draft'] == 'true',
         );
+        AppLogger.trackEvent(EventNames.mediaUpload, parameters: {
+          'status': 'success',
+          'is_draft': jsonBody?['is_draft'] == 'true',
+          'file_count': filePathList.length + (additionalFiles?.length ?? 0),
+        });
         return true;
       } else {
         _showFailedNotification(
@@ -102,12 +110,7 @@ class MediaUploadService {
         return false;
       }
     } catch (e) {
-      debugPrint("Upload error: $e");
-      if (e is DioException) {
-        debugPrint("DioError Message: ${e.message}");
-        debugPrint("DioError Response: ${e.response?.data}");
-        debugPrint("DioError Status: ${e.response?.statusCode}");
-      }
+      AppLogger.error("Media upload error: $e", trackAnalytics: true);
       _showFailedNotification(
         localNotificationService.flutterLocalNotificationsPlugin,
       );

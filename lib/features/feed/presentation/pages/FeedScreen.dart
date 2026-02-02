@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
@@ -23,7 +25,8 @@ class FeedScreen extends StatefulWidget {
   }
 }
 
-class FeedScreenState extends State<FeedScreen> with MediaControllerMixin {
+class FeedScreenState extends State<FeedScreen>
+    with MediaControllerMixin, AnalyticsPageMixin {
   PageController pageController = PageController();
   ScrollController listController = ScrollController();
 
@@ -36,6 +39,9 @@ class FeedScreenState extends State<FeedScreen> with MediaControllerMixin {
   List<FilterModel> filterList = [];
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  @override
+  String get pageName => PageNames.feedScreen;
 
   @override
   void initState() {

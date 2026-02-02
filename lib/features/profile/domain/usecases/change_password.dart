@@ -10,7 +10,8 @@ class ChangePassword implements UseCase<void, ChangePasswordParams> {
 
   @override
   Future<Either<Failure, void>> call(ChangePasswordParams params) async {
-    return await repository.changePassword(params.oldPassword, params.newPassword);
+    return await repository.changePassword(
+        params.oldPassword, params.newPassword);
   }
 }
 
@@ -18,7 +19,7 @@ class ChangePasswordParams {
   final String oldPassword;
   final String newPassword;
 
-  ChangePasswordParams({
+  const ChangePasswordParams({
     required this.oldPassword,
     required this.newPassword,
   });

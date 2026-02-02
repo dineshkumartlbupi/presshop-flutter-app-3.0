@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class ApiClient {
   ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {
@@ -230,6 +231,12 @@ class ApiClient {
 
     // Use ApiErrorHandler to sanitize the error before passing it up
     final failure = ApiErrorHandler.handle(err);
+
+    AppLogger.error(
+      "API Error [${err.requestOptions.method}] ${err.requestOptions.path}: ${failure.message}",
+      trackAnalytics: true,
+    );
+
     final sanitizedError = DioException(
       requestOptions: err.requestOptions,
       response: err.response,

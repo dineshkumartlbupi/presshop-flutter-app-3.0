@@ -13,16 +13,23 @@ import 'package:presshop/main.dart'; // Globals
 import 'package:record/record.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final AudioRecorder _audioRecorder = AudioRecorder();
+  final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
+  final AudioRecorder _audioRecorder;
 
   StreamSubscription? _messagesSubscription;
   StreamSubscription? _chatListSubscription;
   StreamSubscription? _typingSubscription;
   StreamSubscription? _onlineStatusSubscription;
 
-  ChatBloc() : super(const ChatState()) {
+  ChatBloc({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+    AudioRecorder? audioRecorder,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _storage = storage ?? FirebaseStorage.instance,
+        _audioRecorder = audioRecorder ?? AudioRecorder(),
+        super(const ChatState()) {
     on<LoadChatListEvent>(_onLoadChatList);
     on<SearchUserEvent>(_onSearchUser);
     on<EnterChatRoomEvent>(_onEnterChatRoom);

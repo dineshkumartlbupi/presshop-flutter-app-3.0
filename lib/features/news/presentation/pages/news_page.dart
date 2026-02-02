@@ -18,6 +18,8 @@ import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
@@ -34,9 +36,12 @@ class NewsPage extends StatefulWidget {
   State<NewsPage> createState() => _NewsPageState();
 }
 
-class _NewsPageState extends State<NewsPage> {
+class _NewsPageState extends State<NewsPage> with AnalyticsPageMixin {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  @override
+  String get pageName => PageNames.newsPage;
 
   @override
   Widget build(BuildContext context) {
