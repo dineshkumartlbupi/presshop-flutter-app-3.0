@@ -25,28 +25,9 @@ const mediaThumbnailUrl = "https://dev-cdn.presshop.news/public/thumbnail/";
 
 // ==============================================================================
 // AUTHENTICATION & ONBOARDING
-// ==============================================================================
+// =============================================================================
 
-// const sendOtpUrl = "auth/sendOTP";
-
-// const verifyOtpUrl = "auth/verifyOTP";
-const registerUrl = "auth/registerHopper";
-const loginUrl = "auth/login";
-const socialLoginRegisterUrl = "auth/hopper/socialRegister";
-const socialExistUrl = "auth/hopper/socialLogin";
-const forgotPasswordUrl = "auth/hopper/forgotPassword";
-const resetPasswordUrl = "auth/hopper/resetPassword";
-const verifyForgotPasswordOTPUrl = "auth/hopper/verifyForgotPasswordOTP";
-const checkUserNameUrl = "admin/checkIfUserNameExist/:username";
-const checkEmailUrl = "admin/checkIfEmailExist/:email";
-const checkPhoneUrl = "admin/checkIfPhoneExist/:phone";
-const referralUrl = "auth/hopper/verifyReferralCode";
-const verifyReferredCodeUrl = "auth/hopper/verifyReferredCode";
 const appRefreshTokenUrl = "auth/refreshToken";
-const checkAppInstallFirstTimeIrNotUrl = "auth/isDeviceExist?device_id=";
-const checkAppVersionUrl = "hopper/check/version";
-const getLatestVersionUrl = "auth/getLatestVersion";
-
 // ==============================================================================
 // USER PROFILE & SETTINGS
 // ==============================================================================

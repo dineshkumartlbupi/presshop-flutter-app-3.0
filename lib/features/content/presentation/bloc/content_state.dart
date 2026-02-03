@@ -16,18 +16,64 @@ class ContentInitial extends ContentState {}
 class ContentLoading extends ContentState {}
 
 class MyContentLoaded extends ContentState {
-  final List<ContentItem> content;
-  final int currentPage;
-  final bool hasMore;
+  final List<ContentItem> allContent;
+  final List<ContentItem> myContent;
+  final int allPage;
+  final int myPage;
+  final bool hasMoreAll;
+  final bool hasMoreMy;
+  final String? errorMessage;
+  final bool isLoadingAll;
+  final bool isLoadingMy;
 
   const MyContentLoaded({
-    required this.content,
-    required this.currentPage,
-    this.hasMore = true,
+    this.allContent = const [],
+    this.myContent = const [],
+    this.allPage = 1,
+    this.myPage = 1,
+    this.hasMoreAll = true,
+    this.hasMoreMy = true,
+    this.errorMessage,
+    this.isLoadingAll = false,
+    this.isLoadingMy = false,
   });
 
   @override
-  List<Object> get props => [content, currentPage, hasMore];
+  List<Object> get props => [
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        errorMessage ?? '',
+        isLoadingAll,
+        isLoadingMy,
+      ];
+
+  MyContentLoaded copyWith({
+    List<ContentItem>? allContent,
+    List<ContentItem>? myContent,
+    int? allPage,
+    int? myPage,
+    bool? hasMoreAll,
+    bool? hasMoreMy,
+    String? errorMessage,
+    bool? isLoadingAll,
+    bool? isLoadingMy,
+  }) {
+    return MyContentLoaded(
+      allContent: allContent ?? this.allContent,
+      myContent: myContent ?? this.myContent,
+      allPage: allPage ?? this.allPage,
+      myPage: myPage ?? this.myPage,
+      hasMoreAll: hasMoreAll ?? this.hasMoreAll,
+      hasMoreMy: hasMoreMy ?? this.hasMoreMy,
+      errorMessage: errorMessage,
+      isLoadingAll: isLoadingAll ?? this.isLoadingAll,
+      isLoadingMy: isLoadingMy ?? this.isLoadingMy,
+    );
+  }
 }
 
 class ContentDetailLoaded extends ContentState {

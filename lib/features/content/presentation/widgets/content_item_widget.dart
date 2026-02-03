@@ -1,0 +1,395 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
+import 'package:presshop/features/content/domain/entities/content_item.dart';
+import 'package:presshop/main.dart';
+
+class ContentItemWidget extends StatelessWidget {
+  final ContentItem item;
+  final Size size;
+  final VoidCallback onTap;
+
+  const ContentItemWidget({
+    super.key,
+    required this.item,
+    required this.size,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.only(
+          left: size.width * numD03,
+          right: size.width * numD03,
+          top: size.width * numD03,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              spreadRadius: 2,
+              blurRadius: 1,
+            )
+          ],
+          borderRadius: BorderRadius.circular(size.width * numD04),
+        ),
+        child: Column(
+          children: [
+            MediaThumbnailWidget(item: item, size: size),
+            SizedBox(height: size.width * numD02),
+            _buildInfoRow(),
+            const Spacer(),
+            _buildStatusRow(),
+            SizedBox(height: size.width * numD02),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            item.status.toLowerCase() == "pending" ||
+                    item.status.toLowerCase() == "rejected"
+                ? item.description
+                : item.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: commonTextStyle(
+              size: size,
+              fontSize: size.width * numD03,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        SizedBox(width: size.width * numD01),
+        Image.asset(
+          (item.isExclusive ?? false)
+              ? "${iconsPath}ic_exclusive.png"
+              : "${iconsPath}ic_share.png",
+          height: (item.isExclusive ?? false)
+              ? size.width * numD03
+              : size.width * numD04,
+          color: colorTextFieldIcon,
+        )
+      ],
+    );
+  }
+
+  Widget _buildStatusRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildMetricsColumn(),
+        _buildPriceBadge(),
+      ],
+    );
+  }
+
+  Widget _buildMetricsColumn() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildMetricItem(
+          icon: "dollar1.png",
+          value: "${item.purchasedMediahouseCount} $sold",
+          isActive: item.purchasedMediahouseCount > 0,
+        ),
+        SizedBox(height: size.width * numD01),
+        _buildMetricItem(
+          icon: "dollar1.png",
+          value:
+              "${item.totalOffer} ${item.totalOffer > 1 ? '${offerText}s' : offerText}",
+          isActive: item.totalOffer > 0,
+        ),
+        SizedBox(height: size.width * numD01),
+        _buildMetricItem(
+          icon: "ic_view.png",
+          value:
+              "${item.totalView} ${item.totalView > 1 ? '${viewsText}s' : viewsText}",
+          isActive: item.totalView > 0,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetricItem({
+    required String icon,
+    required String value,
+    required bool isActive,
+  }) {
+    return Row(
+      children: [
+        Image.asset(
+          "$iconsPath$icon",
+          height: size.width * numD025,
+          width: size.width * numD025,
+          color: isActive ? colorThemePink : Colors.grey,
+        ),
+        SizedBox(width: size.width * numD014),
+        Text(
+          value,
+          style: commonTextStyle(
+            size: size,
+            fontSize: size.width * numD026,
+            color: isActive ? colorThemePink : Colors.grey,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPriceBadge() {
+    bool isPendingOrRejected = item.status.toLowerCase() == "pending" ||
+        item.status.toLowerCase() == "rejected";
+
+    if (isPendingOrRejected) {
+      return Container(
+        height: size.height * numD036,
+        width: size.width * numD17,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(size.width * numD015),
+        ),
+        child: Center(
+          child: Text(
+            item.status.toLowerCase() == "pending"
+                ? "Under\nReview"
+                : "Not\nApproved",
+            textAlign: TextAlign.center,
+            style: commonTextStyle(
+              size: size,
+              fontSize: size.width * numD024,
+              color: Colors.white,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      height: size.width * numD08,
+      padding: EdgeInsets.symmetric(
+        horizontal: size.width * numD015,
+        vertical: size.width * numD01,
+      ),
+      decoration: BoxDecoration(
+        color: !item.paidStatus ? colorThemePink : colorLightGrey,
+        borderRadius: BorderRadius.circular(size.width * numD015),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: item.paidStatus && !item.isPaidStatusToHopper
+                ? EdgeInsets.symmetric(horizontal: size.width * numD028)
+                : EdgeInsets.zero,
+            child: Text(
+              !item.paidStatus
+                  ? item.status.toCapitalized()
+                  : item.paidStatus && item.isPaidStatusToHopper
+                      ? "Received"
+                      : "Sold",
+              textAlign: TextAlign.center,
+              style: commonTextStyle(
+                size: size,
+                fontSize: size.width * numD022,
+                color: !item.paidStatus ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Text(
+            "$currencySymbol${formatDouble(double.tryParse(item.price ?? '0') ?? 0)}",
+            textAlign: TextAlign.center,
+            style: commonTextStyle(
+              size: size,
+              fontSize: size.width * numD022,
+              color: !item.paidStatus ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MediaThumbnailWidget extends StatelessWidget {
+  final ContentItem item;
+  final Size size;
+
+  const MediaThumbnailWidget({
+    super.key,
+    required this.item,
+    required this.size,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size.width * numD04),
+      child: Stack(
+        children: [
+          _buildMediaContent(),
+          if (item.mediaUrls.isNotEmpty)
+            Image.asset(
+              "${commonImagePath}watermark1.png",
+              height: size.width * numD29,
+              width: size.width,
+              fit: BoxFit.cover,
+            ),
+          Positioned(
+            right: size.width * numD02,
+            top: size.width * numD02,
+            child: _buildCountBadge(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMediaContent() {
+    if (item.mediaUrls.isEmpty) {
+      return Container(
+        height: size.width * numD30,
+        width: size.width,
+        decoration: const BoxDecoration(color: colorLightGrey),
+        padding: EdgeInsets.all(size.width * numD06),
+        child: Image.asset(
+          "${commonImagePath}rabbitLogo.png",
+          height: size.width * numD07,
+          width: size.width * numD07,
+        ),
+      );
+    }
+
+    final isVideo = item.mediaType == 'video' ||
+        (item.mediaList.isNotEmpty &&
+            item.mediaList.first.mediaType == 'video');
+
+    if (isVideo && item.mediaList.isNotEmpty) {
+      return VideoThumbnailWidget(
+        videoUrl: getMediaImageUrl(item.mediaUrls.first, isVideo: true),
+        thumbnailUrl: item.mediaList.first.thumbnailUrl.isNotEmpty
+            ? fixS3Url(item.mediaList.first.thumbnailUrl)
+            : null,
+        width: size.width,
+        height: size.width * numD30,
+        fit: BoxFit.cover,
+      );
+    }
+
+    return _showImage(item.mediaType ?? 'photo', item.mediaUrls.first);
+  }
+
+  Widget _buildCountBadge() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: size.width * numD015,
+        vertical: size.width * 0.005,
+      ),
+      decoration: BoxDecoration(
+        color: colorLightGreen.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(size.width * numD015),
+      ),
+      child: Center(
+        child: Text(
+          "${item.mediaUrls.length} ",
+          textAlign: TextAlign.center,
+          style: commonTextStyle(
+            size: size,
+            fontSize: size.width * numD038,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _showImage(String type, String url) {
+    switch (type) {
+      case "audio":
+        return _buildPlaceholder(
+          color: colorThemePink,
+          child: Icon(
+            Icons.play_arrow_rounded,
+            size: size.width * numD18,
+            color: Colors.white,
+          ),
+        );
+      case "pdf":
+        return _buildPlaceholder(
+          child: Image.asset(
+            "${dummyImagePath}pngImage.png",
+            width: size.width * numD03,
+            height: size.height * numD03,
+          ),
+        );
+      case "doc":
+        return _buildPlaceholder(
+          child: Image.asset(
+            "${dummyImagePath}doc_black_icon.png",
+            width: size.width * numD03,
+            height: size.height * numD03,
+          ),
+        );
+      default:
+        return CachedNetworkImage(
+          imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),
+          height: size.width * numD30,
+          width: size.width,
+          fit: BoxFit.cover,
+          placeholder: (_, __) => _buildImagePlaceholder(),
+          errorWidget: (_, __, ___) => _buildImagePlaceholder(),
+        );
+    }
+  }
+
+  Widget _buildPlaceholder({Color? color, required Widget child}) {
+    return Container(
+      height: size.width * numD30,
+      width: size.width,
+      padding: EdgeInsets.all(size.width * numD04),
+      decoration: BoxDecoration(
+        color: color,
+        border: Border.all(color: colorHint),
+        borderRadius: BorderRadius.circular(size.width * numD04),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size.width * numD04),
+        child: Padding(
+          padding: EdgeInsets.all(size.width * numD03),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      alignment: Alignment.topCenter,
+      height: size.width * numD30,
+      width: size.width,
+      child: Center(
+        child: Image.asset(
+          "${commonImagePath}rabbitLogo.png",
+          height: size.width * numD15,
+          width: size.width * numD15,
+        ),
+      ),
+    );
+  }
+}

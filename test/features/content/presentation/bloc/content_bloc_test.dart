@@ -133,7 +133,7 @@ void main() {
       expect: () => [
         ContentLoading(),
         const MyContentLoaded(
-            content: [tContentItem], currentPage: 1, hasMore: false),
+            allContent: [tContentItem], allPage: 1, hasMoreAll: false),
       ],
     );
 

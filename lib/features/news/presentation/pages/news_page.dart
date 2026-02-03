@@ -36,7 +36,11 @@ class NewsPage extends StatefulWidget {
   State<NewsPage> createState() => _NewsPageState();
 }
 
-class _NewsPageState extends State<NewsPage> with AnalyticsPageMixin {
+class _NewsPageState extends State<NewsPage>
+    with AnalyticsPageMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -45,15 +49,21 @@ class _NewsPageState extends State<NewsPage> with AnalyticsPageMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var size = MediaQuery.of(context).size;
 
     return BlocProvider(
-      create: (_) => sl<NewsBloc>()
-        ..add(GetAggregatedNewsEvent(
-          lat: widget.latitude ?? 0.0,
-          lng: widget.longitude ?? 0.0,
-          km: 50,
-        )),
+      create: (_) {
+        final bloc = sl<NewsBloc>();
+        if (bloc.state.newsList.isEmpty) {
+          bloc.add(GetAggregatedNewsEvent(
+            lat: widget.latitude ?? 0.0,
+            lng: widget.longitude ?? 0.0,
+            km: 50,
+          ));
+        }
+        return bloc;
+      },
       child: BlocConsumer<NewsBloc, NewsState>(
         listener: (context, state) {
           if (!state.isLoading) {

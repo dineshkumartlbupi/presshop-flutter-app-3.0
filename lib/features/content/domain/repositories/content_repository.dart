@@ -6,8 +6,13 @@ import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 
 abstract class ContentRepository {
-  Future<Either<Failure, List<ContentItem>>> getMyContent(
-      {int page = 1, int limit = 20, Map<String, dynamic> params = const {}});
+  Future<Either<Failure, List<ContentItem>>> getMyContent({
+    int page = 1,
+    int limit = 20,
+    Map<String, dynamic> params = const {},
+    bool showLoader = true,
+    String type = 'my',
+  });
   Future<Either<Failure, ContentItem>> publishContent(
       Map<String, dynamic> data);
   Future<Either<Failure, ContentItem>> saveDraft(Map<String, dynamic> data);

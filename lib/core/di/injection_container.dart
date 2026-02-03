@@ -1,4 +1,7 @@
 import 'package:get_it/get_it.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/network_info.dart';
@@ -348,6 +351,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => InternetConnectionChecker());
   sl.registerLazySingleton(() => http.Client());
 
+  sl.registerLazySingleton(() => FirebaseAnalytics.instance);
+  sl.registerLazySingleton(() => FirebaseCrashlytics.instance);
+  sl.registerLazySingleton(() => GoogleSignIn(scopes: ['email']));
+
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => ApiClient(sl(), sl(), sl()));
@@ -378,7 +385,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<TermsRepository>(
-    () => TermsRepository(sl()),
+    () => TermsRepository(sl<ApiClient>()),
   );
 
   sl.registerLazySingleton<DashboardRepository>(

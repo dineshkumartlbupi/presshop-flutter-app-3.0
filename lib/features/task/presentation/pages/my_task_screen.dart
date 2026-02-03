@@ -33,7 +33,13 @@ class MyTaskScreen extends StatefulWidget {
 }
 
 class MyTaskScreenState extends State<MyTaskScreen>
-    with TickerProviderStateMixin, AnalyticsPageMixin {
+    with
+        TickerProviderStateMixin,
+        AnalyticsPageMixin,
+        AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   // Analytics Mixin Requirements
   @override
   String get pageName => PageNames.myTasks;
@@ -138,6 +144,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     size = MediaQuery.of(context).size;
     return BlocProvider(
       create: (context) {
@@ -228,19 +235,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         ),
                       ],
                       onTap: (index) {
-                        if (index == 0) {
-                          context.read<TaskBloc>().add(FetchAllTasksEvent(
-                              offset: 0,
-                              filterParams: _currentPosition != null
-                                  ? {
-                                      "latitude": _currentPosition!.latitude,
-                                      "longitude": _currentPosition!.longitude
-                                    }
-                                  : null));
-                        } else if (index == 1) {
-                          context.read<TaskBloc>().add(FetchLocalTasksEvent(
-                              filterParams: getFilterParams()));
-                        }
+                        // Tapping the tab changes the index, BlocBuilder will handle fetching if empty.
+                        // We removed explicit add(Fetch...) here to prevent redundant calls on every tap.
+                        setState(() {});
                       },
                     ),
                   ),
@@ -250,8 +247,12 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   ),
                   Flexible(child: BlocBuilder<TaskBloc, TaskState>(
                     builder: (context, state) {
-                      // Check if we need to fetch local tasks
-                      if (_tabController.index == 1 &&
+                      // Check if we need to fetch tasks
+                      if (_tabController.index == 0 &&
+                          state.allTasks.isEmpty &&
+                          state.allTasksStatus == TaskStatus.initial) {
+                        _fetchLocationAndLoadTasks(context.read<TaskBloc>());
+                      } else if (_tabController.index == 1 &&
                           state.localTasks.isEmpty &&
                           state.localTasksStatus == TaskStatus.initial) {
                         context.read<TaskBloc>().add(FetchLocalTasksEvent(
@@ -313,21 +314,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
   }
 
   Widget showLocalTasksDataWidget(List<Task> taskList, BuildContext context) {
-    if (taskList.isEmpty) {
-      // Simplified check, loading handled by BlocBuilder state if needed, or overlay.
-      // Actually BlocBuilder handles loading state too if we want to show full page loader.
-      // But typically SmartRefresher handles list updates.
-      // If initial load and empty, we might want to show loader.
-      // Let's rely on passed list.
-      // If list is empty and state is loading, return loader?
-      // Since specific logic was removed from build, we rely on _onRefresh calling events.
-      // We can check state in build.
-    }
-    if (taskList.isEmpty) {
-      final state = context.read<TaskBloc>().state;
-      if (state.localTasksStatus == TaskStatus.loading) {
-        return showLoader();
-      }
+    final state = context.watch<TaskBloc>().state;
+    if (taskList.isEmpty && state.localTasksStatus == TaskStatus.loading) {
+      return const SizedBox.shrink();
     }
     return taskList.isNotEmpty
         ? SmartRefresher(
@@ -757,6 +746,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
   }
 
   Widget allTaskWidget(List<TaskAll> allTaskList, BuildContext context) {
+    final state = context.watch<TaskBloc>().state;
+    if (allTaskList.isEmpty && state.allTasksStatus == TaskStatus.loading) {
+      return const SizedBox.shrink();
+    }
     return allTaskList.isNotEmpty
         ? SmartRefresher(
             controller: _refreshController,

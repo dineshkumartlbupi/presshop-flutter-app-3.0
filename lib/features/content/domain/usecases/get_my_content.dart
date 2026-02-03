@@ -12,13 +12,26 @@ class GetMyContent implements UseCase<List<ContentItem>, GetMyContentParams> {
   Future<Either<Failure, List<ContentItem>>> call(
       GetMyContentParams params) async {
     return await repository.getMyContent(
-        page: params.page, limit: params.limit, params: params.params);
+      page: params.page,
+      limit: params.limit,
+      params: params.params,
+      showLoader: params.showLoader,
+      type: params.type,
+    );
   }
 }
 
 class GetMyContentParams {
-  GetMyContentParams({this.page = 1, this.limit = 20, this.params = const {}});
+  GetMyContentParams({
+    this.page = 1,
+    this.limit = 20,
+    this.params = const {},
+    this.showLoader = true,
+    this.type = 'my',
+  });
   final int page;
   final int limit;
   final Map<String, dynamic> params;
+  final bool showLoader;
+  final String type;
 }

@@ -17,6 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
+import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (_) => sl<TaskBloc>()),
           BlocProvider(create: (_) => sl<EarningBloc>()),
+          BlocProvider(create: (_) => sl<ContentBloc>()),
         ],
         child: MaterialApp(
           navigatorKey: navigatorKey,
