@@ -4,6 +4,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 
+// ignore: must_be_immutable
 class DocumentView extends StatefulWidget {
   DocumentView({super.key, required this.path});
   String path = '';
