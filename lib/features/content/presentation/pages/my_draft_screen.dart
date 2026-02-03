@@ -813,8 +813,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     }
 
     try {
-      final response =
-          await sl<ApiClient>().get(myDraftUrl, queryParameters: params);
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.content.draftContent, queryParameters: params);
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -870,8 +870,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     };
 
     try {
-      final response =
-          await sl<ApiClient>().patch(removeFromDraftContentAPI, data: map);
+      final response = await sl<ApiClient>()
+          .patch(ApiConstantsNew.content.removeFromDraft, data: map);
       log("reqRemoveFromDraftContentAPI===> ${response.data}");
     } catch (e) {
       debugPrint("ApiError::::$e");

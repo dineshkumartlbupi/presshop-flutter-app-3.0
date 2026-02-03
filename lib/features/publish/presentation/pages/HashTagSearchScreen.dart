@@ -361,8 +361,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     }
 
     try {
-      final response =
-          await sl<ApiClient>().get(getHashTagsUrl, queryParameters: params);
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.content.getTags, queryParameters: params);
 
       if (response.statusCode == 200) {
         var list = response.data;
@@ -398,8 +398,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
     }
 
     try {
-      final response =
-          await sl<ApiClient>().get(getHashTagsUrl, queryParameters: params);
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.content.getTags, queryParameters: params);
 
       if (response.statusCode == 200) {
         var list = response.data;
@@ -446,7 +446,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
 
     try {
       final response = await sl<ApiClient>().post(
-        addHashTagsUrl,
+        ApiConstantsNew.content.addTags,
         data: params,
       );
 

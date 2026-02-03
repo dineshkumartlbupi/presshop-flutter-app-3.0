@@ -611,7 +611,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
 
   Future<void> callGetActiveAdmin() async {
     try {
-      final response = await _apiClient.get(getAdminListUrl);
+      final response = await _apiClient.get(ApiConstantsNew.misc.adminList);
 
       debugPrint("getAdminListReq Success: ${response.data}");
       var dataModel = response.data["data"] as List;

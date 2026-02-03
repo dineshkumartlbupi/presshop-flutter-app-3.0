@@ -1062,8 +1062,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 height: size.width * numD12,
                 child: GooglePlaceAutoCompleteTextField(
                   textEditingController: postCodeController,
-                  googleAPIKey:
-                      Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                  googleAPIKey: Platform.isIOS
+                      ? ApiConstantsNew.config.appleMapApiKey
+                      : ApiConstantsNew.config.googleMapApiKey,
                   isCrossBtnShown: false,
                   boxDecoration: BoxDecoration(
                       color: Colors.white,
@@ -1175,8 +1176,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 height: size.width * numD12,
                 child: GooglePlaceAutoCompleteTextField(
                   textEditingController: addressController,
-                  googleAPIKey:
-                      Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                  googleAPIKey: Platform.isIOS
+                      ? ApiConstantsNew.config.appleMapApiKey
+                      : ApiConstantsNew.config.googleMapApiKey,
                   isCrossBtnShown: false,
                   boxDecoration: BoxDecoration(
                       color: Colors.white,
@@ -1505,7 +1507,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         queryParameters: {"userId": userId},
         showLoader: false,
       );
-      print("myProfileUrl: $myProfileUrl");
+      // print("myProfileUrl: $myProfileUrl");
 
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1651,7 +1653,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Future<String?> setIsClickForBeansActivation() async {
     try {
-      final response = await sl<ApiClient>().post(studentBeansActivationUrl);
+      final response = await sl<ApiClient>().post(
+        ApiConstantsNew.profile.studentBeansActivation,
+      );
 
       if (response.statusCode == 200) {
         var map = response.data;

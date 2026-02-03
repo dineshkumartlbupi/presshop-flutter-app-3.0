@@ -2,6 +2,7 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/core/widgets/common_widgets.dart';
 
 import '../models/admin_contact_info_model.dart';
 import '../../../publish/data/models/category_data_model.dart';
@@ -25,7 +26,7 @@ class AccountSettingsRemoteDataSourceImpl
   Future<bool> deleteAccount(Map<String, String> reason) async {
     try {
       final response = await apiClient.post(
-        deleteAccountUrl,
+        ApiConstantsNew.profile.deleteAccount,
         data: reason,
       );
 
@@ -51,7 +52,7 @@ class AccountSettingsRemoteDataSourceImpl
   @override
   Future<AdminContactInfoModel> getAdminContactInfo() async {
     try {
-      final response = await apiClient.get(adminDetailAPI);
+      final response = await apiClient.get(ApiConstantsNew.misc.adminDetails);
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is String) {}
@@ -67,7 +68,7 @@ class AccountSettingsRemoteDataSourceImpl
   Future<List<FAQModel>> getFAQs(String category, int offset, int limit) async {
     try {
       final response = await apiClient.get(
-        getAllCmsUrl,
+        ApiConstantsNew.misc.generalMgmt,
         queryParameters: {
           'category': category.toLowerCase(),
           'offset': offset,
@@ -102,7 +103,7 @@ class AccountSettingsRemoteDataSourceImpl
       String category, int offset, int limit) async {
     try {
       final response = await apiClient.get(
-        priceTipsAPI,
+        ApiConstantsNew.payments.priceTips,
         queryParameters: {
           'category': category,
           'offset': offset,
@@ -129,7 +130,7 @@ class AccountSettingsRemoteDataSourceImpl
   Future<List<CategoryDataModel>> getFAQCategories(String type) async {
     try {
       final response = await apiClient.get(
-        getHopperCategory,
+        ApiConstantsNew.content.hopperCategory,
         queryParameters: {'type': type},
       );
 

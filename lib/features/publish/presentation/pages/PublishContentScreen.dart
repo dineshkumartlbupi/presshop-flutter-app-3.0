@@ -3198,8 +3198,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
     };
 
     try {
-      final response =
-          await sl<ApiClient>().patch(removeFromDraftContentAPI, data: map);
+      final response = await sl<ApiClient>()
+          .patch(ApiConstantsNew.content.removeFromDraft, data: map);
       if (response.statusCode == 200) {
         log("reqRemoveFromDraftContentAPI===> ${response.data}");
         callCheckOnboardingCompleteOrNotApi();
@@ -3229,7 +3229,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
 
     try {
-      final response = await sl<ApiClient>().get(getHashTagsUrl,
+      final response = await sl<ApiClient>().get(
+          ApiConstantsNew.content.getTags,
           queryParameters: searchParam.trim().isNotEmpty ? params : null);
 
       if (response.statusCode == 200) {
@@ -3401,7 +3402,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
     debugPrint("LocalMedia: ${filesPath.length}");
     log("AddContent Params: $params");
-    log("AddContent URL: $addContentUrl");
+    log("AddContent URL: ${ApiConstantsNew.content.addContent}");
 
     Map<String, String> additionalFiles = {};
     if (audioPath.isNotEmpty) {
@@ -3409,7 +3410,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
 
     return await uploadMediaUsingDio(
-      addContentUrl,
+      ApiConstantsNew.content.addContent,
       params,
       filesPath,
       "images",
@@ -3426,8 +3427,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
     debugPrint("Checking onboarding status API called");
 
     try {
-      final response =
-          await sl<ApiClient>().get(checkOnboardingCompleteOrNotUrl);
+      final response = await sl<ApiClient>().get(
+        ApiConstantsNew.profile.onboardingStatus,
+        showLoader: false,
+      );
       var data = response.data;
       if (data is String) data = jsonDecode(data);
       debugPrint("Onboarding response: $data");

@@ -47,7 +47,9 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }) async {
     try {
       final queryParams = {'page': page, 'limit': limit, ...params};
-      final url = type == 'my' ? myContentUrl : allContentUrl;
+      final url = type == 'my'
+          ? ApiConstantsNew.content.myContent
+          : ApiConstantsNew.content.allContent;
       final response = await apiClient.get(
         url,
         queryParameters: queryParams,
@@ -144,10 +146,15 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             await MultipartFile.fromFile(mediaPaths[i]),
           ));
         }
-        response =
-            await apiClient.multipartPost(uploadContentUrl, formData: formData);
+        response = await apiClient.multipartPost(
+          ApiConstantsNew.content.aggregatedNewsDetail,
+          formData: formData,
+        );
       } else {
-        response = await apiClient.post(uploadContentUrl, data: data);
+        response = await apiClient.post(
+          ApiConstantsNew.content.uploadMedia,
+          data: data,
+        );
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -184,10 +191,15 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             await MultipartFile.fromFile(mediaPaths[i]),
           ));
         }
-        response =
-            await apiClient.multipartPost(uploadContentUrl, formData: formData);
+        response = await apiClient.multipartPost(
+          ApiConstantsNew.content.uploadMedia,
+          formData: formData,
+        );
       } else {
-        response = await apiClient.post(uploadContentUrl, data: data);
+        response = await apiClient.post(
+          ApiConstantsNew.content.uploadMedia,
+          data: data,
+        );
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -207,8 +219,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<ContentItemModel> updateContent(
       String contentId, Map<String, dynamic> data) async {
     try {
-      final response =
-          await apiClient.put('$uploadContentUrl/$contentId', data: data);
+      final response = await apiClient
+          .put('${ApiConstantsNew.content.uploadMedia}/$contentId', data: data);
 
       if (response.statusCode == 200) {
         final resData = response.data;
@@ -227,7 +239,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<void> deleteContent(String contentId) async {
     try {
-      final response = await apiClient.delete('$uploadContentUrl/$contentId');
+      final response = await apiClient
+          .delete('${ApiConstantsNew.content.uploadMedia}/$contentId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -253,8 +266,9 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         ));
       }
 
-      final response =
-          await apiClient.multipartPost(uploadContentUrl, formData: formData);
+      final response = await apiClient.multipartPost(
+          ApiConstantsNew.content.uploadMedia,
+          formData: formData);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -273,7 +287,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<List<HashtagModel>> searchHashtags(String query) async {
     try {
       final response = await apiClient.get(
-        getHashTagsUrl,
+        ApiConstantsNew.content.getTags,
         queryParameters: {'query': query},
       );
 
@@ -294,7 +308,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<HashtagModel>> getTrendingHashtags() async {
     try {
-      final response = await apiClient.get(getHashTagsUrl);
+      final response = await apiClient.get(ApiConstantsNew.content.getTags);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -313,7 +327,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<ContentItemModel> getContentDetail(String contentId) async {
     try {
-      final response = await apiClient.get('$myContentDetailUrl$contentId');
+      final response = await apiClient
+          .get('${ApiConstantsNew.content.contentDetail}$contentId');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -347,7 +362,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       String contentId) async {
     try {
       final response = await apiClient.get(
-        getContentMediaHouseOfferUrl,
+        ApiConstantsNew.tasks.mediaHouseOffer,
         queryParameters: {'image_id': contentId},
       );
 
@@ -374,7 +389,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
     try {
       try {
         final response = await apiClient.get(
-          getDetailsById,
+          ApiConstantsNew.misc.getDetailsById,
           queryParameters: {
             'content_id': contentId,
             // 'limit': limit,

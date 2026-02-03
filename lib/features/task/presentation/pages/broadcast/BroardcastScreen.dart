@@ -671,7 +671,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               onTap: () async {
                 try {
                   Share.share(
-                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
+                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task. Cheers");
                 } catch (e) {
                   debugPrint("Share Error: $e");
                 }
@@ -1143,7 +1143,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       path: phoneNumber,
                                                       queryParameters: {
                                                         'body':
-                                                            '${taskDetail!.title}\n${taskDetail!.description}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task.Cheers'
+                                                            '${taskDetail!.title}\n${taskDetail!.description}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task.Cheers'
                                                       });
                                                   if (await canLaunchUrl(uri)) {
                                                     await launchUrl(uri);
@@ -1171,7 +1171,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                           "\n\n ${Uri.parse(appUrl)}")}"); */
 
                                                   Share.share(Uri.encodeComponent(
-                                                      "${taskDetail!.title}\n ${taskDetail!.description}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers"));
+                                                      "${taskDetail!.title}\n ${taskDetail!.description}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task. Cheers"));
                                                 },
                                                 icon: Padding(
                                                   padding: EdgeInsets.only(
@@ -1343,9 +1343,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     debugPrint("::: Inside estimate Time Fuc ::::");
     dynamic mapKey;
     if (Platform.isIOS) {
-      mapKey = appleMapAPiKey;
+      mapKey = ApiConstantsNew.config.appleMapApiKey;
     } else {
-      mapKey = googleMapAPiKey;
+      mapKey = ApiConstantsNew.config.googleMapApiKey;
     }
 
     String drivingMode =

@@ -3217,7 +3217,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
     if (isFirstTime) {
       isFirstTime = false;
-      _apiClient.post(sendchatInitToAdminUrl, data: {});
+      _apiClient.post(ApiConstantsNew.chat.sendChatInitToAdmin, data: {});
     }
 
     _chatBloc.add(SendMessageEvent(
@@ -3676,8 +3676,8 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint('map: $map');
 
     try {
-      final response =
-          await _apiClient.post(sendPushNotificationAPI, data: map);
+      final response = await _apiClient
+          .post(ApiConstantsNew.chat.sendPushNotification, data: map);
       debugPrint("sendNotification success : ${response.data}");
     } catch (e) {
       debugPrint("sendNotification Error : $e");
@@ -3694,7 +3694,8 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint("Map : $map");
 
     try {
-      final response = await _apiClient.post(getRoomIdUrl, data: map);
+      final response =
+          await _apiClient.post(ApiConstantsNew.chat.createRoom, data: map);
       debugPrint("getRoomIdReq Success : ${response.data}");
       var data = response.data;
       if (data["details"] != null) {

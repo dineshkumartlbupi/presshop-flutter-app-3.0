@@ -50,7 +50,8 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
     _isFetching = true;
     try {
       final response = await apiClient.get(
-        allAlertUrl, // Using constant directly, assuming it's the endpoint path
+        ApiConstantsNew.chat
+            .allAlerts, // Using constant directly, assuming it's the endpoint path
         queryParameters: {
           "limit": _limit,
           "offset": _offset,

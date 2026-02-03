@@ -99,7 +99,7 @@ class ForceUpdateRepository {
       if (refresh == null) return false;
 
       final response = await _dio.post(
-        appRefreshTokenUrl,
+        ApiConstantsNew.auth.refreshToken,
         options: Options(headers: {
           refreshHeaderKey: refresh,
           accessHeaderKey: refresh.isEmpty ? (accessToken ?? "") : "",
