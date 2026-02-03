@@ -73,7 +73,7 @@ class VideoWidgetState extends State<VideoWidget> {
                 Expanded(child: VideoPlayer(_controller!)),
                 Container(
                   padding: EdgeInsets.only(
-                      left: size.width * numD02, right: size.width * numD04),
+                      left: size.width * AppDimensions.numD02, right: size.width * AppDimensions.numD04),
                   child: Row(
                     children: [
                       InkWell(
@@ -90,20 +90,20 @@ class VideoWidgetState extends State<VideoWidget> {
                           _controller!.value.isPlaying
                               ? Icons.pause
                               : Icons.play_arrow,
-                          size: size.width * numD08,
+                          size: size.width * AppDimensions.numD08,
                           color: Colors.black,
                         ),
                       ),
                       Expanded(
                           child: Container(
                         margin: EdgeInsets.symmetric(
-                            horizontal: size.width * numD02),
+                            horizontal: size.width * AppDimensions.numD02),
                         child: VideoProgressIndicator(
                           _controller!,
                           allowScrubbing: true,
                           colors: VideoProgressColors(
                             backgroundColor: Colors.black.withOpacity(0.2),
-                            playedColor: colorThemePink,
+                            playedColor: AppColorTheme.colorThemePink,
                             bufferedColor: Colors.grey.withOpacity(0.5),
                           ),
                           padding: EdgeInsets.zero,
@@ -113,7 +113,7 @@ class VideoWidgetState extends State<VideoWidget> {
                         "$currentTIme / 00:${_controller!.value.duration.inSeconds}",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD025,
+                            fontSize: size.width * AppDimensions.numD025,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       )

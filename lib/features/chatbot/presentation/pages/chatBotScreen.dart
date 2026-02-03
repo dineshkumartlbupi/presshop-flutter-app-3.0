@@ -72,13 +72,13 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
             hideLeading: false,
             title: Padding(
               padding: EdgeInsets.only(
-                  left: widget.hideLeading ? size.width * numD04 : 0),
+                  left: widget.hideLeading ? size.width * AppDimensions.numD04 : 0),
               child: Text(
                 "Chat",
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: size.width * appBarHeadingFontSize),
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
               ),
             ),
             centerTitle: false,
@@ -98,12 +98,12 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
           ),
@@ -116,8 +116,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                     physics: const BouncingScrollPhysics(),
                     itemCount: chatList.length,
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD02),
+                        horizontal: size.width * AppDimensions.numD04,
+                        vertical: size.width * AppDimensions.numD02),
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
@@ -135,56 +135,56 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                         children: [
                                           Container(
                                             padding: EdgeInsets.all(
-                                                size.width * numD025),
+                                                size.width * AppDimensions.numD025),
                                             constraints: BoxConstraints(
-                                                maxWidth: size.width * numD60),
+                                                maxWidth: size.width * AppDimensions.numD60),
                                             decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.only(
                                                   topLeft: Radius.circular(
-                                                      size.width * numD04),
+                                                      size.width * AppDimensions.numD04),
                                                   bottomLeft: Radius.circular(
-                                                      size.width * numD04),
+                                                      size.width * AppDimensions.numD04),
                                                   bottomRight: Radius.circular(
-                                                      size.width * numD04),
+                                                      size.width * AppDimensions.numD04),
                                                 ),
-                                                color: colorGreyChat),
+                                                color: AppColorTheme.colorGreyChat),
                                             child: Text(
                                               chatList[index].message,
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize:
-                                                      size.width * numD035,
+                                                      size.width * AppDimensions.numD035,
                                                   fontWeight: FontWeight.w400),
                                             ),
                                           ),
                                           SizedBox(
-                                            height: size.width * numD01,
+                                            height: size.width * AppDimensions.numD01,
                                           ),
                                           Text(
                                             dateTimeFormatter(
                                                 dateTime: chatList[index].time,
                                                 format: "dd MMM yyyy hh:mm a"),
                                             style: TextStyle(
-                                                fontSize: size.width * numD03,
-                                                color: colorGoogleButtonBorder,
+                                                fontSize: size.width * AppDimensions.numD03,
+                                                color: AppColorTheme.colorGoogleButtonBorder,
                                                 fontWeight: FontWeight.w400),
                                           ),
                                           SizedBox(
-                                            height: size.width * numD02,
+                                            height: size.width * AppDimensions.numD02,
                                           ),
                                         ],
                                       ),
                                       SizedBox(
-                                        width: size.width * numD02,
+                                        width: size.width * AppDimensions.numD02,
                                       ),
                                       Container(
                                           margin: EdgeInsets.only(
-                                            bottom: size.width * numD07,
-                                            top: size.width * numD01,
+                                            bottom: size.width * AppDimensions.numD07,
+                                            top: size.width * AppDimensions.numD01,
                                           ),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD07),
+                                                size.width * AppDimensions.numD07),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey.shade300,
@@ -193,19 +193,19 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                           ),
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD07),
+                                                size.width * AppDimensions.numD07),
                                             child: Image.network(senderPic,
-                                                width: size.width * numD085,
-                                                height: size.width * numD085,
+                                                width: size.width * AppDimensions.numD085,
+                                                height: size.width * AppDimensions.numD085,
                                                 fit: BoxFit.cover,
                                                 errorBuilder: (context, error,
                                                         stackTrace) =>
                                                     Image.asset(
                                                       "${commonImagePath}rabbitLogo.png", // Fallback
                                                       width:
-                                                          size.width * numD085,
+                                                          size.width * AppDimensions.numD085,
                                                       height:
-                                                          size.width * numD085,
+                                                          size.width * AppDimensions.numD085,
                                                       fit: BoxFit.cover,
                                                     )),
                                           )),
@@ -220,8 +220,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                     children: [
                                       Container(
                                           margin: EdgeInsets.only(
-                                            bottom: size.width * numD04,
-                                            top: size.width * numD03,
+                                            bottom: size.width * AppDimensions.numD04,
+                                            top: size.width * AppDimensions.numD03,
                                           ),
                                           decoration: BoxDecoration(
                                               color: Colors.black,
@@ -235,22 +235,22 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                             clipBehavior: Clip.antiAlias,
                                             child: Padding(
                                               padding: EdgeInsets.all(
-                                                  size.width * numD01),
+                                                  size.width * AppDimensions.numD01),
                                               child: Image.asset(
                                                 "${commonImagePath}ic_black_rabbit.png",
                                                 color: Colors.white,
-                                                width: size.width * numD07,
-                                                height: size.width * numD07,
+                                                width: size.width * AppDimensions.numD07,
+                                                height: size.width * AppDimensions.numD07,
                                               ),
                                             ),
                                           )),
                                       SizedBox(
-                                        width: size.width * numD02,
+                                        width: size.width * AppDimensions.numD02,
                                       ),
                                       Expanded(
                                         child: Container(
                                           margin: EdgeInsets.only(
-                                            top: size.width * numD03,
+                                            top: size.width * AppDimensions.numD03,
                                           ),
                                           child: Column(
                                             crossAxisAlignment:
@@ -258,25 +258,25 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                             children: [
                                               Container(
                                                 padding: EdgeInsets.all(
-                                                    size.width * numD025),
+                                                    size.width * AppDimensions.numD025),
                                                 decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.only(
                                                       topRight: Radius.circular(
-                                                          size.width * numD04),
+                                                          size.width * AppDimensions.numD04),
                                                       bottomLeft:
                                                           Radius.circular(
                                                               size.width *
-                                                                  numD04),
+                                                                  AppDimensions.numD04),
                                                       bottomRight:
                                                           Radius.circular(
                                                               size.width *
-                                                                  numD04),
+                                                                  AppDimensions.numD04),
                                                     ),
                                                     border: Border.all(
                                                         width: 1.5,
                                                         color:
-                                                            colorSwitchBack)),
+                                                            AppColorTheme.colorSwitchBack)),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -286,7 +286,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: size.width *
-                                                              numD035,
+                                                              AppDimensions.numD035,
                                                           fontWeight:
                                                               FontWeight.w400),
                                                     ),
@@ -308,7 +308,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                                   size: size,
                                                                   fontSize: size
                                                                           .width *
-                                                                      numD035,
+                                                                      AppDimensions.numD035,
                                                                   color: Colors
                                                                       .white,
                                                                   fontWeight:
@@ -316,7 +316,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                                           .w700),
                                                               commonButtonStyle(
                                                                   size,
-                                                                  colorThemePink),
+                                                                  AppColorTheme.colorThemePink),
                                                               () {
                                                                 Navigator.push(
                                                                     context,
@@ -348,7 +348,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                                   size: size,
                                                                   fontSize: size
                                                                           .width *
-                                                                      numD035,
+                                                                      AppDimensions.numD035,
                                                                   color: Colors
                                                                       .white,
                                                                   fontWeight:
@@ -356,7 +356,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                                           .w700),
                                                               commonButtonStyle(
                                                                   size,
-                                                                  colorThemePink),
+                                                                  AppColorTheme.colorThemePink),
                                                               () {
                                                                 context
                                                                     .read<
@@ -376,7 +376,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                                   size: size,
                                                                   fontSize: size
                                                                           .width *
-                                                                      numD035,
+                                                                      AppDimensions.numD035,
                                                                   color: Colors
                                                                       .white,
                                                                   fontWeight:
@@ -384,7 +384,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                                           .w700),
                                                               commonButtonStyle(
                                                                   size,
-                                                                  colorThemePink),
+                                                                  AppColorTheme.colorThemePink),
                                                               () {
                                                                 context
                                                                     .read<
@@ -404,7 +404,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                 ),
                                               ),
                                               SizedBox(
-                                                height: size.width * numD01,
+                                                height: size.width * AppDimensions.numD01,
                                               ),
                                               Text(
                                                 dateTimeFormatter(
@@ -414,14 +414,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                                         "dd MMM yyyy hh:mm a"),
                                                 style: TextStyle(
                                                     fontSize:
-                                                        size.width * numD03,
+                                                        size.width * AppDimensions.numD03,
                                                     color:
-                                                        colorGoogleButtonBorder,
+                                                        AppColorTheme.colorGoogleButtonBorder,
                                                     fontWeight:
                                                         FontWeight.w400),
                                               ),
                                               SizedBox(
-                                                height: size.width * numD02,
+                                                height: size.width * AppDimensions.numD02,
                                               ),
                                             ],
                                           ),
@@ -438,7 +438,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                               children: [
                                 Container(
                                     margin: EdgeInsets.only(
-                                      top: size.width * numD02,
+                                      top: size.width * AppDimensions.numD02,
                                     ),
                                     decoration: BoxDecoration(
                                         color: Colors.black,
@@ -452,56 +452,56 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                                       clipBehavior: Clip.antiAlias,
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.all(size.width * numD01),
+                                            EdgeInsets.all(size.width * AppDimensions.numD01),
                                         child: Image.asset(
                                           "${commonImagePath}ic_black_rabbit.png",
                                           color: Colors.white,
-                                          width: size.width * numD07,
-                                          height: size.width * numD07,
+                                          width: size.width * AppDimensions.numD07,
+                                          height: size.width * AppDimensions.numD07,
                                         ),
                                       ),
                                     )),
                                 SizedBox(
-                                  width: size.width * numD02,
+                                  width: size.width * AppDimensions.numD02,
                                 ),
                                 Container(
                                   margin:
-                                      EdgeInsets.only(top: size.width * numD02),
+                                      EdgeInsets.only(top: size.width * AppDimensions.numD02),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                         bottomLeft: Radius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                         bottomRight: Radius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                       ),
                                       border: Border.all(
-                                          width: 1.5, color: colorSwitchBack)),
+                                          width: 1.5, color: AppColorTheme.colorSwitchBack)),
                                   child: Lottie.asset(
                                       "assets/lottieFiles/typing.json",
-                                      height: size.width * numD10,
-                                      width: size.width * numD16),
+                                      height: size.width * AppDimensions.numD10,
+                                      width: size.width * AppDimensions.numD16),
                                 ),
                               ],
                             ),
                           ),
                           SizedBox(
-                            height: size.width * numD06,
+                            height: size.width * AppDimensions.numD06,
                           ),
                         ],
                       );
                     }),
               ),
               SizedBox(
-                height: size.width * numD03,
+                height: size.width * AppDimensions.numD03,
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
-                margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD02),
+                margin: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(size.width * numD03)),
+                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
                 child: Row(
                   children: [
                     Expanded(
@@ -513,7 +513,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                         autofocus: false,
                         borderColor: Colors.transparent,
                         prefixIconHeight: 0,
-                        suffixIconIconHeight: size.width * numD045,
+                        suffixIconIconHeight: size.width * AppDimensions.numD045,
                         textInputFormatters: null,
                         hidePassword: false,
                         keyboardType: TextInputType.text,
@@ -527,7 +527,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                       ),
                     ),
                     IconButton(
-                      splashRadius: size.width * numD07,
+                      splashRadius: size.width * AppDimensions.numD07,
                       onPressed: () {
                         if (messageController.text.isNotEmpty) {
                           context.read<ChatbotBloc>().add(SendMessageEvent(
@@ -537,8 +537,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                         }
                       },
                       icon: Container(
-                        width: size.width * numD07,
-                        height: size.width * numD07,
+                        width: size.width * AppDimensions.numD07,
+                        height: size.width * AppDimensions.numD07,
                         alignment: Alignment.center,
                         child: Image.asset(
                           "${iconsPath}ic_arrow_right.png",
@@ -550,7 +550,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
                 ),
               ),
               SizedBox(
-                height: size.width * numD10,
+                height: size.width * AppDimensions.numD10,
               ),
             ],
           ),

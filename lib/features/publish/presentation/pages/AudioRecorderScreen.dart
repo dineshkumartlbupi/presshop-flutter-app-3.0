@@ -65,12 +65,12 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
               "Record Audio",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD05,
+                  fontSize: size.width * AppDimensions.numD05,
                   color: Colors.black,
                   fontWeight: FontWeight.w700),
             ),
             centerTitle: false,
-            titleSpacing: size.width * numD02,
+            titleSpacing: size.width * AppDimensions.numD02,
             size: size,
             showActions: true,
             leadingFxn: () {
@@ -80,12 +80,12 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
               InkWell(
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
             hideLeading: false),
@@ -101,7 +101,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
                     backgroundColor: Colors.transparent,
                     shouldCalculateScrolledPosition: true,
                     waveStyle: WaveStyle(
-                      waveColor: colorThemePink,
+                      waveColor: AppColorTheme.colorThemePink,
                       extendWaveform: true,
                       showMiddleLine: false,
                       showDurationLabel: false,
@@ -117,15 +117,15 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
               recordingTime.isEmpty ? "00:00:00" : recordingTime,
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD15,
+                  fontSize: size.width * AppDimensions.numD15,
                   color: Colors.black,
                   fontWeight: FontWeight.w500),
             ),
             const Spacer(),
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD08,
-                  vertical: size.width * numD04),
+                  horizontal: size.width * AppDimensions.numD08,
+                  vertical: size.width * AppDimensions.numD04),
               child: Row(
                 children: [
                   recordingTime.isNotEmpty
@@ -136,7 +136,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
                           icon: Icon(
                             Icons.close,
                             color: Colors.red,
-                            size: size.width * numD08,
+                            size: size.width * AppDimensions.numD08,
                           ))
                       : Container(),
                   const Spacer(),
@@ -155,18 +155,18 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
                     },
                     child: Container(
                       padding: EdgeInsets.all(isAudioRecording
-                          ? size.width * numD04
-                          : size.width * numD04),
+                          ? size.width * AppDimensions.numD04
+                          : size.width * AppDimensions.numD04),
                       decoration: const BoxDecoration(
-                          color: colorThemePink, shape: BoxShape.circle),
+                          color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
                       child: Icon(
                           isAudioRecording
                               ? Icons.square
                               : Icons.mic_none_outlined,
                           color: Colors.white,
                           size: isAudioRecording
-                              ? size.width * numD07
-                              : size.width * numD1),
+                              ? size.width * AppDimensions.numD07
+                              : size.width * AppDimensions.numD1),
                     ),
                   ),
                   const Spacer(),
@@ -177,8 +177,8 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
                           },
                           icon: Icon(
                             Icons.check,
-                            color: colorOnlineGreen,
-                            size: size.width * numD08,
+                            color: AppColorTheme.colorOnlineGreen,
+                            size: size.width * AppDimensions.numD08,
                           ))
                       : Container(),
                 ],

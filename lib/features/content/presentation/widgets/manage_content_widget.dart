@@ -14,9 +14,9 @@ class ManageContentWidget extends StatelessWidget {
     size = MediaQuery.of(context).size;
     return Card(
       elevation: 3,
-      color: colorLightGrey,
+      color: AppColorTheme.colorLightGrey,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(size.width * numD03),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
       ),
       child: Padding(
         padding: EdgeInsets.all(size.width * 0.02),
@@ -26,23 +26,23 @@ class ManageContentWidget extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(size.width * numD04),
-                border: Border.all(color: lightGrey.withOpacity(.6)),
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                border: Border.all(color: AppColorTheme.lightGrey.withOpacity(.6)),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * numD04),
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: Image.network(
                   data['userDetails'][0]['profile_image'],
                   fit: BoxFit.cover,
-                  height: size.width * numD20,
-                  width: size.width * numD20,
+                  height: size.width * AppDimensions.numD20,
+                  width: size.width * AppDimensions.numD20,
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
                     return Image.asset(
                       "${commonImagePath}rabbitLogo.png",
                       fit: BoxFit.contain,
-                      width: size.width * numD20,
-                      height: size.width * numD20,
+                      width: size.width * AppDimensions.numD20,
+                      height: size.width * AppDimensions.numD20,
                     );
                   },
                 ),
@@ -50,25 +50,25 @@ class ManageContentWidget extends StatelessWidget {
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: size.height * numD006,
+              spacing: size.height * AppDimensions.numD006,
               children: [
                 SizedBox(
-                  width: size.width * numD32,
+                  width: size.width * AppDimensions.numD32,
                   child: Text(data['userDetails'][0]['company_name'],
                       maxLines: 2,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD03,
+                          fontSize: size.width * AppDimensions.numD03,
                           color: Colors.black,
                           fontWeight: FontWeight.w700)),
                 ),
                 Row(
-                  spacing: size.width * numD01,
+                  spacing: size.width * AppDimensions.numD01,
                   children: [
                     Icon(
                       Icons.access_time,
                       color: Colors.grey,
-                      size: size.width * numD05,
+                      size: size.width * AppDimensions.numD05,
                     ),
                     Text(
                         dateTimeFormatter(
@@ -76,18 +76,18 @@ class ManageContentWidget extends StatelessWidget {
                             format: "hh:mm a"),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.grey,
                             fontWeight: FontWeight.w500))
                   ],
                 ),
                 Row(
-                  spacing: size.width * numD01,
+                  spacing: size.width * AppDimensions.numD01,
                   children: [
                     Icon(
                       Icons.calendar_month,
                       color: Colors.grey,
-                      size: size.width * numD05,
+                      size: size.width * AppDimensions.numD05,
                     ),
                     Text(
                         dateTimeFormatter(
@@ -95,7 +95,7 @@ class ManageContentWidget extends StatelessWidget {
                             format: "dd MMM yyyy"),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.grey,
                             fontWeight: FontWeight.w500))
                   ],
@@ -103,13 +103,13 @@ class ManageContentWidget extends StatelessWidget {
               ],
             ),
             Container(
-              width: size.width * numD30,
-              padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+              width: size.width * AppDimensions.numD30,
+              padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD012),
               decoration: BoxDecoration(
                   color: data['message_type'] == "Offered"
                       ? Colors.black
-                      : lightGrey,
-                  borderRadius: BorderRadius.circular(size.width * numD03)),
+                      : AppColorTheme.lightGrey,
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
               child: Column(
                 children: [
                   Text(
@@ -118,7 +118,7 @@ class ManageContentWidget extends StatelessWidget {
                         : 'Sold Price',
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: data['message_type'] == "Offered"
                             ? Colors.white
                             : Colors.black,
@@ -127,14 +127,14 @@ class ManageContentWidget extends StatelessWidget {
                   FittedBox(
                     child: Container(
                       margin: EdgeInsets.only(
-                        left: size.width * numD02,
-                        right: size.width * numD02,
+                        left: size.width * AppDimensions.numD02,
+                        right: size.width * AppDimensions.numD02,
                       ),
                       child: Text(
                         "$currencySymbol${formatDouble(double.parse(data['amount']))}",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD05,
+                            fontSize: size.width * AppDimensions.numD05,
                             color: data['message_type'] == "Offered"
                                 ? Colors.white
                                 : Colors.black,

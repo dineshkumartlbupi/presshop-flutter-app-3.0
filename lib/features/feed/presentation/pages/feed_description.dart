@@ -67,7 +67,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             widget.text,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD03,
+                fontSize: size.width * AppDimensions.numD03,
                 lineHeight: 2,
                 color: Colors.black,
                 fontWeight: FontWeight.normal),
@@ -83,7 +83,7 @@ class _ExpandableTextState extends State<ExpandableText> {
                   _readMore ? 'See more' : 'See less',
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD03,
+                      fontSize: size.width * AppDimensions.numD03,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),
                 ),

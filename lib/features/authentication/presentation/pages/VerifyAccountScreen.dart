@@ -135,19 +135,19 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
             ),
             bottomNavigationBar: Container(
               margin: EdgeInsets.symmetric(
-                  horizontal: size.width * numD04,
-                  vertical: size.width * numD08),
+                  horizontal: size.width * AppDimensions.numD04,
+                  vertical: size.width * AppDimensions.numD08),
               width: size.width,
-              height: size.width * numD13,
+              height: size.width * AppDimensions.numD13,
               child: commonElevatedButton(
-                  nextText,
+                  AppStrings.nextText,
                   size,
                   commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.white,
                       fontWeight: FontWeight.w700),
-                  commonButtonStyle(size, colorThemePink), () {
+                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                 // Submit OTP
                 final otp = _otpPinFieldMobileController
                         .currentState?.controller.text ??
@@ -169,40 +169,40 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                   child: Form(
                     child: ListView(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD25),
+                          horizontal: size.width * AppDimensions.numD04,
+                          vertical: size.width * AppDimensions.numD25),
                       children: [
                         Text(
                           "Verify Your Mobile Number",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: size.width * numD07),
+                              fontSize: size.width * AppDimensions.numD07),
                         ),
                         SizedBox(
-                          height: size.width * numD05,
+                          height: size.width * AppDimensions.numD05,
                         ),
                         RichText(
                           text: TextSpan(children: [
                             TextSpan(
-                                text: verifyMobileSubHeadingText,
+                                text: AppStrings.verifyMobileSubHeadingText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035)),
+                                    fontSize: size.width * AppDimensions.numD035)),
                             WidgetSpan(
                                 child: SizedBox(
-                              width: size.width * numD01,
+                              width: size.width * AppDimensions.numD01,
                             )),
                             TextSpan(
                                 text:
                                     "${widget.countryCode}${widget.mobileNumberValue}",
                                 style: TextStyle(
-                                    color: colorThemePink,
-                                    fontSize: size.width * numD035))
+                                    color: AppColorTheme.colorThemePink,
+                                    fontSize: size.width * AppDimensions.numD035))
                           ]),
                         ),
                         SizedBox(
-                          height: size.width * numD07,
+                          height: size.width * AppDimensions.numD07,
                         ),
                         OtpPinField(
                           key: _otpPinFieldMobileController,
@@ -210,56 +210,56 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                           onSubmit: (text) {},
                           onChange: (text) {},
                           otpPinFieldStyle: OtpPinFieldStyle(
-                            defaultFieldBorderColor: colorTextFieldBorder,
-                            activeFieldBorderColor: colorTextFieldBorder,
-                            defaultFieldBackgroundColor: colorLightGrey,
-                            activeFieldBackgroundColor: colorLightGrey,
-                            fieldBorderRadius: size.width * numD025,
+                            defaultFieldBorderColor: AppColorTheme.colorTextFieldBorder,
+                            activeFieldBorderColor: AppColorTheme.colorTextFieldBorder,
+                            defaultFieldBackgroundColor: AppColorTheme.colorLightGrey,
+                            activeFieldBackgroundColor: AppColorTheme.colorLightGrey,
+                            fieldBorderRadius: size.width * AppDimensions.numD025,
                             fieldBorderWidth: 0.4,
                           ),
                           maxLength: 5,
                           showCursor: true,
                           keyboardType: TextInputType.number,
-                          cursorColor: colorTextFieldIcon,
+                          cursorColor: AppColorTheme.colorTextFieldIcon,
                           showCustomKeyboard: false,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           otpPinFieldDecoration: OtpPinFieldDecoration.custom,
                         ),
                         SizedBox(
-                          height: size.width * numD065,
+                          height: size.width * AppDimensions.numD065,
                         ),
                         Row(
                           children: [
                             Image.asset(
                               "${iconsPath}ic_time.png",
-                              height: size.width * numD06,
+                              height: size.width * AppDimensions.numD06,
                             ),
                             SizedBox(
-                              width: size.width * numD02,
+                              width: size.width * AppDimensions.numD02,
                             ),
-                            Text("$otpExpireText $expireTimeValue $minutesText",
+                            Text("${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035))
+                                    fontSize: size.width * AppDimensions.numD035))
                           ],
                         ),
                         SizedBox(
-                          height: size.width * numD06,
+                          height: size.width * AppDimensions.numD06,
                         ),
                         RichText(
                           text: TextSpan(children: [
                             TextSpan(
-                                text: otpNotReceivedText,
+                                text: AppStrings.otpNotReceivedText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     fontFamily: 'AirbnbCereal',
                                     fontWeight: FontWeight.normal)),
                             TextSpan(
-                              text: " ${clickHereText.toLowerCase()} ",
+                              text: " ${AppStrings.clickHereText.toLowerCase()} ",
                               style: TextStyle(
-                                  color: colorThemePink,
-                                  fontSize: size.width * numD035,
+                                  color: AppColorTheme.colorThemePink,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: 'AirbnbCereal',
                                   fontWeight: FontWeight.bold),
                               recognizer: TapGestureRecognizer()
@@ -281,10 +281,10 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                 },
                             ),
                             TextSpan(
-                                text: anotherOneText,
+                                text: AppStrings.anotherOneText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     fontFamily: 'AirbnbCereal',
                                     fontWeight: FontWeight.normal)),
                           ]),

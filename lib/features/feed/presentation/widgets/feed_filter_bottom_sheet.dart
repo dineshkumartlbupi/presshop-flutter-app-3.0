@@ -27,9 +27,9 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        top: size.width * numD06,
-        left: size.width * numD05,
-        right: size.width * numD05,
+        top: size.width * AppDimensions.numD06,
+        left: size.width * AppDimensions.numD05,
+        right: size.width * AppDimensions.numD05,
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -41,21 +41,21 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  splashRadius: size.width * numD07,
+                  splashRadius: size.width * AppDimensions.numD07,
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   icon: Icon(
                     Icons.close,
                     color: Colors.black,
-                    size: size.width * numD07,
+                    size: size.width * AppDimensions.numD07,
                   ),
                 ),
                 Text(
                   "Sort and Filter",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * appBarHeadingFontSizeNew,
+                      fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),
                 ),
@@ -67,9 +67,9 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                   child: Text(
                     "Clear all",
                     style: TextStyle(
-                        color: colorThemePink,
+                        color: AppColorTheme.colorThemePink,
                         fontWeight: FontWeight.w400,
-                        fontSize: size.width * numD035),
+                        fontSize: size.width * AppDimensions.numD035),
                   ),
                 ),
               ],
@@ -77,15 +77,15 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
 
             /// Sort
             SizedBox(
-              height: size.width * numD085,
+              height: size.width * AppDimensions.numD085,
             ),
 
             /// Sort Heading
             Text(
-              sortText,
+              AppStrings.sortText,
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD05,
+                  fontSize: size.width * AppDimensions.numD05,
                   color: Colors.black,
                   fontWeight: FontWeight.w500),
             ),
@@ -94,29 +94,29 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
 
             /// Filter
             SizedBox(
-              height: size.width * numD05,
+              height: size.width * AppDimensions.numD05,
             ),
 
             SizedBox(
-              height: size.width * numD06,
+              height: size.width * AppDimensions.numD06,
             ),
 
             Container(
               width: size.width,
-              height: size.width * numD13,
-              margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
+              height: size.width * AppDimensions.numD13,
+              margin: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD04,
+                horizontal: size.width * AppDimensions.numD04,
               ),
               child: commonElevatedButton(
-                  applyText,
+                  AppStrings.applyText,
                   size,
                   commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.white,
                       fontWeight: FontWeight.w700),
-                  commonButtonStyle(size, colorThemePink), () {
+                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                 Map<String, dynamic> map = {"limit": "10", "offset": "0"};
 
                 int pos =
@@ -129,19 +129,19 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                 for (var element in widget.filterList) {
                   if (element.isSelected) {
                     switch (element.name) {
-                      case allExclusiveContentText:
+                      case AppStrings.allExclusiveContentText:
                         map["type"] = 'exclusive';
                         break;
 
-                      case allSharedContentText:
+                      case AppStrings.allSharedContentText:
                         map["sharedtype"] = "shared";
                         break;
 
-                      case paymentsReceivedText:
+                      case AppStrings.paymentsReceivedText:
                         map["paid_status"] = "paid";
                         break;
 
-                      case pendingPaymentsText:
+                      case AppStrings.pendingPaymentsText:
                         map["paid_status"] = "un_paid";
                         break;
                     }
@@ -152,7 +152,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
               }),
             ),
             SizedBox(
-              height: size.width * numD04,
+              height: size.width * AppDimensions.numD04,
             )
           ],
         ),
@@ -163,7 +163,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
   Widget filterListWidget(BuildContext context, List<FilterModel> list,
       StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
-      padding: EdgeInsets.only(top: size.width * numD02),
+      padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: list.length,
@@ -188,19 +188,19 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText
+              top: list[index].name == AppStrings.filterDateText
                   ? size.width * 0
-                  : size.width * numD025,
-              bottom: list[index].name == filterDateText
+                  : size.width * AppDimensions.numD025,
+              bottom: list[index].name == AppStrings.filterDateText
                   ? size.width * 0
-                  : size.width * numD025,
-              left: size.width * numD02,
-              right: size.width * numD02,
+                  : size.width * AppDimensions.numD025,
+              left: size.width * AppDimensions.numD02,
+              right: size.width * AppDimensions.numD02,
             ),
             color: list[index].isSelected ? Colors.grey.shade400 : null,
             child: Row(
               children: [
-                list[index].name == filterDateText
+                list[index].name == AppStrings.filterDateText
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -218,15 +218,15 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                top: size.width * numD01,
-                                bottom: size.width * numD01,
-                                left: size.width * numD03,
-                                right: size.width * numD01,
+                                top: size.width * AppDimensions.numD01,
+                                bottom: size.width * AppDimensions.numD01,
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD01,
                               ),
-                              width: size.width * numD32,
+                              width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                    BorderRadius.circular(size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -238,15 +238,15 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                     item.fromDate != null
                                         ? dateTimeFormatter(
                                             dateTime: item.fromDate.toString())
-                                        : fromText,
+                                        : AppStrings.fromText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD032,
+                                        fontSize: size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD015,
+                                    width: size.width * AppDimensions.numD015,
                                   ),
                                   const Icon(
                                     Icons.arrow_drop_down_sharp,
@@ -257,7 +257,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                             ),
                           ),
                           SizedBox(
-                            width: size.width * numD03,
+                            width: size.width * AppDimensions.numD03,
                           ),
                           InkWell(
                             onTap: () async {
@@ -284,15 +284,15 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                top: size.width * numD01,
-                                bottom: size.width * numD01,
-                                left: size.width * numD03,
-                                right: size.width * numD01,
+                                top: size.width * AppDimensions.numD01,
+                                bottom: size.width * AppDimensions.numD01,
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD01,
                               ),
-                              width: size.width * numD32,
+                              width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                    BorderRadius.circular(size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -304,15 +304,15 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                     item.toDate != null
                                         ? dateTimeFormatter(
                                             dateTime: item.toDate.toString())
-                                        : toText,
+                                        : AppStrings.toText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD032,
+                                        fontSize: size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   const Icon(
                                     Icons.arrow_drop_down_sharp,
@@ -326,7 +326,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                       )
                     : Text(list[index].name,
                         style: TextStyle(
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
@@ -337,7 +337,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
       },
       separatorBuilder: (context, index) {
         return SizedBox(
-          height: size.width * numD01,
+          height: size.width * AppDimensions.numD01,
         );
       },
     );

@@ -1,4 +1,4 @@
-import '../../../../core/constants/string_constants.dart';
+import '../../../../core/constants/string_constants_new.dart';
 import '../../domain/entities/content_item.dart';
 import '../../data/models/my_content_data_model.dart';
 import '../../data/models/category_data_model.dart';
@@ -17,7 +17,7 @@ extension ContentItemMapper on ContentItem {
       originalAmount: price ?? "0",
       status: status,
       soldStatus: "", // ContentItem doesn't track sale status string directly
-      paidStatus: paidStatus ? paidText : unPaidText,
+      paidStatus: paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
       contentType: mediaType ?? "",
       dateTime: createdAt,
       isPaidStatusToHopper: isPaidStatusToHopper,

@@ -7,6 +7,7 @@ import '../../../authentication/domain/usecases/check_onboarding_status.dart';
 import '../../domain/usecases/check_splash_version.dart';
 import 'splash_event.dart';
 import 'splash_state.dart';
+import 'package:presshop/core/utils/current_user.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final CheckAuthStatus checkAuthStatus;
@@ -58,7 +59,19 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       (isLoggedIn) async {
         debugPrint("🔍 SplashBloc: Is Logged In: $isLoggedIn");
         if (isLoggedIn) {
-          emit(SplashAuthenticated());
+          final profileResult = await getProfile(NoParams());
+          profileResult.fold(
+            (failure) {
+              debugPrint("❌ SplashBloc: Failed to fetch profile: $failure");
+              emit(
+                  SplashAuthenticated()); // Proceed anyway, Dashboard will retry
+            },
+            (user) {
+              CurrentUser.user = user;
+              debugPrint("✅ SplashBloc: CurrentUser set: ${user.id}");
+              emit(SplashAuthenticated());
+            },
+          );
         } else {
           final onboardingResult = await checkOnboardingStatus(NoParams());
           debugPrint("🔍 SplashBloc: Onboarding Status: $onboardingResult");

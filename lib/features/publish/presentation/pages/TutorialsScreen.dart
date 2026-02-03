@@ -83,11 +83,11 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
               elevation: 0,
               hideLeading: false,
               title: Text(
-                tutorialsText,
+                AppStrings.tutorialsText,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontSize: size.width * appBarHeadingFontSize),
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
               ),
               centerTitle: false,
               titleSpacing: 0,
@@ -107,12 +107,12 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD07,
-                    width: size.width * numD07,
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
                   ),
                 ),
                 SizedBox(
-                  width: size.width * numD04,
+                  width: size.width * AppDimensions.numD04,
                 )
               ],
             ),
@@ -130,16 +130,16 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.height * numD03),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.height * AppDimensions.numD03),
                           child: TextFormField(
                             decoration: InputDecoration(
-                                hintText: searchText,
+                                hintText: AppStrings.searchText,
                                 filled: true,
-                                fillColor: colorLightGrey,
+                                fillColor: AppColorTheme.colorLightGrey,
                                 hintStyle: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035),
+                                    fontSize: size.width * AppDimensions.numD035),
                                 disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
                                         size.width * 0.03),
@@ -177,7 +177,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                     )),
                                 suffixIcon: Padding(
                                   padding: EdgeInsets.only(
-                                      right: size.width * numD04),
+                                      right: size.width * AppDimensions.numD04),
                                   child: const ImageIcon(
                                     AssetImage("${iconsPath}ic_search.png"),
                                     color: Colors.black,
@@ -185,10 +185,10 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                 ),
                                 suffixIconColor: Colors.black,
                                 suffixIconConstraints: BoxConstraints(
-                                    maxHeight: size.width * numD07),
+                                    maxHeight: size.width * AppDimensions.numD07),
                                 contentPadding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD05,
-                                    vertical: size.width * numD02)),
+                                    horizontal: size.width * AppDimensions.numD05,
+                                    vertical: size.width * AppDimensions.numD02)),
                             onChanged: (value) {
                               _bloc.add(TutorialsSearchVideos(value));
                             },
@@ -197,12 +197,12 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
 
                         /// Category
                         SizedBox(
-                          height: size.width * numD10,
+                          height: size.width * AppDimensions.numD10,
                           child: ListView.separated(
                               controller: listController,
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD04),
+                                  horizontal: size.width * AppDimensions.numD04),
                               itemBuilder: (context, index) {
                                 final category = state.categories[index];
                                 final isSelected =
@@ -218,17 +218,17 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                   child: Chip(
                                     backgroundColor: isSelected
                                         ? Colors.black
-                                        : colorLightGrey,
+                                        : AppColorTheme.colorLightGrey,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD04,
-                                        vertical: size.width * numD02),
+                                        horizontal: size.width * AppDimensions.numD04,
+                                        vertical: size.width * AppDimensions.numD02),
                                     label: Text(
                                       category.name,
                                       style: TextStyle(
                                           color: isSelected
                                               ? Colors.white
                                               : Colors.black,
-                                          fontSize: size.width * numD036,
+                                          fontSize: size.width * AppDimensions.numD036,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ),
@@ -236,7 +236,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                               },
                               separatorBuilder: (context, index) {
                                 return SizedBox(
-                                  width: size.width * numD04,
+                                  width: size.width * AppDimensions.numD04,
                                 );
                               },
                               itemCount: state.categories.length),
@@ -254,14 +254,14 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             childAspectRatio: 0.85,
-                            mainAxisSpacing: size.width * numD04,
-                            crossAxisSpacing: size.width * numD04,
+                            mainAxisSpacing: size.width * AppDimensions.numD04,
+                            crossAxisSpacing: size.width * AppDimensions.numD04,
                           ),
                           itemBuilder: (context, index) {
                             var item = state.isSearch
@@ -281,20 +281,20 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04,
-                                    vertical: size.width * numD04),
+                                    horizontal: size.width * AppDimensions.numD04,
+                                    vertical: size.width * AppDimensions.numD04),
                                 decoration: BoxDecoration(
                                     border:
-                                        Border.all(color: colorTextFieldIcon),
+                                        Border.all(color: AppColorTheme.colorTextFieldIcon),
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04)),
+                                        size.width * AppDimensions.numD04)),
                                 child: Column(
                                   children: [
                                     Expanded(
                                       // Use Expanded to prevent overflow
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                         child: Stack(
                                           children: [
                                             item.thumbnail.isNotEmpty
@@ -322,24 +322,24 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                                     fit: BoxFit.cover,
                                                   ),
                                             Positioned(
-                                              right: size.width * numD02,
-                                              top: size.width * numD02,
+                                              right: size.width * AppDimensions.numD02,
+                                              top: size.width * AppDimensions.numD02,
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal:
-                                                          size.width * numD01,
+                                                          size.width * AppDimensions.numD01,
                                                       vertical:
                                                           size.width * 0.002),
                                                   decoration: BoxDecoration(
-                                                      color: colorLightGreen
+                                                      color: AppColorTheme.colorLightGreen
                                                           .withOpacity(0.8),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               size.width *
-                                                                  numD015)),
+                                                                  AppDimensions.numD015)),
                                                   child: Icon(
                                                     Icons.videocam_outlined,
-                                                    size: size.width * numD045,
+                                                    size: size.width * AppDimensions.numD045,
                                                     color: Colors.white,
                                                   )),
                                             )
@@ -348,56 +348,56 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.width * numD01,
+                                      height: size.width * AppDimensions.numD01,
                                     ),
                                     Text(item.description,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD03,
+                                            fontSize: size.width * AppDimensions.numD03,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis),
                                     SizedBox(
-                                      height: size.width * numD01,
+                                      height: size.width * AppDimensions.numD01,
                                     ), // Spacer adjustment
                                     Row(
                                       children: [
                                         Image.asset(
                                           "${iconsPath}ic_clock.png",
-                                          height: size.width * numD03,
+                                          height: size.width * AppDimensions.numD03,
                                         ),
                                         SizedBox(
-                                          width: size.width * numD01,
+                                          width: size.width * AppDimensions.numD01,
                                         ),
                                         Text(
                                           item.duration,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD025,
-                                              color: colorHint,
+                                              fontSize: size.width * AppDimensions.numD025,
+                                              color: AppColorTheme.colorHint,
                                               fontWeight: FontWeight.w600),
                                         ),
                                         const Spacer(),
                                         Image.asset(
                                           "${iconsPath}ic_view.png",
-                                          height: size.width * numD03,
+                                          height: size.width * AppDimensions.numD03,
                                         ),
                                         SizedBox(
-                                          width: size.width * numD01,
+                                          width: size.width * AppDimensions.numD01,
                                         ),
                                         Text(
                                           item.view.toString(),
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD025,
-                                              color: colorThemePink,
+                                              fontSize: size.width * AppDimensions.numD025,
+                                              color: AppColorTheme.colorThemePink,
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * numD01,
+                                      height: size.width * AppDimensions.numD01,
                                     ),
                                   ],
                                 ),

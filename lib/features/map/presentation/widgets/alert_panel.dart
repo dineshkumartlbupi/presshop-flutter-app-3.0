@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class AlertPanel extends StatelessWidget {
@@ -17,19 +17,19 @@ class AlertPanel extends StatelessWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            margin: EdgeInsets.all(size.width * numD042),
+            margin: EdgeInsets.all(size.width * AppDimensions.numD042),
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD026,
-                vertical: size.width * numD026),
-            width: size.width * numD47,
+                horizontal: size.width * AppDimensions.numD026,
+                vertical: size.width * AppDimensions.numD026),
+            width: size.width * AppDimensions.numD47,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(size.width * numD05),
+              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD05),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  blurRadius: size.width * numD026,
-                  offset: Offset(0.0, size.width * numD01),
+                  blurRadius: size.width * AppDimensions.numD026,
+                  offset: Offset(0.0, size.width * AppDimensions.numD01),
                 ),
               ],
             ),
@@ -42,34 +42,34 @@ class AlertPanel extends StatelessWidget {
                       "Send Alerts",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: size.width * numD026,
+                        fontSize: size.width * AppDimensions.numD026,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: size.width * numD026),
+                SizedBox(height: size.width * AppDimensions.numD026),
                 Container(
-                  height: size.width * numD005,
+                  height: size.width * AppDimensions.numD005,
                   width: double.infinity,
-                  margin: EdgeInsets.only(bottom: size.width * numD026),
+                  margin: EdgeInsets.only(bottom: size.width * AppDimensions.numD026),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(size.width * numD005),
+                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD005),
                   ),
                 ),
-                SizedBox(height: size.width * numD01),
+                SizedBox(height: size.width * AppDimensions.numD01),
                 Row(
                   children: [
                     Text(
                       "Tap to instantly alert the community",
                       style: TextStyle(
                         color: Colors.grey.shade700,
-                        fontSize: size.width * numD021,
+                        fontSize: size.width * AppDimensions.numD021,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: size.width * numD042),
+                SizedBox(height: size.width * AppDimensions.numD042),
                 GridView.builder(
                   shrinkWrap: true,
                   itemCount: alertTypes.length,
@@ -77,8 +77,8 @@ class AlertPanel extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     childAspectRatio: 1,
-                    crossAxisSpacing: size.width * numD016,
-                    mainAxisSpacing: size.width * numD016,
+                    crossAxisSpacing: size.width * AppDimensions.numD016,
+                    mainAxisSpacing: size.width * AppDimensions.numD016,
                   ),
                   itemBuilder: (context, i) {
                     final item = alertTypes[i];
@@ -91,7 +91,7 @@ class AlertPanel extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(
-                            size.width * numD021,
+                            size.width * AppDimensions.numD021,
                           ),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
@@ -100,15 +100,15 @@ class AlertPanel extends StatelessWidget {
                           children: [
                             Image.asset(
                               item['icon']!,
-                              width: size.width * numD065,
-                              height: size.width * numD065,
+                              width: size.width * AppDimensions.numD065,
+                              height: size.width * AppDimensions.numD065,
                               fit: BoxFit.contain,
                             ),
-                            SizedBox(height: size.width * numD016),
+                            SizedBox(height: size.width * AppDimensions.numD016),
                             Text(
                               item['label']!,
                               style: TextStyle(
-                                fontSize: size.width * numD021,
+                                fontSize: size.width * AppDimensions.numD021,
                                 color: Colors.grey.shade700,
                               ),
                               textAlign: TextAlign.center,
@@ -119,23 +119,23 @@ class AlertPanel extends StatelessWidget {
                     );
                   },
                 ),
-                SizedBox(height: size.width * numD04),
+                SizedBox(height: size.width * AppDimensions.numD04),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Image.asset(
                       'assets/icons/mapalert.png',
-                      width: size.width * numD04,
-                      height: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
+                      height: size.width * AppDimensions.numD04,
                       fit: BoxFit.contain,
                     ),
-                    SizedBox(width: size.width * numD016),
+                    SizedBox(width: size.width * AppDimensions.numD016),
                     Expanded(
                       child: Text(
                         "False or misleading reports may lead to account suspension.",
                         style: TextStyle(
                           color: Color(0xFF4F4F4F),
-                          fontSize: size.width * numD021,
+                          fontSize: size.width * AppDimensions.numD021,
                           fontWeight: FontWeight.w500,
                         ),
                         // textAlign: TextAlign.center,
@@ -150,13 +150,13 @@ class AlertPanel extends StatelessWidget {
 
         // Pointer arrow
         Positioned(
-          left: size.width * numD1,
-          bottom: size.width * numD016,
+          left: size.width * AppDimensions.numD1,
+          bottom: size.width * AppDimensions.numD016,
           child: Transform.rotate(
             angle: math.pi / 4, // 45 degrees
             child: Container(
-              width: size.width * numD05,
-              height: size.width * numD05,
+              width: size.width * AppDimensions.numD05,
+              height: size.width * AppDimensions.numD05,
               decoration: BoxDecoration(color: Colors.white),
             ),
           ),

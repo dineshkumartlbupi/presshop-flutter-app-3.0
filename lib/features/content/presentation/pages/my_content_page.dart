@@ -79,9 +79,9 @@ class _MyContentViewState extends State<MyContentView>
           name: photosText, icon: "ic_camera_publish.png", isSelected: false),
       FilterModel(name: videosText, icon: "ic_v_cam.png", isSelected: false),
       FilterModel(
-          name: soldContentText, icon: "dollar1.png", isSelected: false),
+          name: AppStrings.soldContentText, icon: "dollar1.png", isSelected: false),
       FilterModel(
-          name: filterDateText,
+          name: AppStrings.filterDateText,
           icon: "ic_yearly_calendar.png",
           isSelected: false),
     ];
@@ -124,7 +124,7 @@ class _MyContentViewState extends State<MyContentView>
       params['type'] = "photo";
     } else if (selectedFilter.name == videosText) {
       params['type'] = "video";
-    } else if (selectedFilter.name == soldContentText) {
+    } else if (selectedFilter.name == AppStrings.soldContentText) {
       params['isSold'] = true;
     }
 
@@ -172,7 +172,7 @@ class _MyContentViewState extends State<MyContentView>
       MaterialPageRoute(
         builder: (context) => MyContentDetailScreen(
           contentId: item.id,
-          paymentStatus: item.paidStatus ? paidText : unPaidText,
+          paymentStatus: item.paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
           exclusive: item.isExclusive ?? false,
           offerCount: item.totalOffer,
           purchasedMediahouseCount: item.purchasedMediahouseCount,
@@ -195,22 +195,22 @@ class _MyContentViewState extends State<MyContentView>
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: size.width * numD04),
+            SizedBox(height: size.width * AppDimensions.numD04),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+              padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               child: TabBar(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
                 labelColor: Colors.white,
-                dividerColor: colorThemePink,
+                dividerColor: AppColorTheme.colorThemePink,
                 unselectedLabelColor: Colors.black,
                 indicator: BoxDecoration(
-                  color: colorThemePink,
-                  borderRadius: BorderRadius.circular(size.width * numD02),
+                  color: AppColorTheme.colorThemePink,
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
                 ),
                 labelStyle: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD038,
+                  fontSize: size.width * AppDimensions.numD038,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
@@ -307,12 +307,12 @@ class _MyContentViewState extends State<MyContentView>
                   ],
                 )
               : GridView.builder(
-                  padding: EdgeInsets.all(size.width * numD04),
+                  padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.75,
-                    mainAxisSpacing: size.width * numD04,
-                    crossAxisSpacing: size.width * numD04,
+                    mainAxisSpacing: size.width * AppDimensions.numD04,
+                    crossAxisSpacing: size.width * AppDimensions.numD04,
                   ),
                   itemCount: currentList.length,
                   itemBuilder: (context, index) {
@@ -337,8 +337,8 @@ class _MyContentViewState extends State<MyContentView>
       useSafeArea: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(size.width * numD085),
-          topRight: Radius.circular(size.width * numD085),
+          topLeft: Radius.circular(size.width * AppDimensions.numD085),
+          topRight: Radius.circular(size.width * AppDimensions.numD085),
         ),
       ),
       builder: (context) {

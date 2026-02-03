@@ -70,7 +70,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             showSnackBar(
                 "Password updated!",
                 "Your password has been successfully changed!",
-                colorOnlineGreen);
+                AppColorTheme.colorOnlineGreen);
           }
         },
         child: Scaffold(
@@ -78,10 +78,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             elevation: 0,
             hideLeading: false,
             title: Text(
-              changePasswordText,
+              AppStrings.changePasswordText,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: size.width * appBarHeadingFontSize),
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -100,12 +100,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
           ),
@@ -113,50 +113,50 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             child: Form(
               key: formKey,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * numD05),
+                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD05),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                          left: size.width * numD11, right: size.width * numD1),
+                          left: size.width * AppDimensions.numD11, right: size.width * AppDimensions.numD1),
                       child: Text(
-                        changePasswordSubTitleText,
+                        AppStrings.changePasswordSubTitleText,
                         style: TextStyle(
                             color: Colors.black,
-                            fontSize: size.width * numD033),
+                            fontSize: size.width * AppDimensions.numD033),
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD06,
+                      height: size.width * AppDimensions.numD06,
                     ),
                     Expanded(
                         child: ListView(
                       children: [
                         /// Current Password
                         Text(
-                          currentPasswordText,
+                          AppStrings.currentPasswordText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         CommonTextField(
                           size: size,
                           controller: _currentPasswordController,
-                          hintText: enterCurrentPasswordHintText,
+                          hintText: AppStrings.enterCurrentPasswordHintText,
                           textInputFormatters: null,
                           prefixIcon: const ImageIcon(
                             AssetImage(
                               "${iconsPath}ic_key.png",
                             ),
                           ),
-                          prefixIconHeight: size.width * numD08,
-                          suffixIconIconHeight: size.width * numD08,
+                          prefixIconHeight: size.width * AppDimensions.numD08,
+                          suffixIconIconHeight: size.width * AppDimensions.numD08,
                           suffixIcon: InkWell(
                             onTap: () {
                               hideCurrentPassword = !hideCurrentPassword;
@@ -171,8 +171,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                       "${iconsPath}ic_block_eye.png",
                                     ),
                               color: !hideCurrentPassword
-                                  ? colorTextFieldIcon
-                                  : colorHint,
+                                  ? AppColorTheme.colorTextFieldIcon
+                                  : AppColorTheme.colorHint,
                             ),
                           ),
                           hidePassword: hideCurrentPassword,
@@ -182,40 +182,40 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           filled: false,
                           filledColor: Colors.transparent,
                           maxLines: 1,
-                          borderColor: colorTextFieldBorder,
+                          borderColor: AppColorTheme.colorTextFieldBorder,
                           autofocus: false,
                         ),
                         SizedBox(
-                          height: size.width * numD06,
+                          height: size.width * AppDimensions.numD06,
                         ),
 
                         /// New Password
                         Text(
-                          newPasswordText,
+                          AppStrings.newPasswordText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
 
                         CommonTextField(
                           size: size,
                           maxLines: 1,
-                          borderColor: colorTextFieldBorder,
+                          borderColor: AppColorTheme.colorTextFieldBorder,
                           controller: _newPasswordController,
-                          hintText: enterNewPasswordHint,
+                          hintText: AppStrings.enterNewPasswordHint,
                           textInputFormatters: null,
                           prefixIcon: const ImageIcon(
                             AssetImage(
                               "${iconsPath}ic_key.png",
                             ),
                           ),
-                          prefixIconHeight: size.width * numD08,
-                          suffixIconIconHeight: size.width * numD08,
+                          prefixIconHeight: size.width * AppDimensions.numD08,
+                          suffixIconIconHeight: size.width * AppDimensions.numD08,
                           onChanged: (text) {
                             if (text.toString().length < 8) {
                               showMincase = false;
@@ -273,8 +273,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                       "${iconsPath}ic_block_eye.png",
                                     ),
                               color: !hideNewPassword
-                                  ? colorTextFieldIcon
-                                  : colorHint,
+                                  ? AppColorTheme.colorTextFieldIcon
+                                  : AppColorTheme.colorHint,
                             ),
                           ),
                           hidePassword: hideNewPassword,
@@ -282,7 +282,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           errorMaxLines: 2,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return requiredText;
+                              return AppStrings.requiredText;
                             } else if (_currentPasswordController.text ==
                                 _newPasswordController.text) {
                               return "Please choose a new password. The old password cannot be reused.";
@@ -305,7 +305,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           filledColor: Colors.transparent,
                           autofocus: false,
                         ),
-                        SizedBox(height: size.width * numD02),
+                        SizedBox(height: size.width * AppDimensions.numD02),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,35 +453,35 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           ],
                         ),
                         SizedBox(
-                          height: size.width * numD06,
+                          height: size.width * AppDimensions.numD06,
                         ),
 
                         /// Confirm New Password
                         Text(
-                          confirmNewPasswordText,
+                          AppStrings.confirmNewPasswordText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         CommonTextField(
                           size: size,
                           maxLines: 1,
-                          borderColor: colorTextFieldBorder,
+                          borderColor: AppColorTheme.colorTextFieldBorder,
                           controller: _confirmNewPasswordController,
-                          hintText: confirmNewPasswordText,
+                          hintText: AppStrings.confirmNewPasswordText,
                           textInputFormatters: null,
                           prefixIcon: const ImageIcon(
                             AssetImage(
                               "${iconsPath}ic_key.png",
                             ),
                           ),
-                          prefixIconHeight: size.width * numD08,
-                          suffixIconIconHeight: size.width * numD08,
+                          prefixIconHeight: size.width * AppDimensions.numD08,
+                          suffixIconIconHeight: size.width * AppDimensions.numD08,
                           suffixIcon: InkWell(
                             onTap: () {
                               hideConfirmPassword = !hideConfirmPassword;
@@ -496,18 +496,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                       "${iconsPath}ic_block_eye.png",
                                     ),
                               color: !hideConfirmPassword
-                                  ? colorTextFieldIcon
-                                  : colorHint,
+                                  ? AppColorTheme.colorTextFieldIcon
+                                  : AppColorTheme.colorHint,
                             ),
                           ),
                           hidePassword: hideConfirmPassword,
                           keyboardType: TextInputType.text,
                           validator: (value) {
                             if (value!.trim().isEmpty) {
-                              return requiredText;
+                              return AppStrings.requiredText;
                             } else if (_newPasswordController.text.trim() !=
                                 value) {
-                              return confirmPasswordErrorText;
+                              return AppStrings.confirmPasswordErrorText;
                             }
                             return null;
                           },
@@ -518,25 +518,25 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         ),
 
                         SizedBox(
-                          height: size.width * numD30,
+                          height: size.width * AppDimensions.numD30,
                         ),
 
                         /// Button
                         Container(
                           width: size.width,
-                          height: size.width * numD13,
+                          height: size.width * AppDimensions.numD13,
                           margin: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: Builder(builder: (context) {
                             return commonElevatedButton(
-                                submitText,
+                                AppStrings.submitText,
                                 size,
                                 commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700),
-                                commonButtonStyle(size, colorThemePink), () {
+                                commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                               if (formKey.currentState!.validate()) {
                                 context.read<AccountSettingsBloc>().add(
                                       ChangePasswordEvent(
@@ -553,7 +553,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         ),
 
                         SizedBox(
-                          height: size.width * numD03,
+                          height: size.width * AppDimensions.numD03,
                         ),
                       ],
                     )),
@@ -578,11 +578,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   8 /*&&
           !passwordExpression.hasMatch(_newPasswordController.text.trim())*/
           ) {
-        passwordStrengthValue = weakText;
+        passwordStrengthValue = AppStrings.weakText;
       } else if (_newPasswordController.text.isNotEmpty &&
           _newPasswordController.text.length >= 8 &&
           passwordExpression.hasMatch(_newPasswordController.text.trim())) {
-        passwordStrengthValue = strongText;
+        passwordStrengthValue = AppStrings.strongText;
       } else {
         passwordStrengthValue = "";
       }

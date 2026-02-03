@@ -32,7 +32,7 @@ class FeedScreenState extends State<FeedScreen>
 
   int feedIndex = 0;
   String contentId = "";
-  String selectedSellType = sharedText;
+  String selectedSellType = AppStrings.sharedText;
 
   late FeedBloc _feedBloc;
   List<FilterModel> sortList = [];
@@ -64,7 +64,7 @@ class FeedScreenState extends State<FeedScreen>
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -81,7 +81,7 @@ class FeedScreenState extends State<FeedScreen>
             child: commonFilterIcon(size),
           ),
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
           InkWell(
             onTap: () {
@@ -92,12 +92,12 @@ class FeedScreenState extends State<FeedScreen>
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           )
         ],
       ),
@@ -132,8 +132,8 @@ class FeedScreenState extends State<FeedScreen>
                 footer: const CustomFooter(builder: commonRefresherFooter),
                 child: ListView.separated(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD04),
+                        horizontal: size.width * AppDimensions.numD04,
+                        vertical: size.width * AppDimensions.numD04),
                     itemBuilder: (context, index) {
                       return FeedItemWidget(
                         feed: state.feeds[index],
@@ -160,9 +160,9 @@ class FeedScreenState extends State<FeedScreen>
                     },
                     separatorBuilder: (context, index) {
                       return Padding(
-                        padding: EdgeInsets.only(bottom: size.width * numD04),
+                        padding: EdgeInsets.only(bottom: size.width * AppDimensions.numD04),
                         child: const Divider(
-                          color: colorTextFieldIcon,
+                          color: AppColorTheme.colorTextFieldIcon,
                         ),
                       );
                     },
@@ -182,9 +182,9 @@ class FeedScreenState extends State<FeedScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft:
-                Radius.circular(MediaQuery.of(context).size.width * numD08),
+                Radius.circular(MediaQuery.of(context).size.width * AppDimensions.numD08),
             topRight:
-                Radius.circular(MediaQuery.of(context).size.width * numD08),
+                Radius.circular(MediaQuery.of(context).size.width * AppDimensions.numD08),
           ),
         ),
         context: context,
@@ -248,17 +248,17 @@ class FeedScreenState extends State<FeedScreen>
     ]);
     filterList.addAll([
       FilterModel(
-          name: allExclusiveContentText,
+          name: AppStrings.allExclusiveContentText,
           icon: "ic_exclusive.png",
           isSelected: false),
       FilterModel(
-          name: allSharedContentText, icon: "ic_share.png", isSelected: false),
+          name: AppStrings.allSharedContentText, icon: "ic_share.png", isSelected: false),
       FilterModel(
-          name: paymentsReceivedText,
+          name: AppStrings.paymentsReceivedText,
           icon: "ic_payment_reviced.png",
           isSelected: false),
       FilterModel(
-          name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+          name: AppStrings.pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
     ]);
   }
 

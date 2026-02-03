@@ -90,20 +90,20 @@ class _FeedAudioPlayerState extends State<FeedAudioPlayer> {
   Widget build(BuildContext context) {
     if (!isInitialized) {
       return Container(
-        height: widget.size.width * numD50,
+        height: widget.size.width * AppDimensions.numD50,
         alignment: Alignment.center,
-        child: const CircularProgressIndicator(color: colorThemePink),
+        child: const CircularProgressIndicator(color: AppColorTheme.colorThemePink),
       );
     }
 
     return Container(
       width: widget.size.width,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(widget.size.width * numD04),
+      padding: EdgeInsets.all(widget.size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
-        color: colorThemePink,
-        border: Border.all(color: colorGreyNew),
-        borderRadius: BorderRadius.circular(widget.size.width * numD06),
+        color: AppColorTheme.colorThemePink,
+        border: Border.all(color: AppColorTheme.colorGreyNew),
+        borderRadius: BorderRadius.circular(widget.size.width * AppDimensions.numD06),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -126,7 +126,7 @@ class _FeedAudioPlayerState extends State<FeedAudioPlayer> {
             child: Icon(
               audioPlaying ? Icons.pause : Icons.play_arrow_rounded,
               color: Colors.white,
-              size: widget.size.width * numD15,
+              size: widget.size.width * AppDimensions.numD15,
             ),
           ),
         ],

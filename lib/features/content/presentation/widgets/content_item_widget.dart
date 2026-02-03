@@ -23,9 +23,9 @@ class ContentItemWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.only(
-          left: size.width * numD03,
-          right: size.width * numD03,
-          top: size.width * numD03,
+          left: size.width * AppDimensions.numD03,
+          right: size.width * AppDimensions.numD03,
+          top: size.width * AppDimensions.numD03,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -36,16 +36,16 @@ class ContentItemWidget extends StatelessWidget {
               blurRadius: 1,
             )
           ],
-          borderRadius: BorderRadius.circular(size.width * numD04),
+          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
         ),
         child: Column(
           children: [
             MediaThumbnailWidget(item: item, size: size),
-            SizedBox(height: size.width * numD02),
+            SizedBox(height: size.width * AppDimensions.numD02),
             _buildInfoRow(),
             const Spacer(),
             _buildStatusRow(),
-            SizedBox(height: size.width * numD02),
+            SizedBox(height: size.width * AppDimensions.numD02),
           ],
         ),
       ),
@@ -66,21 +66,21 @@ class ContentItemWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD03,
+              fontSize: size.width * AppDimensions.numD03,
               color: Colors.black,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        SizedBox(width: size.width * numD01),
+        SizedBox(width: size.width * AppDimensions.numD01),
         Image.asset(
           (item.isExclusive ?? false)
               ? "${iconsPath}ic_exclusive.png"
               : "${iconsPath}ic_share.png",
           height: (item.isExclusive ?? false)
-              ? size.width * numD03
-              : size.width * numD04,
-          color: colorTextFieldIcon,
+              ? size.width * AppDimensions.numD03
+              : size.width * AppDimensions.numD04,
+          color: AppColorTheme.colorTextFieldIcon,
         )
       ],
     );
@@ -102,21 +102,21 @@ class ContentItemWidget extends StatelessWidget {
       children: [
         _buildMetricItem(
           icon: "dollar1.png",
-          value: "${item.purchasedMediahouseCount} $sold",
+          value: "${item.purchasedMediahouseCount} ${AppStrings.sold}",
           isActive: item.purchasedMediahouseCount > 0,
         ),
-        SizedBox(height: size.width * numD01),
+        SizedBox(height: size.width * AppDimensions.numD01),
         _buildMetricItem(
           icon: "dollar1.png",
           value:
-              "${item.totalOffer} ${item.totalOffer > 1 ? '${offerText}s' : offerText}",
+              "${item.totalOffer} ${item.totalOffer > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}",
           isActive: item.totalOffer > 0,
         ),
-        SizedBox(height: size.width * numD01),
+        SizedBox(height: size.width * AppDimensions.numD01),
         _buildMetricItem(
           icon: "ic_view.png",
           value:
-              "${item.totalView} ${item.totalView > 1 ? '${viewsText}s' : viewsText}",
+              "${item.totalView} ${item.totalView > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}",
           isActive: item.totalView > 0,
         ),
       ],
@@ -132,17 +132,17 @@ class ContentItemWidget extends StatelessWidget {
       children: [
         Image.asset(
           "$iconsPath$icon",
-          height: size.width * numD025,
-          width: size.width * numD025,
-          color: isActive ? colorThemePink : Colors.grey,
+          height: size.width * AppDimensions.numD025,
+          width: size.width * AppDimensions.numD025,
+          color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
         ),
-        SizedBox(width: size.width * numD014),
+        SizedBox(width: size.width * AppDimensions.numD014),
         Text(
           value,
           style: commonTextStyle(
             size: size,
-            fontSize: size.width * numD026,
-            color: isActive ? colorThemePink : Colors.grey,
+            fontSize: size.width * AppDimensions.numD026,
+            color: isActive ? AppColorTheme.colorThemePink : Colors.grey,
             fontWeight: FontWeight.normal,
           ),
         ),
@@ -156,11 +156,11 @@ class ContentItemWidget extends StatelessWidget {
 
     if (isPendingOrRejected) {
       return Container(
-        height: size.height * numD036,
-        width: size.width * numD17,
+        height: size.height * AppDimensions.numD036,
+        width: size.width * AppDimensions.numD17,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(size.width * numD015),
+          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
         ),
         child: Center(
           child: Text(
@@ -170,7 +170,7 @@ class ContentItemWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD024,
+              fontSize: size.width * AppDimensions.numD024,
               color: Colors.white,
               fontWeight: FontWeight.w400,
             ),
@@ -180,20 +180,20 @@ class ContentItemWidget extends StatelessWidget {
     }
 
     return Container(
-      height: size.width * numD08,
+      height: size.width * AppDimensions.numD08,
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * numD015,
-        vertical: size.width * numD01,
+        horizontal: size.width * AppDimensions.numD015,
+        vertical: size.width * AppDimensions.numD01,
       ),
       decoration: BoxDecoration(
-        color: !item.paidStatus ? colorThemePink : colorLightGrey,
-        borderRadius: BorderRadius.circular(size.width * numD015),
+        color: !item.paidStatus ? AppColorTheme.colorThemePink : AppColorTheme.colorLightGrey,
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
       ),
       child: Column(
         children: [
           Padding(
             padding: item.paidStatus && !item.isPaidStatusToHopper
-                ? EdgeInsets.symmetric(horizontal: size.width * numD028)
+                ? EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD028)
                 : EdgeInsets.zero,
             child: Text(
               !item.paidStatus
@@ -204,7 +204,7 @@ class ContentItemWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD022,
+                fontSize: size.width * AppDimensions.numD022,
                 color: !item.paidStatus ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w400,
               ),
@@ -215,7 +215,7 @@ class ContentItemWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD022,
+              fontSize: size.width * AppDimensions.numD022,
               color: !item.paidStatus ? Colors.white : Colors.black,
               fontWeight: FontWeight.w600,
             ),
@@ -239,20 +239,20 @@ class MediaThumbnailWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(size.width * numD04),
+      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
       child: Stack(
         children: [
           _buildMediaContent(),
           if (item.mediaUrls.isNotEmpty)
             Image.asset(
               "${commonImagePath}watermark1.png",
-              height: size.width * numD29,
+              height: size.width * AppDimensions.numD29,
               width: size.width,
               fit: BoxFit.cover,
             ),
           Positioned(
-            right: size.width * numD02,
-            top: size.width * numD02,
+            right: size.width * AppDimensions.numD02,
+            top: size.width * AppDimensions.numD02,
             child: _buildCountBadge(),
           ),
         ],
@@ -263,14 +263,14 @@ class MediaThumbnailWidget extends StatelessWidget {
   Widget _buildMediaContent() {
     if (item.mediaUrls.isEmpty) {
       return Container(
-        height: size.width * numD30,
+        height: size.width * AppDimensions.numD30,
         width: size.width,
-        decoration: const BoxDecoration(color: colorLightGrey),
-        padding: EdgeInsets.all(size.width * numD06),
+        decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
+        padding: EdgeInsets.all(size.width * AppDimensions.numD06),
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
-          height: size.width * numD07,
-          width: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
+          width: size.width * AppDimensions.numD07,
         ),
       );
     }
@@ -286,7 +286,7 @@ class MediaThumbnailWidget extends StatelessWidget {
             ? fixS3Url(item.mediaList.first.thumbnailUrl)
             : null,
         width: size.width,
-        height: size.width * numD30,
+        height: size.width * AppDimensions.numD30,
         fit: BoxFit.cover,
       );
     }
@@ -297,12 +297,12 @@ class MediaThumbnailWidget extends StatelessWidget {
   Widget _buildCountBadge() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * numD015,
+        horizontal: size.width * AppDimensions.numD015,
         vertical: size.width * 0.005,
       ),
       decoration: BoxDecoration(
-        color: colorLightGreen.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(size.width * numD015),
+        color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
       ),
       child: Center(
         child: Text(
@@ -310,7 +310,7 @@ class MediaThumbnailWidget extends StatelessWidget {
           textAlign: TextAlign.center,
           style: commonTextStyle(
             size: size,
-            fontSize: size.width * numD038,
+            fontSize: size.width * AppDimensions.numD038,
             color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
@@ -323,10 +323,10 @@ class MediaThumbnailWidget extends StatelessWidget {
     switch (type) {
       case "audio":
         return _buildPlaceholder(
-          color: colorThemePink,
+          color: AppColorTheme.colorThemePink,
           child: Icon(
             Icons.play_arrow_rounded,
-            size: size.width * numD18,
+            size: size.width * AppDimensions.numD18,
             color: Colors.white,
           ),
         );
@@ -334,22 +334,22 @@ class MediaThumbnailWidget extends StatelessWidget {
         return _buildPlaceholder(
           child: Image.asset(
             "${dummyImagePath}pngImage.png",
-            width: size.width * numD03,
-            height: size.height * numD03,
+            width: size.width * AppDimensions.numD03,
+            height: size.height * AppDimensions.numD03,
           ),
         );
       case "doc":
         return _buildPlaceholder(
           child: Image.asset(
             "${dummyImagePath}doc_black_icon.png",
-            width: size.width * numD03,
-            height: size.height * numD03,
+            width: size.width * AppDimensions.numD03,
+            height: size.height * AppDimensions.numD03,
           ),
         );
       default:
         return CachedNetworkImage(
           imageUrl: getMediaImageUrl(url, isVideo: type == 'video'),
-          height: size.width * numD30,
+          height: size.width * AppDimensions.numD30,
           width: size.width,
           fit: BoxFit.cover,
           placeholder: (_, __) => _buildImagePlaceholder(),
@@ -360,18 +360,18 @@ class MediaThumbnailWidget extends StatelessWidget {
 
   Widget _buildPlaceholder({Color? color, required Widget child}) {
     return Container(
-      height: size.width * numD30,
+      height: size.width * AppDimensions.numD30,
       width: size.width,
-      padding: EdgeInsets.all(size.width * numD04),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
         color: color,
-        border: Border.all(color: colorHint),
-        borderRadius: BorderRadius.circular(size.width * numD04),
+        border: Border.all(color: AppColorTheme.colorHint),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(size.width * numD04),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
         child: Padding(
-          padding: EdgeInsets.all(size.width * numD03),
+          padding: EdgeInsets.all(size.width * AppDimensions.numD03),
           child: child,
         ),
       ),
@@ -381,13 +381,13 @@ class MediaThumbnailWidget extends StatelessWidget {
   Widget _buildImagePlaceholder() {
     return Container(
       alignment: Alignment.topCenter,
-      height: size.width * numD30,
+      height: size.width * AppDimensions.numD30,
       width: size.width,
       child: Center(
         child: Image.asset(
           "${commonImagePath}rabbitLogo.png",
-          height: size.width * numD15,
-          width: size.width * numD15,
+          height: size.width * AppDimensions.numD15,
+          width: size.width * AppDimensions.numD15,
         ),
       ),
     );

@@ -113,54 +113,54 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: size.width * numD25,
+                      height: size.width * AppDimensions.numD25,
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD06),
+                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
                       child: Text(
-                        forgotPasswordText.toTitleCase(),
+                        AppStrings.forgotPasswordText.toTitleCase(),
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'AirbnbCereal',
-                            fontSize: size.width * numD07),
+                            fontSize: size.width * AppDimensions.numD07),
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD06),
-                      child: Text(forgotPasswordSubHeading,
+                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                      child: Text(AppStrings.forgotPasswordSubHeading,
                           style: TextStyle(
                               fontFamily: 'AirbnbCereal',
                               color: Colors.black,
-                              fontSize: size.width * numD035)),
+                              fontSize: size.width * AppDimensions.numD035)),
                     ),
                     SizedBox(
-                      height: size.width * numD08,
+                      height: size.width * AppDimensions.numD08,
                     ),
 
                     /// Email Controller
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD06),
+                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
                       child: CommonTextField(
                         size: size,
                         maxLines: 1,
-                        borderColor: colorTextFieldBorder,
+                        borderColor: AppColorTheme.colorTextFieldBorder,
                         controller: emailAddressController,
-                        hintText: emailAddressHintText,
+                        hintText: AppStrings.emailAddressHintText,
                         textInputFormatters: null,
                         prefixIcon: ImageIcon(
                           AssetImage(
                             "${iconsPath}ic_email.png",
                           ),
-                          size: size.width * numD045,
+                          size: size.width * AppDimensions.numD045,
                         ),
-                        prefixIconHeight: size.width * numD045,
+                        prefixIconHeight: size.width * AppDimensions.numD045,
                         suffixIconIconHeight: 0,
                         suffixIcon: null,
                         hidePassword: false,
@@ -177,9 +177,9 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     /// Submit Button
                     Container(
                       width: size.width,
-                      height: size.width * (isIpad ? numD1 : numD14),
+                      height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                       padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD08),
+                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
                       child: BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, state) {
                           if (state is AuthLoading) {
@@ -187,14 +187,14 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                 child: CircularProgressIndicator());
                           }
                           return commonElevatedButton(
-                              submitText,
+                              AppStrings.submitText,
                               size,
                               commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700),
-                              commonButtonStyle(size, colorThemePink), () {
+                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                             if (formKey.currentState!.validate()) {
                               context.read<AuthBloc>().add(
                                   ForgotPasswordRequested(
@@ -206,7 +206,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     ),
                     isIpad
                         ? SizedBox(
-                            height: size.height * numD02,
+                            height: size.height * AppDimensions.numD02,
                           )
                         : const SizedBox.shrink(),
                     Align(
@@ -215,16 +215,16 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text(signInText,
+                          child: Text(AppStrings.signInText,
                               style: TextStyle(
-                                  color: colorThemePink,
-                                  fontSize: size.width * numD035,
+                                  color: AppColorTheme.colorThemePink,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   fontFamily: 'AirbnbCereal',
                                   fontWeight: FontWeight.w700)),
                         )),
                     isIpad
                         ? SizedBox(
-                            height: size.height * numD04,
+                            height: size.height * AppDimensions.numD04,
                           )
                         : const SizedBox.shrink(),
                   ],
@@ -353,24 +353,24 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              left: size.width * numD06,
-              right: size.width * numD06,
-              top: size.width * numD02,
+              left: size.width * AppDimensions.numD06,
+              right: size.width * AppDimensions.numD06,
+              top: size.width * AppDimensions.numD02,
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: size.width * numD05),
+                SizedBox(height: size.width * AppDimensions.numD05),
                 Text(
                   "Verify OTP",
                   style: TextStyle(
                     fontFamily: 'AirbnbCereal_W_Bd',
-                    fontSize: size.width * numD06,
+                    fontSize: size.width * AppDimensions.numD06,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: size.width * numD02),
+                SizedBox(height: size.width * AppDimensions.numD02),
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -379,45 +379,45 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                         text: "We’ve sent a 5-digit verification code to ",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           fontFamily: 'AirbnbCereal_W_Lt',
                         ),
                       ),
                       TextSpan(
                         text: widget.email,
                         style: TextStyle(
-                          color: colorThemePink,
+                          color: AppColorTheme.colorThemePink,
                           fontFamily: 'AirbnbCereal_W_Bd',
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: size.width * numD08),
+                SizedBox(height: size.width * AppDimensions.numD08),
                 OtpPinField(
                   key: _otpPinController,
                   onSubmit: (pin) => debugPrint("Entered OTP: $pin"),
                   onChange: (pin) => debugPrint("OTP Changed: $pin"),
                   otpPinFieldStyle: OtpPinFieldStyle(
-                    defaultFieldBorderColor: colorTextFieldBorder,
-                    activeFieldBorderColor: colorTextFieldIcon,
-                    defaultFieldBackgroundColor: colorLightGrey,
-                    activeFieldBackgroundColor: colorLightGrey,
-                    fieldBorderRadius: size.width * numD02,
+                    defaultFieldBorderColor: AppColorTheme.colorTextFieldBorder,
+                    activeFieldBorderColor: AppColorTheme.colorTextFieldIcon,
+                    defaultFieldBackgroundColor: AppColorTheme.colorLightGrey,
+                    activeFieldBackgroundColor: AppColorTheme.colorLightGrey,
+                    fieldBorderRadius: size.width * AppDimensions.numD02,
                     fieldBorderWidth: 0.5,
                   ),
                   maxLength: 5,
                   showCursor: true,
-                  cursorColor: colorTextFieldIcon,
+                  cursorColor: AppColorTheme.colorTextFieldIcon,
                   showCustomKeyboard: false,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   otpPinFieldDecoration: OtpPinFieldDecoration.custom,
                 ),
-                SizedBox(height: size.width * numD1),
+                SizedBox(height: size.width * AppDimensions.numD1),
                 SizedBox(
                   width: size.width,
-                  height: size.width * (isIpad ? numD1 : numD14),
+                  height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                   child: BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       if (state is AuthLoading) {
@@ -428,11 +428,11 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                         size,
                         commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                         ),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {
                           String otpValue =
                               _otpPinController.currentState?.controller.text ??
@@ -453,24 +453,24 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                     },
                   ),
                 ),
-                SizedBox(height: size.width * numD07),
+                SizedBox(height: size.width * AppDimensions.numD07),
                 if (secondsLeft != 0)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         "${iconsPath}ic_time.png",
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
-                      SizedBox(width: size.width * numD02),
-                      Text("$otpExpireText $expireTimeValue $minutesText",
+                      SizedBox(width: size.width * AppDimensions.numD02),
+                      Text("${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
                           style: TextStyle(
                               fontFamily: 'AirbnbCereal',
                               color: Colors.black,
-                              fontSize: size.width * numD035)),
+                              fontSize: size.width * AppDimensions.numD035)),
                     ],
                   ),
-                if (secondsLeft != 0) SizedBox(height: size.width * numD06),
+                if (secondsLeft != 0) SizedBox(height: size.width * AppDimensions.numD06),
                 if (secondsLeft == 0)
                   TextButton(
                     onPressed: widget.onResend,
@@ -479,33 +479,33 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                              text: otpNotReceivedText,
+                              text: AppStrings.otpNotReceivedText,
                               style: TextStyle(
                                   fontFamily: 'AirbnbCereal',
                                   color: Colors.black,
-                                  fontSize: size.width * numD035)),
+                                  fontSize: size.width * AppDimensions.numD035)),
                           WidgetSpan(child: SizedBox(width: size.width * 0.01)),
                           TextSpan(
-                            text: clickHereText,
+                            text: AppStrings.clickHereText,
                             style: TextStyle(
                               fontFamily: 'AirbnbCereal',
-                              color: colorThemePink,
-                              fontSize: size.width * numD038,
+                              color: AppColorTheme.colorThemePink,
+                              fontSize: size.width * AppDimensions.numD038,
                             ),
                           ),
                           WidgetSpan(child: SizedBox(width: size.width * 0.01)),
                           TextSpan(
-                            text: anotherOneText,
+                            text: AppStrings.anotherOneText,
                             style: TextStyle(
                                 fontFamily: 'AirbnbCereal',
                                 color: Colors.black,
-                                fontSize: size.width * numD035),
+                                fontSize: size.width * AppDimensions.numD035),
                           ),
                         ],
                       ),
                     ),
                   ),
-                SizedBox(height: size.width * numD06),
+                SizedBox(height: size.width * AppDimensions.numD06),
               ],
             ),
           ),

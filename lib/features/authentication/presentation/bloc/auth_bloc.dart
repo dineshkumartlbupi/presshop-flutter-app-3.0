@@ -10,6 +10,7 @@ import '../../domain/usecases/reset_password.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:presshop/core/utils/current_user.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUser loginUser;
@@ -47,6 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             'method': 'email',
             'user_id': user.id,
           });
+          CurrentUser.user = user;
           emit(AuthAuthenticated(user: user));
         },
       );
@@ -88,6 +90,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             'method': event.socialType,
             'user_id': user.id,
           });
+          CurrentUser.user = user;
           emit(AuthAuthenticated(user: user));
         },
       );

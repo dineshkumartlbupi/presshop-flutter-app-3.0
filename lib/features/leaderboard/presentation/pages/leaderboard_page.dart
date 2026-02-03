@@ -117,7 +117,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -136,12 +136,12 @@ class _LeaderboardViewState extends State<LeaderboardView> {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
         ],
       ),
@@ -165,13 +165,13 @@ class _LeaderboardViewState extends State<LeaderboardView> {
 
   Widget _buildBody(LeaderboardEntity leaderboard) {
     return Padding(
-      padding: EdgeInsets.all(size.width * numD04),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: size.width * numD10,
+            height: size.width * AppDimensions.numD10,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: leaderboard.countryList.length,
@@ -187,21 +187,21 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                         .add(GetLeaderboard(selectedCountryCode));
                   },
                   child: Container(
-                    margin: EdgeInsets.only(right: size.width * numD03),
+                    margin: EdgeInsets.only(right: size.width * AppDimensions.numD03),
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD03,
-                        vertical: size.width * numD015),
+                        horizontal: size.width * AppDimensions.numD03,
+                        vertical: size.width * AppDimensions.numD015),
                     decoration: BoxDecoration(
                       color: selectedCountryCode == countryItem.countryCode
-                          ? colorThemePink
+                          ? AppColorTheme.colorThemePink
                           : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(size.width * numD02),
+                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
                     ),
                     child: Center(
                       child: Text(countryItem.country,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color:
                                   selectedCountryCode == countryItem.countryCode
                                       ? Colors.white
@@ -215,33 +215,33 @@ class _LeaderboardViewState extends State<LeaderboardView> {
           ),
           if (leaderboard.memberList.isEmpty) ...[
             Padding(
-              padding: EdgeInsets.only(top: size.height * numD30),
+              padding: EdgeInsets.only(top: size.height * AppDimensions.numD30),
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
                   "No Member available in this Country",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.w500),
                 ),
               ),
             )
           ] else ...[
-            SizedBox(height: size.height * numD04),
+            SizedBox(height: size.height * AppDimensions.numD04),
             LeadershipTableWidget(
               memberList: leaderboard.memberList.take(3).toList(),
             ),
-            SizedBox(height: size.height * numD04),
+            SizedBox(height: size.height * AppDimensions.numD04),
             Text('${leaderboard.totalMember} total earning members',
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w500)),
             Divider(
-              height: size.height * numD02,
+              height: size.height * AppDimensions.numD02,
               thickness: 0.5,
               color: Colors.black,
             ),
@@ -256,15 +256,15 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                   debugPrint(
                       "DEBUG: Rendering list item $index: ${memberItem.userName} (${memberItem.country})");
                   return Padding(
-                    padding: EdgeInsets.only(bottom: size.height * numD02),
+                    padding: EdgeInsets.only(bottom: size.height * AppDimensions.numD02),
                     child: Row(
                       children: [
                         Container(
                             padding: EdgeInsets.all(
-                              size.width * numD01,
+                              size.width * AppDimensions.numD01,
                             ),
-                            height: size.width * numD15,
-                            width: size.width * numD15,
+                            height: size.width * AppDimensions.numD15,
+                            width: size.width * AppDimensions.numD15,
                             child: ClipOval(
                               clipBehavior: Clip.antiAlias,
                               child: CachedNetworkImage(
@@ -272,15 +272,15 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                 errorWidget: (context, url, error) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
-                                    height: size.width * numD06,
-                                    width: size.width * numD06,
+                                    height: size.width * AppDimensions.numD06,
+                                    width: size.width * AppDimensions.numD06,
                                     fit: BoxFit.cover,
                                   );
                                 },
                                 fit: BoxFit.cover,
                               ),
                             )),
-                        SizedBox(width: size.width * numD03),
+                        SizedBox(width: size.width * AppDimensions.numD03),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -288,16 +288,16 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                               memberItem.userName.toTitleCase(),
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD04,
+                                  fontSize: size.width * AppDimensions.numD04,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500),
                             ),
-                            SizedBox(height: size.height * numD005),
+                            SizedBox(height: size.height * AppDimensions.numD005),
                             Text(
                               "Hopper since ${getFormattedDate(memberItem.createdAt)}",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD032,
+                                  fontSize: size.width * AppDimensions.numD032,
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400),
                             ),
@@ -309,7 +309,7 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                               memberItem.totalEarnings, currencySymbol),
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD04,
+                              fontSize: size.width * AppDimensions.numD04,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         )

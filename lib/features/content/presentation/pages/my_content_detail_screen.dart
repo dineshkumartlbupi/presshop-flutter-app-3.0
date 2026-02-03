@@ -10,10 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:presshop/core/constants/string_constants.dart';
+import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
-import 'package:presshop/core/constants/string_constants.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
+import 'package:presshop/core/constants/string_constants_new.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/core/utils/date_time_utils.dart';
 import 'package:presshop/core/utils/extensions.dart';
@@ -66,7 +68,7 @@ class MyContentDetailScreen extends StatefulWidget {
 }
 
 class MyContentDetailScreenState extends State<MyContentDetailScreen> {
-  String selectedSellType = sharedText;
+  String selectedSellType = AppStringsNew2.sharedText;
   ScrollController listController = ScrollController();
   ContentItem? contentItem;
   List<dynamic> chatList = [];
@@ -227,11 +229,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               elevation: 0,
               hideLeading: false,
               title: Text(
-                "${myContentText.toTitleCase()} ${detailsText.toTitleCase()}",
+                "${AppStrings.myContentText.toTitleCase()} ${AppStrings.detailsText.toTitleCase()}",
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: size.width * appBarHeadingFontSize),
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
               ),
               centerTitle: false,
               titleSpacing: 0,
@@ -251,12 +253,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD07,
-                    width: size.width * numD07,
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
                   ),
                 ),
                 SizedBox(
-                  width: size.width * numD04,
+                  width: size.width * AppDimensions.numD04,
                 )
               ]),
 
@@ -267,17 +269,19 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   : (contentItem != null
                       ? SingleChildScrollView(
                           child: Container(
-                            margin: EdgeInsets.only(top: size.width * numD02),
+                            margin: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 showMediaWidget(),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04,
+                                    horizontal:
+                                        size.width * AppDimensions.numD04,
                                     vertical:
                                         (contentItem!.isExclusive ?? false)
-                                            ? size.width * numD01
+                                            ? size.width * AppDimensions.numD01
                                             : 0,
                                   ),
                                   child: Column(
@@ -287,7 +291,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                       headerWidget(),
 
                                       const Divider(
-                                        color: colorGrey1,
+                                        color: AppColorTheme.colorGrey1,
                                       ),
 
                                       /// Description
@@ -296,31 +300,37 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                         textAlign: TextAlign.justify,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD03,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
                                             color: Colors.black,
                                             lineHeight: 2,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       if (chatList.isNotEmpty) ...[
                                         SizedBox(
-                                          height: size.width * numD02,
+                                          height:
+                                              size.width * AppDimensions.numD02,
                                         ),
                                         if (isOwner)
-                                          const Divider(color: colorGrey1),
+                                          const Divider(color: AppColorTheme.colorGrey1),
                                         SizedBox(
-                                          height: size.width * numD02,
+                                          height:
+                                              size.width * AppDimensions.numD02,
                                         ),
                                         if (isOwner)
-                                          Text(manageContentText.toUpperCase(),
+                                          Text(
+                                              AppStrings.manageContentText
+                                                  .toUpperCase(),
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize:
-                                                      size.width * numD035,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w700)),
                                         if (isOwner)
                                           SizedBox(
-                                            height: size.width * numD02,
+                                            height: size.width *
+                                                AppDimensions.numD02,
                                           ),
                                         if (isOwner)
                                           ListView.builder(
@@ -335,23 +345,26 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           ),
                                       ],
                                       SizedBox(
-                                        height: size.width * numD02,
+                                        height:
+                                            size.width * AppDimensions.numD02,
                                       ),
                                       if (isOwner)
-                                        const Divider(color: colorGrey1),
+                                        const Divider(color: AppColorTheme.colorGrey1),
 
                                       Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             SizedBox(
-                                              height: size.width * numD03,
+                                              height: size.width *
+                                                  AppDimensions.numD03,
                                             ),
                                             if (isOwner)
                                               AnimatedButtonWidget(
                                                 shouldRestartAnimation:
                                                     shouldRestartAnimation,
                                                 size: size,
-                                                buttonText: manageContentText,
+                                                buttonText: AppStrings
+                                                    .manageContentText,
                                                 onPressed: () {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
@@ -409,19 +422,21 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                 },
                                               ),
                                             SizedBox(
-                                              height: size.width * numD05,
+                                              height: size.width *
+                                                  AppDimensions.numD05,
                                             ),
                                             Padding(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      size.width * numD02),
+                                                  horizontal: size.width *
+                                                      AppDimensions.numD02),
                                               child: RichText(
                                                   textAlign: TextAlign.justify,
                                                   text: TextSpan(
                                                       style: commonTextStyle(
                                                           size: size,
                                                           fontSize: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.w400),
@@ -434,11 +449,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                                 " Manage Content",
                                                             style: commonTextStyle(
                                                                 size: size,
-                                                                fontSize:
-                                                                    size.width *
-                                                                        numD03,
+                                                                fontSize: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD03,
                                                                 color:
-                                                                    colorThemePink,
+                                                                    AppColorTheme.colorThemePink,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400)),
@@ -449,7 +465,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                       ])),
                                             ),
                                             SizedBox(
-                                              height: size.width * numD05,
+                                              height: size.width *
+                                                  AppDimensions.numD05,
                                             )
                                           ])
                                     ],
@@ -467,7 +484,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
   Widget showMediaWidget() {
     return SizedBox(
-      height: size.width * numD50,
+      height: size.width * AppDimensions.numD50,
       child: PageView.builder(
           onPageChanged: (value) {
             debugPrint('value:::::::$value');
@@ -484,9 +501,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
           itemBuilder: (context, index) {
             var item = contentItem!.mediaList[index];
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * numD04),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: InkWell(
                   onTap: () {
                     if (item.mediaType == "pdf" || item.mediaType == "doc") {
@@ -501,8 +520,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                               ? videoWidget(index)
                               : item.mediaType == "pdf"
                                   ? Padding(
-                                      padding:
-                                          EdgeInsets.all(size.width * numD04),
+                                      padding: EdgeInsets.all(
+                                          size.width * AppDimensions.numD04),
                                       child: Image.asset(
                                         "${dummyImagePath}pngImage.png",
                                         fit: BoxFit.contain,
@@ -511,8 +530,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                     )
                                   : item.mediaType == "doc"
                                       ? Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD04),
+                                          padding: EdgeInsets.all(size.width *
+                                              AppDimensions.numD04),
                                           child: Image.asset(
                                             "${dummyImagePath}doc_black_icon.png",
                                             fit: BoxFit.contain,
@@ -530,12 +549,13 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                               : getMediaImageUrl(contentItem!
                                                   .mediaList[index].mediaUrl),
                                           width: double.infinity,
-                                          height: size.width * numD50,
+                                          height:
+                                              size.width * AppDimensions.numD50,
                                           fit: BoxFit.cover,
                                         ),
                       Positioned(
-                        right: size.width * numD02,
-                        top: size.width * numD02,
+                        right: size.width * AppDimensions.numD02,
+                        top: size.width * AppDimensions.numD02,
                         child: Column(
                           children: getMediaCount(contentItem!.mediaList,
                               size), // Assuming getMediaCount can handle List<ContentMedia> or dynamic
@@ -578,27 +598,29 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
         if (showTimer)
           Padding(
-            padding: EdgeInsets.symmetric(vertical: size.width * numD02),
+            padding: EdgeInsets.symmetric(
+                vertical: size.width * AppDimensions.numD02),
             child: Container(
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD04,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD04,
+                  vertical: size.width * AppDimensions.numD02),
               decoration: BoxDecoration(
                   color: Colors.redAccent,
-                  borderRadius: BorderRadius.circular(size.width * numD02)),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD02)),
               child: Text(
                 "Time Left: $_timeLeft",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: size.width * numD04),
+                    fontSize: size.width * AppDimensions.numD04),
               ),
             ),
           ),
 
         (contentItem!.mediaList.length >= 0)
             ? SizedBox(
-                height: size.width * numD02,
+                height: size.width * AppDimensions.numD02,
               )
             : Container(),
 
@@ -607,10 +629,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
             Text(
               (contentItem!.isExclusive ?? false)
                   ? ""
-                  : multipleText.toUpperCase(),
+                  : AppStrings.multipleText.toUpperCase(),
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD033,
+                  fontSize: size.width * AppDimensions.numD033,
                   color: Colors.black,
                   fontWeight: FontWeight.w400),
             ),
@@ -621,18 +643,18 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   (contentItem!.isExclusive ?? false)
                       ? "${iconsPath}ic_exclusive.png"
                       : "${iconsPath}ic_share.png",
-                  height: size.width * numD035,
+                  height: size.width * AppDimensions.numD035,
                 ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
                 Text(
                   (contentItem!.isExclusive ?? false)
-                      ? exclusiveText
-                      : sharedText,
+                      ? AppStrings.exclusiveText
+                      : AppStrings.sharedText,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.normal),
                 ),
@@ -641,7 +663,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
           ],
         ),
         SizedBox(
-          height: size.width * numD04,
+          height: size.width * AppDimensions.numD04,
         ),
 
         /// Title
@@ -653,7 +675,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD005,
+                    height: size.width * AppDimensions.numD005,
                   ),
                   Text(
                     contentItem!.title,
@@ -661,13 +683,13 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD04,
+                        fontSize: size.width * AppDimensions.numD04,
                         color: Colors.black,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w700),
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// Offers
@@ -685,60 +707,63 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                   const AssetImage("${iconsPath}dollar1.png"),
                                   color: widget.purchasedMediahouseCount == 0
                                       ? Colors.grey
-                                      : colorThemePink,
-                                  size: size.width * numD042),
-                              SizedBox(width: size.width * numD018),
+                                      : AppColorTheme.colorThemePink,
+                                  size: size.width * AppDimensions.numD042),
+                              SizedBox(
+                                  width: size.width * AppDimensions.numD018),
                               Text(
-                                '${widget.purchasedMediahouseCount} $sold',
+                                '${widget.purchasedMediahouseCount} ${AppStrings.sold}',
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD029,
+                                    fontSize:
+                                        size.width * AppDimensions.numD029,
                                     color: widget.purchasedMediahouseCount == 0
                                         ? Colors.grey
-                                        : colorThemePink,
+                                        : AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.normal),
                               ),
                             ],
                           ),
-                          SizedBox(width: size.width * numD02),
+                          SizedBox(width: size.width * AppDimensions.numD02),
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
                               color: widget.offerCount == 0
                                   ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD042),
-                          SizedBox(width: size.width * numD018),
+                                  : AppColorTheme.colorThemePink,
+                              size: size.width * AppDimensions.numD042),
+                          SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${offerText}s' : offerText}',
+                            '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${AppStrings.offerText}s' : AppStrings.offerText}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
+                                fontSize: size.width * AppDimensions.numD029,
                                 color: widget.offerCount == 0
                                     ? Colors.grey
-                                    : colorThemePink,
+                                    : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
-                      SizedBox(width: size.width * numD02),
+                      SizedBox(width: size.width * AppDimensions.numD02),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
                               color: contentItem!.totalView == 0
                                   ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD05),
-                          SizedBox(width: size.width * numD018),
+                                  : AppColorTheme.colorThemePink,
+                              size: size.width * AppDimensions.numD05),
+                          SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${contentItem!.totalView.toString()} ${contentItem!.totalView > 1 ? '${viewsText}s' : viewsText}',
+                            '${contentItem!.totalView.toString()} ${contentItem!.totalView > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
-                                color: (contentItem!.paidStatus == paidText &&
+                                fontSize: size.width * AppDimensions.numD029,
+                                color: (contentItem!.paidStatus ==
+                                                AppStrings.paidText &&
                                             contentItem!.totalView == 1) ||
                                         contentItem!.totalView == 0
                                     ? Colors.grey
-                                    : colorThemePink,
+                                    : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
@@ -746,7 +771,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// Time Date
@@ -755,45 +780,45 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                       children: [
                         Image.asset(
                           "${iconsPath}ic_clock.png",
-                          height: size.width * numD04,
-                          color: colorTextFieldIcon,
+                          height: size.width * AppDimensions.numD04,
+                          color: AppColorTheme.colorTextFieldIcon,
                         ),
                         SizedBox(
-                          width: size.width * numD012,
+                          width: size.width * AppDimensions.numD012,
                         ),
                         Text(
                           DateFormat('hh:mm a')
                               .format(DateTime.parse(contentItem!.createdAt)),
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
+                              fontSize: size.width * AppDimensions.numD028,
+                              color: AppColorTheme.colorHint,
                               fontWeight: FontWeight.normal),
                         ),
                         SizedBox(
-                          width: size.width * numD02,
+                          width: size.width * AppDimensions.numD02,
                         ),
                         Image.asset(
                           "${iconsPath}ic_yearly_calendar.png",
-                          height: size.width * numD04,
-                          color: colorTextFieldIcon,
+                          height: size.width * AppDimensions.numD04,
+                          color: AppColorTheme.colorTextFieldIcon,
                         ),
                         SizedBox(
-                          width: size.width * numD018,
+                          width: size.width * AppDimensions.numD018,
                         ),
                         Text(
                           DateFormat("dd MMM yyyy")
                               .format(DateTime.parse(contentItem!.createdAt)),
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
+                              fontSize: size.width * AppDimensions.numD028,
+                              color: AppColorTheme.colorHint,
                               fontWeight: FontWeight.normal),
                         ),
                       ],
                     ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// Location
@@ -801,11 +826,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                     children: [
                       Image.asset(
                         "${iconsPath}ic_location.png",
-                        height: size.width * numD045,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD045,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD01,
+                        width: size.width * AppDimensions.numD01,
                       ),
                       Expanded(
                         child: Text(
@@ -813,61 +838,64 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
+                              fontSize: size.width * AppDimensions.numD028,
+                              color: AppColorTheme.colorHint,
                               fontWeight: FontWeight.normal),
                         ),
                       )
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
                 ],
               ),
             ),
             SizedBox(
-              width: size.width * numD075,
+              width: size.width * AppDimensions.numD075,
             ),
 
             /// price
             Column(
               children: [
                 Container(
-                  width: size.width * numD30,
-                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  width: size.width * AppDimensions.numD30,
+                  padding: EdgeInsets.symmetric(
+                      vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: contentItem!.paidStatus == unPaidText
-                          ? colorThemePink
-                          : /*myContentData!.paidStatus == paidText &&
+                      color: contentItem!.paidStatus == AppStrings.unPaidText
+                          ? AppColorTheme.colorThemePink
+                          : /*myContentData!.paidStatus == AppStrings.paidText &&
                                   !myContentData!.isPaidStatusToHopper
-                              ? colorThemePink
+                              ? AppColorTheme.colorThemePink
                               :*/
-                          colorLightGrey,
-                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                          AppColorTheme.colorLightGrey,
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD03)),
                   child: Column(
                     children: [
                       Text(
-                        contentItem!.paidStatus == unPaidText
+                        contentItem!.paidStatus == AppStrings.unPaidText
                             ? 'Published Price'
-                            : contentItem!.paidStatus == paidText &&
+                            : contentItem!.paidStatus == AppStrings.paidText &&
                                     (contentItem!.isPaidStatusToHopper)
-                                ? receivedText
-                                : soldText,
+                                ? AppStrings.receivedText
+                                : AppStrings.soldText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
-                            color: contentItem!.paidStatus == unPaidText
-                                ? Colors.white
-                                : Colors.black,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color:
+                                contentItem!.paidStatus == AppStrings.unPaidText
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.w400),
-                        /*myContentData!.paidStatus == unPaidText
-                                ? size.width * numD035
-                                : myContentData!.paidStatus == paidText &&
+                        /*myContentData!.paidStatus == AppStrings.unPaidText
+                                ? size.width * AppDimensions.numD035
+                                : myContentData!.paidStatus == AppStrings.paidText &&
                                         myContentData!.isPaidStatusToHopper
-                                    ? size.width * numD035
-                                    : size.width * numD03,*/
-                        /*myContentData!.paidStatus == paidText &&
+                                    ? size.width * AppDimensions.numD035
+                                    : size.width * AppDimensions.numD03,*/
+                        /*myContentData!.paidStatus == AppStrings.paidText &&
                                         myContentData!.isPaidStatusToHopper
                                     ?
                                     : Colors.white*/
@@ -875,19 +903,20 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                       FittedBox(
                         child: Container(
                           margin: EdgeInsets.only(
-                            left: size.width * numD02,
-                            right: size.width * numD02,
+                            left: size.width * AppDimensions.numD02,
+                            right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
                             "$currencySymbol${formatDouble(double.parse(contentItem!.price ?? "0"))}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD05,
-                                color: contentItem!.paidStatus == unPaidText
+                                fontSize: size.width * AppDimensions.numD05,
+                                color: contentItem!.paidStatus ==
+                                        AppStrings.unPaidText
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold),
-                            /*myContentData!.paidStatus == paidText &&
+                            /*myContentData!.paidStatus == AppStrings.paidText &&
                                             myContentData!.isPaidStatusToHopper
                                         ?
                             : Colors.white*/
@@ -898,35 +927,37 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * numD015,
+                  height: size.height * AppDimensions.numD015,
                 ),
                 Container(
-                  width: size.width * numD30,
-                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  width: size.width * AppDimensions.numD30,
+                  padding: EdgeInsets.symmetric(
+                      vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: colorGreyChat,
-                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                      color: AppColorTheme.colorGreyChat,
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD03)),
                   child: Column(
                     children: [
                       Text(
                         'Total Earnings',
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
                         child: Container(
                           margin: EdgeInsets.only(
-                            left: size.width * numD02,
-                            right: size.width * numD02,
+                            left: size.width * AppDimensions.numD02,
+                            right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
                             "$currencySymbol${contentItem!.totalSold}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD05,
+                                fontSize: size.width * AppDimensions.numD05,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -953,12 +984,13 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
         return !_mediaHouseList[index].paidStatus
             ? Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD04,
-                  vertical: size.width * numD035,
+                  horizontal: size.width * AppDimensions.numD04,
+                  vertical: size.width * AppDimensions.numD035,
                 ),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(size.width * numD05),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD05),
                     border: Border.all(color: Colors.black)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -970,33 +1002,33 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                           Container(
                             margin: const EdgeInsets.only(top: 5),
                             decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               border:
-                                  Border.all(color: lightGrey.withOpacity(.6)),
+                                  Border.all(color: AppColorTheme.lightGrey.withOpacity(.6)),
                             ),
                             child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               child: Image.network(
                                 item.mediaHouseImage,
                                 fit: BoxFit.contain,
-                                height: size.width * numD20,
-                                width: size.width * numD20,
+                                height: size.width * AppDimensions.numD20,
+                                width: size.width * AppDimensions.numD20,
                                 errorBuilder: (BuildContext context,
                                     Object exception, StackTrace? stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,
-                                    width: size.width * numD20,
-                                    height: size.width * numD20,
+                                    width: size.width * AppDimensions.numD20,
+                                    height: size.width * AppDimensions.numD20,
                                   );
                                 },
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: size.width * numD025,
+                            width: size.width * AppDimensions.numD025,
                           ),
                           Expanded(
                             child: Column(
@@ -1009,13 +1041,14 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                       : item.mediaHouseName,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD033,
+                                      fontSize:
+                                          size.width * AppDimensions.numD033,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500),
                                 ),
 
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
 
                                 /// Time
@@ -1023,11 +1056,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_clock.png",
-                                      height: size.width * numD04,
-                                      color: colorTextFieldIcon,
+                                      height: size.width * AppDimensions.numD04,
+                                      color: AppColorTheme.colorTextFieldIcon,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Text(
                                       dateTimeFormatter(
@@ -1036,14 +1069,15 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                           time: true),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorHint,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          color: AppColorTheme.colorHint,
                                           fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
 
                                 /// date
@@ -1051,11 +1085,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_yearly_calendar.png",
-                                      height: size.width * numD04,
-                                      color: colorTextFieldIcon,
+                                      height: size.width * AppDimensions.numD04,
+                                      color: AppColorTheme.colorTextFieldIcon,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Expanded(
                                       child: Text(
@@ -1065,15 +1099,16 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorHint,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
+                                            color: AppColorTheme.colorHint,
                                             fontWeight: FontWeight.normal),
                                       ),
                                     )
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                               ],
                             ),
@@ -1082,18 +1117,18 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD01,
+                      width: size.width * AppDimensions.numD01,
                     ),
                     Container(
-                      width: size.width * numD30,
+                      width: size.width * AppDimensions.numD30,
                       padding: EdgeInsets.symmetric(
-                          //horizontal: size.width * numD06,
-                          vertical: size.width * numD012),
+                          //horizontal: size.width * AppDimensions.numD06,
+                          vertical: size.width * AppDimensions.numD012),
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
-                          border: Border.all(color: lightGrey),
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD03)),
+                          color: AppColorTheme.colorLightGrey,
+                          border: Border.all(color: AppColorTheme.lightGrey),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD03)),
                       child: Column(
                         children: [
                           Text(
@@ -1102,7 +1137,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400),
                           ),
@@ -1112,7 +1147,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD05,
+                                fontSize: size.width * AppDimensions.numD05,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1126,7 +1161,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
       },
       separatorBuilder: (context, index) {
         return SizedBox(
-          height: size.width * numD05,
+          height: size.width * AppDimensions.numD05,
         );
       },
       itemCount: _mediaHouseList.length,
@@ -1137,11 +1172,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     return Container(
       width: size.width,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(size.width * numD04),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
-        color: colorThemePink,
-        border: Border.all(color: colorGreyNew),
-        borderRadius: BorderRadius.circular(size.width * numD06),
+        color: AppColorTheme.colorThemePink,
+        border: Border.all(color: AppColorTheme.colorGreyNew),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD06),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -1170,7 +1205,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
             child: Icon(
               audioPlaying ? Icons.pause : Icons.play_arrow_rounded,
               color: Colors.white,
-              size: size.width * numD15,
+              size: size.width * AppDimensions.numD15,
             ),
           ),
         ],
@@ -1191,7 +1226,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
             thumbnailUrl:
                 item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
             width: double.infinity,
-            height: size.width * numD50,
+            height: size.width * AppDimensions.numD50,
             fit: BoxFit.cover,
           ),
           const Center(
@@ -1224,12 +1259,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
                       width: double.infinity,
-                      height: size.width * numD50,
+                      height: size.width * AppDimensions.numD50,
                       fit: BoxFit.cover,
                     ),
                     const Center(
                       child: CircularProgressIndicator(
-                        color: colorThemePink,
+                        color: AppColorTheme.colorThemePink,
                       ),
                     ),
                   ],
@@ -1246,12 +1281,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                           ? fixS3Url(item.thumbnailUrl!)
                           : null,
                       width: double.infinity,
-                      height: size.width * numD50,
+                      height: size.width * AppDimensions.numD50,
                       fit: BoxFit.cover,
                     ),
                     const Center(
                       child: CircularProgressIndicator(
-                        color: colorThemePink,
+                        color: AppColorTheme.colorThemePink,
                       ),
                     ),
                   ],
@@ -1268,19 +1303,20 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     return [
       Container(
         padding: EdgeInsets.symmetric(
-          horizontal: size.width * numD015,
+          horizontal: size.width * AppDimensions.numD015,
           vertical: size.width * 0.005,
         ),
         decoration: BoxDecoration(
-            color: colorLightGreen.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(size.width * numD015)),
+            color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+            borderRadius:
+                BorderRadius.circular(size.width * AppDimensions.numD015)),
         child: Center(
           child: Text(
             "${mediaList.length} ",
             textAlign: TextAlign.center,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD038,
+                fontSize: size.width * AppDimensions.numD038,
                 color: Colors.white,
                 fontWeight: FontWeight.w600),
           ),

@@ -32,9 +32,9 @@ class ManageContentScreenState extends State<ManageContentScreen> {
         elevation: 0,
         hideLeading: false,
         title: Text(
-          manageContentText,
+          AppStrings.manageContentText,
           style: TextStyle(
-              color: Colors.black, fontSize: size.width * headerFontSize),
+              color: Colors.black, fontSize: size.width * AppDimensions.headerFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -47,66 +47,66 @@ class ManageContentScreenState extends State<ManageContentScreen> {
           InkWell(
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           )
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+            padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
             child: Column(
               children: [
                 SizedBox(
-                  height: size.width * numD08,
+                  height: size.width * AppDimensions.numD08,
                 ),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD04),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: Stack(
                     children: [
                       Image.asset(
                         "${dummyImagePath}dummy_content.png",
-                        height: size.width * numD50,
+                        height: size.width * AppDimensions.numD50,
                         width: size.width,
                         fit: BoxFit.cover,
                       ),
                       Positioned(
-                        right: size.width * numD02,
-                        top: size.width * numD02,
+                        right: size.width * AppDimensions.numD02,
+                        top: size.width * AppDimensions.numD02,
                         child: Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD01,
+                                horizontal: size.width * AppDimensions.numD01,
                                 vertical: size.width * 0.002),
                             decoration: BoxDecoration(
-                                color: colorLightGreen.withOpacity(0.8),
+                                color: AppColorTheme.colorLightGreen.withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(
-                                    size.width * numD015)),
+                                    size.width * AppDimensions.numD015)),
                             child: Icon(
                               Icons.videocam_outlined,
-                              size: size.width * numD06,
+                              size: size.width * AppDimensions.numD06,
                               color: Colors.white,
                             )),
                       ),
                       Positioned(
-                        right: size.width * numD02,
-                        bottom: size.width * numD02,
+                        right: size.width * AppDimensions.numD02,
+                        bottom: size.width * AppDimensions.numD02,
                         child: Text(
                           "+2",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD04,
+                              fontSize: size.width * AppDimensions.numD04,
                               color: Colors.white,
                               fontWeight: FontWeight.w600),
                         ),
                       ),
                       Image.asset(
                         "${commonImagePath}watermark.png",
-                        height: size.width * numD50,
+                        height: size.width * AppDimensions.numD50,
                         width: size.width,
                         fit: BoxFit.cover,
                       )
@@ -114,7 +114,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD02,
+                  height: size.width * AppDimensions.numD02,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +126,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD045,
+                            fontSize: size.width * AppDimensions.numD045,
                             color: Colors.black,
                             fontWeight: FontWeight.w600),
                       ),
@@ -135,16 +135,16 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       children: [
                         Image.asset(
                           "${iconsPath}ic_exclusive.png",
-                          height: size.width * numD05,
+                          height: size.width * AppDimensions.numD05,
                         ),
                         SizedBox(
-                          width: size.width * numD02,
+                          width: size.width * AppDimensions.numD02,
                         ),
                         Text(
-                          exclusiveText,
+                          AppStrings.exclusiveText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD04,
+                              fontSize: size.width * AppDimensions.numD04,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -153,7 +153,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,68 +166,68 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                             children: [
                               Image.asset(
                                 "${iconsPath}ic_clock.png",
-                                height: size.width * numD05,
-                                color: colorTextFieldIcon,
+                                height: size.width * AppDimensions.numD05,
+                                color: AppColorTheme.colorTextFieldIcon,
                               ),
                               SizedBox(
-                                width: size.width * numD02,
+                                width: size.width * AppDimensions.numD02,
                               ),
                               Text(
                                 "12:36, 10:12:2021",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
-                                    color: colorHint,
+                                    fontSize: size.width * AppDimensions.numD035,
+                                    color: AppColorTheme.colorHint,
                                     fontWeight: FontWeight.w500),
                               )
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD02,
+                            height: size.width * AppDimensions.numD02,
                           ),
                           Row(
                             children: [
                               Image.asset(
                                 "${iconsPath}ic_location.png",
-                                height: size.width * numD06,
-                                color: colorTextFieldIcon,
+                                height: size.width * AppDimensions.numD06,
+                                color: AppColorTheme.colorTextFieldIcon,
                               ),
                               SizedBox(
-                                width: size.width * numD02,
+                                width: size.width * AppDimensions.numD02,
                               ),
                               Text(
                                 "Grenfell Tower, London",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
-                                    color: colorHint,
+                                    fontSize: size.width * AppDimensions.numD035,
+                                    color: AppColorTheme.colorHint,
                                     fontWeight: FontWeight.w500),
                               )
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD02,
+                            height: size.width * AppDimensions.numD02,
                           ),
                         ],
                       ),
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD06,
-                          vertical: size.width * numD01),
+                          horizontal: size.width * AppDimensions.numD06,
+                          vertical: size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
-                          color: colorThemePink,
+                          color: AppColorTheme.colorThemePink,
                           borderRadius:
-                              BorderRadius.circular(size.width * numD03)),
+                              BorderRadius.circular(size.width * AppDimensions.numD03)),
                       child: Column(
                         children: [
                           Text(
-                            priceQuotedText,
+                            AppStrings.priceQuotedText,
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -237,7 +237,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD06,
+                                fontSize: size.width * AppDimensions.numD06,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -247,20 +247,20 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
                 const Divider(
-                  color: colorTextFieldIcon,
+                  color: AppColorTheme.colorTextFieldIcon,
                 ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD03),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -270,52 +270,52 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        height: size.width * numD07,
-                        width: size.width * numD07,
+                        height: size.width * AppDimensions.numD07,
+                        width: size.width * AppDimensions.numD07,
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "Congrats, you’ve received $currencySymbol 200 from Reuters Media ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: commonElevatedButton(
-                                viewDetailsText,
+                                AppStrings.viewDetailsText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                           )
                         ],
@@ -324,14 +324,14 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD01),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -341,52 +341,52 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: ClipRRect(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                            BorderRadius.circular(size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${dummyImagePath}news.png",
-                          height: size.width * numD09,
+                          height: size.width * AppDimensions.numD09,
                         ),
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "Do you have additional pictures related to the task?",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Row(
                             children: [
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 width: size.width,
                                 child: ElevatedButton(
                                   onPressed: () {},
@@ -395,39 +395,39 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                       backgroundColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD04),
+                                              size.width * AppDimensions.numD04),
                                           side: const BorderSide(
-                                              color: colorGrey1, width: 2))),
+                                              color: AppColorTheme.colorGrey1, width: 2))),
                                   child: Text(
-                                    noText,
+                                    AppStrings.noText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
-                                        color: colorLightGreen,
+                                        fontSize: size.width * AppDimensions.numD04,
+                                        color: AppColorTheme.colorLightGreen,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               )),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 width: size.width,
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorThemePink,
+                                      backgroundColor: AppColorTheme.colorThemePink,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                       )),
                                   child: Text(
-                                    viewDetailsText,
+                                    AppStrings.viewDetailsText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
+                                        fontSize: size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -441,14 +441,14 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD03),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -458,52 +458,52 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        height: size.width * numD07,
-                        width: size.width * numD07,
+                        height: size.width * AppDimensions.numD07,
+                        width: size.width * AppDimensions.numD07,
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "Send the content for approval",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: commonElevatedButton(
-                                uploadText,
+                                AppStrings.uploadText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                           )
                         ],
@@ -512,7 +512,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -524,7 +524,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                         children: [
                           ClipRRect(
                               borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                                  BorderRadius.circular(size.width * AppDimensions.numD04),
                               child: Image.asset(
                                 "${dummyImagePath}walk6.png",
                                 height: size.height / 3,
@@ -535,11 +535,11 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.2),
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                    BorderRadius.circular(size.width * AppDimensions.numD04),
                               ),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   child: Image.asset(
                                     "${commonImagePath}watermark.png",
                                     height: size.height / 3,
@@ -549,54 +549,54 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                         ],
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       ClipRRect(
                           borderRadius:
-                              BorderRadius.circular(size.width * numD08),
+                              BorderRadius.circular(size.width * AppDimensions.numD08),
                           child: Image.asset(
                             "${dummyImagePath}avatar.png",
-                            height: size.width * numD08,
-                            width: size.width * numD08,
+                            height: size.width * AppDimensions.numD08,
+                            width: size.width * AppDimensions.numD08,
                             fit: BoxFit.cover,
                           ))
                     ],
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD05,
+                  height: size.width * AppDimensions.numD05,
                 ),
                 Row(
                   children: [
                     const Expanded(
                         child: Divider(
-                      color: colorGrey1,
+                      color: AppColorTheme.colorGrey1,
                       thickness: 1,
                     )),
                     Text(
                       "Pending reviews from Reuters",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
-                          color: colorGrey2,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: AppColorTheme.colorGrey2,
                           fontWeight: FontWeight.w600),
                     ),
                     const Expanded(
                         child: Divider(
-                      color: colorGrey1,
+                      color: AppColorTheme.colorGrey1,
                       thickness: 1,
                     )),
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD01),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -606,35 +606,35 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: ClipRRect(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                            BorderRadius.circular(size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${dummyImagePath}news.png",
-                          height: size.width * numD09,
+                          height: size.width * AppDimensions.numD09,
                         ),
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           RichText(
                               text: TextSpan(children: [
@@ -642,7 +642,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               text: "Reuters Media has offered ",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -650,27 +650,27 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               text: "${currencySymbol}150 ",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
-                                  color: colorThemePink,
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: AppColorTheme.colorThemePink,
                                   fontWeight: FontWeight.w600),
                             ),
                             TextSpan(
                               text: "to buy your content",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
                           ])),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Row(
                             children: [
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 width: size.width,
                                 child: ElevatedButton(
                                   onPressed: () {},
@@ -679,39 +679,39 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                       backgroundColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD04),
+                                              size.width * AppDimensions.numD04),
                                           side: const BorderSide(
-                                              color: colorGrey1, width: 2))),
+                                              color: AppColorTheme.colorGrey1, width: 2))),
                                   child: Text(
-                                    rejectText,
+                                    AppStrings.rejectText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
-                                        color: colorLightGreen,
+                                        fontSize: size.width * AppDimensions.numD04,
+                                        color: AppColorTheme.colorLightGreen,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               )),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 width: size.width,
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorThemePink,
+                                      backgroundColor: AppColorTheme.colorThemePink,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                       )),
                                   child: Text(
-                                    acceptText,
+                                    AppStrings.acceptText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
+                                        fontSize: size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -720,51 +720,51 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD05,
+                            height: size.width * AppDimensions.numD05,
                           ),
                           Row(
                             children: [
                               const Expanded(
                                   child: Divider(
-                                color: colorTextFieldIcon,
+                                color: AppColorTheme.colorTextFieldIcon,
                                 thickness: 1,
                               )),
                               Text(
                                 "or",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600),
                               ),
                               const Expanded(
                                   child: Divider(
-                                color: colorTextFieldIcon,
+                                color: AppColorTheme.colorTextFieldIcon,
                                 thickness: 1,
                               )),
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: commonElevatedButton(
                                 "Make a Counter Offer",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "You can make a counter offer only once",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -774,14 +774,14 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD03),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -791,49 +791,49 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        height: size.width * numD07,
-                        width: size.width * numD07,
+                        height: size.width * AppDimensions.numD07,
+                        width: size.width * AppDimensions.numD07,
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "Make a counter offer to Reuters Media",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: TextFormField(
-                              cursorColor: colorTextFieldIcon,
+                              cursorColor: AppColorTheme.colorTextFieldIcon,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
                                       decimal: true, signed: true),
@@ -843,7 +843,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 hintText: "Enter price here...",
                                 hintStyle: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD04),
+                                    fontSize: size.width * AppDimensions.numD04),
                                 disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
                                         size.width * 0.03),
@@ -877,51 +877,51 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                             ),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: commonElevatedButton(
-                                "submitText",
+                                "AppStrings.submitText",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
                                 "${iconsPath}ic_tag.png",
-                                height: size.width * numD06,
+                                height: size.width * AppDimensions.numD06,
                               ),
                               SizedBox(
-                                width: size.width * numD02,
+                                width: size.width * AppDimensions.numD02,
                               ),
                               Expanded(
                                 child: Text(
                                   "Check price tips, and learnings",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorThemePink,
+                                      fontSize: size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w600),
                                 ),
                               )
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "You can make a counter offer only once",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD031,
+                                fontSize: size.width * AppDimensions.numD031,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -931,14 +931,14 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD01),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -948,35 +948,35 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: ClipRRect(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                            BorderRadius.circular(size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${dummyImagePath}news.png",
-                          height: size.width * numD09,
+                          height: size.width * AppDimensions.numD09,
                         ),
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           RichText(
                               text: TextSpan(children: [
@@ -985,7 +985,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                   "Reuters Media have increased their offered to ",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -993,27 +993,27 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               text: "${currencySymbol}200 ",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
-                                  color: colorThemePink,
+                                  fontSize: size.width * AppDimensions.numD035,
+                                  color: AppColorTheme.colorThemePink,
                                   fontWeight: FontWeight.w600),
                             ),
                             TextSpan(
                               text: "to buy your content",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
                           ])),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Row(
                             children: [
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 width: size.width,
                                 child: ElevatedButton(
                                   onPressed: () {},
@@ -1022,39 +1022,39 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                       backgroundColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD04),
+                                              size.width * AppDimensions.numD04),
                                           side: const BorderSide(
-                                              color: colorGrey1, width: 2))),
+                                              color: AppColorTheme.colorGrey1, width: 2))),
                                   child: Text(
-                                    rejectText,
+                                    AppStrings.rejectText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
-                                        color: colorLightGreen,
+                                        fontSize: size.width * AppDimensions.numD04,
+                                        color: AppColorTheme.colorLightGreen,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               )),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 width: size.width,
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorThemePink,
+                                      backgroundColor: AppColorTheme.colorThemePink,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                       )),
                                   child: Text(
-                                    acceptText,
+                                    AppStrings.acceptText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
+                                        fontSize: size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -1068,14 +1068,14 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD03),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -1085,51 +1085,51 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        width: size.width * numD07,
+                        width: size.width * AppDimensions.numD07,
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "Congrats, you’ve received £200 from Reuters Media ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: commonElevatedButton(
-                                viewDetailsText,
+                                AppStrings.viewDetailsText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                           )
                         ],
@@ -1138,14 +1138,14 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD04),
-                      padding: EdgeInsets.all(size.width * numD03),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -1155,43 +1155,43 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           ]),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        width: size.width * numD07,
+                        width: size.width * AppDimensions.numD07,
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * numD06),
+                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD05,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD05,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
+                              topRight: Radius.circular(size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
                               bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                                  Radius.circular(size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Text(
                             "Rate your experience with Reuters Media",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           RatingBar(
                             ratingWidget: RatingWidget(
@@ -1201,15 +1201,15 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               half: Image.asset("${iconsPath}ic_half_star.png"),
                             ),
                             onRatingUpdate: (value) {},
-                            itemSize: size.width * numD09,
+                            itemSize: size.width * AppDimensions.numD09,
                             itemCount: 5,
                             initialRating: 0,
                             allowHalfRating: true,
                             itemPadding:
-                                EdgeInsets.only(left: size.width * numD03),
+                                EdgeInsets.only(left: size.width * AppDimensions.numD03),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Align(
                             alignment: Alignment.topLeft,
@@ -1217,20 +1217,20 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               "Write your review here",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Stack(
                             children: [
                               SizedBox(
-                                height: size.width * numD35,
+                                height: size.width * AppDimensions.numD35,
                                 child: TextFormField(
-                                  cursorColor: colorTextFieldIcon,
+                                  cursorColor: AppColorTheme.colorTextFieldIcon,
                                   keyboardType: TextInputType.multiline,
                                   maxLines: 4,
                                   decoration: InputDecoration(
@@ -1238,7 +1238,7 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                         "Please share your feedback on your experience with the publication. Your feedback is very important for improving your experience, and our service. Thank you",
                                     hintStyle: TextStyle(
                                         color: Colors.grey.shade400,
-                                        fontSize: size.width * numD035),
+                                        fontSize: size.width * AppDimensions.numD035),
                                     disabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(
                                             size.width * 0.03),
@@ -1265,10 +1265,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                         borderSide: const BorderSide(
                                             width: 1, color: Colors.black)),
                                     contentPadding: EdgeInsets.only(
-                                        left: size.width * numD08,
-                                        right: size.width * numD03,
-                                        top: size.width * numD04,
-                                        bottom: size.width * numD04),
+                                        left: size.width * AppDimensions.numD08,
+                                        right: size.width * AppDimensions.numD03,
+                                        top: size.width * AppDimensions.numD04,
+                                        bottom: size.width * AppDimensions.numD04),
                                     alignLabelWithHint: true,
                                   ),
                                   validator: checkRequiredValidator,
@@ -1278,31 +1278,31 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    top: size.width * numD04,
-                                    left: size.width * numD01),
+                                    top: size.width * AppDimensions.numD04,
+                                    left: size.width * AppDimensions.numD01),
                                 child: Icon(
                                   Icons.sticky_note_2_outlined,
-                                  size: size.width * numD06,
+                                  size: size.width * AppDimensions.numD06,
                                   color: Colors.grey.shade400,
                                 ),
                               ),
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: commonElevatedButton(
-                                submitText,
+                                AppStrings.submitText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                         ],
                       ),

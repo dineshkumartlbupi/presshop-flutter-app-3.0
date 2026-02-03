@@ -127,11 +127,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
             appBar: CommonAppBar(
               elevation: 0,
               title: Text(
-                digitalId,
+                AppStrings.digitalId,
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: size.width * appBarHeadingFontSize),
+                    fontSize: size.width * AppDimensions.appBarHeadingFontSize),
               ),
               centerTitle: true,
               titleSpacing: 0,
@@ -151,26 +151,26 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD07,
-                    width: size.width * numD07,
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
                   ),
                 ),
                 SizedBox(
-                  width: size.width * numD04,
+                  width: size.width * AppDimensions.numD04,
                 )
               ],
               hideLeading: false,
             ),
             body: Container(
               margin: EdgeInsets.only(
-                left: size.width * numD02,
-                right: size.width * numD02,
-                top: size.width * numD02,
-                bottom: size.width * numD1,
+                left: size.width * AppDimensions.numD02,
+                right: size.width * AppDimensions.numD02,
+                top: size.width * AppDimensions.numD02,
+                bottom: size.width * AppDimensions.numD1,
               ),
               decoration: BoxDecoration(
-                  color: colorLightGrey,
-                  borderRadius: BorderRadius.circular(size.width * numD03),
+                  color: AppColorTheme.colorLightGrey,
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                   border: Border.all(width: 1.0, color: Colors.black)),
               child: Stack(
                 alignment: Alignment.centerRight,
@@ -179,8 +179,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                     alignment: Alignment.topLeft,
                     child: Container(
                       padding: EdgeInsets.only(
-                        left: size.width * numD03,
-                        right: size.width * numD28,
+                        left: size.width * AppDimensions.numD03,
+                        right: size.width * AppDimensions.numD28,
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -189,7 +189,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: size.width * numD03,
+                              height: size.width * AppDimensions.numD03,
                             ),
 
                             /// Rabbit logo
@@ -198,8 +198,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               children: [
                                 Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * numD28,
-                                  // width: size.width * numD1,
+                                  height: size.width * AppDimensions.numD28,
+                                  // width: size.width * AppDimensions.numD1,
                                 ),
                                 Expanded(
                                     child: Column(
@@ -211,7 +211,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         Text(
                                           "press",
                                           style: TextStyle(
-                                              fontSize: size.width * numD065,
+                                              fontSize: size.width * AppDimensions.numD065,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.normal),
@@ -219,7 +219,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         Text(
                                           "hop",
                                           style: TextStyle(
-                                              fontSize: size.width * numD065,
+                                              fontSize: size.width * AppDimensions.numD065,
                                               color: Colors.black,
                                               letterSpacing: 0,
                                               fontFamily: "AirbnbCereal",
@@ -231,7 +231,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     Text(
                                       "news delivered",
                                       style: TextStyle(
-                                          fontSize: size.width * numD04,
+                                          fontSize: size.width * AppDimensions.numD04,
                                           color: Colors.black,
                                           fontFamily: "AirbnbCereal",
                                           fontWeight: FontWeight.normal),
@@ -242,7 +242,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               ],
                             ),
                             SizedBox(
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                             ),
 
                             Center(
@@ -254,26 +254,26 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       // Actually better to check isLoading generally for profile fetch too if we want.
                                       // But matching original:
                                       ? Container(
-                                          height: size.width * numD60,
-                                          width: size.width * numD70,
+                                          height: size.width * AppDimensions.numD60,
+                                          width: size.width * AppDimensions.numD70,
                                           alignment: Alignment.center,
                                           child:
                                               const CircularProgressIndicator(),
                                         )
                                       : ClipRRect(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD04),
+                                              size.width * AppDimensions.numD04),
                                           child: CachedNetworkImage(
                                             imageUrl: userImage.isEmpty
                                                 ? "https://via.placeholder.com/300"
                                                 : userImage,
-                                            height: size.width * numD60,
-                                            width: size.width * numD70,
+                                            height: size.width * AppDimensions.numD60,
+                                            width: size.width * AppDimensions.numD70,
                                             fit: BoxFit.cover,
                                             placeholder: (context, url) =>
                                                 Container(
-                                              height: size.width * numD60,
-                                              width: size.width * numD70,
+                                              height: size.width * AppDimensions.numD60,
+                                              width: size.width * AppDimensions.numD70,
                                               alignment: Alignment.center,
                                               child:
                                                   const CircularProgressIndicator(
@@ -283,8 +283,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             errorWidget:
                                                 (context, url, error) =>
                                                     Container(
-                                              height: size.width * numD65,
-                                              width: size.width * numD70,
+                                              height: size.width * AppDimensions.numD65,
+                                              width: size.width * AppDimensions.numD70,
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
@@ -292,7 +292,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                                         255, 223, 223, 223)),
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        size.width * numD04),
+                                                        size.width * AppDimensions.numD04),
                                               ),
                                               child: Column(
                                                 mainAxisAlignment:
@@ -300,12 +300,12 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                                 children: [
                                                   Image.asset(
                                                     "${iconsPath}ic_user.png",
-                                                    width: size.width * numD11,
+                                                    width: size.width * AppDimensions.numD11,
                                                     color: Colors.grey,
                                                   ),
                                                   SizedBox(
                                                       height:
-                                                          size.width * numD03),
+                                                          size.width * AppDimensions.numD03),
                                                   Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
@@ -316,8 +316,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                                       style: commonTextStyle(
                                                         size: size,
                                                         fontSize:
-                                                            size.width * numD03,
-                                                        color: colorHint,
+                                                            size.width * AppDimensions.numD03,
+                                                        color: AppColorTheme.colorHint,
                                                         fontWeight:
                                                             FontWeight.normal,
                                                       ),
@@ -332,8 +332,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         ),
                                   // Edit button
                                   Positioned(
-                                    right: size.width * numD02,
-                                    bottom: size.width * numD02,
+                                    right: size.width * AppDimensions.numD02,
+                                    bottom: size.width * AppDimensions.numD02,
                                     child: InkWell(
                                       onTap: () => _showImagePicker(context),
                                       child: Container(
@@ -347,7 +347,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           padding: EdgeInsets.all(
                                               size.width * 0.005),
                                           decoration: const BoxDecoration(
-                                            color: colorThemePink,
+                                            color: AppColorTheme.colorThemePink,
                                             shape: BoxShape.circle,
                                           ),
                                           child: Padding(
@@ -355,7 +355,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             child: Icon(
                                               Icons.edit_outlined,
                                               color: Colors.white,
-                                              size: size.width * numD04,
+                                              size: size.width * AppDimensions.numD04,
                                             ),
                                           ),
                                         ),
@@ -366,7 +366,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                               ),
                             ),
                             SizedBox(
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                             ),
 
                             /// User name
@@ -375,49 +375,49 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                 fullName,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD05,
+                                    fontSize: size.width * AppDimensions.numD05,
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
                             SizedBox(
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                             ),
 
                             /// Verified button
                             Container(
-                                width: size.width * numD60,
+                                width: size.width * AppDimensions.numD60,
                                 padding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD03,
-                                  horizontal: size.width * numD01,
+                                  vertical: size.width * AppDimensions.numD03,
+                                  horizontal: size.width * AppDimensions.numD01,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD02),
+                                      size.width * AppDimensions.numD02),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: size.width * numD03,
+                                      width: size.width * AppDimensions.numD03,
                                     ),
                                     Image.asset(
                                       "${iconsPath}ic_verified.png",
-                                      height: size.width * numD06,
-                                      width: size.width * numD06,
+                                      height: size.width * AppDimensions.numD06,
+                                      width: size.width * AppDimensions.numD06,
                                       color: Colors.white,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD03,
+                                      width: size.width * AppDimensions.numD03,
                                     ),
                                     Text(
-                                      verifiedHopperText,
+                                      AppStrings.verifiedHopperText,
                                       textAlign: TextAlign.start,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD05,
+                                          fontSize: size.width * AppDimensions.numD05,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -426,25 +426,25 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
 
                             /// Digital ID Expire
                             Container(
-                                width: size.width * numD60,
+                                width: size.width * AppDimensions.numD60,
                                 alignment: Alignment.center,
                                 margin:
-                                    EdgeInsets.only(top: size.width * numD04),
+                                    EdgeInsets.only(top: size.width * AppDimensions.numD04),
                                 padding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD03,
-                                  horizontal: size.width * numD03,
+                                  vertical: size.width * AppDimensions.numD03,
+                                  horizontal: size.width * AppDimensions.numD03,
                                 ),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02),
+                                        size.width * AppDimensions.numD02),
                                     border: Border.all(
                                         width: 1.0, color: Colors.black)),
                                 child: RichText(
                                   textAlign: TextAlign.start,
                                   text: TextSpan(
-                                    text: digitalIdExpireOnText,
+                                    text: AppStrings.digitalIdExpireOnText,
                                     style: TextStyle(
-                                        fontSize: size.width * numD036,
+                                        fontSize: size.width * AppDimensions.numD036,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400,
                                         height: 1.5),
@@ -453,7 +453,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         text: DateFormat("dd MMM yyyy")
                                             .format(DateTime.now()),
                                         style: TextStyle(
-                                            fontSize: size.width * numD036,
+                                            fontSize: size.width * AppDimensions.numD036,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600,
                                             height: 1.5),
@@ -463,17 +463,17 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                 )),
 
                             SizedBox(
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                             ),
 
                             Container(
-                                width: size.width * numD60,
+                                width: size.width * AppDimensions.numD60,
                                 padding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD02,
+                                  vertical: size.width * AppDimensions.numD02,
                                 ),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02),
+                                        size.width * AppDimensions.numD02),
                                     border: Border.all(
                                         width: 1.0, color: Colors.black)),
                                 child: Row(
@@ -481,11 +481,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     SizedBox(
-                                      height: size.width * numD16,
-                                      width: size.width * numD16,
+                                      height: size.width * AppDimensions.numD16,
+                                      width: size.width * AppDimensions.numD16,
                                       child: QrImageView(
                                         data: "https://www.presshop.co.uk/",
                                         version: QrVersions.auto,
@@ -493,7 +493,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Expanded(
                                       child: Column(
@@ -505,7 +505,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "PressHop Media UK Limited",
                                             style: TextStyle(
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width * AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600,
                                                 height: 1.5),
@@ -513,7 +513,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "167-169, Great Portland St",
                                             style: TextStyle(
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width * AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
@@ -521,7 +521,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "London, United Kingdom",
                                             style: TextStyle(
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width * AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
@@ -529,7 +529,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "Company No: 13522872",
                                             style: TextStyle(
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width * AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
@@ -541,7 +541,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                 )),
 
                             SizedBox(
-                              height: size.width * numD02,
+                              height: size.width * AppDimensions.numD02,
                             ),
                           ],
                         ),
@@ -552,16 +552,16 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                     quarterTurns: 1,
                     child: Container(
                       alignment: Alignment.center,
-                      height: size.width * numD25,
+                      height: size.width * AppDimensions.numD25,
                       decoration: BoxDecoration(
-                          color: colorThemePink,
+                          color: AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(size.width * numD03),
-                            topRight: Radius.circular(size.width * numD03),
+                            topLeft: Radius.circular(size.width * AppDimensions.numD03),
+                            topRight: Radius.circular(size.width * AppDimensions.numD03),
                           )),
                       child: Text("PRESS",
                           style: TextStyle(
-                            fontSize: size.width * numD20,
+                            fontSize: size.width * AppDimensions.numD20,
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 18.0,

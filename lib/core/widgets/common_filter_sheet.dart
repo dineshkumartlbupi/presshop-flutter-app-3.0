@@ -48,13 +48,13 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(size.width * numD05),
-          topRight: Radius.circular(size.width * numD05),
+          topLeft: Radius.circular(size.width * AppDimensions.numD05),
+          topRight: Radius.circular(size.width * AppDimensions.numD05),
         ),
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: size.width * numD05,
-        vertical: size.width * numD05,
+        horizontal: size.width * AppDimensions.numD05,
+        vertical: size.width * AppDimensions.numD05,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -66,7 +66,7 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
               Text(
                 "Sort & Filter",
                 style: TextStyle(
-                  fontSize: size.width * numD05,
+                  fontSize: size.width * AppDimensions.numD05,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -77,19 +77,19 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
               )
             ],
           ),
-          SizedBox(height: size.width * numD04),
+          SizedBox(height: size.width * AppDimensions.numD04),
           Text(
             "Sort By",
             style: TextStyle(
-              fontSize: size.width * numD04,
+              fontSize: size.width * AppDimensions.numD04,
               fontWeight: FontWeight.w600,
               color: Colors.black,
             ),
           ),
-          SizedBox(height: size.width * numD02),
+          SizedBox(height: size.width * AppDimensions.numD02),
           Wrap(
-            spacing: size.width * numD02,
-            runSpacing: size.width * numD02,
+            spacing: size.width * AppDimensions.numD02,
+            runSpacing: size.width * AppDimensions.numD02,
             children: widget.sortList.map((item) {
               return FilterChip(
                 label: Text(item.name),
@@ -103,32 +103,32 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                   });
                 },
                 backgroundColor: Colors.white,
-                selectedColor: colorThemePink,
+                selectedColor: AppColorTheme.colorThemePink,
                 labelStyle: TextStyle(
                   color: item.isSelected ? Colors.white : Colors.black,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(size.width * numD02),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
                   side: BorderSide(
-                    color: item.isSelected ? colorThemePink : Colors.grey,
+                    color: item.isSelected ? AppColorTheme.colorThemePink : Colors.grey,
                   ),
                 ),
               );
             }).toList(),
           ),
-          SizedBox(height: size.width * numD04),
+          SizedBox(height: size.width * AppDimensions.numD04),
           Text(
             "Filter By",
             style: TextStyle(
-              fontSize: size.width * numD04,
+              fontSize: size.width * AppDimensions.numD04,
               fontWeight: FontWeight.w600,
               color: Colors.black,
             ),
           ),
-          SizedBox(height: size.width * numD02),
+          SizedBox(height: size.width * AppDimensions.numD02),
           Wrap(
-            spacing: size.width * numD02,
-            runSpacing: size.width * numD02,
+            spacing: size.width * AppDimensions.numD02,
+            runSpacing: size.width * AppDimensions.numD02,
             children: widget.filterList.map((item) {
               return FilterChip(
                 label: Text(item.name),
@@ -143,20 +143,20 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                   });
                 },
                 backgroundColor: Colors.white,
-                selectedColor: colorThemePink,
+                selectedColor: AppColorTheme.colorThemePink,
                 labelStyle: TextStyle(
                   color: item.isSelected ? Colors.white : Colors.black,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(size.width * numD02),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
                   side: BorderSide(
-                    color: item.isSelected ? colorThemePink : Colors.grey,
+                    color: item.isSelected ? AppColorTheme.colorThemePink : Colors.grey,
                   ),
                 ),
               );
             }).toList(),
           ),
-          SizedBox(height: size.width * numD06),
+          SizedBox(height: size.width * AppDimensions.numD06),
           Row(
             children: [
               Expanded(
@@ -167,22 +167,22 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                   },
                   style: OutlinedButton.styleFrom(
                     padding:
-                        EdgeInsets.symmetric(vertical: size.width * numD035),
+                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD035),
                     side: const BorderSide(color: Colors.black),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(size.width * numD02),
+                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
                     ),
                   ),
                   child: Text(
                     "Clear",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: size.width * numD04),
+              SizedBox(width: size.width * AppDimensions.numD04),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
@@ -191,17 +191,17 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding:
-                        EdgeInsets.symmetric(vertical: size.width * numD035),
-                    backgroundColor: colorThemePink,
+                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD035),
+                    backgroundColor: AppColorTheme.colorThemePink,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(size.width * numD02),
+                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
                     ),
                   ),
                   child: Text(
                     "Apply",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                     ),
                   ),
                 ),

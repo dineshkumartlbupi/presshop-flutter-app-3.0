@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 
 Widget commonElevatedButton(String buttonText, Size size, TextStyle textStyle,
     ButtonStyle buttonStyle, VoidCallback fxn) {
@@ -19,13 +19,13 @@ ButtonStyle commonButtonStyle(Size size, Color color) {
       backgroundColor: color,
       elevation: 0.0,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(size.width * numD03)));
+          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)));
 }
 
 TextStyle commonButtonTextStyle(Size size) {
   return TextStyle(
       color: Colors.white,
-      fontSize: size.width * numD037,
+      fontSize: size.width * AppDimensions.numD037,
       fontFamily: "AirbnbCereal",
       fontWeight: FontWeight.bold);
 }

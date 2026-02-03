@@ -69,12 +69,12 @@ class ConnectionErrorOverlay extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(size.width * 0.04),
                         decoration: BoxDecoration(
-                          color: colorThemePink.withOpacity(0.1),
+                          color: AppColorTheme.colorThemePink.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           LucideIcons.wifi_off,
-                          color: colorThemePink,
+                          color: AppColorTheme.colorThemePink,
                           size: size.width * 0.1,
                         ),
                       ),
@@ -111,7 +111,7 @@ class ConnectionErrorOverlay extends StatelessWidget {
                           commonButtonTextStyle(size).copyWith(
                             fontSize: size.width * 0.042,
                           ),
-                          commonButtonStyle(size, colorThemePink).copyWith(
+                          commonButtonStyle(size, AppColorTheme.colorThemePink).copyWith(
                             shape: WidgetStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius:

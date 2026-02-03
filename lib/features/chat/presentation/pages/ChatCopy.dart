@@ -27,28 +27,28 @@
 //             children: [
 //               Container(
 //                 padding: EdgeInsets.all(
-//                   size.width * numD01,
+//                   size.width * AppDimensions.numD01,
 //                 ),
-//                 height: size.width * numD11,
-//                 width: size.width * numD11,
+//                 height: size.width * AppDimensions.numD11,
+//                 width: size.width * AppDimensions.numD11,
 //                 decoration: const BoxDecoration(
-//                     color: colorSwitchBack, shape: BoxShape.circle),
+//                     color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
 //                 child: CircleAvatar(
 //                   backgroundColor: Colors.white,
 //                   child: Image.asset(
 //                     "${commonImagePath}rabbitLogo.png",
-//                     height: size.width * numD075,
-//                     width: size.width * numD075,
+//                     height: size.width * AppDimensions.numD075,
+//                     width: size.width * AppDimensions.numD075,
 //                   ),
 //                 ),
 //               ),
 //               SizedBox(
-//                 width: size.width * numD02,
+//                 width: size.width * AppDimensions.numD02,
 //               ),
 //               Text(
 //                 widget.title.toUpperCase(),
 //                 style: TextStyle(
-//                     color: Colors.black, fontSize: size.width * numD045),
+//                     color: Colors.black, fontSize: size.width * AppDimensions.numD045),
 //               ),
 //             ],
 //           ),
@@ -62,15 +62,15 @@
 //           actionWidget: null),
 //       body: Padding(
 //         padding: EdgeInsets.symmetric(
-//           horizontal: size.width * numD03,
-//           vertical: size.width * numD03,
+//           horizontal: size.width * AppDimensions.numD03,
+//           vertical: size.width * AppDimensions.numD03,
 //         ),
 //         child: Column(
 //           children: [
 //             Expanded(
 //                 child: ListView.separated(
 //                     padding: EdgeInsets.only(
-//                       bottom: size.width * numD03,
+//                       bottom: size.width * AppDimensions.numD03,
 //                     ),
 //                     reverse: true,
 //                     shrinkWrap: true,
@@ -81,21 +81,21 @@
 //                     },
 //                     separatorBuilder: (context, index) {
 //                       return SizedBox(
-//                         height: size.width*numD06,
+//                         height: size.width*AppDimensions.numD06,
 //                       );
 //                     },
 //                     itemCount: 10)),
 //             Row(
 //               children: [
 //                 SizedBox(
-//                   width: size.width * numD03,
+//                   width: size.width * AppDimensions.numD03,
 //                 ),
 //                 SizedBox(
-//                     height: size.width * numD075,
-//                     width: size.width * numD075,
+//                     height: size.width * AppDimensions.numD075,
+//                     width: size.width * AppDimensions.numD075,
 //                     child: Image.asset("${iconsPath}ic_attachment.png")),
 //                 SizedBox(
-//                   width: size.width * numD05,
+//                   width: size.width * AppDimensions.numD05,
 //                 ),
 //                 Expanded(
 //                   child: CommonTextField(
@@ -105,14 +105,14 @@
 //                     prefixIcon: null,
 //                     borderColor: Colors.grey.shade300,
 //                     prefixIconHeight: 0,
-//                     suffixIconIconHeight: size.width * numD06,
+//                     suffixIconIconHeight: size.width * AppDimensions.numD06,
 //                     textInputFormatters: null,
 //                     suffixIcon: InkWell(
 //                       onTap: null,
 //                       child: Image.asset(
 //                         "${iconsPath}ic_arrow_right.png",
 //                         color: Colors.black,
-//                         width: size.width * numD07,
+//                         width: size.width * AppDimensions.numD07,
 //                       ),
 //                     ),
 //                     hidePassword: false,
@@ -125,7 +125,7 @@
 //                   ),
 //                 ),
 //                 SizedBox(
-//                   width: size.width * numD03,
+//                   width: size.width * AppDimensions.numD03,
 //                 ),
 //               ],
 //             ),
@@ -137,45 +137,45 @@
 
 //   Widget leftChatWidget() {
 //     return Container(
-//       margin: EdgeInsets.only(right: size.width*numD20),
+//       margin: EdgeInsets.only(right: size.width*AppDimensions.numD20),
 //       child: Row(
 //         crossAxisAlignment: CrossAxisAlignment.start,
 //         children: [
 //           Container(
 //             padding: EdgeInsets.all(
-//               size.width * numD01,
+//               size.width * AppDimensions.numD01,
 //             ),
-//             height: size.width * numD12,
-//             width: size.width * numD12,
+//             height: size.width * AppDimensions.numD12,
+//             width: size.width * AppDimensions.numD12,
 //             decoration: const BoxDecoration(
-//                 color: colorSwitchBack, shape: BoxShape.circle),
+//                 color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
 //             child: CircleAvatar(
 //               backgroundColor: Colors.white,
 //               child: Image.asset(
 //                 "${commonImagePath}rabbitLogo.png",
-//                 height: size.width * numD09,
-//                 width: size.width * numD09,
+//                 height: size.width * AppDimensions.numD09,
+//                 width: size.width * AppDimensions.numD09,
 //               ),
 //             ),
 //           ),
-//           SizedBox(width: size.width*numD02,),
+//           SizedBox(width: size.width*AppDimensions.numD02,),
 //           Expanded(
 //             child: Column(
 //               children: [
 //                 Container(
-//                   margin: EdgeInsets.only(top: size.width*numD02),
+//                   margin: EdgeInsets.only(top: size.width*AppDimensions.numD02),
 //                   decoration: BoxDecoration(
 //                       borderRadius: BorderRadius.only(
-//                         topRight: Radius.circular(size.width * numD04),
-//                         bottomLeft: Radius.circular(size.width * numD04),
-//                         bottomRight: Radius.circular(size.width * numD04),
+//                         topRight: Radius.circular(size.width * AppDimensions.numD04),
+//                         bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
+//                         bottomRight: Radius.circular(size.width * AppDimensions.numD04),
 //                       ),
-//                       border: Border.all(width: 1.5, color: colorSwitchBack)),
-//                   padding: EdgeInsets.all(size.width * numD05),
+//                       border: Border.all(width: 1.5, color: AppColorTheme.colorSwitchBack)),
+//                   padding: EdgeInsets.all(size.width * AppDimensions.numD05),
 //                   child: Text(
 //                     "Okay, No problem! We can provide you other options.",
 //                     style: TextStyle(
-//                         fontSize: size.width * numD037,
+//                         fontSize: size.width * AppDimensions.numD037,
 //                         color: Colors.black,
 //                         fontWeight: FontWeight.w400,
 //                         fontFamily: "AirbnbCereal_W_Bk"),
@@ -185,13 +185,13 @@
 //                   alignment: Alignment.centerRight,
 //                   width: size.width / 1.5,
 //                   padding: EdgeInsets.only(
-//                     right: size.width * numD02,
-//                     top: size.width * numD01,
+//                     right: size.width * AppDimensions.numD02,
+//                     top: size.width * AppDimensions.numD01,
 //                   ),
 //                   child: Text(
 //                     "12:10 PM",
 //                     style: TextStyle(
-//                         fontSize: size.width * numD03,
+//                         fontSize: size.width * AppDimensions.numD03,
 //                         color: Color(0xFF979797),
 //                         fontWeight: FontWeight.w400),
 //                   ),
@@ -206,7 +206,7 @@
 
 //   Widget rightChatWidget() {
 //     return Container(
-//       margin: EdgeInsets.only(left: size.width*numD20),
+//       margin: EdgeInsets.only(left: size.width*AppDimensions.numD20),
 //       child: Row(
 //         crossAxisAlignment: CrossAxisAlignment.start,
 //         children: [
@@ -216,18 +216,18 @@
 //               children: [
 //                 Container(
 //                   decoration: BoxDecoration(
-//                     color: colorThemePink.withOpacity(0.4),
+//                     color: AppColorTheme.colorThemePink.withOpacity(0.4),
 //                     borderRadius: BorderRadius.only(
-//                       topRight: Radius.circular(size.width * numD04),
-//                       bottomLeft: Radius.circular(size.width * numD04),
-//                       topLeft: Radius.circular(size.width * numD04),
+//                       topRight: Radius.circular(size.width * AppDimensions.numD04),
+//                       bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
+//                       topLeft: Radius.circular(size.width * AppDimensions.numD04),
 //                     ),
 //                   ),
-//                   padding: EdgeInsets.all(size.width * numD05),
+//                   padding: EdgeInsets.all(size.width * AppDimensions.numD05),
 //                   child: Text(
 //                     "Yes, that would be great.s s s s s s s s s s s ",
 //                     style: TextStyle(
-//                         fontSize: size.width * numD037,
+//                         fontSize: size.width * AppDimensions.numD037,
 //                         color: Colors.black,
 //                         fontWeight: FontWeight.w400,
 //                         fontFamily: "AirbnbCereal_W_Bk"),
@@ -235,14 +235,14 @@
 //                 ),
 //                 Container(
 //                   padding: EdgeInsets.only(
-//                     right: size.width * numD02,
-//                     top: size.width * numD01,
+//                     right: size.width * AppDimensions.numD02,
+//                     top: size.width * AppDimensions.numD01,
 //                   ),
 //                   child: Text(
 //                     "12:10 PM",
 //                     style: TextStyle(
-//                         fontSize: size.width * numD03,
-//                         color: colorGoogleButtonBorder,
+//                         fontSize: size.width * AppDimensions.numD03,
+//                         color: AppColorTheme.colorGoogleButtonBorder,
 //                         fontWeight: FontWeight.w400),
 //                   ),
 //                 ),
@@ -250,15 +250,15 @@
 //             ),
 //           ),
 
-//           SizedBox(width: size.width*numD02,),
+//           SizedBox(width: size.width*AppDimensions.numD02,),
 //           Container(
 //             padding: EdgeInsets.all(
-//               size.width * numD01,
+//               size.width * AppDimensions.numD01,
 //             ),
-//             height: size.width * numD12,
-//             width: size.width * numD12,
+//             height: size.width * AppDimensions.numD12,
+//             width: size.width * AppDimensions.numD12,
 //             decoration: const BoxDecoration(
-//                 color: colorLightGrey, shape: BoxShape.circle),
+//                 color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
 //             child: ClipOval(
 //               clipBehavior: Clip.antiAlias,
 //               child:

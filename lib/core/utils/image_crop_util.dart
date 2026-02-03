@@ -10,7 +10,7 @@ Future<CroppedFile?> cropImage(String path) async {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Presshop Editor',
-          toolbarColor: colorThemePink,
+          toolbarColor: AppColorTheme.colorThemePink,
           toolbarWidgetColor: Colors.black,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,

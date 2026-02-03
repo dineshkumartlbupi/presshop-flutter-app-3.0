@@ -50,13 +50,13 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: size.width * numD20,
+            height: size.width * AppDimensions.numD20,
           ),
           Expanded(
             flex: 2,
             child: SizedBox(
-                // padding: EdgeInsets.all(size.width * numD04),
-                // decoration: const BoxDecoration(color: colorThemePink, shape: BoxShape.circle),
+                // padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                // decoration: const BoxDecoration(color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
                 child: Image.asset(
               "assets/commonImages/audio_logo.png",
               width: double.infinity,
@@ -64,17 +64,17 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
             )),
           ),
           SizedBox(
-            height: size.width * numD20,
+            height: size.width * AppDimensions.numD20,
           ),
           Expanded(
               flex: isIpad ? 5 : 4,
               child: Padding(
-                padding: EdgeInsets.all(size.width * numD04),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Lottie.asset("assets/lottieFiles/audio_waves.json",
-                        width: isIpad ? size.width * num2 : double.infinity,
+                        width: isIpad ? size.width * AppDimensions.num2 : double.infinity,
                         fit: BoxFit.fill,
                         controller: _controller),
                     Align(
@@ -93,12 +93,12 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                         },
                         child: Container(
                           padding: EdgeInsets.all(
-                              size.width * (isIpad ? numD01 : numD018)),
+                              size.width * (isIpad ? AppDimensions.numD01 : AppDimensions.numD018)),
                           decoration: const BoxDecoration(
-                              color: colorThemePink, shape: BoxShape.circle),
+                              color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
                           child: Container(
                             padding: EdgeInsets.all(
-                                size.width * (isIpad ? numD01 : numD04)),
+                                size.width * (isIpad ? AppDimensions.numD01 : AppDimensions.numD04)),
                             decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 shape: BoxShape.circle,
@@ -108,7 +108,7 @@ class AudioWaveFormWidgetScreenState extends State<AudioWaveFormWidgetScreen>
                               audioPlaying
                                   ? Icons.pause
                                   : Icons.play_arrow_rounded,
-                              size: size.width * (isIpad ? numD1 : numD16),
+                              size: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD16),
                               color: Colors.white,
                             ),
                           ),

@@ -81,11 +81,11 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
               },
               child: Image.asset(
                 "${iconsPath}ic_arrow_left.png",
-                width: size.width * numD07,
+                width: size.width * AppDimensions.numD07,
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
               child: TextField(
@@ -101,63 +101,63 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                 },
                 decoration: InputDecoration(
                     filled: true,
-                    fillColor: colorLightGrey,
+                    fillColor: AppColorTheme.colorLightGrey,
                     hintText: "Search or Add Hashtags",
                     hintStyle: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
-                        color: colorHint,
+                        fontSize: size.width * AppDimensions.numD035,
+                        color: AppColorTheme.colorHint,
                         fontWeight: FontWeight.normal),
                     disabledBorder: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD08),
+                            BorderRadius.circular(size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     focusedBorder: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD08),
+                            BorderRadius.circular(size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     enabledBorder: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD08),
+                            BorderRadius.circular(size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     errorBorder: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD08),
+                            BorderRadius.circular(size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     focusedErrorBorder: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD08),
+                            BorderRadius.circular(size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
-                    contentPadding: EdgeInsets.only(left: size.width * numD06)),
+                    contentPadding: EdgeInsets.only(left: size.width * AppDimensions.numD06)),
               ),
             ),
             /*    SizedBox(
-              width:  size.width * numD04 ,
+              width:  size.width * AppDimensions.numD04 ,
             ),
             commonElevatedButton(
                 "Add New",
                 size,
                 commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD025,
+                    fontSize: size.width * AppDimensions.numD025,
                     color: Colors.white,
                     fontWeight: FontWeight.w700),
-                commonButtonStyle(size, colorThemePink), () {
+                commonButtonStyle(size, AppColorTheme.colorThemePink), () {
               if(hashTagController.text.trim().isNotEmpty){
                 addHashTagsApi();
 
@@ -168,31 +168,31 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
+          padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD035,
+                height: size.width * AppDimensions.numD035,
               ),
               if (selectedHashTagList.isNotEmpty)
                 Wrap(
                   children: List.generate(selectedHashTagList.length, (index) {
                     return Container(
-                      margin: EdgeInsets.only(right: size.width * numD02),
+                      margin: EdgeInsets.only(right: size.width * AppDimensions.numD02),
                       child: Chip(
                           label: Text(
                             "#${selectedHashTagList[index].name}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.white,
                                 fontWeight: FontWeight.normal),
                           ),
                           deleteIcon: Icon(
                             Icons.close,
                             color: Colors.white,
-                            size: size.width * numD045,
+                            size: size.width * AppDimensions.numD045,
                           ),
                           onDeleted: () {
                             final removedTag = selectedHashTagList[index];
@@ -212,23 +212,23 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                   }),
                 ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               if (hashTagController.text.isEmpty &&
                   hashtagSearchList.isNotEmpty)
                 Padding(
-                  padding: EdgeInsets.only(bottom: size.width * numD02),
+                  padding: EdgeInsets.only(bottom: size.width * AppDimensions.numD02),
                   child: Text(
                     "Suggested Tags",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                 ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Expanded(
                   child: ListView.separated(
@@ -254,19 +254,19 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                                color: colorLightGrey,
+                                color: AppColorTheme.colorLightGrey,
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD02)),
+                                    BorderRadius.circular(size.width * AppDimensions.numD02)),
                             padding: EdgeInsets.symmetric(
-                                vertical: size.width * numD02,
-                                horizontal: size.width * numD02),
+                                vertical: size.width * AppDimensions.numD02,
+                                horizontal: size.width * AppDimensions.numD02),
                             child: Row(
                               children: [
                                 Text(
                                   "#${hashtagSearchList[index].name}",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -288,18 +288,18 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                         },
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD02,
-                                              vertical: size.width * numD005),
+                                              horizontal: size.width * AppDimensions.numD02,
+                                              vertical: size.width * AppDimensions.numD005),
                                           decoration: BoxDecoration(
-                                              color: colorThemePink,
+                                              color: AppColorTheme.colorThemePink,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD025)),
+                                                      size.width * AppDimensions.numD025)),
                                           child: Text(
                                             "Add",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width * AppDimensions.numD03,
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w500),
                                           ),
@@ -309,7 +309,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                         ? Icon(
                                             Icons.check,
                                             color: Colors.black,
-                                            size: size.width * numD06,
+                                            size: size.width * AppDimensions.numD06,
                                           )
                                         : Container())
                               ],
@@ -319,27 +319,27 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                       },
                       separatorBuilder: (context, index) {
                         return SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         );
                       },
                       itemCount: hashtagSearchList.length)),
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 width: size.width,
                 child: commonElevatedButton(
-                    submitText,
+                    AppStrings.submitText,
                     size,
                     commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
-                    commonButtonStyle(size, colorThemePink), () {
+                    commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                   Navigator.pop(context, selectedHashTagList);
                 }),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
             ],
           ),

@@ -51,26 +51,26 @@ class _MyBanksViewState extends State<MyBanksView> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           contentPadding: EdgeInsets.zero,
-          insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+          insetPadding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
           content: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(size.width * numD045),
+              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD045),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: size.width * numD02),
+                SizedBox(height: size.width * AppDimensions.numD02),
                 Padding(
-                  padding: EdgeInsets.only(left: size.width * numD04),
+                  padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                   child: Row(
                     children: [
                       Text(
                         "Delete bank?",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * numD05,
+                          fontSize: size.width * AppDimensions.numD05,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.bold,
                         ),
@@ -80,8 +80,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                         onPressed: () => Navigator.pop(dialogContext),
                         icon: Image.asset(
                           "${iconsPath}cross.png",
-                          width: size.width * numD065,
-                          height: size.width * numD065,
+                          width: size.width * AppDimensions.numD065,
+                          height: size.width * AppDimensions.numD065,
                           color: Colors.black,
                         ),
                       )
@@ -89,14 +89,14 @@ class _MyBanksViewState extends State<MyBanksView> {
                   ),
                 ),
                 const Divider(color: Colors.black, thickness: 0.5),
-                SizedBox(height: size.width * numD02),
+                SizedBox(height: size.width * AppDimensions.numD02),
                 Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD035),
+                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD035),
                   child: Text(
                     "Are you sure you wish to delete this bank account?",
                     style: TextStyle(
-                      fontSize: size.width * numD038,
+                      fontSize: size.width * AppDimensions.numD038,
                       color: Colors.black,
                       fontFamily: "AirbnbCereal",
                       fontWeight: FontWeight.w400,
@@ -104,15 +104,15 @@ class _MyBanksViewState extends State<MyBanksView> {
                     ),
                   ),
                 ),
-                SizedBox(height: size.width * numD05),
+                SizedBox(height: size.width * AppDimensions.numD05),
                 Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD035),
+                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD035),
                   child: Row(
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: size.width * numD13,
+                          height: size.width * AppDimensions.numD13,
                           child: commonElevatedButton(
                             "Cancel",
                             size,
@@ -122,15 +122,15 @@ class _MyBanksViewState extends State<MyBanksView> {
                           ),
                         ),
                       ),
-                      SizedBox(width: size.width * numD04),
+                      SizedBox(width: size.width * AppDimensions.numD04),
                       Expanded(
                         child: SizedBox(
-                          height: size.width * numD13,
+                          height: size.width * AppDimensions.numD13,
                           child: commonElevatedButton(
                             "Delete",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink),
+                            commonButtonStyle(size, AppColorTheme.colorThemePink),
                             () {
                               Navigator.pop(dialogContext);
                               context.read<BankBloc>().add(
@@ -146,7 +146,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                     ],
                   ),
                 ),
-                SizedBox(height: size.width * numD05),
+                SizedBox(height: size.width * AppDimensions.numD05),
               ],
             ),
           ),
@@ -173,11 +173,11 @@ class _MyBanksViewState extends State<MyBanksView> {
         elevation: 0,
         hideLeading: false,
         title: Text(
-          paymentMethods,
+          AppStrings.paymentMethods,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
-            fontSize: size.width * appBarHeadingFontSize,
+            fontSize: size.width * AppDimensions.appBarHeadingFontSize,
           ),
         ),
         centerTitle: false,
@@ -197,11 +197,11 @@ class _MyBanksViewState extends State<MyBanksView> {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
-          SizedBox(width: size.width * numD04),
+          SizedBox(width: size.width * AppDimensions.numD04),
         ],
       ),
       body: BlocConsumer<BankBloc, BankState>(
@@ -248,7 +248,7 @@ class _MyBanksViewState extends State<MyBanksView> {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(size.width * numD05),
+        padding: EdgeInsets.all(size.width * AppDimensions.numD05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -256,22 +256,22 @@ class _MyBanksViewState extends State<MyBanksView> {
               "Hi ${sharedPreferences!.getString(userNameKey) ?? ''}",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: size.width * numD05,
+                fontSize: size.width * AppDimensions.numD05,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: size.height * numD03),
+            SizedBox(height: size.height * AppDimensions.numD03),
             Center(
               child: Image.asset("${iconsPath}payment_page_icon_2.png"),
             ),
-            SizedBox(height: size.width * numD02),
+            SizedBox(height: size.width * AppDimensions.numD02),
             Container(
               decoration: BoxDecoration(
-                color: colorLightWhite,
-                borderRadius: BorderRadius.circular(size.width * numD03),
+                color: AppColorTheme.colorLightWhite,
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                 border: Border.all(color: Colors.black),
               ),
-              padding: EdgeInsets.all(size.width * numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD04),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -279,19 +279,19 @@ class _MyBanksViewState extends State<MyBanksView> {
                     "Manage your bank account on Stripe",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: size.width * numD033,
+                      fontSize: size.width * AppDimensions.numD033,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: size.width * numD02),
+                  SizedBox(height: size.width * AppDimensions.numD02),
                   // Display the first bank detail
                   Container(
                     decoration: BoxDecoration(
-                      color: colorLightWhite,
-                      borderRadius: BorderRadius.circular(size.width * numD03),
+                      color: AppColorTheme.colorLightWhite,
+                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                       border: Border.all(color: Colors.black),
                     ),
-                    padding: EdgeInsets.all(size.width * numD02),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -299,26 +299,26 @@ class _MyBanksViewState extends State<MyBanksView> {
                           children: [
                             ClipRRect(
                               borderRadius:
-                                  BorderRadius.circular(size.width * numD02),
+                                  BorderRadius.circular(size.width * AppDimensions.numD02),
                               child: Image.network(
                                 firstBank.bankImage,
-                                height: size.width * numD11,
-                                width: size.width * numD11,
+                                height: size.width * AppDimensions.numD11,
+                                width: size.width * AppDimensions.numD11,
                                 fit: BoxFit.contain,
                                 errorBuilder: (c, s, o) {
                                   return Container(
-                                    height: size.width * numD11,
-                                    width: size.width * numD11,
+                                    height: size.width * AppDimensions.numD11,
+                                    width: size.width * AppDimensions.numD11,
                                     decoration: BoxDecoration(
-                                      color: colorLightGrey,
+                                      color: AppColorTheme.colorLightGrey,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD02),
+                                          size.width * AppDimensions.numD02),
                                     ),
                                   );
                                 },
                               ),
                             ),
-                            SizedBox(width: size.width * numD02),
+                            SizedBox(width: size.width * AppDimensions.numD02),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -331,14 +331,14 @@ class _MyBanksViewState extends State<MyBanksView> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD028,
+                                          fontSize: size.width * AppDimensions.numD028,
                                           fontFamily: "AirbnbCereal",
                                           overflow: TextOverflow.ellipsis,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: size.width * numD01),
+                                    SizedBox(width: size.width * AppDimensions.numD01),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 2),
@@ -351,7 +351,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD028,
+                                          fontSize: size.width * AppDimensions.numD028,
                                           fontFamily: "AirbnbCereal",
                                           overflow: TextOverflow.ellipsis,
                                           fontWeight: FontWeight.normal,
@@ -360,12 +360,12 @@ class _MyBanksViewState extends State<MyBanksView> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: size.width * numD015),
+                                SizedBox(height: size.width * AppDimensions.numD015),
                                 Text(
                                   "********${firstBank.accountNumber}",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD025,
+                                    fontSize: size.width * AppDimensions.numD025,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal,
                                   ),
@@ -381,19 +381,19 @@ class _MyBanksViewState extends State<MyBanksView> {
                             if (firstBank.isDefault)
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD028,
-                                  vertical: size.width * numD01,
+                                  horizontal: size.width * AppDimensions.numD028,
+                                  vertical: size.width * AppDimensions.numD01,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: colorThemePink,
+                                  color: AppColorTheme.colorThemePink,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD03),
+                                      size.width * AppDimensions.numD03),
                                 ),
                                 child: Text(
                                   "Default",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD028,
+                                    fontSize: size.width * AppDimensions.numD028,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -402,19 +402,19 @@ class _MyBanksViewState extends State<MyBanksView> {
                             Container(
                               margin: EdgeInsets.only(top: size.width * 0.014),
                               padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD028,
+                                horizontal: size.width * AppDimensions.numD028,
                                 vertical: size.width * 0.008,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.green,
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD03),
+                                    BorderRadius.circular(size.width * AppDimensions.numD03),
                               ),
                               child: Text(
                                 "Verified",
                                 style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD028,
+                                  fontSize: size.width * AppDimensions.numD028,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -425,7 +425,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                       ],
                     ),
                   ),
-                  SizedBox(height: size.width * numD02),
+                  SizedBox(height: size.width * AppDimensions.numD02),
                   RichText(
                     text: TextSpan(
                       children: [
@@ -434,7 +434,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                               "This is your connected bank account on Stripe — where your payments will be sent.\n\n",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: size.width * numD032,
+                            fontSize: size.width * AppDimensions.numD032,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
@@ -443,7 +443,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                               "Need to update your details or switch to a different account? Simply click below to log into Stripe and make any changes you need.",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: size.width * numD032,
+                            fontSize: size.width * AppDimensions.numD032,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
@@ -453,13 +453,13 @@ class _MyBanksViewState extends State<MyBanksView> {
                 ],
               ),
             ),
-            SizedBox(height: size.height * numD06),
+            SizedBox(height: size.height * AppDimensions.numD06),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     child: commonElevatedButton(
                       "Update Your Details",
                       size,
@@ -472,15 +472,15 @@ class _MyBanksViewState extends State<MyBanksView> {
                     ),
                   ),
                 ),
-                SizedBox(width: size.width * numD06),
+                SizedBox(width: size.width * AppDimensions.numD06),
                 Expanded(
                   child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     child: commonElevatedButton(
                       "Change Bank Account",
                       size,
                       commonButtonTextStyle(size),
-                      commonButtonStyle(size, colorThemePink),
+                      commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
                         stripeBankPageTitle = "Change bank account";
                         _generateAddBankApi(context);
@@ -499,7 +499,7 @@ class _MyBanksViewState extends State<MyBanksView> {
   Widget _upliftNoAccountsPaymentDesign(BuildContext context, Size size) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(size.width * numD05),
+        padding: EdgeInsets.all(size.width * AppDimensions.numD05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -507,26 +507,26 @@ class _MyBanksViewState extends State<MyBanksView> {
               "Hi ${sharedPreferences!.getString(userNameKey) ?? ''}",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: size.width * numD06,
+                fontSize: size.width * AppDimensions.numD06,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: size.height * numD04),
+            SizedBox(height: size.height * AppDimensions.numD04),
             Image.asset("${iconsPath}payment_page_icon.png"),
-            SizedBox(height: size.width * numD02),
+            SizedBox(height: size.width * AppDimensions.numD02),
             Container(
               decoration: BoxDecoration(
-                color: colorLightWhite,
-                borderRadius: BorderRadius.circular(size.width * numD03),
+                color: AppColorTheme.colorLightWhite,
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                 border: Border.all(color: Colors.black),
               ),
-              padding: EdgeInsets.all(size.width * numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD04),
               child: RichText(
                 text: TextSpan(
                   text: "Ready to get paid?\n\n",
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: size.width * numD03,
+                    fontSize: size.width * AppDimensions.numD03,
                     fontWeight: FontWeight.bold,
                   ),
                   children: [
@@ -535,7 +535,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                           "Set up your Stripe account now to receive payments within 2-7 days when your content is purchased.\n\n",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: size.width * numD032,
+                        fontSize: size.width * AppDimensions.numD032,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
@@ -544,7 +544,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                           "Just tap the CTA below to get started - it takes less than a minute.\n\n",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: size.width * numD032,
+                        fontSize: size.width * AppDimensions.numD032,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
@@ -552,13 +552,13 @@ class _MyBanksViewState extends State<MyBanksView> {
                 ),
               ),
             ),
-            SizedBox(height: size.height * numD06),
+            SizedBox(height: size.height * AppDimensions.numD06),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     child: commonElevatedButton(
                       "Camera",
                       size,
@@ -575,15 +575,15 @@ class _MyBanksViewState extends State<MyBanksView> {
                     ),
                   ),
                 ),
-                SizedBox(width: size.width * numD06),
+                SizedBox(width: size.width * AppDimensions.numD06),
                 Expanded(
                   child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     child: commonElevatedButton(
                       "Add bank",
                       size,
                       commonButtonTextStyle(size),
-                      commonButtonStyle(size, colorThemePink),
+                      commonButtonStyle(size, AppColorTheme.colorThemePink),
                       () {
                         stripeBankPageTitle = "Add bank";
                         _generateAddBankApi(context);

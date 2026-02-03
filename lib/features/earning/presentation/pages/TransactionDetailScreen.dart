@@ -65,11 +65,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       appBar: CommonAppBar(
         elevation: 0,
         hideLeading: false,
-        title: Text(transactionDetailsText,
+        title: Text(AppStrings.transactionDetailsText,
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize,
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize,
             )),
         centerTitle: false,
         titleSpacing: 0,
@@ -88,12 +88,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           )
         ],
       ),
@@ -101,15 +101,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05,
-              vertical: size.width * numD05,
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD05,
             ),
             child: Column(
               children: [
                 widget.type == "pending"
                     ? pendingPaymentWidget()
                     : receivedPaymentWidget(),
-                SizedBox(height: size.width * numD02),
+                SizedBox(height: size.width * AppDimensions.numD02),
                 if (widget.shouldShowPublication) ...[
                   Center(
                     child: TextButton(
@@ -122,11 +122,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 publicationCount: "")));
                       },
                       child: Text(
-                        viewPublicationsPurchasedText,
+                        AppStrings.viewPublicationsPurchasedText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD033,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD033,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                         textAlign: TextAlign.center,
                       ),
@@ -137,7 +137,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   "*Your payment has been successfully processed from our end. Please note, it may take 2-3 business days to appear in your account due to bank processing times.",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD033,
+                      fontSize: size.width * AppDimensions.numD033,
                       color: Colors.black,
                       fontWeight: FontWeight.w400),
                   textAlign: TextAlign.center,
@@ -156,18 +156,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       children: [
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: size.width * numD03,
-            vertical: size.width * numD03,
+            horizontal: size.width * AppDimensions.numD03,
+            vertical: size.width * AppDimensions.numD03,
           ),
           decoration: BoxDecoration(
-              color: colorLightGrey,
+              color: AppColorTheme.colorLightGrey,
               boxShadow: [
                 BoxShadow(
                     color: Colors.grey.shade300,
                     blurRadius: 0,
                     spreadRadius: 0.5)
               ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
+              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
               border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,18 +176,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(size.width * numD02),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: colorThemePink,
+                        color: AppColorTheme.colorThemePink,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD015)),
+                            BorderRadius.circular(size.width * AppDimensions.numD015)),
                     child: Row(
                       children: [
                         Text(
-                          receivedText,
+                          AppStrings.receivedText,
                           style: TextStyle(
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w400,
                               fontFamily: "AirbnbCereal"),
@@ -199,7 +199,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               : "",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w500),
                         ),
@@ -207,25 +207,25 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                   ),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                     child: Image.network(widget.transactionData!.hopperAvatar,
-                        height: size.width * numD11,
-                        width: size.width * numD12,
+                        height: size.width * AppDimensions.numD11,
+                        width: size.width * AppDimensions.numD12,
                         fit: BoxFit.cover,
                         errorBuilder: (context, i, b) => Image.asset(
                               "${commonImagePath}rabbitLogo.png",
                               fit: BoxFit.cover,
-                              height: size.width * numD11,
-                              width: size.width * numD12,
+                              height: size.width * AppDimensions.numD11,
+                              width: size.width * AppDimensions.numD12,
                             )),
                   )
                 ],
               ),
               SizedBox(
-                height: size.width * numD03,
+                height: size.width * AppDimensions.numD03,
               ),
               SizedBox(
-                height: size.width * numD40,
+                height: size.width * AppDimensions.numD40,
                 child: PageView.builder(
                     controller: pageController,
                     onPageChanged: (value) {
@@ -242,7 +242,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       var item = widget.transactionData!.contentDataList[idx];
                       return ClipRRect(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                            BorderRadius.circular(size.width * AppDimensions.numD04),
                         child: Stack(
                           children: [
                             item.mediaType == "audio"
@@ -261,8 +261,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                         fit: BoxFit.cover,
                                       ),
                             Positioned(
-                              right: size.width * numD02,
-                              top: size.width * numD02,
+                              right: size.width * AppDimensions.numD02,
+                              top: size.width * AppDimensions.numD02,
                               child: Column(
                                 children: getMediaCount2(
                                     widget.transactionData!.contentDataList
@@ -272,8 +272,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               ),
                             ),
                             /*Positioned(
-                              right: size.width * numD02,
-                              bottom: size.width * numD02,
+                              right: size.width * AppDimensions.numD02,
+                              bottom: size.width * AppDimensions.numD02,
                               child: Visibility(
                                 visible: widget.transactionData!.contentDataList
                                         .length >
@@ -282,7 +282,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                   "+${widget.transactionData!.contentDataList.length}",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD04,
+                                      fontSize: size.width * AppDimensions.numD04,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -301,10 +301,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     }),
               ),
               SizedBox(
-                height: size.width * numD013,
+                height: size.width * AppDimensions.numD013,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * numD01),
+                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD01),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -312,7 +312,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     //   widget.transactionData!.contentTitle,
                     //   style: commonTextStyle(
                     //       size: size,
-                    //       fontSize: size.width * numD035,
+                    //       fontSize: size.width * AppDimensions.numD035,
                     //       color: Colors.black,
                     //       fontWeight: FontWeight.w500),
                     // ),
@@ -331,18 +331,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           )
                         : Container(),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           widget.transactionData!.type == "content"
-                              ? contentSoldText
-                              : taskCompletedText,
+                              ? AppStrings.contentSoldText
+                              : AppStrings.taskCompletedText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -355,12 +355,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                         : "${iconsPath}ic_share.png",
                                     height:
                                         widget.transactionData!.typesOfContent
-                                            ? size.width * numD03
-                                            : size.width * numD04,
-                                    color: colorTextFieldIcon,
+                                            ? size.width * AppDimensions.numD03
+                                            : size.width * AppDimensions.numD04,
+                                    color: AppColorTheme.colorTextFieldIcon,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Text(
                                     widget.transactionData!.typesOfContent
@@ -368,7 +368,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                         : "Shared",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize: size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -378,16 +378,16 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 children: [
                                   Image.asset(
                                     "${iconsPath}ic_task.png",
-                                    width: size.width * numD05,
+                                    width: size.width * AppDimensions.numD05,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Text(
                                     "Yes",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize: size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -396,7 +396,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
 
                     /// Payment date
@@ -404,10 +404,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          dateOfSaleText,
+                          AppStrings.dateOfSaleText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -419,23 +419,23 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           widget.transactionData!.createdAT,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          paymentDateText,
+                          AppStrings.paymentDateText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -447,14 +447,14 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           widget.transactionData!.createdAT,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
 
                     /// Payment made time
@@ -462,10 +462,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          paymentMadeTimeText,
+                          AppStrings.paymentMadeTimeText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -481,14 +481,14 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               format: "hh:mm a"),
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
 
                     /// Transaction ID
@@ -496,10 +496,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          transactionIdText,
+                          AppStrings.transactionIdText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -507,7 +507,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           widget.transactionData!.id,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -520,29 +520,29 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           ),
         ),
         SizedBox(
-          height: size.width * numD1,
+          height: size.width * AppDimensions.numD1,
         ),
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: size.width * numD03,
-            vertical: size.width * numD03,
+            horizontal: size.width * AppDimensions.numD03,
+            vertical: size.width * AppDimensions.numD03,
           ),
           decoration: BoxDecoration(
-              color: colorLightGrey,
+              color: AppColorTheme.colorLightGrey,
               boxShadow: [
                 BoxShadow(
                     color: Colors.grey.shade300,
                     blurRadius: 0,
                     spreadRadius: 0.5)
               ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
+              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
               border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                  left: size.width * numD01,
+                  left: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -560,16 +560,16 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       widget.transactionData!.hopperBankName,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD04,
+                          fontSize: size.width * AppDimensions.numD04,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
                     // SizedBox(
-                    //   height: size.width * numD01,
+                    //   height: size.width * AppDimensions.numD01,
                     // ),
                     // Text(
                     //   widget.transactionData!.adminFullName,
-                    //   style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                    //   style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     // ),
                   ],
                 ),
@@ -577,7 +577,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
               /// Divider
               Padding(
-                padding: EdgeInsets.only(top: size.width * numD01),
+                padding: EdgeInsets.only(top: size.width * AppDimensions.numD01),
                 child: const Divider(
                   thickness: 1,
                   color: Colors.white,
@@ -587,18 +587,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// to
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD025,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD025,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      toText,
+                      AppStrings.toText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -606,7 +606,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "${widget.transactionData!.userFirstName} ${widget.transactionData!.userLastName}",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -617,18 +617,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// From
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      fromText,
+                      AppStrings.fromText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -637,7 +637,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "PressHop Media UK Limited",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -647,7 +647,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
               /// Divider
               Padding(
-                padding: EdgeInsets.only(top: size.width * numD01),
+                padding: EdgeInsets.only(top: size.width * AppDimensions.numD01),
                 child: const Divider(
                   thickness: 1,
                   color: Colors.white,
@@ -657,15 +657,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Payment Summary
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Text(
-                  paymentSummaryText,
+                  AppStrings.paymentSummaryText,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD03,
+                      fontSize: size.width * AppDimensions.numD03,
                       color: Colors.black,
                       fontWeight: FontWeight.w500),
                 ),
@@ -674,19 +674,19 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Offered amount
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      // "Total earnings from sold content"
-                      "Content sold for",
+                      // "Total earnings from AppStrings.sold content"
+                      "Content AppStrings.sold for",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -696,7 +696,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           : "$currencySymbol 0",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -707,18 +707,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// PressHop fees
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      presshopCommissionText,
+                      AppStrings.presshopCommissionText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -726,7 +726,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -736,18 +736,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      processingFeeText,
+                      AppStrings.processingFeeText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -755,7 +755,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.stripefee))}",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -766,9 +766,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Amount paid
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -777,7 +777,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "Nett amount received by you",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -787,7 +787,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           : "",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -865,27 +865,27 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
     return Container(
       width: size.width,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(size.width * numD04),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
-        border: Border.all(color: colorGreyNew),
-        color: colorThemePink,
-        borderRadius: BorderRadius.circular(size.width * numD06),
+        border: Border.all(color: AppColorTheme.colorGreyNew),
+        color: AppColorTheme.colorThemePink,
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD06),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           // SizedBox(
-          //   height: size.width * numD05,
+          //   height: size.width * AppDimensions.numD05,
           // ),
           // AudioFileWaveforms(
-          //   size: Size(size.width, size.width * numD15),
+          //   size: Size(size.width, size.width * AppDimensions.numD15),
           //   playerController: controller,
           //   enableSeekGesture: true,
           //   waveformType: WaveformType.long,
           //   continuousWaveform: true,
           //   playerWaveStyle: PlayerWaveStyle(
           //     fixedWaveColor: Colors.black,
-          //     liveWaveColor: colorThemePink,
+          //     liveWaveColor: AppColorTheme.colorThemePink,
           //     spacing: 6,
           //     liveWaveGradient: ui.Gradient.linear(
           //       const Offset(70, 50),
@@ -897,7 +897,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           //       Offset(MediaQuery.of(context).size.width / 2, 0),
           //       [Colors.red, Colors.green],
           //     ),
-          //     seekLineColor: colorThemePink,
+          //     seekLineColor: AppColorTheme.colorThemePink,
           //     seekLineThickness: 2,
           //     showSeekLine: true,
           //     showBottom: true,
@@ -928,7 +928,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             child: Icon(
               audioPlaying ? Icons.pause : Icons.play_arrow_rounded,
               color: Colors.white,
-              size: size.width * numD1,
+              size: size.width * AppDimensions.numD1,
             ),
           ),
           // Image.asset(
@@ -958,7 +958,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               flickVideoWithControls: const FlickVideoWithControls(
                 playerLoadingFallback: Center(
                     child: CircularProgressIndicator(
-                  color: colorThemePink,
+                  color: AppColorTheme.colorThemePink,
                 )),
                 closedCaptionTextStyle: TextStyle(fontSize: 8),
                 controls: FlickPortraitControls(),
@@ -966,7 +966,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               flickVideoWithControlsFullscreen: const FlickVideoWithControls(
                 playerLoadingFallback: Center(
                     child: CircularProgressIndicator(
-                  color: colorThemePink,
+                  color: AppColorTheme.colorThemePink,
                 )),
                 controls: FlickLandscapeControls(),
               ),
@@ -980,18 +980,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       children: [
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: size.width * numD03,
-            vertical: size.width * numD03,
+            horizontal: size.width * AppDimensions.numD03,
+            vertical: size.width * AppDimensions.numD03,
           ),
           decoration: BoxDecoration(
-              color: colorLightGrey,
+              color: AppColorTheme.colorLightGrey,
               boxShadow: [
                 BoxShadow(
                     color: Colors.grey.shade300,
                     blurRadius: 0,
                     spreadRadius: 0.5)
               ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
+              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
               border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             children: [
@@ -1000,24 +1000,24 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 children: [
                   Container(
                     padding: EdgeInsets.only(
-                      top: size.width * numD025,
-                      bottom: size.width * numD02,
-                      left: size.width * numD03,
-                      right: size.width * numD03,
+                      top: size.width * AppDimensions.numD025,
+                      bottom: size.width * AppDimensions.numD02,
+                      left: size.width * AppDimensions.numD03,
+                      right: size.width * AppDimensions.numD03,
                     ),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD015),
+                            BorderRadius.circular(size.width * AppDimensions.numD015),
                         border: Border.all(
                             color: const Color(0xFFAEB4B3), width: 1)),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pendingText,
+                          AppStrings.pendingText,
                           style: TextStyle(
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400,
                               fontFamily: "AirbnbCereal"),
@@ -1026,7 +1026,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           " $currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w500),
                         ),
@@ -1034,27 +1034,27 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                   ),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                     child: Image.network(widget.transactionData!.companyLogo,
-                        height: size.width * numD11,
-                        width: size.width * numD12,
+                        height: size.width * AppDimensions.numD11,
+                        width: size.width * AppDimensions.numD12,
                         fit: BoxFit.cover,
                         errorBuilder: (context, i, b) => Image.asset(
                               "${commonImagePath}rabbitLogo.png",
                               fit: BoxFit.cover,
-                              height: size.width * numD11,
-                              width: size.width * numD12,
+                              height: size.width * AppDimensions.numD11,
+                              width: size.width * AppDimensions.numD12,
                             )),
                   )
                 ],
               ),
 
               SizedBox(
-                height: size.width * numD03,
+                height: size.width * AppDimensions.numD03,
               ),
 
               SizedBox(
-                height: size.width * numD40,
+                height: size.width * AppDimensions.numD40,
                 child: PageView.builder(
                     controller: pageController,
                     onPageChanged: (value) {
@@ -1071,7 +1071,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       var item = widget.transactionData!.contentDataList[idx];
                       return ClipRRect(
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                            BorderRadius.circular(size.width * AppDimensions.numD04),
                         child: InkWell(
                           onTap: () {
                             if (item.mediaType == "pdf" ||
@@ -1100,7 +1100,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                       : item.mediaType == "pdf"
                                           ? Padding(
                                               padding: EdgeInsets.all(
-                                                  size.width * numD04),
+                                                  size.width * AppDimensions.numD04),
                                               child: Image.asset(
                                                 "${dummyImagePath}pngImage.png",
                                                 fit: BoxFit.contain,
@@ -1110,7 +1110,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                           : item.mediaType == "doc"
                                               ? Padding(
                                                   padding: EdgeInsets.all(
-                                                      size.width * numD04),
+                                                      size.width * AppDimensions.numD04),
                                                   child: Image.asset(
                                                     "${dummyImagePath}doc_black_icon.png",
                                                     fit: BoxFit.contain,
@@ -1130,8 +1130,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                                   fit: BoxFit.cover,
                                                 ),
                               Positioned(
-                                right: size.width * numD02,
-                                top: size.width * numD02,
+                                right: size.width * AppDimensions.numD02,
+                                top: size.width * AppDimensions.numD02,
                                 child: Column(
                                   children: getMediaCount2(
                                       widget.transactionData!.contentDataList
@@ -1141,8 +1141,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 ),
                               ),
                               /* Positioned(
-                                right: size.width * numD02,
-                                bottom: size.width * numD02,
+                                right: size.width * AppDimensions.numD02,
+                                bottom: size.width * AppDimensions.numD02,
                                 child: Visibility(
                                   visible: widget.transactionData!
                                           .contentDataList.length >
@@ -1151,7 +1151,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     "+${widget.transactionData!.contentDataList.length}",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD04,
+                                        fontSize: size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -1187,20 +1187,20 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   : Container(),
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD01,
+                  horizontal: size.width * AppDimensions.numD01,
                 ).copyWith(
-                  top: size.width * numD025,
+                  top: size.width * AppDimensions.numD025,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                         widget.transactionData!.type == "content"
-                            ? contentSoldText
-                            : taskCompletedText,
+                            ? AppStrings.contentSoldText
+                            : AppStrings.taskCompletedText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400)),
                     widget.transactionData!.type == "content"
@@ -1211,12 +1211,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     ? "${iconsPath}ic_exclusive.png"
                                     : "${iconsPath}ic_share.png",
                                 height: widget.transactionData!.typesOfContent
-                                    ? size.width * numD04
-                                    : size.width * numD05,
-                                color: colorTextFieldIcon,
+                                    ? size.width * AppDimensions.numD04
+                                    : size.width * AppDimensions.numD05,
+                                color: AppColorTheme.colorTextFieldIcon,
                               ),
                               SizedBox(
-                                width: size.width * numD02,
+                                width: size.width * AppDimensions.numD02,
                               ),
                               Text(
                                 widget.transactionData!.typesOfContent
@@ -1224,7 +1224,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                     : "Shared",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400),
                               ),
@@ -1234,16 +1234,16 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                             children: [
                               Image.asset(
                                 "${iconsPath}ic_task.png",
-                                width: size.width * numD05,
+                                width: size.width * AppDimensions.numD05,
                               ),
                               SizedBox(
-                                width: size.width * numD02,
+                                width: size.width * AppDimensions.numD02,
                               ),
                               Text(
                                 "Yes",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400),
                               ),
@@ -1256,18 +1256,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Date of sale
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      dateOfSaleText,
+                      AppStrings.dateOfSaleText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1275,7 +1275,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       widget.transactionData!.createdAT,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1286,22 +1286,22 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           ),
         ),
         SizedBox(
-          height: size.width * numD1,
+          height: size.width * AppDimensions.numD1,
         ),
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: size.width * numD03,
-            vertical: size.width * numD03,
+            horizontal: size.width * AppDimensions.numD03,
+            vertical: size.width * AppDimensions.numD03,
           ),
           decoration: BoxDecoration(
-              color: colorLightGrey,
+              color: AppColorTheme.colorLightGrey,
               boxShadow: [
                 BoxShadow(
                     color: Colors.grey.shade300,
                     blurRadius: 0,
                     spreadRadius: 0.5)
               ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
+              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
               border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1309,15 +1309,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Payment Summary
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Text(
-                  paymentSummaryText,
+                  AppStrings.paymentSummaryText,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD042,
+                      fontSize: size.width * AppDimensions.numD042,
                       color: Colors.black,
                       fontWeight: FontWeight.w500),
                 ),
@@ -1325,7 +1325,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
               /// Divider
               Padding(
-                padding: EdgeInsets.only(top: size.width * numD01),
+                padding: EdgeInsets.only(top: size.width * AppDimensions.numD01),
                 child: const Divider(
                   thickness: 1,
                   color: Colors.white,
@@ -1335,18 +1335,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Your earnings
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Total earnings for sold content" /*yourEarningsText*/,
+                      "Total earnings for AppStrings.sold content" /*AppStrings.yourEarningsText*/,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1356,7 +1356,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           : "$currencySymbol 0",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1367,18 +1367,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// PressHop fees
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      presshopCommissionText,
+                      AppStrings.presshopCommissionText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1386,7 +1386,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1395,18 +1395,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      processingFeeText,
+                      AppStrings.processingFeeText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1416,7 +1416,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           : "$currencySymbol 0",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1427,9 +1427,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               /// Amount pending
               Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD02,
-                  left: size.width * numD01,
-                  right: size.width * numD01,
+                  top: size.width * AppDimensions.numD02,
+                  left: size.width * AppDimensions.numD01,
+                  right: size.width * AppDimensions.numD01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1438,7 +1438,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "Nett amount pending",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1446,7 +1446,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1456,15 +1456,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
               Padding(
                 padding: EdgeInsets.only(
-                    left: size.width * numD01, top: size.width * numD02),
+                    left: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD02),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      paymentDueDateText,
+                      AppStrings.paymentDueDateText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -1474,7 +1474,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           format: "dd MMM yyyy"),
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),

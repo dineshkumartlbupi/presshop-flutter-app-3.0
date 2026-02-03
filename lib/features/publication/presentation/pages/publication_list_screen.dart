@@ -68,11 +68,11 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             elevation: 0,
             hideLeading: false,
             title: Text(
-              publicationsListText,
+              AppStrings.publicationsListText,
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: size.width * appBarHeadingFontSize),
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -124,17 +124,17 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
               return ListView(
                 padding: EdgeInsets.only(
-                  left: size.width * numD06,
-                  right: size.width * numD06,
+                  left: size.width * AppDimensions.numD06,
+                  right: size.width * AppDimensions.numD06,
                 ),
                 children: [
                   /// My Earnings
                   Container(
-                    padding: EdgeInsets.all(size.width * numD05),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD05),
                     decoration: BoxDecoration(
-                        color: colorLightGrey,
+                        color: AppColorTheme.colorLightGrey,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD05)),
+                            BorderRadius.circular(size.width * AppDimensions.numD05)),
                     child: Column(
                       children: [
                         Row(
@@ -144,16 +144,16 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   border: Border.all(
                                       width: 1.2, color: Colors.black),
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04)),
+                                      size.width * AppDimensions.numD04)),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   child: CachedNetworkImage(
                                     imageUrl: earningData!.avatar,
                                     imageBuilder: (context, imageProvider) =>
                                         Container(
-                                      height: size.width * numD32,
-                                      width: size.width * numD35,
+                                      height: size.width * AppDimensions.numD32,
+                                      width: size.width * AppDimensions.numD35,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                             image: imageProvider,
@@ -166,23 +166,23 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                         Image.asset(
                                       "${commonImagePath}rabbitLogo.png",
                                       fit: BoxFit.cover,
-                                      height: size.width * numD32,
-                                      width: size.width * numD35,
+                                      height: size.width * AppDimensions.numD32,
+                                      width: size.width * AppDimensions.numD35,
                                     ),
                                   )),
                             ),
                             Padding(
                               padding:
-                                  EdgeInsets.only(left: size.width * numD06),
+                                  EdgeInsets.only(left: size.width * AppDimensions.numD06),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    publicationsText,
+                                    AppStrings.publicationsText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize: size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -192,19 +192,19 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                         : '0',
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD08,
-                                        color: colorThemePink,
+                                        fontSize: size.width * AppDimensions.numD08,
+                                        color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.w800),
                                   ),
                                   SizedBox(
-                                    height: size.width * numD01,
+                                    height: size.width * AppDimensions.numD01,
                                   ),
                                   Text(
-                                    youHaveEarnedText,
+                                    AppStrings.youHaveEarnedText,
                                     //"Total amount",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize: size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -215,8 +215,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           : '£0',
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD075,
-                                          color: colorThemePink,
+                                          fontSize: size.width * AppDimensions.numD075,
+                                          color: AppColorTheme.colorThemePink,
                                           fontWeight: FontWeight.w800),
                                     ),
                                   ),
@@ -226,7 +226,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                           ],
                         ),
                         SizedBox(
-                          height: size.width * numD03,
+                          height: size.width * AppDimensions.numD03,
                         ),
                         widget.contentType == "exclusive"
                             ? Container()
@@ -245,15 +245,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       },
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
-                                          vertical: size.width * numD02,
-                                          horizontal: size.width * numD02,
+                                          vertical: size.width * AppDimensions.numD02,
+                                          horizontal: size.width * AppDimensions.numD02,
                                         ),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 width: 1.2,
                                                 color: Colors.black),
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD02)),
+                                                size.width * AppDimensions.numD02)),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -267,7 +267,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                               style: commonTextStyle(
                                                   size: size,
                                                   fontSize:
-                                                      size.width * numD035,
+                                                      size.width * AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w600),
                                             ),
@@ -281,7 +281,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD05,
+                                    width: size.width * AppDimensions.numD05,
                                   ),
                                   Expanded(
                                     child: InkWell(
@@ -322,15 +322,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       },
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
-                                          vertical: size.width * numD02,
-                                          horizontal: size.width * numD02,
+                                          vertical: size.width * AppDimensions.numD02,
+                                          horizontal: size.width * AppDimensions.numD02,
                                         ),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 width: 1.2,
                                                 color: Colors.black),
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD02)),
+                                                size.width * AppDimensions.numD02)),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -344,7 +344,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                               style: commonTextStyle(
                                                   size: size,
                                                   fontSize:
-                                                      size.width * numD035,
+                                                      size.width * AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w700),
                                             ),
@@ -364,14 +364,14 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                   ),
 
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
 
                   Text(
-                    publicationsListHeadingText,
+                    AppStrings.publicationsListHeadingText,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.normal),
                   ),
@@ -382,13 +382,13 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                   ),
 
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
 
                   paymentReceivedWidget(),
 
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                 ],
               );
@@ -409,15 +409,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
               return item.paidStatus
                   ? Container(
                       padding: EdgeInsets.only(
-                        top: size.width * numD05,
-                        bottom: size.width * numD025,
-                        left: size.width * numD05,
-                        right: size.width * numD05,
+                        top: size.width * AppDimensions.numD05,
+                        bottom: size.width * AppDimensions.numD025,
+                        left: size.width * AppDimensions.numD05,
+                        right: size.width * AppDimensions.numD05,
                       ),
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                           borderRadius:
-                              BorderRadius.circular(size.width * numD02)),
+                              BorderRadius.circular(size.width * AppDimensions.numD02)),
                       child: Column(
                         children: [
                           Row(
@@ -425,21 +425,21 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             children: [
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD01,
-                                    horizontal: size.width * numD04),
+                                    vertical: size.width * AppDimensions.numD01,
+                                    horizontal: size.width * AppDimensions.numD04),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD015),
+                                        size.width * AppDimensions.numD015),
                                     border: Border.all(
-                                        color: colorGrey3, width: 1)),
+                                        color: AppColorTheme.colorGrey3, width: 1)),
                                 child: Text(
                                   item.payableT0Hopper.isNotEmpty
                                       ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
                                       : "£0",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD04,
+                                      fontSize: size.width * AppDimensions.numD04,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -451,54 +451,54 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                         ? "${iconsPath}ic_exclusive.png"
                                         : "${iconsPath}ic_share.png",
                                     height: item.typesOfContent
-                                        ? size.width * numD075
-                                        : size.width * numD07,
-                                    width: size.width * numD09,
-                                    color: colorTextFieldIcon,
+                                        ? size.width * AppDimensions.numD075
+                                        : size.width * AppDimensions.numD07,
+                                    width: size.width * AppDimensions.numD09,
+                                    color: AppColorTheme.colorTextFieldIcon,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD03,
+                                    width: size.width * AppDimensions.numD03,
                                   ),
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD03),
+                                        size.width * AppDimensions.numD03),
                                     child: CachedNetworkImage(
                                       imageUrl: item.contentImage,
-                                      height: size.width * numD11,
-                                      width: size.width * numD12,
+                                      height: size.width * AppDimensions.numD11,
+                                      width: size.width * AppDimensions.numD12,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           Image.asset(
                                         "assets/dummyImages/placeholderImage.png",
                                         fit: BoxFit.cover,
-                                        height: size.width * numD11,
-                                        width: size.width * numD12,
+                                        height: size.width * AppDimensions.numD11,
+                                        width: size.width * AppDimensions.numD12,
                                       ),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         "${commonImagePath}rabbitLogo.png",
                                         fit: BoxFit.cover,
-                                        height: size.width * numD11,
-                                        width: size.width * numD12,
+                                        height: size.width * AppDimensions.numD11,
+                                        width: size.width * AppDimensions.numD12,
                                       ),
                                     ),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD03,
+                                    width: size.width * AppDimensions.numD03,
                                   ),
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD03),
+                                        size.width * AppDimensions.numD03),
                                     child: Image.network(item.companyLogo,
-                                        height: size.width * numD11,
-                                        width: size.width * numD12,
+                                        height: size.width * AppDimensions.numD11,
+                                        width: size.width * AppDimensions.numD12,
                                         fit: BoxFit.contain,
                                         errorBuilder: (context, i, b) =>
                                             Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
-                                              height: size.width * numD11,
-                                              width: size.width * numD12,
+                                              height: size.width * AppDimensions.numD11,
+                                              width: size.width * AppDimensions.numD12,
                                             )),
                                   )
                                 ],
@@ -508,15 +508,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Payment Detail
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD04),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD04),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  paymentDetailText,
+                                  AppStrings.paymentDetailText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -524,7 +524,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   item.createdAT,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -534,15 +534,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Payment made time
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD02),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  paymentMadeTimeText,
+                                  AppStrings.paymentMadeTimeText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -553,7 +553,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       format: "hh:mm a"),
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -563,15 +563,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Transaction ID
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD02),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  transactionIdText,
+                                  AppStrings.transactionIdText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -579,7 +579,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   item.id,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -590,7 +590,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                           /// Divider
                           Padding(
                             padding: EdgeInsets.only(
-                              top: size.width * numD01,
+                              top: size.width * AppDimensions.numD01,
                             ),
                             child: const Divider(
                               color: Colors.white,
@@ -619,14 +619,14 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   "View transaction details",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorThemePink,
+                                      fontSize: size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_right,
                                   color: Colors.black,
-                                  size: size.width * numD045,
+                                  size: size.width * AppDimensions.numD045,
                                 )
                               ],
                             ),
@@ -636,15 +636,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                     )
                   : Container(
                       padding: EdgeInsets.only(
-                        top: size.width * numD05,
-                        bottom: size.width * numD025,
-                        left: size.width * numD05,
-                        right: size.width * numD05,
+                        top: size.width * AppDimensions.numD05,
+                        bottom: size.width * AppDimensions.numD025,
+                        left: size.width * AppDimensions.numD05,
+                        right: size.width * AppDimensions.numD05,
                       ),
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                           borderRadius:
-                              BorderRadius.circular(size.width * numD02)),
+                              BorderRadius.circular(size.width * AppDimensions.numD02)),
                       child: Column(
                         children: [
                           Row(
@@ -652,13 +652,13 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             children: [
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD01,
-                                    horizontal: size.width * numD04),
+                                    vertical: size.width * AppDimensions.numD01,
+                                    horizontal: size.width * AppDimensions.numD04),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: colorThemePink,
+                                  color: AppColorTheme.colorThemePink,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD015),
+                                      size.width * AppDimensions.numD015),
                                 ),
                                 child: Text(
                                   item.amount.isNotEmpty
@@ -666,7 +666,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD04,
+                                      fontSize: size.width * AppDimensions.numD04,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -678,26 +678,26 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                         ? "${iconsPath}ic_exclusive.png"
                                         : "${iconsPath}ic_share.png",
                                     height: item.typesOfContent
-                                        ? size.width * numD075
-                                        : size.width * numD07,
-                                    color: colorTextFieldIcon,
+                                        ? size.width * AppDimensions.numD075
+                                        : size.width * AppDimensions.numD07,
+                                    color: AppColorTheme.colorTextFieldIcon,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD03,
+                                    width: size.width * AppDimensions.numD03,
                                   ),
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD03),
+                                        size.width * AppDimensions.numD03),
                                     child: Image.network(item.companyLogo,
-                                        height: size.width * numD11,
-                                        width: size.width * numD12,
+                                        height: size.width * AppDimensions.numD11,
+                                        width: size.width * AppDimensions.numD12,
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, i, b) =>
                                             Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
-                                              height: size.width * numD11,
-                                              width: size.width * numD12,
+                                              height: size.width * AppDimensions.numD11,
+                                              width: size.width * AppDimensions.numD12,
                                             )),
                                   )
                                 ],
@@ -707,7 +707,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Your earnings
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD04),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD04),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -715,7 +715,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   'Content Sold',
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -725,7 +725,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "0",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -735,15 +735,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// PressHop fees
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD02),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  presshopCommissionText,
+                                  AppStrings.presshopCommissionText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -753,7 +753,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -762,15 +762,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                           ),
 
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD02),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  processingFeeText,
+                                  AppStrings.processingFeeText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -780,7 +780,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -790,15 +790,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Amount pending
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD02),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  amountPendingText,
+                                  AppStrings.amountPendingText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -808,7 +808,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -818,15 +818,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Payment due date
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * numD02),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  paymentDueDateText,
+                                  AppStrings.paymentDueDateText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -836,7 +836,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       format: "dd MMM yyyy"),
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -847,7 +847,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                           /// Divider
                           Padding(
                             padding: EdgeInsets.only(
-                              top: size.width * numD01,
+                              top: size.width * AppDimensions.numD01,
                             ),
                             child: const Divider(
                               color: Colors.white,
@@ -876,14 +876,14 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   "View transaction details",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorThemePink,
+                                      fontSize: size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_right,
                                   color: Colors.black,
-                                  size: size.width * numD045,
+                                  size: size.width * AppDimensions.numD045,
                                 )
                               ],
                             ),
@@ -894,7 +894,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             },
             separatorBuilder: (context, index) {
               return SizedBox(
-                height: size.width * numD05,
+                height: size.width * AppDimensions.numD05,
               );
             },
             itemCount: publicationTransactionList.length)
@@ -920,7 +920,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
           icon: "ic_graph_down.png",
           isSelected: false),
       FilterModel(
-          name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+          name: AppStrings.filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
     ]);
   }
 
@@ -933,8 +933,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(size.width * numD085),
-          topRight: Radius.circular(size.width * numD085),
+          topLeft: Radius.circular(size.width * AppDimensions.numD085),
+          topRight: Radius.circular(size.width * AppDimensions.numD085),
         )),
         builder: (context) {
           return BlocProvider.value(
@@ -942,9 +942,9 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
               return Padding(
                 padding: EdgeInsets.only(
-                  top: size.width * numD06,
-                  left: size.width * numD05,
-                  right: size.width * numD05,
+                  top: size.width * AppDimensions.numD06,
+                  left: size.width * AppDimensions.numD05,
+                  right: size.width * AppDimensions.numD05,
                 ),
                 child: SingleChildScrollView(
                   child: Column(
@@ -956,21 +956,21 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
-                            splashRadius: size.width * numD07,
+                            splashRadius: size.width * AppDimensions.numD07,
                             onPressed: () {
                               Navigator.pop(context);
                             },
                             icon: Icon(
                               Icons.close,
                               color: Colors.black,
-                              size: size.width * numD07,
+                              size: size.width * AppDimensions.numD07,
                             ),
                           ),
                           Text(
                             "Sort and Filter",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * appBarHeadingFontSizeNew,
+                                fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -989,9 +989,9 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             child: Text(
                               "Clear all",
                               style: TextStyle(
-                                  color: colorThemePink,
+                                  color: AppColorTheme.colorThemePink,
                                   fontWeight: FontWeight.w400,
-                                  fontSize: size.width * numD035),
+                                  fontSize: size.width * AppDimensions.numD035),
                             ),
                           ),
                         ],
@@ -999,15 +999,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                       /// Sort
                       SizedBox(
-                        height: size.width * numD085,
+                        height: size.width * AppDimensions.numD085,
                       ),
 
                       /// Sort Heading
                       Text(
-                        sortText,
+                        AppStrings.sortText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD05,
+                            fontSize: size.width * AppDimensions.numD05,
                             color: Colors.black,
                             fontWeight: FontWeight.w500),
                       ),
@@ -1016,48 +1016,48 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                       /// Filter
                       SizedBox(
-                        height: size.width * numD05,
+                        height: size.width * AppDimensions.numD05,
                       ),
 
                       /// Filter Heading
                       Text(
-                        filterText,
+                        AppStrings.filterText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD05,
+                            fontSize: size.width * AppDimensions.numD05,
                             color: Colors.black,
                             fontWeight: FontWeight.w500),
                       ),
 
                       filterListWidget(filterList, stateSetter, size, false),
                       SizedBox(
-                        height: size.width * numD05,
+                        height: size.width * AppDimensions.numD05,
                       ),
 
                       Container(
                         width: size.width,
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         margin: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
+                            horizontal: size.width * AppDimensions.numD04),
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
+                          horizontal: size.width * AppDimensions.numD04,
                         ),
                         child: commonElevatedButton(
-                            applyText,
+                            AppStrings.applyText,
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                           Navigator.pop(context);
                           _applyFilter(context);
                         }),
                       ),
 
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                     ],
                   ),
@@ -1071,9 +1071,9 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
   Widget filterListWidget(
       List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return SizedBox(
-      height: size.height * numD30,
+      height: size.height * AppDimensions.numD30,
       child: ListView.separated(
-        padding: EdgeInsets.only(top: size.width * numD03),
+        padding: EdgeInsets.only(top: size.width * AppDimensions.numD03),
         itemCount: list.length,
         itemBuilder: (context, index) {
           var item = list[index];
@@ -1102,14 +1102,14 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             },
             child: Container(
               padding: EdgeInsets.only(
-                top: list[index].name == filterDateText
+                top: list[index].name == AppStrings.filterDateText
                     ? size.width * 0
-                    : size.width * numD025,
-                bottom: list[index].name == filterDateText
+                    : size.width * AppDimensions.numD025,
+                bottom: list[index].name == AppStrings.filterDateText
                     ? size.width * 0
-                    : size.width * numD025,
-                left: size.width * numD02,
-                right: size.width * numD02,
+                    : size.width * AppDimensions.numD025,
+                left: size.width * AppDimensions.numD02,
+                right: size.width * AppDimensions.numD02,
               ),
               color: list[index].isSelected ? Colors.grey.shade400 : null,
               child: Row(
@@ -1117,45 +1117,45 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                   list[index].icon.isNotEmpty
                       ? list[index].icon.contains('https')
                           ? Image.network(list[index].icon,
-                              height: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
-                              width: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
+                              height: list[index].name == AppStrings.soldContentText
+                                  ? size.width * AppDimensions.numD06
+                                  : size.width * AppDimensions.numD05,
+                              width: list[index].name == AppStrings.soldContentText
+                                  ? size.width * AppDimensions.numD06
+                                  : size.width * AppDimensions.numD05,
                               errorBuilder: (context, i, d) => Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
-                                    height: list[index].name == soldContentText
-                                        ? size.width * numD06
-                                        : size.width * numD05,
-                                    width: list[index].name == soldContentText
-                                        ? size.width * numD06
-                                        : size.width * numD05,
+                                    height: list[index].name == AppStrings.soldContentText
+                                        ? size.width * AppDimensions.numD06
+                                        : size.width * AppDimensions.numD05,
+                                    width: list[index].name == AppStrings.soldContentText
+                                        ? size.width * AppDimensions.numD06
+                                        : size.width * AppDimensions.numD05,
                                   ))
                           : Image.asset(
                               "$iconsPath${list[index].icon}",
                               color: Colors.black,
-                              height: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
-                              width: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
+                              height: list[index].name == AppStrings.soldContentText
+                                  ? size.width * AppDimensions.numD06
+                                  : size.width * AppDimensions.numD05,
+                              width: list[index].name == AppStrings.soldContentText
+                                  ? size.width * AppDimensions.numD06
+                                  : size.width * AppDimensions.numD05,
                               errorBuilder: (context, i, d) => Image.asset(
                                 "${commonImagePath}rabbitLogo.png",
-                                height: list[index].name == soldContentText
-                                    ? size.width * numD06
-                                    : size.width * numD05,
-                                width: list[index].name == soldContentText
-                                    ? size.width * numD06
-                                    : size.width * numD05,
+                                height: list[index].name == AppStrings.soldContentText
+                                    ? size.width * AppDimensions.numD06
+                                    : size.width * AppDimensions.numD05,
+                                width: list[index].name == AppStrings.soldContentText
+                                    ? size.width * AppDimensions.numD06
+                                    : size.width * AppDimensions.numD05,
                               ),
                             )
                       : Container(),
                   SizedBox(
-                    width: size.width * numD03,
+                    width: size.width * AppDimensions.numD03,
                   ),
-                  item.name == filterDateText
+                  item.name == AppStrings.filterDateText
                       ? Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1175,15 +1175,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                               },
                               child: Container(
                                 padding: EdgeInsets.only(
-                                  top: size.width * numD01,
-                                  bottom: size.width * numD01,
-                                  left: size.width * numD03,
-                                  right: size.width * numD01,
+                                  top: size.width * AppDimensions.numD01,
+                                  bottom: size.width * AppDimensions.numD01,
+                                  left: size.width * AppDimensions.numD03,
+                                  right: size.width * AppDimensions.numD01,
                                 ),
-                                width: size.width * numD32,
+                                width: size.width * AppDimensions.numD32,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   border: Border.all(
                                       width: 1, color: const Color(0xFFDEE7E6)),
                                 ),
@@ -1196,15 +1196,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           ? dateTimeFormatter(
                                               dateTime:
                                                   item.fromDate.toString())
-                                          : fromText,
+                                          : AppStrings.fromText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD032,
+                                          fontSize: size.width * AppDimensions.numD032,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w400),
                                     ),
                                     SizedBox(
-                                      width: size.width * numD015,
+                                      width: size.width * AppDimensions.numD015,
                                     ),
                                     const Icon(
                                       Icons.arrow_drop_down_sharp,
@@ -1215,7 +1215,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                               ),
                             ),
                             SizedBox(
-                              width: size.width * numD03,
+                              width: size.width * AppDimensions.numD03,
                             ),
                             InkWell(
                               onTap: () async {
@@ -1250,15 +1250,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                               },
                               child: Container(
                                 padding: EdgeInsets.only(
-                                  top: size.width * numD01,
-                                  bottom: size.width * numD01,
-                                  left: size.width * numD03,
-                                  right: size.width * numD01,
+                                  top: size.width * AppDimensions.numD01,
+                                  bottom: size.width * AppDimensions.numD01,
+                                  left: size.width * AppDimensions.numD03,
+                                  right: size.width * AppDimensions.numD01,
                                 ),
-                                width: size.width * numD32,
+                                width: size.width * AppDimensions.numD32,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   border: Border.all(
                                       width: 1, color: const Color(0xFFDEE7E6)),
                                 ),
@@ -1270,15 +1270,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       item.toDate != null
                                           ? dateTimeFormatter(
                                               dateTime: item.toDate.toString())
-                                          : toText,
+                                          : AppStrings.toText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD032,
+                                          fontSize: size.width * AppDimensions.numD032,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w400),
                                     ),
                                     SizedBox(
-                                      width: size.width * numD02,
+                                      width: size.width * AppDimensions.numD02,
                                     ),
                                     const Icon(
                                       Icons.arrow_drop_down_sharp,
@@ -1292,7 +1292,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                         )
                       : Text(item.name,
                           style: TextStyle(
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400,
                           ))
@@ -1303,7 +1303,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
         },
         separatorBuilder: (context, index) {
           return SizedBox(
-            height: size.width * numD01,
+            height: size.width * AppDimensions.numD01,
           );
         },
       ),

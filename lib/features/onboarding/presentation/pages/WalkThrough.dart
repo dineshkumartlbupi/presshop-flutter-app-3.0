@@ -25,54 +25,54 @@ class _WalkthroughState extends State<Walkthrough> {
     super.initState();
     walkthroughList.add(WalkthroughData(
         image: "${dummyImagePath}walk1.png",
-        title1: walk1Title1Text,
-        title2: walk1Title2Text,
+        title1: AppStrings.walk1Title1Text,
+        title2: AppStrings.walk1Title2Text,
         buttonText: "",
-        description: walk1DescriptionText,
+        description: AppStrings.walk1DescriptionText,
         showButton: false));
 
     walkthroughList.add(WalkthroughData(
       image: "${dummyImagePath}walk2.png",
-      title1: walk2Title1Text,
-      title2: walk2Title2Text,
-      buttonText: walk2ButtonText,
-      description: walk2DescriptionText,
+      title1: AppStrings.walk2Title1Text,
+      title2: AppStrings.walk2Title2Text,
+      buttonText: AppStrings.walk2ButtonText,
+      description: AppStrings.walk2DescriptionText,
       showButton: true,
     ));
 
     walkthroughList.add(WalkthroughData(
       image: "${dummyImagePath}walk3.png",
-      title1: walk3Title1Text,
-      title2: walk3Title2Text,
-      buttonText: walk3ButtonText,
-      description: walk3DescriptionText,
+      title1: AppStrings.walk3Title1Text,
+      title2: AppStrings.walk3Title2Text,
+      buttonText: AppStrings.walk3ButtonText,
+      description: AppStrings.walk3DescriptionText,
       showButton: true,
     ));
 
     walkthroughList.add(WalkthroughData(
       image: "${dummyImagePath}walk4.png",
-      title1: walk4Title1Text,
-      title2: walk4Title2Text,
-      buttonText: walk4ButtonText,
-      description: walk4DescriptionText,
+      title1: AppStrings.walk4Title1Text,
+      title2: AppStrings.walk4Title2Text,
+      buttonText: AppStrings.walk4ButtonText,
+      description: AppStrings.walk4DescriptionText,
       showButton: true,
     ));
 
     walkthroughList.add(WalkthroughData(
       image: "${dummyImagePath}walk5.png",
-      title1: walk5Title1Text,
-      title2: walk5Title2Text,
-      buttonText: walk5ButtonText,
-      description: walk5DescriptionText,
+      title1: AppStrings.walk5Title1Text,
+      title2: AppStrings.walk5Title2Text,
+      buttonText: AppStrings.walk5ButtonText,
+      description: AppStrings.walk5DescriptionText,
       showButton: true,
     ));
 
     walkthroughList.add(WalkthroughData(
         image: "${dummyImagePath}walk6.png",
-        title1: walk6Title1Text,
-        title2: walk6Title2Text,
-        buttonText: walk6ButtonText,
-        description: walk6DescriptionText,
+        title1: AppStrings.walk6Title1Text,
+        title2: AppStrings.walk6Title2Text,
+        buttonText: AppStrings.walk6ButtonText,
+        description: AppStrings.walk6DescriptionText,
         showButton: true));
 
     setState(() {});
@@ -105,18 +105,18 @@ class _WalkthroughState extends State<Walkthrough> {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD06),
+                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: size.width * numD06,
+                          height: size.width * AppDimensions.numD06,
                         ),
                         index % 2 == 0
                             ? Expanded(
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD1),
+                                        size.width * AppDimensions.numD1),
                                     child: Image.asset(
                                       walkthroughList[index].image,
                                       fit: BoxFit.cover,
@@ -125,7 +125,7 @@ class _WalkthroughState extends State<Walkthrough> {
                               )
                             : Container(),
                         SizedBox(
-                            height: index % 2 == 0 ? size.width * numD04 : 0),
+                            height: index % 2 == 0 ? size.width * AppDimensions.numD04 : 0),
                         Container(
                           decoration: const BoxDecoration(
                               image: DecorationImage(
@@ -139,7 +139,7 @@ class _WalkthroughState extends State<Walkthrough> {
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: "AirbnbCereal_W_Bd",
-                                fontSize: size.width * numD07),
+                                fontSize: size.width * AppDimensions.numD07),
                           ),
                         ),
                         Text(
@@ -148,28 +148,28 @@ class _WalkthroughState extends State<Walkthrough> {
                               color: Colors.black,
                               fontFamily: "AirbnbCereal_W_Bd",
                               fontWeight: FontWeight.w600,
-                              fontSize: size.width * numD07),
+                              fontSize: size.width * AppDimensions.numD07),
                         ),
                         Text(walkthroughList[index].description,
                             style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'AirbnbCereal_W_Bk',
-                                fontSize: size.width * numD035)),
+                                fontSize: size.width * AppDimensions.numD035)),
                         SizedBox(
-                            height: index % 2 == 0 ? 0 : size.width * numD04),
+                            height: index % 2 == 0 ? 0 : size.width * AppDimensions.numD04),
                         index % 2 == 0
                             ? Container()
                             : Expanded(
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD1),
+                                        size.width * AppDimensions.numD1),
                                     child: Image.asset(
                                       walkthroughList[index].image,
                                       fit: BoxFit.cover,
                                       width: size.width,
                                     )),
                               ),
-                        SizedBox(height: size.width * numD04),
+                        SizedBox(height: size.width * AppDimensions.numD04),
                         Row(
                           children: [
                             index == 0
@@ -180,15 +180,15 @@ class _WalkthroughState extends State<Walkthrough> {
                                     splashColor: Colors.grey.shade300,
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD02,
-                                          vertical: size.width * numD03),
+                                          horizontal: size.width * AppDimensions.numD02,
+                                          vertical: size.width * AppDimensions.numD03),
                                       child: Text(
-                                        skipText,
+                                        AppStrings.skipText,
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.normal,
                                             fontFamily: 'AirbnbCereal_W_Md',
-                                            fontSize: size.width * numD03),
+                                            fontSize: size.width * AppDimensions.numD03),
                                       ),
                                     ))
                                 : Container(),
@@ -200,16 +200,16 @@ class _WalkthroughState extends State<Walkthrough> {
                                     },
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD012,
-                                            horizontal: size.width * numD04),
-                                        backgroundColor: colorThemePink,
+                                            vertical: size.width * AppDimensions.numD012,
+                                            horizontal: size.width * AppDimensions.numD04),
+                                        backgroundColor: AppColorTheme.colorThemePink,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD05))),
+                                                size.width * AppDimensions.numD05))),
                                     child: Text(
                                       walkthroughList[index].buttonText,
                                       style: TextStyle(
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width * AppDimensions.numD035,
                                           color: Colors.white,
                                           fontFamily: 'AirbnbCereal_W_Md',
                                           fontWeight: FontWeight.w700),
@@ -229,20 +229,20 @@ class _WalkthroughState extends State<Walkthrough> {
                                 splashColor: Colors.grey.shade300,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD02,
-                                      vertical: size.width * numD03),
+                                      horizontal: size.width * AppDimensions.numD02,
+                                      vertical: size.width * AppDimensions.numD03),
                                   child: Text(
-                                    nextText,
+                                    AppStrings.nextText,
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: size.width * numD03,
+                                        fontSize: size.width * AppDimensions.numD03,
                                         fontWeight: FontWeight.normal),
                                   ),
                                 )),
                           ],
                         ),
                         SizedBox(
-                          height: size.width * numD03,
+                          height: size.width * AppDimensions.numD03,
                         ),
                       ],
                     ),

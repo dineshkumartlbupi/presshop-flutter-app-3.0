@@ -132,7 +132,6 @@ class TaskDetail extends Equatable {
       mediaHouseId: mediaHouseId ?? this.mediaHouseId,
       mediaHouseImage: mediaHouseImage ?? this.mediaHouseImage,
       mediaHouseName: mediaHouseName ?? this.mediaHouseName,
-      companyName: companyName ?? this.companyName,
       title: title ?? this.title,
       description: description ?? this.description,
       acceptedBy: acceptedBy ?? this.acceptedBy,

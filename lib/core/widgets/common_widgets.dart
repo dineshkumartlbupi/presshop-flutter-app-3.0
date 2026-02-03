@@ -19,7 +19,7 @@ Widget errorMessageWidget(String message) {
         message,
         style: commonTextStyle(
           size: globalSize,
-          fontSize: globalSize.width * numD04,
+          fontSize: globalSize.width * AppDimensions.numD04,
           color: Colors.grey,
           fontWeight: FontWeight.w400,
         ),
@@ -36,7 +36,7 @@ Widget commonRefresherFooter(BuildContext context, LoadStatus? mode) {
     body = const Text("pull up load");
   } else if (mode == LoadStatus.loading) {
     body = const CircularProgressIndicator(
-      color: colorThemePink,
+      color: AppColorTheme.colorThemePink,
     );
   } else if (mode == LoadStatus.failed) {
     body = const Text("Load Failed!Click retry!");
@@ -60,10 +60,10 @@ Widget showLoader({bool isForLocation = false}) {
     children: [
       Center(
         child: Lottie.asset("assets/lottieFiles/loader_new.json",
-            height: size.width * numD28, width: size.width * numD28),
+            height: size.width * AppDimensions.numD28, width: size.width * AppDimensions.numD28),
       ),
       if (isForLocation) ...[
-        SizedBox(height: size.width * numD005),
+        SizedBox(height: size.width * AppDimensions.numD005),
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20),
           child: Text(
@@ -71,7 +71,7 @@ Widget showLoader({bool isForLocation = false}) {
             textAlign: TextAlign.center,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD04,
+                fontSize: size.width * AppDimensions.numD04,
                 color: Colors.black,
                 fontWeight: FontWeight.w500),
           ),
@@ -84,7 +84,7 @@ Widget showLoader({bool isForLocation = false}) {
 Widget showAnimatedLoader(Size size) {
   return Center(
       child: Lottie.asset("assets/lottieFiles/loader_new.json",
-          height: size.width * numD25, width: size.width * numD25));
+          height: size.width * AppDimensions.numD25, width: size.width * AppDimensions.numD25));
 }
 
 /// Calender
@@ -98,7 +98,7 @@ Future<String?> commonDatePicker({String? date}) async {
       return Theme(
         data: ThemeData.light().copyWith(
             colorScheme:
-                const ColorScheme.light().copyWith(primary: colorThemePink)),
+                const ColorScheme.light().copyWith(primary: AppColorTheme.colorThemePink)),
         child: child!,
       );
     },
@@ -117,7 +117,7 @@ Future<String?> commonDatePicker({String? date}) async {
 /// FilterIcon
 Container commonFilterIcon(Size size) {
   return Container(
-      padding: EdgeInsets.all(size.width * (isIpad ? numD008 : numD043)),
+      padding: EdgeInsets.all(size.width * (isIpad ? AppDimensions.numD008 : AppDimensions.numD043)),
       child: Image.asset(
         "assets/icons/newfilter.png",
         fit: BoxFit.fill,
@@ -132,11 +132,11 @@ Container commonFilterIcon(Size size) {
 
 Widget getMediaCountCard(String mediaType, int count, Size size) {
   return Container(
-    width: size.width * numD11,
-    padding: EdgeInsets.symmetric(vertical: size.width * numD01),
+    width: size.width * AppDimensions.numD11,
+    padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD01),
     decoration: BoxDecoration(
-        color: colorLightGreen.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(size.width * numD021)),
+        color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD021)),
     child: Padding(
       padding: EdgeInsets.symmetric(
         horizontal: size.width * 0.005,
@@ -150,7 +150,7 @@ Widget getMediaCountCard(String mediaType, int count, Size size) {
             "$count ",
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD038,
+                fontSize: size.width * AppDimensions.numD038,
                 color: Colors.white,
                 fontWeight: FontWeight.w600),
           ),

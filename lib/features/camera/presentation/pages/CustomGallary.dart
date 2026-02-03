@@ -93,10 +93,10 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
             elevation: 0,
             hideLeading: false,
             title: Text(
-              galleryText,
+              AppStrings.galleryText,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: size.width * (isIpad ? numD04 : numD06)),
+                  fontSize: size.width * (isIpad ? AppDimensions.numD04 : AppDimensions.numD06)),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -115,23 +115,23 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                         "Processing...",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * (isIpad ? numD02 : numD03),
+                            fontSize: size.width * (isIpad ? AppDimensions.numD02 : AppDimensions.numD03),
                             color: Colors.grey,
                             fontWeight: FontWeight.w700),
                       ),
                     )
                   : Padding(
                       padding: EdgeInsets.symmetric(
-                          vertical: size.width * (isIpad ? numD004 : numD03)),
+                          vertical: size.width * (isIpad ? AppDimensions.numD004 : AppDimensions.numD03)),
                       child: commonElevatedButton(
                           "Done",
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * (isIpad ? numD02 : numD03),
+                              fontSize: size.width * (isIpad ? AppDimensions.numD02 : AppDimensions.numD03),
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () async {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink), () async {
                         /// Prince
                         if (widget.picAgain) {
                           Navigator.pop(context, camListData);
@@ -172,7 +172,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                       }),
                     ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
           ),
@@ -386,14 +386,14 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               child: Container(
                                   alignment: Alignment.topRight,
                                   decoration: BoxDecoration(
-                                      color: colorThemePink.withOpacity(0.5)),
+                                      color: AppColorTheme.colorThemePink.withOpacity(0.5)),
                                   child: Padding(
                                     padding:
-                                        EdgeInsets.all(size.width * numD01),
+                                        EdgeInsets.all(size.width * AppDimensions.numD01),
                                     child: Icon(
                                       Icons.radio_button_checked,
                                       color: Colors.black,
-                                      size: size.width * numD05,
+                                      size: size.width * AppDimensions.numD05,
                                     ),
                                   )),
                             )

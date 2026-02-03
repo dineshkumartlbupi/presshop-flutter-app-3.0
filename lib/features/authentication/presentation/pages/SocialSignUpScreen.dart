@@ -179,14 +179,14 @@ class _SocialSignUpState extends State<SocialSignUp>
               leadingFxn: () {
                 Navigator.pop(context);
               },
-              leadingLeftSPace: size.width * numD04,
+              leadingLeftSPace: size.width * AppDimensions.numD04,
             ),
             body: SafeArea(
               child: SingleChildScrollView(
                 controller: scrollController,
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD08),
+                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
                   child: Form(
                     key: formKey,
                     child: Column(
@@ -197,26 +197,26 @@ class _SocialSignUpState extends State<SocialSignUp>
                           style: commonBigTitleTextStyle(size, Colors.black),
                         ),
                         SizedBox(
-                          height: size.width * numD01,
+                          height: size.width * AppDimensions.numD01,
                         ),
                         Text(
                           "Hi ${widget.name}, please complete your profile to continue.",
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               fontFamily: 'AirbnbCereal'),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
-                            right: size.width * numD01,
-                            top: size.width * numD04,
-                            bottom: size.width * numD04,
+                            right: size.width * AppDimensions.numD01,
+                            top: size.width * AppDimensions.numD04,
+                            bottom: size.width * AppDimensions.numD04,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                height: size.width * numD04,
+                                height: size.width * AppDimensions.numD04,
                               ),
                               selectedAvatar.isEmpty
                                   ? Column(
@@ -228,34 +228,34 @@ class _SocialSignUpState extends State<SocialSignUp>
                                             avatarBottomSheet(size);
                                           },
                                           child: Container(
-                                            height: size.width * numD30,
-                                            width: size.width * numD35,
+                                            height: size.width * AppDimensions.numD30,
+                                            width: size.width * AppDimensions.numD35,
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
                                                     color:
-                                                        colorTextFieldBorder),
+                                                        AppColorTheme.colorTextFieldBorder),
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        size.width * numD04)),
+                                                        size.width * AppDimensions.numD04)),
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
                                                 Image.asset(
                                                   "${iconsPath}ic_user.png",
-                                                  width: size.width * numD11,
+                                                  width: size.width * AppDimensions.numD11,
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * numD01,
+                                                  height: size.width * AppDimensions.numD01,
                                                 ),
                                                 Text(
-                                                  chooseYourAvatarText,
+                                                  AppStrings.chooseYourAvatarText,
                                                   style: commonTextStyle(
                                                       size: size,
                                                       fontSize:
-                                                          size.width * numD03,
-                                                      color: colorHint,
+                                                          size.width * AppDimensions.numD03,
+                                                      color: AppColorTheme.colorHint,
                                                       fontWeight:
                                                           FontWeight.normal),
                                                   textAlign: TextAlign.center,
@@ -272,11 +272,11 @@ class _SocialSignUpState extends State<SocialSignUp>
                                         children: [
                                           ClipRRect(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
+                                                size.width * AppDimensions.numD04),
                                             child: Image.network(
                                               selectedAvatar,
-                                              height: size.width * numD30,
-                                              width: size.width * numD35,
+                                              height: size.width * AppDimensions.numD30,
+                                              width: size.width * AppDimensions.numD35,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -303,13 +303,13 @@ class _SocialSignUpState extends State<SocialSignUp>
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.all(
-                                                    size.width * numD01),
+                                                    size.width * AppDimensions.numD01),
                                                 decoration: const BoxDecoration(
                                                     color: Colors.white,
                                                     shape: BoxShape.circle),
                                                 child: Icon(Icons.cancel,
                                                     color: Colors.black,
-                                                    size: size.width * numD035),
+                                                    size: size.width * AppDimensions.numD035),
                                               ),
                                             ),
                                           )
@@ -321,12 +321,12 @@ class _SocialSignUpState extends State<SocialSignUp>
                                       alignment: Alignment.topLeft,
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD01),
+                                            vertical: size.width * AppDimensions.numD01),
                                         child: Text(
-                                          requiredText,
+                                          AppStrings.requiredText,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD03,
+                                              fontSize: size.width * AppDimensions.numD03,
                                               color: Colors.red.shade700,
                                               fontWeight: FontWeight.normal),
                                         ),
@@ -334,25 +334,25 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     )
                                   : Container(),
                               SizedBox(
-                                height: size.width * numD02,
+                                height: size.width * AppDimensions.numD02,
                               ),
                               Text(
-                                chooseAvatarNoteText,
+                                AppStrings.chooseAvatarNoteText,
                                 style: TextStyle(
-                                  color: colorHint,
-                                  fontSize: size.width * numD025,
+                                  color: AppColorTheme.colorHint,
+                                  fontSize: size.width * AppDimensions.numD025,
                                 ),
                                 textAlign: TextAlign.justify,
                               ),
                               SizedBox(
-                                height: size.width * numD06,
+                                height: size.width * AppDimensions.numD06,
                               ),
                               CommonTextField(
                                 size: size,
                                 maxLines: 1,
-                                borderColor: colorTextFieldBorder,
+                                borderColor: AppColorTheme.colorTextFieldBorder,
                                 controller: userNameController,
-                                hintText: userNameHintText,
+                                hintText: AppStrings.userNameHintText,
                                 errorMaxLines: 2,
                                 textInputFormatters: [
                                   FilteringTextInputFormatter.deny(
@@ -361,8 +361,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 suffixIcon: getUsernameSuffixIcon(),
                                 prefixIcon:
                                     const Icon(Icons.person_outline_sharp),
-                                prefixIconHeight: size.width * numD06,
-                                suffixIconIconHeight: size.width * numD085,
+                                prefixIconHeight: size.width * AppDimensions.numD06,
+                                suffixIconIconHeight: size.width * AppDimensions.numD085,
                                 hidePassword: false,
                                 keyboardType: TextInputType.text,
                                 enableValidations: true,
@@ -378,23 +378,23 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 },
                               ),
                               SizedBox(
-                                height: size.width * numD01,
+                                height: size.width * AppDimensions.numD01,
                               ),
                               Text(
-                                userNameNoteText,
+                                AppStrings.userNameNoteText,
                                 style: TextStyle(
-                                    color: colorHint,
-                                    fontSize: size.width * numD025),
+                                    color: AppColorTheme.colorHint,
+                                    fontSize: size.width * AppDimensions.numD025),
                               ),
                               SizedBox(
-                                height: size.height * numD02,
+                                height: size.height * AppDimensions.numD02,
                               ),
                               CommonTextField(
                                 size: size,
                                 maxLines: 1,
-                                borderColor: colorTextFieldBorder,
+                                borderColor: AppColorTheme.colorTextFieldBorder,
                                 controller: phoneController,
-                                hintText: phoneHintText,
+                                hintText: AppStrings.phoneHintText,
                                 textInputFormatters: [
                                   FilteringTextInputFormatter.allow(
                                       RegExp("[0-9]")),
@@ -410,25 +410,25 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     children: [
                                       const Icon(Icons.call_outlined),
                                       SizedBox(
-                                        width: size.width * numD01,
+                                        width: size.width * AppDimensions.numD01,
                                       ),
                                       Text(
                                         selectedCountryCodePicker,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
+                                            fontSize: size.width * AppDimensions.numD035,
                                             color: Colors.black,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       Icon(
                                         Icons.keyboard_arrow_down_rounded,
-                                        size: size.width * numD07,
+                                        size: size.width * AppDimensions.numD07,
                                       )
                                     ],
                                   ),
                                 ),
-                                prefixIconHeight: size.width * numD06,
-                                suffixIconIconHeight: size.width * numD085,
+                                prefixIconHeight: size.width * AppDimensions.numD06,
+                                suffixIconIconHeight: size.width * AppDimensions.numD085,
                                 suffixIcon:
                                     phoneController.text.trim().length >= 7
                                         ? phoneAlreadyExists
@@ -456,14 +456,14 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 },
                               ),
                               SizedBox(
-                                height: size.width * numD06,
+                                height: size.width * AppDimensions.numD06,
                               ),
                               CommonTextField(
                                 size: size,
                                 maxLines: 1,
-                                borderColor: colorTextFieldBorder,
+                                borderColor: AppColorTheme.colorTextFieldBorder,
                                 controller: referralCodeController,
-                                hintText: referralCodeHintText,
+                                hintText: AppStrings.referralCodeHintText,
                                 errorMaxLines: 2,
                                 textInputFormatters: [
                                   FilteringTextInputFormatter.deny(
@@ -471,8 +471,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 ],
                                 suffixIcon: getReferralCodeSuffixIcon(),
                                 prefixIcon: const Icon(Icons.campaign_outlined),
-                                prefixIconHeight: size.width * numD06,
-                                suffixIconIconHeight: size.width * numD085,
+                                prefixIconHeight: size.width * AppDimensions.numD06,
+                                suffixIconIconHeight: size.width * AppDimensions.numD085,
                                 hidePassword: false,
                                 keyboardType: TextInputType.text,
                                 enableValidations: false,
@@ -491,16 +491,16 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 validator: null,
                               ),
                               SizedBox(
-                                height: size.width * numD01,
+                                height: size.width * AppDimensions.numD01,
                               ),
                               Text(
-                                referralcodeNoteText,
+                                AppStrings.referralcodeNoteText,
                                 style: TextStyle(
-                                    color: colorHint,
-                                    fontSize: size.width * numD025),
+                                    color: AppColorTheme.colorHint,
+                                    fontSize: size.width * AppDimensions.numD025),
                               ),
                               SizedBox(
-                                height: size.width * numD04,
+                                height: size.width * AppDimensions.numD04,
                               ),
                               InkWell(
                                 onTap: () {
@@ -527,21 +527,21 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     termConditionsChecked
                                         ? Container(
                                             margin: EdgeInsets.only(
-                                                top: size.width * numD008),
+                                                top: size.width * AppDimensions.numD008),
                                             child: Image.asset(
                                               "${iconsPath}ic_checkbox_filled.png",
-                                              height: size.width * numD06,
+                                              height: size.width * AppDimensions.numD06,
                                             ),
                                           )
                                         : Container(
                                             margin: EdgeInsets.only(
-                                                top: size.width * numD008),
+                                                top: size.width * AppDimensions.numD008),
                                             child: Image.asset(
                                                 "${iconsPath}ic_checkbox_empty.png",
-                                                height: size.width * numD06),
+                                                height: size.width * AppDimensions.numD06),
                                           ),
                                     SizedBox(
-                                      width: size.width * numD02,
+                                      width: size.width * AppDimensions.numD02,
                                     ),
                                     Expanded(
                                       child: Text(
@@ -549,34 +549,34 @@ class _SocialSignUpState extends State<SocialSignUp>
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontFamily: "AirbnbCereal",
-                                            fontSize: size.width * numD035),
+                                            fontSize: size.width * AppDimensions.numD035),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                               SizedBox(
-                                height: size.width * numD06,
+                                height: size.width * AppDimensions.numD06,
                               ),
                               Container(
                                 margin: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04),
+                                    horizontal: size.width * AppDimensions.numD04),
                                 width: size.width,
-                                height: size.width * numD13,
+                                height: size.width * AppDimensions.numD13,
                                 child: commonElevatedButton(
-                                    nextText,
+                                    AppStrings.nextText,
                                     size,
                                     commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize: size.width * AppDimensions.numD035,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700),
-                                    commonButtonStyle(size, colorThemePink),
+                                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                                     () {
                                   if (formKey.currentState!.validate()) {
                                     if (!isSelectCheck) {
                                       showSnackBar("Error",
-                                          enableNotificationText, Colors.red);
+                                          AppStrings.enableNotificationText, Colors.red);
                                     } else if (!termConditionsChecked) {
                                       showSnackBar(
                                           "Privacy Policy",
@@ -737,7 +737,7 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   String? userNameValidator(String? value) {
     if (value!.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
 
     String firstName = widget.name.trim().toLowerCase();
@@ -806,27 +806,27 @@ class _SocialSignUpState extends State<SocialSignUp>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
+                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
-                                chooseAvatarText,
+                                AppStrings.chooseAvatarText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD05,
+                                    fontSize: size.width * AppDimensions.numD05,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700),
                               ),
                               const Spacer(),
                               IconButton(
-                                  splashRadius: size.width * numD06,
+                                  splashRadius: size.width * AppDimensions.numD06,
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                             ],
                           ),
@@ -874,8 +874,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   fit: BoxFit.contain,
-                                                  width: size.width * numD20,
-                                                  height: size.width * numD20,
+                                                  width: size.width * AppDimensions.numD20,
+                                                  height: size.width * AppDimensions.numD20,
                                                 );
                                               },
                                               loadingBuilder: (context, child,
@@ -900,7 +900,7 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                 child: Icon(
                                                   Icons.check,
                                                   color: Colors.black,
-                                                  size: size.width * numD06,
+                                                  size: size.width * AppDimensions.numD06,
                                                 ),
                                               ),
                                           ],
@@ -920,18 +920,18 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   // String? checkSignupPhoneValidator(String? value) {
   //   if (value!.isEmpty) {
-  //     return requiredText;
+  //     return AppStrings.requiredText;
   //   } else if (value.length < 10) {
-  //     return phoneErrorText;
+  //     return AppStrings.phoneErrorText;
   //   } else if (phoneAlreadyExists) {
-  //     return phoneExistsErrorText;
+  //     return AppStrings.phoneExistsErrorText;
   //   }
   //   return null;
   // }
 
   String? checkSignupPhoneValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
 
     String digitsOnly = value.trim().replaceAll(RegExp(r'\D+'), '');
@@ -956,7 +956,7 @@ class _SocialSignUpState extends State<SocialSignUp>
     }
 
     if (phoneAlreadyExists) {
-      return phoneExistsErrorText;
+      return AppStrings.phoneExistsErrorText;
     }
 
     return null;
@@ -964,11 +964,11 @@ class _SocialSignUpState extends State<SocialSignUp>
 
   String? checkSignupEmailValidator(String? value) {
     if (value!.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     } else if (!emailExpression.hasMatch(value)) {
-      return emailErrorText;
+      return AppStrings.emailErrorText;
     } else if (emailAlreadyExists) {
-      return emailExistsErrorText;
+      return AppStrings.emailExistsErrorText;
     }
     return null;
   }

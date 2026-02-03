@@ -21,7 +21,7 @@ class AccountDeleteScreen extends StatefulWidget {
 
 class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
   late AccountSettingsBloc _accountSettingsBloc;
-  List<dynamic> purposeData = [...purposeForDeleteAccount];
+  List<dynamic> purposeData = [...AppStrings.purposeForDeleteAccount];
   Map<String, String> selectReason = {};
 
   @override
@@ -52,7 +52,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: size.width * appBarHeadingFontSize),
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -67,31 +67,31 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
             actionWidget: [],
           ),
           body: Padding(
-            padding: EdgeInsets.all(size.width * numD045),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD045),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  deleteAccountText,
+                  AppStrings.deleteAccountText,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.red,
                       fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
-                  height: size.height * numD02,
+                  height: size.height * AppDimensions.numD02,
                 ),
                 Text(
                   "Please let us know your reason for deleting the app :- ",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                       color: Colors.black,
                       fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
-                  height: size.height * numD01,
+                  height: size.height * AppDimensions.numD01,
                 ),
                 Expanded(
                   child: ListView.separated(
@@ -99,7 +99,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                     separatorBuilder: (context, index) =>
                         const Divider(height: 1, color: Colors.grey),
                     padding: isIpad
-                        ? EdgeInsets.symmetric(vertical: size.width * numD012)
+                        ? EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD012)
                         : EdgeInsets.zero,
                     physics: const BouncingScrollPhysics(),
                     itemCount: purposeData.length,
@@ -108,7 +108,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                       return ListTile(
                         contentPadding: isIpad
                             ? EdgeInsets.symmetric(
-                                vertical: size.width * numD02)
+                                vertical: size.width * AppDimensions.numD02)
                             : EdgeInsets.zero,
                         leading: Transform.scale(
                           scale: isIpad ? 1.8 : 1,
@@ -119,7 +119,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                               selectReason = purposeData[int];
                               setState(() {});
                             },
-                            activeColor: colorThemePink,
+                            activeColor: AppColorTheme.colorThemePink,
                             checkColor: Colors.white,
                           ),
                         ),
@@ -127,7 +127,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                           purposeData[int]['title'],
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD034,
+                              fontSize: size.width * AppDimensions.numD034,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -137,18 +137,18 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                 ),
                 Container(
                   width: double.infinity,
-                  height: size.height * (isIpad ? numD1 : numD08),
+                  height: size.height * (isIpad ? AppDimensions.numD1 : AppDimensions.numD08),
                   padding:
-                      EdgeInsets.symmetric(vertical: size.height * numD015),
+                      EdgeInsets.symmetric(vertical: size.height * AppDimensions.numD015),
                   child: commonElevatedButton(
                     'Delete Account',
                     size,
                     commonTextStyle(
                         size: size,
-                        fontSize: size.width * (isIpad ? numD032 : numD038),
+                        fontSize: size.width * (isIpad ? AppDimensions.numD032 : AppDimensions.numD038),
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
-                    commonButtonStyle(size, colorThemePink),
+                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                     () {
                       if (selectReason.isNotEmpty) {
                         showDeleteDialog(size);
@@ -175,27 +175,27 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               elevation: 0,
               contentPadding: EdgeInsets.zero,
               insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD045)),
+                            BorderRadius.circular(size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
+                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
-                                youWIllBeMissedText,
+                                AppStrings.youWIllBeMissedText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD05,
+                                    fontSize: size.width * AppDimensions.numD05,
                                     fontWeight: FontWeight.bold),
                               ),
                               const Spacer(),
@@ -206,52 +206,52 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                             ],
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: const Divider(
                             color: Colors.black,
                             thickness: 0.5,
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
+                                        size.width * AppDimensions.numD04),
                                     border: Border.all(color: Colors.black)),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
+                                        size.width * AppDimensions.numD04),
                                     child: Image.asset(
                                       "assets/rabbits/delete_rabbit2.png",
-                                      height: size.width * numD30,
-                                      width: size.width * numD35,
+                                      height: size.width * AppDimensions.numD30,
+                                      width: size.width * AppDimensions.numD35,
                                       fit: BoxFit.cover,
                                     )),
                               ),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                 child: Text(
-                                  deleteAccountPopupMessageText,
+                                  AppStrings.deleteAccountPopupMessageText,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
@@ -259,21 +259,21 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD12,
+                                height: size.width * AppDimensions.numD12,
                                 child: commonElevatedButton(
                                     "Procced",
                                     size,
@@ -286,16 +286,16 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                 }),
                               )),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD12,
+                                height: size.width * AppDimensions.numD12,
                                 child: commonElevatedButton(
                                     "Cancel",
                                     size,
                                     commonButtonTextStyle(size),
-                                    commonButtonStyle(size, colorThemePink),
+                                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                                     () async {
                                   Navigator.pop(context);
                                 }),

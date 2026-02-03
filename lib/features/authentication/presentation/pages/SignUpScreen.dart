@@ -310,44 +310,44 @@ class _SignUpScreenState extends State<SignUpScreen>
                 leadingFxn: () {
                   Navigator.pop(context);
                 },
-                leadingLeftSPace: size.width * numD04,
+                leadingLeftSPace: size.width * AppDimensions.numD04,
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD08),
+                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
                     child: Form(
                       key: formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            signUpText,
+                            AppStrings.signUpText,
                             style: commonBigTitleTextStyle(size, Colors.black),
                           ),
                           SizedBox(
-                            height: size.width * numD01,
+                            height: size.width * AppDimensions.numD01,
                           ),
                           Text(
-                            signUpSubTitleText,
+                            AppStrings.signUpSubTitleText,
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 fontFamily: 'AirbnbCereal'),
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                              right: size.width * numD01,
-                              top: size.width * numD04,
-                              bottom: size.width * numD04,
+                              right: size.width * AppDimensions.numD01,
+                              top: size.width * AppDimensions.numD04,
+                              bottom: size.width * AppDimensions.numD04,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 selectedAvatar.isEmpty
                                     ? Column(
@@ -359,34 +359,34 @@ class _SignUpScreenState extends State<SignUpScreen>
                                               avatarBottomSheet(size);
                                             },
                                             child: Container(
-                                              height: size.width * numD30,
-                                              width: size.width * numD35,
+                                              height: size.width * AppDimensions.numD30,
+                                              width: size.width * AppDimensions.numD35,
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   border: Border.all(
                                                       color:
-                                                          colorTextFieldBorder),
+                                                          AppColorTheme.colorTextFieldBorder),
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          size.width * numD04)),
+                                                          size.width * AppDimensions.numD04)),
                                               child: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
                                                   Image.asset(
                                                     "${iconsPath}ic_user.png",
-                                                    width: size.width * numD11,
+                                                    width: size.width * AppDimensions.numD11,
                                                   ),
                                                   SizedBox(
-                                                    height: size.width * numD01,
+                                                    height: size.width * AppDimensions.numD01,
                                                   ),
                                                   Text(
-                                                    chooseYourAvatarText,
+                                                    AppStrings.chooseYourAvatarText,
                                                     style: commonTextStyle(
                                                         size: size,
                                                         fontSize:
-                                                            size.width * numD03,
-                                                        color: colorHint,
+                                                            size.width * AppDimensions.numD03,
+                                                        color: AppColorTheme.colorHint,
                                                         fontWeight:
                                                             FontWeight.normal),
                                                     textAlign: TextAlign.center,
@@ -404,11 +404,11 @@ class _SignUpScreenState extends State<SignUpScreen>
                                             ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD04),
+                                                      size.width * AppDimensions.numD04),
                                               child: Image.network(
                                                 selectedAvatar,
-                                                height: size.width * numD30,
-                                                width: size.width * numD35,
+                                                height: size.width * AppDimensions.numD30,
+                                                width: size.width * AppDimensions.numD35,
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -436,7 +436,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                 },
                                                 child: Container(
                                                   padding: EdgeInsets.all(
-                                                      size.width * numD01),
+                                                      size.width * AppDimensions.numD01),
                                                   decoration:
                                                       const BoxDecoration(
                                                           color: Colors.white,
@@ -445,7 +445,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                   child: Icon(Icons.cancel,
                                                       color: Colors.black,
                                                       size:
-                                                          size.width * numD035),
+                                                          size.width * AppDimensions.numD035),
                                                 ),
                                               ),
                                             )
@@ -457,12 +457,12 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         alignment: Alignment.topLeft,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                              vertical: size.width * numD01),
+                                              vertical: size.width * AppDimensions.numD01),
                                           child: Text(
-                                            requiredText,
+                                            AppStrings.requiredText,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width * AppDimensions.numD03,
                                                 color: Colors.red.shade700,
                                                 fontWeight: FontWeight.normal),
                                           ),
@@ -470,33 +470,33 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       )
                                     : Container(),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                                 Text(
-                                  chooseAvatarNoteText,
+                                  AppStrings.chooseAvatarNoteText,
                                   style: TextStyle(
-                                    color: colorHint,
-                                    fontSize: size.width * numD025,
+                                    color: AppColorTheme.colorHint,
+                                    fontSize: size.width * AppDimensions.numD025,
                                   ),
                                   textAlign: TextAlign.justify,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
                                 ),
                                 CommonTextField(
                                   controller: firstNameController,
                                   size: size,
-                                  borderColor: colorTextFieldBorder,
+                                  borderColor: AppColorTheme.colorTextFieldBorder,
                                   maxLines: 1,
                                   enableValidations: true,
-                                  hintText: firstNameHintText,
+                                  hintText: AppStrings.firstNameHintText,
                                   textInputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp("[a-z A-Z]"))
                                   ],
                                   prefixIcon:
                                       const Icon(Icons.person_outline_sharp),
-                                  prefixIconHeight: size.width * numD06,
+                                  prefixIconHeight: size.width * AppDimensions.numD06,
                                   suffixIconIconHeight: 0,
                                   suffixIcon: null,
                                   hidePassword: false,
@@ -507,21 +507,21 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   autofocus: false,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
                                 ),
                                 CommonTextField(
                                   size: size,
                                   maxLines: 1,
-                                  borderColor: colorTextFieldBorder,
+                                  borderColor: AppColorTheme.colorTextFieldBorder,
                                   controller: lastNameController,
-                                  hintText: lastNameHintText,
+                                  hintText: AppStrings.lastNameHintText,
                                   textInputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp("[a-z A-Z]"))
                                   ],
                                   prefixIcon:
                                       const Icon(Icons.person_outline_sharp),
-                                  prefixIconHeight: size.width * numD06,
+                                  prefixIconHeight: size.width * AppDimensions.numD06,
                                   suffixIconIconHeight: 0,
                                   suffixIcon: null,
                                   // Capitalize first letter
@@ -534,14 +534,14 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   autofocus: false,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
                                 ),
                                 CommonTextField(
                                   size: size,
                                   maxLines: 1,
-                                  borderColor: colorTextFieldBorder,
+                                  borderColor: AppColorTheme.colorTextFieldBorder,
                                   controller: userNameController,
-                                  hintText: userNameHintText,
+                                  hintText: AppStrings.userNameHintText,
                                   errorMaxLines: 2,
                                   textInputFormatters: [
                                     FilteringTextInputFormatter.deny(
@@ -550,8 +550,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   suffixIcon: getUsernameSuffixIcon(),
                                   prefixIcon:
                                       const Icon(Icons.person_outline_sharp),
-                                  prefixIconHeight: size.width * numD06,
-                                  suffixIconIconHeight: size.width * numD085,
+                                  prefixIconHeight: size.width * AppDimensions.numD06,
+                                  suffixIconIconHeight: size.width * AppDimensions.numD085,
                                   hidePassword: false,
                                   keyboardType: TextInputType.text,
                                   enableValidations: true,
@@ -562,23 +562,23 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   onChanged: _onUserNameChanged,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD01,
+                                  height: size.width * AppDimensions.numD01,
                                 ),
                                 Text(
-                                  userNameNoteText,
+                                  AppStrings.userNameNoteText,
                                   style: TextStyle(
-                                      color: colorHint,
-                                      fontSize: size.width * numD025),
+                                      color: AppColorTheme.colorHint,
+                                      fontSize: size.width * AppDimensions.numD025),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 CommonTextField(
                                   size: size,
                                   maxLines: 1,
-                                  borderColor: colorTextFieldBorder,
+                                  borderColor: AppColorTheme.colorTextFieldBorder,
                                   controller: phoneController,
-                                  hintText: phoneHintText,
+                                  hintText: AppStrings.phoneHintText,
                                   textInputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp("[0-9]")),
@@ -593,25 +593,25 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         const Icon(Icons.call_outlined),
-                                        SizedBox(width: size.width * numD01),
+                                        SizedBox(width: size.width * AppDimensions.numD01),
                                         Text(
                                           selectedCountryCodePicker,
                                           style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
+                                            fontSize: size.width * AppDimensions.numD035,
                                             color: Colors.black,
                                             fontWeight: FontWeight.normal,
                                           ),
                                         ),
                                         Icon(
                                           Icons.keyboard_arrow_down_rounded,
-                                          size: size.width * numD07,
+                                          size: size.width * AppDimensions.numD07,
                                         )
                                       ],
                                     ),
                                   ),
-                                  prefixIconHeight: size.width * numD06,
-                                  suffixIconIconHeight: size.width * numD085,
+                                  prefixIconHeight: size.width * AppDimensions.numD06,
+                                  suffixIconIconHeight: size.width * AppDimensions.numD085,
                                   suffixIcon:
                                       phoneController.text.trim().length >= 7
                                           ? phoneAlreadyExists
@@ -640,17 +640,17 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   },
                                 ),
                                 SizedBox(
-                                  height: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
                                 ),
                                 CommonTextField(
                                   size: size,
                                   maxLines: 1,
-                                  borderColor: colorTextFieldBorder,
+                                  borderColor: AppColorTheme.colorTextFieldBorder,
                                   controller: emailController,
-                                  hintText: emailHintText,
+                                  hintText: AppStrings.emailHintText,
                                   textInputFormatters: null,
                                   prefixIcon: const Icon(Icons.email_outlined),
-                                  prefixIconHeight: size.width * numD06,
+                                  prefixIconHeight: size.width * AppDimensions.numD06,
                                   suffixIconIconHeight: 0,
                                   suffixIcon: null,
                                   hidePassword: false,
@@ -684,14 +684,14 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   },
                                 ),
                                 SizedBox(
-                                  height: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
                                 ),
                                 CommonTextField(
                                   size: size,
                                   maxLines: 1,
-                                  borderColor: colorTextFieldBorder,
+                                  borderColor: AppColorTheme.colorTextFieldBorder,
                                   controller: referralCodeController,
-                                  hintText: referralCodeHintText,
+                                  hintText: AppStrings.referralCodeHintText,
                                   errorMaxLines: 2,
                                   textInputFormatters: [
                                     FilteringTextInputFormatter.deny(
@@ -700,8 +700,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   suffixIcon: getReferralCodeSuffixIcon(),
                                   prefixIcon:
                                       const Icon(Icons.campaign_outlined),
-                                  prefixIconHeight: size.width * numD06,
-                                  suffixIconIconHeight: size.width * numD085,
+                                  prefixIconHeight: size.width * AppDimensions.numD06,
+                                  suffixIconIconHeight: size.width * AppDimensions.numD085,
                                   hidePassword: false,
                                   keyboardType: TextInputType.text,
                                   enableValidations: false,
@@ -720,24 +720,24 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   },
                                 ),
                                 SizedBox(
-                                  height: size.width * numD01,
+                                  height: size.width * AppDimensions.numD01,
                                 ),
                                 Text(
-                                  referralcodeNoteText,
+                                  AppStrings.referralcodeNoteText,
                                   style: TextStyle(
-                                      color: colorHint,
-                                      fontSize: size.width * numD025),
+                                      color: AppColorTheme.colorHint,
+                                      fontSize: size.width * AppDimensions.numD025),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 !widget.socialLogin
                                     ? CommonTextField(
                                         size: size,
                                         maxLines: 1,
-                                        borderColor: colorTextFieldBorder,
+                                        borderColor: AppColorTheme.colorTextFieldBorder,
                                         controller: passwordController,
-                                        hintText: enterPasswordHint,
+                                        hintText: AppStrings.enterPasswordHint,
                                         textInputFormatters: null,
                                         prefixIcon:
                                             const Icon(Icons.lock_outline),
@@ -787,9 +787,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                                           }
                                           return null;
                                         },
-                                        prefixIconHeight: size.width * numD08,
+                                        prefixIconHeight: size.width * AppDimensions.numD08,
                                         suffixIconIconHeight:
-                                            size.width * numD06,
+                                            size.width * AppDimensions.numD06,
                                         suffixIcon: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -807,21 +807,21 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                         "${iconsPath}ic_block_eye.png",
                                                       ),
                                                 color: !hidePassword
-                                                    ? colorTextFieldIcon
-                                                    : colorHint,
+                                                    ? AppColorTheme.colorTextFieldIcon
+                                                    : AppColorTheme.colorHint,
                                               ),
                                             ),
                                             SizedBox(
                                               width: passwordStrengthValue
                                                           .isNotEmpty &&
                                                       passwordStrengthValue ==
-                                                          strongText
-                                                  ? size.width * numD02
+                                                          AppStrings.strongText
+                                                  ? size.width * AppDimensions.numD02
                                                   : 0,
                                             ),
                                             passwordStrengthValue.isNotEmpty &&
                                                     passwordStrengthValue ==
-                                                        strongText
+                                                        AppStrings.strongText
                                                 ? const ImageIcon(
                                                     AssetImage(
                                                       "${iconsPath}checked.png",
@@ -1026,7 +1026,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 SizedBox(
                                   height: !widget.socialLogin
                                       ? passwordStrengthValue.isNotEmpty
-                                          ? size.width * numD02
+                                          ? size.width * AppDimensions.numD02
                                           : 0
                                       : 0,
                                 ),
@@ -1039,38 +1039,38 @@ class _SignUpScreenState extends State<SignUpScreen>
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            passwordStrengthText,
+                                            AppStrings.passwordStrengthText,
                                             style: TextStyle(
-                                                color: colorHint,
-                                                fontSize: size.width * numD03),
+                                                color: AppColorTheme.colorHint,
+                                                fontSize: size.width * AppDimensions.numD03),
                                           ),
                                           Text(
                                             passwordStrengthValue,
                                             style: TextStyle(
-                                                color: colorThemePink,
-                                                fontSize: size.width * numD03),
+                                                color: AppColorTheme.colorThemePink,
+                                                fontSize: size.width * AppDimensions.numD03),
                                           ),
                                         ],
                                       )
                                     : Container(),
                                 SizedBox(
                                   height: !widget.socialLogin
-                                      ? size.width * numD04
+                                      ? size.width * AppDimensions.numD04
                                       : 0,
                                 ),
                                 !widget.socialLogin
                                     ? CommonTextField(
                                         size: size,
                                         maxLines: 1,
-                                        borderColor: colorTextFieldBorder,
+                                        borderColor: AppColorTheme.colorTextFieldBorder,
                                         controller: confirmPasswordController,
-                                        hintText: confirmPwdHintText,
+                                        hintText: AppStrings.confirmPwdHintText,
                                         textInputFormatters: null,
                                         prefixIcon:
                                             const Icon(Icons.lock_outline),
-                                        prefixIconHeight: size.width * numD08,
+                                        prefixIconHeight: size.width * AppDimensions.numD08,
                                         suffixIconIconHeight:
-                                            size.width * numD08,
+                                            size.width * AppDimensions.numD08,
                                         suffixIcon: InkWell(
                                           onTap: () {
                                             hideConfirmPassword =
@@ -1086,22 +1086,22 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                     "${iconsPath}ic_block_eye.png",
                                                   ),
                                             color: !hideConfirmPassword
-                                                ? colorTextFieldIcon
-                                                : colorHint,
+                                                ? AppColorTheme.colorTextFieldIcon
+                                                : AppColorTheme.colorHint,
                                           ),
                                         ),
                                         hidePassword: hideConfirmPassword,
                                         keyboardType: TextInputType.text,
                                         validator: (value) {
                                           if (value!.isEmpty) {
-                                            return requiredText;
+                                            return AppStrings.requiredText;
                                           }
                                           /*else if (value.length < 8) {
-                                    return passwordErrorText;
+                                    return AppStrings.passwordErrorText;
                                   } */
                                           else if (passwordController.text !=
                                               value) {
-                                            return confirmPasswordErrorText;
+                                            return AppStrings.confirmPasswordErrorText;
                                           }
                                           return null;
                                         },
@@ -1112,7 +1112,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       )
                                     : Container(),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 InkWell(
                                   onTap: () {
@@ -1144,21 +1144,21 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       termConditionsChecked
                                           ? Container(
                                               margin: EdgeInsets.only(
-                                                  top: size.width * numD008),
+                                                  top: size.width * AppDimensions.numD008),
                                               child: Image.asset(
                                                 "${iconsPath}ic_checkbox_filled.png",
-                                                height: size.width * numD06,
+                                                height: size.width * AppDimensions.numD06,
                                               ),
                                             )
                                           : Container(
                                               margin: EdgeInsets.only(
-                                                  top: size.width * numD008),
+                                                  top: size.width * AppDimensions.numD008),
                                               child: Image.asset(
                                                   "${iconsPath}ic_checkbox_empty.png",
-                                                  height: size.width * numD06),
+                                                  height: size.width * AppDimensions.numD06),
                                             ),
                                       SizedBox(
-                                        width: size.width * numD02,
+                                        width: size.width * AppDimensions.numD02,
                                       ),
                                       Expanded(
                                         child: Text(
@@ -1166,34 +1166,34 @@ class _SignUpScreenState extends State<SignUpScreen>
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
-                                              fontSize: size.width * numD035),
+                                              fontSize: size.width * AppDimensions.numD035),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
                                 ),
                                 Container(
                                   margin: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD04),
+                                      horizontal: size.width * AppDimensions.numD04),
                                   width: size.width,
-                                  height: size.width * numD13,
+                                  height: size.width * AppDimensions.numD13,
                                   child: commonElevatedButton(
-                                      nextText,
+                                      AppStrings.nextText,
                                       size,
                                       commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width * AppDimensions.numD035,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700),
-                                      commonButtonStyle(size, colorThemePink),
+                                      commonButtonStyle(size, AppColorTheme.colorThemePink),
                                       () {
                                     if (formKey.currentState!.validate()) {
                                       if (!isSelectCheck) {
                                         showSnackBar("Error",
-                                            enableNotificationText, Colors.red);
+                                            AppStrings.enableNotificationText, Colors.red);
                                       } else if (!termConditionsChecked) {
                                         showSnackBar(
                                             "Privacy Policy",
@@ -1222,13 +1222,13 @@ class _SignUpScreenState extends State<SignUpScreen>
                                               text: TextSpan(children: [
                                                 TextSpan(
                                                     text:
-                                                        alreadyHaveAccountText,
+                                                        AppStrings.alreadyHaveAccountText,
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontFamily:
                                                             "AirbnbCereal",
                                                         fontSize: size.width *
-                                                            numD035)),
+                                                            AppDimensions.numD035)),
                                                 WidgetSpan(
                                                     alignment:
                                                         PlaceholderAlignment
@@ -1237,13 +1237,13 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                       width: size.width * 0.005,
                                                     )),
                                                 TextSpan(
-                                                    text: signInText,
+                                                    text: AppStrings.signInText,
                                                     style: TextStyle(
-                                                        color: colorThemePink,
+                                                        color: AppColorTheme.colorThemePink,
                                                         fontFamily:
                                                             "AirbnbCereal",
                                                         fontSize: size.width *
-                                                            numD035,
+                                                            AppDimensions.numD035,
                                                         fontWeight:
                                                             FontWeight.w700)),
                                               ]),
@@ -1440,11 +1440,11 @@ class _SignUpScreenState extends State<SignUpScreen>
       if (passwordController.text.isNotEmpty &&
           passwordController.text.length >= 8 &&
           !passwordExpression.hasMatch(passwordController.text.trim())) {
-        passwordStrengthValue = weakText;
+        passwordStrengthValue = AppStrings.weakText;
       } else if (passwordController.text.isNotEmpty &&
           passwordController.text.length >= 8 &&
           passwordExpression.hasMatch(passwordController.text.trim())) {
-        passwordStrengthValue = strongText;
+        passwordStrengthValue = AppStrings.strongText;
       } else {
         passwordStrengthValue = "";
       }
@@ -1495,7 +1495,7 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   String? userNameValidator(String? value) {
     if (value!.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
     String firstName = firstNameController.text.trim().toLowerCase();
     String lastName = lastNameController.text.trim().toLowerCase();
@@ -1569,27 +1569,27 @@ class _SignUpScreenState extends State<SignUpScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
+                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
-                                chooseAvatarText,
+                                AppStrings.chooseAvatarText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD05,
+                                    fontSize: size.width * AppDimensions.numD05,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700),
                               ),
                               const Spacer(),
                               IconButton(
-                                  splashRadius: size.width * numD06,
+                                  splashRadius: size.width * AppDimensions.numD06,
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                             ],
                           ),
@@ -1637,8 +1637,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   fit: BoxFit.contain,
-                                                  width: size.width * numD20,
-                                                  height: size.width * numD20,
+                                                  width: size.width * AppDimensions.numD20,
+                                                  height: size.width * AppDimensions.numD20,
                                                 );
                                               },
                                               loadingBuilder: (context, child,
@@ -1663,7 +1663,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                 child: Icon(
                                                   Icons.check,
                                                   color: Colors.black,
-                                                  size: size.width * numD06,
+                                                  size: size.width * AppDimensions.numD06,
                                                 ),
                                               ),
                                           ],
@@ -1710,7 +1710,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         return Theme(
           data: ThemeData.light().copyWith(
               colorScheme:
-                  const ColorScheme.light().copyWith(primary: colorThemePink)),
+                  const ColorScheme.light().copyWith(primary: AppColorTheme.colorThemePink)),
           child: child!,
         );
       },
@@ -1740,7 +1740,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme:
-                const ColorScheme.light().copyWith(primary: colorThemePink),
+                const ColorScheme.light().copyWith(primary: AppColorTheme.colorThemePink),
           ),
           child: child!,
         );
@@ -1791,11 +1791,11 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   // String? checkSignupPhoneValidator(String? value) {
   //   if (value!.isEmpty) {
-  //     return requiredText;
+  //     return AppStrings.requiredText;
   //   } else if (value.length < 10) {
-  //     return phoneErrorText;
+  //     return AppStrings.phoneErrorText;
   //   } else if (phoneAlreadyExists) {
-  //     return phoneExistsErrorText;
+  //     return AppStrings.phoneExistsErrorText;
   //   }
   //   return null;
   // }
@@ -1864,7 +1864,7 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   String? checkSignupPhoneValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
 
     String digitsOnly = value.trim().replaceAll(RegExp(r'\D+'), '');
@@ -1891,7 +1891,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     if (phoneAlreadyExists) {
       print("This phone number already exists");
       print(phoneAlreadyExists);
-      return phoneApiError.isNotEmpty ? phoneApiError : phoneExistsErrorText;
+      return phoneApiError.isNotEmpty ? phoneApiError : AppStrings.phoneExistsErrorText;
     }
 
     return null;
@@ -1899,11 +1899,11 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   String? checkSignupEmailValidator(String? value) {
     if (value!.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     } else if (!emailExpression.hasMatch(value)) {
-      return emailErrorText;
+      return AppStrings.emailErrorText;
     } else if (emailAlreadyExists) {
-      return emailExistsErrorText;
+      return AppStrings.emailExistsErrorText;
     }
     return null;
   }

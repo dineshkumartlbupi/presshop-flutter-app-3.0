@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
@@ -351,21 +352,22 @@ class DashboardState extends State<Dashboard>
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD045)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
@@ -376,7 +378,7 @@ class DashboardState extends State<Dashboard>
                                         : "Brains, beans, and breaking news!")!,
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: size.width * numD04,
+                                  fontSize: size.width * AppDimensions.numD04,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -388,25 +390,25 @@ class DashboardState extends State<Dashboard>
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                             ],
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: const Divider(
                             color: Colors.black,
                             thickness: 0.5,
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -428,7 +430,7 @@ class DashboardState extends State<Dashboard>
                                 ),
                               ),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                 child: Text(
@@ -441,7 +443,8 @@ class DashboardState extends State<Dashboard>
                                           : "Please confirm your student status to continue")!,
                                   style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -450,26 +453,26 @@ class DashboardState extends State<Dashboard>
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Expanded(
                                 child: SizedBox(
-                                  height: size.width * numD12,
+                                  height: size.width * AppDimensions.numD12,
                                   child: commonElevatedButton(
                                       "Confirm",
                                       size,
                                       commonButtonTextStyle(size),
-                                      commonButtonStyle(size, colorThemePink),
+                                      commonButtonStyle(size, AppColorTheme.colorThemePink),
                                       () async {
                                     try {
                                       final url =
@@ -659,11 +662,11 @@ class DashboardState extends State<Dashboard>
                   showUnselectedLabels: true,
                   showSelectedLabels: true,
                   unselectedItemColor: Colors.black,
-                  selectedItemColor: colorThemePink,
+                  selectedItemColor: AppColorTheme.colorThemePink,
                   elevation: 0,
-                  iconSize: size.width * numD05,
-                  selectedFontSize: size.width * numD03,
-                  unselectedFontSize: size.width * numD03,
+                  iconSize: size.width * AppDimensions.numD05,
+                  selectedFontSize: size.width * AppDimensions.numD03,
+                  unselectedFontSize: size.width * AppDimensions.numD03,
                   type: BottomNavigationBarType.fixed,
                   onTap: _onBottomBarItemTapped,
                   items: [
@@ -673,12 +676,12 @@ class DashboardState extends State<Dashboard>
                           AssetImage("${iconsPath}ic_content1.png"),
                           // AssetImage("${iconsPath}/homeIcons/camera.png"),
                         ),
-                        label: contentText),
+                        label: AppStringsNew2.contentText),
                     BottomNavigationBarItem(
                         icon: ImageIcon(
                           AssetImage("${iconsPath}ic_task1.png"),
                         ),
-                        label: taskText),
+                        label: AppStringsNew2.taskText),
                     BottomNavigationBarItem(
                         icon: Transform.scale(
                           scale: 1.3,
@@ -688,12 +691,12 @@ class DashboardState extends State<Dashboard>
                             ),
                           ),
                         ),
-                        label: cameraText),
+                        label: AppStringsNew2.cameraText),
                     // BottomNavigationBarItem(
                     //     icon: ImageIcon(
                     //       AssetImage("${iconsPath}ic_feed.png"),
                     //     ),
-                    //     label: feedText),
+                    //     label: AppstringnewfeedText),
 
                     BottomNavigationBarItem(
                         icon: ImageIcon(

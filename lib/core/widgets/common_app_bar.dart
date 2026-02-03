@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/main.dart';
 
@@ -67,10 +67,10 @@ class CommonAppBarState extends State<CommonAppBar> {
                 : widget.appBarbackgroundColor,
             elevation: 8,
             title: widget.title,
-            titleSpacing: widget.hideLeading ? 0 : widget.size.width * numD03,
+            titleSpacing: widget.hideLeading ? 0 : widget.size.width * AppDimensions.numD03,
             centerTitle: widget.centerTitle,
             titleTextStyle: TextStyle(
-              fontSize: widget.size.width * numD015,
+              fontSize: widget.size.width * AppDimensions.numD015,
               color: Colors.black,
             ),
             automaticallyImplyLeading: false,
@@ -82,7 +82,7 @@ class CommonAppBarState extends State<CommonAppBar> {
                     onPressed: widget.leadingFxn,
                     icon: Icon(
                       Icons.arrow_back_sharp,
-                      size: widget.size.width * numD04,
+                      size: widget.size.width * AppDimensions.numD04,
                       color: widget.leadingIconColor,
                     )),
           )
@@ -100,15 +100,15 @@ class CommonAppBarState extends State<CommonAppBar> {
                     child: Container(
                       margin: EdgeInsets.only(
                         left: widget.leadingLeftSPace ?? 0,
-                        top: widget.size.width * numD01,
+                        top: widget.size.width * AppDimensions.numD01,
                       ),
                       padding: EdgeInsets.all(
-                        widget.size.width * numD043,
+                        widget.size.width * AppDimensions.numD043,
                       ),
                       child: Image.asset(
                         "${iconsPath}ic_arrow_left.png",
-                        height: widget.size.width * numD025,
-                        width: widget.size.width * numD025,
+                        height: widget.size.width * AppDimensions.numD025,
+                        width: widget.size.width * AppDimensions.numD025,
                         color: widget.leadingIconColor,
                       ),
                     ),
@@ -116,8 +116,8 @@ class CommonAppBarState extends State<CommonAppBar> {
                 : null,
             leadingWidth:
                 widget.leadingLeftSPace != null && widget.leadingLeftSPace! > 0
-                    ? widget.size.width * numD19
-                    : widget.size.width * numD14,
+                    ? widget.size.width * AppDimensions.numD19
+                    : widget.size.width * AppDimensions.numD14,
             title: widget.title,
             centerTitle: widget.centerTitle,
             titleSpacing: widget.titleSpacing,

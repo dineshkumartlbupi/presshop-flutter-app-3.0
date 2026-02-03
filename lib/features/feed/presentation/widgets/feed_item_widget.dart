@@ -47,7 +47,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: size.width * numD50,
+          height: size.width * AppDimensions.numD50,
           child: PageView.builder(
               controller: widget.pageController,
               scrollDirection: Axis.horizontal,
@@ -62,7 +62,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                 ChewieController? chewieController =
                     widget.initialController(feed, idx);
                 return ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD04),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: InkWell(
                     onTap: () {
                       if (item.mediaType == "pdf" || item.mediaType == "doc") {
@@ -90,22 +90,22 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                 : item.mediaType == "pdf"
                                     ? Padding(
                                         padding:
-                                            EdgeInsets.all(size.width * numD04),
+                                            EdgeInsets.all(size.width * AppDimensions.numD04),
                                         child: Image.asset(
                                           "${dummyImagePath}pngImage.png",
                                           fit: BoxFit.contain,
-                                          height: size.width * numD35,
+                                          height: size.width * AppDimensions.numD35,
                                           width: size.width,
                                         ),
                                       )
                                     : item.mediaType == "doc"
                                         ? Padding(
                                             padding: EdgeInsets.all(
-                                                size.width * numD04),
+                                                size.width * AppDimensions.numD04),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
                                               fit: BoxFit.contain,
-                                              height: size.width * numD35,
+                                              height: size.width * AppDimensions.numD35,
                                               width: size.width,
                                             ),
                                           )
@@ -120,8 +120,8 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                                             fit: BoxFit.cover,
                                           ),
                         Positioned(
-                          right: size.width * numD02,
-                          top: size.width * numD02,
+                          right: size.width * AppDimensions.numD02,
+                          top: size.width * AppDimensions.numD02,
                           child: Column(
                             children: getMediaCount2(feed.contentList, size),
                           ),
@@ -133,7 +133,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
               }),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         feed.contentList.length > 1
             ? Align(
@@ -149,13 +149,13 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
               )
             : Container(),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         Row(
           children: [
             Container(
-              width: size.width * numD09,
-              height: size.width * numD09,
+              width: size.width * AppDimensions.numD09,
+              height: size.width * AppDimensions.numD09,
               padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -164,22 +164,22 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                     BoxShadow(color: Colors.grey.shade200, spreadRadius: 3)
                   ]),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD06),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD06),
                   child: Image.network(
                     feed.feedImage,
-                    height: size.width * numD06,
+                    height: size.width * AppDimensions.numD06,
                     fit: BoxFit.fill,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
                         "${commonImagePath}rabbitLogo.png",
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                         fit: BoxFit.fill,
                       );
                     },
                   )),
             ),
             SizedBox(
-              width: size.width * numD02,
+              width: size.width * AppDimensions.numD02,
             ),
             Text(
               feed.categoryName.toUpperCase(),
@@ -187,17 +187,17 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
               overflow: TextOverflow.ellipsis,
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD033,
+                  fontSize: size.width * AppDimensions.numD033,
                   color: Colors.black,
                   fontWeight: FontWeight.w400),
             ),
             const Spacer(),
             Image.asset(
               "${iconsPath}ic_newspaper.png",
-              height: size.width * numD035,
+              height: size.width * AppDimensions.numD035,
             ),
             SizedBox(
-              width: size.width * numD02,
+              width: size.width * AppDimensions.numD02,
             ),
             Text(
               feed.status.toUpperCase(),
@@ -205,14 +205,14 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
               overflow: TextOverflow.ellipsis,
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD033,
+                  fontSize: size.width * AppDimensions.numD033,
                   color: Colors.black,
                   fontWeight: FontWeight.w400),
             ),
           ],
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         Text(
           feed.heading.toCapitalized(),
@@ -220,19 +220,19 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
           overflow: TextOverflow.ellipsis,
           style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD04,
+              fontSize: size.width * AppDimensions.numD04,
               color: Colors.black,
               lineHeight: 1.5,
               fontWeight: FontWeight.w600),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         ExpandableText(
           text: feed.description.toCapitalizeText(),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,25 +250,25 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                             "${iconsPath}dollar1.png",
                             color: feed.viewCount == 0
                                 ? Colors.grey
-                                : colorThemePink,
-                            height: size.width * numD04,
-                            width: size.width * numD04,
+                                : AppColorTheme.colorThemePink,
+                            height: size.width * AppDimensions.numD04,
+                            width: size.width * AppDimensions.numD04,
                           ),
                           SizedBox(
-                            width: size.width * numD014,
+                            width: size.width * AppDimensions.numD014,
                           ),
                           Text(
-                            '${feed.offerCount.toString()} ${soldText.toLowerCase()}',
+                            '${feed.offerCount.toString()} ${AppStrings.soldText.toLowerCase()}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD029,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -277,19 +277,19 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                             "${iconsPath}ic_view.png",
                             color: feed.viewCount == 0
                                 ? Colors.grey
-                                : colorThemePink,
-                            height: size.width * numD05,
-                            width: size.width * numD05,
+                                : AppColorTheme.colorThemePink,
+                            height: size.width * AppDimensions.numD05,
+                            width: size.width * AppDimensions.numD05,
                           ),
                           SizedBox(
-                            width: size.width * numD012,
+                            width: size.width * AppDimensions.numD012,
                           ),
                           Text(
-                            '${feed.viewCount.toString()} ${feed.viewCount > 1 ? '${viewsText}s' : viewsText}',
+                            '${feed.viewCount.toString()} ${feed.viewCount > 1 ? '${AppStrings.viewsText}s' : AppStrings.viewsText}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD029,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
@@ -297,61 +297,61 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
                   Row(
                     children: [
                       Image.asset(
                         "${iconsPath}ic_clock.png",
-                        height: size.width * numD04,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD04,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       Text(
                         dateTimeFormatter(
                             dateTime: feed.createdAt, format: "hh:mm a"),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
+                            fontSize: size.width * AppDimensions.numD028,
+                            color: AppColorTheme.colorHint,
                             fontWeight: FontWeight.normal),
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       Image.asset(
                         "${iconsPath}ic_yearly_calendar.png",
-                        height: size.width * numD04,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD04,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD018,
+                        width: size.width * AppDimensions.numD018,
                       ),
                       Text(
                         dateTimeFormatter(
                             dateTime: feed.createdAt, format: "dd MMM yyyy"),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
+                            fontSize: size.width * AppDimensions.numD028,
+                            color: AppColorTheme.colorHint,
                             fontWeight: FontWeight.normal),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD03,
+                    height: size.width * AppDimensions.numD03,
                   ),
                   Row(
                     children: [
                       Image.asset(
                         "${iconsPath}ic_location.png",
-                        height: size.width * numD045,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD045,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       Expanded(
                         child: Text(
@@ -359,25 +359,25 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                           overflow: TextOverflow.ellipsis,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
+                              fontSize: size.width * AppDimensions.numD028,
+                              color: AppColorTheme.colorHint,
                               fontWeight: FontWeight.normal),
                         ),
                       )
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD03,
+                    height: size.width * AppDimensions.numD03,
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: size.width * numD002),
+                    margin: EdgeInsets.only(left: size.width * AppDimensions.numD002),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                              right: size.width * numD01,
-                              top: size.width * numD005),
+                              right: size.width * AppDimensions.numD01,
+                              top: size.width * AppDimensions.numD005),
                           child: InkWell(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -385,20 +385,20 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                             child: feed.isFavourite
                                 ? Image.asset(
                                     "${iconsPath}heart_icon.png",
-                                    color: colorThemePink,
-                                    height: size.width * numD0575,
+                                    color: AppColorTheme.colorThemePink,
+                                    height: size.width * AppDimensions.numD0575,
                                   )
                                 : Image.asset(
                                     "${iconsPath}heart_icon.png",
-                                    height: size.width * numD0575,
+                                    height: size.width * AppDimensions.numD0575,
                                   ),
                           ),
                         ),
                         SizedBox(
-                          width: size.width * numD1,
+                          width: size.width * AppDimensions.numD1,
                           child: Padding(
                             padding:
-                                EdgeInsets.only(bottom: size.width * numD002),
+                                EdgeInsets.only(bottom: size.width * AppDimensions.numD002),
                             child: InkWell(
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -406,19 +406,19 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                               child: feed.isLiked
                                   ? Image.asset(
                                       "${iconsPath}like_icon_fill.png",
-                                      height: size.width * numD057,
+                                      height: size.width * AppDimensions.numD057,
                                     )
                                   : Image.asset(
                                       "${iconsPath}like_grey.png",
-                                      height: size.width * numD057,
+                                      height: size.width * AppDimensions.numD057,
                                     ),
                             ),
                           ),
                         ),
                         SizedBox(
-                          width: size.width * numD1,
+                          width: size.width * AppDimensions.numD1,
                           child: Padding(
-                            padding: EdgeInsets.only(top: size.width * numD003),
+                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD003),
                             child: InkWell(
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -426,11 +426,11 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                               child: feed.isEmoji
                                   ? Image.asset(
                                       "${iconsPath}sad.png",
-                                      height: size.width * numD058,
+                                      height: size.width * AppDimensions.numD058,
                                     )
                                   : Image.asset(
                                       "${iconsPath}ic_grey_sad_emoji.png",
-                                      height: size.width * numD058,
+                                      height: size.width * AppDimensions.numD058,
                                     ),
                             ),
                           ),
@@ -439,31 +439,31 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                     ),
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
                 ],
               ),
             ),
             SizedBox(
-              width: size.width * numD075,
+              width: size.width * AppDimensions.numD075,
             ),
             Container(
-              width: size.width * numD30,
-              padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+              width: size.width * AppDimensions.numD30,
+              padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD012),
               decoration: BoxDecoration(
-                  color: feed.paidStatus == unPaidText
-                      ? colorThemePink
-                      : colorLightGrey,
-                  borderRadius: BorderRadius.circular(size.width * numD03)),
+                  color: feed.paidStatus == AppStrings.unPaidText
+                      ? AppColorTheme.colorThemePink
+                      : AppColorTheme.colorLightGrey,
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
               child: Column(
                 children: [
                   Text(
-                    feed.saleStatus == "sold" ? "Sold" : "Sold",
+                    feed.saleStatus == "AppStrings.sold" ? "Sold" : "Sold",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: feed.paidStatus == "paid"
                             ? Colors.black
                             : Colors.white,
@@ -476,7 +476,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                       overflow: TextOverflow.ellipsis,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD055,
+                          fontSize: size.width * AppDimensions.numD055,
                           color: feed.paidStatus == "paid"
                               ? Colors.black
                               : Colors.white,

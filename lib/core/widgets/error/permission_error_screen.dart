@@ -97,7 +97,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
       child: Scaffold(
         body: Center(
           child: Padding(
-            padding: EdgeInsets.all(size.width * numD05),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD05),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -107,28 +107,28 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                   size: 80,
                   color: Colors.red,
                 ),
-                SizedBox(height: size.height * numD02),
+                SizedBox(height: size.height * AppDimensions.numD02),
                 Text(
                   'Permissions Required',
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                       color: Colors.black,
                       fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: size.height * numD01),
+                SizedBox(height: size.height * AppDimensions.numD01),
                 Text(
                   'We need access below permissions to continue using the app. Please allow the permissions to proceed.',
                   textAlign: TextAlign.center,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.w400),
                 ),
-                SizedBox(height: size.height * numD03),
+                SizedBox(height: size.height * AppDimensions.numD03),
                 Column(
-                  spacing: size.height * numD015,
+                  spacing: size.height * AppDimensions.numD015,
                   children: permissionsStatus.keys.map((permission) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,7 +146,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                                         : "Gallery",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD04,
+                                    fontSize: size.width * AppDimensions.numD04,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600),
                               ),
@@ -158,7 +158,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                                         : "Allow saving captured content to your device's gallery.",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.grey,
                                     fontWeight: FontWeight.w400),
                               ),
@@ -172,10 +172,10 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                           color: permissionsStatus[permission]!
                               ? Colors.green
                               : Colors.red,
-                          size: size.width * numD08,
+                          size: size.width * AppDimensions.numD08,
                         ),
                         // SizedBox(
-                        //   width: size.width * numD04,
+                        //   width: size.width * AppDimensions.numD04,
                         //   child: CupertinoSwitch(
                         //     value: permissionsStatus[permission]!,
                         //     onChanged: (value) {},
@@ -186,24 +186,24 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                     );
                   }).toList(),
                 ),
-                SizedBox(height: size.height * numD04),
+                SizedBox(height: size.height * AppDimensions.numD04),
                 SizedBox(
-                  height: size.width * numD12,
-                  width: size.width * numD80,
+                  height: size.width * AppDimensions.numD12,
+                  width: size.width * AppDimensions.numD80,
                   child: commonElevatedButton(
                     "Allow Permissions",
                     size,
                     commonButtonTextStyle(size),
-                    commonButtonStyle(size, colorThemePink),
+                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                     () async {
                       await requestPermissions();
                     },
                   ),
                 ),
-                SizedBox(height: size.height * numD02),
+                SizedBox(height: size.height * AppDimensions.numD02),
                 SizedBox(
-                  height: size.width * numD12,
-                  width: size.width * numD80,
+                  height: size.width * AppDimensions.numD12,
+                  width: size.width * AppDimensions.numD80,
                   child: commonElevatedButton(
                     "My Content",
                     size,

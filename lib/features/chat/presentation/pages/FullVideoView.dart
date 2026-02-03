@@ -108,10 +108,10 @@ class _MediaViewScreenState extends State<MediaViewScreen>
                     ? Colors.white
                     : Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
           ),
           centerTitle: true,
-          titleSpacing: size.width * numD11,
+          titleSpacing: size.width * AppDimensions.numD11,
           size: size,
           showActions: false,
           leadingFxn: () {
@@ -182,7 +182,7 @@ class _MediaViewScreenState extends State<MediaViewScreen>
             maxScale: PhotoViewComputedScale.contained * 10.0,
             imageProvider: NetworkImage(widget.mediaFile)),
         ClipRRect(
-            borderRadius: BorderRadius.circular(size.width * numD04),
+            borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
             child: Image.asset(
               "${commonImagePath}watermark1.png",
               height: size.height / 3,
@@ -253,26 +253,26 @@ class _MediaViewScreenState extends State<MediaViewScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                height: size.height * numD025,
+                height: size.height * AppDimensions.numD025,
               ),
               Expanded(
                 flex: 4,
                 child: SizedBox(
-                    // padding: EdgeInsets.all(size.width * numD04),
-                    // decoration: const BoxDecoration(color: colorThemePink, shape: BoxShape.circle),
+                    // padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                    // decoration: const BoxDecoration(color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
                     child: Image.asset("assets/commonImages/audio_logo.png")),
               ),
               Expanded(
                 flex: 6,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: size.width * numD04, right: size.width * numD04),
+                      left: size.width * AppDimensions.numD04, right: size.width * AppDimensions.numD04),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Lottie.asset("assets/lottieFiles/audio_waves.json",
                           width: double.infinity,
-                          height: size.height * (isIpad ? numD70 : numD40),
+                          height: size.height * (isIpad ? AppDimensions.numD70 : AppDimensions.numD40),
                           backgroundLoading: true,
                           fit: BoxFit.fill,
                           controller: _animationController),
@@ -291,12 +291,12 @@ class _MediaViewScreenState extends State<MediaViewScreen>
                             setState(() {});
                           },
                           child: Container(
-                            padding: EdgeInsets.all(size.width * numD018),
+                            padding: EdgeInsets.all(size.width * AppDimensions.numD018),
                             decoration: const BoxDecoration(
-                                color: colorThemePink, shape: BoxShape.circle),
+                                color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
                             child: Container(
                               padding: EdgeInsets.all(
-                                  size.width * (isIpad ? numD03 : numD04)),
+                                  size.width * (isIpad ? AppDimensions.numD03 : AppDimensions.numD04)),
                               decoration: BoxDecoration(
                                   color: Colors.transparent,
                                   shape: BoxShape.circle,
@@ -306,7 +306,7 @@ class _MediaViewScreenState extends State<MediaViewScreen>
                                 audioPlaying
                                     ? Icons.pause
                                     : Icons.play_arrow_rounded,
-                                size: size.width * numD16,
+                                size: size.width * AppDimensions.numD16,
                                 color: Colors.white,
                               ),
                             ),
@@ -321,8 +321,8 @@ class _MediaViewScreenState extends State<MediaViewScreen>
           )
         : const Center(
             child: CircularProgressIndicator(
-              // Assuming 'colorThemePink' is defined in Common.dart
-              color: colorThemePink,
+              // Assuming 'AppColorTheme.colorThemePink' is defined in Common.dart
+              color: AppColorTheme.colorThemePink,
             ),
           );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
@@ -15,43 +16,43 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
         return AlertDialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: screenWidth * numD04),
+            contentPadding: EdgeInsets.symmetric(
+                horizontal: screenWidth * AppDimensions.numD04),
             content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(screenWidth * numD015)),
+                      borderRadius: BorderRadius.circular(
+                          screenWidth * AppDimensions.numD015)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         margin: EdgeInsets.only(
-                            left: screenWidth * numD04,
-                            right: screenWidth * numD04,
-                            top: screenWidth * numD05),
+                            left: screenWidth * AppDimensions.numD04,
+                            right: screenWidth * AppDimensions.numD04,
+                            top: screenWidth * AppDimensions.numD05),
                         child: Text(
                           message,
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: screenWidth * numD04),
+                              fontSize: screenWidth * AppDimensions.numD04),
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         margin: EdgeInsets.only(
-                            top: screenWidth * numD06,
-                            left: screenWidth * numD04,
-                            right: screenWidth * numD04,
-                            bottom: screenWidth * numD04),
+                            top: screenWidth * AppDimensions.numD06,
+                            left: screenWidth * AppDimensions.numD04,
+                            right: screenWidth * AppDimensions.numD04,
+                            bottom: screenWidth * AppDimensions.numD04),
                         child: ElevatedButton(
                           onPressed: pressed,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: colorThemePink,
+                            backgroundColor: AppColorTheme.colorThemePink,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30)),
                           ),
@@ -59,7 +60,7 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
                             "Ok",
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: screenWidth * numD04,
+                                fontSize: screenWidth * AppDimensions.numD04,
                                 fontWeight: FontWeight.w900),
                           ),
                         ),
@@ -89,16 +90,16 @@ void broadcastDialog({
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return Container(
                     width: size.width,
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD045)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -106,23 +107,23 @@ void broadcastDialog({
                         /// Heading
                         Padding(
                           padding: EdgeInsets.only(
-                            left: size.width * numD04,
-                            right: size.width * numD03,
-                            top: size.width * numD04,
+                            left: size.width * AppDimensions.numD04,
+                            right: size.width * AppDimensions.numD03,
+                            top: size.width * AppDimensions.numD04,
                           ),
                           child: Row(
                             children: [
                               Text(
-                                newBroadcastedTask.toTitleCase(),
+                                AppStrings.newBroadcastedTask.toTitleCase(),
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD04,
+                                    fontSize: size.width * AppDimensions.numD04,
                                     fontWeight: FontWeight.bold),
                               ),
                               const Spacer(),
                               SizedBox(
-                                height: size.width * numD07,
-                                width: size.width * numD07,
+                                height: size.width * AppDimensions.numD07,
+                                width: size.width * AppDimensions.numD07,
                                 child: IconButton(
                                     padding: EdgeInsets.zero,
                                     onPressed: () {
@@ -134,7 +135,7 @@ void broadcastDialog({
                                     icon: Icon(
                                       Icons.close,
                                       color: Colors.black,
-                                      size: size.width * numD06,
+                                      size: size.width * AppDimensions.numD06,
                                     )),
                               )
                             ],
@@ -142,59 +143,61 @@ void broadcastDialog({
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: const Divider(
                             color: Colors.black,
                             thickness: 0.5,
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
 
                         /// Image, Title , des
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
+                                        size.width * AppDimensions.numD04),
                                     border: Border.all(color: Colors.black)),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
+                                        size.width * AppDimensions.numD04),
                                     child: Image.network(
                                       taskDetail.task.mediaHouse.profileImage,
-                                      height: size.width * numD20,
-                                      width: size.width * numD20,
+                                      height: size.width * AppDimensions.numD20,
+                                      width: size.width * AppDimensions.numD20,
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, object, stacktrace) {
                                         return Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD02),
+                                          padding: EdgeInsets.all(size.width *
+                                              AppDimensions.numD02),
                                           child: Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
-                                            height: size.width * numD20,
-                                            width: size.width * numD20,
+                                            height: size.width *
+                                                AppDimensions.numD20,
+                                            width: size.width *
+                                                AppDimensions.numD20,
                                           ),
                                         );
                                       },
                                     )),
                               ),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      height: size.width * numD01,
+                                      height: size.width * AppDimensions.numD01,
                                     ),
 
                                     /// Heading
@@ -204,7 +207,8 @@ void broadcastDialog({
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           fontWeight: FontWeight.w700),
                                     ),
 
@@ -215,7 +219,8 @@ void broadcastDialog({
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           fontWeight: FontWeight.normal),
                                     ),
                                   ],
@@ -228,23 +233,25 @@ void broadcastDialog({
                         /// Location or deadline
                         Container(
                           margin: EdgeInsets.only(
-                            top: size.width * numD03,
-                            bottom: size.width * numD05,
-                            left: size.width * numD04,
-                            right: size.width * numD04,
+                            top: size.width * AppDimensions.numD03,
+                            bottom: size.width * AppDimensions.numD05,
+                            left: size.width * AppDimensions.numD04,
+                            right: size.width * AppDimensions.numD04,
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Container(
-                                  height: size.width * numD20,
+                                  height: size.width * AppDimensions.numD20,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: size.width * numD03,
-                                      horizontal: size.width * numD02),
+                                      vertical:
+                                          size.width * AppDimensions.numD03,
+                                      horizontal:
+                                          size.width * AppDimensions.numD02),
                                   decoration: BoxDecoration(
-                                      color: colorLightGrey,
+                                      color: AppColorTheme.colorLightGrey,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD03)),
+                                          size.width * AppDimensions.numD03)),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -256,28 +263,34 @@ void broadcastDialog({
                                           Icon(
                                             Icons.access_time,
                                             color: Colors.black,
-                                            size: size.width * numD04,
+                                            size: size.width *
+                                                AppDimensions.numD04,
                                           ),
                                           SizedBox(
-                                            width: size.width * numD01,
+                                            width: size.width *
+                                                AppDimensions.numD01,
                                           ),
                                           Text(
-                                            deadlineText,
+                                            AppStrings.deadlineText,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
                                       ),
                                       SizedBox(
-                                        width: size.width * numD01,
+                                        width:
+                                            size.width * AppDimensions.numD01,
                                       ),
                                       Padding(
                                           padding: EdgeInsets.only(
-                                            left: size.width * numD01,
-                                            top: size.width * numD01,
+                                            left: size.width *
+                                                AppDimensions.numD01,
+                                            top: size.width *
+                                                AppDimensions.numD01,
                                           ),
                                           child: TimerCountdown(
                                             endTime:
@@ -300,7 +313,8 @@ void broadcastDialog({
                                                 .customFormats,
                                             timeTextStyle: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           )),
@@ -309,18 +323,20 @@ void broadcastDialog({
                                 ),
                               ),
                               SizedBox(
-                                width: size.width * numD05,
+                                width: size.width * AppDimensions.numD05,
                               ),
                               Expanded(
                                 child: Container(
-                                  height: size.width * numD20,
+                                  height: size.width * AppDimensions.numD20,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: size.width * numD03,
-                                      horizontal: size.width * numD02),
+                                      vertical:
+                                          size.width * AppDimensions.numD03,
+                                      horizontal:
+                                          size.width * AppDimensions.numD02),
                                   decoration: BoxDecoration(
-                                      color: colorLightGrey,
+                                      color: AppColorTheme.colorLightGrey,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD03)),
+                                          size.width * AppDimensions.numD03)),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -331,16 +347,19 @@ void broadcastDialog({
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_location.png",
-                                            width: size.width * numD03,
+                                            width: size.width *
+                                                AppDimensions.numD03,
                                           ),
                                           SizedBox(
-                                            width: size.width * numD01,
+                                            width: size.width *
+                                                AppDimensions.numD01,
                                           ),
                                           Text(
-                                            locationText.toUpperCase(),
+                                            AppStrings.locationText.toUpperCase(),
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -350,8 +369,10 @@ void broadcastDialog({
                                       /// Location Data
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          left: size.width * numD01,
-                                          top: size.width * numD01,
+                                          left:
+                                              size.width * AppDimensions.numD01,
+                                          top:
+                                              size.width * AppDimensions.numD01,
                                         ),
                                         child: Text(
                                           taskDetail.task.location,
@@ -359,7 +380,8 @@ void broadcastDialog({
                                           maxLines: 2,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD03,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w400),
                                         ),
@@ -383,34 +405,39 @@ void broadcastDialog({
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD058,
-                                        color: colorThemePink,
+                                        fontSize:
+                                            size.width * AppDimensions.numD058,
+                                        color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    offeredText,
+                                    AppStrings.offeredText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
-                                    height: size.width * numD04,
+                                    height: size.width * AppDimensions.numD04,
                                   ),
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD06,
-                                        vertical: size.width * numD02),
+                                        horizontal:
+                                            size.width * AppDimensions.numD06,
+                                        vertical:
+                                            size.width * AppDimensions.numD02),
                                     decoration: BoxDecoration(
-                                        color: colorThemePink,
+                                        color: AppColorTheme.colorThemePink,
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD02)),
+                                            size.width * AppDimensions.numD02)),
                                     child: Text(
-                                      photoText.toUpperCase(),
+                                      AppStrings.photoText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -427,34 +454,39 @@ void broadcastDialog({
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD058,
-                                        color: colorThemePink,
+                                        fontSize:
+                                            size.width * AppDimensions.numD058,
+                                        color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    offeredText,
+                                    AppStrings.offeredText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
-                                    height: size.width * numD04,
+                                    height: size.width * AppDimensions.numD04,
                                   ),
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: size.width * numD02,
-                                        horizontal: size.width * numD03),
+                                        vertical:
+                                            size.width * AppDimensions.numD02,
+                                        horizontal:
+                                            size.width * AppDimensions.numD03),
                                     decoration: BoxDecoration(
-                                        color: colorThemePink,
+                                        color: AppColorTheme.colorThemePink,
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD02)),
+                                            size.width * AppDimensions.numD02)),
                                     child: Text(
-                                      interviewText.toUpperCase(),
+                                      AppStrings.interviewText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -471,34 +503,39 @@ void broadcastDialog({
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD058,
-                                        color: colorThemePink,
+                                        fontSize:
+                                            size.width * AppDimensions.numD058,
+                                        color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
-                                    offeredText,
+                                    AppStrings.offeredText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
-                                    height: size.width * numD04,
+                                    height: size.width * AppDimensions.numD04,
                                   ),
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD06,
-                                        vertical: size.width * numD02),
+                                        horizontal:
+                                            size.width * AppDimensions.numD06,
+                                        vertical:
+                                            size.width * AppDimensions.numD02),
                                     decoration: BoxDecoration(
-                                        color: colorThemePink,
+                                        color: AppColorTheme.colorThemePink,
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD02)),
+                                            size.width * AppDimensions.numD02)),
                                     child: Text(
-                                      videoText.toUpperCase(),
+                                      AppStrings.videoText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -510,24 +547,24 @@ void broadcastDialog({
                         ),
 
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
 
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
                           child: SizedBox(
-                            height: size.width * numD12,
+                            height: size.width * AppDimensions.numD12,
                             child: commonElevatedButton(
                               "View Details",
                               size,
                               commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700),
-                              commonButtonStyle(size, colorThemePink),
+                              commonButtonStyle(size, AppColorTheme.colorThemePink),
                               onTapView,
                             ),
                           ),
@@ -554,31 +591,32 @@ void commonErrorDialogDialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
             contentPadding: EdgeInsets.zero,
-            insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD04),
             content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(size.width * numD045)),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD045)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
-                            left: size.width * numD04,
-                            top: size.width * numD02),
+                            left: size.width * AppDimensions.numD04,
+                            top: size.width * AppDimensions.numD02),
                         child: Row(
                           children: [
                             Text(
                               isFromNetworkError
-                                  ? "$errorDialogText $errorCode!"
+                                  ? "${AppStrings.errorDialogText} $errorCode!"
                                   : errorCode,
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: size.width * numD04,
+                                  fontSize: size.width * AppDimensions.numD04,
                                   fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
@@ -590,52 +628,53 @@ void commonErrorDialogDialog(
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                           ],
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
+                            horizontal: size.width * AppDimensions.numD04),
                         child: const Divider(
                           color: Colors.black,
                           thickness: 0.5,
                         ),
                       ),
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
+                            horizontal: size.width * AppDimensions.numD04),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                               ),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   child: Image.asset(
                                     "${commonImagePath}dog.png",
-                                    height: size.width * numD25,
-                                    width: size.width * numD35,
+                                    height: size.width * AppDimensions.numD25,
+                                    width: size.width * AppDimensions.numD35,
                                     fit: BoxFit.cover,
                                   )),
                             ),
                             SizedBox(
-                              width: size.width * numD04,
+                              width: size.width * AppDimensions.numD04,
                             ),
                             Expanded(
                               child: Text(
                                 message,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     fontWeight: FontWeight.normal),
                               ),
                             ),
@@ -643,20 +682,20 @@ void commonErrorDialogDialog(
                         ),
                       ),
                       SizedBox(
-                        height: size.width * numD08,
+                        height: size.width * AppDimensions.numD08,
                       ),
                       SizedBox(
-                        height: size.width * numD12,
-                        width: size.width * numD35,
+                        height: size.width * AppDimensions.numD12,
+                        width: size.width * AppDimensions.numD35,
                         child: commonElevatedButton(
                             actionButton,
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink),
+                            commonButtonStyle(size, AppColorTheme.colorThemePink),
                             callback),
                       ),
                       SizedBox(
-                        height: size.width * numD05,
+                        height: size.width * AppDimensions.numD05,
                       ),
                     ],
                   ),
@@ -675,30 +714,32 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
             backgroundColor: Colors.transparent,
             elevation: 0,
             contentPadding: EdgeInsets.zero,
-            insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD04),
             content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(size.width * numD045)),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD045)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: size.width * numD04),
+                        padding: EdgeInsets.only(
+                            left: size.width * AppDimensions.numD04),
                         child: Row(
                           children: [
                             Text(
                               "Complete your onboarding",
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: size.width * numD05,
+                                  fontSize: size.width * AppDimensions.numD05,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.bold),
                             ),
@@ -709,8 +750,8 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                 },
                                 icon: Image.asset(
                                   "${iconsPath}cross.png",
-                                  width: size.width * numD065,
-                                  height: size.width * numD065,
+                                  width: size.width * AppDimensions.numD065,
+                                  height: size.width * AppDimensions.numD065,
                                   color: Colors.black,
                                 ))
                           ],
@@ -721,19 +762,19 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                         thickness: 0.5,
                       ),
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       Padding(
                           padding: EdgeInsets.only(
-                              left: size.width * numD04,
-                              right: size.width * numD04),
+                              left: size.width * AppDimensions.numD04,
+                              right: size.width * AppDimensions.numD04),
                           child: RichText(
                             textAlign: TextAlign.start,
                             text: TextSpan(
                               text:
                                   "Please complete your pending onboarding process to register on ",
                               style: TextStyle(
-                                  fontSize: size.width * numD038,
+                                  fontSize: size.width * AppDimensions.numD038,
                                   color: Colors.black,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.w400,
@@ -742,7 +783,8 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                 TextSpan(
                                   text: "Press",
                                   style: TextStyle(
-                                      fontSize: size.width * numD038,
+                                      fontSize:
+                                          size.width * AppDimensions.numD038,
                                       color: Colors.black,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.w400,
@@ -751,7 +793,8 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                                 TextSpan(
                                   text: "Hop",
                                   style: TextStyle(
-                                      fontSize: size.width * numD038,
+                                      fontSize:
+                                          size.width * AppDimensions.numD038,
                                       color: Colors.black,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.w400,
@@ -761,21 +804,21 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                             ),
                           )),
                       SizedBox(
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
                       SizedBox(
-                        height: size.width * numD13,
-                        width: size.width * numD45,
+                        height: size.width * AppDimensions.numD13,
+                        width: size.width * AppDimensions.numD45,
                         child: commonElevatedButton(
                             "Let's go",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                           func();
                         }),
                       ),
                       SizedBox(
-                        height: size.width * numD05,
+                        height: size.width * AppDimensions.numD05,
                       ),
                     ],
                   ),
@@ -811,7 +854,7 @@ void showLoaderDialog(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircularProgressIndicator(
-          color: colorThemePink,
+          color: AppColorTheme.colorThemePink,
         ),
       ],
     ),

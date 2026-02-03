@@ -38,7 +38,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: size.height * numD05),
+                SizedBox(height: size.height * AppDimensions.numD05),
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
@@ -55,7 +55,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                       child: Icon(
                         Icons.close,
                         color: Colors.white,
-                        size: size.width * numD06,
+                        size: size.width * AppDimensions.numD06,
                       ),
                     ),
                   ),
@@ -63,51 +63,51 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                 Spacer(),
                 Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD04),
+                        horizontal: size.width * AppDimensions.numD04,
+                        vertical: size.width * AppDimensions.numD04),
                     decoration: BoxDecoration(
-                        color: colorLightGrey,
+                        color: AppColorTheme.colorLightGrey,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04)),
+                            BorderRadius.circular(size.width * AppDimensions.numD04)),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ClipRRect(
                             borderRadius:
-                                BorderRadius.circular(size.width * numD06),
+                                BorderRadius.circular(size.width * AppDimensions.numD06),
                             child: Image.asset("${commonImagePath}dog.png",
-                                height: size.width * numD30,
-                                width: size.width * numD30,
+                                height: size.width * AppDimensions.numD30,
+                                width: size.width * AppDimensions.numD30,
                                 fit: BoxFit.cover)),
-                        SizedBox(width: size.width * numD05),
+                        SizedBox(width: size.width * AppDimensions.numD05),
                         Flexible(
                           child: Text(
                             'Oops! We’ll need access to your location before you can proceed.',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
                       ],
                     )),
-                SizedBox(height: size.height * numD04),
+                SizedBox(height: size.height * AppDimensions.numD04),
                 Text(
                   'Note: The press needs to know where a photo or video was taken, and without your location, we can’t submit and help sell your content. Pop it on and you’re good to go!',
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.w400),
                 ),
-                SizedBox(height: size.height * numD04),
+                SizedBox(height: size.height * AppDimensions.numD04),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      height: size.width * numD12,
-                      width: size.width * numD44,
+                      height: size.width * AppDimensions.numD12,
+                      width: size.width * AppDimensions.numD44,
                       child: commonElevatedButton(
                         "Back",
                         size,
@@ -123,14 +123,14 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD12,
-                      width: size.width * numD44,
+                      height: size.width * AppDimensions.numD12,
+                      width: size.width * AppDimensions.numD44,
                       child: commonElevatedButton(
                         "Enable Location",
                         size,
                         commonButtonTextStyle(size),
                         commonButtonStyle(size,
-                            isFetchingLocation ? Colors.grey : colorThemePink),
+                            isFetchingLocation ? Colors.grey : AppColorTheme.colorThemePink),
                         () async {
                           // if (isFetchingLocation) {
                           //   return; // Prevent multiple taps while fetching location
@@ -165,7 +165,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                     textAlign: TextAlign.center,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD03,
+                        fontSize: size.width * AppDimensions.numD03,
                         color: Colors.grey,
                         fontWeight: FontWeight.w400),
                   )

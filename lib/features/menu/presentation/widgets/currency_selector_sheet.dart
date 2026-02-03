@@ -47,7 +47,7 @@ class CurrencySelectorSheet extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
         margin: const EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
-          color: isSelected ? colorGreyChat : Colors.transparent,
+          color: isSelected ? AppColorTheme.colorGreyChat : Colors.transparent,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Text(
@@ -55,7 +55,7 @@ class CurrencySelectorSheet extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: isSelected ? colorThemePink : Colors.black,
+            color: isSelected ? AppColorTheme.colorThemePink : Colors.black,
           ),
         ),
       ),

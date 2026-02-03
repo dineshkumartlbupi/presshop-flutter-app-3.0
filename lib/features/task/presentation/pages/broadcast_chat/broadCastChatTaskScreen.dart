@@ -35,8 +35,9 @@ import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart'
-    hide photoText, videoText, interviewText;
+import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
+import 'package:presshop/core/constants/string_constants_new2.dart';
+
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -274,11 +275,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             elevation: 0,
             hideLeading: false,
             title: Text(
-              manageTaskText,
+              AppStringsNew2.manageTaskText,
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: size.width * appBarHeadingFontSize),
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -297,29 +298,30 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 },
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
           ),
           bottomNavigationBar: isLoading
               ? showLoader()
               : Padding(
-                  padding: EdgeInsets.only(bottom: size.height * numD03),
+                  padding: EdgeInsets.only(
+                      bottom: size.height * AppDimensions.numD03),
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD02),
-                          height: size.width * numD18,
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD02),
+                          height: size.width * AppDimensions.numD18,
                           child: commonElevatedButton(
-                              galleryText,
+                              AppStringsNew2.galleryText,
                               size,
                               commonButtonTextStyle(size),
                               commonButtonStyle(size, Colors.black), () {
@@ -337,14 +339,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD02),
-                          height: size.width * numD18,
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD02),
+                          height: size.width * AppDimensions.numD18,
                           child: commonElevatedButton(
-                              cameraText,
+                              AppStringsNew2.cameraText,
                               size,
                               commonButtonTextStyle(size),
-                              commonButtonStyle(size, colorThemePink), () {
+                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -381,38 +383,42 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   ),
                 ),
           body: SingleChildScrollView(
-            padding: EdgeInsets.all(size.width * numD04),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD04),
             child: Column(
               children: [
                 Stack(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * numD055),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD055),
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD03,
-                          vertical: size.width * numD02),
+                          horizontal: size.width * AppDimensions.numD03,
+                          vertical: size.width * AppDimensions.numD02),
                       width: size.width,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey.shade400),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * numD04),
-                              bottomLeft: Radius.circular(size.width * numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: size.width * numD025,
+                            height: size.width * AppDimensions.numD025,
                           ),
                           Row(
                             children: [
                               Text(
-                                // "$taskText ${widget.taskDetail?.status}",
+                                // "${AppStringsNew2.taskText} ${widget.taskDetail?.status}",
                                 "TASK ACCEPTED",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600),
                               ),
@@ -431,14 +437,16 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                     widget.taskDetail!.task.mediaHouse
                                         .profileImage
                                         .toString(),
-                                    height: size.width * numD10,
-                                    width: size.width * numD10,
+                                    height: size.width * AppDimensions.numD10,
+                                    width: size.width * AppDimensions.numD10,
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Image.asset(
                                         "${commonImagePath}rabbitLogo.png", // Fallback image
-                                        height: size.width * numD10,
-                                        width: size.width * numD10,
+                                        height:
+                                            size.width * AppDimensions.numD10,
+                                        width:
+                                            size.width * AppDimensions.numD10,
                                         fit: BoxFit.contain,
                                       );
                                     },
@@ -448,19 +456,19 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD03,
+                            height: size.width * AppDimensions.numD03,
                           ),
                           Text(
                             "${widget.taskDetail?.task.heading}",
                             style: TextStyle(
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           SizedBox(
-                            height: size.width * numD04,
+                            height: size.width * AppDimensions.numD04,
                           ),
                           Row(
                             children: [
@@ -473,37 +481,43 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           : "-",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD055,
-                                          color: colorThemePink,
+                                          fontSize: size.width *
+                                              AppDimensions.numD055,
+                                          color: AppColorTheme.colorThemePink,
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Text(
-                                      offeredText,
+                                      AppStringsNew2.offeredText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                     ),
                                     SizedBox(
-                                      height: size.width * numD03,
+                                      height: size.width * AppDimensions.numD03,
                                     ),
                                     Container(
-                                      width: size.width * numD24,
+                                      width: size.width * AppDimensions.numD24,
                                       padding: EdgeInsets.symmetric(
-                                          // horizontal: size.width * numD05,
-                                          vertical: size.width * numD02),
+                                          // horizontal: size.width * AppDimensions.numD05,
+                                          vertical: size.width *
+                                              AppDimensions.numD02),
                                       decoration: BoxDecoration(
-                                          color: colorThemePink,
-                                          // color: colorThemePink,
+                                          color: AppColorTheme.colorThemePink,
+                                          // color: AppColorTheme.colorThemePink,
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
+                                              size.width *
+                                                  AppDimensions.numD02)),
                                       child: Center(
                                         child: Text(
-                                          photoText.toUpperCase(),
+                                          AppStringsNew2.photoText
+                                              .toUpperCase(),
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD033,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD033,
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -521,37 +535,43 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           : "-",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD055,
-                                          color: colorThemePink,
+                                          fontSize: size.width *
+                                              AppDimensions.numD055,
+                                          color: AppColorTheme.colorThemePink,
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Text(
-                                      offeredText,
+                                      AppStringsNew2.offeredText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                     ),
                                     SizedBox(
-                                      height: size.width * numD03,
+                                      height: size.width * AppDimensions.numD03,
                                     ),
                                     Container(
                                       // alignment: Alignment.center,
-                                      width: size.width * numD24,
+                                      width: size.width * AppDimensions.numD24,
                                       padding: EdgeInsets.symmetric(
-                                          // horizontal: size.width * numD05,
-                                          vertical: size.width * numD02),
+                                          // horizontal: size.width * AppDimensions.numD05,
+                                          vertical: size.width *
+                                              AppDimensions.numD02),
                                       decoration: BoxDecoration(
-                                          color: colorThemePink,
+                                          color: AppColorTheme.colorThemePink,
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
+                                              size.width *
+                                                  AppDimensions.numD02)),
                                       child: Center(
                                         child: Text(
-                                          interviewText.toUpperCase(),
+                                          AppStringsNew2.interviewText
+                                              .toUpperCase(),
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD033,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD033,
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -569,36 +589,42 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           : "-",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD055,
-                                          color: colorThemePink,
+                                          fontSize: size.width *
+                                              AppDimensions.numD055,
+                                          color: AppColorTheme.colorThemePink,
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Text(
-                                      offeredText,
+                                      AppStringsNew2.offeredText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                     ),
                                     SizedBox(
-                                      height: size.width * numD03,
+                                      height: size.width * AppDimensions.numD03,
                                     ),
                                     Container(
-                                      width: size.width * numD24,
+                                      width: size.width * AppDimensions.numD24,
                                       padding: EdgeInsets.symmetric(
-                                          // horizontal: size.width * numD05,
-                                          vertical: size.width * numD02),
+                                          // horizontal: size.width * AppDimensions.numD05,
+                                          vertical: size.width *
+                                              AppDimensions.numD02),
                                       decoration: BoxDecoration(
-                                          color: colorThemePink,
+                                          color: AppColorTheme.colorThemePink,
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD02)),
+                                              size.width *
+                                                  AppDimensions.numD02)),
                                       child: Center(
                                         child: Text(
-                                          videoText.toUpperCase(),
+                                          AppStringsNew2.videoText
+                                              .toUpperCase(),
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD033,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD033,
                                               color: Colors.white,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -610,7 +636,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             ],
                           ),
                           SizedBox(
-                            height: size.width * numD03,
+                            height: size.width * AppDimensions.numD03,
                           ),
                         ],
                       ),
@@ -618,24 +644,25 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     Align(
                       alignment: Alignment.center,
                       child: Container(
-                        padding: EdgeInsets.all(size.width * numD025),
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD025),
                         decoration: const BoxDecoration(
                             color: Colors.black, shape: BoxShape.circle),
                         child: Icon(
                           Icons.check,
                           color: Colors.white,
-                          size: size.width * numD07,
+                          size: size.width * AppDimensions.numD07,
                         ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
                 uploadMediaInfoWidget('', size),
                 SizedBox(
-                  height: size.width * numD033,
+                  height: size.width * AppDimensions.numD033,
                 ),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   ListView.separated(
@@ -652,7 +679,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 separatorBuilder: (context, index) {
                                   return SizedBox(
-                                    height: size.width * numD035,
+                                    height: size.width * AppDimensions.numD035,
                                   );
                                 },
                                 shrinkWrap: true,
@@ -707,7 +734,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             child: Column(
                               children: [
                                 SizedBox(
-                                  height: size.width * numD035,
+                                  height: size.width * AppDimensions.numD035,
                                 ),
                                 thanksToUploadMediaWidget(
                                     "",
@@ -731,7 +758,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                     size,
                                     item.transactionId),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 myEarningWidget(
                                     item.mediaHouseName,
@@ -759,7 +786,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     itemCount: chatList.length,
                     separatorBuilder: (context, index) {
                       return SizedBox(
-                        height: size.width * numD035,
+                        height: size.width * AppDimensions.numD035,
                       );
                     },
                   ),
@@ -769,8 +796,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin:
-                                  EdgeInsets.only(top: size.width * numD013),
+                              margin: EdgeInsets.only(
+                                  top: size.width * AppDimensions.numD013),
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
@@ -781,42 +808,45 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                   ]),
                               child: ClipOval(
                                 child: Padding(
-                                  padding: EdgeInsets.all(size.width * numD01),
+                                  padding: EdgeInsets.all(
+                                      size.width * AppDimensions.numD01),
                                   child: Image.asset(
                                     "${commonImagePath}ic_black_rabbit.png",
-                                    width: size.width * numD075,
-                                    height: size.width * numD075,
+                                    width: size.width * AppDimensions.numD075,
+                                    height: size.width * AppDimensions.numD075,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
                               ),
                             ),
                             SizedBox(
-                              width: size.width * numD04,
+                              width: size.width * AppDimensions.numD04,
                             ),
                             Expanded(
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD05,
-                                    vertical: size.width * numD02),
+                                    horizontal:
+                                        size.width * AppDimensions.numD05,
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 width: size.width,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     border:
                                         Border.all(color: Colors.grey.shade400),
                                     borderRadius: BorderRadius.only(
-                                      topRight:
-                                          Radius.circular(size.width * numD04),
-                                      bottomLeft:
-                                          Radius.circular(size.width * numD04),
-                                      bottomRight:
-                                          Radius.circular(size.width * numD04),
+                                      topRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomLeft: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
                                     )),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      height: size.width * numD01,
+                                      height: size.width * AppDimensions.numD01,
                                     ),
                                     RichText(
                                         text: TextSpan(
@@ -829,7 +859,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                             text: "Congratulations, ",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           ),
@@ -838,8 +869,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 "${widget.taskDetail!.task.mediaHouse.firstName} ${widget.taskDetail!.task.mediaHouse.lastName}",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
-                                                color: colorThemePink,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
+                                                color: AppColorTheme.colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
@@ -847,7 +879,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 " has purchased your content for ",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           ),
@@ -857,27 +890,29 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 : "-",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
-                                                color: colorThemePink,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
+                                                color: AppColorTheme.colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ])),
                                     SizedBox(
-                                      height: size.width * numD03,
+                                      height: size.width * AppDimensions.numD03,
                                     ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          height: size.width * numD13,
+                                          height:
+                                              size.width * AppDimensions.numD13,
                                           width: size.width,
                                           child: commonElevatedButton(
                                               "View Transaction Details",
                                               size,
                                               commonButtonTextStyle(size),
                                               commonButtonStyle(
-                                                  size, colorThemePink), () {
+                                                  size, AppColorTheme.colorThemePink), () {
                                             context.read<TaskBloc>().add(
                                                 GetContentTransactionDetailsEvent(
                                                     roomId: widget.roomId,
@@ -889,7 +924,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           }),
                                         ),
                                         SizedBox(
-                                          height: size.width * numD01,
+                                          height:
+                                              size.width * AppDimensions.numD01,
                                         ),
                                       ],
                                     )
@@ -902,7 +938,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       : Container(),
                   SizedBox(
                     height: widget.taskDetail!.task.paidStatus == "paid"
-                        ? size.width * numD035
+                        ? size.width * AppDimensions.numD035
                         : 0,
                   ),
                   widget.taskDetail!.task.paidStatus == "paid"
@@ -911,8 +947,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin:
-                                  EdgeInsets.only(top: size.width * numD013),
+                              margin: EdgeInsets.only(
+                                  top: size.width * AppDimensions.numD013),
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
@@ -923,48 +959,52 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                   ]),
                               child: ClipOval(
                                 child: Padding(
-                                  padding: EdgeInsets.all(size.width * numD01),
+                                  padding: EdgeInsets.all(
+                                      size.width * AppDimensions.numD01),
                                   child: Image.asset(
                                     "${commonImagePath}ic_black_rabbit.png",
-                                    width: size.width * numD075,
-                                    height: size.width * numD075,
+                                    width: size.width * AppDimensions.numD075,
+                                    height: size.width * AppDimensions.numD075,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
                               ),
                             ),
                             SizedBox(
-                              width: size.width * numD04,
+                              width: size.width * AppDimensions.numD04,
                             ),
                             Expanded(
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD05,
-                                    vertical: size.width * numD02),
+                                    horizontal:
+                                        size.width * AppDimensions.numD05,
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 width: size.width,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                        color: colorGoogleButtonBorder),
+                                        color: AppColorTheme.colorGoogleButtonBorder),
                                     borderRadius: BorderRadius.only(
-                                      topRight:
-                                          Radius.circular(size.width * numD04),
-                                      bottomLeft:
-                                          Radius.circular(size.width * numD04),
-                                      bottomRight:
-                                          Radius.circular(size.width * numD04),
+                                      topRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomLeft: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
                                     )),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      height: size.width * numD01,
+                                      height: size.width * AppDimensions.numD01,
                                     ),
                                     RichText(
                                         text: TextSpan(
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: size.width * numD037,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD037,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -973,7 +1013,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                             text: "Woohoo! We have paid ",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           ),
@@ -982,8 +1023,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
-                                                color: colorThemePink,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
+                                                color: AppColorTheme.colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
@@ -991,7 +1033,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 " into your bank account. Please visit ",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           ),
@@ -999,35 +1042,38 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                             text: "My Earnings",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
-                                                color: colorThemePink,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
+                                                color: AppColorTheme.colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
                                             text: " to view your transaction ",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD036,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD036,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           )
                                         ])),
                                     SizedBox(
-                                      height: size.width * numD03,
+                                      height: size.width * AppDimensions.numD03,
                                     ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          height: size.width * numD13,
+                                          height:
+                                              size.width * AppDimensions.numD13,
                                           width: size.width,
                                           child: commonElevatedButton(
                                               "View My Earnings",
                                               size,
                                               commonButtonTextStyle(size),
                                               commonButtonStyle(
-                                                  size, colorThemePink), () {
+                                                  size, AppColorTheme.colorThemePink), () {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
@@ -1038,7 +1084,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           }),
                                         ),
                                         SizedBox(
-                                          height: size.width * numD01,
+                                          height:
+                                              size.width * AppDimensions.numD01,
                                         ),
                                       ],
                                     )
@@ -1066,7 +1113,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          // margin: EdgeInsets.only(top: uploadTextType == "request_more_content" ? size.width * numD04 : 0),
+          // margin: EdgeInsets.only(top: uploadTextType == "request_more_content" ? size.width * AppDimensions.numD04 : 0),
           decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -1075,38 +1122,42 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
           child: Container(
-            // margin: EdgeInsets.only(top: uploadTextType == "request_more_content" ? size.width * numD05 : 0),
+            // margin: EdgeInsets.only(top: uploadTextType == "request_more_content" ? size.width * AppDimensions.numD05 : 0),
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD03, vertical: size.width * numD02),
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD02),
             width: size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04))),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
                     text: TextSpan(
                         style: TextStyle(
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontFamily: "AirbnbCereal",
                             height: 1.5),
@@ -1119,8 +1170,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       TextSpan(
                         text: " Gallery or Camera",
                         style: TextStyle(
-                          fontSize: size.width * numD035,
-                          color: colorThemePink,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: AppColorTheme.colorThemePink,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.bold,
                         ),
@@ -1194,16 +1245,16 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     ),
                   ),
                   Positioned(
-                      top: size.width * numD02,
-                      left: size.width * numD02,
+                      top: size.width * AppDimensions.numD02,
+                      left: size.width * AppDimensions.numD02,
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD006,
-                            vertical: size.width * numD002),
+                            horizontal: size.width * AppDimensions.numD006,
+                            vertical: size.width * AppDimensions.numD002),
                         decoration: BoxDecoration(
-                            color: colorLightGreen.withOpacity(0.8),
-                            borderRadius:
-                                BorderRadius.circular(size.width * numD01)),
+                            color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD01)),
                         child: const Icon(
                           Icons.videocam_outlined,
                           color: Colors.white,
@@ -1222,38 +1273,38 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     child: Icon(
                       Icons.play_circle,
                       color: Colors.white,
-                      size: size.width * numD09,
+                      size: size.width * AppDimensions.numD09,
                     ),
                   )
                 ],
               ),
             ),
             SizedBox(
-              width: size.width * numD02,
+              width: size.width * AppDimensions.numD02,
             ),
             (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
                 ? Container(
                     padding: EdgeInsets.all(
-                      size.width * numD01,
+                      size.width * AppDimensions.numD01,
                     ),
                     decoration: const BoxDecoration(
-                        color: colorLightGrey, shape: BoxShape.circle),
+                        color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
                     child: ClipOval(
                         clipBehavior: Clip.antiAlias,
                         child: Image.network(
                           sharedPreferences!.getString(avatarKey) ?? "",
                           fit: BoxFit.cover,
-                          height: size.width * numD09,
-                          width: size.width * numD09,
+                          height: size.width * AppDimensions.numD09,
+                          width: size.width * AppDimensions.numD09,
                         )))
                 : Container(
                     padding: EdgeInsets.all(
-                      size.width * numD01,
+                      size.width * AppDimensions.numD01,
                     ),
-                    height: size.width * numD09,
-                    width: size.width * numD09,
+                    height: size.width * AppDimensions.numD09,
+                    width: size.width * AppDimensions.numD09,
                     decoration: const BoxDecoration(
-                        color: colorSwitchBack, shape: BoxShape.circle),
+                        color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Image.asset("${commonImagePath}rabbitLogo.png",
@@ -1263,48 +1314,49 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           ],
         ),
         SizedBox(
-          height: size.width * numD018,
+          height: size.width * AppDimensions.numD018,
         ),
         Row(
           children: [
             Image.asset(
               "${iconsPath}ic_clock.png",
-              height: size.width * numD038,
+              height: size.width * AppDimensions.numD038,
               color: Colors.black,
             ),
             SizedBox(
-              width: size.width * numD012,
+              width: size.width * AppDimensions.numD012,
             ),
             Text(
               "${dateTimeFormatter(dateTime: time, format: 'hh:mm a')}, ${dateTimeFormatter(dateTime: time, format: 'dd MMM yyyy')}",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD028,
-                  color: colorHint,
+                  fontSize: size.width * AppDimensions.numD028,
+                  color: AppColorTheme.colorHint,
                   fontWeight: FontWeight.normal),
             ),
             SizedBox(
-              width: size.width * numD018,
+              width: size.width * AppDimensions.numD018,
             ),
             Image.asset(
               "${iconsPath}ic_location.png",
-              height: size.width * numD035,
+              height: size.width * AppDimensions.numD035,
               color: Colors.black,
             ),
             SizedBox(
-              width: size.width * numD01,
+              width: size.width * AppDimensions.numD01,
             ),
             Flexible(
               child: Padding(
-                padding: EdgeInsets.only(right: size.width * numD13),
+                padding:
+                    EdgeInsets.only(right: size.width * AppDimensions.numD13),
                 child: Text(
                   address.isNotEmpty ? address : "N/A",
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD028,
-                      color: colorHint,
+                      fontSize: size.width * AppDimensions.numD028,
+                      color: AppColorTheme.colorHint,
                       fontWeight: FontWeight.normal),
                 ),
               ),
@@ -1312,7 +1364,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           ],
         ),
         SizedBox(
-          height: size.width * numD018,
+          height: size.width * AppDimensions.numD018,
         ),
       ],
     );
@@ -1342,39 +1394,40 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   alignment: Alignment.center,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(size.width * numD04),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                       child: Container(
-                        color: colorThemePink,
+                        color: AppColorTheme.colorThemePink,
                         height: size.height / 3,
                         width: double.infinity,
                         child: Icon(
                           Icons.play_arrow_rounded,
                           color: Colors.white,
-                          size: size.width * numD18,
+                          size: size.width * AppDimensions.numD18,
                         ),
                       ),
                     ),
                     Positioned(
-                        top: size.width * numD02,
-                        left: size.width * numD02,
+                        top: size.width * AppDimensions.numD02,
+                        left: size.width * AppDimensions.numD02,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD008,
-                              vertical: size.width * numD005),
+                              horizontal: size.width * AppDimensions.numD008,
+                              vertical: size.width * AppDimensions.numD005),
                           decoration: BoxDecoration(
-                              color: colorLightGreen.withOpacity(0.8),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD01)),
+                              color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD01)),
                           child: Image.asset(
                             "${iconsPath}ic_mic1.png",
                             fit: BoxFit.cover,
-                            height: size.width * numD05,
-                            width: size.width * numD05,
+                            height: size.width * AppDimensions.numD05,
+                            width: size.width * AppDimensions.numD05,
                           ),
                         )),
                     ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${commonImagePath}watermark1.png",
                           height: size.height / 3,
@@ -1385,31 +1438,31 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 ),
               ),
               SizedBox(
-                width: size.width * numD02,
+                width: size.width * AppDimensions.numD02,
               ),
               (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
                   ? Container(
                       padding: EdgeInsets.all(
-                        size.width * numD01,
+                        size.width * AppDimensions.numD01,
                       ),
                       decoration: const BoxDecoration(
-                          color: colorLightGrey, shape: BoxShape.circle),
+                          color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
                             sharedPreferences!.getString(avatarKey) ?? "",
                             fit: BoxFit.cover,
-                            height: size.width * numD09,
-                            width: size.width * numD09,
+                            height: size.width * AppDimensions.numD09,
+                            width: size.width * AppDimensions.numD09,
                           )))
                   : Container(
                       padding: EdgeInsets.all(
-                        size.width * numD01,
+                        size.width * AppDimensions.numD01,
                       ),
-                      height: size.width * numD09,
-                      width: size.width * numD09,
+                      height: size.width * AppDimensions.numD09,
+                      width: size.width * AppDimensions.numD09,
                       decoration: const BoxDecoration(
-                          color: colorSwitchBack, shape: BoxShape.circle),
+                          color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Image.asset("${commonImagePath}rabbitLogo.png",
@@ -1419,48 +1472,49 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             ],
           ),
           SizedBox(
-            height: size.width * numD018,
+            height: size.width * AppDimensions.numD018,
           ),
           Row(
             children: [
               Image.asset(
                 "${iconsPath}ic_clock.png",
-                height: size.width * numD038,
+                height: size.width * AppDimensions.numD038,
                 color: Colors.black,
               ),
               SizedBox(
-                width: size.width * numD012,
+                width: size.width * AppDimensions.numD012,
               ),
               Text(
                 "${dateTimeFormatter(dateTime: time, format: 'hh:mm a')}, ${dateTimeFormatter(dateTime: time, format: 'dd MMM yyyy')}",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD028,
-                    color: colorHint,
+                    fontSize: size.width * AppDimensions.numD028,
+                    color: AppColorTheme.colorHint,
                     fontWeight: FontWeight.normal),
               ),
               SizedBox(
-                width: size.width * numD018,
+                width: size.width * AppDimensions.numD018,
               ),
               Image.asset(
                 "${iconsPath}ic_location.png",
-                height: size.width * numD035,
+                height: size.width * AppDimensions.numD035,
                 color: Colors.black,
               ),
               SizedBox(
-                width: size.width * numD01,
+                width: size.width * AppDimensions.numD01,
               ),
               Flexible(
                 child: Padding(
-                  padding: EdgeInsets.only(right: size.width * numD13),
+                  padding:
+                      EdgeInsets.only(right: size.width * AppDimensions.numD13),
                   child: Text(
                     address.isNotEmpty ? address : "N/A",
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD028,
-                        color: colorHint,
+                        fontSize: size.width * AppDimensions.numD028,
+                        color: AppColorTheme.colorHint,
                         fontWeight: FontWeight.normal),
                   ),
                 ),
@@ -1468,7 +1522,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             ],
           ),
           SizedBox(
-            height: size.width * numD018,
+            height: size.width * AppDimensions.numD018,
           ),
         ],
       ),
@@ -1503,14 +1557,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                          color: colorGreyChat,
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          color: AppColorTheme.colorGreyChat,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           border: Border.all(
                               color: Colors.grey.shade300, width: 1)),
                       child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           child: Image.network(
                             imageUrl,
                             height: size.height / 3,
@@ -1528,24 +1582,24 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           )),
                     ),
                     Positioned(
-                        top: size.width * numD02,
-                        left: size.width * numD02,
+                        top: size.width * AppDimensions.numD02,
+                        left: size.width * AppDimensions.numD02,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD01,
+                            horizontal: size.width * AppDimensions.numD01,
                           ),
                           decoration: BoxDecoration(
-                              color: colorLightGreen.withOpacity(0.8),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD01)),
+                              color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD01)),
                           child: const Icon(
                             Icons.camera_alt_outlined,
                             color: Colors.white,
                           ),
                         )),
                     ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${commonImagePath}watermark1.png",
                           height: size.height / 3,
@@ -1556,96 +1610,97 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 ),
               ),
               SizedBox(
-                width: size.width * numD02,
+                width: size.width * AppDimensions.numD02,
               ),
               sharedPreferences!.getString(avatarKey).toString().isNotEmpty
                   ? Container(
                       padding: EdgeInsets.all(
-                        size.width * numD01,
+                        size.width * AppDimensions.numD01,
                       ),
                       decoration: const BoxDecoration(
-                          color: colorLightGrey, shape: BoxShape.circle),
+                          color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
                               sharedPreferences!
                                   .getString(avatarKey)
                                   .toString(),
-                              height: size.width * numD09,
-                              width: size.width * numD09,
+                              height: size.width * AppDimensions.numD09,
+                              width: size.width * AppDimensions.numD09,
                               fit: BoxFit.cover,
                               errorBuilder: (context, exception, stackTrace) {
                             return Center(
                               child: Image.asset(
                                 "${commonImagePath}rabbitLogo.png",
-                                height: size.width * numD09,
-                                width: size.width * numD09,
+                                height: size.width * AppDimensions.numD09,
+                                width: size.width * AppDimensions.numD09,
                                 fit: BoxFit.contain,
                               ),
                             );
                           })))
                   : Container(
                       padding: EdgeInsets.all(
-                        size.width * numD01,
+                        size.width * AppDimensions.numD01,
                       ),
-                      height: size.width * numD09,
-                      width: size.width * numD09,
+                      height: size.width * AppDimensions.numD09,
+                      width: size.width * AppDimensions.numD09,
                       decoration: const BoxDecoration(
-                          color: colorSwitchBack, shape: BoxShape.circle),
+                          color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Image.asset(
                           "${commonImagePath}rabbitLogo.png",
-                          height: size.width * numD09,
-                          width: size.width * numD09,
+                          height: size.width * AppDimensions.numD09,
+                          width: size.width * AppDimensions.numD09,
                         ),
                       ),
                     ),
             ],
           ),
           SizedBox(
-            height: size.width * numD018,
+            height: size.width * AppDimensions.numD018,
           ),
           Row(
             children: [
               Image.asset(
                 "${iconsPath}ic_clock.png",
-                height: size.width * numD038,
+                height: size.width * AppDimensions.numD038,
                 color: Colors.black,
               ),
               SizedBox(
-                width: size.width * numD012,
+                width: size.width * AppDimensions.numD012,
               ),
               Text(
                 "${dateTimeFormatter(dateTime: time, format: 'hh:mm a')}, ${dateTimeFormatter(dateTime: time, format: 'dd MMM yyyy')}",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD028,
-                    color: colorHint,
+                    fontSize: size.width * AppDimensions.numD028,
+                    color: AppColorTheme.colorHint,
                     fontWeight: FontWeight.normal),
               ),
               SizedBox(
-                width: size.width * numD018,
+                width: size.width * AppDimensions.numD018,
               ),
               Image.asset(
                 "${iconsPath}ic_location.png",
-                height: size.width * numD035,
+                height: size.width * AppDimensions.numD035,
                 color: Colors.black,
               ),
               SizedBox(
-                width: size.width * numD01,
+                width: size.width * AppDimensions.numD01,
               ),
               Flexible(
                 child: Padding(
-                  padding: EdgeInsets.only(right: size.width * numD13),
+                  padding:
+                      EdgeInsets.only(right: size.width * AppDimensions.numD13),
                   child: Text(
                     address.isNotEmpty ? address : "N/A",
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD028,
-                        color: colorHint,
+                        fontSize: size.width * AppDimensions.numD028,
+                        color: AppColorTheme.colorHint,
                         fontWeight: FontWeight.normal),
                   ),
                 ),
@@ -1653,7 +1708,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             ],
           ),
           SizedBox(
-            height: size.width * numD018,
+            height: size.width * AppDimensions.numD018,
           ),
         ],
       ),
@@ -1675,41 +1730,45 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
           child: Container(
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD03, vertical: size.width * numD03),
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD03),
             width: size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04))),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: size.width * numD008,
+                  height: size.width * AppDimensions.numD008,
                 ),
                 RichText(
                     text: TextSpan(
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: size.width * numD037,
+                          fontSize: size.width * AppDimensions.numD037,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.bold,
                         ),
@@ -1718,7 +1777,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: "Thanks, you've uploaded ",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
@@ -1760,13 +1819,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                     : '',
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD036,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                     ])),
                 // SizedBox(
-                //   height: size.width * numD008,
+                //   height: size.width * AppDimensions.numD008,
                 // ),
               ],
             ),
@@ -1792,41 +1851,44 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD03, vertical: size.width * numD03),
+              horizontal: size.width * AppDimensions.numD03,
+              vertical: size.width * AppDimensions.numD03),
           width: size.width,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade400),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD008,
+                height: size.width * AppDimensions.numD008,
               ),
               RichText(
                 text: TextSpan(
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: size.width * numD037,
+                      fontSize: size.width * AppDimensions.numD037,
                       fontFamily: "AirbnbCereal",
                       fontWeight: FontWeight.bold,
                     ),
@@ -1835,7 +1897,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: "Congratulations,",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
@@ -1843,15 +1905,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: ' $mediaHouseName',
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD036,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         text: " have purchased ",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
@@ -1859,15 +1921,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: mediaCount,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD036,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         text: " for ",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
@@ -1875,23 +1937,23 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: "$currencySymbol$amount",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD036,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                     ]),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 width: size.width,
                 child: commonElevatedButton(
                     "View Transaction Details",
                     size,
                     commonButtonTextStyle(size),
-                    commonButtonStyle(size, colorThemePink), () {
+                    commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                   callTransactionDetailApi(transactionId);
                 }),
               )
@@ -1921,41 +1983,44 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD03, vertical: size.width * numD03),
+              horizontal: size.width * AppDimensions.numD03,
+              vertical: size.width * AppDimensions.numD03),
           width: size.width,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade400),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD008,
+                height: size.width * AppDimensions.numD008,
               ),
               RichText(
                 text: TextSpan(
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: size.width * numD037,
+                      fontSize: size.width * AppDimensions.numD037,
                       fontFamily: "AirbnbCereal",
                       fontWeight: FontWeight.bold,
                     ),
@@ -1964,7 +2029,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: "Woohoo! We have paid",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
@@ -1972,15 +2037,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: " $currencySymbol$amount",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD036,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         text: " into your bank account. Please visit  ",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
@@ -1988,31 +2053,31 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         text: "My Earnings",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD036,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         text: " to view your transaction",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD036,
+                            fontSize: size.width * AppDimensions.numD036,
                             color: Colors.black,
                             fontWeight: FontWeight.normal),
                       ),
                     ]),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 width: size.width,
                 child: commonElevatedButton(
                     "View My Earnings",
                     size,
                     commonButtonTextStyle(size),
-                    commonButtonStyle(size, colorThemePink), () {
+                    commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => MyEarningScreen(
                             openDashboard: false,
@@ -2033,8 +2098,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       children: [
         /*profilePicWidget(),*/
         Container(
-          margin: EdgeInsets.only(top: size.width * numD04),
-          padding: EdgeInsets.all(size.width * numD03),
+          margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+          padding: EdgeInsets.all(size.width * AppDimensions.numD03),
           decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -2043,49 +2108,52 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ]),
           child: Image.asset(
             "${commonImagePath}rabbitLogo.png",
-            width: size.width * numD07,
+            width: size.width * AppDimensions.numD07,
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
-          margin: EdgeInsets.only(top: size.width * numD06),
+          margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Text(
                 "Congrats, you’ve received $currencySymbol$amount from Reuters Media ",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 width: size.width,
                 child: commonElevatedButton(
                     "View Transaction Details",
                     size,
                     commonButtonTextStyle(size),
-                    commonButtonStyle(size, colorThemePink),
+                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                     () {}),
               )
             ],
@@ -2097,7 +2165,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
   Widget profilePicWidget(var size) {
     return Container(
-        //margin: EdgeInsets.only(top: size.width * numD03),
+        //margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
         decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
@@ -2106,14 +2174,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           clipBehavior: Clip.antiAlias,
           child: Image.network(
             widget.taskDetail?.task.mediaHouse.profileImage ?? "",
-            width: size.width * numD09,
-            height: size.width * numD09,
+            width: size.width * AppDimensions.numD09,
+            height: size.width * AppDimensions.numD09,
             fit: BoxFit.contain,
             errorBuilder: (ctx, obj, stace) {
               return Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                width: size.width * numD09,
-                height: size.width * numD09,
+                width: size.width * AppDimensions.numD09,
+                height: size.width * AppDimensions.numD09,
               );
             },
           ),
@@ -2126,42 +2194,45 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       children: [
         profilePicWidget(size),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade400),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD023,
+                height: size.width * AppDimensions.numD023,
               ),
               Text(
                 "Do you have additional pictures related to the task?",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.normal),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Row(
                 children: [
                   Expanded(
                       child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: ElevatedButton(
                       onPressed: () {
@@ -2183,37 +2254,37 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: item.requestStatus.isEmpty
-                              ? colorThemePink
+                              ? AppColorTheme.colorThemePink
                               : item.requestStatus == "true"
                                   ? Colors.grey
                                   : Colors.transparent,
                           shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               side: item.requestStatus == "true" ||
                                       item.requestStatus.isEmpty
                                   ? BorderSide.none
                                   : const BorderSide(
                                       color: Colors.black, width: 1))),
                       child: Text(
-                        yesText,
+                        AppStringsNew2.yesText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD04,
+                            fontSize: size.width * AppDimensions.numD04,
                             color: item.requestStatus == "true" ||
                                     item.requestStatus.isEmpty
                                 ? Colors.white
-                                : colorLightGreen,
+                                : AppColorTheme.colorLightGreen,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
                   )),
                   SizedBox(
-                    width: size.width * numD04,
+                    width: size.width * AppDimensions.numD04,
                   ),
                   Expanded(
                       child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: ElevatedButton(
                       onPressed: () {
@@ -2252,18 +2323,18 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                   ? Colors.grey
                                   : Colors.black,
                           shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               side: item.requestStatus == "false" ||
                                       item.requestStatus.isEmpty
                                   ? BorderSide.none
                                   : const BorderSide(
                                       color: Colors.black, width: 1))),
                       child: Text(
-                        noText,
+                        AppStringsNew2.noText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD04,
+                            fontSize: size.width * AppDimensions.numD04,
                             color: item.requestStatus == "false" ||
                                     item.requestStatus.isEmpty
                                 ? Colors.white
@@ -2275,7 +2346,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 ],
               ),
               SizedBox(
-                height: size.width * numD023,
+                height: size.width * AppDimensions.numD023,
               ),
             ],
           ),
@@ -2289,7 +2360,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          // margin: EdgeInsets.only(top: size.width * numD03),
+          // margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
           decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -2298,36 +2369,40 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
           child: Container(
-            // margin: EdgeInsets.only(top: size.width * numD03),
+            // margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD03, vertical: size.width * numD03),
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD03),
             width: size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04))),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Text(
               "Thank you ever so much for a splendid job well done!",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD035,
+                  fontSize: size.width * AppDimensions.numD035,
                   color: Colors.black,
                   fontWeight: FontWeight.normal),
             ),
@@ -2341,7 +2416,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       ManageTaskChatModel item, bool isMakeCounter, var size) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: size.width * numD026,
+        vertical: size.width * AppDimensions.numD026,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -2359,37 +2434,41 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   child: ClipOval(
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
-                      padding: EdgeInsets.all(size.width * numD01),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       child: Image.asset(
                         "${commonImagePath}ic_black_rabbit.png",
                         color: Colors.white,
-                        width: size.width * numD07,
-                        height: size.width * numD07,
+                        width: size.width * AppDimensions.numD07,
+                        height: size.width * AppDimensions.numD07,
                       ),
                     ),
                   )),
               SizedBox(
-                width: size.width * numD025,
+                width: size.width * AppDimensions.numD025,
               ),
               Expanded(
                   child: Container(
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD05,
-                    vertical: size.width * numD02),
+                    horizontal: size.width * AppDimensions.numD05,
+                    vertical: size.width * AppDimensions.numD02),
                 width: size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: colorGoogleButtonBorder),
+                    border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                     borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
                     )),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: size.width * numD009,
+                      height: size.width * AppDimensions.numD009,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -2409,7 +2488,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                       "Well done! You've received\nan offer from",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD036,
+                                      fontSize:
+                                          size.width * AppDimensions.numD036,
                                       color: Colors.black,
                                       fontWeight: FontWeight.normal),
                                 ),
@@ -2417,20 +2497,22 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                   text: " ${item.mediaHouseName}",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD036,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD036,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w600),
                                 ),
                               ])),
                         ),
                         Container(
-                            margin: EdgeInsets.only(left: size.width * numD01),
-                            width: size.width * numD13,
-                            height: size.width * numD13,
+                            margin: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD01),
+                            width: size.width * AppDimensions.numD13,
+                            height: size.width * AppDimensions.numD13,
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD03),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03),
                                 boxShadow: [
                                   BoxShadow(
                                       color: Colors.grey.shade200,
@@ -2441,14 +2523,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               child: Image.network(
                                 item.mediaHouseImage,
                                 fit: BoxFit.contain,
-                                height: size.width * numD20,
-                                width: size.width * numD20,
+                                height: size.width * AppDimensions.numD20,
+                                width: size.width * AppDimensions.numD20,
                                 errorBuilder: (context, exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,
-                                    width: size.width * numD20,
-                                    height: size.width * numD20,
+                                    width: size.width * AppDimensions.numD20,
+                                    height: size.width * AppDimensions.numD20,
                                   );
                                 },
                               ),
@@ -2456,16 +2538,17 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                     Container(
                       width: double.infinity,
                       alignment: Alignment.center,
-                      padding: EdgeInsets.all(size.width * numD012),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD012),
                       decoration: BoxDecoration(
-                          color: colorLightGrey,
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD03),
+                          color: AppColorTheme.colorLightGrey,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD03),
                           border: Border.all(
                               color: const Color(0xFFd4dedd), width: 2)),
                       child: Column(
@@ -2474,8 +2557,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           Text(
                             "Offered Price",
                             style: TextStyle(
-                                fontSize: size.width * numD035,
-                                color: colorLightGreen,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: AppColorTheme.colorLightGreen,
                                 fontFamily: 'AirbnbCereal'),
                           ),
                           Text(
@@ -2483,8 +2566,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 ? ""
                                 : "$currencySymbol${formatDouble(double.tryParse(item.hopperPrice) ?? 0.0)}",
                             style: TextStyle(
-                                fontSize: size.width * numD045,
-                                color: colorLightGreen,
+                                fontSize: size.width * AppDimensions.numD045,
+                                color: AppColorTheme.colorLightGreen,
                                 fontWeight: FontWeight.w900,
                                 fontFamily: 'AirbnbCereal'),
                           ),
@@ -2492,7 +2575,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD01,
+                      height: size.width * AppDimensions.numD01,
                     )
                   ],
                 ),
@@ -2503,7 +2586,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                  margin: EdgeInsets.only(top: size.width * numD06),
+                  margin:
+                      EdgeInsets.only(top: size.width * AppDimensions.numD06),
                   decoration: BoxDecoration(
                       color: Colors.black,
                       shape: BoxShape.circle,
@@ -2513,38 +2597,42 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   child: ClipOval(
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
-                      padding: EdgeInsets.all(size.width * numD01),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       child: Image.asset(
                         "${commonImagePath}ic_black_rabbit.png",
                         color: Colors.white,
-                        width: size.width * numD07,
-                        height: size.width * numD07,
+                        width: size.width * AppDimensions.numD07,
+                        height: size.width * AppDimensions.numD07,
                       ),
                     ),
                   )),
               SizedBox(
-                width: size.width * numD025,
+                width: size.width * AppDimensions.numD025,
               ),
               Expanded(
                   child: Container(
-                margin: EdgeInsets.only(top: size.width * numD06),
+                margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD05,
-                    vertical: size.width * numD02),
+                    horizontal: size.width * AppDimensions.numD05,
+                    vertical: size.width * AppDimensions.numD02),
                 width: size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: colorGoogleButtonBorder),
+                    border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                     borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
                     )),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: size.width * numD01,
+                      height: size.width * AppDimensions.numD01,
                     ),
                     RichText(
                         text: TextSpan(
@@ -2557,7 +2645,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             text: "Congratulations, ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -2565,15 +2653,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             text: item.mediaHouseName,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD036,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w600),
                           ),
                           TextSpan(
                             text: " has purchased your content for ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -2583,28 +2671,28 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 : "$currencySymbol${formatDouble(double.tryParse(item.hopperPrice) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD036,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w600),
                           ),
                         ])),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: size.width * numD13,
+                          height: size.width * AppDimensions.numD13,
                           width: size.width,
                           child: commonElevatedButton(
                               "View Transaction Details ",
                               size,
                               commonButtonTextStyle(size),
-                              commonButtonStyle(size, colorThemePink), () {
+                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                             context.read<TaskBloc>().add(
                                 GetContentTransactionDetailsEvent(
                                     roomId: widget.roomId,
@@ -2613,7 +2701,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           }),
                         ),
                         SizedBox(
-                          height: size.width * numD01,
+                          height: size.width * AppDimensions.numD01,
                         ),
                       ],
                     )
@@ -2626,7 +2714,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                  margin: EdgeInsets.only(top: size.width * numD06),
+                  margin:
+                      EdgeInsets.only(top: size.width * AppDimensions.numD06),
                   decoration: BoxDecoration(
                       color: Colors.black,
                       shape: BoxShape.circle,
@@ -2636,44 +2725,48 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   child: ClipOval(
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
-                      padding: EdgeInsets.all(size.width * numD01),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       child: Image.asset(
                         "${commonImagePath}ic_black_rabbit.png",
                         color: Colors.white,
-                        width: size.width * numD07,
-                        height: size.width * numD07,
+                        width: size.width * AppDimensions.numD07,
+                        height: size.width * AppDimensions.numD07,
                       ),
                     ),
                   )),
               SizedBox(
-                width: size.width * numD025,
+                width: size.width * AppDimensions.numD025,
               ),
               Expanded(
                   child: Container(
-                margin: EdgeInsets.only(top: size.width * numD06),
+                margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD05,
-                    vertical: size.width * numD02),
+                    horizontal: size.width * AppDimensions.numD05,
+                    vertical: size.width * AppDimensions.numD02),
                 width: size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: colorGoogleButtonBorder),
+                    border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                     borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
                     )),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: size.width * numD01,
+                      height: size.width * AppDimensions.numD01,
                     ),
                     RichText(
                         text: TextSpan(
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: size.width * numD037,
+                              fontSize: size.width * AppDimensions.numD037,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.bold,
                             ),
@@ -2682,7 +2775,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             text: "Woohoo! We have paid ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -2692,15 +2785,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 : "$currencySymbol${formatDouble(double.tryParse(item.payableHopperPrice) ?? 0.0)}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD036,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w600),
                           ),
                           TextSpan(
                             text: " into your bank account. Please visit ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -2708,33 +2801,33 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             text: "My Earnings",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD036,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w600),
                           ),
                           TextSpan(
                             text: " to view your transaction ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal),
                           )
                         ])),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: size.width * numD13,
+                          height: size.width * AppDimensions.numD13,
                           width: size.width,
                           child: commonElevatedButton(
                               "View My Earnings",
                               size,
                               commonButtonTextStyle(size),
-                              commonButtonStyle(size, colorThemePink), () {
+                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => MyEarningScreen(
                                       openDashboard: false,
@@ -2743,7 +2836,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           }),
                         ),
                         SizedBox(
-                          height: size.width * numD01,
+                          height: size.width * AppDimensions.numD01,
                         ),
                       ],
                     )
@@ -2774,38 +2867,42 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 child: ClipOval(
                   clipBehavior: Clip.antiAlias,
                   child: Padding(
-                    padding: EdgeInsets.all(size.width * numD01),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
                       color: Colors.white,
-                      width: size.width * numD07,
-                      height: size.width * numD07,
+                      width: size.width * AppDimensions.numD07,
+                      height: size.width * AppDimensions.numD07,
                     ),
                   ),
                 )),
             SizedBox(
-              width: size.width * numD025,
+              width: size.width * AppDimensions.numD025,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(bottom: size.width * numD06),
+              margin:
+                  EdgeInsets.only(bottom: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: colorGoogleButtonBorder),
+                  border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
                   )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   RichText(
                       text: TextSpan(children: [
@@ -2813,13 +2910,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       text: "Rate your experience with PressHop",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD036,
+                          fontSize: size.width * AppDimensions.numD036,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
                   ])),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   RatingBar(
                     glowRadius: 0,
@@ -2832,11 +2929,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       ratings = value;
                       setState(() {});
                     },
-                    itemSize: size.width * numD09,
+                    itemSize: size.width * AppDimensions.numD09,
                     itemCount: 5,
                     initialRating: ratings,
                     allowHalfRating: true,
-                    itemPadding: EdgeInsets.only(left: size.width * numD03),
+                    itemPadding: EdgeInsets.only(
+                        left: size.width * AppDimensions.numD03),
                   ),
                   SizedBox(
                     height: size.width * 0.04,
@@ -2849,7 +2947,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         fontWeight: FontWeight.w700),
                   ),
                   SizedBox(
-                    height: size.width * numD018,
+                    height: size.width * AppDimensions.numD018,
                   ),
                   Wrap(
                       children: List<Widget>.generate(intList.length, (index) {
@@ -2861,7 +2959,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         labelStyle: TextStyle(
                             color: dataList.contains(intList[index])
                                 ? Colors.white
-                                : colorGrey6),
+                                : AppColorTheme.colorGrey6),
                         onSelected: (selected) {
                           if (selected) {
                             for (int i = 0; i < intList.length; i++) {
@@ -2882,41 +2980,41 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           }
                           setState(() {});
                         },
-                        selectedColor: colorThemePink,
-                        disabledColor: colorGreyChat.withOpacity(.3),
+                        selectedColor: AppColorTheme.colorThemePink,
+                        disabledColor: AppColorTheme.colorGreyChat.withOpacity(.3),
                         selected:
                             dataList.contains(intList[index]) ? true : false,
                       ),
                     );
                   })),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
                   Stack(
                     children: [
                       TextFormField(
                         controller: ratingReviewController1,
-                        cursorColor: colorTextFieldIcon,
+                        cursorColor: AppColorTheme.colorTextFieldIcon,
                         keyboardType: TextInputType.multiline,
                         maxLines: 6,
                         readOnly: false,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                         ),
                         onChanged: (v) {
                           onTextChanged();
                         },
                         decoration: InputDecoration(
-                          hintText: textData,
+                          hintText: AppStringsNew2.textData,
                           contentPadding: EdgeInsets.only(
-                              left: size.width * numD08,
-                              right: size.width * numD02,
-                              top: size.width * numD075),
+                              left: size.width * AppDimensions.numD08,
+                              right: size.width * AppDimensions.numD02,
+                              top: size.width * AppDimensions.numD075),
                           hintStyle: TextStyle(
                               color: Colors.grey.shade400,
                               wordSpacing: 2,
-                              fontSize: size.width * numD035),
+                              fontSize: size.width * AppDimensions.numD035),
                           disabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
@@ -2948,8 +3046,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            top: size.width * numD038,
-                            left: size.width * numD014),
+                            top: size.width * AppDimensions.numD038,
+                            left: size.width * AppDimensions.numD014),
                         child: Image.asset(
                           "${iconsPath}docs.png",
                           width: size.width * 0.06,
@@ -2959,32 +3057,34 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: size.width * numD017),
+                  SizedBox(height: size.width * AppDimensions.numD017),
                   ratingReviewController1.text.isEmpty
                       ? const Text(
                           "Required",
                           style: TextStyle(
                               fontSize: 11,
-                              color: colorThemePink,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w400),
                         )
                       : Container(),
-                  SizedBox(height: size.width * numD04),
+                  SizedBox(height: size.width * AppDimensions.numD04),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
-                        isRatingGiven ? "Thanks a Ton" : submitText,
+                        isRatingGiven
+                            ? "Thanks a Ton"
+                            : AppStringsNew2.submitText,
                         size,
                         isRatingGiven
                             ? TextStyle(
                                 color: Colors.black,
-                                fontSize: size.width * numD037,
+                                fontSize: size.width * AppDimensions.numD037,
                                 fontFamily: "AirbnbCereal",
                                 fontWeight: FontWeight.bold)
                             : commonButtonTextStyle(size),
                         commonButtonStyle(
-                            size, isRatingGiven ? Colors.grey : colorThemePink),
+                            size, isRatingGiven ? Colors.grey : AppColorTheme.colorThemePink),
                         !isRatingGiven
                             ? () {
                                 if (ratingReviewController1.text.isNotEmpty) {
@@ -3035,7 +3135,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           text: "Please refer to our ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               lineHeight: 1.2,
                               fontWeight: FontWeight.w400),
@@ -3044,8 +3144,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             text: "Terms & Conditions. ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: AppColorTheme.colorThemePink,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                             recognizer: TapGestureRecognizer()
@@ -3059,7 +3159,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           text: "If you have any questions, please ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w400),
                         ),
@@ -3067,8 +3167,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             text: "contact ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD035,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w600),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
@@ -3081,7 +3181,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               "our helpful teams who are available 24x7 to assist you. Thank you",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               lineHeight: 1.4,
                               fontWeight: FontWeight.w400),
@@ -3320,16 +3420,17 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(size.width * numD04),
-                    topRight: Radius.circular(size.width * numD04))),
+                    topLeft: Radius.circular(size.width * AppDimensions.numD04),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   margin: EdgeInsets.only(
-                      left: size.width * numD06,
-                      right: size.width * numD03,
-                      top: size.width * numD018),
+                      left: size.width * AppDimensions.numD06,
+                      right: size.width * AppDimensions.numD03,
+                      top: size.width * AppDimensions.numD018),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -3337,7 +3438,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         "Select Option",
                         style: TextStyle(
                             color: Colors.black,
-                            fontSize: size.width * numD048,
+                            fontSize: size.width * AppDimensions.numD048,
                             fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
@@ -3347,16 +3448,18 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             Navigator.pop(context);
                           },
                           icon: Icon(Icons.close_rounded,
-                              color: Colors.black, size: size.width * numD08)),
+                              color: Colors.black,
+                              size: size.width * AppDimensions.numD08)),
                     ],
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
                 Container(
                   margin: EdgeInsets.only(
-                      left: size.width * numD06, right: size.width * numD06),
+                      left: size.width * AppDimensions.numD06,
+                      right: size.width * AppDimensions.numD06),
                   child: Row(
                     children: [
                       Expanded(
@@ -3371,24 +3474,27 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(color: Colors.black),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD02),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD02),
                               ),
-                              height: size.width * numD25,
-                              padding: EdgeInsets.all(size.width * numD02),
+                              height: size.width * AppDimensions.numD25,
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.upload, size: size.width * numD08),
+                                  Icon(Icons.upload,
+                                      size: size.width * AppDimensions.numD08),
                                   SizedBox(
-                                    height: size.width * numD03,
+                                    height: size.width * AppDimensions.numD03,
                                   ),
                                   Text(
                                     "My Gallery",
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         fontFamily: "AirbnbCereal",
                                         fontWeight: FontWeight.bold),
                                   )
@@ -3410,27 +3516,29 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(color: Colors.black),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD02),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD02),
                               ),
-                              height: size.width * numD25,
-                              padding: EdgeInsets.all(size.width * numD04),
+                              height: size.width * AppDimensions.numD25,
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD04),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.file_copy_outlined,
-                                    size: size.width * numD08,
+                                    size: size.width * AppDimensions.numD08,
                                   ),
                                   SizedBox(
-                                    height: size.width * numD03,
+                                    height: size.width * AppDimensions.numD03,
                                   ),
                                   Text(
                                     "My Files",
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         fontFamily: "AirbnbCereal",
                                         fontWeight: FontWeight.bold),
                                   )
@@ -3442,7 +3550,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD06,
+                  height: size.width * AppDimensions.numD06,
                 ),
               ],
             ),
@@ -3459,15 +3567,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   //           backgroundColor: Colors.transparent,
   //           elevation: 0,
   //           contentPadding: EdgeInsets.zero,
-  //           insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+  //           insetPadding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD02),
   //           content: StatefulBuilder(
   //               builder: (BuildContext context, StateSetter setState) {
   //             return Container(
-  //               width: size.width * num1,
-  //               height: size.height * numD18,
+  //               width: size.width * AppDimensions.num1,
+  //               height: size.height * AppDimensions.numD18,
   //               decoration: BoxDecoration(
   //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.circular(size.width * numD025),
+  //                 borderRadius: BorderRadius.circular(size.width * AppDimensions.numD025),
   //               ),
   //               child: Column(
   //                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -3481,7 +3589,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   //                         style: TextStyle(
   //                           color: Colors.black,
   //                           fontSize:
-  //                               MediaQuery.of(context).size.width * numD045,
+  //                               MediaQuery.of(context).size.width * AppDimensions.numD045,
   //                           fontWeight: FontWeight.w500,
   //                         ),
   //                         textAlign: TextAlign.center,
@@ -3493,8 +3601,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   //                           onTap: () => Navigator.pop(context),
   //                           child: Icon(
   //                             Icons.highlight_remove,
-  //                             color: colorThemePink,
-  //                             size: size.width * numD07,
+  //                             color: AppColorTheme.colorThemePink,
+  //                             size: size.width * AppDimensions.numD07,
   //                           ),
   //                         ),
   //                       ),
@@ -3507,13 +3615,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   //                     mainAxisAlignment: MainAxisAlignment.center,
   //                     children: [
   //                       SizedBox(
-  //                         width: size.width * numD45,
-  //                         height: size.height * numD055,
+  //                         width: size.width * AppDimensions.numD45,
+  //                         height: size.height * AppDimensions.numD055,
   //                         child: commonElevatedButton(
   //                             "Photo Gallery",
   //                             size,
   //                             commonButtonTextStyle(size),
-  //                             commonButtonStyle(size, colorThemePink), () {
+  //                             commonButtonStyle(size, AppColorTheme.colorThemePink), () {
   //                           Navigator.pop(context);
   //                           selectMultipleMediaList.clear();
   //                           getMultipleImages("image");
@@ -3525,13 +3633,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   //                         width: size.width * 0.02,
   //                       ),
   //                       SizedBox(
-  //                         width: size.width * numD45,
-  //                         height: size.height * numD055,
+  //                         width: size.width * AppDimensions.numD45,
+  //                         height: size.height * AppDimensions.numD055,
   //                         child: commonElevatedButton(
   //                             "My File",
   //                             size,
   //                             commonButtonTextStyle(size),
-  //                             commonButtonStyle(size, colorThemePink), () {
+  //                             commonButtonStyle(size, AppColorTheme.colorThemePink), () {
   //                           Navigator.pop(context);
   //                           selectMultipleMediaList.clear();
   //                           getMultipleImages("file");
@@ -3615,7 +3723,7 @@ class _LoadingDialogContentState extends State<LoadingDialogContent> {
               text,
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD035,
+                  fontSize: size.width * AppDimensions.numD035,
                   color: const Color.fromARGB(255, 204, 208, 208),
                   fontWeight: FontWeight.normal),
             ),
