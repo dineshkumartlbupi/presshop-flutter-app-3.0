@@ -18,15 +18,23 @@ class ContentRepositoryImpl implements ContentRepository {
   });
 
   @override
-  Future<Either<Failure, List<ContentItem>>> getMyContent(
-      {int page = 1,
-      int limit = 20,
-      Map<String, dynamic> params = const {}}) async {
+  Future<Either<Failure, List<ContentItem>>> getMyContent({
+    int page = 1,
+    int limit = 20,
+    Map<String, dynamic> params = const {},
+    bool showLoader = true,
+    String type = 'my',
+  }) async {
     if (await networkInfo.isConnected) {
       try {
-        final content = await remoteDataSource.getMyContent(
-            page: page, limit: limit, params: params);
-        return Right(content);
+        final remoteContent = await remoteDataSource.getMyContent(
+          page: page,
+          limit: limit,
+          params: params,
+          showLoader: showLoader,
+          type: type,
+        );
+        return Right(remoteContent);
       } on Failure catch (failure) {
         return Left(failure);
       } catch (e) {

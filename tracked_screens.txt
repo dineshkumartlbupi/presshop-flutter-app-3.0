@@ -1,0 +1,15 @@
+lib/core/analytics/analytics_mixin.dart
+lib/features/account_settings/presentation/pages/faq_screen.dart
+lib/features/authentication/presentation/pages/ForgotPasswordScreen.dart
+lib/features/authentication/presentation/pages/LoginScreen.dart
+lib/features/authentication/presentation/pages/WelcomeScreen.dart
+lib/features/camera/presentation/pages/CustomGallary.dart
+lib/features/camera/presentation/pages/PreviewScreen.dart
+lib/features/chat/presentation/pages/ChatListingScreen.dart
+lib/features/chatbot/presentation/pages/chatBotScreen.dart
+lib/features/dashboard/presentation/pages/Dashboard.dart
+lib/features/profile/presentation/pages/my_profile_screen.dart
+lib/features/referral/presentation/pages/refer_screen.dart
+lib/features/splash/presentation/pages/splash_screen.dart
+lib/features/task/presentation/pages/broadcast/BroardcastScreen.dart
+lib/features/task/presentation/pages/preview_media/manageTaskPreviewMediaScreen.dart

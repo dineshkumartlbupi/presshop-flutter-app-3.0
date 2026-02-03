@@ -9,14 +9,10 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:presshop/features/publish/data/models/category_data_model.dart';
-import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import '../../../../core/di/injection_container.dart';
 
 // ignore: must_be_immutable
@@ -882,4 +878,3 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     }
   }
 }
-

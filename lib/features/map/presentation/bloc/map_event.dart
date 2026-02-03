@@ -9,7 +9,9 @@ abstract class MapEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetCurrentLocationEvent extends MapEvent {}
+class GetCurrentLocationEvent extends MapEvent {
+  const GetCurrentLocationEvent();
+}
 
 class GetRouteEvent extends MapEvent {
   final LatLng start;
@@ -75,11 +77,17 @@ class SetSelectedPositionEvent extends MapEvent {
   List<Object> get props => [position];
 }
 
-class ToggleAlertPanelEvent extends MapEvent {}
+class ToggleAlertPanelEvent extends MapEvent {
+  const ToggleAlertPanelEvent();
+}
 
-class ClearSelectedMarkerEvent extends MapEvent {}
+class ClearSelectedMarkerEvent extends MapEvent {
+  const ClearSelectedMarkerEvent();
+}
 
-class ClearSelectedPolygonEvent extends MapEvent {}
+class ClearSelectedPolygonEvent extends MapEvent {
+  const ClearSelectedPolygonEvent();
+}
 
 class UpdateFiltersEvent extends MapEvent {
   final String? alertType;
@@ -135,13 +143,21 @@ class SetMapSelectedLocationEvent extends MapEvent {
   List<Object> get props => [position, address, isOrigin];
 }
 
-class ClearMapSelectedLocationEvent extends MapEvent {}
+class ClearMapSelectedLocationEvent extends MapEvent {
+  const ClearMapSelectedLocationEvent();
+}
 
-class StartNavigationEvent extends MapEvent {}
+class StartNavigationEvent extends MapEvent {
+  const StartNavigationEvent();
+}
 
-class StopNavigationEvent extends MapEvent {}
+class StopNavigationEvent extends MapEvent {
+  const StopNavigationEvent();
+}
 
-class ToggleGetDirectionCardEvent extends MapEvent {}
+class ToggleGetDirectionCardEvent extends MapEvent {
+  const ToggleGetDirectionCardEvent();
+}
 
 class SetDestinationSelectionModeEvent extends MapEvent {
   final bool isSelectionMode;
@@ -156,7 +172,9 @@ class SetDestinationSelectionModeEvent extends MapEvent {
   List<Object> get props => [isSelectionMode, isOrigin];
 }
 
-class ClearRouteEvent extends MapEvent {}
+class ClearRouteEvent extends MapEvent {
+  const ClearRouteEvent();
+}
 
 class UpdatePulseCircleEvent extends MapEvent {
   final double radiusMultiplier;

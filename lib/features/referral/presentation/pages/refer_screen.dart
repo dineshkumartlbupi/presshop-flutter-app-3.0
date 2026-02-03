@@ -152,43 +152,49 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Column(
-                          children: [
-                            Text("Your Friends Earn",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD04,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold)),
-                            ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD06),
-                              child: Image.asset(
-                                "${iconsPath}amount_100.png",
-                                height: size.width * numD40,
-                                width: size.width * numD40,
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text("Your Friends Earn",
+                                  textAlign: TextAlign.center,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD04,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD06),
+                                child: Image.asset(
+                                  "${iconsPath}amount_100.png",
+                                  height: size.width * numD40,
+                                  width: size.width * numD40,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        Column(
-                          children: [
-                            Text("You Earn",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD04,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold)),
-                            ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD06),
-                              child: Image.asset(
-                                "${iconsPath}amount_5.png",
-                                height: size.width * numD40,
-                                width: size.width * numD40,
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text("You Earn",
+                                  textAlign: TextAlign.center,
+                                  style: commonTextStyle(
+                                      size: size,
+                                      fontSize: size.width * numD04,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(size.width * numD06),
+                                child: Image.asset(
+                                  "${iconsPath}amount_5.png",
+                                  height: size.width * numD40,
+                                  width: size.width * numD40,
+                                ),
                               ),
-                            )
-                          ],
+                            ],
+                          ),
                         )
                       ]),
                 ),
@@ -209,14 +215,22 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                     margin: EdgeInsets.only(
                         left: size.width * numD03, right: size.width * numD03),
                     child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween, // Ensure spacing
                       children: [
-                        Text(sharedPreferences!.getString(referralCode) ?? "",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD044,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold)),
-                        Spacer(),
+                        Expanded(
+                            child: Text(
+                                sharedPreferences!.getString(referralCode) ??
+                                    "",
+                                overflow:
+                                    TextOverflow.ellipsis, // Valid for Text
+                                style: commonTextStyle(
+                                    size: size,
+                                    fontSize: size.width * numD044,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold))),
+                        // Spacer(), // Removed Spacer as we use MainAxisAlignment.spaceBetween and Expanded
+
                         InkWell(
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: refrralCode));

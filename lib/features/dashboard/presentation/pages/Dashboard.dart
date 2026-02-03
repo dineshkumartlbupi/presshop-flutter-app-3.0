@@ -126,6 +126,7 @@ class DashboardState extends State<Dashboard>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUpdateAndShowPopup();
     });
+    // Initialize screens once
     _updateBottomNavigationScreens();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -209,7 +210,7 @@ class DashboardState extends State<Dashboard>
 
   void _updateBottomNavigationScreens() {
     bottomNavigationScreens = <Widget>[
-      MyContentPage(hideLeading: true),
+      MyContentPage(),
       MyTaskScreen(hideLeading: true),
       CameraScreen(
         key: _cameraKey,
@@ -327,8 +328,7 @@ class DashboardState extends State<Dashboard>
         debugPrint("commonID-->$id");
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => MyContentPage(hideLeading: false)),
+          MaterialPageRoute(builder: (context) => MyContentPage()),
         );
       } else if (link.split("&").last == "type=Group") {
         String groupId = link.substring(link.lastIndexOf("?") + 1, link.length);
@@ -926,7 +926,7 @@ class DashboardState extends State<Dashboard>
 
             isGetLatLong = false;
             callUpdateCurrentData1();
-            _updateBottomNavigationScreens();
+            // Removed _updateBottomNavigationScreens() to prevent recreation of tab screens
             setState(() {});
 
             if (alertDialog != null) {

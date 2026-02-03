@@ -70,6 +70,8 @@ void main() {
 
     // act
     await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pump(
+        const Duration(milliseconds: 600)); // Advance past the InitState delay
     await tester.pumpAndSettle(); // allow everything to settle
 
     // assert

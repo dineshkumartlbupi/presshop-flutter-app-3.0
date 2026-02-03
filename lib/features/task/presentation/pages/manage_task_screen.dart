@@ -50,6 +50,8 @@ import 'package:presshop/features/account_settings/presentation/pages/contact_us
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 // ignore: must_be_immutable
 class ManageTaskScreen extends StatefulWidget {
@@ -79,7 +81,8 @@ class ManageTaskScreen extends StatefulWidget {
   }
 }
 
-class ManageTaskScreenState extends State<ManageTaskScreen> {
+class ManageTaskScreenState extends State<ManageTaskScreen>
+    with AnalyticsPageMixin {
   late Size size;
 
   late IO.Socket socket;
@@ -125,6 +128,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen> {
   //     curve: Curves.fastOutSlowIn,
   //   );
   // }
+
+  @override
+  String get pageName => PageNames.manageContent;
 
   @override
   void initState() {

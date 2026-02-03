@@ -18,5 +18,5 @@ class DeleteBankParams {
   final String id;
   final String stripeBankId;
 
-  DeleteBankParams({required this.id, required this.stripeBankId});
+  const DeleteBankParams({required this.id, required this.stripeBankId});
 }

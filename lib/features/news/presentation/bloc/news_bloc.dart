@@ -49,10 +49,19 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     GetAggregatedNewsEvent event,
     Emitter<NewsState> emit,
   ) async {
+    double lat = event.lat;
+    double lng = event.lng;
+
+    // Fallback to shared preferences if location is not provided
+    if (lat == 0.0 && lng == 0.0) {
+      lat = sharedPreferences.getDouble(currentLat) ?? 0.0;
+      lng = sharedPreferences.getDouble(currentLon) ?? 0.0;
+    }
+
     emit(state.copyWith(isLoading: true, isProcessing: false));
     final result = await getAggregatedNews(GetAggregatedNewsParams(
-      lat: event.lat,
-      lng: event.lng,
+      lat: lat,
+      lng: lng,
       km: event.km,
       category: event.category,
       alertType: event.alertType,

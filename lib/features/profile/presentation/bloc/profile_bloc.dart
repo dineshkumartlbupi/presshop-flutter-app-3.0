@@ -6,6 +6,8 @@ import '../../domain/usecases/upload_profile_image.dart';
 import '../../domain/usecases/change_password.dart';
 import '../../domain/usecases/check_username.dart';
 import '../../domain/usecases/get_avatars.dart';
+import 'package:presshop/core/utils/app_logger.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
@@ -52,7 +54,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final result =
         await getProfileData(GetProfileParams(showLoader: event.showLoader));
     result.fold(
-      (failure) => emit(ProfileError(failure.message)),
+      (failure) {
+        AppLogger.error("Failed to fetch profile: ${failure.message}",
+            trackAnalytics: true);
+        emit(ProfileError(failure.message));
+      },
       (profile) => emit(ProfileLoaded(profile)),
     );
   }
@@ -65,8 +71,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final result =
         await updateProfileData(UpdateProfileParams(data: event.data));
     result.fold(
-      (failure) => emit(ProfileError(failure.message)),
-      (profile) => emit(ProfileUpdated(profile)),
+      (failure) {
+        AppLogger.error("Failed to update profile: ${failure.message}",
+            trackAnalytics: true);
+        emit(ProfileError(failure.message));
+      },
+      (profile) {
+        AppLogger.trackEvent(EventNames.profileUpdated, parameters: {
+          'user_id': profile.id,
+        });
+        emit(ProfileUpdated(profile));
+      },
     );
   }
 

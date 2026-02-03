@@ -22,6 +22,7 @@ import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:presshop/core/core_export.dart';
 
+import 'camera_controller_builder.dart';
 import 'camera_event.dart';
 import 'camera_state.dart';
 
@@ -31,12 +32,20 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   // Duration? _stopDurationDifference;
   // double _currentZoom = 1.0;
 
+  // Dependency Injection for testing
+  final CameraControllerBuilder _cameraControllerBuilder;
+
   // Location
   final LocationService _locationService;
   double _latitude = 0;
   double _longitude = 0;
 
-  CameraBloc(this._locationService) : super(const CameraState()) {
+  CameraBloc(this._locationService,
+      {CameraState? initialState,
+      CameraControllerBuilder? cameraControllerBuilder})
+      : _cameraControllerBuilder =
+            cameraControllerBuilder ?? const CameraControllerBuilder(),
+        super(initialState ?? const CameraState()) {
     on<CameraInitializeEvent>(_onInitialize);
     on<CameraSwitchEvent>(_onSwitchCamera);
     on<CameraFlashToggleEvent>(_onToggleFlash);
@@ -128,7 +137,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // Dispose previous controller if exists to free resources
       await state.cameraController?.dispose();
 
-      final controller = CameraController(
+      final controller = _cameraControllerBuilder.create(
         cameraDescription,
         ResolutionPreset.medium, // Changed to medium for compatibility
         imageFormatGroup: ImageFormatGroup.jpeg,
@@ -188,7 +197,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     await state.cameraController?.dispose();
 
     final cameraDescription = newIsFront ? cameras[1] : cameras[0];
-    final controller = CameraController(
+    final controller = _cameraControllerBuilder.create(
       cameraDescription,
       ResolutionPreset.high, // Changed from max to high
       imageFormatGroup: ImageFormatGroup.jpeg,

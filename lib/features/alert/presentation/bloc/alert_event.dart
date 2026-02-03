@@ -11,8 +11,14 @@ class FetchAlertsEvent extends AlertEvent {
   const FetchAlertsEvent();
 }
 
-class RefreshAlertsEvent extends AlertEvent {}
+class RefreshAlertsEvent extends AlertEvent {
+  const RefreshAlertsEvent();
+}
 
-class LoadMoreAlertsEvent extends AlertEvent {}
+class LoadMoreAlertsEvent extends AlertEvent {
+  const LoadMoreAlertsEvent();
+}
 
-class GetCurrentLocationEvent extends AlertEvent {}
+class GetCurrentLocationEvent extends AlertEvent {
+  const GetCurrentLocationEvent();
+}

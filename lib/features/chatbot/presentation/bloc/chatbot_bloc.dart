@@ -11,11 +11,14 @@ part 'chatbot_state.dart';
 
 class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
   final ApiClient apiClient;
-  late DialogFlowtter dialogFlowtter;
+  DialogFlowtter? dialogFlowtter;
   int failCount = 0;
   List<ChatModel> chatList = [];
 
-  ChatbotBloc({required this.apiClient}) : super(ChatbotInitial()) {
+  ChatbotBloc({
+    required this.apiClient,
+    this.dialogFlowtter,
+  }) : super(ChatbotInitial()) {
     on<InitChatbotEvent>(_onInitChatbot);
     on<FetchMessagesEvent>(_onFetchMessages);
     on<SendMessageEvent>(_onSendMessage);
@@ -28,8 +31,10 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
   Future<void> _onInitChatbot(
       InitChatbotEvent event, Emitter<ChatbotState> emit) async {
     try {
-      dialogFlowtter =
-          await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
+      if (dialogFlowtter == null) {
+        dialogFlowtter =
+            await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
+      }
       add(FetchMessagesEvent());
     } catch (e) {
       emit(ChatbotError("Failed to initialize chatbot: $e"));
@@ -89,7 +94,13 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
 
     try {
       // DialogFlow response
-      DetectIntentResponse response = await dialogFlowtter.detectIntent(
+      if (dialogFlowtter == null) {
+        // Should not happen if initialized, or if test mock provided.
+        // fallback or error
+        throw Exception("DialogFlowtter not initialized");
+      }
+
+      DetectIntentResponse response = await dialogFlowtter!.detectIntent(
         queryInput: QueryInput(
             text: TextInput(
           text: event.message,

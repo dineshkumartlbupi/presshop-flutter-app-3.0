@@ -10,7 +10,8 @@ class SetDefaultBank implements UseCase<void, SetDefaultBankParams> {
 
   @override
   Future<Either<Failure, void>> call(SetDefaultBankParams params) async {
-    return await repository.setDefaultBank(params.stripeBankId, params.isDefault);
+    return await repository.setDefaultBank(
+        params.stripeBankId, params.isDefault);
   }
 }
 
@@ -18,5 +19,6 @@ class SetDefaultBankParams {
   final String stripeBankId;
   final bool isDefault;
 
-  SetDefaultBankParams({required this.stripeBankId, required this.isDefault});
+  const SetDefaultBankParams(
+      {required this.stripeBankId, required this.isDefault});
 }

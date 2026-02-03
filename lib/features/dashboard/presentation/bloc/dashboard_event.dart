@@ -7,7 +7,9 @@ abstract class DashboardEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchActiveAdmins extends DashboardEvent {}
+class FetchActiveAdmins extends DashboardEvent {
+  const FetchActiveAdmins();
+}
 
 class UpdateLocationEvent extends DashboardEvent {
   final Map<String, dynamic> params;
@@ -45,11 +47,17 @@ class FetchRoomIdEvent extends DashboardEvent {
   List<Object> get props => [params];
 }
 
-class CheckAppVersionEvent extends DashboardEvent {}
+class CheckAppVersionEvent extends DashboardEvent {
+  const CheckAppVersionEvent();
+}
 
-class ActivateStudentBeansEvent extends DashboardEvent {}
+class ActivateStudentBeansEvent extends DashboardEvent {
+  const ActivateStudentBeansEvent();
+}
 
-class FetchMyProfileEvent extends DashboardEvent {}
+class FetchMyProfileEvent extends DashboardEvent {
+  const FetchMyProfileEvent();
+}
 
 class ChangeDashboardTabEvent extends DashboardEvent {
   final int newIndex;
@@ -60,7 +68,10 @@ class ChangeDashboardTabEvent extends DashboardEvent {
   List<Object> get props => [newIndex];
 }
 
-class DashboardCheckStudentBeansEvent extends DashboardEvent {}
+class DashboardCheckStudentBeansEvent extends DashboardEvent {
+  const DashboardCheckStudentBeansEvent();
+}
 
-class DashboardMarkStudentBeansVisitedEvent extends DashboardEvent {}
-
+class DashboardMarkStudentBeansVisitedEvent extends DashboardEvent {
+  const DashboardMarkStudentBeansVisitedEvent();
+}

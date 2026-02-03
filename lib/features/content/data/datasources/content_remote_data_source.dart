@@ -11,8 +11,13 @@ import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/api/api_constant.dart';
 
 abstract class ContentRemoteDataSource {
-  Future<List<ContentItemModel>> getMyContent(
-      {int page = 1, int limit = 20, Map<String, dynamic> params = const {}});
+  Future<List<ContentItemModel>> getMyContent({
+    int page = 1,
+    int limit = 20,
+    Map<String, dynamic> params = const {},
+    bool showLoader = true,
+    String type = 'my',
+  });
   Future<ContentItemModel> publishContent(Map<String, dynamic> data);
   Future<ContentItemModel> saveDraft(Map<String, dynamic> data);
   Future<ContentItemModel> updateContent(
@@ -33,15 +38,20 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   ContentRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<List<ContentItemModel>> getMyContent(
-      {int page = 1,
-      int limit = 20,
-      Map<String, dynamic> params = const {}}) async {
+  Future<List<ContentItemModel>> getMyContent({
+    int page = 1,
+    int limit = 20,
+    Map<String, dynamic> params = const {},
+    bool showLoader = true,
+    String type = 'my',
+  }) async {
     try {
       final queryParams = {'page': page, 'limit': limit, ...params};
+      final url = type == 'my' ? myContentUrl : allContentUrl;
       final response = await apiClient.get(
-        myContentUrl,
+        url,
         queryParameters: queryParams,
+        showLoader: showLoader,
       );
 
       debugPrint("DEBUG: getMyContent response: ${response.data}");
@@ -50,49 +60,65 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         var data = response.data;
         debugPrint("DEBUG: getMyContent data: $data");
 
-        List contentList = [];
+        // Handle "success": true case or "code": 200 case
+        if (data['code'] == 200 || data['success'] == true) {
+          var contentList = [];
 
-        // Handle nested structure from recent logs
-        if (data['data'] != null && data['data'] is Map) {
-          final innerData = data['data'];
-          if (innerData['code'] == 200) {
-            contentList = innerData['contentList'] ??
-                innerData['content'] ??
-                innerData['data'] ??
-                [];
-            debugPrint(
-                "DEBUG: getMyContent list length (nested): ${contentList.length}");
-          }
-        } else if (data['code'] == 200) {
-          contentList =
-              data['contentList'] ?? data['content'] ?? data['data'] ?? [];
-          debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
-        }
-
-        if (contentList.isNotEmpty) {
-          try {
-            return contentList.map((e) {
-              try {
-                return ContentItemModel.fromJson(e);
-              } catch (err) {
-                debugPrint(
-                    "DEBUG: Error parsing individual content item: $err");
-                debugPrint("DEBUG: Problematic item data: $e");
-                rethrow;
+          // Handle nested structure: data -> data -> list
+          if (data['data'] != null) {
+            if (data['data'] is Map) {
+              // data['data']['data'] (from latest logs)
+              if (data['data']['data'] is List) {
+                contentList = data['data']['data'];
               }
-            }).toList();
-          } catch (e) {
-            debugPrint("DEBUG: Error in list mapping: $e");
-            rethrow;
+              // data['data']['contentList'] (legacy)
+              else if (data['data']['contentList'] is List) {
+                contentList = data['data']['contentList'];
+              }
+              // data['data']['content'] (legacy)
+              else if (data['data']['content'] is List) {
+                contentList = data['data']['content'];
+              }
+            } else if (data['data'] is List) {
+              // data['data'] is directly the list
+              contentList = data['data'];
+            }
           }
-        }
 
-        if (data['code'] != 200 &&
-            (data['data'] is! Map || data['data']['code'] != 200)) {
-          debugPrint("DEBUG: getMyContent failed code or no data matched");
-        }
+          // Fallback check on root level if not found in nested 'data'
+          if (contentList.isEmpty) {
+            if (data['contentList'] is List) {
+              contentList = data['contentList'];
+            } else if (data['content'] is List) {
+              contentList = data['content'];
+            }
+          }
 
-        return [];
+          debugPrint("DEBUG: getMyContent list length: ${contentList.length}");
+
+          if (contentList.isNotEmpty) {
+            try {
+              return contentList
+                  .map((e) {
+                    try {
+                      return ContentItemModel.fromJson(e);
+                    } catch (err) {
+                      debugPrint(
+                          "DEBUG: Error parsing individual content item: $err");
+                      return null;
+                    }
+                  })
+                  .whereType<ContentItemModel>()
+                  .toList(); // Filter out nulls
+            } catch (e) {
+              debugPrint("DEBUG: Error in list mapping: $e");
+              rethrow;
+            }
+          }
+
+          // If we got success/200 but list is empty, return empty list
+          return [];
+        }
       }
       throw ServerFailure(message: 'Failed to load content');
     } catch (e) {
@@ -346,23 +372,32 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<List<EarningTransactionDetail>> getContentTransactions(
       String contentId, int limit, int offset) async {
     try {
-      final response = await apiClient.post(
-        getDetailsById,
-        data: {
-          'content_id': contentId,
-          // 'limit': limit, // Endpoint might not support limit/offset or handles it differently
-          // 'offset': offset,
-        },
-      );
+      try {
+        final response = await apiClient.get(
+          getDetailsById,
+          queryParameters: {
+            'content_id': contentId,
+            // 'limit': limit,
+            // 'offset': offset,
+          },
+        );
 
-      if (response.statusCode == 200) {
-        final data = response.data;
-        // TaskRemoteDataSource uses 'response' key for this endpoint
-        final List transactions = data['response'] ?? [];
-        return transactions
-            .map((e) => EarningTransactionDetail.fromJson(e))
-            .toList();
+        if (response.statusCode == 200) {
+          final data = response.data;
+          final List transactions = data['response'] ?? [];
+          return transactions
+              .map((e) => EarningTransactionDetail.fromJson(e))
+              .toList();
+        }
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 404) {
+          debugPrint(
+              "WARNING: getContentTransactions endpoint 404s. Returning empty list.");
+          return [];
+        }
+        rethrow;
       }
+
       throw ServerFailure(message: 'Failed to load transactions');
     } catch (e) {
       throw ApiErrorHandler.handle(e);

@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
+import 'package:presshop/core/utils/app_logger.dart';
 
 class ApiClient {
   ApiClient(this._dio, this._sharedPreferences, this._secureStorage) {
@@ -110,126 +111,64 @@ class ApiClient {
     ErrorInterceptorHandler handler,
   ) async {
     GlobalLoader.hide();
+    /*
     if (ApiErrorHandler.isUnauthenticated(err)) {
-      /*
-      /// Token refresh logic
+      /// Avoid infinite loops if the refresh token call itself fails
       if (err.requestOptions.path.contains(ApiConstantsNew.auth.refreshToken)) {
-        final failure = ApiErrorHandler.handle(err);
-        final sanitized = DioException(
-          requestOptions: err.requestOptions,
-          response: err.response,
-          type: err.type,
-          error: failure.message,
-          message: failure.message,
-        );
-        handler.next(sanitized);
+        handler.next(err);
         return;
       }
 
-      String? refreshToken = await _secureStorage.read(key: refreshtokenKey);
+      debugPrint("🔄 401 Detected - Attempting Token Refresh...");
 
-      /// Fallback for Refresh Token
-      if (refreshToken == null || refreshToken.isEmpty) {
-        refreshToken = _sharedPreferences.getString(refreshtokenKey);
-        if (refreshToken != null && refreshToken.isNotEmpty) {
-          debugPrint(
-              "DEBUG: ApiClient Refresh Token retrieved from SharedPreferences");
-          await _secureStorage.write(key: refreshtokenKey, value: refreshToken);
-        }
-      }
+      try {
+        final refreshSuccess = await TokenRefreshManager().refreshToken();
 
-      String? accessToken = await _secureStorage.read(key: tokenKey);
-      if (accessToken == null || accessToken.isEmpty) {
-        accessToken = _sharedPreferences.getString(tokenKey) ?? "";
-      }
+        if (refreshSuccess) {
+          debugPrint("✅ Token Refresh Success - Retrying original request");
+          final newAccessToken = _sharedPreferences.getString(tokenKey);
 
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        try {
-          final refreshDio = Dio();
-          refreshDio.options.baseUrl = ApiConstantsNew.config.baseUrl;
+          if (newAccessToken != null && newAccessToken.isNotEmpty) {
+            final opts = err.requestOptions;
+            opts.headers[headerKey] = "Bearer $newAccessToken";
 
-          // Match TokenRefreshManager headers
-          refreshDio.options.headers[headerDeviceIdKey] =
-              _sharedPreferences.getString(deviceIdKey) ?? "";
-          refreshDio.options.headers[headerDeviceTypeKey] =
-              "mobile-flutter-${Platform.isIOS ? "ios" : "android"}";
-
-          // Logic from TokenRefreshManager: if refresh token exists, access token header is empty
-          String tokenForAccess = refreshToken.isEmpty ? accessToken : "";
-
-          refreshDio.options.headers[refreshHeaderKey] = refreshToken;
-          refreshDio.options.headers[accessHeaderKey] = tokenForAccess;
-
-          debugPrint("🔄 Attempting Token Refresh (ApiClient)...");
-          // Send empty body as per TokenRefreshManager
-          final response = await refreshDio.get(ApiConstantsNew.auth.refreshToken);
-
-          if (response.statusCode == 200) {
-            final data = response.data;
-            debugPrint("✅ Token Refresh Success: $data");
-
-            if (data["success"] == true &&
-                data["data"] != null &&
-                data["data"]["access_token"] != null &&
-                data["data"]["refresh_token"] != null) {
-              // 1. Delete old tokens
-              await _secureStorage.delete(key: tokenKey);
-              await _secureStorage.delete(key: refreshtokenKey);
-
-              // 2. Save NEW tokens
-              final newAccessToken = data["data"]["access_token"];
-              final newRefreshToken = data["data"]["refresh_token"];
-
-              await _secureStorage.write(key: tokenKey, value: newAccessToken);
-              await _secureStorage.write(
-                  key: refreshtokenKey, value: newRefreshToken);
-
-              // 3. Update SharedPreferences to stay in sync
-              await _sharedPreferences.setString(tokenKey, newAccessToken);
-              await _sharedPreferences.setString(
-                  refreshtokenKey, newRefreshToken);
-
-              debugPrint("🔄 Retrying original request with new token");
-              final opts = err.requestOptions;
-              opts.headers[headerKey] = "Bearer $newAccessToken";
-
-              final cloneReq = await _dio.request(
-                opts.path,
-                options: Options(
-                  method: opts.method,
-                  headers: opts.headers,
-                  contentType: opts.contentType,
-                  responseType: opts.responseType,
-                  followRedirects: opts.followRedirects,
-                  validateStatus: opts.validateStatus,
-                  receiveTimeout: opts.receiveTimeout,
-                  sendTimeout: opts.sendTimeout,
-                  extra: opts.extra,
-                ),
-                data: opts.data,
-                queryParameters: opts.queryParameters,
-              );
-              return handler.resolve(cloneReq);
-            }
-          } else {
-            debugPrint(
-                "❌ Token Refresh Failed with status: ${response.statusCode}");
-            await _clearSession();
+            final cloneReq = await _dio.request(
+              opts.path,
+              options: Options(
+                method: opts.method,
+                headers: opts.headers,
+                contentType: opts.contentType,
+                responseType: opts.responseType,
+                followRedirects: opts.followRedirects,
+                validateStatus: opts.validateStatus,
+                receiveTimeout: opts.receiveTimeout,
+                sendTimeout: opts.sendTimeout,
+                extra: opts.extra,
+              ),
+              data: opts.data,
+              queryParameters: opts.queryParameters,
+            );
+            return handler.resolve(cloneReq);
           }
-        } catch (e) {
-          debugPrint("❌ Token Refresh Failed: $e");
-          await _clearSession();
         }
-      } else {
-        debugPrint("❌ Refresh Token is NULL or EMPTY - Clearing Session");
-        await _clearSession();
+      } catch (e) {
+        debugPrint("❌ Token Refresh Exception in ApiClient: $e");
       }
-      */
+
+      // If refresh failed or was not possible, continue to error handling
+      // TokenRefreshManager already handles logout/navigation if needed.
     }
+    */
     _printCurlCommand(err.requestOptions);
 
     // Use ApiErrorHandler to sanitize the error before passing it up
     final failure = ApiErrorHandler.handle(err);
+
+    AppLogger.error(
+      "API Error [${err.requestOptions.method}] ${err.requestOptions.path}: ${failure.message}",
+      trackAnalytics: true,
+    );
+
     final sanitizedError = DioException(
       requestOptions: err.requestOptions,
       response: err.response,

@@ -30,6 +30,8 @@ import 'package:presshop/features/news/presentation/pages/news_details_screen_le
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MapPage extends StatefulWidget {
   final bool hideLeading;
@@ -72,7 +74,7 @@ class _MapPageContent extends StatefulWidget {
 }
 
 class _MapPageContentState extends State<_MapPageContent>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AnalyticsPageMixin {
   final Completer<GoogleMapController> _controller = Completer();
   double _currentZoom = 14.0;
   final TextEditingController _searchController = TextEditingController();
@@ -142,6 +144,9 @@ class _MapPageContentState extends State<_MapPageContent>
       });
     _pulseController.repeat();
   }
+
+  @override
+  String get pageName => PageNames.map;
 
   @override
   void dispose() {

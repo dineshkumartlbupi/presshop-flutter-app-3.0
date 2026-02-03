@@ -134,8 +134,8 @@ List<MenuData> buildMenu() => [
         icon: "${iconsPath}ic_content.png",
         action: MenuAction.myContent,
         pageBuilder: (context) => const MyContentPage(
-          hideLeading: false,
-        ),
+            // hideLeading: false,
+            ),
       ),
       MenuData(
         title: feedText,

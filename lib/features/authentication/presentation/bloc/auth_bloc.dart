@@ -8,6 +8,8 @@ import '../../domain/usecases/forgot_password.dart';
 import '../../domain/usecases/verify_forgot_password_otp.dart';
 import '../../domain/usecases/reset_password.dart';
 import 'package:presshop/core/error/failures.dart';
+import 'package:presshop/core/utils/app_logger.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUser loginUser;
@@ -30,8 +32,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
       ));
       result.fold(
-        (failure) => emit(AuthError(message: failure.message)),
-        (user) => emit(AuthAuthenticated(user: user)),
+        (failure) {
+          AppLogger.error("Login failed: ${failure.message}",
+              trackAnalytics: true);
+          emit(AuthError(message: failure.message));
+        },
+        (user) {
+          AppLogger.setUserIdentity(
+            userId: user.id,
+            email: user.email,
+            name: user.firstName + " " + user.lastName,
+          );
+          AppLogger.trackEvent(EventNames.userLogin, parameters: {
+            'method': 'email',
+            'user_id': user.id,
+          });
+          emit(AuthAuthenticated(user: user));
+        },
       );
     });
 
@@ -47,6 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       result.fold(
         (failure) {
           if (failure is UserNotRegisteredFailure) {
+            AppLogger.info("Social login - registration required");
             emit(AuthSocialSignUpRequired(
               socialType: event.socialType,
               socialId: event.socialId,
@@ -55,10 +73,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               photoUrl: event.photoUrl,
             ));
           } else {
+            AppLogger.error("Social login failed: ${failure.message}",
+                trackAnalytics: true);
             emit(AuthError(message: failure.message));
           }
         },
-        (user) => emit(AuthAuthenticated(user: user)),
+        (user) {
+          AppLogger.setUserIdentity(
+            userId: user.id,
+            email: user.email,
+            name: user.firstName + " " + user.lastName,
+          );
+          AppLogger.trackEvent(EventNames.userLogin, parameters: {
+            'method': event.socialType,
+            'user_id': user.id,
+          });
+          emit(AuthAuthenticated(user: user));
+        },
       );
     });
 

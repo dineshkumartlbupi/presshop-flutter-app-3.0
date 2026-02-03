@@ -204,7 +204,12 @@ class PageNames {
         kycScreen,
         updateScreen,
         changelogScreen,
+        newsPage,
+        newsDetailsScreen,
       ];
+
+  static const String newsPage = 'news_page';
+  static const String newsDetailsScreen = 'news_details_screen';
 
   /// Check if a page name is valid
   static bool isValidPageName(String pageName) {
@@ -299,6 +304,7 @@ class EventNames {
   static const String userLogout = 'user_logout';
   static const String userProfileComplete = 'user_profile_complete';
   static const String userVerified = 'user_verified';
+  static const String profileUpdated = 'profile_updated';
 
   // Content Lifecycle
   static const String contentPublished = 'content_published';
@@ -342,4 +348,5 @@ class EventNames {
   static const String paymentReceived = 'payment_received';
   static const String commissionEarned = 'commission_earned';
   static const String referralSuccessful = 'referral_successful';
+  static const String mediaUpload = 'media_upload';
 }

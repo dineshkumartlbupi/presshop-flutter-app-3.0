@@ -1,19 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/features/authentication/data/models/term_model.dart';
 
 class TermsRepository {
-  final Dio dio;
+  final ApiClient apiClient;
 
-  TermsRepository(this.dio);
+  TermsRepository(this.apiClient);
 
   Future<TermsResponse> fetchTerms(String type) async {
     try {
-      debugPrint(
-          "Fetching terms with URL: ${ApiConstantsNew.config.baseUrl}${ApiConstantsNew.misc.cms}?type=$type");
-      final response = await dio.get(
-        "${ApiConstantsNew.config.baseUrl}${ApiConstantsNew.misc.cms}",
+      debugPrint("Fetching terms with type: $type");
+      final response = await apiClient.get(
+        ApiConstantsNew.misc.cms,
         queryParameters: {
           "type": type,
         },

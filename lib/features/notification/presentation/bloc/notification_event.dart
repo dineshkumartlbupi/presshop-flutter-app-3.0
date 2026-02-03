@@ -17,12 +17,22 @@ class FetchNotificationsEvent extends NotificationEvent {
   List<Object?> get props => [offset, limit];
 }
 
-class MarkNotificationsAsReadEvent extends NotificationEvent {}
+class MarkNotificationsAsReadEvent extends NotificationEvent {
+  const MarkNotificationsAsReadEvent();
+}
 
-class ClearAllNotificationsEvent extends NotificationEvent {}
+class ClearAllNotificationsEvent extends NotificationEvent {
+  const ClearAllNotificationsEvent();
+}
 
-class CheckStudentBeansEvent extends NotificationEvent {}
+class CheckStudentBeansEvent extends NotificationEvent {
+  const CheckStudentBeansEvent();
+}
 
-class StudentBeansActivationEvent extends NotificationEvent {}
+class StudentBeansActivationEvent extends NotificationEvent {
+  const StudentBeansActivationEvent();
+}
 
-class MarkStudentBeansVisitedEvent extends NotificationEvent {}
+class MarkStudentBeansVisitedEvent extends NotificationEvent {
+  const MarkStudentBeansVisitedEvent();
+}

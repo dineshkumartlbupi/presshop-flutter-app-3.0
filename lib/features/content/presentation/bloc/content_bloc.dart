@@ -55,44 +55,84 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     FetchMyContentEvent event,
     Emitter<ContentState> emit,
   ) async {
+    final currentState = (state is MyContentLoaded)
+        ? (state as MyContentLoaded)
+        : const MyContentLoaded();
+
+    bool isAll = event.type == 'all';
+    List<ContentItem> currentList =
+        isAll ? currentState.allContent : currentState.myContent;
+
     // If data is already loaded and it's not a refresh or pagination, don't fetch
-    if (state is MyContentLoaded && !event.isRefresh && event.page == 1) {
+    if (!event.isRefresh && event.page == 1 && currentList.isNotEmpty) {
+      // Still need to emit the state to ensure UI is updated if it was in a different state
+      emit(currentState);
       return;
     }
 
-    // Only emit loading if we don't have data already or if it's a refresh of the first page
-    if (state is! MyContentLoaded || event.isRefresh || event.page > 1) {
-      if (event.page == 1) {
-        emit(ContentLoading());
-      }
+    // Only emit loading if we don't have data already for this specific type or if it's a refresh of the first page
+    // Always use granular loading flags to prevent state clobbering
+    if (isAll) {
+      emit(currentState.copyWith(isLoadingAll: true));
+    } else {
+      emit(currentState.copyWith(isLoadingMy: true));
     }
+
+    final showLoader = event.page == 1 && !event.isRefresh;
 
     final result = await getMyContent(
       GetMyContentParams(
-          page: event.page, limit: event.limit, params: event.params),
+          page: event.page,
+          limit: event.limit,
+          params: event.params,
+          showLoader: showLoader,
+          type: event.type),
     );
+
+    // Re-fetch state as it might have changed while waiting for the API response
+    final freshState = (state is MyContentLoaded)
+        ? (state as MyContentLoaded)
+        : const MyContentLoaded();
+
     result.fold(
       (failure) {
         debugPrint(
             "DEBUG: ContentBloc FetchMyContent failure: ${failure.message}");
-        emit(ContentError(failure.message));
+        emit(freshState.copyWith(
+          errorMessage: failure.message,
+          isLoadingAll: isAll ? false : freshState.isLoadingAll,
+          isLoadingMy: isAll ? freshState.isLoadingMy : false,
+        ));
       },
       (content) {
         debugPrint(
-            "DEBUG: ContentBloc FetchMyContent success, items: ${content.length}");
+            "DEBUG: ContentBloc FetchMyContent success, type: ${event.type}, items: ${content.length}");
         List<ContentItem> updatedContent = [];
-        if (state is MyContentLoaded && event.page > 1) {
-          updatedContent = List.from((state as MyContentLoaded).content);
+        List<ContentItem> currentList =
+            isAll ? freshState.allContent : freshState.myContent;
+
+        if (event.page > 1) {
+          updatedContent = List.from(currentList);
           updatedContent.addAll(content);
         } else {
           updatedContent = content;
         }
 
-        emit(MyContentLoaded(
-          content: updatedContent,
-          currentPage: event.page,
-          hasMore: content.length >= event.limit,
-        ));
+        if (isAll) {
+          emit(freshState.copyWith(
+            allContent: updatedContent,
+            allPage: event.page,
+            hasMoreAll: content.length >= event.limit,
+            isLoadingAll: false,
+          ));
+        } else {
+          emit(freshState.copyWith(
+            myContent: updatedContent,
+            myPage: event.page,
+            hasMoreMy: content.length >= event.limit,
+            isLoadingMy: false,
+          ));
+        }
       },
     );
   }

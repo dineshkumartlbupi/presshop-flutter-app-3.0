@@ -11,7 +11,8 @@ import 'package:presshop/features/task/domain/usecases/get_content_transaction_d
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/domain/usecases/get_all_tasks.dart';
 import 'package:presshop/features/task/domain/usecases/get_local_tasks.dart';
-
+import 'package:presshop/core/utils/app_logger.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
@@ -71,8 +72,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       status: event.status,
     ));
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (_) => emit(TaskActionSuccess("Task ${event.status} successfully")),
+      (failure) {
+        AppLogger.error("Failed to ${event.status} task: ${failure.message}",
+            trackAnalytics: true);
+        emit(TaskError(failure.message));
+      },
+      (_) {
+        final eventName = event.status == 'accepted'
+            ? EventNames.taskAccepted
+            : EventNames.taskRejected;
+        AppLogger.trackEvent(eventName, parameters: {
+          'task_id': event.taskId,
+          'media_house_id': event.mediaHouseId,
+        });
+        emit(TaskActionSuccess("Task ${event.status} successfully"));
+      },
     );
   }
 
@@ -95,8 +109,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     emit(TaskLoading());
     final result = await uploadTaskMedia(event.data);
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (response) => emit(TaskMediaUploaded(response)),
+      (failure) {
+        AppLogger.error("Task media upload failed: ${failure.message}",
+            trackAnalytics: true);
+        emit(TaskError(failure.message));
+      },
+      (response) {
+        final taskId = event.data.fields
+            .firstWhere((f) => f.key == 'task_id',
+                orElse: () => const MapEntry('', 'unknown'))
+            .value;
+        AppLogger.trackEvent(EventNames.taskSubmitted, parameters: {
+          'task_id': taskId,
+        });
+        emit(TaskMediaUploaded(response));
+      },
     );
   }
 

@@ -14,6 +14,8 @@ import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/presentation/widgets/comment_input_widget.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +38,11 @@ class NewsDetailsScreen extends StatefulWidget {
   State<NewsDetailsScreen> createState() => _NewsDetailsScreenState();
 }
 
-class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
+class _NewsDetailsScreenState extends State<NewsDetailsScreen>
+    with AnalyticsPageMixin {
+  @override
+  String get pageName => PageNames.newsDetailsScreen;
+
   final TextEditingController _commentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _commentsKey = GlobalKey();

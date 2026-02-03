@@ -1,7 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:presshop/core/di/injection_container.dart';
 
 /// Firebase Analytics Helper Class
 ///
@@ -20,17 +20,22 @@ import 'dart:io';
 /// AnalyticsHelper.trackEvent('content_published', {'content_type': 'photo'});
 /// ```
 class AnalyticsHelper {
-  static final bool _isTest = Platform.environment.containsKey('FLUTTER_TEST');
-
-  static final FirebaseAnalytics? _analytics =
-      _isTest ? null : FirebaseAnalytics.instance;
-
-  static final NavigatorObserver _observer = _isTest
-      ? RouteObserver<PageRoute<dynamic>>()
-      : FirebaseAnalyticsObserver(analytics: _analytics!);
+  static FirebaseAnalytics? get _analytics {
+    try {
+      return sl<FirebaseAnalytics>();
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// Get the Firebase Analytics Observer for routing
-  static NavigatorObserver get observer => _observer;
+  static NavigatorObserver get observer {
+    final analytics = _analytics;
+    if (analytics == null) {
+      return RouteObserver<PageRoute<dynamic>>();
+    }
+    return FirebaseAnalyticsObserver(analytics: analytics);
+  }
 
   /// Track page/screen visits
   ///
@@ -50,11 +55,14 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logScreenView(
-        screenName: pageName,
-        screenClass: className ?? pageName,
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logScreenView(
+          screenName: pageName,
+          screenClass: className ?? pageName,
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Page Visit - $pageName');
@@ -82,10 +90,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'user_action',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'user_action',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: User Action - $action');
@@ -112,10 +123,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: eventName,
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: eventName,
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Custom Event - $eventName');
@@ -146,10 +160,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'content_interaction',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'content_interaction',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Content Event - $contentType:$action');
@@ -180,10 +197,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'task_interaction',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'task_interaction',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Task Event - $taskType:$action');
@@ -211,10 +231,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'chat_interaction',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'chat_interaction',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Chat Event - $action');
@@ -247,10 +270,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'navigation',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'navigation',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Navigation - $from → $to ($method)');
@@ -281,10 +307,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: success ? 'login_success' : 'login_failed',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: success ? 'login_success' : 'login_failed',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print(
@@ -316,10 +345,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'app_error',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'app_error',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Error Event - $error on $page');
@@ -341,13 +373,14 @@ class AnalyticsHelper {
     Map<String, String>? properties,
   }) async {
     try {
-      if (userId != null) {
-        await _analytics?.setUserId(id: userId);
+      final analytics = _analytics;
+      if (userId != null && analytics != null) {
+        await analytics.setUserId(id: userId);
       }
 
-      if (properties != null) {
+      if (properties != null && analytics != null) {
         for (final entry in properties.entries) {
-          await _analytics?.setUserProperty(
+          await analytics.setUserProperty(
             name: entry.key,
             value: entry.value,
           );
@@ -381,10 +414,13 @@ class AnalyticsHelper {
         ...?parameters,
       };
 
-      await _analytics?.logEvent(
-        name: 'app_lifecycle',
-        parameters: eventParams,
-      );
+      final analytics = _analytics;
+      if (analytics != null) {
+        await analytics.logEvent(
+          name: 'app_lifecycle',
+          parameters: eventParams,
+        );
+      }
 
       if (kDebugMode) {
         print('📊 Analytics: Lifecycle Event - $event');

@@ -18,6 +18,8 @@ import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
 import 'package:presshop/core/utils/ui_utils.dart';
+import 'package:presshop/core/analytics/analytics_mixin.dart';
+import 'package:presshop/core/analytics/analytics_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
@@ -34,21 +36,34 @@ class NewsPage extends StatefulWidget {
   State<NewsPage> createState() => _NewsPageState();
 }
 
-class _NewsPageState extends State<NewsPage> {
+class _NewsPageState extends State<NewsPage>
+    with AnalyticsPageMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
+  String get pageName => PageNames.newsPage;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     var size = MediaQuery.of(context).size;
 
     return BlocProvider(
-      create: (_) => sl<NewsBloc>()
-        ..add(GetAggregatedNewsEvent(
-          lat: widget.latitude ?? 0.0,
-          lng: widget.longitude ?? 0.0,
-          km: 50,
-        )),
+      create: (_) {
+        final bloc = sl<NewsBloc>();
+        if (bloc.state.newsList.isEmpty) {
+          bloc.add(GetAggregatedNewsEvent(
+            lat: widget.latitude ?? 0.0,
+            lng: widget.longitude ?? 0.0,
+            km: 50,
+          ));
+        }
+        return bloc;
+      },
       child: BlocConsumer<NewsBloc, NewsState>(
         listener: (context, state) {
           if (!state.isLoading) {
