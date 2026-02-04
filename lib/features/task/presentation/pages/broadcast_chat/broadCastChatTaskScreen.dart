@@ -121,10 +121,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     debugPrint("class name :::$runtimeType");
     super.initState();
     socketConnectionFunc();
+    isLoading = true;
     context.read<TaskBloc>().add(GetTaskChatEvent(
         roomId: widget.roomId,
         type: "task_content",
-        contentId: widget.taskDetail?.task.id ?? ""));
+        contentId: widget.taskDetail?.task.id ?? "",
+        showLoader: false));
     getCurrentLocation();
   }
 
@@ -263,7 +265,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             context.read<TaskBloc>().add(GetTaskChatEvent(
                 roomId: widget.roomId,
                 type: "task_content",
-                contentId: widget.taskDetail?.task.id ?? ""));
+                contentId: widget.taskDetail?.task.id ?? "",
+                showLoader: false));
           }
         } else if (state is TaskError) {
           showSnackBar("Error", state.message, Colors.red);
@@ -346,7 +349,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               AppStringsNew2.cameraText,
                               size,
                               commonButtonTextStyle(size),
-                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink), () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -871,7 +875,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD036,
-                                                color: AppColorTheme.colorThemePink,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
@@ -892,7 +897,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD036,
-                                                color: AppColorTheme.colorThemePink,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ])),
@@ -911,8 +917,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                               "View Transaction Details",
                                               size,
                                               commonButtonTextStyle(size),
-                                              commonButtonStyle(
-                                                  size, AppColorTheme.colorThemePink), () {
+                                              commonButtonStyle(size,
+                                                  AppColorTheme.colorThemePink),
+                                              () {
                                             context.read<TaskBloc>().add(
                                                 GetContentTransactionDetailsEvent(
                                                     roomId: widget.roomId,
@@ -984,7 +991,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                        color: AppColorTheme.colorGoogleButtonBorder),
+                                        color: AppColorTheme
+                                            .colorGoogleButtonBorder),
                                     borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(
                                           size.width * AppDimensions.numD04),
@@ -1025,7 +1033,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD036,
-                                                color: AppColorTheme.colorThemePink,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
@@ -1044,7 +1053,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 size: size,
                                                 fontSize: size.width *
                                                     AppDimensions.numD036,
-                                                color: AppColorTheme.colorThemePink,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
@@ -1072,8 +1082,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                               "View My Earnings",
                                               size,
                                               commonButtonTextStyle(size),
-                                              commonButtonStyle(
-                                                  size, AppColorTheme.colorThemePink), () {
+                                              commonButtonStyle(size,
+                                                  AppColorTheme.colorThemePink),
+                                              () {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
@@ -1252,7 +1263,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             horizontal: size.width * AppDimensions.numD006,
                             vertical: size.width * AppDimensions.numD002),
                         decoration: BoxDecoration(
-                            color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                            color:
+                                AppColorTheme.colorLightGreen.withOpacity(0.8),
                             borderRadius: BorderRadius.circular(
                                 size.width * AppDimensions.numD01)),
                         child: const Icon(
@@ -1288,7 +1300,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       size.width * AppDimensions.numD01,
                     ),
                     decoration: const BoxDecoration(
-                        color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
+                        color: AppColorTheme.colorLightGrey,
+                        shape: BoxShape.circle),
                     child: ClipOval(
                         clipBehavior: Clip.antiAlias,
                         child: Image.network(
@@ -1304,7 +1317,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     height: size.width * AppDimensions.numD09,
                     width: size.width * AppDimensions.numD09,
                     decoration: const BoxDecoration(
-                        color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
+                        color: AppColorTheme.colorSwitchBack,
+                        shape: BoxShape.circle),
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Image.asset("${commonImagePath}rabbitLogo.png",
@@ -1415,7 +1429,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               horizontal: size.width * AppDimensions.numD008,
                               vertical: size.width * AppDimensions.numD005),
                           decoration: BoxDecoration(
-                              color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                              color: AppColorTheme.colorLightGreen
+                                  .withOpacity(0.8),
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD01)),
                           child: Image.asset(
@@ -1446,7 +1461,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         size.width * AppDimensions.numD01,
                       ),
                       decoration: const BoxDecoration(
-                          color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
+                          color: AppColorTheme.colorLightGrey,
+                          shape: BoxShape.circle),
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
@@ -1462,7 +1478,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       height: size.width * AppDimensions.numD09,
                       width: size.width * AppDimensions.numD09,
                       decoration: const BoxDecoration(
-                          color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
+                          color: AppColorTheme.colorSwitchBack,
+                          shape: BoxShape.circle),
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Image.asset("${commonImagePath}rabbitLogo.png",
@@ -1589,7 +1606,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                             horizontal: size.width * AppDimensions.numD01,
                           ),
                           decoration: BoxDecoration(
-                              color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                              color: AppColorTheme.colorLightGreen
+                                  .withOpacity(0.8),
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD01)),
                           child: const Icon(
@@ -1618,7 +1636,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                         size.width * AppDimensions.numD01,
                       ),
                       decoration: const BoxDecoration(
-                          color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
+                          color: AppColorTheme.colorLightGrey,
+                          shape: BoxShape.circle),
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
@@ -1645,7 +1664,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       height: size.width * AppDimensions.numD09,
                       width: size.width * AppDimensions.numD09,
                       decoration: const BoxDecoration(
-                          color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
+                          color: AppColorTheme.colorSwitchBack,
+                          shape: BoxShape.circle),
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Image.asset(
@@ -2455,7 +2475,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 width: size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                    border: Border.all(
+                        color: AppColorTheme.colorGoogleButtonBorder),
                     borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -2619,7 +2640,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 width: size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                    border: Border.all(
+                        color: AppColorTheme.colorGoogleButtonBorder),
                     borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -2692,7 +2714,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               "View Transaction Details ",
                               size,
                               commonButtonTextStyle(size),
-                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink), () {
                             context.read<TaskBloc>().add(
                                 GetContentTransactionDetailsEvent(
                                     roomId: widget.roomId,
@@ -2747,7 +2770,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 width: size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                    border: Border.all(
+                        color: AppColorTheme.colorGoogleButtonBorder),
                     borderRadius: BorderRadius.only(
                       topRight:
                           Radius.circular(size.width * AppDimensions.numD04),
@@ -2827,7 +2851,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               "View My Earnings",
                               size,
                               commonButtonTextStyle(size),
-                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink), () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => MyEarningScreen(
                                       openDashboard: false,
@@ -2889,7 +2914,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                  border:
+                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
                     topRight:
                         Radius.circular(size.width * AppDimensions.numD04),
@@ -2981,7 +3007,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           setState(() {});
                         },
                         selectedColor: AppColorTheme.colorThemePink,
-                        disabledColor: AppColorTheme.colorGreyChat.withOpacity(.3),
+                        disabledColor:
+                            AppColorTheme.colorGreyChat.withOpacity(.3),
                         selected:
                             dataList.contains(intList[index]) ? true : false,
                       ),
@@ -3084,7 +3111,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 fontWeight: FontWeight.bold)
                             : commonButtonTextStyle(size),
                         commonButtonStyle(
-                            size, isRatingGiven ? Colors.grey : AppColorTheme.colorThemePink),
+                            size,
+                            isRatingGiven
+                                ? Colors.grey
+                                : AppColorTheme.colorThemePink),
                         !isRatingGiven
                             ? () {
                                 if (ratingReviewController1.text.isNotEmpty) {
@@ -3234,7 +3264,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       context.read<TaskBloc>().add(GetTaskChatEvent(
           roomId: widget.roomId,
           type: "task_content",
-          contentId: widget.taskDetail?.task.id ?? ""));
+          contentId: widget.taskDetail?.task.id ?? "",
+          showLoader: false));
     }
   }
 
@@ -3260,7 +3291,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         context.read<TaskBloc>().add(GetTaskChatEvent(
             roomId: widget.roomId,
             type: "task_content",
-            contentId: widget.taskDetail?.task.id ?? ""));
+            contentId: widget.taskDetail?.task.id ?? "",
+            showLoader: false));
       }
     }
 
@@ -3405,7 +3437,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     }
 
     if (mounted) {
-      context.read<TaskBloc>().add(UploadTaskMediaEvent(formData));
+      setState(() {
+        isLoading = true;
+      });
+      context
+          .read<TaskBloc>()
+          .add(UploadTaskMediaEvent(formData, showLoader: false));
     }
   }
 

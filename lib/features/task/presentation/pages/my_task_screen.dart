@@ -50,7 +50,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
         'broadcast_id': widget.broadCastId ?? 'none',
       };
 
-  final RefreshController _refreshController =
+  final RefreshController _allRefreshController =
+      RefreshController(initialRefresh: false);
+  final RefreshController _localRefreshController =
       RefreshController(initialRefresh: false);
   late AnimationController _blinkingController;
   late TabController _tabController;
@@ -137,7 +139,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
   void dispose() {
     _blinkingController.dispose();
     _tabController.dispose();
-    _refreshController.dispose();
+    _allRefreshController.dispose();
+    _localRefreshController.dispose();
     listController.dispose();
     super.dispose();
   }
@@ -183,14 +186,22 @@ class MyTaskScreenState extends State<MyTaskScreen>
             });
           }
 
-          if (state.allTasksStatus == TaskStatus.success ||
-              state.localTasksStatus == TaskStatus.success) {
-            _refreshController.refreshCompleted();
-            _refreshController.loadComplete();
-          } else if (state.allTasksStatus == TaskStatus.failure ||
-              state.localTasksStatus == TaskStatus.failure) {
-            _refreshController.refreshFailed();
-            _refreshController.loadFailed();
+          if (_tabController.index == 0) {
+            if (state.allTasksStatus == TaskStatus.success) {
+              _allRefreshController.refreshCompleted();
+              _allRefreshController.loadComplete();
+            } else if (state.allTasksStatus == TaskStatus.failure) {
+              _allRefreshController.refreshFailed();
+              _allRefreshController.loadFailed();
+            }
+          } else {
+            if (state.localTasksStatus == TaskStatus.success) {
+              _localRefreshController.refreshCompleted();
+              _localRefreshController.loadComplete();
+            } else if (state.localTasksStatus == TaskStatus.failure) {
+              _localRefreshController.refreshFailed();
+              _localRefreshController.loadFailed();
+            }
           }
         },
         child: Builder(builder: (context) {
@@ -207,8 +218,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                 children: [
                   SizedBox(height: size.width * AppDimensions.numD04),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD04),
                     child: TabBar(
                       controller: _tabController,
                       physics: const NeverScrollableScrollPhysics(),
@@ -217,8 +228,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       unselectedLabelColor: Colors.black,
                       indicator: BoxDecoration(
                         color: AppColorTheme.colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD02),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02),
                       ),
                       labelStyle: commonTextStyle(
                         size: size,
@@ -288,7 +299,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
           icon: "ic_yearly_calendar.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
       FilterModel(
           name: "View highest payment received",
           icon: "ic_graph_up.png",
@@ -318,15 +331,15 @@ class MyTaskScreenState extends State<MyTaskScreen>
     if (taskList.isEmpty && state.localTasksStatus == TaskStatus.loading) {
       return const SizedBox.shrink();
     }
-    return taskList.isNotEmpty
-        ? SmartRefresher(
-            controller: _refreshController,
-            enablePullDown: true,
-            enablePullUp: true,
-            onRefresh: () => _onRefresh(context),
-            onLoading: () => _onLoading(context),
-            footer: const CustomFooter(builder: commonRefresherFooter),
-            child: GridView.builder(
+    return SmartRefresher(
+      controller: _localRefreshController,
+      enablePullDown: true,
+      enablePullUp: taskList.isNotEmpty,
+      onRefresh: () => _onRefresh(context),
+      onLoading: () => _onLoading(context),
+      footer: const CustomFooter(builder: commonRefresherFooter),
+      child: taskList.isNotEmpty
+          ? GridView.builder(
               itemCount: taskList.length,
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * AppDimensions.numD04,
@@ -359,8 +372,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 spreadRadius: 2,
                                 blurRadius: 1)
                           ],
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD04)),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -368,15 +381,16 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           Stack(
                             children: [
                               ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 child: item.taskDetail?.mediaHouseImage !=
                                             null &&
                                         item.taskDetail!.mediaHouseImage
                                             .isNotEmpty
                                     ? Image.network(
                                         item.taskDetail!.mediaHouseImage,
-                                        height: size.width * AppDimensions.numD28,
+                                        height:
+                                            size.width * AppDimensions.numD28,
                                         width: size.width,
                                         fit: BoxFit.cover,
                                         loadingBuilder:
@@ -387,8 +401,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             alignment: Alignment.topCenter,
                                             child: Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
-                                              height: size.width * AppDimensions.numD26,
-                                              width: size.width * AppDimensions.numD26,
+                                              height: size.width *
+                                                  AppDimensions.numD26,
+                                              width: size.width *
+                                                  AppDimensions.numD26,
                                             ),
                                           );
                                         },
@@ -398,8 +414,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             alignment: Alignment.topCenter,
                                             child: Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
-                                              height: size.width * AppDimensions.numD26,
-                                              width: size.width * AppDimensions.numD26,
+                                              height: size.width *
+                                                  AppDimensions.numD26,
+                                              width: size.width *
+                                                  AppDimensions.numD26,
                                             ),
                                           );
                                         },
@@ -408,8 +426,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         alignment: Alignment.topCenter,
                                         child: Image.asset(
                                           "${commonImagePath}rabbitLogo.png",
-                                          height: size.width * AppDimensions.numD26,
-                                          width: size.width * AppDimensions.numD26,
+                                          height:
+                                              size.width * AppDimensions.numD26,
+                                          width:
+                                              size.width * AppDimensions.numD26,
                                         ),
                                       ),
                               ),
@@ -452,7 +472,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     format: "hh:mm a"),
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD024,
+                                    fontSize:
+                                        size.width * AppDimensions.numD024,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -473,7 +494,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     format: "dd MMM yyyy"),
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD024,
+                                    fontSize:
+                                        size.width * AppDimensions.numD024,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -489,7 +511,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 "TAP TO ACCEPT",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD025,
+                                    fontSize:
+                                        size.width * AppDimensions.numD025,
                                     color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -500,8 +523,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 alignment: Alignment.center,
                                 height: size.width * AppDimensions.numD08,
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * AppDimensions.numD025,
-                                    vertical: size.width * AppDimensions.numD01),
+                                    horizontal:
+                                        size.width * AppDimensions.numD025,
+                                    vertical:
+                                        size.width * AppDimensions.numD01),
                                 decoration: BoxDecoration(
                                     color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
@@ -510,7 +535,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   "Available",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD025,
+                                      fontSize:
+                                          size.width * AppDimensions.numD025,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -537,7 +563,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                   totalEarning: item.totalAmount)))
                           .then((value) => context.read<TaskBloc>().add(
                               FetchLocalTasksEvent(
-                                  filterParams: getFilterParams())));
+                                  filterParams: getFilterParams(),
+                                  showLoader: false)));
 
                       //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
                     },
@@ -554,8 +581,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                 spreadRadius: 2,
                                 blurRadius: 1)
                           ],
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD04)),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -563,8 +590,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           Stack(
                             children: [
                               ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 child: Image.network(
                                   item.taskDetail!.mediaHouseImage,
                                   height: size.width * AppDimensions.numD28,
@@ -577,8 +604,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       alignment: Alignment.topCenter,
                                       child: Image.asset(
                                         "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * AppDimensions.numD26,
-                                        width: size.width * AppDimensions.numD26,
+                                        height:
+                                            size.width * AppDimensions.numD26,
+                                        width:
+                                            size.width * AppDimensions.numD26,
                                       ),
                                     );
                                   },
@@ -588,8 +617,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       alignment: Alignment.topCenter,
                                       child: Image.asset(
                                         "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * AppDimensions.numD26,
-                                        width: size.width * AppDimensions.numD26,
+                                        height:
+                                            size.width * AppDimensions.numD26,
+                                        width:
+                                            size.width * AppDimensions.numD26,
                                       ),
                                     );
                                   },
@@ -634,7 +665,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     format: "hh:mm a"),
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD024,
+                                    fontSize:
+                                        size.width * AppDimensions.numD024,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -655,7 +687,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     format: "dd MMM yyyy"),
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD024,
+                                    fontSize:
+                                        size.width * AppDimensions.numD024,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -674,7 +707,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       : "RECEIVED",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD025,
+                                      fontSize:
+                                          size.width * AppDimensions.numD025,
                                       color: item.status == "accepted" ||
                                               item.status == "completed"
                                           ? AppColorTheme.colorThemePink
@@ -682,10 +716,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       fontWeight: FontWeight.normal)),
                               item.status == "accepted"
                                   ? Container(
-                                      height: size.width * AppDimensions.numD065,
+                                      height:
+                                          size.width * AppDimensions.numD065,
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * AppDimensions.numD04,
-                                          vertical: size.width * AppDimensions.numD01),
+                                          horizontal:
+                                              size.width * AppDimensions.numD04,
+                                          vertical: size.width *
+                                              AppDimensions.numD01),
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                           color: item.status == "accepted" &&
@@ -693,7 +730,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                               ? Colors.black
                                               : AppColorTheme.colorLightGrey,
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD015)),
+                                              size.width *
+                                                  AppDimensions.numD015)),
                                       child: Text(
                                         item.status == "accepted" &&
                                                 item.totalAmount == "0"
@@ -701,7 +739,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                             : "$currencySymbol${item.totalAmount}",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD025,
+                                            fontSize: size.width *
+                                                AppDimensions.numD025,
                                             color: item.status == "accepted" &&
                                                     item.totalAmount == "0"
                                                 ? Colors.white
@@ -713,17 +752,21 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                       alignment: Alignment.center,
                                       height: size.width * AppDimensions.numD08,
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * AppDimensions.numD05,
-                                          vertical: size.width * AppDimensions.numD01),
+                                          horizontal:
+                                              size.width * AppDimensions.numD05,
+                                          vertical: size.width *
+                                              AppDimensions.numD01),
                                       decoration: BoxDecoration(
                                           color: Colors.black,
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD015)),
+                                              size.width *
+                                                  AppDimensions.numD015)),
                                       child: Text(
                                         "$currencySymbol${item.totalAmount}",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD025,
+                                            fontSize: size.width *
+                                                AppDimensions.numD025,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600),
                                       ),
@@ -740,9 +783,13 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   );
                 }
               },
-            ),
-          )
-        : errorMessageWidget("No Task Available");
+            )
+          : SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                  height: size.height * 0.7,
+                  child: errorMessageWidget("No Task Available"))),
+    );
   }
 
   Widget allTaskWidget(List<TaskAll> allTaskList, BuildContext context) {
@@ -750,254 +797,267 @@ class MyTaskScreenState extends State<MyTaskScreen>
     if (allTaskList.isEmpty && state.allTasksStatus == TaskStatus.loading) {
       return const SizedBox.shrink();
     }
-    return allTaskList.isNotEmpty
-        ? SmartRefresher(
-            controller: _refreshController,
-            enablePullDown: true,
-            enablePullUp: true,
-            onRefresh: () => _onRefresh(context),
-            onLoading: () => _onLoading(context),
-            footer: const CustomFooter(builder: commonRefresherFooter),
-            child: GridView.builder(
-                itemCount: allTaskList.length,
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * AppDimensions.numD04,
-                    vertical: size.width * AppDimensions.numD04),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  mainAxisSpacing: size.width * AppDimensions.numD04,
-                  crossAxisSpacing: size.width * AppDimensions.numD04,
-                ),
-                itemBuilder: (context, index) {
-                  var item = allTaskList[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => TaskDetailNewScreen(
-                                  taskStatus: item.status,
-                                  taskId: item.id,
-                                  totalEarning: "0")))
-                          .then((value) => context.read<TaskBloc>().add(
-                              FetchLocalTasksEvent(
-                                  filterParams: getFilterParams())));
+    return SmartRefresher(
+      controller: _allRefreshController,
+      enablePullDown: true,
+      enablePullUp: allTaskList.isNotEmpty,
+      onRefresh: () => _onRefresh(context),
+      onLoading: () => _onLoading(context),
+      footer: const CustomFooter(builder: commonRefresherFooter),
+      child: allTaskList.isNotEmpty
+          ? GridView.builder(
+              itemCount: allTaskList.length,
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04,
+                  vertical: size.width * AppDimensions.numD04),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.75,
+                mainAxisSpacing: size.width * AppDimensions.numD04,
+                crossAxisSpacing: size.width * AppDimensions.numD04,
+              ),
+              itemBuilder: (context, index) {
+                var item = allTaskList[index];
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                            builder: (context) => TaskDetailNewScreen(
+                                taskStatus: item.status,
+                                taskId: item.id,
+                                totalEarning: "0")))
+                        .then((value) => context.read<TaskBloc>().add(
+                            FetchLocalTasksEvent(
+                                filterParams: getFilterParams(),
+                                showLoader: false)));
 
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             const TaskDetailNewScreen()));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          left: size.width * AppDimensions.numD03,
-                          right: size.width * AppDimensions.numD03,
-                          top: size.width * AppDimensions.numD03),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.shade200,
-                                spreadRadius: 2,
-                                blurRadius: 1)
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             const TaskDetailNewScreen()));
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        left: size.width * AppDimensions.numD03,
+                        right: size.width * AppDimensions.numD03,
+                        top: size.width * AppDimensions.numD03),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey.shade200,
+                              spreadRadius: 2,
+                              blurRadius: 1)
+                        ],
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Image
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
+                              child: Image.network(
+                                // item.taskDetail!.mediaHouseImage,
+                                item.uploadContents?.videothubnail ?? "",
+                                height: size.width * AppDimensions.numD28,
+                                width: size.width,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    alignment: Alignment.topCenter,
+                                    child: Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
+                                      height: size.width * AppDimensions.numD26,
+                                      width: size.width * AppDimensions.numD26,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, exception, stackTrace) {
+                                  return Container(
+                                    alignment: Alignment.topCenter,
+                                    child: Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
+                                      height: size.width * AppDimensions.numD26,
+                                      width: size.width * AppDimensions.numD26,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ],
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD04)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /// Image
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
-                                child: Image.network(
-                                  // item.taskDetail!.mediaHouseImage,
-                                  item.uploadContents?.videothubnail ?? "",
-                                  height: size.width * AppDimensions.numD28,
-                                  width: size.width,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      alignment: Alignment.topCenter,
-                                      child: Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * AppDimensions.numD26,
-                                        width: size.width * AppDimensions.numD26,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder:
-                                      (context, exception, stackTrace) {
-                                    return Container(
-                                      alignment: Alignment.topCenter,
-                                      child: Image.asset(
-                                        "${commonImagePath}rabbitLogo.png",
-                                        height: size.width * AppDimensions.numD26,
-                                        width: size.width * AppDimensions.numD26,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.width * AppDimensions.numD02,
-                          ),
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        ),
 
-                          /// Title
-                          Text(
-                            // item.taskDetail!.title.toTitleCase(),
-                            item.heading.toTitleCase(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.start,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * AppDimensions.numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
-                          ),
+                        /// Title
+                        Text(
+                          // item.taskDetail!.title.toTitleCase(),
+                          item.heading.toTitleCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: commonTextStyle(
+                              size: size,
+                              fontSize: size.width * AppDimensions.numD03,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500),
+                        ),
 
-                          const Spacer(),
+                        const Spacer(),
 
-                          /// Dead Line
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(
-                                "${iconsPath}ic_clock.png",
-                                height: size.width * AppDimensions.numD029,
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD01,
-                              ),
-                              Text(
-                                dateTimeFormatter(
-                                    // dateTime:
-                                    // item.taskDetail!.createdAt.toString(),
-                                    dateTime: item.createdAt.toString(),
-                                    format: "hh:mm a"),
+                        /// Dead Line
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              "${iconsPath}ic_clock.png",
+                              height: size.width * AppDimensions.numD029,
+                            ),
+                            SizedBox(
+                              width: size.width * AppDimensions.numD01,
+                            ),
+                            Text(
+                              dateTimeFormatter(
+                                  // dateTime:
+                                  // item.taskDetail!.createdAt.toString(),
+                                  dateTime: item.createdAt.toString(),
+                                  format: "hh:mm a"),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD024,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            SizedBox(
+                              width: size.width * AppDimensions.numD018,
+                            ),
+                            Image.asset(
+                              "${iconsPath}ic_yearly_calendar.png",
+                              height: size.width * AppDimensions.numD028,
+                            ),
+                            SizedBox(
+                              width: size.width * AppDimensions.numD01,
+                            ),
+                            Text(
+                              dateTimeFormatter(
+                                  // dateTime:
+                                  //     item.taskDetail!.createdAt.toString(),
+                                  dateTime: item.createdAt.toString(),
+                                  format: "dd MMM yyyy"),
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * AppDimensions.numD024,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD013,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                // item.totalAmount == "0" &&
+                                item.status == "accepted"
+                                    ? item.status.toUpperCase()
+                                    : "",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD024,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD018,
-                              ),
-                              Image.asset(
-                                "${iconsPath}ic_yearly_calendar.png",
-                                height: size.width * AppDimensions.numD028,
-                              ),
-                              SizedBox(
-                                width: size.width * AppDimensions.numD01,
-                              ),
-                              Text(
-                                dateTimeFormatter(
-                                    // dateTime:
-                                    //     item.taskDetail!.createdAt.toString(),
-                                    dateTime: item.createdAt.toString(),
-                                    format: "dd MMM yyyy"),
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * AppDimensions.numD024,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.width * AppDimensions.numD013,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                  // item.totalAmount == "0" &&
-                                  item.status == "accepted"
-                                      ? item.status.toUpperCase()
-                                      : "",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * AppDimensions.numD025,
-                                      color: item.status == "accepted" ||
-                                              item.status == "completed"
-                                          ? AppColorTheme.colorThemePink
-                                          : Colors.black,
-                                      fontWeight: FontWeight.normal)),
+                                    fontSize:
+                                        size.width * AppDimensions.numD025,
+                                    color: item.status == "accepted" ||
+                                            item.status == "completed"
+                                        ? AppColorTheme.colorThemePink
+                                        : Colors.black,
+                                    fontWeight: FontWeight.normal)),
 
-                              //////////////
-                              item.status == "accepted"
-                                  ? Container(
-                                      height: size.width * AppDimensions.numD065,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * AppDimensions.numD04,
-                                          vertical: size.width * AppDimensions.numD01),
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
+                            //////////////
+                            item.status == "accepted"
+                                ? Container(
+                                    height: size.width * AppDimensions.numD065,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            size.width * AppDimensions.numD04,
+                                        vertical:
+                                            size.width * AppDimensions.numD01),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: item.status == "accepted"
+                                            // && item.totalAmount == "0"
+                                            ? Colors.black
+                                            : AppColorTheme.colorLightGrey,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width *
+                                                AppDimensions.numD015)),
+                                    child: Text(
+                                      item.status == "accepted"
+                                          //  &&   item.totalAmount == "0"
+                                          ? "Live"
+                                          : "Amount",
+                                      // : "$currencySymbol${item.totalAmount}",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD025,
                                           color: item.status == "accepted"
                                               // && item.totalAmount == "0"
-                                              ? Colors.black
-                                              : AppColorTheme.colorLightGrey,
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD015)),
-                                      child: Text(
-                                        item.status == "accepted"
-                                            //  &&   item.totalAmount == "0"
-                                            ? "Live"
-                                            : "Amount",
-                                        // : "$currencySymbol${item.totalAmount}",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * AppDimensions.numD025,
-                                            color: item.status == "accepted"
-                                                // && item.totalAmount == "0"
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    )
-                                  : Container(
-                                      alignment: Alignment.center,
-                                      height: size.width * AppDimensions.numD06,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * AppDimensions.numD025,
-                                          vertical: size.width * AppDimensions.numD003),
-                                      decoration: BoxDecoration(
-                                          color: AppColorTheme.colorThemePink,
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD015)),
-                                      child: Text(
-                                        "Available",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * AppDimensions.numD025,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    )
-                            ],
-                          ),
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                                : Container(
+                                    alignment: Alignment.center,
+                                    height: size.width * AppDimensions.numD06,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            size.width * AppDimensions.numD025,
+                                        vertical:
+                                            size.width * AppDimensions.numD003),
+                                    decoration: BoxDecoration(
+                                        color: AppColorTheme.colorThemePink,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width *
+                                                AppDimensions.numD015)),
+                                    child: Text(
+                                      "Available",
+                                      style: commonTextStyle(
+                                          size: size,
+                                          fontSize: size.width *
+                                              AppDimensions.numD025,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                          ],
+                        ),
 
-                          SizedBox(
-                            height: size.width * AppDimensions.numD02,
-                          )
-                        ],
-                      ),
+                        SizedBox(
+                          height: size.width * AppDimensions.numD02,
+                        )
+                      ],
                     ),
-                  );
-                }
-                // },
-                ),
-          )
-        : errorMessageWidget("No Task Available");
+                  ),
+                );
+              }
+              // },
+              )
+          : SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                  height: size.height * 0.7,
+                  child: errorMessageWidget("No Task Available"))),
+    );
   }
 
   Future<void> showBottomSheet(Size size) async {
@@ -1042,7 +1102,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                           "Filter",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
+                              fontSize: size.width *
+                                  AppDimensions.appBarHeadingFontSizeNew,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
@@ -1106,8 +1167,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     Container(
                       width: size.width,
                       height: size.width * AppDimensions.numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD04,
                       ),
@@ -1119,7 +1180,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                         context.read<TaskBloc>().add(FetchLocalTasksEvent(
@@ -1211,8 +1273,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               ),
                               width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -1226,7 +1288,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         format: "dd/mm/yy"),
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -1281,8 +1344,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               ),
                               width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -1296,7 +1359,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         format: "dd/mm/yy"),
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -1383,13 +1447,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
         params["latitude"] = _currentPosition!.latitude;
         params["longitude"] = _currentPosition!.longitude;
       }
-      context
-          .read<TaskBloc>()
-          .add(FetchAllTasksEvent(offset: 0, filterParams: params));
+      context.read<TaskBloc>().add(FetchAllTasksEvent(
+          offset: 0, filterParams: params, showLoader: false));
     } else {
-      context
-          .read<TaskBloc>()
-          .add(FetchLocalTasksEvent(filterParams: getFilterParams()));
+      context.read<TaskBloc>().add(FetchLocalTasksEvent(
+          filterParams: getFilterParams(), showLoader: false));
     }
   }
 
@@ -1401,11 +1463,11 @@ class MyTaskScreenState extends State<MyTaskScreen>
         params["latitude"] = _currentPosition!.latitude;
         params["longitude"] = _currentPosition!.longitude;
       }
-      context.read<TaskBloc>().add(
-          FetchAllTasksEvent(offset: _allTaskOffset, filterParams: params));
+      context.read<TaskBloc>().add(FetchAllTasksEvent(
+          offset: _allTaskOffset, filterParams: params, showLoader: false));
     } else {
       // Local tasks pagination if applicable
-      _refreshController.loadComplete();
+      _localRefreshController.loadComplete();
     }
   }
 }

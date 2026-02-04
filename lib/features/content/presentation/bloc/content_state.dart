@@ -76,13 +76,33 @@ class MyContentLoaded extends ContentState {
   }
 }
 
-class ContentDetailLoaded extends ContentState {
+class ContentDetailLoaded extends MyContentLoaded {
   final ContentItem content;
 
-  const ContentDetailLoaded(this.content);
+  const ContentDetailLoaded(
+    this.content, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
 
   @override
-  List<Object> get props => [content];
+  List<Object> get props => [
+        content,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }
 
 class ContentPublished extends ContentState {
@@ -139,29 +159,89 @@ class TrendingHashtagsLoaded extends ContentState {
   List<Object> get props => [hashtags];
 }
 
-class MediaHouseOffersLoaded extends ContentState {
+class MediaHouseOffersLoaded extends MyContentLoaded {
   final List<ManageTaskChatModel> offers;
 
-  const MediaHouseOffersLoaded(this.offers);
+  const MediaHouseOffersLoaded(
+    this.offers, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
 
   @override
-  List<Object> get props => [offers];
+  List<Object> get props => [
+        offers,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }
 
-class ContentTransactionsLoaded extends ContentState {
+class ContentTransactionsLoaded extends MyContentLoaded {
   final List<EarningTransactionDetail> transactions;
 
-  const ContentTransactionsLoaded(this.transactions);
+  const ContentTransactionsLoaded(
+    this.transactions, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
 
   @override
-  List<Object> get props => [transactions];
+  List<Object> get props => [
+        transactions,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }
 
-class ContentError extends ContentState {
+class ContentError extends MyContentLoaded {
   final String message;
 
-  const ContentError(this.message);
+  const ContentError(
+    this.message, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [
+        message,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }

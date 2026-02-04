@@ -15,7 +15,8 @@ class GetAllTasks implements UseCase<List<TaskAll>, GetAllTasksParams> {
     return await repository.getAllTasks(
         limit: params.limit,
         offset: params.offset,
-        filterParams: params.filterParams);
+        filterParams: params.filterParams,
+        showLoader: params.showLoader);
   }
 }
 
@@ -23,10 +24,14 @@ class GetAllTasksParams extends Equatable {
   final int limit;
   final int offset;
   final Map<String, dynamic>? filterParams;
+  final bool showLoader;
 
   const GetAllTasksParams(
-      {required this.limit, required this.offset, this.filterParams});
+      {required this.limit,
+      required this.offset,
+      this.filterParams,
+      this.showLoader = true});
 
   @override
-  List<Object?> get props => [limit, offset, filterParams];
+  List<Object?> get props => [limit, offset, filterParams, showLoader];
 }

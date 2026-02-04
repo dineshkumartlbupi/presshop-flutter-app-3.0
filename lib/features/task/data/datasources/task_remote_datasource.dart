@@ -10,17 +10,21 @@ import 'package:presshop/features/task/data/models/all_task_model.dart';
 import 'package:presshop/features/task/data/models/my_task_model.dart';
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
+import 'dart:convert';
 import 'package:presshop/features/task/data/models/task_assigned_response_model.dart';
 
 abstract class TaskRemoteDataSource {
-  Future<TaskAssignedResponseModel> getTaskDetail(String taskId);
+  Future<TaskAssignedResponseModel> getTaskDetail(String taskId,
+      {bool showLoader = true});
   Future<void> acceptRejectTask(
       {required String taskId,
       required String mediaHouseId,
       required String status});
   Future<List<ManageTaskChatModel>> getTaskChat(
-      String roomId, String type, String contentId);
-  Future<Map<String, dynamic>> uploadTaskMedia(FormData data);
+      String roomId, String type, String contentId,
+      {bool showLoader = true});
+  Future<Map<String, dynamic>> uploadTaskMedia(FormData data,
+      {bool showLoader = true});
   Future<String> getRoomId(
       String receiverId, String taskId, String roomType, String type);
   Future<String> getHopperAcceptedCount(String taskId);
@@ -31,8 +35,10 @@ abstract class TaskRemoteDataSource {
   Future<List<TaskAll>> getAllTasks(
       {required int limit,
       required int offset,
-      Map<String, dynamic>? filterParams});
-  Future<List<Task>> getLocalTasks(Map<String, dynamic> filterParams);
+      Map<String, dynamic>? filterParams,
+      bool showLoader = true});
+  Future<List<Task>> getLocalTasks(Map<String, dynamic> filterParams,
+      {bool showLoader = true});
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
@@ -41,23 +47,74 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   TaskRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<TaskAssignedResponseModel> getTaskDetail(String taskId) async {
+  Future<TaskAssignedResponseModel> getTaskDetail(String taskId,
+      {bool showLoader = true}) async {
     try {
       final response = await apiClient.get(
-        "${ApiConstantsNew.tasks.assignedTaskDetail}$taskId",
-      );
+          "${ApiConstantsNew.tasks.assignedTaskDetail}$taskId",
+          showLoader: showLoader);
 
       final data = response.data;
       var responseData = data;
+      if (responseData is String) {
+        try {
+          responseData = jsonDecode(responseData);
+        } catch (e) {
+          debugPrint("Failed to decode response string: $e");
+        }
+      }
 
       // Handle nested structure: data['data']
-      if (data != null) {
-        if (data is Map && data.containsKey('data')) {
-          responseData = data; //Pass the whole response as the model expects
+      if (responseData != null) {
+        if (responseData is Map && responseData.containsKey('data')) {
+          debugPrint("✅ Data before inner parsing: $responseData");
+          var innerData = responseData['data'];
+          // Check if inner data is string
+          if (innerData is String) {
+            try {
+              innerData = jsonDecode(innerData);
+              responseData['data'] = innerData;
+            } catch (e) {
+              debugPrint("Failed to decode inner data string: $e");
+            }
+          }
+
+          // Check nested 'task' field
+          if (innerData is Map && innerData.containsKey('task')) {
+            var taskData = innerData['task'];
+            if (taskData is String) {
+              try {
+                innerData['task'] = jsonDecode(taskData);
+              } catch (e) {
+                debugPrint("Failed to decode nested task string: $e");
+              }
+            }
+          }
+
+          // Check nested 'resp' field logic
+          if (innerData is Map) {
+            // Handle "response" key vs "resp" key mismatch
+            if (innerData.containsKey('response') &&
+                !innerData.containsKey('resp')) {
+              innerData['resp'] = innerData['response'];
+            }
+
+            if (innerData.containsKey('resp')) {
+              var respData = innerData['resp'];
+              if (respData is String) {
+                try {
+                  innerData['resp'] = jsonDecode(respData);
+                } catch (e) {
+                  debugPrint("Failed to decode nested resp string: $e");
+                }
+              }
+            }
+          }
         }
       }
 
       if (response.statusCode == 200) {
+        debugPrint("✅ Final Response Data passed to fromJson: $responseData");
         return TaskAssignedResponseModel.fromJson(responseData);
       } else {
         throw ServerException(
@@ -101,7 +158,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
   @override
   Future<List<ManageTaskChatModel>> getTaskChat(
-      String roomId, String type, String contentId) async {
+      String roomId, String type, String contentId,
+      {bool showLoader = true}) async {
     try {
       debugPrint(
           "🚀 getTaskChat: type='$type', contentId='$contentId', roomId='$roomId'");
@@ -115,7 +173,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           ? {"room_id": roomId, "type": "task_content"}
           : {"content_id": contentId};
 
-      final response = await apiClient.post(url, data: body);
+      final response =
+          await apiClient.post(url, data: body, showLoader: showLoader);
 
       debugPrint("🚀 getTaskChat Response Status: ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -169,11 +228,13 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> uploadTaskMedia(FormData data) async {
+  Future<Map<String, dynamic>> uploadTaskMedia(FormData data,
+      {bool showLoader = true}) async {
     try {
       final response = await apiClient.multipartPost(
         ApiConstantsNew.tasks.uploadTaskMedia,
         formData: data,
+        showLoader: showLoader,
       );
 
       final rawData = response.data;
@@ -295,7 +356,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<List<TaskAll>> getAllTasks(
       {required int limit,
       required int offset,
-      Map<String, dynamic>? filterParams}) async {
+      Map<String, dynamic>? filterParams,
+      bool showLoader = true}) async {
     try {
       Map<String, dynamic> queryParams = {
         "limit": limit,
@@ -311,6 +373,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       final response = await apiClient.get(
         ApiConstantsNew.tasks.allTasks, // Base URL for assigned tasks
         queryParameters: queryParams,
+        showLoader: showLoader,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -343,11 +406,13 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   }
 
   @override
-  Future<List<Task>> getLocalTasks(Map<String, dynamic> filterParams) async {
+  Future<List<Task>> getLocalTasks(Map<String, dynamic> filterParams,
+      {bool showLoader = true}) async {
     try {
       final response = await apiClient.post(
         ApiConstantsNew.tasks.myTasks,
         data: filterParams,
+        showLoader: showLoader,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

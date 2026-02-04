@@ -68,7 +68,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
     getAllIcons();
     getCurrentLocation();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));
+      context
+          .read<TaskBloc>()
+          .add(GetTaskDetailEvent(widget.taskId, showLoader: false));
     });
     super.initState();
   }
@@ -236,7 +238,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                               vertical: size.width *
                                                   AppDimensions.numD018),
                                           decoration: BoxDecoration(
-                                              color: AppColorTheme.colorThemePink,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
                                               borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(
                                                     size.width *
@@ -347,8 +350,10 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                                     AppDimensions.numD06,
                                                 color: widget.taskStatus ==
                                                         "accepted"
-                                                    ? AppColorTheme.colorOnlineGreen
-                                                    : AppColorTheme.colorThemePink,
+                                                    ? AppColorTheme
+                                                        .colorOnlineGreen
+                                                    : AppColorTheme
+                                                        .colorThemePink,
                                                 fontWeight: FontWeight.w500),
                                           )),
                                     )
@@ -874,8 +879,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                         width: size.width / 2,
                                         decoration: BoxDecoration(
                                             color: AppColorTheme.colorThemePink,
-                                            border:
-                                                Border.all(color: AppColorTheme.colorGreyNew),
+                                            border: Border.all(
+                                                color:
+                                                    AppColorTheme.colorGreyNew),
                                             borderRadius: BorderRadius.circular(
                                                 size.width *
                                                     AppDimensions.numD028)),
@@ -930,8 +936,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           vertical: size.width *
                                               AppDimensions.numD002),
                                       decoration: BoxDecoration(
-                                          color:
-                                              AppColorTheme.colorLightGreen.withOpacity(0.8),
+                                          color: AppColorTheme.colorLightGreen
+                                              .withOpacity(0.8),
                                           borderRadius: BorderRadius.circular(
                                               size.width *
                                                   AppDimensions.numD01)),
@@ -950,8 +956,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           vertical: size.width *
                                               AppDimensions.numD005),
                                       decoration: BoxDecoration(
-                                          color:
-                                              AppColorTheme.colorLightGreen.withOpacity(0.8),
+                                          color: AppColorTheme.colorLightGreen
+                                              .withOpacity(0.8),
                                           borderRadius: BorderRadius.circular(
                                               size.width *
                                                   AppDimensions.numD01)),
@@ -984,9 +990,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                             taskDetail: taskDetail!,
                                             roomId: roomId,
                                           )))
-                                  .then((value) => context
-                                      .read<TaskBloc>()
-                                      .add(GetTaskDetailEvent(widget.taskId)));
+                                  .then((value) => context.read<TaskBloc>().add(
+                                      GetTaskDetailEvent(widget.taskId,
+                                          showLoader: false)));
                             },
                             child: AnimatedButtonWidget(
                               shouldRestartAnimation: shouldRestartAnimation,
@@ -1002,9 +1008,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                             )))
                                     .then((value) {
                                   shouldRestartAnimation = true;
-                                  context
-                                      .read<TaskBloc>()
-                                      .add(GetTaskDetailEvent(widget.taskId));
+                                  context.read<TaskBloc>().add(
+                                      GetTaskDetailEvent(widget.taskId,
+                                          showLoader: false));
                                 });
                               },
                             ),

@@ -10,9 +10,10 @@ abstract class TaskEvent extends Equatable {
 
 class GetTaskDetailEvent extends TaskEvent {
   final String taskId;
-  const GetTaskDetailEvent(this.taskId);
+  final bool showLoader;
+  const GetTaskDetailEvent(this.taskId, {this.showLoader = true});
   @override
-  List<Object> get props => [taskId];
+  List<Object> get props => [taskId, showLoader];
 }
 
 class AcceptRejectTaskEvent extends TaskEvent {
@@ -32,18 +33,21 @@ class GetTaskChatEvent extends TaskEvent {
   final String roomId;
   final String type;
   final String contentId;
+  final bool showLoader;
   const GetTaskChatEvent({
     required this.roomId,
     required this.type,
     required this.contentId,
+    this.showLoader = true,
   });
   @override
-  List<Object> get props => [roomId, type, contentId];
+  List<Object> get props => [roomId, type, contentId, showLoader];
 }
 
 class UploadTaskMediaEvent extends TaskEvent {
   final FormData data;
-  const UploadTaskMediaEvent(this.data);
+  final bool showLoader;
+  const UploadTaskMediaEvent(this.data, {this.showLoader = true});
 }
 
 class GetRoomIdEvent extends TaskEvent {
@@ -89,21 +93,25 @@ class GetContentTransactionDetailsEvent extends TaskEvent {
 class FetchAllTasksEvent extends TaskEvent {
   final int offset;
   final Map<String, dynamic>? filterParams;
-  const FetchAllTasksEvent({required this.offset, this.filterParams});
+  final bool showLoader;
+  const FetchAllTasksEvent(
+      {required this.offset, this.filterParams, this.showLoader = true});
   @override
-  List<Object> get props => [offset, filterParams ?? {}];
+  List<Object> get props => [offset, filterParams ?? {}, showLoader];
 }
 
 class FetchLocalTasksEvent extends TaskEvent {
   final Map<String, dynamic>? filterParams;
-  const FetchLocalTasksEvent({this.filterParams});
+  final bool showLoader;
+  const FetchLocalTasksEvent({this.filterParams, this.showLoader = true});
   @override
-  List<Object> get props => [filterParams ?? {}];
+  List<Object> get props => [filterParams ?? {}, showLoader];
 }
 
 class FetchTaskDetailEvent extends TaskEvent {
   final String taskId;
-  const FetchTaskDetailEvent(this.taskId);
+  final bool showLoader;
+  const FetchTaskDetailEvent(this.taskId, {this.showLoader = true});
   @override
-  List<Object> get props => [taskId];
+  List<Object> get props => [taskId, showLoader];
 }

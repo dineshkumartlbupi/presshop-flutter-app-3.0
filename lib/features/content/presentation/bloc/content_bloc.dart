@@ -141,11 +141,36 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     FetchContentDetailEvent event,
     Emitter<ContentState> emit,
   ) async {
-    emit(ContentLoading());
-    final result = await getContentDetail(event.contentId);
+    // DO NOT emit(ContentLoading()); as it wipes the list state
+    final currentState = (state is MyContentLoaded)
+        ? (state as MyContentLoaded)
+        : const MyContentLoaded();
+
+    final result = await getContentDetail(
+        GetContentDetailParams(event.contentId, showLoader: false));
     result.fold(
-      (failure) => emit(ContentError(failure.message)),
-      (content) => emit(ContentDetailLoaded(content)),
+      (failure) => emit(ContentError(
+        failure.message,
+        allContent: currentState.allContent,
+        myContent: currentState.myContent,
+        allPage: currentState.allPage,
+        myPage: currentState.myPage,
+        hasMoreAll: currentState.hasMoreAll,
+        hasMoreMy: currentState.hasMoreMy,
+        isLoadingAll: currentState.isLoadingAll,
+        isLoadingMy: currentState.isLoadingMy,
+      )),
+      (content) => emit(ContentDetailLoaded(
+        content,
+        allContent: currentState.allContent,
+        myContent: currentState.myContent,
+        allPage: currentState.allPage,
+        myPage: currentState.myPage,
+        hasMoreAll: currentState.hasMoreAll,
+        hasMoreMy: currentState.hasMoreMy,
+        isLoadingAll: currentState.isLoadingAll,
+        isLoadingMy: currentState.isLoadingMy,
+      )),
     );
   }
 
@@ -223,11 +248,35 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     FetchMediaHouseOffersEvent event,
     Emitter<ContentState> emit,
   ) async {
-    // emit(ContentLoading()); // Optional: might not want to show full page loader for this
-    final result = await getMediaHouseOffers(event.contentId);
+    final currentState = (state is MyContentLoaded)
+        ? (state as MyContentLoaded)
+        : const MyContentLoaded();
+
+    final result = await getMediaHouseOffers(
+        GetMediaHouseOffersParams(event.contentId, showLoader: false));
     result.fold(
-      (failure) => emit(ContentError(failure.message)),
-      (offers) => emit(MediaHouseOffersLoaded(offers)),
+      (failure) => emit(ContentError(
+        failure.message,
+        allContent: currentState.allContent,
+        myContent: currentState.myContent,
+        allPage: currentState.allPage,
+        myPage: currentState.myPage,
+        hasMoreAll: currentState.hasMoreAll,
+        hasMoreMy: currentState.hasMoreMy,
+        isLoadingAll: currentState.isLoadingAll,
+        isLoadingMy: currentState.isLoadingMy,
+      )),
+      (offers) => emit(MediaHouseOffersLoaded(
+        offers,
+        allContent: currentState.allContent,
+        myContent: currentState.myContent,
+        allPage: currentState.allPage,
+        myPage: currentState.myPage,
+        hasMoreAll: currentState.hasMoreAll,
+        hasMoreMy: currentState.hasMoreMy,
+        isLoadingAll: currentState.isLoadingAll,
+        isLoadingMy: currentState.isLoadingMy,
+      )),
     );
   }
 
@@ -235,15 +284,39 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     FetchContentTransactionsEvent event,
     Emitter<ContentState> emit,
   ) async {
-    // emit(ContentLoading()); // Optional
+    final currentState = (state is MyContentLoaded)
+        ? (state as MyContentLoaded)
+        : const MyContentLoaded();
+
     final result = await getContentTransactions(GetContentTransactionsParams(
       contentId: event.contentId,
       limit: event.limit,
       offset: event.offset,
+      showLoader: false,
     ));
     result.fold(
-      (failure) => emit(ContentError(failure.message)),
-      (transactions) => emit(ContentTransactionsLoaded(transactions)),
+      (failure) => emit(ContentError(
+        failure.message,
+        allContent: currentState.allContent,
+        myContent: currentState.myContent,
+        allPage: currentState.allPage,
+        myPage: currentState.myPage,
+        hasMoreAll: currentState.hasMoreAll,
+        hasMoreMy: currentState.hasMoreMy,
+        isLoadingAll: currentState.isLoadingAll,
+        isLoadingMy: currentState.isLoadingMy,
+      )),
+      (transactions) => emit(ContentTransactionsLoaded(
+        transactions,
+        allContent: currentState.allContent,
+        myContent: currentState.myContent,
+        allPage: currentState.allPage,
+        myPage: currentState.myPage,
+        hasMoreAll: currentState.hasMoreAll,
+        hasMoreMy: currentState.hasMoreMy,
+        isLoadingAll: currentState.isLoadingAll,
+        isLoadingMy: currentState.isLoadingMy,
+      )),
     );
   }
 }

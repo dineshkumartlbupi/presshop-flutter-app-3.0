@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:presshop/core/utils/safe_parser.dart';
 import '../../domain/entities/task_assigned_entity.dart';
 
 class TaskAssignedResponseModel extends TaskAssignedEntity {
@@ -13,8 +15,8 @@ class TaskAssignedResponseModel extends TaskAssignedEntity {
 
   factory TaskAssignedResponseModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedResponseModel(
-      success: json['success'],
-      message: json['message'],
+      success: SafeParser.parseBool(json['success']),
+      message: SafeParser.parseString(json['message']),
       data: TaskAssignedDataModel.fromJson(json['data']),
     );
   }
@@ -33,9 +35,20 @@ class TaskAssignedDataModel {
 
   factory TaskAssignedDataModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedDataModel(
-      code: json['code'],
+      code: SafeParser.parseInt(json['code']),
       task: TaskAssignedItemModel.fromJson(json['task']),
-      resp: ChatRoomDataModel.fromJson(json['resp']),
+      resp: (json['resp'] != null &&
+              json['resp'] is Map &&
+              json['resp'].containsKey('participants'))
+          ? ChatRoomDataModel.fromJson(json['resp'])
+          : ChatRoomDataModel(
+              id: "dummy",
+              participants: [],
+              type: "",
+              roomId: "",
+              senderId: "",
+              taskId: "",
+              createdAt: DateTime.now()),
     );
   }
 }
@@ -73,22 +86,32 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedItemModel(
-      id: json['_id'],
-      mediaHouse: MediaHouseDataModel.fromJson(json['mediahouse_id']),
-      deadlineDate: DateTime.parse(json['deadline_date']),
-      heading: json['heading'],
-      description: json['description'],
-      location: json['location'],
-      addressLocation:
-          AddressLocationDataModel.fromJson(json['address_location']),
-      status: json['status'],
-      isDraft: json['is_draft'],
-      paidStatus: json['paid_status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      content: (json['content'] as List)
-          .map((e) => TaskContentDataModel.fromJson(e))
-          .toList(),
+      id: SafeParser.parseString(json['_id']),
+      mediaHouse: (json['mediahouse_id'] is String)
+          ? MediaHouseDataModel(
+              id: SafeParser.parseString(json['mediahouse_id']),
+              firstName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+              role: "",
+              profileImage: "")
+          : MediaHouseDataModel.fromJson(json['mediahouse_id']),
+      deadlineDate: SafeParser.parseDateTime(json['deadline_date']),
+      heading: SafeParser.parseString(json['heading']),
+      description: SafeParser.parseString(json['description']),
+      location: SafeParser.parseString(json['location']),
+      addressLocation: (json['address_location'] is String)
+          ? AddressLocationDataModel.fromJson(
+              jsonDecode(json['address_location']))
+          : AddressLocationDataModel.fromJson(json['address_location']),
+      status: SafeParser.parseString(json['status']),
+      isDraft: SafeParser.parseBool(json['is_draft']),
+      paidStatus: SafeParser.parseString(json['paid_status']),
+      createdAt: SafeParser.parseDateTime(json['createdAt']),
+      updatedAt: SafeParser.parseDateTime(json['updatedAt']),
+      content: SafeParser.parseList<TaskContentDataModel>(
+          json['content'], (e) => TaskContentDataModel.fromJson(e)),
     );
   }
 }
@@ -114,13 +137,13 @@ class MediaHouseDataModel extends MediaHouseEntity {
 
   factory MediaHouseDataModel.fromJson(Map<String, dynamic> json) {
     return MediaHouseDataModel(
-      id: json['_id'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      email: json['email'],
-      phone: json['phone'],
-      role: json['role'],
-      profileImage: json['profile_image'],
+      id: SafeParser.parseString(json['_id']),
+      firstName: SafeParser.parseString(json['firstName']),
+      lastName: SafeParser.parseString(json['lastName']),
+      email: SafeParser.parseString(json['email']),
+      phone: SafeParser.parseString(json['phone']),
+      role: SafeParser.parseString(json['role']),
+      profileImage: SafeParser.parseString(json['profile_image']),
     );
   }
 }
@@ -133,9 +156,9 @@ class AddressLocationDataModel extends AddressLocationEntity {
 
   factory AddressLocationDataModel.fromJson(Map<String, dynamic> json) {
     return AddressLocationDataModel(
-      type: json['type'],
-      coordinates:
-          List<double>.from(json['coordinates'].map((x) => x.toDouble())),
+      type: SafeParser.parseString(json['type']),
+      coordinates: SafeParser.parseList<double>(
+          json['coordinates'], (x) => SafeParser.parseDouble(x)),
     );
   }
 }
@@ -159,12 +182,12 @@ class TaskContentDataModel extends TaskContentEntity {
 
   factory TaskContentDataModel.fromJson(Map<String, dynamic> json) {
     return TaskContentDataModel(
-      media: json['media'],
-      mediaType: json['media_type'],
-      watermark: json['watermark'],
-      hopperId: json['hopper_id'],
-      imageId: json['image_id'],
-      timeStamp: DateTime.parse(json['time_stamp']),
+      media: SafeParser.parseString(json['media']),
+      mediaType: SafeParser.parseString(json['media_type']),
+      watermark: SafeParser.parseString(json['watermark']),
+      hopperId: SafeParser.parseString(json['hopper_id']),
+      imageId: SafeParser.parseString(json['image_id']),
+      timeStamp: SafeParser.parseDateTime(json['time_stamp']),
     );
   }
 }
@@ -190,13 +213,14 @@ class ChatRoomDataModel extends ChatRoomEntity {
 
   factory ChatRoomDataModel.fromJson(Map<String, dynamic> json) {
     return ChatRoomDataModel(
-      id: json['_id'],
-      participants: List<String>.from(json['participants']),
-      type: json['type'],
-      roomId: json['room_id'],
-      senderId: json['sender_id'],
-      taskId: json['task_id'],
-      createdAt: DateTime.parse(json['createdAt']),
+      id: SafeParser.parseString(json['_id']),
+      participants: SafeParser.parseList<String>(
+          json['participants'], (e) => SafeParser.parseString(e)),
+      type: SafeParser.parseString(json['type']),
+      roomId: SafeParser.parseString(json['room_id']),
+      senderId: SafeParser.parseString(json['sender_id']),
+      taskId: SafeParser.parseString(json['task_id']),
+      createdAt: SafeParser.parseDateTime(json['createdAt']),
     );
   }
 }

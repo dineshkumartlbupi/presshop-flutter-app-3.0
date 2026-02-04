@@ -162,11 +162,12 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
   @override
-  Future<Either<Failure, ContentItem>> getContentDetail(
-      String contentId) async {
+  Future<Either<Failure, ContentItem>> getContentDetail(String contentId,
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
-        final content = await remoteDataSource.getContentDetail(contentId);
+        final content = await remoteDataSource.getContentDetail(contentId,
+            showLoader: showLoader);
         return Right(content);
       } on Failure catch (failure) {
         return Left(failure);
@@ -180,10 +181,12 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<Either<Failure, List<ManageTaskChatModel>>> getMediaHouseOffers(
-      String contentId) async {
+      String contentId,
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
-        final offers = await remoteDataSource.getMediaHouseOffers(contentId);
+        final offers = await remoteDataSource.getMediaHouseOffers(contentId,
+            showLoader: showLoader);
         return Right(offers);
       } on Failure catch (failure) {
         return Left(failure);
@@ -197,11 +200,13 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<Either<Failure, List<EarningTransactionDetail>>>
-      getContentTransactions(String contentId, int limit, int offset) async {
+      getContentTransactions(String contentId, int limit, int offset,
+          {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
         final transactions = await remoteDataSource.getContentTransactions(
-            contentId, limit, offset);
+            contentId, limit, offset,
+            showLoader: showLoader);
         return Right(transactions);
       } on Failure catch (failure) {
         return Left(failure);

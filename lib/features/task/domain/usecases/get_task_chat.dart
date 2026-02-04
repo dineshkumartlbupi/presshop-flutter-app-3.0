@@ -15,7 +15,8 @@ class GetTaskChat
   Future<Either<Failure, List<ManageTaskChatModel>>> call(
       GetTaskChatParams params) async {
     return await repository.getTaskChat(
-        params.roomId, params.type, params.contentId);
+        params.roomId, params.type, params.contentId,
+        showLoader: params.showLoader);
   }
 }
 
@@ -24,9 +25,14 @@ class GetTaskChatParams extends Equatable {
   final String type;
   final String contentId;
 
+  final bool showLoader;
+
   const GetTaskChatParams(
-      {required this.roomId, required this.type, required this.contentId});
+      {required this.roomId,
+      required this.type,
+      required this.contentId,
+      this.showLoader = true});
 
   @override
-  List<Object> get props => [roomId, type, contentId];
+  List<Object> get props => [roomId, type, contentId, showLoader];
 }
