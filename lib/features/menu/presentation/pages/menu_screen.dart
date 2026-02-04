@@ -100,11 +100,11 @@ class _MenuScreenState extends State<MenuScreen> {
         elevation: 0,
         hideLeading: false,
         title: Text(
-          menuText,
+          AppStrings.menuText,
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -116,11 +116,11 @@ class _MenuScreenState extends State<MenuScreen> {
       body: SafeArea(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD06, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD06, vertical: size.width * AppDimensions.numD02),
           itemCount: menuList.length,
           separatorBuilder: (context, index) => const Divider(
             thickness: 2,
-            color: colorLightGrey,
+            color: AppColorTheme.colorLightGrey,
           ),
           itemBuilder: (context, index) {
             final item = menuList[index];
@@ -145,24 +145,24 @@ class _MenuScreenState extends State<MenuScreen> {
               elevation: 0,
               contentPadding: EdgeInsets.zero,
               insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               content: Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(size.width * numD045)),
+                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD045)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: size.width * numD04),
+                      padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                       child: Row(
                         children: [
                           Text(
-                            youWIllBeMissedText,
+                            AppStrings.youWIllBeMissedText,
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: size.width * numD05,
+                                fontSize: size.width * AppDimensions.numD05,
                                 fontWeight: FontWeight.bold),
                           ),
                           const Spacer(),
@@ -171,67 +171,67 @@ class _MenuScreenState extends State<MenuScreen> {
                               icon: Icon(
                                 Icons.close,
                                 color: Colors.black,
-                                size: size.width * numD06,
+                                size: size.width * AppDimensions.numD06,
                               ))
                         ],
                       ),
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                       child: const Divider(
                         color: Colors.black,
                         thickness: 0.5,
                       ),
                     ),
-                    SizedBox(height: size.width * numD02),
+                    SizedBox(height: size.width * AppDimensions.numD02),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                    BorderRadius.circular(size.width * AppDimensions.numD04),
                                 border: Border.all(color: Colors.black)),
                             child: ClipRRect(
                                 borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                    BorderRadius.circular(size.width * AppDimensions.numD04),
                                 child: Image.asset(
                                   "assets/rabbits/logout_rabbit.png",
-                                  height: size.width * numD30,
-                                  width: size.width * numD35,
+                                  height: size.width * AppDimensions.numD30,
+                                  width: size.width * AppDimensions.numD35,
                                   fit: BoxFit.cover,
                                 )),
                           ),
-                          SizedBox(width: size.width * numD04),
+                          SizedBox(width: size.width * AppDimensions.numD04),
                           Expanded(
                             child: Text(
-                              logoutMessageText,
+                              AppStrings.logoutMessageText,
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   fontWeight: FontWeight.w500),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: size.width * numD02),
+                    SizedBox(height: size.width * AppDimensions.numD02),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD04),
+                          horizontal: size.width * AppDimensions.numD04,
+                          vertical: size.width * AppDimensions.numD04),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Expanded(
                               child: SizedBox(
-                            height: size.width * numD12,
+                            height: size.width * AppDimensions.numD12,
                             child: commonElevatedButton(
-                                logoutText,
+                                AppStrings.logoutText,
                                 size,
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(size, Colors.black), () {
@@ -239,15 +239,15 @@ class _MenuScreenState extends State<MenuScreen> {
                               menuBloc.add(MenuLogoutRequested());
                             }),
                           )),
-                          SizedBox(width: size.width * numD04),
+                          SizedBox(width: size.width * AppDimensions.numD04),
                           Expanded(
                               child: SizedBox(
-                            height: size.width * numD12,
+                            height: size.width * AppDimensions.numD12,
                             child: commonElevatedButton(
-                                stayLoggedInText,
+                                AppStrings.stayLoggedInText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink),
+                                commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () => Navigator.pop(dialogContext)),
                           )),
                         ],
@@ -304,7 +304,7 @@ class MenuTile extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
             vertical:
-                isNotification ? size.width * numD01 : size.width * numD02),
+                isNotification ? size.width * AppDimensions.numD01 : size.width * AppDimensions.numD02),
         child: Row(
           children: [
             if (isNotification)
@@ -313,7 +313,7 @@ class MenuTile extends StatelessWidget {
               _buildIcon(context),
             SizedBox(
               width:
-                  isNotification ? size.width * numD015 : size.width * numD03,
+                  isNotification ? size.width * AppDimensions.numD015 : size.width * AppDimensions.numD03,
             ),
             Expanded(
               child: _buildTitle(context),
@@ -321,7 +321,7 @@ class MenuTile extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: Colors.black,
-              size: size.width * numD04,
+              size: size.width * AppDimensions.numD04,
             )
           ],
         ),
@@ -339,7 +339,7 @@ class MenuTile extends StatelessWidget {
       children: [
         ImageIcon(
           AssetImage(item.icon),
-          size: isSpecialSize ? size.width * numD072 : size.width * numD06,
+          size: isSpecialSize ? size.width * AppDimensions.numD072 : size.width * AppDimensions.numD06,
           color: Colors.black,
         ),
         if (item.showAlertBadge)
@@ -348,18 +348,18 @@ class MenuTile extends StatelessWidget {
             builder: (context, count) {
               if (count == 0) return const SizedBox.shrink();
               return Container(
-                margin: EdgeInsets.only(top: size.width * numD004),
+                margin: EdgeInsets.only(top: size.width * AppDimensions.numD004),
                 child: CircleAvatar(
-                  backgroundColor: colorThemePink,
-                  radius: size.width * numD016,
+                  backgroundColor: AppColorTheme.colorThemePink,
+                  radius: size.width * AppDimensions.numD016,
                   child: FittedBox(
                     child: Padding(
-                      padding: EdgeInsets.all(size.width * numD004),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD004),
                       child: Text(
                         "$count",
                         style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD019,
+                          fontSize: size.width * AppDimensions.numD019,
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                         ),
@@ -383,7 +383,7 @@ class MenuTile extends StatelessWidget {
           Text(
             "Contact Press",
             style: TextStyle(
-              fontSize: size.width * numD035,
+              fontSize: size.width * AppDimensions.numD035,
               color: Colors.black,
               fontFamily: "AirbnbCereal",
               fontWeight: FontWeight.normal,
@@ -392,7 +392,7 @@ class MenuTile extends StatelessWidget {
           Text(
             "Hop",
             style: TextStyle(
-              fontSize: size.width * numD035,
+              fontSize: size.width * AppDimensions.numD035,
               color: Colors.black,
               letterSpacing: 0,
               fontFamily: "AirbnbCereal",
@@ -405,7 +405,7 @@ class MenuTile extends StatelessWidget {
     return Text(
       item.title,
       style: TextStyle(
-        fontSize: size.width * numD035,
+        fontSize: size.width * AppDimensions.numD035,
         color: Colors.black,
         fontFamily: "AirbnbCereal",
         fontWeight: FontWeight.normal,
@@ -424,17 +424,17 @@ class NotificationBadge extends StatelessWidget {
       selector: (state) => state.notificationCount,
       builder: (context, count) {
         return SizedBox(
-          width: size.width * numD075,
-          height: size.width * numD075,
+          width: size.width * AppDimensions.numD075,
+          height: size.width * AppDimensions.numD075,
           child: Stack(
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 5),
-                height: size.width * numD06,
-                width: size.width * numD06,
+                height: size.width * AppDimensions.numD06,
+                width: size.width * AppDimensions.numD06,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, width: 1.2),
-                  borderRadius: BorderRadius.circular(size.width * numD015),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
                 ),
               ),
               if (count > 0)
@@ -450,15 +450,15 @@ class NotificationBadge extends StatelessWidget {
                             color: Colors.white, shape: BoxShape.circle),
                         child: Icon(
                           Icons.circle,
-                          color: colorThemePink,
-                          size: size.width * numD04,
+                          color: AppColorTheme.colorThemePink,
+                          size: size.width * AppDimensions.numD04,
                         ),
                       ),
                       Text(
                         count.toString(),
                         style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD025,
+                          fontSize: size.width * AppDimensions.numD025,
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                         ),

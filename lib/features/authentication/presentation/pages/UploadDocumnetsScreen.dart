@@ -18,7 +18,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 const String uploadDocumentsText = "Upload Documents";
 
 class UploadDocumentsScreen extends StatefulWidget {
-
   const UploadDocumentsScreen(
       {super.key, required this.menuScreen, required this.hideLeading});
   final bool menuScreen;
@@ -50,7 +49,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize,
+                fontSize: size.width * AppDimensions.appBarHeadingFontSize,
               ),
             ),
             centerTitle: false,
@@ -98,68 +97,71 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
               return SafeArea(
                 child: SingleChildScrollView(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * AppDimensions.numD04),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: size.width * numD06),
+                      SizedBox(height: size.width * AppDimensions.numD06),
                       Text(
-                        uploadDocsHeadingText,
+                        AppStrings.uploadDocsHeadingText,
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
                             fontFamily: "AirbnbCereal",
-                            fontSize: size.width * numD07),
+                            fontSize: size.width * AppDimensions.numD07),
                       ),
-                      SizedBox(height: size.width * numD02),
+                      SizedBox(height: size.width * AppDimensions.numD02),
                       Text(
                         "If you're a professional photographer or journalist, and want to sign up as a PRO please upload your docs for review.",
                         style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.normal,
                         ),
                       ),
-                      SizedBox(height: size.width * numD02),
+                      SizedBox(height: size.width * AppDimensions.numD02),
                       RichText(
                         text: TextSpan(children: [
                           TextSpan(
-                              text: "$uploadDocsSubHeading1Text ",
+                              text: "${AppStrings.uploadDocsSubHeading1Text} ",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "AirbnbCereal",
-                                  fontSize: size.width * numD035)),
+                                  fontSize:
+                                      size.width * AppDimensions.numD035)),
                           WidgetSpan(
                               alignment: PlaceholderAlignment.middle,
                               child: Image.asset("${iconsPath}ic_pro.png",
-                                  height: size.width * numD06)),
+                                  height: size.width * AppDimensions.numD06)),
                           TextSpan(
-                              text: " $uploadDocsSubHeading2Text",
+                              text: " ${AppStrings.uploadDocsSubHeading2Text}",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "AirbnbCereal",
-                                  fontSize: size.width * numD035)),
+                                  fontSize:
+                                      size.width * AppDimensions.numD035)),
                         ]),
                       ),
 
-                      SizedBox(height: size.width * numD06),
+                      SizedBox(height: size.width * AppDimensions.numD06),
 
                       // Instructions List (Checklist style from screenshot 1)
                       Text("Upload your documents for verification (any 2)",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400)),
-                      SizedBox(height: size.width * numD04),
+                      SizedBox(height: size.width * AppDimensions.numD04),
                       Container(
-                        padding: EdgeInsets.all(size.width * numD04),
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
                         decoration: BoxDecoration(
                             color: const Color(0xFFF2F2F2),
-                            borderRadius:
-                                BorderRadius.circular(size.width * numD02),
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD02),
                             border: Border.all(color: Colors.black)),
                         child: ListView.builder(
                           shrinkWrap: true,
@@ -172,21 +174,22 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                 children: [
                                   Container(
                                     margin: EdgeInsets.only(
-                                      top: size.width * numD009,
+                                      top: size.width * AppDimensions.numD009,
                                     ),
                                     child: Icon(
                                       Icons.circle,
-                                      color: colorThemePink,
-                                      size: size.width * numD035,
+                                      color: AppColorTheme.colorThemePink,
+                                      size: size.width * AppDimensions.numD035,
                                     ),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Expanded(
                                     child: Text(state.instructions[index].name,
                                         style: TextStyle(
-                                            fontSize: size.width * numD036,
+                                            fontSize: size.width *
+                                                AppDimensions.numD036,
                                             color: Colors.black,
                                             fontFamily: "AirbnbCereal",
                                             fontWeight: FontWeight.w400)),
@@ -196,7 +199,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                         ),
                       ),
 
-                      SizedBox(height: size.width * numD05),
+                      SizedBox(height: size.width * AppDimensions.numD05),
 
                       // Uploaded Documents Grid/List
                       if (state.uploadedDocuments.isNotEmpty)
@@ -206,19 +209,20 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: size.width * numD03,
-                            mainAxisSpacing: size.width * numD03,
+                            crossAxisSpacing: size.width * AppDimensions.numD03,
+                            mainAxisSpacing: size.width * AppDimensions.numD03,
                             childAspectRatio: 1,
                           ),
                           itemCount: state.uploadedDocuments.length,
                           itemBuilder: (context, index) {
                             final doc = state.uploadedDocuments[index];
                             return Container(
-                              padding: EdgeInsets.all(size.width * numD025),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD025),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                               ),
                               child: Column(
                                 children: [
@@ -228,13 +232,16 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                       children: [
                                         ClipRRect(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD03),
+                                              size.width *
+                                                  AppDimensions.numD03),
                                           child: doc.documentName
                                                   .endsWith(".pdf")
                                               ? Image.asset(
                                                   "${iconsPath}pdfIcon.png",
-                                                  height: size.width * numD28,
-                                                  width: size.width * numD38,
+                                                  height: size.width *
+                                                      AppDimensions.numD28,
+                                                  width: size.width *
+                                                      AppDimensions.numD38,
                                                 )
                                               : Image.network(
                                                   docImageUrl +
@@ -264,10 +271,12 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                             alignment: Alignment.topRight,
                                             child: Padding(
                                               padding: EdgeInsets.all(
-                                                  size.width * numD018),
+                                                  size.width *
+                                                      AppDimensions.numD018),
                                               child: Image.asset(
                                                   "${iconsPath}ic_deleteIcon.png",
-                                                  height: size.width * numD05),
+                                                  height: size.width *
+                                                      AppDimensions.numD05),
                                             ),
                                           ),
                                         )
@@ -275,7 +284,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: size.width * numD02,
+                                    height: size.width * AppDimensions.numD02,
                                   ),
                                   Text(
                                     doc.documentName.split("/").last,
@@ -284,13 +293,14 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD03,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     height: Platform.isIOS
-                                        ? size.width * numD02
+                                        ? size.width * AppDimensions.numD02
                                         : 0,
                                   ),
                                 ],
@@ -300,8 +310,8 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                         ),
 
                       SizedBox(
-                          height:
-                              size.width * numD20), // Spacer for bottom button
+                          height: size.width *
+                              AppDimensions.numD20), // Spacer for bottom button
                     ],
                   ),
                 ),
@@ -309,15 +319,15 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
             },
           ),
           bottomNavigationBar: Padding(
-            padding: EdgeInsets.all(size.width * numD05),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD05),
             child: Builder(builder: (context) {
-              return SizedBox(
-                height: size.width * numD13,
+              return Container(
+                height: size.width * AppDimensions.numD13,
                 child: commonElevatedButton(
                   "Upload Documents",
                   size,
                   commonButtonTextStyle(size),
-                  commonButtonStyle(size, colorThemePink),
+                  commonButtonStyle(size, AppColorTheme.colorThemePink),
                   () {
                     // Open Verification Sheet
                     final state = context.read<UploadDocumentsBloc>().state;
@@ -337,18 +347,17 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (bc) {
-        return StatefulBuilder(
-            builder: (context, setModalState) {
+        return StatefulBuilder(builder: (context, setModalState) {
           return Container(
             height: size.height * 0.85,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(size.width * numD05),
-                topRight: Radius.circular(size.width * numD05),
+                topLeft: Radius.circular(size.width * AppDimensions.numD05),
+                topRight: Radius.circular(size.width * AppDimensions.numD05),
               ),
             ),
-            padding: EdgeInsets.all(size.width * numD05),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD05),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -359,7 +368,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                       "Upload docs for verification",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD045,
+                          fontSize: size.width * AppDimensions.numD045,
                           color: Colors.black,
                           fontWeight: FontWeight.w700),
                     ),
@@ -376,15 +385,15 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   color: Colors.black,
                   thickness: 1.3,
                 ),
-                SizedBox(height: size.width * numD035),
+                SizedBox(height: size.width * AppDimensions.numD035),
                 Text(
                   "Kindly upload clear copies of your original documents to complete bank verification.",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "AirbnbCereal",
-                      fontSize: size.width * numD035),
+                      fontSize: size.width * AppDimensions.numD035),
                 ),
-                SizedBox(height: size.width * numD04),
+                SizedBox(height: size.width * AppDimensions.numD04),
                 Expanded(
                   child: ListView.separated(
                     itemCount: instructions.length,
@@ -394,21 +403,22 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
-                              margin:
-                                  EdgeInsets.only(top: size.width * numD005),
+                              margin: EdgeInsets.only(
+                                  top: size.width * AppDimensions.numD005),
                               child: Icon(
                                 Icons.circle,
-                                color: colorThemePink,
-                                size: size.width * numD035,
+                                color: AppColorTheme.colorThemePink,
+                                size: size.width * AppDimensions.numD035,
                               ),
                             ),
                             SizedBox(
-                              width: size.width * numD04,
+                              width: size.width * AppDimensions.numD04,
                             ),
                             Expanded(
                               child: Text(instructions[index].name,
                                   style: TextStyle(
-                                      fontSize: size.width * numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.w400)),
@@ -417,7 +427,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     },
                     separatorBuilder: (context, index) {
                       return SizedBox(
-                        height: size.width * numD025,
+                        height: size.width * AppDimensions.numD025,
                       );
                     },
                   ),
@@ -435,11 +445,12 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     }
                   },
                   child: Container(
-                    padding: EdgeInsets.all(size.width * numD035),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD035),
                     decoration: BoxDecoration(
-                        border: Border.all(color: colorTextFieldBorder),
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD03)),
+                        border: Border.all(
+                            color: AppColorTheme.colorTextFieldBorder),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD03)),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -452,21 +463,22 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   ),
                 ),
 
-                SizedBox(height: size.width * numD06),
+                SizedBox(height: size.width * AppDimensions.numD06),
 
                 // Submit Button
                 SizedBox(
                   width: size.width,
-                  height: size.width * numD13,
+                  height: size.width * AppDimensions.numD13,
                   child: commonElevatedButton(
-                      submitText,
+                      AppStrings.submitText,
                       size,
                       commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.white,
                           fontWeight: FontWeight.w700),
-                      commonButtonStyle(size, colorThemePink), () {
+                      commonButtonStyle(size, AppColorTheme.colorThemePink),
+                      () {
                     if (selectedDocType != null) {
                       _showSelectionOption(contextValue);
                     } else {
@@ -475,7 +487,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     }
                   }),
                 ),
-                SizedBox(height: size.width * numD04),
+                SizedBox(height: size.width * AppDimensions.numD04),
               ],
             ),
           );
@@ -494,11 +506,11 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(size.width * numD05),
-                  topRight: Radius.circular(size.width * numD05),
+                  topLeft: Radius.circular(size.width * AppDimensions.numD05),
+                  topRight: Radius.circular(size.width * AppDimensions.numD05),
                 ),
               ),
-              padding: EdgeInsets.all(size.width * numD05),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD05),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -510,7 +522,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                         "Select Document",
                         style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD05,
+                          fontSize: size.width * AppDimensions.numD05,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
@@ -527,15 +539,16 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             title: Text(e.name,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal)),
                             onTap: () {
                               Navigator.pop(context, e.name);
                             },
                           ))
-                      ,
-                  SizedBox(height: size.width * numD05),
+                      .toList(),
+                  SizedBox(height: size.width * AppDimensions.numD05),
                 ],
               ));
         });
@@ -550,11 +563,11 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(size.width * numD05),
-              topRight: Radius.circular(size.width * numD05),
+              topLeft: Radius.circular(size.width * AppDimensions.numD05),
+              topRight: Radius.circular(size.width * AppDimensions.numD05),
             ),
           ),
-          padding: EdgeInsets.all(size.width * numD05),
+          padding: EdgeInsets.all(size.width * AppDimensions.numD05),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,7 +579,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     "Select Option",
                     style: TextStyle(
                         color: Colors.black,
-                        fontSize: size.width * numD048,
+                        fontSize: size.width * AppDimensions.numD048,
                         fontFamily: "AirbnbCereal",
                         fontWeight: FontWeight.w500),
                     textAlign: TextAlign.center,
@@ -576,15 +589,17 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                         Navigator.pop(context);
                       },
                       icon: Icon(Icons.close_rounded,
-                          color: Colors.black, size: size.width * numD08)),
+                          color: Colors.black,
+                          size: size.width * AppDimensions.numD08)),
                 ],
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Container(
                 margin: EdgeInsets.only(
-                    left: size.width * numD06, right: size.width * numD06),
+                    left: size.width * AppDimensions.numD06,
+                    right: size.width * AppDimensions.numD06),
                 child: Row(
                   children: [
                     Expanded(
@@ -598,24 +613,27 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(color: Colors.black),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD02),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD02),
                             ),
-                            height: size.width * numD25,
-                            padding: EdgeInsets.all(size.width * numD02),
+                            height: size.width * AppDimensions.numD25,
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD02),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.upload, size: size.width * numD08),
+                                Icon(Icons.upload,
+                                    size: size.width * AppDimensions.numD08),
                                 SizedBox(
-                                  height: size.width * numD03,
+                                  height: size.width * AppDimensions.numD03,
                                 ),
                                 Text(
                                   "My Gallery",
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.bold),
                                 )
@@ -636,27 +654,29 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(color: Colors.black),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD02),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD02),
                             ),
-                            height: size.width * numD25,
-                            padding: EdgeInsets.all(size.width * numD04),
+                            height: size.width * AppDimensions.numD25,
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD04),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.file_copy_outlined,
-                                  size: size.width * numD08,
+                                  size: size.width * AppDimensions.numD08,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD03,
+                                  height: size.width * AppDimensions.numD03,
                                 ),
                                 Text(
                                   "My Files",
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       fontFamily: "AirbnbCereal",
                                       fontWeight: FontWeight.bold),
                                 )
@@ -668,7 +688,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 ),
               ),
               SizedBox(
-                height: size.width * numD06,
+                height: size.width * AppDimensions.numD06,
               ),
             ],
           ),

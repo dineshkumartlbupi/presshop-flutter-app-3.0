@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/map/data/services/socket_service.dart';
@@ -256,7 +256,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: size.width * appBarHeadingFontSize),
+                      fontSize:
+                          size.width * AppDimensions.appBarHeadingFontSize),
                 ),
               ),
               centerTitle: false,
@@ -268,7 +269,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                 Navigator.pop(context);
               },
               actionWidget: [
-                SizedBox(width: size.width * numD02),
+                SizedBox(width: size.width * AppDimensions.numD02),
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pushAndRemoveUntil(
@@ -279,11 +280,11 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD07,
-                    width: size.width * numD07,
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
                   ),
                 ),
-                SizedBox(width: size.width * numD04)
+                SizedBox(width: size.width * AppDimensions.numD04)
               ],
             ),
             body: SingleChildScrollView(
@@ -378,14 +379,16 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(width: size.width * numD02),
+                                SizedBox(
+                                    width: size.width * AppDimensions.numD02),
                                 // Time
                                 Image.asset(
                                   "${iconsPath}ic_clock.png",
-                                  height: size.width * numD03,
+                                  height: size.width * AppDimensions.numD03,
                                   color: Colors.grey[500],
                                 ),
-                                SizedBox(width: size.width * numD01),
+                                SizedBox(
+                                    width: size.width * AppDimensions.numD01),
                                 Builder(builder: (context) {
                                   final timeStr = currentNews.createdAt;
                                   if (timeStr == null) return const SizedBox();
@@ -409,14 +412,16 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                                     ),
                                   );
                                 }),
-                                SizedBox(width: size.width * numD02),
+                                SizedBox(
+                                    width: size.width * AppDimensions.numD02),
                                 // Date
                                 Image.asset(
                                   "${iconsPath}ic_yearly_calendar.png",
-                                  height: size.width * numD03,
+                                  height: size.width * AppDimensions.numD03,
                                   color: Colors.grey[500],
                                 ),
-                                SizedBox(width: size.width * numD01),
+                                SizedBox(
+                                    width: size.width * AppDimensions.numD01),
                                 Builder(builder: (context) {
                                   final timeStr = currentNews.createdAt;
                                   if (timeStr == null) return const SizedBox();
@@ -445,7 +450,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                     Text(
                       currentNews.title,
                       style: TextStyle(
-                          fontSize: size.width * numD04,
+                          fontSize: size.width * AppDimensions.numD04,
                           color: Colors.black,
                           height: 1.5,
                           fontWeight: FontWeight.w700),
@@ -461,7 +466,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                               : description),
                       textAlign: TextAlign.justify,
                       style: TextStyle(
-                          fontSize: size.width * numD03,
+                          fontSize: size.width * AppDimensions.numD03,
                           color: Colors.black,
                           height: 2,
                           fontWeight: FontWeight.normal),
@@ -497,29 +502,33 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                                 isLiked
                                     ? Image.asset(
                                         "assets/icons/new_heartfill.png",
-                                        width: size.width * numD025,
-                                        height: size.width * numD025)
+                                        width:
+                                            size.width * AppDimensions.numD025,
+                                        height:
+                                            size.width * AppDimensions.numD025)
                                     : Image.asset("assets/icons/news_heart.png",
-                                        width: size.width * numD025,
-                                        height: size.width * numD025),
+                                        width:
+                                            size.width * AppDimensions.numD025,
+                                        height:
+                                            size.width * AppDimensions.numD025),
                                 "$likeCount likes"),
                             const SizedBox(width: 12),
                             _buildStatCount(
                                 Image.asset("assets/icons/news_message1.png",
-                                    width: size.width * numD025,
-                                    height: size.width * numD025),
+                                    width: size.width * AppDimensions.numD025,
+                                    height: size.width * AppDimensions.numD025),
                                 "$commentCount Comments"),
                             const SizedBox(width: 12),
                             _buildStatCount(
                                 Image.asset("assets/icons/news_send1.png",
-                                    width: size.width * numD025,
-                                    height: size.width * numD025),
+                                    width: size.width * AppDimensions.numD025,
+                                    height: size.width * AppDimensions.numD025),
                                 "$shareCount Shares"),
                             const SizedBox(width: 12),
                             _buildStatCount(
                                 Image.asset("assets/icons/news_eye.png",
-                                    width: size.width * numD025,
-                                    height: size.width * numD025,
+                                    width: size.width * AppDimensions.numD025,
+                                    height: size.width * AppDimensions.numD025,
                                     color: const Color(0xFF4A4A4A)),
                                 "$viewCount Views"),
                           ],
@@ -531,11 +540,12 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                               isLiked
                                   ? Image.asset(
                                       "assets/icons/new_heartfill.png",
-                                      width: size.width * numD04,
-                                      height: size.width * numD04)
+                                      width: size.width * AppDimensions.numD04,
+                                      height: size.width * AppDimensions.numD04)
                                   : Image.asset("assets/icons/news_heart.png",
-                                      width: size.width * numD04,
-                                      height: size.width * numD04),
+                                      width: size.width * AppDimensions.numD04,
+                                      height:
+                                          size.width * AppDimensions.numD04),
                               onTap: () {
                                 if (_userId.isEmpty) return;
                                 // Toggle like logic
@@ -555,15 +565,17 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                             const SizedBox(width: 8),
                             _buildActionIcon(
                                 Image.asset("assets/icons/news_send1.png",
-                                    width: size.width * numD04,
-                                    height: size.width * numD04), onTap: () {
+                                    width: size.width * AppDimensions.numD04,
+                                    height: size.width * AppDimensions.numD04),
+                                onTap: () {
                               _handleShare(context, currentNews);
                             }),
                             const SizedBox(width: 8),
                             _buildActionIcon(
                                 Image.asset("assets/icons/news_message1.png",
-                                    width: size.width * numD04,
-                                    height: size.width * numD04), onTap: () {
+                                    width: size.width * AppDimensions.numD04,
+                                    height: size.width * AppDimensions.numD04),
+                                onTap: () {
                               _scrollToComments();
                             }),
                           ],

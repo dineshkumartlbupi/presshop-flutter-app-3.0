@@ -95,11 +95,11 @@
 //         elevation: 0,
 //         hideLeading: false,
 //         title: Text(
-//           taskDetailText,
+//           AppStrings.taskDetailText,
 //           style: TextStyle(
 //               color: Colors.black,
 //               fontWeight: FontWeight.bold,
-//               fontSize: size.width * appBarHeadingFontSize),
+//               fontSize: size.width * AppDimensions.appBarHeadingFontSize),
 //         ),
 //         centerTitle: false,
 //         titleSpacing: 0,
@@ -118,12 +118,12 @@
 //             },
 //             child: Image.asset(
 //               "${commonImagePath}rabbitLogo.png",
-//               height: size.width * numD07,
-//               width: size.width * numD07,
+//               height: size.width * AppDimensions.numD07,
+//               width: size.width * AppDimensions.numD07,
 //             ),
 //           ),
 //           SizedBox(
-//             width: size.width * numD04,
+//             width: size.width * AppDimensions.numD04,
 //           )
 //         ],
 //       ),
@@ -181,17 +181,17 @@
 //             return SafeArea(
 //                 child: SingleChildScrollView(
 //                     child: Container(
-//                         margin: EdgeInsets.only(top: size.width * numD04),
+//                         margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
 //                         child: Padding(
 //                           padding: EdgeInsets.symmetric(
-//                               horizontal: size.width * numD04),
+//                               horizontal: size.width * AppDimensions.numD04),
 //                           child: Column(
 //                               crossAxisAlignment: CrossAxisAlignment.start,
 //                               children: [
 //                                 /// Status Or Media House Name
 //                                 Padding(
 //                                   padding: EdgeInsets.symmetric(
-//                                     horizontal: size.width * numD01,
+//                                     horizontal: size.width * AppDimensions.numD01,
 //                                   ),
 //                                   child: Row(
 //                                     mainAxisAlignment:
@@ -201,7 +201,7 @@
 //                                         taskDetail!.mediaHouseName,
 //                                         style: commonTextStyle(
 //                                             size: size,
-//                                             fontSize: size.width * numD036,
+//                                             fontSize: size.width * AppDimensions.numD036,
 //                                             color: Colors.black,
 //                                             fontWeight: FontWeight.w500),
 //                                       ),
@@ -212,18 +212,18 @@
 //                                             : "COMPLETED",
 //                                         style: commonTextStyle(
 //                                             size: size,
-//                                             fontSize: size.width * numD036,
+//                                             fontSize: size.width * AppDimensions.numD036,
 //                                             color:
 //                                                 widget.taskStatus == "rejected"
 //                                                     ? Colors.black
-//                                                     : colorThemePink,
+//                                                     : AppColorTheme.colorThemePink,
 //                                             fontWeight: FontWeight.w500),
 //                                       )
 //                                     ],
 //                                   ),
 //                                 ),
 //                                 SizedBox(
-//                                   height: size.width * numD02,
+//                                   height: size.width * AppDimensions.numD02,
 //                                 ),
 
 //                                 /// Map or Timer
@@ -232,7 +232,7 @@
 //                                         children: [
 //                                           Expanded(
 //                                             child: SizedBox(
-//                                               height: size.width * numD35,
+//                                               height: size.width * AppDimensions.numD35,
 //                                               child: Container(
 //                                                 decoration: BoxDecoration(
 //                                                   border: Border.all(
@@ -240,13 +240,13 @@
 //                                                       color: Colors.black),
 //                                                   borderRadius:
 //                                                       BorderRadius.circular(
-//                                                           size.width * numD04),
+//                                                           size.width * AppDimensions.numD04),
 //                                                 ),
 //                                                 child: ClipRRect(
 //                                                     borderRadius:
 //                                                         BorderRadius.circular(
 //                                                             size.width *
-//                                                                 numD04),
+//                                                                 AppDimensions.numD04),
 //                                                     child: Stack(
 //                                                       alignment: Alignment
 //                                                           .bottomCenter,
@@ -280,7 +280,7 @@
 //                                                           padding:
 //                                                               EdgeInsets.all(
 //                                                                   size.width *
-//                                                                       numD07),
+//                                                                       AppDimensions.numD07),
 //                                                           child: Image.asset(
 //                                                             "${commonImagePath}ic_cover_radius.png",
 //                                                           ),
@@ -301,23 +301,23 @@
 //                                                             padding: EdgeInsets.symmetric(
 //                                                                 horizontal:
 //                                                                     size.width *
-//                                                                         numD06,
+//                                                                         AppDimensions.numD06,
 //                                                                 vertical: size
 //                                                                         .width *
-//                                                                     numD018),
+//                                                                     AppDimensions.numD018),
 //                                                             decoration:
 //                                                                 BoxDecoration(
 //                                                                     color:
-//                                                                         colorThemePink,
+//                                                                         AppColorTheme.colorThemePink,
 //                                                                     borderRadius:
 //                                                                         BorderRadius
 //                                                                             .only(
 //                                                                       bottomLeft:
 //                                                                           Radius.circular(size.width *
-//                                                                               numD01),
+//                                                                               AppDimensions.numD01),
 //                                                                       bottomRight:
 //                                                                           Radius.circular(size.width *
-//                                                                               numD02),
+//                                                                               AppDimensions.numD02),
 //                                                                     )),
 //                                                             child: Text(
 //                                                               "Click the Map & GO",
@@ -325,7 +325,7 @@
 //                                                                   size: size,
 //                                                                   fontSize: size
 //                                                                           .width *
-//                                                                       numD032,
+//                                                                       AppDimensions.numD032,
 //                                                                   color: Colors
 //                                                                       .white,
 //                                                                   fontWeight:
@@ -340,26 +340,26 @@
 //                                             ),
 //                                           ),
 //                                           SizedBox(
-//                                             width: size.width * numD05,
+//                                             width: size.width * AppDimensions.numD05,
 //                                           ),
 //                                           Expanded(
 //                                             child: Stack(
 //                                               alignment: Alignment.bottomCenter,
 //                                               children: [
 //                                                 Container(
-//                                                   height: size.width * numD35,
+//                                                   height: size.width * AppDimensions.numD35,
 //                                                   width: double.infinity,
 //                                                   decoration: BoxDecoration(
-//                                                       color: colorGrey5,
+//                                                       color: AppColorTheme.colorGrey5,
 //                                                       borderRadius:
 //                                                           BorderRadius.circular(
 //                                                               size.width *
-//                                                                   numD04)),
+//                                                                   AppDimensions.numD04)),
 //                                                   child: Column(
 //                                                     children: [
 //                                                       SizedBox(
 //                                                         height:
-//                                                             size.width * numD03,
+//                                                             size.width * AppDimensions.numD03,
 //                                                       ),
 //                                                       Text(
 //                                                         isExtraTime
@@ -371,7 +371,7 @@
 //                                                             size: size,
 //                                                             fontSize:
 //                                                                 size.width *
-//                                                                     numD035,
+//                                                                     AppDimensions.numD035,
 //                                                             color: Colors.white,
 //                                                             fontWeight:
 //                                                                 FontWeight
@@ -386,7 +386,7 @@
 //                                                                       .taskStatus)
 //                                                                   ? 0
 //                                                                   : size.width *
-//                                                                       numD04),
+//                                                                       AppDimensions.numD04),
 //                                                           decoration: BoxDecoration(
 //                                                               color: [
 //                                                                 "accepted",
@@ -394,8 +394,8 @@
 //                                                               ].contains(
 //                                                                       widget.taskStatus)
 //                                                                   ? Colors.transparent
-//                                                                   : colorThemePink,
-//                                                               borderRadius: BorderRadius.circular(size.width * numD04)),
+//                                                                   : AppColorTheme.colorThemePink,
+//                                                               borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04)),
 //                                                           child: widget.taskStatus == "Delayed" || widget.taskStatus == "accepted" && widget.totalEarning == "0"
 //                                                               ? TimerCountdown(
 //                                                                   endTime:
@@ -442,13 +442,13 @@
 //                                                                       .inDays >
 //                                                                   0
 //                                                               ? size.width *
-//                                                                   numD07
+//                                                                   AppDimensions.numD07
 //                                                               :*/
 //                                                                               size.width *
-//                                                                                   numD055,
+//                                                                                   AppDimensions.numD055,
 //                                                                           color: widget.taskStatus == "accepted"
-//                                                                               ? colorOnlineGreen
-//                                                                               : colorThemePink,
+//                                                                               ? AppColorTheme.colorOnlineGreen
+//                                                                               : AppColorTheme.colorThemePink,
 //                                                                           fontWeight:
 //                                                                               FontWeight.w600),
 //                                                                 ) /*Text(
@@ -456,31 +456,31 @@
 //                                                 style: commonTextStyle(
 //                                                     size: size,
 //                                                     fontSize:
-//                                                         size.width * numD095,
+//                                                         size.width * AppDimensions.numD095,
 //                                                     color: widget.taskStatus ==
 //                                                             "accepted"
 //                                                         ? Colors.green
-//                                                         : colorThemePink,
+//                                                         : AppColorTheme.colorThemePink,
 //                                                     fontWeight: FontWeight.w600),
 //                                               )*/
 //                                                               : Container(
 //                                                                   padding: EdgeInsets
 //                                                                       .all(size
 //                                                                               .width *
-//                                                                           numD02),
+//                                                                           AppDimensions.numD02),
 //                                                                   decoration: BoxDecoration(
 //                                                                       color:
-//                                                                           colorThemePink,
+//                                                                           AppColorTheme.colorThemePink,
 //                                                                       borderRadius:
 //                                                                           BorderRadius.circular(size.width *
-//                                                                               numD02)),
+//                                                                               AppDimensions.numD02)),
 //                                                                   child: Icon(
 //                                                                     Icons.check,
 //                                                                     color: Colors
 //                                                                         .black,
 //                                                                     size: size
 //                                                                             .width *
-//                                                                         numD09,
+//                                                                         AppDimensions.numD09,
 //                                                                   ),
 //                                                                 )),
 //                                                       SizedBox(
@@ -489,7 +489,7 @@
 //                                                                     "Delayed"
 //                                                                 ? 0
 //                                                                 : size.width *
-//                                                                     numD02,
+//                                                                     AppDimensions.numD02,
 //                                                       ),
 //                                                       Text(
 //                                                         widget.taskStatus ==
@@ -505,7 +505,7 @@
 //                                                             size: size,
 //                                                             fontSize:
 //                                                                 size.width *
-//                                                                     numD035,
+//                                                                     AppDimensions.numD035,
 //                                                             color: Colors.white,
 //                                                             fontWeight:
 //                                                                 FontWeight
@@ -518,21 +518,21 @@
 //                                                   width: double.infinity,
 //                                                   padding: EdgeInsets.symmetric(
 //                                                       horizontal:
-//                                                           size.width * numD07,
+//                                                           size.width * AppDimensions.numD07,
 //                                                       vertical:
-//                                                           size.width * numD018),
+//                                                           size.width * AppDimensions.numD018),
 //                                                   decoration: BoxDecoration(
-//                                                       color: colorThemePink,
+//                                                       color: AppColorTheme.colorThemePink,
 //                                                       borderRadius:
 //                                                           BorderRadius.only(
 //                                                         bottomLeft:
 //                                                             Radius.circular(
 //                                                                 size.width *
-//                                                                     numD04),
+//                                                                     AppDimensions.numD04),
 //                                                         bottomRight:
 //                                                             Radius.circular(
 //                                                                 size.width *
-//                                                                     numD04),
+//                                                                     AppDimensions.numD04),
 //                                                       )),
 //                                                   child: Center(
 //                                                     child: Text(
@@ -540,7 +540,7 @@
 //                                                       style: commonTextStyle(
 //                                                           size: size,
 //                                                           fontSize: size.width *
-//                                                               numD032,
+//                                                               AppDimensions.numD032,
 //                                                           color: Colors.white,
 //                                                           fontWeight:
 //                                                               FontWeight.bold),
@@ -554,7 +554,7 @@
 //                                       )
 //                                     : Container(),
 //                                 SizedBox(
-//                                   height: size.width * numD04,
+//                                   height: size.width * AppDimensions.numD04,
 //                                 ),
 //                                 Row(
 //                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -569,10 +569,10 @@
 //                                             children: [
 //                                               Icon(
 //                                                 Icons.access_time,
-//                                                 size: size.width * numD045,
+//                                                 size: size.width * AppDimensions.numD045,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD018,
+//                                                 width: size.width * AppDimensions.numD018,
 //                                               ),
 //                                               Text(
 //                                                   dateTimeFormatter(
@@ -582,19 +582,19 @@
 //                                                   style: commonTextStyle(
 //                                                       size: size,
 //                                                       fontSize:
-//                                                           size.width * numD03,
-//                                                       color: colorHint,
+//                                                           size.width * AppDimensions.numD03,
+//                                                       color: AppColorTheme.colorHint,
 //                                                       fontWeight:
 //                                                           FontWeight.w500)),
 //                                               SizedBox(
-//                                                 width: size.width * numD02,
+//                                                 width: size.width * AppDimensions.numD02,
 //                                               ),
 //                                               Icon(
 //                                                 Icons.calendar_month,
-//                                                 size: size.width * numD045,
+//                                                 size: size.width * AppDimensions.numD045,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD018,
+//                                                 width: size.width * AppDimensions.numD018,
 //                                               ),
 //                                               Text(
 //                                                   dateTimeFormatter(
@@ -604,14 +604,14 @@
 //                                                   style: commonTextStyle(
 //                                                       size: size,
 //                                                       fontSize:
-//                                                           size.width * numD03,
-//                                                       color: colorHint,
+//                                                           size.width * AppDimensions.numD03,
+//                                                       color: AppColorTheme.colorHint,
 //                                                       fontWeight:
 //                                                           FontWeight.w500)),
 //                                             ],
 //                                           ),
 //                                           SizedBox(
-//                                             height: size.width * numD025,
+//                                             height: size.width * AppDimensions.numD025,
 //                                           ),
 
 //                                           /// Location
@@ -623,10 +623,10 @@
 //                                             children: [
 //                                               Icon(
 //                                                 Icons.location_on_outlined,
-//                                                 size: size.width * numD045,
+//                                                 size: size.width * AppDimensions.numD045,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD02,
+//                                                 width: size.width * AppDimensions.numD02,
 //                                               ),
 //                                               Expanded(
 //                                                 child: Text(
@@ -634,8 +634,8 @@
 //                                                   style: commonTextStyle(
 //                                                       size: size,
 //                                                       fontSize:
-//                                                           size.width * numD028,
-//                                                       color: colorHint,
+//                                                           size.width * AppDimensions.numD028,
+//                                                       color: AppColorTheme.colorHint,
 //                                                       fontWeight:
 //                                                           FontWeight.w500),
 //                                                 ),
@@ -643,16 +643,16 @@
 //                                             ],
 //                                           ),
 //                                           SizedBox(
-//                                             height: size.width * numD025,
+//                                             height: size.width * AppDimensions.numD025,
 //                                           ),
 //                                           Row(
 //                                             children: [
 //                                               Icon(
 //                                                 Icons.location_on_outlined,
-//                                                 size: size.width * numD045,
+//                                                 size: size.width * AppDimensions.numD045,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD02,
+//                                                 width: size.width * AppDimensions.numD02,
 //                                               ),
 //                                               Text(
 //                                                 "${taskDetail!.miles} miles",
@@ -660,28 +660,28 @@
 //                                                 style: commonTextStyle(
 //                                                     size: size,
 //                                                     fontSize:
-//                                                         size.width * numD028,
-//                                                     color: colorHint,
+//                                                         size.width * AppDimensions.numD028,
+//                                                     color: AppColorTheme.colorHint,
 //                                                     fontWeight:
 //                                                         FontWeight.w500),
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD018,
+//                                                 width: size.width * AppDimensions.numD018,
 //                                               ),
 //                                               Container(
 //                                                 width: 1,
-//                                                 height: size.width * numD04,
+//                                                 height: size.width * AppDimensions.numD04,
 //                                                 color: Colors.grey,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD02,
+//                                                 width: size.width * AppDimensions.numD02,
 //                                               ),
 //                                               Icon(
 //                                                 Icons.directions_walk_rounded,
-//                                                 size: size.width * numD045,
+//                                                 size: size.width * AppDimensions.numD045,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD01,
+//                                                 width: size.width * AppDimensions.numD01,
 //                                               ),
 //                                               Text(
 //                                                 "${taskDetail!.byFeet} mins",
@@ -689,95 +689,95 @@
 //                                                 style: commonTextStyle(
 //                                                     size: size,
 //                                                     fontSize:
-//                                                         size.width * numD028,
-//                                                     color: colorHint,
+//                                                         size.width * AppDimensions.numD028,
+//                                                     color: AppColorTheme.colorHint,
 //                                                     fontWeight:
 //                                                         FontWeight.w500),
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD01,
+//                                                 width: size.width * AppDimensions.numD01,
 //                                               ),
 //                                               Container(
 //                                                 width: 1,
-//                                                 height: size.width * numD04,
+//                                                 height: size.width * AppDimensions.numD04,
 //                                                 color: Colors.grey,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD02,
+//                                                 width: size.width * AppDimensions.numD02,
 //                                               ),
 //                                               Icon(
 //                                                 Icons.directions_car,
-//                                                 size: size.width * numD045,
+//                                                 size: size.width * AppDimensions.numD045,
 //                                               ),
 //                                               SizedBox(
-//                                                 width: size.width * numD01,
+//                                                 width: size.width * AppDimensions.numD01,
 //                                               ),
 //                                               Text(
 //                                                 "${taskDetail!.byCar} mins",
 //                                                 style: commonTextStyle(
 //                                                     size: size,
 //                                                     fontSize:
-//                                                         size.width * numD028,
-//                                                     color: colorHint,
+//                                                         size.width * AppDimensions.numD028,
+//                                                     color: AppColorTheme.colorHint,
 //                                                     fontWeight:
 //                                                         FontWeight.w500),
 //                                               ),
 //                                             ],
 //                                           ),
 //                                           SizedBox(
-//                                             height: size.width * numD02,
+//                                             height: size.width * AppDimensions.numD02,
 //                                           ),
 //                                         ],
 //                                       ),
 //                                     ),
 //                                     SizedBox(
-//                                       width: size.width * numD075,
+//                                       width: size.width * AppDimensions.numD075,
 //                                     ),
 //                                   ],
 //                                 ),
 //                                 SizedBox(
-//                                   height: size.width * numD04,
+//                                   height: size.width * AppDimensions.numD04,
 //                                 ),
 //                                 Text(
 //                                   "HEADING",
 //                                   style: commonTextStyle(
 //                                       size: size,
-//                                       fontSize: size.width * numD03,
-//                                       color: colorThemePink,
+//                                       fontSize: size.width * AppDimensions.numD03,
+//                                       color: AppColorTheme.colorThemePink,
 //                                       fontWeight: FontWeight.bold),
 //                                 ),
 //                                 SizedBox(
-//                                   height: size.width * numD02,
+//                                   height: size.width * AppDimensions.numD02,
 //                                 ),
 //                                 Text(
 //                                   taskDetail!.title,
 //                                   style: commonTextStyle(
 //                                       size: size,
-//                                       fontSize: size.width * numD04,
+//                                       fontSize: size.width * AppDimensions.numD04,
 //                                       color: Colors.black,
 //                                       lineHeight: 1.5,
 //                                       fontWeight: FontWeight.w700),
 //                                 ),
 
 //                                 SizedBox(
-//                                   height: size.width * numD06,
+//                                   height: size.width * AppDimensions.numD06,
 //                                 ),
 //                                 Text(
 //                                   "DESCRIPTION",
 //                                   style: commonTextStyle(
 //                                       size: size,
-//                                       fontSize: size.width * numD03,
-//                                       color: colorThemePink,
+//                                       fontSize: size.width * AppDimensions.numD03,
+//                                       color: AppColorTheme.colorThemePink,
 //                                       fontWeight: FontWeight.bold),
 //                                 ),
 //                                 SizedBox(
-//                                   height: size.width * numD02,
+//                                   height: size.width * AppDimensions.numD02,
 //                                 ),
 //                                 Text(
 //                                   taskDetail!.description,
 //                                   style: commonTextStyle(
 //                                       size: size,
-//                                       fontSize: size.width * numD03,
+//                                       fontSize: size.width * AppDimensions.numD03,
 //                                       color: Colors.black,
 //                                       lineHeight: 2,
 //                                       fontWeight: FontWeight.normal),
@@ -785,7 +785,7 @@
 
 //                                 SizedBox(
 //                                   height: taskDetail!.specialReq.isNotEmpty
-//                                       ? size.width * numD06
+//                                       ? size.width * AppDimensions.numD06
 //                                       : 0,
 //                                 ),
 //                                 Visibility(
@@ -794,14 +794,14 @@
 //                                     "SPECIAL REQUIREMENTS",
 //                                     style: commonTextStyle(
 //                                         size: size,
-//                                         fontSize: size.width * numD03,
-//                                         color: colorThemePink,
+//                                         fontSize: size.width * AppDimensions.numD03,
+//                                         color: AppColorTheme.colorThemePink,
 //                                         fontWeight: FontWeight.bold),
 //                                   ),
 //                                 ),
 //                                 SizedBox(
 //                                   height: taskDetail!.specialReq.isNotEmpty
-//                                       ? size.width * numD02
+//                                       ? size.width * AppDimensions.numD02
 //                                       : 0,
 //                                 ),
 //                                 Visibility(
@@ -810,7 +810,7 @@
 //                                     taskDetail!.specialReq,
 //                                     style: commonTextStyle(
 //                                         size: size,
-//                                         fontSize: size.width * numD03,
+//                                         fontSize: size.width * AppDimensions.numD03,
 //                                         color: Colors.black,
 //                                         lineHeight: 2,
 //                                         fontWeight: FontWeight.normal),
@@ -818,7 +818,7 @@
 //                                 ),
 //                                 SizedBox(
 //                                   height: taskDetail!.specialReq.isNotEmpty
-//                                       ? size.width * numD08
+//                                       ? size.width * AppDimensions.numD08
 //                                       : 0,
 //                                 ),
 
@@ -828,7 +828,7 @@
 //                                     child: priceOfferWidget()),
 
 //                                 SizedBox(
-//                                   height: size.width * numD04,
+//                                   height: size.width * AppDimensions.numD04,
 //                                 ),
 
 //                                 /// Uploaded Content
@@ -837,25 +837,25 @@
 //                                         taskDetail!.mediaList.isNotEmpty
 //                                     ? Container(
 //                                         padding: EdgeInsets.symmetric(
-//                                             horizontal: size.width * numD04,
-//                                             vertical: size.width * numD04),
+//                                             horizontal: size.width * AppDimensions.numD04,
+//                                             vertical: size.width * AppDimensions.numD04),
 //                                         decoration: BoxDecoration(
-//                                             color: colorLightGrey,
+//                                             color: AppColorTheme.colorLightGrey,
 //                                             borderRadius: BorderRadius.circular(
-//                                                 size.width * numD04)),
+//                                                 size.width * AppDimensions.numD04)),
 //                                         child: Column(
 //                                           children: [
 //                                             Text(
-//                                               uploadedContentText,
+//                                               AppStrings.uploadedContentText,
 //                                               style: commonTextStyle(
 //                                                   size: size,
 //                                                   fontSize:
-//                                                       size.width * numD035,
+//                                                       size.width * AppDimensions.numD035,
 //                                                   color: Colors.black,
 //                                                   fontWeight: FontWeight.w600),
 //                                             ),
 //                                             SizedBox(
-//                                               height: size.width * numD04,
+//                                               height: size.width * AppDimensions.numD04,
 //                                             ),
 //                                             GridView.builder(
 //                                               shrinkWrap: true,
@@ -865,9 +865,9 @@
 //                                                   SliverGridDelegateWithFixedCrossAxisCount(
 //                                                       crossAxisCount: 4,
 //                                                       mainAxisSpacing:
-//                                                           size.width * numD04,
+//                                                           size.width * AppDimensions.numD04,
 //                                                       crossAxisSpacing:
-//                                                           size.width * numD04),
+//                                                           size.width * AppDimensions.numD04),
 //                                               itemBuilder: (context, index) {
 //                                                 var item = taskDetail!
 //                                                     .mediaList[index];
@@ -917,7 +917,7 @@
 //                                                             BorderRadius
 //                                                                 .circular(
 //                                                                     size.width *
-//                                                                         numD04),
+//                                                                         AppDimensions.numD04),
 //                                                         child: item.type ==
 //                                                                 "audio"
 //                                                             ? Container(
@@ -929,17 +929,17 @@
 //                                                                   border: Border
 //                                                                       .all(
 //                                                                           color:
-//                                                                               colorGreyNew),
+//                                                                               AppColorTheme.colorGreyNew),
 //                                                                   borderRadius:
 //                                                                       BorderRadius.circular(
 //                                                                           size.width *
-//                                                                               numD04),
+//                                                                               AppDimensions.numD04),
 //                                                                 ),
 //                                                                 child: Icon(
 //                                                                   Icons
 //                                                                       .play_circle,
 //                                                                   color:
-//                                                                       colorThemePink,
+//                                                                       AppColorTheme.colorThemePink,
 //                                                                   size:
 //                                                                       size.width *
 //                                                                           0.17,
@@ -979,25 +979,25 @@
 //                                                       ),
 //                                                       Positioned(
 //                                                         right:
-//                                                             size.width * numD02,
+//                                                             size.width * AppDimensions.numD02,
 //                                                         top:
-//                                                             size.width * numD02,
+//                                                             size.width * AppDimensions.numD02,
 //                                                         child: Container(
 //                                                             padding: EdgeInsets.symmetric(
 //                                                                 horizontal: size
 //                                                                         .width *
-//                                                                     numD01,
+//                                                                     AppDimensions.numD01,
 //                                                                 vertical: size
 //                                                                         .width *
 //                                                                     0.002),
 //                                                             decoration: BoxDecoration(
-//                                                                 color: colorLightGreen
+//                                                                 color: AppColorTheme.colorLightGreen
 //                                                                     .withOpacity(
 //                                                                         0.8),
 //                                                                 borderRadius: BorderRadius
 //                                                                     .circular(size
 //                                                                             .width *
-//                                                                         numD015)),
+//                                                                         AppDimensions.numD015)),
 //                                                             child: Icon(
 //                                                               item.type ==
 //                                                                       "audio"
@@ -1010,7 +1010,7 @@
 //                                                                       : Icons
 //                                                                           .camera_alt_outlined,
 //                                                               size: size.width *
-//                                                                   numD05,
+//                                                                   AppDimensions.numD05,
 //                                                               color:
 //                                                                   Colors.white,
 //                                                             )),
@@ -1028,16 +1028,16 @@
 //                                     : Container(),
 
 //                                 SizedBox(
-//                                   height: size.width * numD1,
+//                                   height: size.width * AppDimensions.numD1,
 //                                 ),
 
 //                                 widget.taskStatus == 'accepted'
 //                                     ? Padding(
 //                                         padding: EdgeInsets.symmetric(
-//                                             horizontal: size.width * numD04,
-//                                             vertical: size.width * numD04),
+//                                             horizontal: size.width * AppDimensions.numD04,
+//                                             vertical: size.width * AppDimensions.numD04),
 //                                         child: AnimatedButtonWidget(
-//                                           buttonText: manageTaskText,
+//                                           buttonText: AppStrings.manageTaskText,
 //                                           shouldRestartAnimation: false,
 //                                           size: size,
 //                                           onPressed: () {
@@ -1065,9 +1065,9 @@
 //                                       )
 //                                     : Container(
 //                                         width: size.width,
-//                                         height: size.width * numD14,
+//                                         height: size.width * AppDimensions.numD14,
 //                                         margin: EdgeInsets.symmetric(
-//                                             horizontal: size.width * numD04),
+//                                             horizontal: size.width * AppDimensions.numD04),
 //                                         child: ElevatedButton(
 //                                             style: ElevatedButton.styleFrom(
 //                                                 backgroundColor: Colors.black,
@@ -1075,17 +1075,17 @@
 //                                                     borderRadius:
 //                                                         BorderRadius.circular(
 //                                                             size.width *
-//                                                                 numD04))),
+//                                                                 AppDimensions.numD04))),
 //                                             onPressed: () {},
 //                                             child: Column(
 //                                               mainAxisSize: MainAxisSize.min,
 //                                               children: [
 //                                                 Text(
-//                                                   youHaveEarnedText,
+//                                                   AppStrings.youHaveEarnedText,
 //                                                   style: commonTextStyle(
 //                                                       size: size,
 //                                                       fontSize:
-//                                                           size.width * numD035,
+//                                                           size.width * AppDimensions.numD035,
 //                                                       color: Colors.white,
 //                                                       fontWeight:
 //                                                           FontWeight.w700),
@@ -1095,7 +1095,7 @@
 //                                                   style: commonTextStyle(
 //                                                       size: size,
 //                                                       fontSize:
-//                                                           size.width * numD065,
+//                                                           size.width * AppDimensions.numD065,
 //                                                       color: Colors.white,
 //                                                       fontWeight:
 //                                                           FontWeight.w700),
@@ -1105,7 +1105,7 @@
 //                                       ),
 
 //                                 SizedBox(
-//                                   height: size.width * numD02,
+//                                   height: size.width * AppDimensions.numD02,
 //                                 ),
 //                                 Align(
 //                                   alignment: Alignment.center,
@@ -1120,11 +1120,11 @@
 //                                                     )));
 //                                       },
 //                                       child: Text(
-//                                         viewYourEarnings,
+//                                         AppStrings.viewYourEarnings,
 //                                         style: commonTextStyle(
 //                                             size: size,
-//                                             fontSize: size.width * numD036,
-//                                             color: colorThemePink,
+//                                             fontSize: size.width * AppDimensions.numD036,
+//                                             color: AppColorTheme.colorThemePink,
 //                                             fontWeight: FontWeight.w500),
 //                                       )),
 //                                 ),
@@ -1142,10 +1142,10 @@
 //     return Column(
 //       children: [
 //         const Divider(
-//           color: colorGrey1,
+//           color: AppColorTheme.colorGrey1,
 //         ),
 //         SizedBox(
-//           height: size.width * numD05,
+//           height: size.width * AppDimensions.numD05,
 //         ),
 
 //         /// Price Offer
@@ -1160,34 +1160,34 @@
 //                         : "-",
 //                     style: commonTextStyle(
 //                         size: size,
-//                         fontSize: size.width * numD06,
-//                         color: colorThemePink,
+//                         fontSize: size.width * AppDimensions.numD06,
+//                         color: AppColorTheme.colorThemePink,
 //                         fontWeight: FontWeight.w700),
 //                   ),
 //                   Text(
-//                     offeredText,
+//                     AppStrings.offeredText,
 //                     style: commonTextStyle(
 //                         size: size,
-//                         fontSize: size.width * numD035,
-//                         color: colorHint,
+//                         fontSize: size.width * AppDimensions.numD035,
+//                         color: AppColorTheme.colorHint,
 //                         fontWeight: FontWeight.w700),
 //                   ),
 //                   SizedBox(
-//                     height: size.width * numD04,
+//                     height: size.width * AppDimensions.numD04,
 //                   ),
 //                   Container(
 //                     padding: EdgeInsets.symmetric(
-//                         horizontal: size.width * numD04,
-//                         vertical: size.width * numD02),
+//                         horizontal: size.width * AppDimensions.numD04,
+//                         vertical: size.width * AppDimensions.numD02),
 //                     decoration: BoxDecoration(
-//                         color: colorLightGrey,
+//                         color: AppColorTheme.colorLightGrey,
 //                         borderRadius:
-//                             BorderRadius.circular(size.width * numD02)),
+//                             BorderRadius.circular(size.width * AppDimensions.numD02)),
 //                     child: Text(
-//                       photoText,
+//                       AppStrings.photoText,
 //                       style: commonTextStyle(
 //                           size: size,
-//                           fontSize: size.width * numD035,
+//                           fontSize: size.width * AppDimensions.numD035,
 //                           color: Colors.black,
 //                           fontWeight: FontWeight.w700),
 //                     ),
@@ -1204,34 +1204,34 @@
 //                         : "-",
 //                     style: commonTextStyle(
 //                         size: size,
-//                         fontSize: size.width * numD06,
-//                         color: colorThemePink,
+//                         fontSize: size.width * AppDimensions.numD06,
+//                         color: AppColorTheme.colorThemePink,
 //                         fontWeight: FontWeight.w700),
 //                   ),
 //                   Text(
-//                     offeredText,
+//                     AppStrings.offeredText,
 //                     style: commonTextStyle(
 //                         size: size,
-//                         fontSize: size.width * numD035,
-//                         color: colorHint,
+//                         fontSize: size.width * AppDimensions.numD035,
+//                         color: AppColorTheme.colorHint,
 //                         fontWeight: FontWeight.w700),
 //                   ),
 //                   SizedBox(
-//                     height: size.width * numD04,
+//                     height: size.width * AppDimensions.numD04,
 //                   ),
 //                   Container(
 //                     padding: EdgeInsets.symmetric(
-//                         horizontal: size.width * numD04,
-//                         vertical: size.width * numD02),
+//                         horizontal: size.width * AppDimensions.numD04,
+//                         vertical: size.width * AppDimensions.numD02),
 //                     decoration: BoxDecoration(
-//                         color: colorLightGrey,
+//                         color: AppColorTheme.colorLightGrey,
 //                         borderRadius:
-//                             BorderRadius.circular(size.width * numD02)),
+//                             BorderRadius.circular(size.width * AppDimensions.numD02)),
 //                     child: Text(
-//                       interviewText,
+//                       AppStrings.interviewText,
 //                       style: commonTextStyle(
 //                           size: size,
-//                           fontSize: size.width * numD035,
+//                           fontSize: size.width * AppDimensions.numD035,
 //                           color: Colors.black,
 //                           fontWeight: FontWeight.w700),
 //                     ),
@@ -1248,34 +1248,34 @@
 //                         : "-",
 //                     style: commonTextStyle(
 //                         size: size,
-//                         fontSize: size.width * numD06,
-//                         color: colorThemePink,
+//                         fontSize: size.width * AppDimensions.numD06,
+//                         color: AppColorTheme.colorThemePink,
 //                         fontWeight: FontWeight.w700),
 //                   ),
 //                   Text(
-//                     offeredText,
+//                     AppStrings.offeredText,
 //                     style: commonTextStyle(
 //                         size: size,
-//                         fontSize: size.width * numD035,
-//                         color: colorHint,
+//                         fontSize: size.width * AppDimensions.numD035,
+//                         color: AppColorTheme.colorHint,
 //                         fontWeight: FontWeight.w700),
 //                   ),
 //                   SizedBox(
-//                     height: size.width * numD04,
+//                     height: size.width * AppDimensions.numD04,
 //                   ),
 //                   Container(
 //                     padding: EdgeInsets.symmetric(
-//                         horizontal: size.width * numD04,
-//                         vertical: size.width * numD02),
+//                         horizontal: size.width * AppDimensions.numD04,
+//                         vertical: size.width * AppDimensions.numD02),
 //                     decoration: BoxDecoration(
-//                         color: colorLightGrey,
+//                         color: AppColorTheme.colorLightGrey,
 //                         borderRadius:
-//                             BorderRadius.circular(size.width * numD02)),
+//                             BorderRadius.circular(size.width * AppDimensions.numD02)),
 //                     child: Text(
-//                       videoText,
+//                       AppStrings.videoText,
 //                       style: commonTextStyle(
 //                           size: size,
-//                           fontSize: size.width * numD035,
+//                           fontSize: size.width * AppDimensions.numD035,
 //                           color: Colors.black,
 //                           fontWeight: FontWeight.w700),
 //                     ),
@@ -1287,11 +1287,11 @@
 //         ),
 
 //         SizedBox(
-//           height: size.width * numD05,
+//           height: size.width * AppDimensions.numD05,
 //         ),
 
 //         const Divider(
-//           color: colorGrey1,
+//           color: AppColorTheme.colorGrey1,
 //         ),
 //       ],
 //     );

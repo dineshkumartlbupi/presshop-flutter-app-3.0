@@ -20,7 +20,7 @@ class AccountSetting extends StatelessWidget {
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
           ),
           centerTitle: false,
           titleSpacing: 0,
@@ -36,20 +36,20 @@ class AccountSetting extends StatelessWidget {
         ),
         body: ListView(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD01, vertical: size.height * numD015),
+              horizontal: size.width * AppDimensions.numD01, vertical: size.height * AppDimensions.numD015),
           children: [
             ListTile(
               title: Text(
                 "Delete Account",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD04,
+                    fontSize: size.width * AppDimensions.numD04,
                     color: Colors.red,
                     fontWeight: FontWeight.w600),
               ),
               trailing: Icon(
                 Icons.arrow_forward_ios,
-                size: size.width * numD05,
+                size: size.width * AppDimensions.numD05,
                 color: Colors.red,
               ),
               onTap: () {

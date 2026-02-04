@@ -30,13 +30,13 @@ class LeadershipTableWidget extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return SizedBox(
-      height: size.height * numD30,
+      height: size.height * AppDimensions.numD30,
       width: double.infinity,
       child: Stack(
         children: [
           // LEFT (2nd place)
           Positioned(
-            top: size.height * numD02,
+            top: size.height * AppDimensions.numD02,
             left: 0,
             child: profileImageWidget(
               isLeader: false,
@@ -47,12 +47,12 @@ class LeadershipTableWidget extends StatelessWidget {
 
           // Background shapes
           Positioned(
-            left: size.width * numD32,
+            left: size.width * AppDimensions.numD32,
             bottom: 15,
             child: Image.asset('${iconsPath}leader_circle.png', scale: 3),
           ),
           Positioned(
-            left: size.width * numD28,
+            left: size.width * AppDimensions.numD28,
             top: 0,
             child: Image.asset('${iconsPath}leader_triangle.png', scale: 2),
           ),
@@ -62,7 +62,7 @@ class LeadershipTableWidget extends StatelessWidget {
             child: Image.asset('${iconsPath}leader_rectangle.png', scale: 3),
           ),
           Positioned(
-            top: size.height * numD02,
+            top: size.height * AppDimensions.numD02,
             right: 40,
             child: Image.asset('${iconsPath}leader_star.png', scale: 3),
           ),
@@ -79,7 +79,7 @@ class LeadershipTableWidget extends StatelessWidget {
 
           // RIGHT (3rd place)
           Positioned(
-            top: size.height * numD05,
+            top: size.height * AppDimensions.numD05,
             right: 0,
             child: profileImageWidget(
               isLeader: false,
@@ -115,8 +115,8 @@ class LeadershipTableWidget extends StatelessWidget {
     // print('🧍 Member Debug -> Name: $name | Earnings: $earnings | Avatar: $avatar');
 
     return SizedBox(
-      height: size.height * numD18,
-      width: size.width * numD34,
+      height: size.height * AppDimensions.numD18,
+      width: size.width * AppDimensions.numD34,
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
@@ -133,16 +133,16 @@ class LeadershipTableWidget extends StatelessWidget {
                         : formatCurrency(0, currencySymbol),
                     style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: size.height * numD005),
+                  SizedBox(height: size.height * AppDimensions.numD005),
                   Container(
-                    padding: EdgeInsets.all(size.width * numD01),
-                    height: size.width * numD24,
-                    width: size.width * numD24,
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                    height: size.width * AppDimensions.numD24,
+                    width: size.width * AppDimensions.numD24,
                     decoration: const BoxDecoration(shape: BoxShape.circle),
                     child: ClipOval(
                       clipBehavior: Clip.antiAlias,
@@ -152,28 +152,28 @@ class LeadershipTableWidget extends StatelessWidget {
                               errorWidget: (context, url, error) {
                                 return Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * numD06,
-                                  width: size.width * numD06,
+                                  height: size.width * AppDimensions.numD06,
+                                  width: size.width * AppDimensions.numD06,
                                 );
                               },
                               fit: BoxFit.cover,
                             )
                           : Image.asset(
                               "${commonImagePath}rabbitLogo.png",
-                              height: size.width * numD06,
-                              width: size.width * numD06,
+                              height: size.width * AppDimensions.numD06,
+                              width: size.width * AppDimensions.numD06,
                               fit: BoxFit.cover,
                             ),
                     ),
                   ),
-                  SizedBox(height: size.height * numD005),
+                  SizedBox(height: size.height * AppDimensions.numD005),
                   Text(
                     name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),

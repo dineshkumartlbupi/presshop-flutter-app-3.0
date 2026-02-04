@@ -22,9 +22,12 @@ abstract class ContentRepository {
   Future<Either<Failure, List<String>>> uploadMedia(List<String> filePaths);
   Future<Either<Failure, List<Hashtag>>> searchHashtags(String query);
   Future<Either<Failure, List<Hashtag>>> getTrendingHashtags();
-  Future<Either<Failure, ContentItem>> getContentDetail(String contentId);
+  Future<Either<Failure, ContentItem>> getContentDetail(String contentId,
+      {bool showLoader = true});
   Future<Either<Failure, List<ManageTaskChatModel>>> getMediaHouseOffers(
-      String contentId);
+      String contentId,
+      {bool showLoader = true});
   Future<Either<Failure, List<EarningTransactionDetail>>>
-      getContentTransactions(String contentId, int limit, int offset);
+      getContentTransactions(String contentId, int limit, int offset,
+          {bool showLoader = true});
 }

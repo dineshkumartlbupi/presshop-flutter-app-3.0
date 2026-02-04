@@ -86,11 +86,11 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
           elevation: 0,
           hideLeading: false,
           title: Text(
-            widget.priceTipsSelected ? priceTipsText : faqText,
+            widget.priceTipsSelected ? AppStrings.priceTipsText : AppStrings.faqText,
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
           ),
           centerTitle: false,
           titleSpacing: 0,
@@ -109,12 +109,12 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                height: size.width * numD07,
-                width: size.width * numD07,
+                height: size.width * AppDimensions.numD07,
+                width: size.width * AppDimensions.numD07,
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             )
           ],
         ),
@@ -146,16 +146,16 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04,
-                            vertical: size.width * numD03),
+                            horizontal: size.width * AppDimensions.numD04,
+                            vertical: size.width * AppDimensions.numD03),
                         child: TextFormField(
                             decoration: InputDecoration(
-                              hintText: searchText,
+                              hintText: AppStrings.searchText,
                               filled: true,
-                              fillColor: colorLightGrey,
+                              fillColor: AppColorTheme.colorLightGrey,
                               hintStyle: TextStyle(
                                   color: Colors.black,
-                                  fontSize: size.width * numD035),
+                                  fontSize: size.width * AppDimensions.numD035),
                               disabledBorder: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.circular(size.width * 0.03),
@@ -193,7 +193,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                   )),
                               suffixIcon: Padding(
                                 padding:
-                                    EdgeInsets.only(right: size.width * numD04),
+                                    EdgeInsets.only(right: size.width * AppDimensions.numD04),
                                 child: const ImageIcon(
                                   AssetImage("${iconsPath}ic_search.png"),
                                   color: Colors.black,
@@ -201,10 +201,10 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               ),
                               suffixIconColor: Colors.black,
                               suffixIconConstraints: BoxConstraints(
-                                  maxHeight: size.width * numD07),
+                                  maxHeight: size.width * AppDimensions.numD07),
                               contentPadding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD04,
-                                  vertical: size.width * numD015),
+                                  horizontal: size.width * AppDimensions.numD04,
+                                  vertical: size.width * AppDimensions.numD015),
                             ),
                             onChanged: (value) {
                               _bloc.add(FAQSearch(value));
@@ -214,9 +214,9 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                           ? Center(
                               child: errorMessageWidget("No Category found"))
                           : Container(
-                              height: size.width * numD15,
+                              height: size.width * AppDimensions.numD15,
                               margin:
-                                  EdgeInsets.only(left: size.width * numD035),
+                                  EdgeInsets.only(left: size.width * AppDimensions.numD035),
                               child: ListView.separated(
                                   controller: _listController,
                                   scrollDirection: Axis.horizontal,
@@ -233,10 +233,10 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                       child: Chip(
                                         backgroundColor: category.selected
                                             ? Colors.black
-                                            : colorLightGrey,
+                                            : AppColorTheme.colorLightGrey,
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD025,
-                                            vertical: size.width * numD02),
+                                            horizontal: size.width * AppDimensions.numD025,
+                                            vertical: size.width * AppDimensions.numD02),
                                         label: Text(
                                           category.name.toTitleCase(),
                                           style: TextStyle(
@@ -244,7 +244,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                                   ? Colors.white
                                                   : Colors.black,
                                               fontFamily: "AirbnbCereal",
-                                              fontSize: size.width * numD036,
+                                              fontSize: size.width * AppDimensions.numD036,
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),
@@ -252,7 +252,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                   },
                                   separatorBuilder: (context, index) {
                                     return SizedBox(
-                                      width: size.width * numD04,
+                                      width: size.width * AppDimensions.numD04,
                                     );
                                   },
                                   itemCount: state.categories.length),
@@ -262,13 +262,13 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD035),
+                                  horizontal: size.width * AppDimensions.numD035),
                               itemBuilder: (context, index) {
                                 var item = state.items[index];
                                 return Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD02),
+                                          size.width * AppDimensions.numD02),
                                       border: Border.all(
                                           color: Colors.grey.shade300)),
                                   child: ExpansionTile(
@@ -280,32 +280,32 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                       children: [
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: size.width * numD01),
+                                              top: size.width * AppDimensions.numD01),
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD02,
-                                              vertical: size.width * numD01),
+                                              horizontal: size.width * AppDimensions.numD02,
+                                              vertical: size.width * AppDimensions.numD01),
                                           decoration: BoxDecoration(
-                                              color: colorThemePink,
+                                              color: AppColorTheme.colorThemePink,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD01)),
+                                                      size.width * AppDimensions.numD01)),
                                           child: Text(
                                             "Q",
                                             style: TextStyle(
-                                                fontSize: size.width * numD036,
+                                                fontSize: size.width * AppDimensions.numD036,
                                                 color: Colors.white,
                                                 fontFamily: "AirbnbCereal",
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         SizedBox(
-                                          width: size.width * numD02,
+                                          width: size.width * AppDimensions.numD02,
                                         ),
                                         Expanded(
                                             child: Text(
                                           item.question,
                                           style: TextStyle(
-                                              fontSize: size.width * numD035,
+                                              fontSize: size.width * AppDimensions.numD035,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.bold),
@@ -321,37 +321,37 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                       Container(
                                         height: 1,
                                         margin: EdgeInsets.only(
-                                            bottom: size.width * numD04,
-                                            left: size.width * numD04,
-                                            right: size.width * numD04),
+                                            bottom: size.width * AppDimensions.numD04,
+                                            left: size.width * AppDimensions.numD04,
+                                            right: size.width * AppDimensions.numD04),
                                         width: size.width,
                                         color: Colors.grey.shade300,
                                       ),
                                       Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD04),
+                                            horizontal: size.width * AppDimensions.numD04),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Container(
                                               margin: EdgeInsets.only(
-                                                  top: size.width * numD01),
+                                                  top: size.width * AppDimensions.numD01),
                                               padding: EdgeInsets.symmetric(
                                                   horizontal:
-                                                      size.width * numD02,
+                                                      size.width * AppDimensions.numD02,
                                                   vertical:
-                                                      size.width * numD01),
+                                                      size.width * AppDimensions.numD01),
                                               decoration: BoxDecoration(
-                                                  color: colorThemePink,
+                                                  color: AppColorTheme.colorThemePink,
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          size.width * numD01)),
+                                                          size.width * AppDimensions.numD01)),
                                               child: Text(
                                                 "A",
                                                 style: TextStyle(
                                                     fontSize:
-                                                        size.width * numD035,
+                                                        size.width * AppDimensions.numD035,
                                                     color: Colors.white,
                                                     fontFamily: "AirbnbCereal",
                                                     fontWeight:
@@ -359,7 +359,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                               ),
                                             ),
                                             SizedBox(
-                                              width: size.width * numD02,
+                                              width: size.width * AppDimensions.numD02,
                                             ),
                                             Expanded(
                                               child: Text(
@@ -368,14 +368,14 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                                                     color: Colors.black,
                                                     fontFamily: "AirbnbCereal",
                                                     fontSize:
-                                                        size.width * numD035),
+                                                        size.width * AppDimensions.numD035),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       SizedBox(
-                                        height: size.width * numD04,
+                                        height: size.width * AppDimensions.numD04,
                                       )
                                     ],
                                   ),
@@ -383,7 +383,7 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
                               },
                               separatorBuilder: (context, index) {
                                 return SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 );
                               },
                               itemCount: state.items.length)

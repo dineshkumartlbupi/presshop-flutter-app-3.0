@@ -79,10 +79,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
             elevation: 0,
             hideLeading: false,
             title: Text(
-              "$contactText ${usText.toTitleCase()}",
+              "${AppStrings.contactText} ${AppStrings.usText.toTitleCase()}",
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: size.width * appBarHeadingFontSize,
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize,
                   fontWeight: FontWeight.w700),
             ),
             centerTitle: false,
@@ -102,19 +102,19 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
           ),
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
+                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
                 child: Form(
                   key: contactUsKey,
                   child: Column(
@@ -122,7 +122,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                     children: [
                       SizedBox(
                         width: size.width,
-                        height: size.width * numD35,
+                        height: size.width * AppDimensions.numD35,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -134,11 +134,11 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                     margin: const EdgeInsets.only(bottom: 5),
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD15),
+                                            size.width * AppDimensions.numD15),
                                         child: Image.asset(
                                           "${dummyImagePath}image1.png",
-                                          height: size.width * numD20,
-                                          width: size.width * numD20,
+                                          height: size.width * AppDimensions.numD20,
+                                          width: size.width * AppDimensions.numD20,
                                           fit: BoxFit.cover,
                                         )),
                                   ),
@@ -153,8 +153,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                           color: Colors.white),
                                       child: Icon(
                                         Icons.circle,
-                                        color: colorOnlineGreen,
-                                        size: size.width * numD03,
+                                        color: AppColorTheme.colorOnlineGreen,
+                                        size: size.width * AppDimensions.numD03,
                                       ),
                                     ),
                                   )
@@ -162,18 +162,18 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               ),
                             ),
                             Positioned(
-                              left: size.width * numD18,
+                              left: size.width * AppDimensions.numD18,
                               child: Stack(
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(bottom: 5),
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD15),
+                                            size.width * AppDimensions.numD15),
                                         child: Image.asset(
                                           "${dummyImagePath}image2.png",
-                                          height: size.width * numD20,
-                                          width: size.width * numD20,
+                                          height: size.width * AppDimensions.numD20,
+                                          width: size.width * AppDimensions.numD20,
                                           fit: BoxFit.cover,
                                         )),
                                   ),
@@ -188,8 +188,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                           color: Colors.white),
                                       child: Icon(
                                         Icons.circle,
-                                        color: colorOnlineGreen,
-                                        size: size.width * numD03,
+                                        color: AppColorTheme.colorOnlineGreen,
+                                        size: size.width * AppDimensions.numD03,
                                       ),
                                     ),
                                   )
@@ -197,18 +197,18 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               ),
                             ),
                             Positioned(
-                              left: size.width * numD36,
+                              left: size.width * AppDimensions.numD36,
                               child: Stack(
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(bottom: 5),
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD15),
+                                            size.width * AppDimensions.numD15),
                                         child: Image.asset(
                                           "${dummyImagePath}image3.png",
-                                          height: size.width * numD20,
-                                          width: size.width * numD20,
+                                          height: size.width * AppDimensions.numD20,
+                                          width: size.width * AppDimensions.numD20,
                                           fit: BoxFit.cover,
                                         )),
                                   ),
@@ -223,8 +223,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                           color: Colors.white),
                                       child: Icon(
                                         Icons.circle,
-                                        color: colorOnlineGreen,
-                                        size: size.width * numD03,
+                                        color: AppColorTheme.colorOnlineGreen,
+                                        size: size.width * AppDimensions.numD03,
                                       ),
                                     ),
                                   )
@@ -232,14 +232,14 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               ),
                             ),
                             Positioned(
-                              left: size.width * numD55,
+                              left: size.width * AppDimensions.numD55,
                               child: Stack(
                                 children: [
                                   Container(
-                                    height: size.width * numD20,
-                                    width: size.width * numD20,
+                                    height: size.width * AppDimensions.numD20,
+                                    width: size.width * AppDimensions.numD20,
                                     padding:
-                                        EdgeInsets.all(size.width * numD04),
+                                        EdgeInsets.all(size.width * AppDimensions.numD04),
                                     margin: const EdgeInsets.only(bottom: 5),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
@@ -264,8 +264,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                           color: Colors.white),
                                       child: Icon(
                                         Icons.circle,
-                                        color: colorOnlineGreen,
-                                        size: size.width * numD03,
+                                        color: AppColorTheme.colorOnlineGreen,
+                                        size: size.width * AppDimensions.numD03,
                                       ),
                                     ),
                                   )
@@ -279,12 +279,12 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         "We’d love to hear from you!",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD05,
+                            fontSize: size.width * AppDimensions.numD05,
                             color: Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
-                        height: size.width * numD01,
+                        height: size.width * AppDimensions.numD01,
                       ),
                       RichText(
                           text: TextSpan(children: [
@@ -293,7 +293,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               "Our helpful teams are available 24x7 to assist, and answer your questions. All communication with us, will remain discreet and secure",
                           style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD034,
+                            fontSize: size.width * AppDimensions.numD034,
                             color: Colors.black,
                             fontWeight:
                                 FontWeight.w300, // Set fontWeight to normal
@@ -301,7 +301,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         )
                       ])),
                       SizedBox(
-                        height: size.width * numD03,
+                        height: size.width * AppDimensions.numD03,
                       ),
                       RichText(
                         text: TextSpan(
@@ -311,7 +311,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   'Please fill out the form to start an instant chat with one of our experienced team members. You can also send us an email. Meanwhile, please check our ',
                               style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD033,
+                                fontSize: size.width * AppDimensions.numD033,
                                 color: Colors.black,
                                 fontWeight:
                                     FontWeight.w300, // Set fontWeight to normal
@@ -330,11 +330,11 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   ));
                                 },
                                 child: Text(
-                                  "$faqText, ",
+                                  "${AppStrings.faqText}, ",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD033,
-                                    color: colorThemePink,
+                                    fontSize: size.width * AppDimensions.numD033,
+                                    color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight
                                         .w500, // Set fontWeight to the desired value
                                   ),
@@ -354,21 +354,21 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   ));
                                 },
                                 child: Text(
-                                  "${priceTipsText.toLowerCase()} ",
+                                  "${AppStrings.priceTipsText.toLowerCase()} ",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD033,
-                                    color: colorThemePink,
+                                    fontSize: size.width * AppDimensions.numD033,
+                                    color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             ),
                             TextSpan(
-                              text: "$andText ",
+                              text: "${AppStrings.andText} ",
                               style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD032,
+                                fontSize: size.width * AppDimensions.numD032,
                                 color: Colors.black,
                                 fontWeight:
                                     FontWeight.w300, // Set fontWeight to normal
@@ -384,11 +384,11 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   ));
                                 },
                                 child: Text(
-                                  "${tutorialsText.toLowerCase()} ",
+                                  "${AppStrings.tutorialsText.toLowerCase()} ",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD033,
-                                    color: colorThemePink,
+                                    fontSize: size.width * AppDimensions.numD033,
+                                    color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -398,7 +398,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               text: "for answers to common queries.",
                               style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD032,
+                                fontSize: size.width * AppDimensions.numD032,
                                 color: Colors.black,
                                 fontWeight:
                                     FontWeight.w300, // Set fontWeight to normal
@@ -408,26 +408,26 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
-                      Text(nameText.toTitleCase(),
+                      Text(AppStrings.nameText.toTitleCase(),
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD033,
+                              fontSize: size.width * AppDimensions.numD033,
                               color: Colors.black,
                               fontWeight: FontWeight.normal)),
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       CommonTextField(
                         size: size,
                         maxLines: 1,
                         textInputFormatters: null,
-                        borderColor: colorTextFieldBorder,
+                        borderColor: AppColorTheme.colorTextFieldBorder,
                         controller: nameController,
                         hintText: "Enter name",
                         prefixIcon: null,
-                        prefixIconHeight: size.width * numD06,
+                        prefixIconHeight: size.width * AppDimensions.numD06,
                         suffixIconIconHeight: 0,
                         suffixIcon: null,
                         hidePassword: false,
@@ -436,29 +436,29 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         enableValidations: true,
                         autofocus: false,
                         filled: false,
-                        filledColor: colorLightGrey,
+                        filledColor: AppColorTheme.colorLightGrey,
                       ),
                       SizedBox(
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
-                      Text(emailAddressText,
+                      Text(AppStrings.emailAddressText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.normal)),
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       CommonTextField(
                         size: size,
                         maxLines: 1,
                         textInputFormatters: null,
-                        borderColor: colorTextFieldBorder,
+                        borderColor: AppColorTheme.colorTextFieldBorder,
                         controller: emailAddressController,
-                        hintText: emailAddressHintText,
+                        hintText: AppStrings.emailAddressHintText,
                         prefixIcon: null,
-                        prefixIconHeight: size.width * numD06,
+                        prefixIconHeight: size.width * AppDimensions.numD06,
                         suffixIconIconHeight: 0,
                         suffixIcon: null,
                         hidePassword: false,
@@ -467,28 +467,28 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         validator: checkEmailValidator,
                         enableValidations: true,
                         filled: false,
-                        filledColor: colorLightGrey,
+                        filledColor: AppColorTheme.colorLightGrey,
                       ),
                       SizedBox(
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
-                      Text("${phoneText.toTitleCase()} $numberText",
+                      Text("${AppStrings.phoneText.toTitleCase()} ${AppStrings.numberText}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.normal)),
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       CommonTextField(
                         controller: phoneNumberController,
                         size: size,
                         textInputFormatters: null,
-                        borderColor: colorTextFieldBorder,
-                        hintText: phoneHintText,
+                        borderColor: AppColorTheme.colorTextFieldBorder,
+                        hintText: AppStrings.phoneHintText,
                         prefixIcon: null,
-                        prefixIconHeight: size.width * numD06,
+                        prefixIconHeight: size.width * AppDimensions.numD06,
                         suffixIconIconHeight: 0,
                         suffixIcon: null,
                         hidePassword: false,
@@ -498,28 +498,28 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         validator: checkRequiredValidator,
                         enableValidations: true,
                         filled: false,
-                        filledColor: colorLightGrey,
+                        filledColor: AppColorTheme.colorLightGrey,
                         maxLines: 5,
                       ),
                       SizedBox(
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
-                      Text(messageText.toTitleCase(),
+                      Text(AppStrings.messageText.toTitleCase(),
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.normal)),
                       SizedBox(
-                        height: size.width * numD02,
+                        height: size.width * AppDimensions.numD02,
                       ),
                       TextFormField(
                         maxLines: 5,
                         controller: messageController,
-                        cursorColor: colorTextFieldIcon,
+                        cursorColor: AppColorTheme.colorTextFieldIcon,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * numD032,
+                          fontSize: size.width * AppDimensions.numD032,
                           fontFamily: 'AirbnbCereal_W_Md',
                         ),
                         onChanged: (v) {
@@ -528,46 +528,46 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         decoration: InputDecoration(
                           counterText: "",
                           fillColor: Colors.white,
-                          hintText: "${enterText.toTitleCase()} $messageText",
+                          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.messageText}",
                           hintStyle: TextStyle(
-                            color: colorHint,
-                            fontSize: size.width * numD035,
+                            color: AppColorTheme.colorHint,
+                            fontSize: size.width * AppDimensions.numD035,
                             fontFamily: 'AirbnbCereal_W_Md',
                           ),
                           disabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: colorTextFieldBorder),
+                                width: 1, color: AppColorTheme.colorTextFieldBorder),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: colorTextFieldBorder),
+                                width: 1, color: AppColorTheme.colorTextFieldBorder),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: colorTextFieldBorder),
+                                width: 1, color: AppColorTheme.colorTextFieldBorder),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: colorTextFieldBorder),
+                                width: 1, color: AppColorTheme.colorTextFieldBorder),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: colorTextFieldBorder),
+                                width: 1, color: AppColorTheme.colorTextFieldBorder),
                           ),
-                          prefixIconColor: colorTextFieldIcon,
+                          prefixIconColor: AppColorTheme.colorTextFieldIcon,
                         ),
                       ),
-                      SizedBox(height: size.width * numD017),
+                      SizedBox(height: size.width * AppDimensions.numD017),
                       messageController.text.isEmpty
                           ? const Text(
                               "Required",
@@ -578,22 +578,22 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             )
                           : Container(),
                       SizedBox(
-                        height: size.width * numD15,
+                        height: size.width * AppDimensions.numD15,
                       ),
                       Container(
                         width: size.width,
-                        height: size.width * numD14,
+                        height: size.width * AppDimensions.numD14,
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD08),
+                            horizontal: size.width * AppDimensions.numD08),
                         child: commonElevatedButton(
-                            chatText,
+                            AppStrings.chatText,
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                           if (messageController.text.isNotEmpty) {
                             Navigator.push(
                               context,
@@ -609,19 +609,19 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         }),
                       ),
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                       Container(
                         width: size.width,
-                        height: size.width * numD14,
+                        height: size.width * AppDimensions.numD14,
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD08),
+                            horizontal: size.width * AppDimensions.numD08),
                         child: commonElevatedButton(
-                            emailUsText,
+                            AppStrings.emailUsText,
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, Colors.black), () async {
@@ -649,21 +649,21 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         }),
                       ),
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          orText,
+                          AppStrings.orText,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
                       ),
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                       Align(
                         alignment: Alignment.center,
@@ -671,13 +671,13 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                           "Follow us to start a conversation",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD03,
+                              fontSize: size.width * AppDimensions.numD03,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
                       ),
                       SizedBox(
-                        height: size.width * numD08,
+                        height: size.width * AppDimensions.numD08,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -691,18 +691,18 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               }
                             },
                             child: Container(
-                              height: size.width * numD1,
-                              width: size.width * numD11,
+                              height: size.width * AppDimensions.numD1,
+                              width: size.width * AppDimensions.numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD02)),
-                              padding: EdgeInsets.all(size.width * numD02),
+                                      size.width * AppDimensions.numD02)),
+                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                               child: Image.asset("${iconsPath}ic_twitter.png"),
                             ),
                           ),
                           SizedBox(
-                            width: size.width * numD04,
+                            width: size.width * AppDimensions.numD04,
                           ),
                           InkWell(
                             onTap: () async {
@@ -713,18 +713,18 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               }
                             },
                             child: Container(
-                              height: size.width * numD1,
-                              width: size.width * numD11,
+                              height: size.width * AppDimensions.numD1,
+                              width: size.width * AppDimensions.numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD02)),
-                              padding: EdgeInsets.all(size.width * numD02),
+                                      size.width * AppDimensions.numD02)),
+                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                               child: Image.asset("${iconsPath}ic_linkdin.png"),
                             ),
                           ),
                           SizedBox(
-                            width: size.width * numD04,
+                            width: size.width * AppDimensions.numD04,
                           ),
                           InkWell(
                             onTap: () async {
@@ -735,18 +735,18 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               }
                             },
                             child: Container(
-                              height: size.width * numD1,
-                              width: size.width * numD11,
+                              height: size.width * AppDimensions.numD1,
+                              width: size.width * AppDimensions.numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD02)),
-                              padding: EdgeInsets.all(size.width * numD02),
+                                      size.width * AppDimensions.numD02)),
+                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                               child:
                                   Image.asset("${iconsPath}ic_instagram.png"),
                             ),
                           ),
-                          SizedBox(width: size.width * numD04),
+                          SizedBox(width: size.width * AppDimensions.numD04),
                           InkWell(
                             onTap: () async {
                               Uri facebookUrl = Uri.parse(
@@ -756,20 +756,20 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               }
                             },
                             child: Container(
-                              height: size.width * numD1,
-                              width: size.width * numD11,
+                              height: size.width * AppDimensions.numD1,
+                              width: size.width * AppDimensions.numD11,
                               decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD02)),
-                              padding: EdgeInsets.all(size.width * numD02),
+                                      size.width * AppDimensions.numD02)),
+                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                               child: Image.asset("${iconsPath}ic_facebook.png"),
                             ),
                           )
                         ],
                       ),
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                     ],
                   ),

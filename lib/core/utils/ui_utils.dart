@@ -7,7 +7,7 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 
 /// Share
 Future<void> shareLink(
@@ -37,7 +37,7 @@ void showToast(String msg, [Toast toastLength = Toast.LENGTH_SHORT]) {
     toastLength: toastLength,
     gravity: ToastGravity.BOTTOM,
     timeInSecForIosWeb: 1,
-    backgroundColor: lightGrey,
+    backgroundColor: AppColorTheme.lightGrey,
     textColor: Colors.black,
     fontSize: 16.0,
   );
@@ -63,7 +63,7 @@ TextStyle commonBigTitleTextStyle(Size size, Color color) {
   return TextStyle(
       fontFamily: "AirbnbCereal",
       color: color,
-      fontSize: size.width * numD08,
+      fontSize: size.width * AppDimensions.numD08,
       fontWeight: FontWeight.bold);
 }
 
@@ -73,7 +73,7 @@ Widget commonLeading(Size size) {
       Icon(
         Icons.arrow_back_rounded,
         color: Colors.black,
-        size: size.width * numD08,
+        size: size.width * AppDimensions.numD08,
       ),
     ],
   );

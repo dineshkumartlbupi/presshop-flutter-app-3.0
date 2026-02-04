@@ -26,10 +26,13 @@ abstract class ContentRemoteDataSource {
   Future<List<String>> uploadMedia(List<String> filePaths);
   Future<List<HashtagModel>> searchHashtags(String query);
   Future<List<HashtagModel>> getTrendingHashtags();
-  Future<ContentItemModel> getContentDetail(String contentId);
-  Future<List<ManageTaskChatModel>> getMediaHouseOffers(String contentId);
+  Future<ContentItemModel> getContentDetail(String contentId,
+      {bool showLoader = true});
+  Future<List<ManageTaskChatModel>> getMediaHouseOffers(String contentId,
+      {bool showLoader = true});
   Future<List<EarningTransactionDetail>> getContentTransactions(
-      String contentId, int limit, int offset);
+      String contentId, int limit, int offset,
+      {bool showLoader = true});
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
@@ -47,7 +50,9 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }) async {
     try {
       final queryParams = {'page': page, 'limit': limit, ...params};
-      final url = type == 'my' ? myContentUrl : allContentUrl;
+      final url = type == 'my'
+          ? ApiConstantsNew.content.myContent
+          : ApiConstantsNew.content.allContent;
       final response = await apiClient.get(
         url,
         queryParameters: queryParams,
@@ -144,10 +149,15 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             await MultipartFile.fromFile(mediaPaths[i]),
           ));
         }
-        response =
-            await apiClient.multipartPost(uploadContentUrl, formData: formData);
+        response = await apiClient.multipartPost(
+          ApiConstantsNew.content.aggregatedNewsDetail,
+          formData: formData,
+        );
       } else {
-        response = await apiClient.post(uploadContentUrl, data: data);
+        response = await apiClient.post(
+          ApiConstantsNew.content.uploadMedia,
+          data: data,
+        );
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -184,10 +194,15 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
             await MultipartFile.fromFile(mediaPaths[i]),
           ));
         }
-        response =
-            await apiClient.multipartPost(uploadContentUrl, formData: formData);
+        response = await apiClient.multipartPost(
+          ApiConstantsNew.content.uploadMedia,
+          formData: formData,
+        );
       } else {
-        response = await apiClient.post(uploadContentUrl, data: data);
+        response = await apiClient.post(
+          ApiConstantsNew.content.uploadMedia,
+          data: data,
+        );
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -207,8 +222,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<ContentItemModel> updateContent(
       String contentId, Map<String, dynamic> data) async {
     try {
-      final response =
-          await apiClient.put('$uploadContentUrl/$contentId', data: data);
+      final response = await apiClient
+          .put('${ApiConstantsNew.content.uploadMedia}/$contentId', data: data);
 
       if (response.statusCode == 200) {
         final resData = response.data;
@@ -227,7 +242,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<void> deleteContent(String contentId) async {
     try {
-      final response = await apiClient.delete('$uploadContentUrl/$contentId');
+      final response = await apiClient
+          .delete('${ApiConstantsNew.content.uploadMedia}/$contentId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -253,8 +269,9 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         ));
       }
 
-      final response =
-          await apiClient.multipartPost(uploadContentUrl, formData: formData);
+      final response = await apiClient.multipartPost(
+          ApiConstantsNew.content.uploadMedia,
+          formData: formData);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -273,7 +290,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<List<HashtagModel>> searchHashtags(String query) async {
     try {
       final response = await apiClient.get(
-        getHashTagsUrl,
+        ApiConstantsNew.content.getTags,
         queryParameters: {'query': query},
       );
 
@@ -294,7 +311,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<HashtagModel>> getTrendingHashtags() async {
     try {
-      final response = await apiClient.get(getHashTagsUrl);
+      final response = await apiClient.get(ApiConstantsNew.content.getTags);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -311,9 +328,12 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
-  Future<ContentItemModel> getContentDetail(String contentId) async {
+  Future<ContentItemModel> getContentDetail(String contentId,
+      {bool showLoader = true}) async {
     try {
-      final response = await apiClient.get('$myContentDetailUrl$contentId');
+      final response = await apiClient.get(
+          '${ApiConstantsNew.content.contentDetail}$contentId',
+          showLoader: showLoader);
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -343,22 +363,31 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
-  Future<List<ManageTaskChatModel>> getMediaHouseOffers(
-      String contentId) async {
+  Future<List<ManageTaskChatModel>> getMediaHouseOffers(String contentId,
+      {bool showLoader = true}) async {
     try {
       final response = await apiClient.get(
-        getContentMediaHouseOfferUrl,
+        ApiConstantsNew.tasks.mediaHouseOffer,
         queryParameters: {'image_id': contentId},
+        showLoader: showLoader,
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['code'] == 200) {
-          final List offers = data['response'] ?? [];
+        // Accept "success": true even if "code" is missing or check both
+        if (data['code'] == 200 || data['success'] == true) {
+          final List offers = data['response'] ?? data['data'] ?? [];
           return offers
               .map((e) => ManageTaskChatModel.fromJson(e ?? {}))
               .toList();
         }
+        // If success is false but message says "Request successful" and data is empty, treat as empty list
+        if (data['message'] == "Request successful" &&
+            (data['data'] == null ||
+                (data['data'] is Map && data['data'].isEmpty))) {
+          return [];
+        }
+
         throw ServerFailure(
             message: data['message'] ?? 'Failed to load offers');
       }
@@ -370,16 +399,18 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
 
   @override
   Future<List<EarningTransactionDetail>> getContentTransactions(
-      String contentId, int limit, int offset) async {
+      String contentId, int limit, int offset,
+      {bool showLoader = true}) async {
     try {
       try {
         final response = await apiClient.get(
-          getDetailsById,
+          ApiConstantsNew.misc.getDetailsById,
           queryParameters: {
             'content_id': contentId,
             // 'limit': limit,
             // 'offset': offset,
           },
+          showLoader: showLoader,
         );
 
         if (response.statusCode == 200) {

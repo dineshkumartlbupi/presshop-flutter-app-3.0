@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/theme/app_colors.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 
 
 class CommonTextField extends StatefulWidget {
@@ -69,13 +69,13 @@ class CommonTextFieldState extends State<CommonTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      cursorColor: colorTextFieldIcon,
+      cursorColor: AppColorTheme.colorTextFieldIcon,
       obscureText: widget.hidePassword,
       keyboardType: widget.keyboardType,
       maxLines: widget.maxLines,
       style: TextStyle(
           color: Colors.black,
-          fontSize: widget.size.width * numD032,
+          fontSize: widget.size.width * AppDimensions.numD032,
           fontFamily: 'AirbnbCereal'),
       inputFormatters: widget.textInputFormatters,
       onTap: widget.callback,
@@ -90,10 +90,10 @@ class CommonTextFieldState extends State<CommonTextField> {
           hintText: widget.hintText,
           errorMaxLines: widget.errorMaxLines,
           errorStyle: const TextStyle(
-              color: colorThemePink, fontFamily: "AirbnbCereal"),
+              color: AppColorTheme.colorThemePink, fontFamily: "AirbnbCereal"),
           hintStyle: TextStyle(
-              color: colorHint,
-              fontSize: widget.size.width * numD035,
+              color: AppColorTheme.colorHint,
+              fontSize: widget.size.width * AppDimensions.numD035,
               fontFamily: 'AirbnbCereal'),
           disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.size.width * 0.03),
@@ -112,24 +112,24 @@ class CommonTextFieldState extends State<CommonTextField> {
               borderSide: BorderSide(width: 1, color: widget.borderColor)),
           prefixIcon: Padding(
             padding:
-                EdgeInsets.symmetric(horizontal: widget.size.width * numD02),
+                EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD02),
             child: widget.prefixIcon,
           ),
           prefix: widget.prefix,
           prefixIconConstraints:
               BoxConstraints(maxHeight: widget.prefixIconHeight),
-          prefixIconColor: colorTextFieldIcon,
+          prefixIconColor: AppColorTheme.colorTextFieldIcon,
           suffixIcon: Padding(
             padding:
-                EdgeInsets.symmetric(horizontal: widget.size.width * numD02),
+                EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD02),
             child: widget.suffixIcon,
           ),
           suffixIconConstraints:
               BoxConstraints(maxHeight: widget.suffixIconIconHeight),
           suffixIconColor:
-              widget.hidePassword ? colorTextFieldIcon : Colors.grey,
+              widget.hidePassword ? AppColorTheme.colorTextFieldIcon : Colors.grey,
           contentPadding:
-              EdgeInsets.symmetric(vertical: widget.size.width * numD02)),
+              EdgeInsets.symmetric(vertical: widget.size.width * AppDimensions.numD02)),
       textAlignVertical: TextAlignVertical.center,
       textCapitalization: widget.textCapitalization,
       onChanged: widget.onChanged,

@@ -97,9 +97,9 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD02),
-                            height: size.width * numD18,
+                                horizontal: size.width * AppDimensions.numD04,
+                                vertical: size.width * AppDimensions.numD02),
+                            height: size.width * AppDimensions.numD18,
                             child: commonElevatedButton(
                                 "Add more",
                                 size,
@@ -142,14 +142,14 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD02),
-                            height: size.width * numD18,
+                                horizontal: size.width * AppDimensions.numD04,
+                                vertical: size.width * AppDimensions.numD02),
+                            height: size.width * AppDimensions.numD18,
                             child: commonElevatedButton(
                                 "Next",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, colorThemePink), () {
+                                commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                               Navigator.pop(context, "upload");
                             }),
                           ),
@@ -157,7 +157,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: size.height * numD015,
+                      height: size.height * AppDimensions.numD015,
                     ),
                   ],
                 ),
@@ -165,8 +165,8 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
             ],
           ),
           Positioned(
-              top: size.width * numD1,
-              right: size.width * numD02,
+              top: size.width * AppDimensions.numD1,
+              right: size.width * AppDimensions.numD02,
               child: IconButton(
                   onPressed: () {
                     widget.mediaList.removeAt(currentPage);
@@ -183,11 +183,11 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                   icon: Icon(
                     Icons.highlight_remove,
                     color: Colors.white,
-                    size: size.width * numD07,
+                    size: size.width * AppDimensions.numD07,
                   ))),
           Positioned(
-              top: size.width * numD1,
-              left: size.width * numD02,
+              top: size.width * AppDimensions.numD1,
+              left: size.width * AppDimensions.numD02,
               child: IconButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -195,7 +195,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                   icon: Icon(
                     Icons.arrow_back_ios,
                     color: Colors.white,
-                    size: size.width * numD06,
+                    size: size.width * AppDimensions.numD06,
                   ))),
         ],
       ),

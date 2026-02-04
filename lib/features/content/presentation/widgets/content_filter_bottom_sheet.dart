@@ -26,9 +26,9 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        top: widget.size.width * numD06,
-        left: widget.size.width * numD05,
-        right: widget.size.width * numD05,
+        top: widget.size.width * AppDimensions.numD06,
+        left: widget.size.width * AppDimensions.numD05,
+        right: widget.size.width * AppDimensions.numD05,
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -36,13 +36,13 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(),
-            SizedBox(height: widget.size.width * numD085),
-            _buildSection(sortText, widget.sortList, true),
-            SizedBox(height: widget.size.width * numD05),
-            _buildSection(filterText, widget.filterList, false),
-            SizedBox(height: widget.size.width * numD06),
+            SizedBox(height: widget.size.width * AppDimensions.numD085),
+            _buildSection(AppStrings.sortText, widget.sortList, true),
+            SizedBox(height: widget.size.width * AppDimensions.numD05),
+            _buildSection(AppStrings.filterText, widget.filterList, false),
+            SizedBox(height: widget.size.width * AppDimensions.numD06),
             _buildApplyButton(),
-            SizedBox(height: widget.size.width * numD02),
+            SizedBox(height: widget.size.width * AppDimensions.numD02),
           ],
         ),
       ),
@@ -53,12 +53,12 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
     return Row(
       children: [
         IconButton(
-          splashRadius: widget.size.width * numD07,
+          splashRadius: widget.size.width * AppDimensions.numD07,
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.close,
             color: Colors.black,
-            size: widget.size.width * numD07,
+            size: widget.size.width * AppDimensions.numD07,
           ),
         ),
         Expanded(
@@ -68,7 +68,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               overflow: TextOverflow.ellipsis,
               style: commonTextStyle(
                   size: widget.size,
-                  fontSize: widget.size.width * appBarHeadingFontSizeNew,
+                  fontSize: widget.size.width * AppDimensions.appBarHeadingFontSizeNew,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -79,9 +79,9 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           child: Text(
             "Clear all",
             style: TextStyle(
-                color: colorThemePink,
+                color: AppColorTheme.colorThemePink,
                 fontWeight: FontWeight.w400,
-                fontSize: widget.size.width * numD03),
+                fontSize: widget.size.width * AppDimensions.numD03),
           ),
         ),
       ],
@@ -96,7 +96,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           title,
           style: commonTextStyle(
               size: widget.size,
-              fontSize: widget.size.width * numD05,
+              fontSize: widget.size.width * AppDimensions.numD05,
               color: Colors.black,
               fontWeight: FontWeight.w500),
         ),
@@ -107,7 +107,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
 
   Widget _buildFilterList(List<FilterModel> list, bool isSort) {
     return ListView.separated(
-      padding: EdgeInsets.only(top: widget.size.width * numD03),
+      padding: EdgeInsets.only(top: widget.size.width * AppDimensions.numD03),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: list.length,
@@ -118,20 +118,20 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           child: Container(
             padding: EdgeInsets.symmetric(
               vertical:
-                  item.name == filterDateText ? 0 : widget.size.width * numD025,
-              horizontal: widget.size.width * numD02,
+                  item.name == AppStrings.filterDateText ? 0 : widget.size.width * AppDimensions.numD025,
+              horizontal: widget.size.width * AppDimensions.numD02,
             ),
             color: item.isSelected ? Colors.grey.shade400 : null,
             child: Row(
               children: [
                 _buildItemIcon(item),
-                SizedBox(width: widget.size.width * numD03),
-                item.name == filterDateText
+                SizedBox(width: widget.size.width * AppDimensions.numD03),
+                item.name == AppStrings.filterDateText
                     ? _buildDateRow(item, list)
                     : Expanded(
                         child: Text(item.name,
                             style: TextStyle(
-                                fontSize: widget.size.width * numD035,
+                                fontSize: widget.size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "AirbnbCereal_W_Bk")),
@@ -141,7 +141,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           ),
         );
       },
-      separatorBuilder: (_, __) => SizedBox(height: widget.size.width * numD01),
+      separatorBuilder: (_, __) => SizedBox(height: widget.size.width * AppDimensions.numD01),
     );
   }
 
@@ -149,12 +149,12 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
     return Image.asset(
       "$iconsPath${item.icon}",
       color: Colors.black,
-      height: item.name == soldContentText
-          ? widget.size.width * numD06
-          : widget.size.width * numD05,
-      width: item.name == soldContentText
-          ? widget.size.width * numD06
-          : widget.size.width * numD05,
+      height: item.name == AppStrings.soldContentText
+          ? widget.size.width * AppDimensions.numD06
+          : widget.size.width * AppDimensions.numD05,
+      width: item.name == AppStrings.soldContentText
+          ? widget.size.width * AppDimensions.numD06
+          : widget.size.width * AppDimensions.numD05,
     );
   }
 
@@ -175,7 +175,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               },
             ),
           ),
-          SizedBox(width: widget.size.width * numD03),
+          SizedBox(width: widget.size.width * AppDimensions.numD03),
           Expanded(
             child: _buildDatePicker(
               label: item.toDate != null
@@ -211,11 +211,11 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: widget.size.width * numD01,
-          horizontal: widget.size.width * numD02,
+          vertical: widget.size.width * AppDimensions.numD01,
+          horizontal: widget.size.width * AppDimensions.numD02,
         ),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(widget.size.width * numD04),
+          borderRadius: BorderRadius.circular(widget.size.width * AppDimensions.numD04),
           border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
         ),
         child: Row(
@@ -227,12 +227,12 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                 overflow: TextOverflow.ellipsis,
                 style: commonTextStyle(
                     size: widget.size,
-                    fontSize: widget.size.width * numD035,
+                    fontSize: widget.size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
             ),
-            SizedBox(width: widget.size.width * numD015),
+            SizedBox(width: widget.size.width * AppDimensions.numD015),
             const Icon(Icons.arrow_drop_down_sharp, color: Colors.black)
           ],
         ),
@@ -243,18 +243,18 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
   Widget _buildApplyButton() {
     return Container(
       width: widget.size.width,
-      height: widget.size.width * numD13,
-      margin: EdgeInsets.symmetric(horizontal: widget.size.width * numD04),
-      padding: EdgeInsets.symmetric(horizontal: widget.size.width * numD04),
+      height: widget.size.width * AppDimensions.numD13,
+      margin: EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD04),
+      padding: EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD04),
       child: commonElevatedButton(
-        applyText,
+        AppStrings.applyText,
         widget.size,
         commonTextStyle(
             size: widget.size,
-            fontSize: widget.size.width * numD035,
+            fontSize: widget.size.width * AppDimensions.numD035,
             color: Colors.white,
             fontWeight: FontWeight.w700),
-        commonButtonStyle(widget.size, colorThemePink),
+        commonButtonStyle(widget.size, AppColorTheme.colorThemePink),
         widget.onApply,
       ),
     );

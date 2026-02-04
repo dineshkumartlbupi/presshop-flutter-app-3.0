@@ -89,12 +89,12 @@ class _AnimatedButtonState extends State<AnimatedButtonWidget>
                   duration: const Duration(microseconds: 350),
                   child: SizedBox(
                     width: widget.size.width,
-                    height: widget.size.width * numD13,
+                    height: widget.size.width * AppDimensions.numD13,
                     child: commonElevatedButton(
                         widget.buttonText,
                         widget.size,
                         commonButtonTextStyle(widget.size),
-                        commonButtonStyle(widget.size, colorThemePink), () {
+                        commonButtonStyle(widget.size, AppColorTheme.colorThemePink), () {
                       _controller.reset();
                       widget.onPressed();
                     }),

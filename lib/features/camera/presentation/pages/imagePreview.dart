@@ -32,11 +32,11 @@ class _ImagePreviewState extends State<ImagePreview> {
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize)),
+                fontSize: size.width * AppDimensions.appBarHeadingFontSize)),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            size: size.width * numD05,
+            size: size.width * AppDimensions.numD05,
             color: Colors.white,
           ),
           onPressed: () {

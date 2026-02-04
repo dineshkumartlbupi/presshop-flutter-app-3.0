@@ -62,7 +62,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
             showSnackBar(
                 "Password Updated!",
                 "Your password has been changed successfully!",
-                colorOnlineGreen);
+                AppColorTheme.colorOnlineGreen);
           } else if (state is AuthError) {
             showSnackBar("Error", state.message, Colors.red);
           }
@@ -89,44 +89,44 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               key: formKey,
               child: ListView(
                 padding: EdgeInsets.only(
-                  left: size.width * numD04,
-                  right: size.width * numD04,
+                  left: size.width * AppDimensions.numD04,
+                  right: size.width * AppDimensions.numD04,
                 ),
                 children: [
                   Text(
-                    resetPasswordText,
+                    AppStrings.resetPasswordText,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
                         fontFamily: 'AirbnbCereal_W_Bd',
-                        fontSize: size.width * numD07),
+                        fontSize: size.width * AppDimensions.numD07),
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
                   Text(
                       "Reset your password below to regain access to your account.",
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * numD036,
+                          fontSize: size.width * AppDimensions.numD036,
                           fontFamily: 'AirbnbCereal_W_Lt')),
                   SizedBox(
-                    height: size.width * numD06,
+                    height: size.width * AppDimensions.numD06,
                   ),
                   CommonTextField(
                     size: size,
                     maxLines: 1,
-                    borderColor: colorTextFieldBorder,
+                    borderColor: AppColorTheme.colorTextFieldBorder,
                     controller: passwordController,
-                    hintText: enterNewPasswordHint,
+                    hintText: AppStrings.enterNewPasswordHint,
                     textInputFormatters: null,
                     prefixIcon: const ImageIcon(
                       AssetImage(
                         "${iconsPath}ic_key.png",
                       ),
                     ),
-                    prefixIconHeight: size.width * numD08,
-                    suffixIconIconHeight: size.width * numD08,
+                    prefixIconHeight: size.width * AppDimensions.numD08,
+                    suffixIconIconHeight: size.width * AppDimensions.numD08,
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -144,17 +144,17 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     "${iconsPath}ic_block_eye.png",
                                   ),
                             color:
-                                !hidePassword ? colorTextFieldIcon : colorHint,
+                                !hidePassword ? AppColorTheme.colorTextFieldIcon : AppColorTheme.colorHint,
                           ),
                         ),
                         SizedBox(
                           width: passwordStrengthValue.isNotEmpty &&
-                                  passwordStrengthValue == strongText
-                              ? size.width * numD02
+                                  passwordStrengthValue == AppStrings.strongText
+                              ? size.width * AppDimensions.numD02
                               : 0,
                         ),
                         passwordStrengthValue.isNotEmpty &&
-                                passwordStrengthValue == strongText
+                                passwordStrengthValue == AppStrings.strongText
                             ? const Icon(
                                 Icons.check_circle,
                                 color: Colors.green,
@@ -166,7 +166,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     keyboardType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return requiredText;
+                        return AppStrings.requiredText;
                       } else if (!showNumber) {
                         return '';
                       } else if (!showSpecialcase) {
@@ -366,7 +366,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                   SizedBox(
                     height: passwordStrengthValue.isNotEmpty
-                        ? size.width * numD02
+                        ? size.width * AppDimensions.numD02
                         : 0,
                   ),
                   passwordStrengthValue.trim().isNotEmpty
@@ -375,37 +375,37 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              passwordStrengthText,
+                              AppStrings.passwordStrengthText,
                               style: TextStyle(
-                                  color: colorHint,
-                                  fontSize: size.width * numD04),
+                                  color: AppColorTheme.colorHint,
+                                  fontSize: size.width * AppDimensions.numD04),
                             ),
                             Text(
                               passwordStrengthValue,
                               style: TextStyle(
-                                  color: colorThemePink,
-                                  fontSize: size.width * numD04),
+                                  color: AppColorTheme.colorThemePink,
+                                  fontSize: size.width * AppDimensions.numD04),
                             ),
                           ],
                         )
                       : Container(),
                   SizedBox(
-                    height: size.width * numD06,
+                    height: size.width * AppDimensions.numD06,
                   ),
                   CommonTextField(
                     size: size,
                     maxLines: 1,
-                    borderColor: colorTextFieldBorder,
+                    borderColor: AppColorTheme.colorTextFieldBorder,
                     controller: confirmPasswordController,
-                    hintText: confirmNewPasswordText,
+                    hintText: AppStrings.confirmNewPasswordText,
                     textInputFormatters: null,
                     prefixIcon: const ImageIcon(
                       AssetImage(
                         "${iconsPath}ic_key.png",
                       ),
                     ),
-                    prefixIconHeight: size.width * numD08,
-                    suffixIconIconHeight: size.width * numD08,
+                    prefixIconHeight: size.width * AppDimensions.numD08,
+                    suffixIconIconHeight: size.width * AppDimensions.numD08,
                     suffixIcon: InkWell(
                       onTap: () {
                         hideConfirmPassword = !hideConfirmPassword;
@@ -420,20 +420,20 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 "${iconsPath}ic_block_eye.png",
                               ),
                         color: !hideConfirmPassword
-                            ? colorTextFieldIcon
-                            : colorHint,
+                            ? AppColorTheme.colorTextFieldIcon
+                            : AppColorTheme.colorHint,
                       ),
                     ),
                     hidePassword: hideConfirmPassword,
                     keyboardType: TextInputType.text,
                     validator: (value) {
                       if (value!.trim().isEmpty) {
-                        return requiredText;
+                        return AppStrings.requiredText;
                       } /* else if (value.length < 8) {
-                        return passwordErrorText;
+                        return AppStrings.passwordErrorText;
                       }*/
                       else if (passwordController.text.trim() != value) {
-                        return confirmPasswordErrorText;
+                        return AppStrings.confirmPasswordErrorText;
                       }
                       return null;
                     },
@@ -443,13 +443,13 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     autofocus: false,
                   ),
                   SizedBox(
-                    height: size.width * numD07,
+                    height: size.width * AppDimensions.numD07,
                   ),
                   Container(
                     width: size.width,
-                    height: size.width * numD14,
+                    height: size.width * AppDimensions.numD14,
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD08),
+                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
                     child: BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         if (state is AuthLoading) {
@@ -457,14 +457,14 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               child: CircularProgressIndicator());
                         }
                         return commonElevatedButton(
-                            submitText,
+                            AppStrings.submitText,
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                           if (formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(ResetPasswordSubmitted(
                                   email: widget.emailAddressValue,
@@ -482,7 +482,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Align(
                       alignment: Alignment.center,
@@ -492,10 +492,10 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           Navigator.pop(context);
                           // Or Navigate to login if needed, typically pop to prev stack is fine
                         },
-                        child: Text(signInText,
+                        child: Text(AppStrings.signInText,
                             style: TextStyle(
-                                color: colorThemePink,
-                                fontSize: size.width * numD035,
+                                color: AppColorTheme.colorThemePink,
+                                fontSize: size.width * AppDimensions.numD035,
                                 fontWeight: FontWeight.w700)),
                       )),
                 ],
@@ -512,11 +512,11 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
       if (passwordController.text.isNotEmpty &&
           passwordController.text.length >= 8 &&
           !passwordExpression.hasMatch(passwordController.text.trim())) {
-        passwordStrengthValue = weakText;
+        passwordStrengthValue = AppStrings.weakText;
       } else if (passwordController.text.isNotEmpty &&
           passwordController.text.length >= 8 &&
           passwordExpression.hasMatch(passwordController.text.trim())) {
-        passwordStrengthValue = strongText;
+        passwordStrengthValue = AppStrings.strongText;
       } else {
         passwordStrengthValue = "";
       }

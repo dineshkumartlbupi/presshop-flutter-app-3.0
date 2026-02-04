@@ -42,7 +42,7 @@ class ContentSubmittedScreen extends StatefulWidget {
 }
 
 class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
-  String selectedSellType = sharedText;
+  String selectedSellType = AppStrings.sharedText;
   int imageCount = 0;
   int videoCount = 0;
   int audioCount = 0;
@@ -110,15 +110,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
             elevation: 0,
             hideLeading: true,
             title: Text(
-              contentSubmittedText,
+              AppStrings.contentSubmittedText,
               style: commonTextStyle(
                   size: size,
                   color: Colors.black,
-                  fontSize: size.width * appBarHeadingFontSize,
+                  fontSize: size.width * AppDimensions.appBarHeadingFontSize,
                   fontWeight: FontWeight.bold),
             ),
             centerTitle: false,
-            titleSpacing: size.width * numD04,
+            titleSpacing: size.width * AppDimensions.numD04,
             size: size,
             showActions: true,
             leadingFxn: () {
@@ -137,12 +137,12 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 },
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
               SizedBox(
-                width: size.width * numD04,
+                width: size.width * AppDimensions.numD04,
               )
             ],
           ),
@@ -151,15 +151,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD04),
+                        horizontal: size.width * AppDimensions.numD04,
+                        vertical: size.width * AppDimensions.numD04),
                     decoration: BoxDecoration(
-                        color: colorLightGrey,
+                        color: AppColorTheme.colorLightGrey,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD04)),
+                            BorderRadius.circular(size.width * AppDimensions.numD04)),
                     child: Column(
                       children: [
                         Row(
@@ -168,15 +168,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             widget.myContentDetail != null
                                 ? Expanded(
                                     child: Container(
-                                      height: size.width * numD35,
+                                      height: size.width * AppDimensions.numD35,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD06),
+                                            size.width * AppDimensions.numD06),
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD06),
+                                            size.width * AppDimensions.numD06),
                                         child: Stack(
                                           fit: StackFit.expand,
                                           children: [
@@ -214,22 +214,22 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                   )),
                                             ),
                                             Positioned(
-                                              right: size.width * numD02,
-                                              top: size.width * numD02,
+                                              right: size.width * AppDimensions.numD02,
+                                              top: size.width * AppDimensions.numD02,
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal:
-                                                        size.width * numD015,
+                                                        size.width * AppDimensions.numD015,
                                                     vertical:
                                                         size.width * 0.005,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                      color: colorLightGreen
+                                                      color: AppColorTheme.colorLightGreen
                                                           .withOpacity(0.8),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               size.width *
-                                                                  numD015)),
+                                                                  AppDimensions.numD015)),
                                                   child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -241,7 +241,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                             size: size,
                                                             fontSize:
                                                                 size.width *
-                                                                    numD038,
+                                                                    AppDimensions.numD038,
                                                             color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight
@@ -307,7 +307,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   )
                                 : ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD03),
+                                        size.width * AppDimensions.numD03),
                                     child: Stack(
                                       alignment: Alignment.topRight,
                                       children: [
@@ -316,18 +316,18 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                               .contains("doc"),
                                           child: Container(
                                             padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                                size.width * AppDimensions.numD01),
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: colorGreyNew),
+                                                  color: AppColorTheme.colorGreyNew),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD06),
+                                                      size.width * AppDimensions.numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
-                                              width: size.width * numD30,
-                                              height: size.width * numD35,
+                                              width: size.width * AppDimensions.numD30,
+                                              height: size.width * AppDimensions.numD35,
                                             ),
                                           ),
                                         ),
@@ -336,18 +336,18 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                               .contains("pdf"),
                                           child: Container(
                                             padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                                size.width * AppDimensions.numD01),
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: colorGreyNew),
+                                                  color: AppColorTheme.colorGreyNew),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD06),
+                                                      size.width * AppDimensions.numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}pngImage.png",
-                                              width: size.width * numD30,
-                                              height: size.width * numD35,
+                                              width: size.width * AppDimensions.numD30,
+                                              height: size.width * AppDimensions.numD35,
                                             ),
                                           ),
                                         ),
@@ -356,22 +356,22 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                   .first.mimeType ==
                                               "audio",
                                           child: Container(
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
+                                            width: size.width * AppDimensions.numD30,
+                                            height: size.width * AppDimensions.numD35,
                                             padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                                size.width * AppDimensions.numD01),
                                             decoration: BoxDecoration(
-                                              color: colorThemePink,
+                                              color: AppColorTheme.colorThemePink,
                                               border: Border.all(
-                                                  color: colorGreyNew),
+                                                  color: AppColorTheme.colorGreyNew),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD04),
+                                                      size.width * AppDimensions.numD04),
                                             ),
                                             child: Icon(
                                               Icons.play_arrow_rounded,
                                               color: Colors.white,
-                                              size: size.width * numD15,
+                                              size: size.width * AppDimensions.numD15,
                                             ),
                                           ),
                                         ),
@@ -382,8 +382,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           child: Image.file(
                                             File(widget.publishData!.mediaList
                                                 .first.thumbnail),
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
+                                            width: size.width * AppDimensions.numD30,
+                                            height: size.width * AppDimensions.numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -394,22 +394,22 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           child: Image.file(
                                             File(widget.publishData!.mediaList
                                                 .first.mediaPath),
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
+                                            width: size.width * AppDimensions.numD30,
+                                            height: size.width * AppDimensions.numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                         Image.asset(
                                           "${commonImagePath}watermark1.png",
-                                          width: size.width * numD30,
-                                          height: size.width * numD35,
+                                          width: size.width * AppDimensions.numD30,
+                                          height: size.width * AppDimensions.numD35,
                                           fit: BoxFit.cover,
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: size.width * numD02,
-                                              bottom: size.width * numD02,
-                                              right: size.width * numD02),
+                                              top: size.width * AppDimensions.numD02,
+                                              bottom: size.width * AppDimensions.numD02,
+                                              right: size.width * AppDimensions.numD02),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -422,7 +422,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             size.width *
-                                                                numD013)),
+                                                                AppDimensions.numD013)),
                                                 child: Row(
                                                   children: [
                                                     Text(
@@ -434,7 +434,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                             color: Colors.white,
                                                             fontSize:
                                                                 size.width *
-                                                                    numD03,
+                                                                    AppDimensions.numD03,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w600)),
@@ -443,111 +443,111 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                               ),
                                               // if (imageCount > 0) ...[
                                               //   Container(
-                                              //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
+                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
                                               //     child: Row(
                                               //       children: [
-                                              //         Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                              //         Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w600)),
                                               //         SizedBox(
-                                              //           width: size.width * numD005,
+                                              //           width: size.width * AppDimensions.numD005,
                                               //         ),
-                                              //         Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
+                                              //         Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * AppDimensions.numD028),
                                               //       ],
                                               //     ),
                                               //   ),
                                               //   SizedBox(
-                                              //     height: size.width * numD005,
+                                              //     height: size.width * AppDimensions.numD005,
                                               //   ),
                                               // ],
                                               // if (videoCount > 0) ...[
                                               //   Container(
-                                              //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
+                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
                                               //     child: Row(
                                               //       children: [
-                                              //         Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                              //         Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
                                               //         SizedBox(
-                                              //           width: size.width * numD005,
+                                              //           width: size.width * AppDimensions.numD005,
                                               //         ),
-                                              //         Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
+                                              //         Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * AppDimensions.numD035),
                                               //       ],
                                               //     ),
                                               //   ),
                                               //   SizedBox(
-                                              //     height: size.width * numD005,
+                                              //     height: size.width * AppDimensions.numD005,
                                               //   ),
                                               // ],
                                               // if (audioCount > 0) ...[
                                               //   Container(
-                                              //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
+                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
                                               //     child: Row(
                                               //       children: [
-                                              //         Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                              //         Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
                                               //         SizedBox(
-                                              //           width: size.width * numD005,
+                                              //           width: size.width * AppDimensions.numD005,
                                               //         ),
                                               //         /*Icon(Icons.mic_none,
                                               //                 color:Colors.white,
-                                              //                 size:size.width * numD037),*/
+                                              //                 size:size.width * AppDimensions.numD037),*/
                                               //
                                               //         Image.asset(
                                               //           "${iconsPath}ic_mic.png",
                                               //           color: Colors.white.withOpacity(0.8),
-                                              //           height: size.width * numD03,
-                                              //           width: size.width * numD036,
+                                              //           height: size.width * AppDimensions.numD03,
+                                              //           width: size.width * AppDimensions.numD036,
                                               //         ),
                                               //       ],
                                               //     ),
                                               //   ),
                                               //   SizedBox(
-                                              //     height: size.width * numD005,
+                                              //     height: size.width * AppDimensions.numD005,
                                               //   ),
                                               // ],
                                               // if (docCount > 0) ...[
                                               //   Container(
-                                              //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
+                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
                                               //     child: Row(
                                               //       children: [
-                                              //         Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                              //         Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
                                               //         SizedBox(
-                                              //           width: size.width * numD005,
+                                              //           width: size.width * AppDimensions.numD005,
                                               //         ),
                                               //         Image.asset(
                                               //           "${iconsPath}doc_icon.png",
                                               //           color: Colors.red,
-                                              //           height: size.width * numD03,
-                                              //           width: size.width * numD022,
+                                              //           height: size.width * AppDimensions.numD03,
+                                              //           width: size.width * AppDimensions.numD022,
                                               //         ),
                                               //       ],
                                               //     ),
                                               //   ),
                                               //   SizedBox(
-                                              //     height: size.width * numD005,
+                                              //     height: size.width * AppDimensions.numD005,
                                               //   ),
                                               // ],
                                               // if (pdfCount > 0) ...[
                                               //   Container(
-                                              //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
-                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              //     padding: EdgeInsets.only(left: size.width * AppDimensions.numD01, right: size.width * AppDimensions.numD01, top: size.width * AppDimensions.numD005, bottom: size.width * AppDimensions.numD005),
+                                              //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * AppDimensions.numD013)),
                                               //     child: Row(
                                               //       children: [
-                                              //         Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                              //         Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * AppDimensions.numD03, fontWeight: FontWeight.w700)),
                                               //         SizedBox(
-                                              //           width: size.width * numD005,
+                                              //           width: size.width * AppDimensions.numD005,
                                               //         ),
                                               //         Image.asset(
                                               //           "${iconsPath}doc_icon.png",
                                               //           color: Colors.red,
-                                              //           height: size.width * numD03,
-                                              //           width: size.width * numD022,
+                                              //           height: size.width * AppDimensions.numD03,
+                                              //           width: size.width * AppDimensions.numD022,
                                               //         ),
                                               //       ],
                                               //     ),
                                               //   ),
                                               //   SizedBox(
-                                              //     height: size.width * numD005,
+                                              //     height: size.width * AppDimensions.numD005,
                                               //   ),
                                               // ],
                                             ],
@@ -557,20 +557,20 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                     ),
                                     /*widget.publishData != null
                                   ? Positioned(
-                                      right: size.width * numD02,
-                                      top: size.width * numD02,
+                                      right: size.width * AppDimensions.numD02,
+                                      top: size.width * AppDimensions.numD02,
                                       child: Container(
-                                          width: size.width * numD06,
-                                          height: size.width * numD06,
+                                          width: size.width * AppDimensions.numD06,
+                                          height: size.width * AppDimensions.numD06,
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD01,
+                                              horizontal: size.width * AppDimensions.numD01,
                                               vertical: size.width * 0.002),
                                           decoration: BoxDecoration(
-                                              color: colorLightGreen
+                                              color: AppColorTheme.colorLightGreen
                                                   .withOpacity(0.8),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD015)),
+                                                      size.width * AppDimensions.numD015)),
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: widget
@@ -629,15 +629,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                           .first
                                                           .mimeType ==
                                                       "video"
-                                                  ? size.width * numD09
+                                                  ? size.width * AppDimensions.numD09
                                                   : widget
                                                               .publishData!
                                                               .mediaList
                                                               .first
                                                               .mimeType ==
                                                           "image"
-                                                      ? size.width * numD05
-                                                      : size.width * numD08,
+                                                      ? size.width * AppDimensions.numD05
+                                                      : size.width * AppDimensions.numD08,
                                             ),
                                           )),
                                     )
@@ -648,12 +648,12 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   ? Positioned.fill(
                                       child: Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD01,
+                                              horizontal: size.width * AppDimensions.numD01,
                                               vertical: size.width * 0.002),
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * numD015)),
+                                                      size.width * AppDimensions.numD015)),
                                           child: GridView.builder(
                                             physics: const NeverScrollableScrollPhysics(),
                                               gridDelegate:
@@ -667,7 +667,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                       int index) {
                                                 return Padding(
                                                   padding: EdgeInsets.all(
-                                                      size.width * numD015),
+                                                      size.width * AppDimensions.numD015),
                                                   child: Image.asset(
                                                     widget.publishData!
                                                                 .mediaList[index]
@@ -693,7 +693,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                                     index]
                                                                 .mimeType ==
                                                             "video"
-                                                        ? size.width * numD09
+                                                        ? size.width * AppDimensions.numD09
                                                         : widget
                                                                     .publishData!
                                                                     .mediaList[
@@ -701,9 +701,9 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                                     .mimeType ==
                                                                 "image"
                                                             ? size.width *
-                                                                numD05
+                                                                AppDimensions.numD05
                                                             : size.width *
-                                                                numD08,
+                                                                AppDimensions.numD08,
                                                   ),
                                                 );
                                               })),
@@ -714,24 +714,24 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             ),*/
                                   ),
                             SizedBox(
-                              width: size.width * numD04,
+                              width: size.width * AppDimensions.numD04,
                             ),
                             Expanded(
                               child: Padding(
                                 padding:
-                                    EdgeInsets.only(top: size.width * numD04),
+                                    EdgeInsets.only(top: size.width * AppDimensions.numD04),
                                 child: Text(
                                   // isUserOutSideOfUnitedKingdom
                                   //     ? "PressHop’s en route to your city ✈"
                                   //     :
 
                                   widget.isBeta
-                                      // ? contentBetaSubmittedHeadingText
+                                      // ? AppStrings.contentBetaSubmittedHeadingText
                                       ? "PressHop’s en route to your city ✈"
-                                      : contentSubmittedHeadingText,
+                                      : AppStrings.contentSubmittedHeadingText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD038,
+                                      fontSize: size.width * AppDimensions.numD038,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -741,17 +741,17 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                         ),
                         if (!isUserOutSideOfUnitedKingdom) ...[
                           SizedBox(
-                            height: size.width * numD06,
+                            height: size.width * AppDimensions.numD06,
                           ),
                           Row(
                             children: [
                               Expanded(
                                 child: Container(
-                                  height: size.width * numD15,
+                                  height: size.width * AppDimensions.numD15,
                                   decoration: BoxDecoration(
                                       color: Colors.black,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD04)),
+                                          size.width * AppDimensions.numD04)),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -759,7 +759,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                         AssetImage(widget.sellType == "Shared"
                                             ? "${iconsPath}ic_share.png"
                                             : "${iconsPath}ic_exclusive.png"),
-                                        size: size.width * numD06,
+                                        size: size.width * AppDimensions.numD06,
                                         color: Colors.white,
                                       ),
                                       Text(
@@ -768,7 +768,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                             : "Exclusive",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD04,
+                                            fontSize: size.width * AppDimensions.numD04,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700),
                                       )
@@ -777,35 +777,35 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 ),
                               ),
                               SizedBox(
-                                width: size.width * numD06,
+                                width: size.width * AppDimensions.numD06,
                               ),
                               Expanded(
                                 child: Container(
-                                  height: size.width * numD15,
+                                  height: size.width * AppDimensions.numD15,
                                   decoration: BoxDecoration(
-                                      color: colorThemePink,
+                                      color: AppColorTheme.colorThemePink,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD04)),
+                                          size.width * AppDimensions.numD04)),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        amountQuoted,
+                                        AppStrings.amountQuoted,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
+                                            fontSize: size.width * AppDimensions.numD035,
                                             color: Colors.white,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
-                                        height: size.width * numD01,
+                                        height: size.width * AppDimensions.numD01,
                                       ),
                                       Text(
                                         widget.price,
                                         //   "$currencySymbol ${amountFormat(widget.myContentDetail!.originalAmount.toString())}",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD045,
+                                            fontSize: size.width * AppDimensions.numD045,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700),
                                       )
@@ -821,13 +821,13 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
                 // if (isUserOutSideOfUnitedKingdom) ...[
                 if (widget.isBeta) ...[
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                     child: RichText(
                         textAlign: TextAlign.justify,
                         text: TextSpan(children: [
@@ -836,7 +836,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 "We’re still warming up in the UK, but big plans are brewing — and your city is on our radar. Have a look around the app, and join the waitlist to be the first to know when we land near you.\n\n",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -846,7 +846,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 "Our mission to revolutionise citizen journalism is going global, and we’ll be hitting your shores before you know it. Until then, stay curious and keep your camera ready!\n\n",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -855,7 +855,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             text: "While you wait, why not explore our ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -870,8 +870,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             text: "blog",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD03,
+                                color: AppColorTheme.colorThemePink,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -879,7 +879,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             text: " check out our ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -899,8 +899,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             text: "FAQs ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD03,
+                                color: AppColorTheme.colorThemePink,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -908,7 +908,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             text: ", or watch some of our ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -925,8 +925,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             text: "videos ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD03,
+                                color: AppColorTheme.colorThemePink,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -935,7 +935,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                 "You might just find the answers you need or discover something new that PressHop has to offer. ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -948,15 +948,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 // else if (widget.isBeta) ...[
                 //   Padding(
                 //     padding:
-                //         EdgeInsets.symmetric(horizontal: size.width * numD04),
+                //         EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                 //     child: RichText(
                 //         textAlign: TextAlign.justify,
                 //         text: TextSpan(children: [
                 //           TextSpan(
-                //             text: contentBetaSubmittedMessageText,
+                //             text: AppStrings.contentBetaSubmittedMessageText,
                 //             style: commonTextStyle(
                 //                 size: size,
-                //                 fontSize: size.width * numD03,
+                //                 fontSize: size.width * AppDimensions.numD03,
                 //                 color: Colors.black,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
@@ -965,7 +965,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             text: "Got questions? Check out our ",
                 //             style: commonTextStyle(
                 //                 size: size,
-                //                 fontSize: size.width * numD03,
+                //                 fontSize: size.width * AppDimensions.numD03,
                 //                 color: Colors.black,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
@@ -982,19 +982,19 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //                               index: 0,
                 //                             )));
                 //               },
-                //             text: faqText,
+                //             text: AppStrings.faqText,
                 //             style: commonTextStyle(
                 //                 size: size,
-                //                 fontSize: size.width * numD03,
-                //                 color: colorThemePink,
+                //                 fontSize: size.width * AppDimensions.numD03,
+                //                 color: AppColorTheme.colorThemePink,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.w600),
                 //           ),
                 //           TextSpan(
-                //             text: " $orText ",
+                //             text: " ${AppStrings.orText} ",
                 //             style: commonTextStyle(
                 //                 size: size,
-                //                 fontSize: size.width * numD03,
+                //                 fontSize: size.width * AppDimensions.numD03,
                 //                 color: Colors.black,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
@@ -1010,8 +1010,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //             text: "Chat ",
                 //             style: commonTextStyle(
                 //                 size: size,
-                //                 fontSize: size.width * numD03,
-                //                 color: colorThemePink,
+                //                 fontSize: size.width * AppDimensions.numD03,
+                //                 color: AppColorTheme.colorThemePink,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.w600),
                 //           ),
@@ -1020,7 +1020,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 //                 "with us on the app. We’re all ears and happy to help",
                 //             style: commonTextStyle(
                 //                 size: size,
-                //                 fontSize: size.width * numD03,
+                //                 fontSize: size.width * AppDimensions.numD03,
                 //                 color: Colors.black,
                 //                 lineHeight: 2,
                 //                 fontWeight: FontWeight.normal),
@@ -1032,15 +1032,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 else ...[
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
                     child: RichText(
                         textAlign: TextAlign.justify,
                         text: TextSpan(children: [
                           TextSpan(
-                            text: "$contentSubmittedMessageText ",
+                            text: "${AppStrings.contentSubmittedMessageText} ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -1056,29 +1056,29 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           )));
                             },
                             child: Text(
-                              "${privacyLawText.toLowerCase()} ",
+                              "${AppStrings.privacyLawText.toLowerCase()} ",
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD03,
+                                  fontSize: size.width * AppDimensions.numD03,
                                   color: Colors.black,
                                   lineHeight: 2,
                                   fontWeight: FontWeight.normal),
                             ),
                           )),
                           TextSpan(
-                            text: " $contentSubmittedMessage1Text\n\n",
+                            text: " ${AppStrings.contentSubmittedMessage1Text}\n\n",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
                           ),
                           TextSpan(
-                            text: "$contentSubmittedMessage2Text ",
+                            text: "${AppStrings.contentSubmittedMessage2Text} ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -1095,19 +1095,19 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                               index: 0,
                                             )));
                               },
-                            text: faqText,
+                            text: AppStrings.faqText,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD03,
+                                color: AppColorTheme.colorThemePink,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
                           TextSpan(
-                            text: " $orText ",
+                            text: " ${AppStrings.orText} ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -1121,19 +1121,19 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                         builder: (context) =>
                                             const ContactUsScreen()));
                               },
-                            text: "${contactText.toLowerCase()} ",
+                            text: "${AppStrings.contactText.toLowerCase()} ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD03,
+                                color: AppColorTheme.colorThemePink,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.w600),
                           ),
                           TextSpan(
-                            text: "$contentSubmittedMessage3Text ",
+                            text: "${AppStrings.contentSubmittedMessage3Text} ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal),
@@ -1142,18 +1142,18 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                   ),
                 ],
                 SizedBox(
-                  height: size.width * numD06,
+                  height: size.width * AppDimensions.numD06,
                 ),
                 const Spacer(),
                 isUserOutSideOfUnitedKingdom
                     ? SizedBox(
-                        height: size.width * numD14,
-                        width: size.width * numD80,
+                        height: size.width * AppDimensions.numD14,
+                        width: size.width * AppDimensions.numD80,
                         child: commonElevatedButton(
                             "Home",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                   builder: (context) =>
@@ -1163,15 +1163,15 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                       )
                     : Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD06),
+                            horizontal: size.width * AppDimensions.numD06),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Expanded(
                                 child: SizedBox(
-                              height: size.width * numD15,
+                              height: size.width * AppDimensions.numD15,
                               child: commonElevatedButton(
-                                  myContentText.toTitleCase(),
+                                  AppStrings.myContentText.toTitleCase(),
                                   size,
                                   commonButtonTextStyle(size),
                                   commonButtonStyle(size, Colors.black), () {
@@ -1184,16 +1184,16 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                               }),
                             )),
                             SizedBox(
-                              width: size.width * numD04,
+                              width: size.width * AppDimensions.numD04,
                             ),
                             Expanded(
                                 child: SizedBox(
-                              height: size.width * numD15,
+                              height: size.width * AppDimensions.numD15,
                               child: commonElevatedButton(
                                   "Home",
                                   size,
                                   commonButtonTextStyle(size),
-                                  commonButtonStyle(size, colorThemePink), () {
+                                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
                                         builder: (context) =>
@@ -1205,7 +1205,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                         ),
                       ),
                 SizedBox(
-                  height: size.width * numD04,
+                  height: size.width * AppDimensions.numD04,
                 ),
               ],
             ),
@@ -1217,8 +1217,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
     return type == "audio"
         ? Icon(
             Icons.play_circle,
-            color: colorThemePink,
-            size: MediaQuery.of(context).size.width * numD15,
+            color: AppColorTheme.colorThemePink,
+            size: MediaQuery.of(context).size.width * AppDimensions.numD15,
           )
         : type == "pdf"
             ? Image.asset(

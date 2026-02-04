@@ -117,7 +117,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF4F4F4F),
-                              fontSize: size.width * numD04,
+                              fontSize: size.width * AppDimensions.numD04,
                             ),
                           ),
                         ),
@@ -135,7 +135,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             child: Icon(
                               Icons.keyboard_arrow_down_sharp,
                               color: Colors.white,
-                              size: size.width * numD085,
+                              size: size.width * AppDimensions.numD085,
                             ),
                           ),
                         ),
@@ -150,12 +150,12 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               hideLeading: false,
               title: Text(
                   widget.type == "privacy_policy"
-                      ? privacyPolicyText
-                      : "$legalText $tcText",
+                      ? AppStrings.privacyPolicyText
+                      : "${AppStrings.legalText} ${AppStrings.tcText}",
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: size.width * appBarHeadingFontSize)),
+                      fontSize: size.width * AppDimensions.appBarHeadingFontSize)),
               centerTitle: false,
               titleSpacing: 0,
               size: size,
@@ -174,12 +174,12 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
-                    height: size.width * numD07,
-                    width: size.width * numD07,
+                    height: size.width * AppDimensions.numD07,
+                    width: size.width * AppDimensions.numD07,
                   ),
                 ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
               ],
             ),
@@ -188,7 +188,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: size.width * numD02,
+                  height: size.width * AppDimensions.numD02,
                 ),
                 htmlDataList.isNotEmpty
                     ? Flexible(
@@ -200,34 +200,34 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             !rememberMe
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD04),
+                                        horizontal: size.width * AppDimensions.numD04),
                                     child: Text(
                                       "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width * AppDimensions.numD035,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   )
                                 : Container(),
                             /*   SizedBox(
-                              height: size.width * numD06,
+                              height: size.width * AppDimensions.numD06,
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD06),
+                                  horizontal: size.width * AppDimensions.numD06),
                               child: Text(
                                 "Updated on : $updatedDate",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
-                                    color: colorHint,
+                                    fontSize: size.width * AppDimensions.numD035,
+                                    color: AppColorTheme.colorHint,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),*/
                             ListView.separated(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD02),
+                                    horizontal: size.width * AppDimensions.numD02),
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
@@ -235,47 +235,47 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     data: htmlDataList[index],
                                     style: {
                                       "span": Style(
-                                        color: colorTextFieldIcon,
-                                        fontSize: FontSize(size.width * numD01),
+                                        color: AppColorTheme.colorTextFieldIcon,
+                                        fontSize: FontSize(size.width * AppDimensions.numD01),
                                       ),
                                       "h1": Style(
-                                          color: colorGreyNew,
+                                          color: AppColorTheme.colorGreyNew,
                                           fontSize:
-                                              FontSize(size.width * numD02),
+                                              FontSize(size.width * AppDimensions.numD02),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * numD01)),
+                                              vertical: size.width * AppDimensions.numD01)),
                                       "h2": Style(
                                           color: Colors.black,
                                           fontSize:
-                                              FontSize(size.width * numD04),
+                                              FontSize(size.width * AppDimensions.numD04),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * numD01)),
+                                              vertical: size.width * AppDimensions.numD01)),
                                       "h3": Style(
                                           color: Colors.black,
                                           fontSize:
-                                              FontSize(size.width * numD035),
+                                              FontSize(size.width * AppDimensions.numD035),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * numD01)),
+                                              vertical: size.width * AppDimensions.numD01)),
                                       "h4": Style(
                                           color: Colors.black,
                                           fontSize:
-                                              FontSize(size.width * numD035),
+                                              FontSize(size.width * AppDimensions.numD035),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * numD01)),
+                                              vertical: size.width * AppDimensions.numD01)),
                                       "td": Style(
-                                          color: colorGreyNew,
+                                          color: AppColorTheme.colorGreyNew,
                                           fontSize:
-                                              FontSize(size.width * numD02),
+                                              FontSize(size.width * AppDimensions.numD02),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * numD01)),
+                                              vertical: size.width * AppDimensions.numD01)),
                                       "th": Style(
-                                          color: colorGreyNew,
+                                          color: AppColorTheme.colorGreyNew,
                                           fontSize:
-                                              FontSize(size.width * numD02),
+                                              FontSize(size.width * AppDimensions.numD02),
                                           fontWeight: FontWeight.w600,
                                           padding: HtmlPaddings.zero),
                                       "div": Style(
-                                        backgroundColor: colorLightGrey,
+                                        backgroundColor: AppColorTheme.colorLightGrey,
                                       )
                                     },
                                   );
@@ -290,7 +290,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             !rememberMe
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD06),
+                                        horizontal: size.width * AppDimensions.numD06),
                                     child: buttonWidget(size),
                                   )
                                 : Container(),
@@ -308,11 +308,11 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
 
   Widget termCheckWidget(Size size) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: size.width * numD15),
+      padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD15),
       child: const Column(
         children: [
           Text(
-            legalDescText,
+            AppStrings.legalDescText,
             style: TextStyle(fontWeight: FontWeight.w300),
           )
         ],
@@ -327,30 +327,30 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          legalDummyText,
+          AppStrings.legalDummyText,
           style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD02,
-              color: colorHint,
+              fontSize: size.width * AppDimensions.numD02,
+              color: AppColorTheme.colorHint,
               fontWeight: FontWeight.w400),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         Text(
-          termsAndConditionText,
+          AppStrings.termsAndConditionText,
           style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD04,
+              fontSize: size.width * AppDimensions.numD04,
               color: Colors.black,
               fontWeight: FontWeight.w400),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         Container(
-          decoration: const BoxDecoration(color: colorLightGrey),
-          padding: EdgeInsets.all(size.width * numD04),
+          decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
+          padding: EdgeInsets.all(size.width * AppDimensions.numD04),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -358,41 +358,41 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 "What & Why",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD05,
-                    color: colorTextFieldIcon,
+                    fontSize: size.width * AppDimensions.numD05,
+                    color: AppColorTheme.colorTextFieldIcon,
                     fontWeight: FontWeight.w500),
               ),
               SizedBox(
-                height: size.width * numD01,
+                height: size.width * AppDimensions.numD01,
               ),
               Text(
-                dummyTermText,
+                AppStrings.dummyTermText,
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
-                    color: colorGreyNew,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: AppColorTheme.colorGreyNew,
                     fontWeight: FontWeight.w400),
               ),
               SizedBox(
-                height: size.width * numD06,
+                height: size.width * AppDimensions.numD06,
               ),
               Text(
-                userConductDummyText,
+                AppStrings.userConductDummyText,
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD05,
-                    color: colorTextFieldIcon,
+                    fontSize: size.width * AppDimensions.numD05,
+                    color: AppColorTheme.colorTextFieldIcon,
                     fontWeight: FontWeight.w500),
               ),
               SizedBox(
-                height: size.width * numD01,
+                height: size.width * AppDimensions.numD01,
               ),
               Text(
-                dummyPrivacyText,
+                AppStrings.dummyPrivacyText,
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
-                    color: colorGreyNew,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: AppColorTheme.colorGreyNew,
                     fontWeight: FontWeight.w400),
               )
             ],
@@ -409,22 +409,22 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
-          height: size.width * numD06,
+          height: size.width * AppDimensions.numD06,
         ),
         Text(
-          copyRightText,
+          AppStrings.copyRightText,
           style: commonTextStyle(
               size: size,
-              fontSize: size.width * numD04,
+              fontSize: size.width * AppDimensions.numD04,
               color: Colors.black,
               fontWeight: FontWeight.w400),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         Container(
-          decoration: const BoxDecoration(color: colorLightGrey),
-          padding: EdgeInsets.all(size.width * numD04),
+          decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
+          padding: EdgeInsets.all(size.width * AppDimensions.numD04),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -432,41 +432,41 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 "What & Why",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD05,
-                    color: colorTextFieldIcon,
+                    fontSize: size.width * AppDimensions.numD05,
+                    color: AppColorTheme.colorTextFieldIcon,
                     fontWeight: FontWeight.w500),
               ),
               SizedBox(
-                height: size.width * numD01,
+                height: size.width * AppDimensions.numD01,
               ),
               Text(
-                dummyTermText,
+                AppStrings.dummyTermText,
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
-                    color: colorGreyNew,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: AppColorTheme.colorGreyNew,
                     fontWeight: FontWeight.w400),
               ),
               SizedBox(
-                height: size.width * numD06,
+                height: size.width * AppDimensions.numD06,
               ),
               Text(
-                userConductDummyText,
+                AppStrings.userConductDummyText,
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD05,
-                    color: colorTextFieldIcon,
+                    fontSize: size.width * AppDimensions.numD05,
+                    color: AppColorTheme.colorTextFieldIcon,
                     fontWeight: FontWeight.w500),
               ),
               SizedBox(
-                height: size.width * numD01,
+                height: size.width * AppDimensions.numD01,
               ),
               Text(
-                dummyPrivacyText,
+                AppStrings.dummyPrivacyText,
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
-                    color: colorGreyNew,
+                    fontSize: size.width * AppDimensions.numD035,
+                    color: AppColorTheme.colorGreyNew,
                     fontWeight: FontWeight.w400),
               )
             ],
@@ -483,26 +483,26 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
-          height: size.width * numD06,
+          height: size.width * AppDimensions.numD06,
         ),
         Padding(
           padding: EdgeInsets.only(
-              left: size.width * numD05,
-              bottom: size.width * numD05,
-              right: size.width * numD05),
+              left: size.width * AppDimensions.numD05,
+              bottom: size.width * AppDimensions.numD05,
+              right: size.width * AppDimensions.numD05),
           child: Text(
-            privacyPolicyText,
+            AppStrings.privacyPolicyText,
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * numD05),
+                fontSize: size.width * AppDimensions.numD05),
           ),
         ),
         SizedBox(
-          height: size.width * numD02,
+          height: size.width * AppDimensions.numD02,
         ),
         ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+            padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
@@ -510,41 +510,41 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 data: htmlDataList[index],
                 style: {
                   "span": Style(
-                    color: colorTextFieldIcon,
-                    fontSize: FontSize(size.width * numD01),
+                    color: AppColorTheme.colorTextFieldIcon,
+                    fontSize: FontSize(size.width * AppDimensions.numD01),
                   ),
                   "h1": Style(
-                      color: colorGreyNew,
-                      fontSize: FontSize(size.width * numD02),
+                      color: AppColorTheme.colorGreyNew,
+                      fontSize: FontSize(size.width * AppDimensions.numD02),
                       padding: HtmlPaddings.symmetric(
-                          vertical: size.width * numD01)),
+                          vertical: size.width * AppDimensions.numD01)),
                   "h2": Style(
                       color: Colors.black,
-                      fontSize: FontSize(size.width * numD04),
+                      fontSize: FontSize(size.width * AppDimensions.numD04),
                       padding: HtmlPaddings.symmetric(
-                          vertical: size.width * numD01)),
+                          vertical: size.width * AppDimensions.numD01)),
                   "h3": Style(
                       color: Colors.black,
-                      fontSize: FontSize(size.width * numD035),
+                      fontSize: FontSize(size.width * AppDimensions.numD035),
                       padding: HtmlPaddings.symmetric(
-                          vertical: size.width * numD01)),
+                          vertical: size.width * AppDimensions.numD01)),
                   "h4": Style(
                       color: Colors.black,
-                      fontSize: FontSize(size.width * numD035),
+                      fontSize: FontSize(size.width * AppDimensions.numD035),
                       padding: HtmlPaddings.symmetric(
-                          vertical: size.width * numD01)),
+                          vertical: size.width * AppDimensions.numD01)),
                   "td": Style(
-                      color: colorGreyNew,
-                      fontSize: FontSize(size.width * numD02),
+                      color: AppColorTheme.colorGreyNew,
+                      fontSize: FontSize(size.width * AppDimensions.numD02),
                       padding: HtmlPaddings.symmetric(
-                          vertical: size.width * numD01)),
+                          vertical: size.width * AppDimensions.numD01)),
                   "th": Style(
-                      color: colorGreyNew,
-                      fontSize: FontSize(size.width * numD02),
+                      color: AppColorTheme.colorGreyNew,
+                      fontSize: FontSize(size.width * AppDimensions.numD02),
                       fontWeight: FontWeight.w600,
                       padding: HtmlPaddings.zero),
                   "div": Style(
-                    backgroundColor: colorLightGrey,
+                    backgroundColor: AppColorTheme.colorLightGrey,
                   )
                 },
               );
@@ -562,8 +562,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   //please confirm
   Widget checkBoxWidget(Size size) {
     return Container(
-      decoration: const BoxDecoration(color: colorLightGrey),
-      padding: EdgeInsets.all(size.width * numD04),
+      decoration: const BoxDecoration(color: AppColorTheme.colorLightGrey),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -579,19 +579,19 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check1Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
-                          height: size.width * numD05,
+                          height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
-                            height: size.width * numD05),
+                            height: size.width * AppDimensions.numD05),
                       ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
                 Expanded(
                   child: RichText(
@@ -599,7 +599,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                     text: TextSpan(
                       text: "I have read and agree to Press",
                       style: TextStyle(
-                          fontSize: size.width * numD038,
+                          fontSize: size.width * AppDimensions.numD038,
                           color: Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
@@ -608,7 +608,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         TextSpan(
                           text: "Hop's",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -618,7 +618,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text:
                               "  terms & conditions as set out in the user agreement.",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -632,7 +632,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
             ),
           ),
           SizedBox(
-            height: size.width * numD03,
+            height: size.width * AppDimensions.numD03,
           ),
           InkWell(
             onTap: () {
@@ -644,19 +644,19 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check2Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
-                          height: size.width * numD05,
+                          height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
-                            height: size.width * numD05),
+                            height: size.width * AppDimensions.numD05),
                       ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
                 Expanded(
                   child: RichText(
@@ -664,7 +664,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                     text: TextSpan(
                       text: "I have read and agree to Press",
                       style: TextStyle(
-                          fontSize: size.width * numD038,
+                          fontSize: size.width * AppDimensions.numD038,
                           color: Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
@@ -673,7 +673,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         TextSpan(
                           text: "Hop's",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -682,7 +682,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         TextSpan(
                           text: " privacy policy.",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -696,7 +696,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
             ),
           ),
           SizedBox(
-            height: size.width * numD03,
+            height: size.width * AppDimensions.numD03,
           ),
           InkWell(
             onTap: () {
@@ -708,19 +708,19 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check3Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
-                          height: size.width * numD05,
+                          height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
-                            height: size.width * numD05),
+                            height: size.width * AppDimensions.numD05),
                       ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
                 Expanded(
                   child: RichText(
@@ -728,7 +728,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                     text: TextSpan(
                       text: "By uploading content on the Press",
                       style: TextStyle(
-                          fontSize: size.width * numD038,
+                          fontSize: size.width * AppDimensions.numD038,
                           color: Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
@@ -737,7 +737,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         TextSpan(
                           text: "Hop",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -747,7 +747,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text:
                               " app and platform, you are warranting that you own all proprietary rights, or are the authorised representative of the applicable copyright owner(s) of such content, including copyright.",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -761,7 +761,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
             ),
           ),
           SizedBox(
-            height: size.width * numD03,
+            height: size.width * AppDimensions.numD03,
           ),
           InkWell(
             onTap: () {
@@ -773,19 +773,19 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check4Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
-                          height: size.width * numD05,
+                          height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * numD008),
+                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
-                            height: size.width * numD05),
+                            height: size.width * AppDimensions.numD05),
                       ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
                 Expanded(
                   child: RichText(
@@ -793,7 +793,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                     text: TextSpan(
                       text: "By using the Press",
                       style: TextStyle(
-                          fontSize: size.width * numD038,
+                          fontSize: size.width * AppDimensions.numD038,
                           color: Colors.black,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.w400,
@@ -802,7 +802,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                         TextSpan(
                           text: "Hop",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -812,7 +812,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                           text:
                               " app and platform, you warrant that you are 18 years of age or older, and have the legal authority to enter into these Terms.",
                           style: TextStyle(
-                              fontSize: size.width * numD038,
+                              fontSize: size.width * AppDimensions.numD038,
                               color: Colors.black,
                               fontFamily: "AirbnbCereal",
                               fontWeight: FontWeight.w400,
@@ -833,15 +833,15 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   Widget buttonWidget(Size size) {
     return Container(
       padding: EdgeInsets.only(
-          top: size.width * numD05, bottom: size.width * numD05),
+          top: size.width * AppDimensions.numD05, bottom: size.width * AppDimensions.numD05),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
               child: SizedBox(
-            height: size.width * numD15,
+            height: size.width * AppDimensions.numD15,
             child: commonElevatedButton(
-                declineText.toTitleCase(),
+                AppStrings.declineText.toTitleCase(),
                 size,
                 commonButtonTextStyle(size),
                 commonButtonStyle(size, Colors.black), () {
@@ -849,16 +849,16 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
             }),
           )),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           ),
           Expanded(
               child: SizedBox(
-            height: size.width * numD15,
+            height: size.width * AppDimensions.numD15,
             child: commonElevatedButton(
-                acceptText,
+                AppStrings.acceptText,
                 size,
                 commonButtonTextStyle(size),
-                commonButtonStyle(size, colorThemePink), () {
+                commonButtonStyle(size, AppColorTheme.colorThemePink), () {
               if (check1Value && check2Value && check3Value && check4Value) {
                 Navigator.pop(context, true);
               } else {
@@ -883,27 +883,27 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               elevation: 0,
               contentPadding: EdgeInsets.zero,
               insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD045)),
+                            BorderRadius.circular(size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
+                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
-                                "$tcText $declinedText?",
+                                "${AppStrings.tcText} ${AppStrings.declinedText}?",
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD05,
+                                    fontSize: size.width * AppDimensions.numD05,
                                     fontWeight: FontWeight.bold),
                               ),
                               const Spacer(),
@@ -914,48 +914,48 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                             ],
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: const Divider(
                             color: Colors.black,
                             thickness: 0.5,
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: Text(
-                            tcDeclinedNoteText,
+                            AppStrings.tcDeclinedNoteText,
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD12,
+                                height: size.width * AppDimensions.numD12,
                                 child: commonElevatedButton(
-                                    declineText.toTitleCase(),
+                                    AppStrings.declineText.toTitleCase(),
                                     size,
                                     commonButtonTextStyle(size),
                                     commonButtonStyle(size, Colors.black), () {
@@ -964,16 +964,16 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                 }),
                               )),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                   child: SizedBox(
-                                height: size.width * numD12,
+                                height: size.width * AppDimensions.numD12,
                                 child: commonElevatedButton(
-                                    "$acceptText $tcText",
+                                    "${AppStrings.acceptText} ${AppStrings.tcText}",
                                     size,
                                     commonButtonTextStyle(size),
-                                    commonButtonStyle(size, colorThemePink),
+                                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                                     () {
                                   Navigator.pop(context);
                                   Navigator.pop(context, true);

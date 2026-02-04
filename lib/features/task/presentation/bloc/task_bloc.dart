@@ -55,8 +55,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onGetTaskDetail(
       GetTaskDetailEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
-    final result = await getTaskDetail(event.taskId);
+    if (event.showLoader) emit(TaskLoading());
+    final result = await getTaskDetail(GetTaskDetailParams(
+        taskId: event.taskId, showLoader: event.showLoader));
     result.fold(
       (failure) => emit(TaskError(failure.message)),
       (taskAssignedEntity) => emit(TaskDetailLoaded(taskAssignedEntity)),
@@ -92,12 +93,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onGetTaskChat(
       GetTaskChatEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
+    if (event.showLoader) emit(TaskLoading());
     final result = await getTaskChat(GetTaskChatParams(
-      roomId: event.roomId,
-      type: event.type,
-      contentId: event.contentId,
-    ));
+        roomId: event.roomId,
+        type: event.type,
+        contentId: event.contentId,
+        showLoader: event.showLoader));
     result.fold(
       (failure) => emit(TaskError(failure.message)),
       (chatList) => emit(TaskChatLoaded(chatList)),
@@ -106,8 +107,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onUploadTaskMedia(
       UploadTaskMediaEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
-    final result = await uploadTaskMedia(event.data);
+    if (event.showLoader) emit(TaskLoading());
+    final result = await uploadTaskMedia(
+        UploadTaskMediaParams(data: event.data, showLoader: event.showLoader));
     result.fold(
       (failure) {
         AppLogger.error("Task media upload failed: ${failure.message}",
@@ -200,6 +202,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       limit: 10,
       offset: event.offset,
       filterParams: event.filterParams ?? {},
+      showLoader: event.showLoader,
     ));
 
     result.fold(
@@ -234,7 +237,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(currentState);
     }
 
-    final result = await getLocalTasks(event.filterParams ?? {});
+    final result = await getLocalTasks(GetLocalTasksParams(
+        filterParams: event.filterParams ?? {}, showLoader: event.showLoader));
 
     result.fold(
       (failure) => emit(TasksLoaded(
@@ -254,8 +258,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onFetchTaskDetail(
       FetchTaskDetailEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
-    final result = await getTaskDetail(event.taskId);
+    if (event.showLoader) emit(TaskLoading());
+    final result = await getTaskDetail(GetTaskDetailParams(
+        taskId: event.taskId, showLoader: event.showLoader));
     result.fold(
       (failure) => emit(TaskError(failure.message)),
       (taskAssignedEntity) => emit(TaskDetailLoaded(taskAssignedEntity)),

@@ -26,7 +26,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       hideLeading: hideLeading,
       title: Padding(
-        padding: EdgeInsets.only(left: hideLeading ? size.width * numD04 : 0),
+        padding: EdgeInsets.only(left: hideLeading ? size.width * AppDimensions.numD04 : 0),
         child: InkWell(
           onTap: () {
             Navigator.of(context).pushAndRemoveUntil(
@@ -36,8 +36,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
           child: Image.asset(
             "${commonImagePath}rabbitLogo.png",
-            height: size.width * numD11,
-            width: size.width * numD11,
+            height: size.width * AppDimensions.numD11,
+            width: size.width * AppDimensions.numD11,
           ),
         ),
       ),
@@ -60,7 +60,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         if (showFilter)
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
         Center(
           child: InkWell(
@@ -69,21 +69,21 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   .push(MaterialPageRoute(builder: (context) => MenuScreen()));
             },
             child: Container(
-              padding: EdgeInsets.all(size.width * numD025),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD025),
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(size.width * numD035),
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD035),
               ),
               child: Image.asset(
                 'assets/icons/menu3.png',
-                width: size.width * numD06,
-                height: size.width * numD06,
+                width: size.width * AppDimensions.numD06,
+                height: size.width * AppDimensions.numD06,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         )
       ],
       bottom: bottom,
@@ -91,7 +91,7 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(size.width * numD15 +
+  Size get preferredSize => Size.fromHeight(size.width * AppDimensions.numD15 +
       (bottom?.preferredSize.height ??
           0)); // Adjust height as per NewCommonAppBar
 }

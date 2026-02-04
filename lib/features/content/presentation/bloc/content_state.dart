@@ -16,7 +16,6 @@ class ContentInitial extends ContentState {}
 class ContentLoading extends ContentState {}
 
 class MyContentLoaded extends ContentState {
-
   const MyContentLoaded({
     this.allContent = const [],
     this.myContent = const [],
@@ -76,17 +75,36 @@ class MyContentLoaded extends ContentState {
   }
 }
 
-class ContentDetailLoaded extends ContentState {
-
-  const ContentDetailLoaded(this.content);
+class ContentDetailLoaded extends MyContentLoaded {
   final ContentItem content;
 
+  const ContentDetailLoaded(
+    this.content, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
+
   @override
-  List<Object> get props => [content];
+  List<Object> get props => [
+        content,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }
 
 class ContentPublished extends ContentState {
-
   const ContentPublished(this.content);
   final ContentItem content;
 
@@ -95,7 +113,6 @@ class ContentPublished extends ContentState {
 }
 
 class DraftSaved extends ContentState {
-
   const DraftSaved(this.draft);
   final ContentItem draft;
 
@@ -104,7 +121,6 @@ class DraftSaved extends ContentState {
 }
 
 class MediaUploaded extends ContentState {
-
   const MediaUploaded(this.mediaUrls);
   final List<String> mediaUrls;
 
@@ -113,7 +129,6 @@ class MediaUploaded extends ContentState {
 }
 
 class ContentDeleted extends ContentState {
-
   const ContentDeleted(this.contentId);
   final String contentId;
 
@@ -122,7 +137,6 @@ class ContentDeleted extends ContentState {
 }
 
 class HashtagsSearched extends ContentState {
-
   const HashtagsSearched(this.hashtags);
   final List<Hashtag> hashtags;
 
@@ -131,7 +145,6 @@ class HashtagsSearched extends ContentState {
 }
 
 class TrendingHashtagsLoaded extends ContentState {
-
   const TrendingHashtagsLoaded(this.hashtags);
   final List<Hashtag> hashtags;
 
@@ -139,29 +152,89 @@ class TrendingHashtagsLoaded extends ContentState {
   List<Object> get props => [hashtags];
 }
 
-class MediaHouseOffersLoaded extends ContentState {
-
-  const MediaHouseOffersLoaded(this.offers);
+class MediaHouseOffersLoaded extends MyContentLoaded {
   final List<ManageTaskChatModel> offers;
 
+  const MediaHouseOffersLoaded(
+    this.offers, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
+
   @override
-  List<Object> get props => [offers];
+  List<Object> get props => [
+        offers,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }
 
-class ContentTransactionsLoaded extends ContentState {
-
-  const ContentTransactionsLoaded(this.transactions);
+class ContentTransactionsLoaded extends MyContentLoaded {
   final List<EarningTransactionDetail> transactions;
 
+  const ContentTransactionsLoaded(
+    this.transactions, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
+
   @override
-  List<Object> get props => [transactions];
+  List<Object> get props => [
+        transactions,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }
 
-class ContentError extends ContentState {
-
-  const ContentError(this.message);
+class ContentError extends MyContentLoaded {
   final String message;
 
+  const ContentError(
+    this.message, {
+    super.allContent,
+    super.myContent,
+    super.allPage,
+    super.myPage,
+    super.hasMoreAll,
+    super.hasMoreMy,
+    super.isLoadingAll,
+    super.isLoadingMy,
+  });
+
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [
+        message,
+        allContent,
+        myContent,
+        allPage,
+        myPage,
+        hasMoreAll,
+        hasMoreMy,
+        isLoadingAll,
+        isLoadingMy,
+      ];
 }

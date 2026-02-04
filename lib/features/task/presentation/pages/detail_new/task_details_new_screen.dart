@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:presshop/core/constants/string_constants.dart';
+import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +17,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
@@ -65,7 +67,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
     getAllIcons();
     getCurrentLocation();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));
+      context
+          .read<TaskBloc>()
+          .add(GetTaskDetailEvent(widget.taskId, showLoader: false));
     });
     super.initState();
   }
@@ -78,11 +82,11 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
         elevation: 0,
         hideLeading: false,
         title: Text(
-          taskDetailText,
+          AppStringsNew2.taskDetailText,
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -101,12 +105,12 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           )
         ],
       ),
@@ -136,7 +140,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
             return showLoader();
           }
           return Padding(
-            padding: EdgeInsets.all(size.width * numD028),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD028),
             child: SingleChildScrollView(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +148,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     /// Status Or Media House Name
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD01,
+                        horizontal: size.width * AppDimensions.numD01,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,7 +158,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 .toUpperCase(),
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -165,34 +169,34 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 : "COMPLETED",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: widget.taskStatus == "rejected"
                                     ? Colors.black
-                                    : colorThemePink,
+                                    : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w500),
                           )
                         ],
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
 
                     Row(
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: size.width * numD35,
+                            height: size.width * AppDimensions.numD35,
                             child: Container(
                               decoration: BoxDecoration(
                                 border:
                                     Border.all(width: 1, color: Colors.black),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD042),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD042),
                               ),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   child: Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: [
@@ -210,8 +214,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                         zoomGesturesEnabled: false,
                                       ),
                                       Padding(
-                                        padding:
-                                            EdgeInsets.all(size.width * numD07),
+                                        padding: EdgeInsets.all(
+                                            size.width * AppDimensions.numD07),
                                         child: Image.asset(
                                           "${commonImagePath}ic_cover_radius.png",
                                         ),
@@ -227,21 +231,27 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                         child: Container(
                                           width: double.infinity,
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD06,
-                                              vertical: size.width * numD018),
+                                              horizontal: size.width *
+                                                  AppDimensions.numD06,
+                                              vertical: size.width *
+                                                  AppDimensions.numD018),
                                           decoration: BoxDecoration(
-                                              color: colorThemePink,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
                                               borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(
-                                                    size.width * numD01),
+                                                    size.width *
+                                                        AppDimensions.numD01),
                                                 bottomRight: Radius.circular(
-                                                    size.width * numD02),
+                                                    size.width *
+                                                        AppDimensions.numD02),
                                               )),
                                           child: Text(
                                             "Click the Map & GO",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD032,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD032,
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -253,23 +263,23 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           ),
                         ),
                         SizedBox(
-                          width: size.width * numD03,
+                          width: size.width * AppDimensions.numD03,
                         ),
                         Expanded(
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: [
                               Container(
-                                height: size.width * numD35,
+                                height: size.width * AppDimensions.numD35,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                    color: colorGrey5,
+                                    color: AppColorTheme.colorGrey5,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04)),
+                                        size.width * AppDimensions.numD04)),
                                 child: Column(
                                   children: [
                                     SizedBox(
-                                      height: size.width * numD03,
+                                      height: size.width * AppDimensions.numD03,
                                     ),
                                     Text(
                                       isExtraTime
@@ -279,14 +289,15 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                               : "Time remaining",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     FittedBox(
                                       child: Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD04),
+                                          padding: EdgeInsets.all(size.width *
+                                              AppDimensions.numD04),
                                           child: TimerCountdown(
                                             key: Key(taskDetail!
                                                 .task.deadlineDate
@@ -333,11 +344,14 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                                 .customFormats,
                                             timeTextStyle: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD06,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD06,
                                                 color: widget.taskStatus ==
                                                         "accepted"
-                                                    ? colorOnlineGreen
-                                                    : colorThemePink,
+                                                    ? AppColorTheme
+                                                        .colorOnlineGreen
+                                                    : AppColorTheme
+                                                        .colorThemePink,
                                                 fontWeight: FontWeight.w500),
                                           )),
                                     )
@@ -347,22 +361,25 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                               Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD07,
-                                    vertical: size.width * numD018),
+                                    horizontal:
+                                        size.width * AppDimensions.numD07,
+                                    vertical:
+                                        size.width * AppDimensions.numD018),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.only(
-                                      bottomLeft:
-                                          Radius.circular(size.width * numD04),
-                                      bottomRight:
-                                          Radius.circular(size.width * numD04),
+                                      bottomLeft: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
                                     )),
                                 child: Center(
                                   child: Text(
                                     "Deadline ${dateTimeFormatter(dateTime: taskDetail!.task.deadlineDate.toString(), format: "hh:mm a").toLowerCase()}",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -374,7 +391,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD04,
+                      height: size.width * AppDimensions.numD04,
                     ),
 
                     Row(
@@ -389,10 +406,10 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 children: [
                                   Icon(
                                     Icons.access_time,
-                                    size: size.width * numD045,
+                                    size: size.width * AppDimensions.numD045,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD018,
+                                    width: size.width * AppDimensions.numD018,
                                   ),
                                   Text(
                                       dateTimeFormatter(
@@ -401,18 +418,19 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           format: "hh:mm a"),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorHint,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          color: AppColorTheme.colorHint,
                                           fontWeight: FontWeight.w500)),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Icon(
                                     Icons.calendar_month,
-                                    size: size.width * numD045,
+                                    size: size.width * AppDimensions.numD045,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD018,
+                                    width: size.width * AppDimensions.numD018,
                                   ),
                                   Text(
                                       dateTimeFormatter(
@@ -421,13 +439,14 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           format: "dd MMM yyyy"),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorHint,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
+                                          color: AppColorTheme.colorHint,
                                           fontWeight: FontWeight.w500)),
                                 ],
                               ),
                               SizedBox(
-                                height: size.width * numD025,
+                                height: size.width * AppDimensions.numD025,
                               ),
 
                               /// Location
@@ -437,206 +456,214 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 children: [
                                   Icon(
                                     Icons.location_on_outlined,
-                                    size: size.width * numD045,
+                                    size: size.width * AppDimensions.numD045,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Expanded(
                                     child: Text(
                                       taskDetail!.task.location,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD028,
-                                          color: colorHint,
+                                          fontSize: size.width *
+                                              AppDimensions.numD028,
+                                          color: AppColorTheme.colorHint,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   )
                                 ],
                               ),
                               SizedBox(
-                                height: size.width * numD025,
+                                height: size.width * AppDimensions.numD025,
                               ),
                               Row(
                                 children: [
                                   Icon(
                                     Icons.location_on_outlined,
-                                    size: size.width * numD045,
+                                    size: size.width * AppDimensions.numD045,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Text(
                                     "20 miles",
                                     overflow: TextOverflow.ellipsis,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD028,
-                                        color: colorHint,
+                                        fontSize:
+                                            size.width * AppDimensions.numD028,
+                                        color: AppColorTheme.colorHint,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD018,
+                                    width: size.width * AppDimensions.numD018,
                                   ),
                                   Container(
                                     width: 1,
-                                    height: size.width * numD04,
+                                    height: size.width * AppDimensions.numD04,
                                     color: Colors.grey,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Icon(
                                     Icons.directions_walk_rounded,
-                                    size: size.width * numD045,
+                                    size: size.width * AppDimensions.numD045,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD01,
+                                    width: size.width * AppDimensions.numD01,
                                   ),
                                   Text(
                                     "34 mins",
                                     overflow: TextOverflow.ellipsis,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD028,
-                                        color: colorHint,
+                                        fontSize:
+                                            size.width * AppDimensions.numD028,
+                                        color: AppColorTheme.colorHint,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD01,
+                                    width: size.width * AppDimensions.numD01,
                                   ),
                                   Container(
                                     width: 1,
-                                    height: size.width * numD04,
+                                    height: size.width * AppDimensions.numD04,
                                     color: Colors.grey,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   Icon(
                                     Icons.directions_car,
-                                    size: size.width * numD045,
+                                    size: size.width * AppDimensions.numD045,
                                   ),
                                   SizedBox(
-                                    width: size.width * numD01,
+                                    width: size.width * AppDimensions.numD01,
                                   ),
                                   Text(
                                     "3 mins",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD028,
-                                        color: colorHint,
+                                        fontSize:
+                                            size.width * AppDimensions.numD028,
+                                        color: AppColorTheme.colorHint,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ],
                               ),
                               SizedBox(
-                                height: size.width * numD02,
+                                height: size.width * AppDimensions.numD02,
                               ),
                             ],
                           ),
                         ),
                         SizedBox(
-                          width: size.width * numD075,
+                          width: size.width * AppDimensions.numD075,
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD025,
+                      height: size.width * AppDimensions.numD025,
                     ),
 
                     const Divider(
                       thickness: 1,
-                      color: colorGreyChat,
+                      color: AppColorTheme.colorGreyChat,
                     ),
 
                     Text("HEADING",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w500)),
                     SizedBox(
-                      height: size.width * numD018,
+                      height: size.width * AppDimensions.numD018,
                     ),
                     Text(
                       taskDetail!.task.heading,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD04,
+                          fontSize: size.width * AppDimensions.numD04,
                           color: Colors.black,
                           lineHeight: 1.5,
                           fontWeight: FontWeight.w700),
                     ),
 
                     SizedBox(
-                      height: size.width * numD06,
+                      height: size.width * AppDimensions.numD06,
                     ),
                     Text("DESCRIPTION",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w500)),
                     SizedBox(
-                      height: size.width * numD018,
+                      height: size.width * AppDimensions.numD018,
                     ),
 
                     Text(taskDetail!.task.description,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal)),
 
                     SizedBox(
-                      height: size.width * numD06,
+                      height: size.width * AppDimensions.numD06,
                     ),
 
                     "".isNotEmpty
                         ? Text("SPECIAL REQUIREMENTS",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500))
                         : Container(),
                     SizedBox(
-                      height: "".isNotEmpty ? size.width * numD025 : 0,
+                      height: "".isNotEmpty
+                          ? size.width * AppDimensions.numD025
+                          : 0,
                     ),
 
                     "".isNotEmpty
                         ? Text("",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 lineHeight: 2,
                                 fontWeight: FontWeight.normal))
                         : Container(),
 
                     SizedBox(
-                      height: "".isNotEmpty ? size.width * numD025 : 0,
+                      height: "".isNotEmpty
+                          ? size.width * AppDimensions.numD025
+                          : 0,
                     ),
 
                     const Divider(
                       thickness: 1,
-                      color: colorGreyChat,
+                      color: AppColorTheme.colorGreyChat,
                     ),
 
                     SizedBox(
-                      height: size.width * numD025,
+                      height: size.width * AppDimensions.numD025,
                     ),
 
                     Text("PRICE OFFERED",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w500)),
                     SizedBox(
-                      height: size.width * numD05,
+                      height: size.width * AppDimensions.numD05,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 14),
@@ -652,31 +679,35 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD058,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD058,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w800)),
                               Text("Offered",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500)),
                               SizedBox(
-                                height: size.width * numD018,
+                                height: size.width * AppDimensions.numD018,
                               ),
                               Container(
-                                width: size.width * numD26,
+                                width: size.width * AppDimensions.numD26,
                                 padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02),
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
+                                        size.width * AppDimensions.numD02)),
                                 child: Center(
                                     child: Text("PHOTO",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500))),
                               )
@@ -691,31 +722,35 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD058,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD058,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w800)),
                               Text("Offered",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500)),
                               SizedBox(
-                                height: size.width * numD018,
+                                height: size.width * AppDimensions.numD018,
                               ),
                               Container(
-                                width: size.width * numD26,
+                                width: size.width * AppDimensions.numD26,
                                 padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02),
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
+                                        size.width * AppDimensions.numD02)),
                                 child: Center(
                                     child: Text("INTERVIEW",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500))),
                               )
@@ -730,31 +765,35 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD058,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD058,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w800)),
                               Text("Offered",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500)),
                               SizedBox(
-                                height: size.width * numD018,
+                                height: size.width * AppDimensions.numD018,
                               ),
                               Container(
-                                width: size.width * numD26,
+                                width: size.width * AppDimensions.numD26,
                                 padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02),
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
+                                        size.width * AppDimensions.numD02)),
                                 child: Center(
                                     child: Text("VIDEO",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD035,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500))),
                               )
@@ -764,28 +803,28 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD025,
+                      height: size.width * AppDimensions.numD025,
                     ),
 
                     const Divider(
                       thickness: 1,
-                      color: colorGreyChat,
+                      color: AppColorTheme.colorGreyChat,
                     ),
                     SizedBox(
-                      height: size.width * numD025,
+                      height: size.width * AppDimensions.numD025,
                     ),
 
                     taskDetail!.task.content.isNotEmpty
-                        ? Text(uploadedContentText.toUpperCase(),
+                        ? Text(AppStringsNew2.uploadedContentText.toUpperCase(),
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500))
                         : Container(),
                     SizedBox(
                       height: taskDetail!.task.content.isNotEmpty
-                          ? size.width * numD05
+                          ? size.width * AppDimensions.numD05
                           : 0,
                     ),
 
@@ -795,8 +834,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
-                          mainAxisSpacing: size.width * numD035,
-                          crossAxisSpacing: size.width * numD018),
+                          mainAxisSpacing: size.width * AppDimensions.numD035,
+                          crossAxisSpacing: size.width * AppDimensions.numD018),
                       itemBuilder: (context, index) {
                         var item = taskDetail!.task.content[index];
                         debugPrint("item.type::::${item.mediaType}");
@@ -833,18 +872,20 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                 }
                               },
                               child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD028),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD028),
                                 child: item.mediaType == "audio"
                                     ? Container(
                                         height: double.infinity,
                                         width: size.width / 2,
                                         decoration: BoxDecoration(
-                                            color: colorThemePink,
-                                            border:
-                                                Border.all(color: colorGreyNew),
+                                            color: AppColorTheme.colorThemePink,
+                                            border: Border.all(
+                                                color:
+                                                    AppColorTheme.colorGreyNew),
                                             borderRadius: BorderRadius.circular(
-                                                size.width * numD028)),
+                                                size.width *
+                                                    AppDimensions.numD028)),
                                         child: Icon(
                                           Icons.play_arrow_rounded,
                                           color: Colors.white,
@@ -886,39 +927,48 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                               ),
                             ),
                             Positioned(
-                              right: size.width * numD01,
-                              top: size.width * numD01,
+                              right: size.width * AppDimensions.numD01,
+                              top: size.width * AppDimensions.numD01,
                               child: item.mediaType != "audio"
                                   ? Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD006,
-                                          vertical: size.width * numD002),
+                                          horizontal: size.width *
+                                              AppDimensions.numD006,
+                                          vertical: size.width *
+                                              AppDimensions.numD002),
                                       decoration: BoxDecoration(
-                                          color:
-                                              colorLightGreen.withOpacity(0.8),
+                                          color: AppColorTheme.colorLightGreen
+                                              .withOpacity(0.8),
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD01)),
+                                              size.width *
+                                                  AppDimensions.numD01)),
                                       child: Icon(
                                         item.mediaType == "video"
                                             ? Icons.videocam_outlined
                                             : Icons.camera_alt_outlined,
-                                        size: size.width * numD035,
+                                        size:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.white,
                                       ))
                                   : Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD008,
-                                          vertical: size.width * numD005),
+                                          horizontal: size.width *
+                                              AppDimensions.numD008,
+                                          vertical: size.width *
+                                              AppDimensions.numD005),
                                       decoration: BoxDecoration(
-                                          color:
-                                              colorLightGreen.withOpacity(0.8),
+                                          color: AppColorTheme.colorLightGreen
+                                              .withOpacity(0.8),
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD01)),
+                                              size.width *
+                                                  AppDimensions.numD01)),
                                       child: Image.asset(
                                         "${iconsPath}ic_mic1.png",
                                         fit: BoxFit.cover,
-                                        height: size.width * numD025,
-                                        width: size.width * numD025,
+                                        height:
+                                            size.width * AppDimensions.numD025,
+                                        width:
+                                            size.width * AppDimensions.numD025,
                                       ),
                                     ),
                             ),
@@ -928,7 +978,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     ),
 
                     SizedBox(
-                      height: size.width * numD1,
+                      height: size.width * AppDimensions.numD1,
                     ),
                     // if (isOwner)
                     widget.taskStatus != "rejected"
@@ -941,14 +991,14 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                             taskDetail: taskDetail!,
                                             roomId: roomId,
                                           )))
-                                  .then((value) => context
-                                      .read<TaskBloc>()
-                                      .add(GetTaskDetailEvent(widget.taskId)));
+                                  .then((value) => context.read<TaskBloc>().add(
+                                      GetTaskDetailEvent(widget.taskId,
+                                          showLoader: false)));
                             },
                             child: AnimatedButtonWidget(
                               shouldRestartAnimation: shouldRestartAnimation,
                               size: size,
-                              buttonText: manageTaskText,
+                              buttonText: AppStringsNew2.manageTaskText,
                               onPressed: () {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
@@ -959,33 +1009,35 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                             )))
                                     .then((value) {
                                   shouldRestartAnimation = true;
-                                  context
-                                      .read<TaskBloc>()
-                                      .add(GetTaskDetailEvent(widget.taskId));
+                                  context.read<TaskBloc>().add(
+                                      GetTaskDetailEvent(widget.taskId,
+                                          showLoader: false));
                                 });
                               },
                             ),
                           )
                         : Container(
                             width: size.width,
-                            height: size.width * numD14,
+                            height: size.width * AppDimensions.numD14,
                             margin: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04),
+                                horizontal: size.width * AppDimensions.numD04),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black,
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD04))),
+                                            size.width *
+                                                AppDimensions.numD04))),
                                 onPressed: () {},
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      youHaveEarnedText,
+                                      AppStringsNew2.youHaveEarnedText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700),
                                     ),
@@ -993,7 +1045,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                       "${taskDetail != null && taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${widget.totalEarning.isNotEmpty ? widget.totalEarning : "0"}",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD065,
+                                          fontSize: size.width *
+                                              AppDimensions.numD065,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700),
                                     ),
@@ -1002,18 +1055,18 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           ),
 
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
 
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * numD02),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD02),
                       child: RichText(
                           textAlign: TextAlign.justify,
                           text: TextSpan(
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD03,
+                                  fontSize: size.width * AppDimensions.numD03,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w400),
                               children: [
@@ -1024,8 +1077,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                     text: " Manage Tasks",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD03,
-                                        color: colorThemePink,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
+                                        color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.w400)),
                                 const TextSpan(
                                   text:
@@ -1035,7 +1089,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     ),
 
                     SizedBox(
-                      height: size.height * numD02,
+                      height: size.height * AppDimensions.numD02,
                     ),
                   ]),
             ),

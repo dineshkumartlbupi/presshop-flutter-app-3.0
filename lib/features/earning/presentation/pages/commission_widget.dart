@@ -18,17 +18,17 @@ class CommissionWidget extends StatelessWidget {
     size = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.symmetric(
-        vertical: size.width * numD02,
+        vertical: size.width * AppDimensions.numD02,
       ),
       padding: EdgeInsets.only(
-        top: size.width * numD04,
-        bottom: size.width * numD04,
-        left: size.width * numD04,
-        right: size.width * numD04,
+        top: size.width * AppDimensions.numD04,
+        bottom: size.width * AppDimensions.numD04,
+        left: size.width * AppDimensions.numD04,
+        right: size.width * AppDimensions.numD04,
       ),
       decoration: BoxDecoration(
-          color: colorLightGrey,
-          borderRadius: BorderRadius.circular(size.width * numD02)),
+          color: AppColorTheme.colorLightGrey,
+          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02)),
       child: Column(
         children: [
           Row(
@@ -50,18 +50,18 @@ class CommissionWidget extends StatelessWidget {
                   ),
                   Container(
                       margin: EdgeInsets.symmetric(
-                        vertical: size.width * numD02,
+                        vertical: size.width * AppDimensions.numD02,
                       ),
                       padding: EdgeInsets.only(
-                        top: size.width * numD02,
-                        bottom: size.width * numD02,
-                        left: size.width * numD04,
-                        right: size.width * numD04,
+                        top: size.width * AppDimensions.numD02,
+                        bottom: size.width * AppDimensions.numD02,
+                        left: size.width * AppDimensions.numD04,
+                        right: size.width * AppDimensions.numD04,
                       ),
                       decoration: BoxDecoration(
-                          color: colorGrey4,
+                          color: AppColorTheme.colorGrey4,
                           borderRadius:
-                              BorderRadius.circular(size.width * numD02)),
+                              BorderRadius.circular(size.width * AppDimensions.numD02)),
                       child: Column(
                         children: [
                           Text(
@@ -85,21 +85,21 @@ class CommissionWidget extends StatelessWidget {
                 ],
               ),
               ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * numD03),
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
                 child: Image.network(commissionData.avatar,
-                    height: size.width * numD20,
-                    width: size.width * numD24,
+                    height: size.width * AppDimensions.numD20,
+                    width: size.width * AppDimensions.numD24,
                     fit: BoxFit.cover,
                     errorBuilder: (context, i, b) => Image.asset(
                           "${commonImagePath}rabbitLogo.png",
                           fit: BoxFit.cover,
-                          height: size.width * numD11,
-                          width: size.width * numD12,
+                          height: size.width * AppDimensions.numD11,
+                          width: size.width * AppDimensions.numD12,
                         )),
               ),
             ],
           ),
-          SizedBox(height: size.height * numD01),
+          SizedBox(height: size.height * AppDimensions.numD01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,32 +108,32 @@ class CommissionWidget extends StatelessWidget {
                 "Total earning by the Hopper",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
               Container(
-                width: size.width * numD25,
+                width: size.width * AppDimensions.numD25,
                 padding: EdgeInsets.symmetric(
-                    vertical: size.width * numD01,
-                    horizontal: size.width * numD02),
+                    vertical: size.width * AppDimensions.numD01,
+                    horizontal: size.width * AppDimensions.numD02),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(size.width * numD015),
-                  color: colorThemePink,
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
+                  color: AppColorTheme.colorThemePink,
                 ),
                 child: Text(
                   "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                       color: Colors.white,
                       fontWeight: FontWeight.w600),
                 ),
               )
             ],
           ),
-          SizedBox(height: size.height * numD01),
+          SizedBox(height: size.height * AppDimensions.numD01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -142,32 +142,32 @@ class CommissionWidget extends StatelessWidget {
                 "Your 5% commission",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
               Container(
-                width: size.width * numD25,
+                width: size.width * AppDimensions.numD25,
                 padding: EdgeInsets.symmetric(
-                    vertical: size.width * numD01,
-                    horizontal: size.width * numD02),
+                    vertical: size.width * AppDimensions.numD01,
+                    horizontal: size.width * AppDimensions.numD02),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(size.width * numD015),
+                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
                   color: Colors.black,
                 ),
                 child: Text(
                   "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commission.toString()))}",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD04,
+                      fontSize: size.width * AppDimensions.numD04,
                       color: Colors.white,
                       fontWeight: FontWeight.w600),
                 ),
               )
             ],
           ),
-          SizedBox(height: size.height * numD01),
+          SizedBox(height: size.height * AppDimensions.numD01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,7 +176,7 @@ class CommissionWidget extends StatelessWidget {
                 "Paid on",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
@@ -184,13 +184,13 @@ class CommissionWidget extends StatelessWidget {
                 commissionData.paidOn ?? "-",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
             ],
           ),
-          SizedBox(height: size.height * numD01),
+          SizedBox(height: size.height * AppDimensions.numD01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -199,7 +199,7 @@ class CommissionWidget extends StatelessWidget {
                 "Commission received",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
@@ -207,13 +207,13 @@ class CommissionWidget extends StatelessWidget {
                 "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
             ],
           ),
-          SizedBox(height: size.height * numD01),
+          SizedBox(height: size.height * AppDimensions.numD01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -222,7 +222,7 @@ class CommissionWidget extends StatelessWidget {
                 "Commission pending",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),
@@ -230,7 +230,7 @@ class CommissionWidget extends StatelessWidget {
                 "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w400),
               ),

@@ -148,7 +148,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   String? userNameValidator(String? value) {
     if (value!.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
     String firstName = firstNameController.text.trim().toLowerCase();
     String lastName = lastNameController.text.trim().toLowerCase();
@@ -219,7 +219,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   String? checkSignupPhoneValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
 
     String digitsOnly = value.trim().replaceAll(RegExp(r'\D+'), '');
@@ -243,7 +243,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     }
 
     if (phoneAlreadyExists) {
-      return phoneExistsErrorText;
+      return AppStrings.phoneExistsErrorText;
     }
 
     return null;
@@ -270,7 +270,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -292,12 +292,12 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
         ],
       ),
@@ -311,48 +311,48 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             child: Form(
               key: formKey,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
+                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (isLoading)
                       const LinearProgressIndicator(
-                        backgroundColor: colorLightGrey,
+                        backgroundColor: AppColorTheme.colorLightGrey,
                         valueColor:
-                            AlwaysStoppedAnimation<Color>(colorThemePink),
+                            AlwaysStoppedAnimation<Color>(AppColorTheme.colorThemePink),
                       ),
                     topProfileWidget(),
                     SizedBox(
-                      height: size.width * numD06,
+                      height: size.width * AppDimensions.numD06,
                     ),
                     _buildUserNameField(),
-                    SizedBox(height: size.width * numD06),
+                    SizedBox(height: size.width * AppDimensions.numD06),
                     _buildFirstNameField(),
-                    SizedBox(height: size.width * numD06),
+                    SizedBox(height: size.width * AppDimensions.numD06),
                     _buildLastNameField(),
-                    SizedBox(height: size.width * numD06),
+                    SizedBox(height: size.width * AppDimensions.numD06),
                     _buildPhoneField(),
-                    SizedBox(height: size.width * numD06),
+                    SizedBox(height: size.width * AppDimensions.numD06),
                     _buildEmailField(),
-                    SizedBox(height: size.width * numD06),
+                    SizedBox(height: size.width * AppDimensions.numD06),
                     _buildAddressSection(),
-                    SizedBox(height: size.width * numD06),
+                    SizedBox(height: size.width * AppDimensions.numD06),
                     _buildCityCountryFields(),
-                    SizedBox(height: size.width * numD09),
+                    SizedBox(height: size.width * AppDimensions.numD09),
                     SizedBox(
                       width: double.infinity,
-                      height: size.width * numD14,
+                      height: size.width * AppDimensions.numD14,
                       child: commonElevatedButton(
                           widget.editProfileScreen
-                              ? saveText.toTitleCase()
-                              : editProfileText.toTitleCase(),
+                              ? AppStrings.saveText.toTitleCase()
+                              : AppStrings.editProfileText.toTitleCase(),
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                         if (!widget.editProfileScreen) {
                           widget.editProfileScreen = !widget.editProfileScreen;
                           scrollController.animateTo(
@@ -373,7 +373,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       }),
                     ),
                     SizedBox(
-                      height: size.width * numD04,
+                      height: size.width * AppDimensions.numD04,
                     ),
                   ],
                 ),
@@ -388,10 +388,10 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Widget topProfileWidget() {
     return Container(
-      height: size.width * numD35,
+      height: size.width * AppDimensions.numD35,
       decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(size.width * numD04)),
+          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
         children: [
           Stack(
@@ -399,39 +399,39 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04)),
+                      topLeft: Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft: Radius.circular(size.width * AppDimensions.numD04)),
                   child: CachedNetworkImage(
                     imageUrl:
                         myProfileData != null ? myProfileData!.avatarImage : "",
                     placeholder: (context, url) => Center(
                       child: Padding(
-                        padding: EdgeInsets.all(size.width * numD04),
+                        padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${commonImagePath}rabbitLogo.png",
                           fit: BoxFit.contain,
-                          width: size.width * numD35,
-                          height: size.width * numD35,
+                          width: size.width * AppDimensions.numD35,
+                          height: size.width * AppDimensions.numD35,
                         ),
                       ),
                     ),
                     errorWidget: (context, url, error) => Padding(
-                      padding: EdgeInsets.all(size.width * numD04),
+                      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
                         fit: BoxFit.contain,
-                        width: size.width * numD35,
-                        height: size.width * numD35,
+                        width: size.width * AppDimensions.numD35,
+                        height: size.width * AppDimensions.numD35,
                       ),
                     ),
                     fit: BoxFit.cover,
-                    width: size.width * numD37,
-                    height: size.width * numD35,
+                    width: size.width * AppDimensions.numD37,
+                    height: size.width * AppDimensions.numD35,
                   )),
               widget.editProfileScreen
                   ? Positioned(
-                      bottom: size.width * numD01,
-                      right: size.width * numD01,
+                      bottom: size.width * AppDimensions.numD01,
+                      right: size.width * AppDimensions.numD01,
                       child: InkWell(
                         onTap: () {
                           avatarBottomSheet(size);
@@ -443,12 +443,12 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           child: Container(
                               padding: EdgeInsets.all(size.width * 0.005),
                               decoration: const BoxDecoration(
-                                  color: colorThemePink,
+                                  color: AppColorTheme.colorThemePink,
                                   shape: BoxShape.circle),
                               child: Icon(
                                 Icons.edit_outlined,
                                 color: Colors.white,
-                                size: size.width * numD04,
+                                size: size.width * AppDimensions.numD04,
                               )),
                         ),
                       ),
@@ -457,7 +457,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             ],
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           ),
           Expanded(
               child: Column(
@@ -470,38 +470,38 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       : "",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD04,
-                      color: colorThemePink,
+                      fontSize: size.width * AppDimensions.numD04,
+                      color: AppColorTheme.colorThemePink,
                       fontWeight: FontWeight.w500)),
               SizedBox(
-                height: size.width * numD01,
+                height: size.width * AppDimensions.numD01,
               ),
               Text(
-                  "$joinedText - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
+                  "${AppStrings.joinedText} - ${myProfileData != null ? myProfileData!.joinedDate : ""}",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.white,
                       fontWeight: FontWeight.normal)),
               SizedBox(
-                height: size.width * numD005,
+                height: size.width * AppDimensions.numD005,
               ),
               Text(
-                  "$earningsText - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
+                  "${AppStrings.earningsText} - $currencySymbol${myProfileData != null ? formatDouble(double.parse(myProfileData!.totalIncome)) : "0"}",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.white,
                       fontWeight: FontWeight.normal)),
               SizedBox(
-                height: size.width * numD005,
+                height: size.width * AppDimensions.numD005,
               ),
               Text(myProfileData != null ? myProfileData!.address : "",
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.white,
                       fontWeight: FontWeight.normal))
             ],
@@ -529,7 +529,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   String? firstNameValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
 
     String username = userNameController.text.trim().toLowerCase();
@@ -562,7 +562,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   String? lastNameValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     }
 
     String username = userNameController.text.trim().toLowerCase();
@@ -702,14 +702,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: size.width * numD04),
+                  padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                   child: Row(
                     children: [
                       Text(
-                        chooseAvatarText,
+                        AppStrings.chooseAvatarText,
                         style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD04,
+                          fontSize: size.width * AppDimensions.numD04,
                           color: Colors.black,
                           fontWeight: FontWeight.w600,
                         ),
@@ -722,7 +722,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                         icon: Icon(
                           Icons.close,
                           color: Colors.black,
-                          size: size.width * numD06,
+                          size: size.width * AppDimensions.numD06,
                         ),
                       ),
                     ],
@@ -762,7 +762,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                     child: Icon(
                                       Icons.check,
                                       color: Colors.black,
-                                      size: size.width * numD06,
+                                      size: size.width * AppDimensions.numD06,
                                     ),
                                   ),
                               ],
@@ -785,35 +785,35 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${userText.toTitleCase()} $nameText",
+        Text("${AppStrings.userText.toTitleCase()} ${AppStrings.nameText}",
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: userNameController,
-          hintText: "${enterText.toTitleCase()} $userText $nameText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.userText} ${AppStrings.nameText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_user.png"),
           ),
-          prefixIconHeight: size.width * numD04,
+          prefixIconHeight: size.width * AppDimensions.numD04,
           hidePassword: false,
           keyboardType: TextInputType.text,
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           autofocus: userNameAutoFocus,
           readOnly: widget.editProfileScreen ? false : true,
           onChanged: _onUserNameChanged,
-          suffixIconIconHeight: size.width * numD04,
+          suffixIconIconHeight: size.width * AppDimensions.numD04,
           suffixIcon: null,
         ),
       ],
@@ -824,25 +824,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${firstText.toTitleCase()} $nameText",
+        Text("${AppStrings.firstText.toTitleCase()} ${AppStrings.nameText}",
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: firstNameController,
-          hintText: "${enterText.toTitleCase()} $firstText $nameText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.firstText} ${AppStrings.nameText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_user.png"),
           ),
-          prefixIconHeight: size.width * numD04,
+          prefixIconHeight: size.width * AppDimensions.numD04,
           suffixIconIconHeight: 0,
           suffixIcon: null,
           hidePassword: false,
@@ -850,7 +850,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: firstNameValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -861,25 +861,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${lastText.toTitleCase()} $nameText",
+        Text("${AppStrings.lastText.toTitleCase()} ${AppStrings.nameText}",
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: lastNameController,
-          hintText: "${enterText.toTitleCase()} $lastText $nameText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.lastText} ${AppStrings.nameText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_user.png"),
           ),
-          prefixIconHeight: size.width * numD04,
+          prefixIconHeight: size.width * AppDimensions.numD04,
           suffixIconIconHeight: 0,
           suffixIcon: null,
           hidePassword: false,
@@ -887,7 +887,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: lastNameValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -898,19 +898,19 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${phoneText.toTitleCase()} $numberText",
+        Text("${AppStrings.phoneText.toTitleCase()} ${AppStrings.numberText}",
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: phoneNumberController,
-          hintText: phoneHintText,
+          hintText: AppStrings.phoneHintText,
           textInputFormatters: [
             FilteringTextInputFormatter.allow(RegExp("[0-9]")),
             LengthLimitingTextInputFormatter(_getMaxPhoneLength()),
@@ -921,24 +921,24 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.call_outlined),
-                SizedBox(width: size.width * numD01),
+                SizedBox(width: size.width * AppDimensions.numD01),
                 Text(
                   selectedCountryCode,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.normal),
                 ),
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
-                  size: size.width * numD07,
+                  size: size.width * AppDimensions.numD07,
                 )
               ],
             ),
           ),
-          prefixIconHeight: size.width * numD06,
-          suffixIconIconHeight: size.width * numD085,
+          prefixIconHeight: size.width * AppDimensions.numD06,
+          suffixIconIconHeight: size.width * AppDimensions.numD085,
           suffixIcon: phoneNumberController.text.trim().length >= 7
               ? phoneAlreadyExists
                   ? const Icon(Icons.highlight_remove, color: Colors.red)
@@ -950,7 +950,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkSignupPhoneValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           autofocus: false,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -962,25 +962,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(emailAddressText,
+        Text(AppStrings.emailAddressText,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: emailAddressController,
-          hintText: "${enterText.toTitleCase()} $emailAddressText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.emailAddressText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_email.png"),
           ),
-          prefixIconHeight: size.width * numD038,
+          prefixIconHeight: size.width * AppDimensions.numD038,
           suffixIconIconHeight: 0,
           suffixIcon: null,
           hidePassword: false,
@@ -988,7 +988,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           autofocus: false,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -1001,9 +1001,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildApartmentField(),
-        SizedBox(height: size.width * numD06),
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildPostCodeField(),
-        SizedBox(height: size.width * numD06),
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildAddressField(),
       ],
     );
@@ -1013,25 +1013,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(apartmentNoHintText,
+        Text(AppStrings.apartmentNoHintText,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: apartmentAndHouseNameController,
-          hintText: "${enterText.toTitleCase()} $apartmentNoHintText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.apartmentNoHintText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_location.png"),
           ),
-          prefixIconHeight: size.width * numD04,
+          prefixIconHeight: size.width * AppDimensions.numD04,
           suffixIconIconHeight: 0,
           suffixIcon: null,
           hidePassword: false,
@@ -1039,7 +1039,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkRequiredValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -1050,44 +1050,45 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(postalCodeText,
+        Text(AppStrings.postalCodeText,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         widget.editProfileScreen
             ? SizedBox(
-                height: size.width * numD12,
+                height: size.width * AppDimensions.numD12,
                 child: GooglePlaceAutoCompleteTextField(
                   textEditingController: postCodeController,
-                  googleAPIKey:
-                      Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                  googleAPIKey: Platform.isIOS
+                      ? ApiConstantsNew.config.appleMapApiKey
+                      : ApiConstantsNew.config.googleMapApiKey,
                   isCrossBtnShown: false,
                   boxDecoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(size.width * 0.03),
                       border:
-                          Border.all(color: colorTextFieldBorder, width: 1)),
+                          Border.all(color: AppColorTheme.colorTextFieldBorder, width: 1)),
                   textStyle: TextStyle(
                       color: Colors.black,
-                      fontSize: size.width * numD032,
+                      fontSize: size.width * AppDimensions.numD032,
                       fontFamily: 'AirbnbCereal_W_Md'),
                   inputDecoration: InputDecoration(
                     border: InputBorder.none,
                     filled: false,
                     contentPadding:
-                        EdgeInsets.symmetric(vertical: size.width * numD038),
+                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD038),
                     hintText:
-                        "${enterText.toTitleCase()} ${postalCodeText.toLowerCase()}",
+                        "${AppStrings.enterText.toTitleCase()} ${AppStrings.postalCodeText.toLowerCase()}",
                     hintStyle: TextStyle(
-                        color: colorHint,
-                        fontSize: size.width * numD035,
+                        color: AppColorTheme.colorHint,
+                        fontSize: size.width * AppDimensions.numD035,
                         fontFamily: 'AirbnbCereal_W_Md'),
                     prefixIcon: Container(
                       margin:
-                          EdgeInsets.only(right: size.width * numD02, left: 12),
+                          EdgeInsets.only(right: size.width * AppDimensions.numD02, left: 12),
                       child: Image.asset("${iconsPath}ic_location.png"),
                     ),
                     suffixIcon: InkWell(
@@ -1095,14 +1096,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(Icons.close,
-                            color: Colors.black, size: size.width * numD058),
+                            color: Colors.black, size: size.width * AppDimensions.numD058),
                       ),
                     ),
                     prefixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * numD045),
+                        BoxConstraints(maxHeight: size.width * AppDimensions.numD045),
                     suffixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * numD07),
-                    prefixIconColor: colorTextFieldIcon,
+                        BoxConstraints(maxHeight: size.width * AppDimensions.numD07),
+                    prefixIconColor: AppColorTheme.colorTextFieldIcon,
                   ),
                   debounceTime: 200,
                   countries: const ["uk", "in"],
@@ -1140,11 +1141,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 size: size,
                 maxLines: 1,
                 textInputFormatters: null,
-                borderColor: colorTextFieldBorder,
+                borderColor: AppColorTheme.colorTextFieldBorder,
                 controller: postCodeController,
-                hintText: "${enterText.toTitleCase()} $postalCodeText",
+                hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.postalCodeText}",
                 prefixIcon: Image.asset("${iconsPath}ic_location.png"),
-                prefixIconHeight: size.width * numD045,
+                prefixIconHeight: size.width * AppDimensions.numD045,
                 suffixIconIconHeight: 0,
                 suffixIcon: null,
                 hidePassword: false,
@@ -1152,7 +1153,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 enableValidations: false,
                 validator: null,
                 filled: true,
-                filledColor: colorLightGrey,
+                filledColor: AppColorTheme.colorLightGrey,
                 readOnly: true,
               ),
       ],
@@ -1163,44 +1164,45 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(addressText,
+        Text(AppStrings.addressText,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         widget.editProfileScreen
             ? SizedBox(
-                height: size.width * numD12,
+                height: size.width * AppDimensions.numD12,
                 child: GooglePlaceAutoCompleteTextField(
                   textEditingController: addressController,
-                  googleAPIKey:
-                      Platform.isIOS ? appleMapAPiKey : googleMapAPiKey,
+                  googleAPIKey: Platform.isIOS
+                      ? ApiConstantsNew.config.appleMapApiKey
+                      : ApiConstantsNew.config.googleMapApiKey,
                   isCrossBtnShown: false,
                   boxDecoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(size.width * 0.03),
                       border:
-                          Border.all(color: colorTextFieldBorder, width: 1)),
+                          Border.all(color: AppColorTheme.colorTextFieldBorder, width: 1)),
                   textStyle: TextStyle(
                       color: Colors.black,
-                      fontSize: size.width * numD032,
+                      fontSize: size.width * AppDimensions.numD032,
                       fontFamily: 'AirbnbCereal_W_Md'),
                   inputDecoration: InputDecoration(
                     border: InputBorder.none,
                     filled: false,
                     contentPadding:
-                        EdgeInsets.symmetric(vertical: size.width * numD038),
+                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD038),
                     hintText:
-                        "${enterText.toTitleCase()} ${addressText.toLowerCase()}",
+                        "${AppStrings.enterText.toTitleCase()} ${AppStrings.addressText.toLowerCase()}",
                     hintStyle: TextStyle(
-                        color: colorHint,
-                        fontSize: size.width * numD035,
+                        color: AppColorTheme.colorHint,
+                        fontSize: size.width * AppDimensions.numD035,
                         fontFamily: 'AirbnbCereal_W_Md'),
                     prefixIcon: Container(
                       margin:
-                          EdgeInsets.only(right: size.width * numD02, left: 12),
+                          EdgeInsets.only(right: size.width * AppDimensions.numD02, left: 12),
                       child: Image.asset("${iconsPath}ic_location.png"),
                     ),
                     suffixIcon: InkWell(
@@ -1208,14 +1210,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(Icons.close,
-                            color: Colors.black, size: size.width * numD058),
+                            color: Colors.black, size: size.width * AppDimensions.numD058),
                       ),
                     ),
                     prefixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * numD045),
+                        BoxConstraints(maxHeight: size.width * AppDimensions.numD045),
                     suffixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * numD07),
-                    prefixIconColor: colorTextFieldIcon,
+                        BoxConstraints(maxHeight: size.width * AppDimensions.numD07),
+                    prefixIconColor: AppColorTheme.colorTextFieldIcon,
                   ),
                   debounceTime: 200,
                   countries: const ["uk", "in"],
@@ -1250,11 +1252,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 size: size,
                 maxLines: 1,
                 textInputFormatters: null,
-                borderColor: colorTextFieldBorder,
+                borderColor: AppColorTheme.colorTextFieldBorder,
                 controller: addressController,
-                hintText: "${enterText.toTitleCase()} $addressText",
+                hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.addressText}",
                 prefixIcon: Image.asset("${iconsPath}ic_location.png"),
-                prefixIconHeight: size.width * numD045,
+                prefixIconHeight: size.width * AppDimensions.numD045,
                 suffixIconIconHeight: 0,
                 suffixIcon: null,
                 hidePassword: false,
@@ -1262,7 +1264,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 enableValidations: false,
                 validator: null,
                 filled: true,
-                filledColor: colorLightGrey,
+                filledColor: AppColorTheme.colorLightGrey,
                 readOnly: true,
               ),
       ],
@@ -1273,7 +1275,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       children: [
         _buildCityField(),
-        SizedBox(height: size.width * numD06),
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildCountryField(),
       ],
     );
@@ -1283,25 +1285,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(cityText.toTitleCase(),
+        Text(AppStrings.cityText.toTitleCase(),
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: cityNameController,
-          hintText: "${enterText.toTitleCase()} $cityText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.cityText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_location.png"),
           ),
-          prefixIconHeight: size.width * numD04,
+          prefixIconHeight: size.width * AppDimensions.numD04,
           suffixIconIconHeight: 0,
           suffixIcon: null,
           hidePassword: false,
@@ -1309,7 +1311,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkRequiredValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -1320,25 +1322,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(countryText.toTitleCase(),
+        Text(AppStrings.countryText.toTitleCase(),
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD032,
+                fontSize: size.width * AppDimensions.numD032,
                 color: Colors.black,
                 fontWeight: FontWeight.normal)),
-        SizedBox(height: size.width * numD02),
+        SizedBox(height: size.width * AppDimensions.numD02),
         CommonTextField(
           size: size,
           maxLines: 1,
           textInputFormatters: null,
-          borderColor: colorTextFieldBorder,
+          borderColor: AppColorTheme.colorTextFieldBorder,
           controller: countryNameController,
-          hintText: "${enterText.toTitleCase()} $countryText",
+          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.countryText}",
           prefixIcon: Container(
-            margin: EdgeInsets.only(left: size.width * numD015),
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_location.png"),
           ),
-          prefixIconHeight: size.width * numD04,
+          prefixIconHeight: size.width * AppDimensions.numD04,
           suffixIconIconHeight: 0,
           suffixIcon: null,
           hidePassword: false,
@@ -1346,7 +1348,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkRequiredValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : colorLightGrey,
+          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -1394,11 +1396,11 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   String? checkSignupEmailValidator(String? value) {
     //<-- add String? as a return type
     if (value!.isEmpty) {
-      return requiredText;
+      return AppStrings.requiredText;
     } else if (!emailExpression.hasMatch(value)) {
-      return emailErrorText;
+      return AppStrings.emailErrorText;
     } else if (emailAlreadyExists) {
-      return emailExistsErrorText;
+      return AppStrings.emailExistsErrorText;
     }
     return null;
   }
@@ -1505,7 +1507,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         queryParameters: {"userId": userId},
         showLoader: false,
       );
-      print("myProfileUrl: $myProfileUrl");
+      // print("myProfileUrl: $myProfileUrl");
 
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1651,7 +1653,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   Future<String?> setIsClickForBeansActivation() async {
     try {
-      final response = await sl<ApiClient>().post(studentBeansActivationUrl);
+      final response = await sl<ApiClient>().post(
+        ApiConstantsNew.profile.studentBeansActivation,
+      );
 
       if (response.statusCode == 200) {
         var map = response.data;
@@ -1680,20 +1684,20 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               elevation: 0,
               contentPadding: EdgeInsets.zero,
               insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius:
-                            BorderRadius.circular(size.width * numD045)),
+                            BorderRadius.circular(size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * numD04),
+                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
@@ -1702,7 +1706,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                 // "Brains, beans, and breaking news!",
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD04,
+                                    fontSize: size.width * AppDimensions.numD04,
                                     fontWeight: FontWeight.bold),
                               ),
                               const Spacer(),
@@ -1713,25 +1717,25 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                   icon: Icon(
                                     Icons.close,
                                     color: Colors.black,
-                                    size: size.width * numD06,
+                                    size: size.width * AppDimensions.numD06,
                                   ))
                             ],
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: const Divider(
                             color: Colors.black,
                             thickness: 0.5,
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1753,7 +1757,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                 ),
                               ),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                 child: Text(
@@ -1761,7 +1765,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                       "Please confirm your student status to continue",
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
@@ -1769,23 +1773,23 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           ),
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD04),
+                              horizontal: size.width * AppDimensions.numD04,
+                              vertical: size.width * AppDimensions.numD04),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               // Expanded(
                               //     child: SizedBox(
-                              //   height: size.width * numD12,
+                              //   height: size.width * AppDimensions.numD12,
                               //   child: commonElevatedButton(
-                              //       logoutText,
+                              //       AppStrings.logoutText,
                               //       size,
                               //       commonButtonTextStyle(size),
                               //       commonButtonStyle(size, Colors.black), () {
@@ -1794,16 +1798,16 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               //   }),
                               // )),
                               // SizedBox(
-                              //   width: size.width * numD04,
+                              //   width: size.width * AppDimensions.numD04,
                               // ),
                               Expanded(
                                 child: SizedBox(
-                                  height: size.width * numD12,
+                                  height: size.width * AppDimensions.numD12,
                                   child: commonElevatedButton(
                                       "Confirm",
                                       size,
                                       commonButtonTextStyle(size),
-                                      commonButtonStyle(size, colorThemePink),
+                                      commonButtonStyle(size, AppColorTheme.colorThemePink),
                                       () async {
                                     try {
                                       final url =

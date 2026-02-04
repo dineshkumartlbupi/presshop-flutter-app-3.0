@@ -124,12 +124,12 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD08),
+                            horizontal: size.width * AppDimensions.numD08),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: size.width * numD25,
+                              height: size.width * AppDimensions.numD25,
                             ),
                             Text(
                               greeting(),
@@ -137,10 +137,10 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                   color: Colors.black,
                                   fontFamily: "AirbnbCereal",
                                   fontWeight: FontWeight.w600,
-                                  fontSize: size.width * numD07),
+                                  fontSize: size.width * AppDimensions.numD07),
                             ),
                             SizedBox(
-                              height: size.width * numD055,
+                              height: size.width * AppDimensions.numD055,
                             ),
                             Container(
                                 margin: const EdgeInsets.only(left: 1.8),
@@ -151,7 +151,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                           text:
                                               "Ready to dive in? Sign up or Log in to start making headlines with Press",
                                           style: TextStyle(
-                                              fontSize: size.width * numD035,
+                                              fontSize: size.width * AppDimensions.numD035,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.w400,
@@ -161,7 +161,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                               text: "Hop",
                                               style: TextStyle(
                                                   fontSize:
-                                                      size.width * numD035,
+                                                      size.width * AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontFamily: "AirbnbCereal",
                                                   fontWeight: FontWeight.w400,
@@ -171,7 +171,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                               text: " !",
                                               style: TextStyle(
                                                   fontSize:
-                                                      size.width * numD038,
+                                                      size.width * AppDimensions.numD038,
                                                   color: Colors.black,
                                                   fontFamily: "AirbnbCereal",
                                                   fontWeight: FontWeight.w400,
@@ -180,39 +180,39 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                           ],
                                         ),
                                       )
-                                    : Text(loginSubTitleText,
+                                    : Text(AppStrings.loginSubTitleText,
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: size.width * numD035))),
+                                            fontSize: size.width * AppDimensions.numD035))),
 
                             SizedBox(
-                              height: size.width * numD08,
+                              height: size.width * AppDimensions.numD08,
                             ),
 
                             /// User name controller
                             CommonTextField(
                               size: size,
-                              borderColor: colorTextFieldBorder,
+                              borderColor: AppColorTheme.colorTextFieldBorder,
                               maxLines: 1,
                               controller: loginController,
-                              hintText: loginUserHint,
+                              hintText: AppStrings.loginUserHint,
                               textInputFormatters: null,
                               prefixIcon: ImageIcon(
                                 AssetImage(
                                   "${iconsPath}ic_user.png",
                                 ),
-                                size: size.width * numD04,
+                                size: size.width * AppDimensions.numD04,
                               ),
-                              prefixIconHeight: size.width * numD05,
+                              prefixIconHeight: size.width * AppDimensions.numD05,
                               suffixIconIconHeight: 0,
                               suffixIcon: null,
                               hidePassword: false,
                               keyboardType: TextInputType.text,
                               validator: (value) {
                                 if (value!.trim().isEmpty) {
-                                  return requiredText;
+                                  return AppStrings.requiredText;
                                 } else if (value.trim().length < 4) {
-                                  return validUserNameOrPhoneText;
+                                  return AppStrings.validUserNameOrPhoneText;
                                 }
                                 return null;
                               },
@@ -223,25 +223,25 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                             ),
 
                             SizedBox(
-                              height: size.width * numD08,
+                              height: size.width * AppDimensions.numD08,
                             ),
 
                             /// Password Controller
                             CommonTextField(
                               size: size,
                               maxLines: 1,
-                              borderColor: colorTextFieldBorder,
+                              borderColor: AppColorTheme.colorTextFieldBorder,
                               controller: passwordController,
-                              hintText: enterPasswordHint,
+                              hintText: AppStrings.enterPasswordHint,
                               textInputFormatters: null,
                               prefixIcon: ImageIcon(
                                 AssetImage(
                                   "${iconsPath}ic_key.png",
                                 ),
-                                size: size.width * numD04,
+                                size: size.width * AppDimensions.numD04,
                               ),
-                              prefixIconHeight: size.width * numD07,
-                              suffixIconIconHeight: size.width * numD065,
+                              prefixIconHeight: size.width * AppDimensions.numD07,
+                              suffixIconIconHeight: size.width * AppDimensions.numD065,
                               suffixIcon: InkWell(
                                 onTap: () {
                                   hidePassword = !hidePassword;
@@ -256,8 +256,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                           "${iconsPath}ic_block_eye.png",
                                         ),
                                   color: !hidePassword
-                                      ? colorTextFieldIcon
-                                      : colorHint,
+                                      ? AppColorTheme.colorTextFieldIcon
+                                      : AppColorTheme.colorHint,
                                 ),
                               ),
                               hidePassword: hidePassword,
@@ -269,7 +269,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                               autofocus: false,
                             ),
                             SizedBox(
-                              height: size.width * numD058,
+                              height: size.width * AppDimensions.numD058,
                             ),
 
                             /// Forgot password
@@ -285,30 +285,30 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                                   const ForgotPasswordScreen()));
                                     },
                                     child: Text(
-                                      "$forgotPasswordText?",
+                                      "${AppStrings.forgotPasswordText}?",
                                       style: TextStyle(
-                                          color: colorThemePink,
-                                          fontSize: size.width * numD035,
+                                          color: AppColorTheme.colorThemePink,
+                                          fontSize: size.width * AppDimensions.numD035,
                                           fontWeight: FontWeight.w500),
                                     ))),
 
                             SizedBox(
-                              height: size.width * numD07,
+                              height: size.width * AppDimensions.numD07,
                             ),
 
                             /// SignIn Button
                             SizedBox(
                               width: size.width,
-                              height: size.width * (isIpad ? numD1 : numD14),
+                              height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                               child: commonElevatedButton(
-                                  signInText,
+                                  AppStrings.signInText,
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink),
+                                  commonButtonStyle(size, AppColorTheme.colorThemePink),
                                   () async {
                                 if (formKey.currentState!.validate()) {
                                   FocusScope.of(context)
@@ -322,33 +322,33 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                               }),
                             ),
                             SizedBox(
-                              height: size.width * numD038,
+                              height: size.width * AppDimensions.numD038,
                             ),
                             Align(
                               alignment: Alignment.center,
                               child: Text(
-                                orText,
+                                AppStrings.orText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * numD04),
+                                    fontSize: size.width * AppDimensions.numD04),
                               ),
                             ),
 
                             SizedBox(
-                              height: Platform.isIOS ? size.width * numD036 : 0,
+                              height: Platform.isIOS ? size.width * AppDimensions.numD036 : 0,
                             ),
                             Platform.isIOS
                                 ? Container(
                                     width: size.width,
                                     height:
-                                        size.width * (isIpad ? numD1 : numD14),
+                                        size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                                     alignment: Alignment.centerLeft,
                                     decoration: BoxDecoration(
                                         color: Colors.black,
                                         borderRadius: BorderRadius.circular(
-                                            size.width * numD04),
+                                            size.width * AppDimensions.numD04),
                                         border: Border.all(
-                                            color: colorGoogleButtonBorder)),
+                                            color: AppColorTheme.colorGoogleButtonBorder)),
                                     child: InkWell(
                                       splashColor: Colors.grey.shade300,
                                       onTap: () async {
@@ -360,11 +360,11 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                         children: [
                                           Image.asset(
                                             "${iconsPath}appleLogo.png",
-                                            height: size.width * numD045,
-                                            width: size.width * numD045,
+                                            height: size.width * AppDimensions.numD045,
+                                            width: size.width * AppDimensions.numD045,
                                             color: Colors.white,
                                           ),
-                                          SizedBox(width: size.width * numD01),
+                                          SizedBox(width: size.width * AppDimensions.numD01),
                                           Align(
                                             alignment: Alignment.center,
                                             child: Text(
@@ -372,7 +372,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize:
-                                                      size.width * numD036,
+                                                      size.width * AppDimensions.numD036,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                           )
@@ -382,41 +382,41 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                   )
                                 : Container(),
                             SizedBox(
-                              height: size.width * numD05,
+                              height: size.width * AppDimensions.numD05,
                             ),
 
                             /// Google SignIn
                             InkWell(
                               splashColor: Colors.grey.shade300,
                               borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                                  BorderRadius.circular(size.width * AppDimensions.numD04),
                               onTap: () async {
                                 googleSignIn.signOut();
                                 googleLogin(context);
                               },
                               child: Container(
                                 width: size.width,
-                                height: size.width * (isIpad ? numD1 : numD14),
+                                height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                                 alignment: Alignment.centerLeft,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
+                                        size.width * AppDimensions.numD04),
                                     border: Border.all(
-                                        color: colorGoogleButtonBorder)),
+                                        color: AppColorTheme.colorGoogleButtonBorder)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_google.png",
-                                      height: size.width * numD045,
-                                      width: size.width * numD045,
+                                      height: size.width * AppDimensions.numD045,
+                                      width: size.width * AppDimensions.numD045,
                                     ),
-                                    SizedBox(width: size.width * numD01),
+                                    SizedBox(width: size.width * AppDimensions.numD01),
                                     Text(
-                                      continueGoogleText,
+                                      AppStrings.continueGoogleText,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD036,
+                                          fontSize: size.width * AppDimensions.numD036,
                                           fontWeight: FontWeight.w500),
                                     )
                                   ],
@@ -425,7 +425,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                             ),
 
                             SizedBox(
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                             ),
                             Align(
                               alignment: Alignment.center,
@@ -433,10 +433,10 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                 textAlign: TextAlign.center,
                                 text: TextSpan(children: [
                                   TextSpan(
-                                      text: donotHaveAccountText,
+                                      text: AppStrings.donotHaveAccountText,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width * AppDimensions.numD035,
                                           fontWeight: FontWeight.normal)),
                                   WidgetSpan(
                                       child: SizedBox(
@@ -471,17 +471,17 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                                         ),
                                                       )));
                                         },
-                                        child: Text(clickHereToJoinText,
+                                        child: Text(AppStrings.clickHereToJoinText,
                                             style: TextStyle(
-                                                color: colorThemePink,
-                                                fontSize: size.width * numD035,
+                                                color: AppColorTheme.colorThemePink,
+                                                fontSize: size.width * AppDimensions.numD035,
                                                 fontWeight: FontWeight.w500)),
                                       ))
                                 ]),
                               ),
                             ),
                             SizedBox(
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                             ),
                           ],
                         ),

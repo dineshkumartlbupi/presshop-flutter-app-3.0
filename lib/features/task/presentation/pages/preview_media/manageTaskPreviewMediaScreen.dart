@@ -34,44 +34,44 @@ class _ManageTaskPreviewMediaScreenState
             ),
             /*    widget.type == "draft"
                 ? Container(
-              height: size.width * numD17,
+              height: size.width * AppDimensions.numD17,
               width: double.infinity,
               color: Colors.white,
               padding: EdgeInsets.only(
-                  left: size.width * numD04,
-                  top: size.width * numD02,
-                  bottom: size.width * numD02,
-                  right: size.width * numD02),
+                  left: size.width * AppDimensions.numD04,
+                  top: size.width * AppDimensions.numD02,
+                  bottom: size.width * AppDimensions.numD02,
+                  right: size.width * AppDimensions.numD02),
               child: commonElevatedButton(
                   "Next",
                   size,
                   commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.white,
                       fontWeight: FontWeight.w700),
-                  commonButtonStyle(size, colorThemePink), () {
+                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                 Navigator.pop(context); //  getImageMetaData();
               }),
             )
                 : Container(
               color: Colors.white,
               padding: EdgeInsets.only(
-                  left: size.width * numD04,
-                  top: size.width * numD02,
-                  bottom: size.width * numD03,
-                  right: size.width * numD02),
+                  left: size.width * AppDimensions.numD04,
+                  top: size.width * AppDimensions.numD02,
+                  bottom: size.width * AppDimensions.numD03,
+                  right: size.width * AppDimensions.numD02),
               child: Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: size.width * numD13,
+                      height: size.width * AppDimensions.numD13,
                       child: commonElevatedButton(
                           "Add More",
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(
@@ -85,7 +85,7 @@ class _ManageTaskPreviewMediaScreenState
                           showSnackBar(
                               "PRESSHOP",
                               "Only 10 contents allowed!",
-                              colorThemePink);
+                              AppColorTheme.colorThemePink);
                         } else {
                           Navigator.of(context)
                               .push(MaterialPageRoute(
@@ -108,19 +108,19 @@ class _ManageTaskPreviewMediaScreenState
                       }),
                     ),
                   ),
-                  SizedBox(width: size.width * numD04),
+                  SizedBox(width: size.width * AppDimensions.numD04),
                   Expanded(
                     child: SizedBox(
-                      height: size.width * numD13,
+                      height: size.width * AppDimensions.numD13,
                       child: commonElevatedButton(
                           "Next",
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                         if (widget.pickAgain) {
                           Navigator.pop(context);
                           if (widget.type == "draft") {

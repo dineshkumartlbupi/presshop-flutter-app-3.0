@@ -72,27 +72,27 @@ class MenuData {
 
 List<MenuData> buildMenu() => [
       MenuData(
-        title: digitalIdText,
+        title: AppStrings.digitalIdText,
         icon: "${iconsPath}ic_id.png",
         action: MenuAction.digitalId,
         pageBuilder: (context) => const DigitalIdScreen(),
       ),
       MenuData(
-        title: myProfileText,
+        title: AppStrings.myProfileText,
         icon: "${iconsPath}ic_my_profile.png",
         action: MenuAction.myProfile,
         pageBuilder: (context) => MyProfile(
           editProfileScreen: false,
-          screenType: myProfileText,
+          screenType: AppStrings.myProfileText,
         ),
       ),
       MenuData(
-        title: editProfileText,
+        title: AppStrings.editProfileText,
         icon: "${iconsPath}ic_edit_profile.png",
         action: MenuAction.editProfile,
         pageBuilder: (context) => MyProfile(
           editProfileScreen: true,
-          screenType: editProfileText,
+          screenType: AppStrings.editProfileText,
         ),
       ),
       MenuData(
@@ -102,26 +102,26 @@ List<MenuData> buildMenu() => [
         pageBuilder: (context) => ChatBotScreen(),
       ),
       MenuData(
-        title: "$contactText PressHop",
+        title: "${AppStrings.contactText} PressHop",
         icon: "${iconsPath}ic_contact_us.png",
         action: MenuAction.contact,
         pageBuilder: (context) => const ContactUsScreen(),
         isContactBrand: true,
       ),
       MenuData(
-        title: leaderboardText,
+        title: AppStrings.leaderboardText,
         icon: "${iconsPath}ic_ranking.png",
         action: MenuAction.leaderboard,
         pageBuilder: (context) => const LeaderboardPage(),
       ),
       MenuData(
-        title: paymentMethodText,
+        title: AppStrings.paymentMethodText,
         icon: "${iconsPath}ic_payment_method.png",
         action: MenuAction.paymentMethod,
         pageBuilder: (context) => const MyBanksPage(),
       ),
       MenuData(
-        title: myDraftText,
+        title: AppStrings.myDraftText,
         icon: "${iconsPath}ic_my_draft.png",
         action: MenuAction.myDrafts,
         pageBuilder: (context) => MyDraftScreen(
@@ -130,7 +130,7 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: myContentText,
+        title: AppStrings.myContentText,
         icon: "${iconsPath}ic_content.png",
         action: MenuAction.myContent,
         pageBuilder: (context) => const MyContentPage(
@@ -138,7 +138,7 @@ List<MenuData> buildMenu() => [
             ),
       ),
       MenuData(
-        title: feedText,
+        title: AppStrings.feedText,
         icon: "${iconsPath}ic_feed.png",
         action: MenuAction.feed,
         pageBuilder: (context) => const FeedScreen(),
@@ -159,14 +159,15 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: notificationText,
+        title: AppStrings.notificationText,
         icon: "${iconsPath}ic_feed.png",
         action: MenuAction.notification,
         pageBuilder: (context) => const MyNotificationScreen(
             count: 0), // Count now handled by BlocSelector
       ),
       MenuData(
-        title: "$ratingText & ${reviewText.toLowerCase()}",
+        title:
+            "${AppStrings.ratingText} & ${AppStrings.reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
         action: MenuAction.ratingReview,
         pageBuilder: (context) => const RatingReviewScreen(),
@@ -179,7 +180,7 @@ List<MenuData> buildMenu() => [
         pageBuilder: (context) => const ReferScreen(),
       ),
       MenuData(
-        title: uploadDocsHeadingText,
+        title: AppStrings.uploadDocsHeadingText,
         icon: "${iconsPath}ic_upload_documents.png",
         action: MenuAction.uploadDocs,
         pageBuilder: (context) => const UploadDocumentsScreen(
@@ -188,7 +189,7 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: faqText,
+        title: AppStrings.faqText,
         icon: "${iconsPath}ic_faq.png",
         action: MenuAction.faq,
         pageBuilder: (context) => FAQScreen(
@@ -198,7 +199,7 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: "$legalText $tcText",
+        title: "${AppStrings.legalText} ${AppStrings.tcText}",
         icon: "${iconsPath}ic_legal.png",
         action: MenuAction.legal,
         pageBuilder: (context) => TermCheckScreen(
@@ -224,19 +225,19 @@ List<MenuData> buildMenu() => [
         ),
       ),
       MenuData(
-        title: tutorialsText,
+        title: AppStrings.tutorialsText,
         icon: "${iconsPath}ic_tutorials.png",
         action: MenuAction.tutorials,
         pageBuilder: (context) => const TutorialsScreen(),
       ),
       MenuData(
-        title: changePasswordText,
+        title: AppStrings.changePasswordText,
         icon: "${iconsPath}ic_change_password.png",
         action: MenuAction.changePassword,
         pageBuilder: (context) => const ChangePasswordScreen(),
       ),
       MenuData(
-        title: accountSettingText,
+        title: AppStrings.accountSettingText,
         icon: "${iconsPath}ic_my_profile.png",
         action: MenuAction.accountSettings,
         pageBuilder: (context) => const AccountSetting(),
@@ -247,7 +248,7 @@ List<MenuData> buildMenu() => [
         action: MenuAction.currency,
       ),
       MenuData(
-        title: logoutText,
+        title: AppStrings.logoutText,
         icon: "${iconsPath}ic_logout.png",
         action: MenuAction.logout,
       ),

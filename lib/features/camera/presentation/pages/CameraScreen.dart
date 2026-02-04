@@ -181,7 +181,7 @@ class CameraScreenState extends State<CameraScreen>
                             type: state.selectedMode.toLowerCase() == "video"
                                 ? "video"
                                 : state.selectedMode.toLowerCase() ==
-                                        scanText.toLowerCase()
+                                        AppStrings.scanText.toLowerCase()
                                     ? "scan"
                                     : state.selectedMode.toLowerCase() == "pdf"
                                         ? "pdf"
@@ -224,24 +224,25 @@ class CameraScreenState extends State<CameraScreen>
       hideLeading: widget.previousScreen == ScreenNameEnum.dashboardScreen,
       showFilter: false,
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(size.width * numD1),
+        preferredSize: Size.fromHeight(size.width * AppDimensions.numD1),
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD06, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD06,
+              vertical: size.width * AppDimensions.numD02),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (widget.previousScreen != ScreenNameEnum.manageTaskScreen)
-                    _buildModeButton(context, scanText, state, size),
-                  _buildModeButton(context, photoText, state, size),
-                  _buildModeButton(context, videoText, state, size),
-                  _buildModeButton(context, audioText, state, size,
+                    _buildModeButton(context, AppStrings.scanText, state, size),
+                  _buildModeButton(context, AppStrings.photoText, state, size),
+                  _buildModeButton(context, AppStrings.videoText, state, size),
+                  _buildModeButton(context, AppStrings.audioText, state, size,
                       label: widget.previousScreen ==
                               ScreenNameEnum.manageTaskScreen
-                          ? interviewText
-                          : audioText),
+                          ? AppStrings.interviewText
+                          : AppStrings.audioText),
                 ],
               )
             ],
@@ -263,8 +264,8 @@ class CameraScreenState extends State<CameraScreen>
           child: Text(
         label ?? mode,
         style: TextStyle(
-            color: isSelected ? colorThemePink : Colors.black,
-            fontSize: size.width * numD035,
+            color: isSelected ? AppColorTheme.colorThemePink : Colors.black,
+            fontSize: size.width * AppDimensions.numD035,
             fontWeight: FontWeight.w500),
       )),
     );
@@ -273,28 +274,28 @@ class CameraScreenState extends State<CameraScreen>
   Widget? _buildBottomBar(BuildContext context, Size size) {
     return Padding(
       padding: EdgeInsets.only(
-          left: size.width * numD04,
-          top: size.height * numD032,
-          bottom: size.height * numD035,
-          right: size.width * numD04),
+          left: size.width * AppDimensions.numD04,
+          top: size.height * AppDimensions.numD032,
+          bottom: size.height * AppDimensions.numD035,
+          right: size.width * AppDimensions.numD04),
       child: SizedBox(
-        height: size.width * numD13,
+        height: size.width * AppDimensions.numD13,
         child: commonElevatedButton(
             "Cancel",
             size,
             commonTextStyle(
                 size: size,
-                fontSize: size.width * numD04,
+                fontSize: size.width * AppDimensions.numD04,
                 color: Colors.white,
                 fontWeight: FontWeight.w700),
-            commonButtonStyle(size, colorThemePink),
+            commonButtonStyle(size, AppColorTheme.colorThemePink),
             () => Navigator.pop(context)),
       ),
     );
   }
 
   Widget _buildBody(BuildContext context, CameraState state, Size size) {
-    if (state.selectedMode == audioText) {
+    if (state.selectedMode == AppStrings.audioText) {
       return _buildAudioBody(context, state, size);
     }
     return Stack(
@@ -305,7 +306,7 @@ class CameraScreenState extends State<CameraScreen>
         Positioned(
           left: 0,
           right: 0,
-          bottom: size.width * numD25,
+          bottom: size.width * AppDimensions.numD25,
           child: Align(
             alignment: Alignment.bottomCenter,
             child: _exposureModeControlRowWidget(size, state),
@@ -322,19 +323,21 @@ class CameraScreenState extends State<CameraScreen>
             },
             child: Container(
               margin: EdgeInsets.only(
-                  left: size.width * numD1, bottom: size.width * numD05),
-              padding: EdgeInsets.all(size.width * numD02),
+                  left: size.width * AppDimensions.numD1,
+                  bottom: size.width * AppDimensions.numD05),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
               decoration: BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white)),
               child: Container(
-                padding: EdgeInsets.all(size.width * numD02),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.3),
                     shape: BoxShape.circle),
                 child: Image.asset("${iconsPath}ic_plus.png",
-                    color: Colors.white, height: size.width * numD07),
+                    color: Colors.white,
+                    height: size.width * AppDimensions.numD07),
               ),
             ),
           ),
@@ -345,13 +348,13 @@ class CameraScreenState extends State<CameraScreen>
           alignment: Alignment.bottomCenter,
           child: InkWell(
             onTap: () {
-              if (state.selectedMode == videoText) {
+              if (state.selectedMode == AppStrings.videoText) {
                 if (state.isRecording) {
                   context.read<CameraBloc>().add(CameraStopRecordingEvent());
                 } else {
                   context.read<CameraBloc>().add(CameraStartRecordingEvent());
                 }
-              } else if (state.selectedMode == scanText) {
+              } else if (state.selectedMode == AppStrings.scanText) {
                 context.read<CameraBloc>().add(CameraScanDocEvent());
               } else {
                 // Photo
@@ -359,25 +362,28 @@ class CameraScreenState extends State<CameraScreen>
               }
             },
             child: Container(
-              margin: EdgeInsets.only(bottom: size.width * numD05),
-              padding: EdgeInsets.all(size.width * numD01),
+              margin:
+                  EdgeInsets.only(bottom: size.width * AppDimensions.numD05),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               decoration: BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: colorThemePink)),
+                  border: Border.all(color: AppColorTheme.colorThemePink)),
               child: Icon(
-                (state.selectedMode == videoText && state.isRecording)
+                (state.selectedMode == AppStrings.videoText &&
+                        state.isRecording)
                     ? Icons.stop_circle_outlined
                     : Icons.circle,
-                color: colorThemePink,
-                size: size.width * numD13,
+                color: AppColorTheme.colorThemePink,
+                size: size.width * AppDimensions.numD13,
               ),
             ),
           ),
         ),
 
         // Gallery Thumbnail
-        if (state.selectedMode == photoText || state.selectedMode == videoText)
+        if (state.selectedMode == AppStrings.photoText ||
+            state.selectedMode == AppStrings.videoText)
           Align(
             alignment: Alignment.bottomRight,
             child: InkWell(
@@ -396,12 +402,14 @@ class CameraScreenState extends State<CameraScreen>
                 });
               },
               child: Container(
-                width: size.width * numD15,
-                height: size.width * numD15,
+                width: size.width * AppDimensions.numD15,
+                height: size.width * AppDimensions.numD15,
                 margin: EdgeInsets.only(
-                    bottom: size.width * numD05, right: size.width * numD1),
+                    bottom: size.width * AppDimensions.numD05,
+                    right: size.width * AppDimensions.numD1),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD025),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD025),
                   child: state.galleryMedia.isNotEmpty
                       ? FutureBuilder(
                           future: state.galleryMedia.first
@@ -429,17 +437,18 @@ class CameraScreenState extends State<CameraScreen>
             top: y - 20,
             left: x - 20,
             child: Image.asset("${iconsPath}ic_focus.png",
-                width: size.width * numD15,
-                height: size.width * numD15,
+                width: size.width * AppDimensions.numD15,
+                height: size.width * AppDimensions.numD15,
                 color: Colors.white),
           ),
 
         // Top Controls (Flash, Rotate, Settings)
-        if (state.selectedMode == photoText || state.selectedMode == videoText)
+        if (state.selectedMode == AppStrings.photoText ||
+            state.selectedMode == AppStrings.videoText)
           Positioned(
-            top: size.width * numD06,
-            left: size.width * numD1,
-            right: size.width * numD1,
+            top: size.width * AppDimensions.numD06,
+            left: size.width * AppDimensions.numD1,
+            right: size.width * AppDimensions.numD1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,17 +459,18 @@ class CameraScreenState extends State<CameraScreen>
                         .read<CameraBloc>()
                         .add(CameraFlashToggleEvent()),
                     child: Container(
-                      padding: EdgeInsets.all(size.width * numD01),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: const BoxDecoration(
                           color: Colors.white, shape: BoxShape.circle),
                       child: Icon(
                           state.isFlashOn ? Icons.flash_on : Icons.flash_off,
                           color: Colors.black,
-                          size: size.width * numD04),
+                          size: size.width * AppDimensions.numD04),
                     ),
                   )
                 else
-                  SizedBox(width: size.width * numD06),
+                  SizedBox(width: size.width * AppDimensions.numD06),
 
                 // Center Settings
                 Column(
@@ -476,20 +486,22 @@ class CameraScreenState extends State<CameraScreen>
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.all(size.width * numD01),
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD01),
                         decoration: const BoxDecoration(
                             color: Colors.white, shape: BoxShape.circle),
                         child: Image.asset("${iconsPath}arrow_square_down.png",
-                            color: Colors.black, height: size.width * numD042),
+                            color: Colors.black,
+                            height: size.width * AppDimensions.numD042),
                       ),
                     ),
                     _exposureModeControlRowUpperWidget(size, state),
-                    SizedBox(height: size.width * numD01),
-                    if (state.selectedMode == videoText)
+                    SizedBox(height: size.width * AppDimensions.numD01),
+                    if (state.selectedMode == AppStrings.videoText)
                       Text(state.recordingTime,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w500)),
                   ],
@@ -500,11 +512,11 @@ class CameraScreenState extends State<CameraScreen>
                   onTap: () =>
                       context.read<CameraBloc>().add(CameraSwitchEvent()),
                   child: Container(
-                    padding: EdgeInsets.all(size.width * numD01),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     decoration: const BoxDecoration(
                         color: Colors.white, shape: BoxShape.circle),
                     child: Image.asset("${iconsPath}ic_rotate.png",
-                        height: size.width * numD04),
+                        height: size.width * AppDimensions.numD04),
                   ),
                 ),
               ],
@@ -543,7 +555,7 @@ class CameraScreenState extends State<CameraScreen>
     if (state.status == CameraStatus.loading ||
         state.cameraController == null ||
         !state.cameraController!.value.isInitialized) {
-      return Center(child: CircularProgressIndicator(color: colorThemePink));
+      return Center(child: CircularProgressIndicator(color: AppColorTheme.colorThemePink));
     }
 
     return Listener(
@@ -606,7 +618,7 @@ class CameraScreenState extends State<CameraScreen>
                 backgroundColor: Colors.transparent,
                 shouldCalculateScrolledPosition: true,
                 waveStyle: WaveStyle(
-                    waveColor: colorThemePink,
+                    waveColor: AppColorTheme.colorThemePink,
                     extendWaveform: true,
                     showMiddleLine: false,
                     gradient: ui.Gradient.linear(const Offset(70, 50),
@@ -616,13 +628,14 @@ class CameraScreenState extends State<CameraScreen>
         Text(state.recordingTime.isEmpty ? "00:00:00" : state.recordingTime,
             style: commonTextStyle(
                 size: size,
-                fontSize: size.width * numD15,
+                fontSize: size.width * AppDimensions.numD15,
                 color: Colors.black,
                 fontWeight: FontWeight.w500)),
         const Spacer(),
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD08, vertical: size.width * numD04),
+              horizontal: size.width * AppDimensions.numD08,
+              vertical: size.width * AppDimensions.numD04),
           child: Row(
             children: [
               if (state.recordingTime.isNotEmpty &&
@@ -638,7 +651,8 @@ class CameraScreenState extends State<CameraScreen>
                     // Or simplified: Just stop.
                   },
                   icon: Icon(Icons.close,
-                      color: Colors.red, size: size.width * numD08),
+                      color: Colors.red,
+                      size: size.width * AppDimensions.numD08),
                 ),
               const Spacer(),
               InkWell(
@@ -650,17 +664,17 @@ class CameraScreenState extends State<CameraScreen>
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.all(size.width * numD01),
+                  padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                   decoration: BoxDecoration(
                       color: Colors.transparent,
                       shape: BoxShape.circle,
-                      border: Border.all(color: colorThemePink)),
+                      border: Border.all(color: AppColorTheme.colorThemePink)),
                   child: Icon(
                       state.isRecording
                           ? Icons.stop_circle_outlined
                           : Icons.circle,
-                      color: colorThemePink,
-                      size: size.width * numD13),
+                      color: AppColorTheme.colorThemePink,
+                      size: size.width * AppDimensions.numD13),
                 ),
               ),
               const Spacer(),
@@ -679,7 +693,8 @@ class CameraScreenState extends State<CameraScreen>
                                 mediaList: [])));
                   },
                   icon: Icon(Icons.check,
-                      color: colorOnlineGreen, size: size.width * numD08),
+                      color: AppColorTheme.colorOnlineGreen,
+                      size: size.width * AppDimensions.numD08),
                 ),
             ],
           ),
@@ -703,15 +718,16 @@ class CameraScreenState extends State<CameraScreen>
                 Text(_minAvailableExposureOffset.toString(),
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: size.width * numD03,
+                        fontSize: size.width * AppDimensions.numD03,
                         fontWeight: FontWeight.w500)),
                 SliderTheme(
-                  data: SliderThemeData(trackHeight: size.width * numD009),
+                  data: SliderThemeData(
+                      trackHeight: size.width * AppDimensions.numD009),
                   child: Slider(
                     value: _currentExposureOffset,
                     min: _minAvailableExposureOffset,
                     max: _maxAvailableExposureOffset,
-                    activeColor: colorThemePink,
+                    activeColor: AppColorTheme.colorThemePink,
                     onChanged: (val) {
                       setState(() => _currentExposureOffset = val);
                       context.read<CameraBloc>().add(UpdateExposureEvent(val));
@@ -721,7 +737,7 @@ class CameraScreenState extends State<CameraScreen>
                 Text(_maxAvailableExposureOffset.toString(),
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: size.width * numD03,
+                        fontSize: size.width * AppDimensions.numD03,
                         fontWeight: FontWeight.w500)),
               ],
             )
@@ -738,13 +754,14 @@ class CameraScreenState extends State<CameraScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            state.selectedMode == scanText
+            state.selectedMode == AppStrings.scanText
                 ? 'This scan is automatically enhanced'
-                : state.selectedMode == videoText
+                : state.selectedMode == AppStrings.videoText
                     ? "This video is automatically enhanced"
                     : "This pic is automatically enhanced",
             style: TextStyle(
-                fontSize: size.width * numD03, fontWeight: FontWeight.w500),
+                fontSize: size.width * AppDimensions.numD03,
+                fontWeight: FontWeight.w500),
           )
         ],
       ),

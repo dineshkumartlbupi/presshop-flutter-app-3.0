@@ -26,11 +26,11 @@ class _DocumentViewState extends State<DocumentView> {
         elevation: 0,
         hideLeading: false,
         title: Text(
-          docViewer,
+          AppStrings.docViewer,
           style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSizeNew),
+              fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -50,17 +50,17 @@ class _DocumentViewState extends State<DocumentView> {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              width: size.width * numD15,
+              width: size.width * AppDimensions.numD15,
             ),
           ),
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
         ],
       ),
       body: SafeArea(
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * numD035),
+            padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD035),
             child: SfPdfViewer.network(
               widget.path,
               key: _pdfViewerKey,

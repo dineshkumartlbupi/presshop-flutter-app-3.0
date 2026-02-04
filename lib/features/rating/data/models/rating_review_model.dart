@@ -68,11 +68,11 @@ class RatingReviewModel extends Review {
           ? (json['hopper_details']['user_name'] != null &&
                   json['hopper_details']['user_name'].toString().isNotEmpty)
               ? json['hopper_details']['user_name']
-              : (json['hopper_details']['companyName'] != null &&
-                      json['hopper_details']['companyName']
+              : (json['hopper_details']['AppStrings.companyName'] != null &&
+                      json['hopper_details']['AppStrings.companyName']
                           .toString()
                           .isNotEmpty)
-                  ? json['hopper_details']['companyName']
+                  ? json['hopper_details']['AppStrings.companyName']
                   : "${json['hopper_details']['firstName'] ?? ""} ${json['hopper_details']['lastName'] ?? ""}"
           : "",
       hopperCreatedAt: json['hopper_details'] != null

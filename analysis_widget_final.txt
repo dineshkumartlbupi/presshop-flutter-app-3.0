@@ -1,0 +1,5 @@
+Analyzing content_item_widget.dart...                           
+
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/content/presentation/widgets/content_item_widget.dart:315:46 • deprecated_member_use
+
+1 issue found. (ran in 3.3s)

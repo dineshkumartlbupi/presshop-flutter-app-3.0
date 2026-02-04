@@ -18,6 +18,7 @@ import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/api/api_constant.dart';
+import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/main.dart';
@@ -43,8 +44,7 @@ import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart'
-    hide videoText, interviewText, photoText;
+import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
@@ -55,7 +55,6 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 
 // ignore: must_be_immutable
 class ManageTaskScreen extends StatefulWidget {
-
   ManageTaskScreen(
       {super.key,
       this.mediaHouseDetail,
@@ -165,7 +164,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
   Widget chatBubbleSpacer() {
     return SizedBox(
-      height: size.width * numD05,
+      height: size.width * AppDimensions.numD05,
     );
   }
 
@@ -191,8 +190,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
   Widget widgetDivider() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-      child: const Divider(color: colorGrey1),
+      padding:
+          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+      child: const Divider(color: AppColorTheme.colorGrey1),
     );
   }
 
@@ -244,12 +244,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   hideLeading: false,
                   title: Text(
                     widget.contentMedia != null && widget.contentHeader != null
-                        ? manageContentText
-                        : manageTaskText,
+                        ? AppStringsNew2.manageContentText
+                        : AppStringsNew2.manageTaskText,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: size.width * appBarHeadingFontSize),
+                        fontSize:
+                            size.width * AppDimensions.appBarHeadingFontSize),
                   ),
                   centerTitle: false,
                   titleSpacing: 0,
@@ -269,12 +270,12 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       },
                       child: Image.asset(
                         "${commonImagePath}ic_black_rabbit.png",
-                        height: size.width * numD07,
-                        width: size.width * numD07,
+                        height: size.width * AppDimensions.numD07,
+                        width: size.width * AppDimensions.numD07,
                       ),
                     ),
                     SizedBox(
-                      width: size.width * numD04,
+                      width: size.width * AppDimensions.numD04,
                     )
                   ],
                 ),
@@ -307,8 +308,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                           widget.taskDetail != null
                                               ? Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          size.width * numD04),
+                                                      horizontal: size.width *
+                                                          AppDimensions.numD04),
                                                   child:
                                                       uploadMediaInfoWidget(""),
                                                 )
@@ -327,9 +328,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                       children: [
                                                         Container(
                                                             margin: EdgeInsets.only(
-                                                                left:
-                                                                    size.width *
-                                                                        numD04),
+                                                                left: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD04),
                                                             decoration: BoxDecoration(
                                                                 color: Colors
                                                                     .black,
@@ -347,10 +349,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                               clipBehavior: Clip
                                                                   .antiAlias,
                                                               child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .all(size
-                                                                            .width *
-                                                                        numD01),
+                                                                padding: EdgeInsets.all(size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD01),
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
@@ -358,53 +360,60 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       .white,
                                                                   width: size
                                                                           .width *
-                                                                      numD07,
+                                                                      AppDimensions
+                                                                          .numD07,
                                                                   height: size
                                                                           .width *
-                                                                      numD07,
+                                                                      AppDimensions
+                                                                          .numD07,
                                                                 ),
                                                               ),
                                                             )),
                                                         SizedBox(
                                                           width: size.width *
-                                                              numD025,
+                                                              AppDimensions
+                                                                  .numD025,
                                                         ),
                                                         Expanded(
                                                             child: Container(
                                                           margin: EdgeInsets.only(
                                                               top: 0,
-                                                              right:
-                                                                  size.width *
-                                                                      numD04),
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
-                                                                  vertical: size
-                                                                          .width *
-                                                                      numD02),
+                                                              right: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD04),
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD05,
+                                                              vertical: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD02),
                                                           width: size.width,
                                                           decoration:
                                                               BoxDecoration(
                                                                   color: Colors
                                                                       .white,
-                                                                  border: Border
-                                                                      .all(
-                                                                          color:
-                                                                              colorGoogleButtonBorder),
+                                                                  border: Border.all(
+                                                                      color: AppColorTheme
+                                                                          .colorGoogleButtonBorder),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .only(
-                                                                    topRight: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomLeft: Radius.circular(
-                                                                        size.width *
-                                                                            numD04),
-                                                                    bottomRight:
-                                                                        Radius.circular(size.width *
-                                                                            numD04),
+                                                                    topRight: Radius.circular(size
+                                                                            .width *
+                                                                        AppDimensions
+                                                                            .numD04),
+                                                                    bottomLeft: Radius.circular(size
+                                                                            .width *
+                                                                        AppDimensions
+                                                                            .numD04),
+                                                                    bottomRight: Radius.circular(size
+                                                                            .width *
+                                                                        AppDimensions
+                                                                            .numD04),
                                                                   )),
                                                           child: Column(
                                                             crossAxisAlignment:
@@ -412,9 +421,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     .start,
                                                             children: [
                                                               SizedBox(
-                                                                height:
-                                                                    size.width *
-                                                                        numD01,
+                                                                height: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD01,
                                                               ),
                                                               contentPurchased !=
                                                                       "0"
@@ -424,7 +434,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             color:
                                                                                 Colors.white,
                                                                             fontSize:
-                                                                                size.width * numD037,
+                                                                                size.width * AppDimensions.numD037,
                                                                             fontFamily:
                                                                                 "AirbnbCereal",
                                                                             fontWeight:
@@ -436,36 +446,36 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "This is fab. Your content was ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
+                                                                                fontSize: size.width * AppDimensions.numD036,
                                                                                 color: Colors.black,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           int.parse(contentView) < 2
                                                                               ? TextSpan(
                                                                                   text: int.parse(contentView) > 2 ? 'viewed by $contentView publications' : 'viewed by $contentView publication',
-                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD036, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w600),
                                                                                 )
                                                                               : TextSpan(
                                                                                   text: int.parse(contentView) < 10 ? 'viewed by $contentView publications' : 'viewed by $contentView publications',
-                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD036, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w600),
                                                                                 ),
                                                                           TextSpan(
                                                                             text:
                                                                                 " and ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
+                                                                                fontSize: size.width * AppDimensions.numD036,
                                                                                 color: Colors.black,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
                                                                           int.parse(contentPurchased) < 2
                                                                               ? TextSpan(
                                                                                   text: int.parse(contentPurchased) < 2 ? 'purchased by $contentPurchased publication' : 'purchased by $contentPurchased publications',
-                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD036, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w600),
                                                                                 )
                                                                               : TextSpan(
                                                                                   text: int.parse(contentPurchased) < 10 ? 'purchased by $contentPurchased publications' : 'purchased by $contentPurchased publications',
-                                                                                  style: commonTextStyle(size: size, fontSize: size.width * numD036, color: colorThemePink, fontWeight: FontWeight.w600),
+                                                                                  style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD036, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w600),
                                                                                 ),
                                                                         ]))
                                                                   : int.parse(contentView) < 1
@@ -476,7 +486,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "You’re officially a newsmaker!  Your content has been ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
+                                                                                fontSize: size.width * AppDimensions.numD036,
                                                                                 color: Colors.black,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
@@ -485,8 +495,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "successfully published.",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
-                                                                                color: colorThemePink,
+                                                                                fontSize: size.width * AppDimensions.numD036,
+                                                                                color: AppColorTheme.colorThemePink,
                                                                                 fontWeight: FontWeight.w600),
                                                                           ),
                                                                           TextSpan(
@@ -494,7 +504,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "Get ready for ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
+                                                                                fontSize: size.width * AppDimensions.numD036,
                                                                                 color: Colors.black,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
@@ -503,8 +513,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "offers to start rolling in!",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
-                                                                                color: colorThemePink,
+                                                                                fontSize: size.width * AppDimensions.numD036,
+                                                                                color: AppColorTheme.colorThemePink,
                                                                                 fontWeight: FontWeight.w600),
                                                                           ),
                                                                         ]))
@@ -515,7 +525,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "This is fab. Your content was ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
+                                                                                fontSize: size.width * AppDimensions.numD036,
                                                                                 color: Colors.black,
                                                                                 fontWeight: FontWeight.normal),
                                                                           ),
@@ -525,8 +535,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 : 'viewed by $contentView publication',
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
-                                                                                color: colorThemePink,
+                                                                                fontSize: size.width * AppDimensions.numD036,
+                                                                                color: AppColorTheme.colorThemePink,
                                                                                 fontWeight: FontWeight.w600),
                                                                           ),
                                                                         ])),
@@ -534,16 +544,19 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 height: contentPurchased !=
                                                                         "0"
                                                                     ? size.width *
-                                                                        numD05
+                                                                        AppDimensions
+                                                                            .numD05
                                                                     : size.width *
-                                                                        numD01,
+                                                                        AppDimensions
+                                                                            .numD01,
                                                               ),
                                                               contentPurchased !=
                                                                       "0"
                                                                   ? SizedBox(
                                                                       height: size
                                                                               .width *
-                                                                          numD13,
+                                                                          AppDimensions
+                                                                              .numD13,
                                                                       width: size
                                                                           .width,
                                                                       child: commonElevatedButton(
@@ -553,7 +566,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               size),
                                                                           commonButtonStyle(
                                                                               size,
-                                                                              colorThemePink),
+                                                                              AppColorTheme.colorThemePink),
                                                                           () {
                                                                         Navigator.of(context).push(MaterialPageRoute(
                                                                             builder: (context) => MyEarningScreen(
@@ -564,9 +577,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     )
                                                                   : Container(),
                                                               SizedBox(
-                                                                height:
-                                                                    size.height *
-                                                                        numD01,
+                                                                height: size
+                                                                        .height *
+                                                                    AppDimensions
+                                                                        .numD01,
                                                               ),
                                                             ],
                                                           ),
@@ -574,8 +588,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                       ],
                                                     ),
                                                     SizedBox(
-                                                      height:
-                                                          size.width * numD025,
+                                                      height: size.width *
+                                                          AppDimensions.numD025,
                                                     ),
                                                     // widgetDivider()
                                                     chatDividerSpacer()
@@ -583,21 +597,24 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                 ),
 
                                           SizedBox(
-                                            height: size.height * numD01,
+                                            height: size.height *
+                                                AppDimensions.numD01,
                                           ),
 
                                           ListView.separated(
                                               separatorBuilder:
                                                   (context, index) {
                                                 return SizedBox(
-                                                  height: size.height * numD02,
+                                                  height: size.height *
+                                                      AppDimensions.numD02,
                                                 );
                                               },
                                               physics:
                                                   const NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
                                               padding: EdgeInsets.symmetric(
-                                                horizontal: size.width * numD04,
+                                                horizontal: size.width *
+                                                    AppDimensions.numD04,
                                               ),
                                               itemBuilder: (context, index) {
                                                 var item = chatList[index];
@@ -614,13 +631,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 .imageVideoUrl),
                                                         SizedBox(
                                                           height: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                         ),
                                                         thanksToUploadMediaWidget(
                                                             "video"),
                                                         SizedBox(
                                                           height: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                         ),
                                                       ],
                                                     );
@@ -633,13 +652,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 .imageVideoUrl),
                                                         SizedBox(
                                                           height: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                         ),
                                                         thanksToUploadMediaWidget(
                                                             "audio"),
                                                         SizedBox(
                                                           height: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                         ),
                                                       ],
                                                     );
@@ -658,13 +679,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                         ),
                                                         SizedBox(
                                                           height: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                         ),
                                                         thanksToUploadMediaWidget(
                                                             "photo"),
                                                         SizedBox(
                                                           height: size.width *
-                                                              numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                         ),
                                                       ],
                                                     );
@@ -684,8 +707,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                       uploadMediaInfoWidget(
                                                           "request_more_content"),
                                                       SizedBox(
-                                                        height:
-                                                            size.width * numD03,
+                                                        height: size.width *
+                                                            AppDimensions
+                                                                .numD03,
                                                       ),
                                                     ],
                                                   );
@@ -725,12 +749,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                       children: [
                                                         SizedBox(
                                                           height: size.height *
-                                                              numD01,
+                                                              AppDimensions
+                                                                  .numD01,
                                                         ),
                                                         chatDividerSpacer(),
                                                         SizedBox(
                                                           height: size.height *
-                                                              numD01,
+                                                              AppDimensions
+                                                                  .numD01,
                                                         ),
                                                         Stack(
                                                           alignment:
@@ -744,7 +770,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 Container(
                                                                     margin: EdgeInsets.only(
                                                                         left: size.width *
-                                                                            numD04),
+                                                                            AppDimensions
+                                                                                .numD04),
                                                                     decoration: BoxDecoration(
                                                                         color: Colors
                                                                             .black,
@@ -762,23 +789,24 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           Padding(
                                                                         padding:
                                                                             EdgeInsets.all(size.width *
-                                                                                numD01),
+                                                                                AppDimensions.numD01),
                                                                         child: Image
                                                                             .asset(
                                                                           "${commonImagePath}ic_black_rabbit.png",
                                                                           color:
                                                                               Colors.white,
                                                                           width:
-                                                                              size.width * numD07,
+                                                                              size.width * AppDimensions.numD07,
                                                                           height:
-                                                                              size.width * numD07,
+                                                                              size.width * AppDimensions.numD07,
                                                                         ),
                                                                       ),
                                                                     )),
                                                                 SizedBox(
                                                                   width: size
                                                                           .width *
-                                                                      numD025,
+                                                                      AppDimensions
+                                                                          .numD025,
                                                                 ),
                                                                 Expanded(
                                                                     child:
@@ -786,31 +814,32 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   margin: EdgeInsets.only(
                                                                       right: size
                                                                               .width *
-                                                                          numD04),
+                                                                          AppDimensions
+                                                                              .numD04),
                                                                   padding: EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          size.width *
-                                                                              numD04,
-                                                                      vertical:
-                                                                          size.width *
-                                                                              numD02),
+                                                                      horizontal: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD04,
+                                                                      vertical: size
+                                                                              .width *
+                                                                          AppDimensions
+                                                                              .numD02),
                                                                   width: size
                                                                       .width,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                           color: Colors
                                                                               .white,
-                                                                          border: Border.all(
-                                                                              color:
-                                                                                  colorGoogleButtonBorder),
-                                                                          borderRadius:
-                                                                              BorderRadius.only(
+                                                                          border:
+                                                                              Border.all(color: AppColorTheme.colorGoogleButtonBorder),
+                                                                          borderRadius: BorderRadius.only(
                                                                             topRight:
-                                                                                Radius.circular(size.width * numD04),
+                                                                                Radius.circular(size.width * AppDimensions.numD04),
                                                                             bottomLeft:
-                                                                                Radius.circular(size.width * numD04),
+                                                                                Radius.circular(size.width * AppDimensions.numD04),
                                                                             bottomRight:
-                                                                                Radius.circular(size.width * numD04),
+                                                                                Radius.circular(size.width * AppDimensions.numD04),
                                                                           )),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -819,19 +848,19 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     children: [
                                                                       SizedBox(
                                                                         height: size.height *
-                                                                            numD01,
+                                                                            AppDimensions.numD01,
                                                                       ),
                                                                       RichText(
                                                                           text: TextSpan(
                                                                               children: [
                                                                             TextSpan(
                                                                               text: "Rate your experience with PressHop",
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w600),
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD036, color: Colors.black, fontWeight: FontWeight.w600),
                                                                             ),
                                                                           ])),
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD04,
+                                                                            AppDimensions.numD04,
                                                                       ),
                                                                       RatingBar(
                                                                         glowRadius:
@@ -854,7 +883,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         },
                                                                         itemSize:
                                                                             size.width *
-                                                                                numD09,
+                                                                                AppDimensions.numD09,
                                                                         itemCount:
                                                                             5,
                                                                         initialRating:
@@ -862,7 +891,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         allowHalfRating:
                                                                             true,
                                                                         itemPadding:
-                                                                            EdgeInsets.only(left: size.width * numD03),
+                                                                            EdgeInsets.only(left: size.width * AppDimensions.numD03),
                                                                       ),
                                                                       SizedBox(
                                                                         height: size.width *
@@ -879,7 +908,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       ),
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD018,
+                                                                            AppDimensions.numD018,
                                                                       ),
                                                                       Wrap(
                                                                           spacing:
@@ -893,8 +922,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               margin: EdgeInsets.only(left: size.width * 0.012, right: size.width * 0.012),
                                                                               child: ChoiceChip(
                                                                                 label: Text(intList[index]),
-                                                                                labelStyle: TextStyle(color: dataList.contains(intList[index]) ? Colors.white : colorGrey6),
-                                                                                onSelected: (selected) {
+                                                                                labelStyle: TextStyle(color: dataList.contains(intList[index]) ? Colors.white : AppColorTheme.colorGrey6),
+                                                                                onSelected: (bool selected) {
                                                                                   if (selected) {
                                                                                     for (int i = 0; i < intList.length; i++) {
                                                                                       if (intList[i] == intList[index] && !dataList.contains(intList[i])) {
@@ -912,15 +941,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                   }
                                                                                   setState(() {});
                                                                                 },
-                                                                                selectedColor: colorThemePink,
-                                                                                disabledColor: colorGreyChat.withOpacity(.3),
+                                                                                selectedColor: AppColorTheme.colorThemePink,
+                                                                                disabledColor: AppColorTheme.colorGreyChat.withOpacity(.3),
                                                                                 selected: dataList.contains(intList[index]) ? true : false,
                                                                               ),
                                                                             );
                                                                           })),
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD02,
+                                                                            AppDimensions.numD02,
                                                                       ),
                                                                       Stack(
                                                                         children: [
@@ -928,7 +957,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             controller:
                                                                                 ratingReviewController1,
                                                                             cursorColor:
-                                                                                colorTextFieldIcon,
+                                                                                AppColorTheme.colorTextFieldIcon,
                                                                             keyboardType:
                                                                                 TextInputType.multiline,
                                                                             maxLines:
@@ -938,7 +967,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             style:
                                                                                 TextStyle(
                                                                               color: Colors.black,
-                                                                              fontSize: size.width * numD035,
+                                                                              fontSize: size.width * AppDimensions.numD035,
                                                                             ),
                                                                             onChanged:
                                                                                 (v) {
@@ -946,9 +975,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             },
                                                                             decoration:
                                                                                 InputDecoration(
-                                                                              hintText: textData,
-                                                                              contentPadding: EdgeInsets.only(left: size.width * numD08, right: size.width * numD02, top: size.width * numD075),
-                                                                              hintStyle: TextStyle(color: Colors.grey.shade400, wordSpacing: 2, fontSize: size.width * numD035),
+                                                                              hintText: AppStringsNew2.textData,
+                                                                              contentPadding: EdgeInsets.only(left: size.width * AppDimensions.numD08, right: size.width * AppDimensions.numD02, top: size.width * AppDimensions.numD075),
+                                                                              hintStyle: TextStyle(color: Colors.grey.shade400, wordSpacing: 2, fontSize: size.width * AppDimensions.numD035),
                                                                               disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: BorderSide(width: 1, color: Colors.grey.shade300)),
                                                                               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: BorderSide(width: 1, color: Colors.grey.shade300)),
                                                                               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * 0.03), borderSide: const BorderSide(width: 1, color: Colors.black)),
@@ -961,7 +990,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           ),
                                                                           Padding(
                                                                             padding:
-                                                                                EdgeInsets.only(top: size.width * numD038, left: size.width * numD014),
+                                                                                EdgeInsets.only(top: size.width * AppDimensions.numD038, left: size.width * AppDimensions.numD014),
                                                                             child:
                                                                                 Image.asset(
                                                                               "${iconsPath}docs.png",
@@ -974,28 +1003,28 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       ),
                                                                       SizedBox(
                                                                           height:
-                                                                              size.width * numD017),
+                                                                              size.width * AppDimensions.numD017),
                                                                       ratingReviewController1
                                                                               .text
                                                                               .isEmpty
                                                                           ? const Text(
                                                                               "Required",
-                                                                              style: TextStyle(fontSize: 11, color: colorThemePink, fontWeight: FontWeight.w400),
+                                                                              style: TextStyle(fontSize: 11, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w400),
                                                                             )
                                                                           : Container(),
                                                                       SizedBox(
                                                                           height:
-                                                                              size.width * numD04),
+                                                                              size.width * AppDimensions.numD04),
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD13,
+                                                                            AppDimensions.numD13,
                                                                         width: size
                                                                             .width,
                                                                         child: commonElevatedButton(
-                                                                            isRatingGiven ? "Thanks a Ton" : submitText,
+                                                                            isRatingGiven ? "Thanks a Ton" : AppStringsNew2.submitText,
                                                                             size,
-                                                                            isRatingGiven ? TextStyle(color: Colors.black, fontSize: size.width * numD037, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold) : commonButtonTextStyle(size),
-                                                                            commonButtonStyle(size, isRatingGiven ? Colors.grey : colorThemePink),
+                                                                            isRatingGiven ? TextStyle(color: Colors.black, fontSize: size.width * AppDimensions.numD037, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold) : commonButtonTextStyle(size),
+                                                                            commonButtonStyle(size, isRatingGiven ? Colors.grey : AppColorTheme.colorThemePink),
                                                                             !isRatingGiven
                                                                                 ? () {
                                                                                     if (ratingReviewController1.text.isNotEmpty) {
@@ -1029,15 +1058,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               size.width * 0.02),
                                                                       RichText(
                                                                           text: TextSpan(
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: Colors.black, fontWeight: FontWeight.w400),
                                                                               children: [
                                                                             TextSpan(
                                                                               text: "Please refer to our ",
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: Colors.black, fontWeight: FontWeight.w400),
                                                                             ),
                                                                             TextSpan(
                                                                                 text: "Terms & Conditions. ",
-                                                                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w400),
+                                                                                style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w400),
                                                                                 recognizer: TapGestureRecognizer()
                                                                                   ..onTap = () {
                                                                                     Navigator.of(context).push(MaterialPageRoute(
@@ -1047,18 +1076,18 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                   }),
                                                                             TextSpan(
                                                                               text: "The price of your content can be automatically adjusted in order to increase sales. If you have any questions, please ",
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: Colors.black, fontWeight: FontWeight.w400),
                                                                             ),
                                                                             TextSpan(
                                                                                 text: "contact ",
-                                                                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w400),
+                                                                                style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w400),
                                                                                 recognizer: TapGestureRecognizer()
                                                                                   ..onTap = () {
                                                                                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
                                                                                   }),
                                                                             TextSpan(
                                                                               text: "our helpful teams who are available 24x7 to assist you. Thank you",
-                                                                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400),
+                                                                              style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: Colors.black, fontWeight: FontWeight.w400),
                                                                             ),
                                                                           ])),
                                                                       SizedBox(
@@ -1070,7 +1099,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     children: [
                                                                       Expanded(
                                                                               child: SizedBox(
-                                                                                height: size.width * numD13,
+                                                                                height: size.width * AppDimensions.numD13,
                                                                                 width: size.width,
                                                                                 child: ElevatedButton(
                                                                                   onPressed: () {
@@ -1114,7 +1143,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                   : Colors.transparent,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(size.width * numD04),
+                                                  BorderRadius.circular(size.width * AppDimensions.numD04),
                                                   side: (item.requestStatus == "false" ||
                                                       item.requestStatus.isEmpty) &&
                                                       !item.isMakeCounterOffer
@@ -1122,25 +1151,25 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                       : const BorderSide(
                                                       color: Colors.black, width: 1))),
                                                                                   child: Text(
-                                                                                        rejectText,
+                                                                                        AppStringsNew2.rejectText,
                                                                                         style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD037,
+                                                fontSize: size.width * AppDimensions.numD037,
                                                 color: (item.requestStatus == "false" ||
                                                     item.requestStatus.isEmpty) &&
                                                     !item.isMakeCounterOffer
                                                     ? Colors.white
-                                                    : colorLightGreen,
+                                                    : AppColorTheme.colorLightGreen,
                                                 fontWeight: FontWeight.w500),
                                                                                   ),
                                                                                 ),
                                                                               )),
                                                                       SizedBox(
-                                                                        width: size.width * numD04,
+                                                                        width: size.width * AppDimensions.numD04,
                                                                       ),
                                                                       Expanded(
                                                                               child: SizedBox(
-                                                                                height: size.width * numD13,
+                                                                                height: size.width * AppDimensions.numD13,
                                                                                 width: size.width,
                                                                                 child: ElevatedButton(
                                                                                   onPressed: () {
@@ -1175,13 +1204,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                               elevation: 0,
                                               backgroundColor: item.requestStatus.isEmpty &&
                                                   !item.isMakeCounterOffer
-                                                  ? colorThemePink
+                                                  ? AppColorTheme.colorThemePink
                                                   : item.requestStatus == "true"
                                                   ? Colors.grey
                                                   : Colors.transparent,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(size.width * numD04),
+                                                  BorderRadius.circular(size.width * AppDimensions.numD04),
                                                   side: (item.requestStatus == "true" ||
                                                       item.requestStatus.isEmpty) &&
                                                       !item.isMakeCounterOffer
@@ -1189,15 +1218,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                       : const BorderSide(
                                                       color: Colors.black, width: 1))),
                                                                                   child: Text(
-                                                                                        acceptText,
+                                                                                        AppStringsNew2.acceptText,
                                                                                         style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD037,
+                                                fontSize: size.width * AppDimensions.numD037,
                                                 color: (item.requestStatus == "true" ||
                                                     item.requestStatus.isEmpty) &&
                                                     !item.isMakeCounterOffer
                                                     ? Colors.white
-                                                    : colorLightGreen,
+                                                    : AppColorTheme.colorLightGreen,
                                                 fontWeight: FontWeight.w500),
                                                                                   ),
                                                                                 ),
@@ -1206,7 +1235,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       */
                                                                       /* Expanded(
                                                                               child: SizedBox(
-                                                                                height: size.width * numD13,
+                                                                                height: size.width * AppDimensions.numD13,
                                                                                 width: size.width,
                                                                                 child: ElevatedButton(
                                                                                   onPressed: () {
@@ -1232,22 +1261,22 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                   style: ElevatedButton.styleFrom(
                                               backgroundColor:
                                               item.requestStatus.isEmpty
-                                                  ? colorThemePink
+                                                  ? AppColorTheme.colorThemePink
                                                   :item.requestStatus == "true"
                                                   ?  Colors.grey
                                                   :  Colors.transparent,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(
-                                                    size.width * numD04),
+                                                    size.width * AppDimensions.numD04),
                                                   side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                                      color: colorGrey1, width: 2)
+                                                      color: AppColorTheme.colorGrey1, width: 2)
                                               )),
                                                                                   child: Text(
-                                                                                        yesText,
+                                                                                        AppStringsNew2.yesText,
                                                                                         style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD04,
-                                                color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
+                                                fontSize: size.width * AppDimensions.numD04,
+                                                color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : AppColorTheme.colorLightGreen,
                                                 fontWeight: FontWeight.w500),
                                                                                   ),
                                                                                 ),
@@ -1278,9 +1307,11 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
                                                           left: size.width *
-                                                              numD04,
+                                                              AppDimensions
+                                                                  .numD04,
                                                           right: size.width *
-                                                              numD04),
+                                                              AppDimensions
+                                                                  .numD04),
                                                       child: Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -1293,7 +1324,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                             margin: EdgeInsets.only(
                                                                 top: size
                                                                         .width *
-                                                                    numD013),
+                                                                    AppDimensions
+                                                                        .numD013),
                                                             decoration: BoxDecoration(
                                                                 color: Colors
                                                                     .white,
@@ -1309,19 +1341,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 ]),
                                                             child: ClipOval(
                                                               child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .all(size
-                                                                            .width *
-                                                                        numD01),
+                                                                padding: EdgeInsets.all(size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD01),
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
                                                                   width: size
                                                                           .width *
-                                                                      numD075,
+                                                                      AppDimensions
+                                                                          .numD075,
                                                                   height: size
                                                                           .width *
-                                                                      numD075,
+                                                                      AppDimensions
+                                                                          .numD075,
                                                                   fit: BoxFit
                                                                       .contain,
                                                                 ),
@@ -1330,17 +1364,20 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                           ),
                                                           SizedBox(
                                                             width: size.width *
-                                                                numD04,
+                                                                AppDimensions
+                                                                    .numD04,
                                                           ),
                                                           Expanded(
                                                             child: Container(
                                                               padding: EdgeInsets.symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
+                                                                  horizontal: size
+                                                                          .width *
+                                                                      AppDimensions
+                                                                          .numD05,
                                                                   vertical: size
                                                                           .width *
-                                                                      numD02),
+                                                                      AppDimensions
+                                                                          .numD02),
                                                               width: size.width,
                                                               decoration:
                                                                   BoxDecoration(
@@ -1355,13 +1392,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               .only(
                                                                         topRight:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                         bottomLeft:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                         bottomRight:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                       )),
                                                               child: Column(
                                                                 crossAxisAlignment:
@@ -1371,7 +1408,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD01,
+                                                                        AppDimensions
+                                                                            .numD01,
                                                                   ),
                                                                   RichText(
                                                                       text: TextSpan(
@@ -1387,7 +1425,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "Congratulations, ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
@@ -1397,8 +1435,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               .mediaHouseName,
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
-                                                                              color: colorThemePink,
+                                                                              fontSize: size.width * AppDimensions.numD036,
+                                                                              color: AppColorTheme.colorThemePink,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
                                                                         TextSpan(
@@ -1406,7 +1444,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               " has purchased your content for ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
@@ -1415,15 +1453,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
-                                                                              color: colorThemePink,
+                                                                              fontSize: size.width * AppDimensions.numD036,
+                                                                              color: AppColorTheme.colorThemePink,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
                                                                       ])),
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD03,
+                                                                        AppDimensions
+                                                                            .numD03,
                                                                   ),
                                                                   Column(
                                                                     crossAxisAlignment:
@@ -1432,7 +1471,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     children: [
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD13,
+                                                                            AppDimensions.numD13,
                                                                         width: size
                                                                             .width,
                                                                         child: commonElevatedButton(
@@ -1441,7 +1480,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             commonButtonTextStyle(
                                                                                 size),
                                                                             commonButtonStyle(size,
-                                                                                colorThemePink),
+                                                                                AppColorTheme.colorThemePink),
                                                                             () {
                                                                           callDetailApi(widget
                                                                               .taskDetail!
@@ -1450,7 +1489,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       ),
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD01,
+                                                                            AppDimensions.numD01,
                                                                       ),
                                                                     ],
                                                                   )
@@ -1465,7 +1504,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                               : Container(),
 
                                           SizedBox(
-                                            height: size.width * numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
                                           ),
                                           widget.type == "task_content"
                                               ? (widget.taskDetail!
@@ -1474,9 +1514,11 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
                                                           left: size.width *
-                                                              numD04,
+                                                              AppDimensions
+                                                                  .numD04,
                                                           right: size.width *
-                                                              numD04),
+                                                              AppDimensions
+                                                                  .numD04),
                                                       child: Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -1489,7 +1531,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                             margin: EdgeInsets.only(
                                                                 top: size
                                                                         .width *
-                                                                    numD013),
+                                                                    AppDimensions
+                                                                        .numD013),
                                                             decoration: BoxDecoration(
                                                                 color: Colors
                                                                     .white,
@@ -1505,19 +1548,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                 ]),
                                                             child: ClipOval(
                                                               child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .all(size
-                                                                            .width *
-                                                                        numD01),
+                                                                padding: EdgeInsets.all(size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD01),
                                                                 child:
                                                                     Image.asset(
                                                                   "${commonImagePath}ic_black_rabbit.png",
                                                                   width: size
                                                                           .width *
-                                                                      numD075,
+                                                                      AppDimensions
+                                                                          .numD075,
                                                                   height: size
                                                                           .width *
-                                                                      numD075,
+                                                                      AppDimensions
+                                                                          .numD075,
                                                                   fit: BoxFit
                                                                       .contain,
                                                                 ),
@@ -1526,37 +1571,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                           ),
                                                           SizedBox(
                                                             width: size.width *
-                                                                numD04,
+                                                                AppDimensions
+                                                                    .numD04,
                                                           ),
                                                           Expanded(
                                                             child: Container(
                                                               padding: EdgeInsets.symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
+                                                                  horizontal: size
+                                                                          .width *
+                                                                      AppDimensions
+                                                                          .numD05,
                                                                   vertical: size
                                                                           .width *
-                                                                      numD02),
+                                                                      AppDimensions
+                                                                          .numD02),
                                                               width: size.width,
                                                               decoration:
                                                                   BoxDecoration(
                                                                       color: Colors
                                                                           .white,
                                                                       border: Border.all(
-                                                                          color:
-                                                                              colorGoogleButtonBorder),
+                                                                          color: AppColorTheme
+                                                                              .colorGoogleButtonBorder),
                                                                       borderRadius:
                                                                           BorderRadius
                                                                               .only(
                                                                         topRight:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                         bottomLeft:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                         bottomRight:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                       )),
                                                               child: Column(
                                                                 crossAxisAlignment:
@@ -1566,7 +1614,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD01,
+                                                                        AppDimensions
+                                                                            .numD01,
                                                                   ),
                                                                   RichText(
                                                                       text: TextSpan(
@@ -1574,7 +1623,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             color:
                                                                                 Colors.white,
                                                                             fontSize:
-                                                                                size.width * numD037,
+                                                                                size.width * AppDimensions.numD037,
                                                                             fontFamily:
                                                                                 "AirbnbCereal",
                                                                             fontWeight:
@@ -1586,7 +1635,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "Woohoo! We have paid ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
@@ -1595,8 +1644,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "$currencySymbol${formatDouble(double.parse(widget.taskDetail!.interviewPrice))}",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
-                                                                              color: colorThemePink,
+                                                                              fontSize: size.width * AppDimensions.numD036,
+                                                                              color: AppColorTheme.colorThemePink,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
                                                                         TextSpan(
@@ -1604,7 +1653,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               " into your bank account. Please visit ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.normal),
                                                                         ),
@@ -1613,8 +1662,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "My Earnings",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
-                                                                              color: colorThemePink,
+                                                                              fontSize: size.width * AppDimensions.numD036,
+                                                                              color: AppColorTheme.colorThemePink,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
                                                                         TextSpan(
@@ -1622,7 +1671,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               " to view your transaction ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.normal),
                                                                         )
@@ -1630,13 +1679,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD025,
+                                                                        AppDimensions
+                                                                            .numD025,
                                                                   ),
                                                                   /*Row(
                             children: [
                               Expanded(
                                     child: SizedBox(
-                                      height: size.width * numD13,
+                                      height: size.width * AppDimensions.numD13,
                                       width: size.width,
                                       child: ElevatedButton(
                                         onPressed: () {
@@ -1680,7 +1730,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                 : Colors.transparent,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                BorderRadius.circular(size.width * numD04),
+                                                BorderRadius.circular(size.width * AppDimensions.numD04),
                                                 side: (item.requestStatus == "false" ||
                                                     item.requestStatus.isEmpty) &&
                                                     !item.isMakeCounterOffer
@@ -1688,25 +1738,25 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                     : const BorderSide(
                                                     color: Colors.black, width: 1))),
                                         child: Text(
-                                          rejectText,
+                                          AppStringsNew2.rejectText,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD037,
+                                              fontSize: size.width * AppDimensions.numD037,
                                               color: (item.requestStatus == "false" ||
                                                   item.requestStatus.isEmpty) &&
                                                   !item.isMakeCounterOffer
                                                   ? Colors.white
-                                                  : colorLightGreen,
+                                                  : AppColorTheme.colorLightGreen,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     )),
                               SizedBox(
-                                width: size.width * numD04,
+                                width: size.width * AppDimensions.numD04,
                               ),
                               Expanded(
                                     child: SizedBox(
-                                      height: size.width * numD13,
+                                      height: size.width * AppDimensions.numD13,
                                       width: size.width,
                                       child: ElevatedButton(
                                         onPressed: () {
@@ -1741,13 +1791,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                             elevation: 0,
                                             backgroundColor: item.requestStatus.isEmpty &&
                                                 !item.isMakeCounterOffer
-                                                ? colorThemePink
+                                                ? AppColorTheme.colorThemePink
                                                 : item.requestStatus == "true"
                                                 ? Colors.grey
                                                 : Colors.transparent,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                BorderRadius.circular(size.width * numD04),
+                                                BorderRadius.circular(size.width * AppDimensions.numD04),
                                                 side: (item.requestStatus == "true" ||
                                                     item.requestStatus.isEmpty) &&
                                                     !item.isMakeCounterOffer
@@ -1755,15 +1805,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                     : const BorderSide(
                                                     color: Colors.black, width: 1))),
                                         child: Text(
-                                          acceptText,
+                                          AppStringsNew2.acceptText,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD037,
+                                              fontSize: size.width * AppDimensions.numD037,
                                               color: (item.requestStatus == "true" ||
                                                   item.requestStatus.isEmpty) &&
                                                   !item.isMakeCounterOffer
                                                   ? Colors.white
-                                                  : colorLightGreen,
+                                                  : AppColorTheme.colorLightGreen,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
@@ -1772,7 +1822,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               */
                                                                   /* Expanded(
                                     child: SizedBox(
-                                      height: size.width * numD13,
+                                      height: size.width * AppDimensions.numD13,
                                       width: size.width,
                                       child: ElevatedButton(
                                         onPressed: () {
@@ -1798,22 +1848,22 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:
                                             item.requestStatus.isEmpty
-                                                ? colorThemePink
+                                                ? AppColorTheme.colorThemePink
                                                 :item.requestStatus == "true"
                                                 ?  Colors.grey
                                                 :  Colors.transparent,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(
-                                                  size.width * numD04),
+                                                  size.width * AppDimensions.numD04),
                                                 side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                                    color: colorGrey1, width: 2)
+                                                    color: AppColorTheme.colorGrey1, width: 2)
                                             )),
                                         child: Text(
-                                          yesText,
+                                          AppStringsNew2.yesText,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD04,
-                                              color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
+                                              fontSize: size.width * AppDimensions.numD04,
+                                              color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : AppColorTheme.colorLightGreen,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
@@ -1823,7 +1873,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD03,
+                                                                        AppDimensions
+                                                                            .numD03,
                                                                   ),
                                                                   Column(
                                                                     crossAxisAlignment:
@@ -1832,7 +1883,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     children: [
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD13,
+                                                                            AppDimensions.numD13,
                                                                         width: size
                                                                             .width,
                                                                         child: commonElevatedButton(
@@ -1841,7 +1892,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             commonButtonTextStyle(
                                                                                 size),
                                                                             commonButtonStyle(size,
-                                                                                colorThemePink),
+                                                                                AppColorTheme.colorThemePink),
                                                                             () {
                                                                           Navigator.of(context).push(MaterialPageRoute(
                                                                               builder: (context) => MyEarningScreen(
@@ -1852,7 +1903,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       ),
                                                                       SizedBox(
                                                                         height: size.width *
-                                                                            numD01,
+                                                                            AppDimensions.numD01,
                                                                       ),
                                                                     ],
                                                                   )
@@ -1866,7 +1917,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                   : Container())
                                               : Container(),
                                           SizedBox(
-                                            height: size.width * numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
                                           ),
 
                                           widget.type == "task_content"
@@ -1886,7 +1938,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                               margin: EdgeInsets.only(
                                                                   left: size
                                                                           .width *
-                                                                      numD04),
+                                                                      AppDimensions
+                                                                          .numD04),
                                                               decoration: BoxDecoration(
                                                                   color: Colors
                                                                       .white,
@@ -1902,19 +1955,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   ]),
                                                               child: ClipOval(
                                                                 child: Padding(
-                                                                  padding: EdgeInsets
-                                                                      .all(size
-                                                                              .width *
-                                                                          numD01),
+                                                                  padding: EdgeInsets.all(size
+                                                                          .width *
+                                                                      AppDimensions
+                                                                          .numD01),
                                                                   child: Image
                                                                       .asset(
                                                                     "${commonImagePath}ic_black_rabbit.png",
                                                                     width: size
                                                                             .width *
-                                                                        numD075,
+                                                                        AppDimensions
+                                                                            .numD075,
                                                                     height: size
                                                                             .width *
-                                                                        numD075,
+                                                                        AppDimensions
+                                                                            .numD075,
                                                                     fit: BoxFit
                                                                         .contain,
                                                                   ),
@@ -1922,9 +1977,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                               ),
                                                             ),
                                                             SizedBox(
-                                                              width:
-                                                                  size.width *
-                                                                      numD04,
+                                                              width: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD04,
                                                             ),
                                                             Expanded(
                                                                 child:
@@ -1932,17 +1988,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                               margin: EdgeInsets.only(
                                                                   right: size
                                                                           .width *
-                                                                      numD04,
+                                                                      AppDimensions
+                                                                          .numD04,
                                                                   bottom: size
                                                                           .width *
-                                                                      numD06),
+                                                                      AppDimensions
+                                                                          .numD06),
                                                               padding: EdgeInsets.symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          numD05,
+                                                                  horizontal: size
+                                                                          .width *
+                                                                      AppDimensions
+                                                                          .numD05,
                                                                   vertical: size
                                                                           .width *
-                                                                      numD02),
+                                                                      AppDimensions
+                                                                          .numD02),
                                                               width: size.width,
                                                               decoration:
                                                                   BoxDecoration(
@@ -1957,13 +2017,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               .only(
                                                                         topRight:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                         bottomLeft:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                         bottomRight:
                                                                             Radius.circular(size.width *
-                                                                                numD04),
+                                                                                AppDimensions.numD04),
                                                                       )),
                                                               child: Column(
                                                                 crossAxisAlignment:
@@ -1973,7 +2033,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD04,
+                                                                        AppDimensions
+                                                                            .numD04,
                                                                   ),
                                                                   RichText(
                                                                       text: TextSpan(
@@ -1987,7 +2048,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "Rate your experience with PressHop",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD035,
+                                                                              fontSize: size.width * AppDimensions.numD035,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.w600),
                                                                         ),
@@ -1995,7 +2056,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD04,
+                                                                        AppDimensions
+                                                                            .numD04,
                                                                   ),
                                                                   RatingBar(
                                                                     glowRadius:
@@ -2021,7 +2083,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     },
                                                                     itemSize: size
                                                                             .width *
-                                                                        numD09,
+                                                                        AppDimensions
+                                                                            .numD09,
                                                                     itemCount:
                                                                         5,
                                                                     initialRating:
@@ -2031,7 +2094,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                     itemPadding:
                                                                         EdgeInsets.only(
                                                                             left:
-                                                                                size.width * numD03),
+                                                                                size.width * AppDimensions.numD03),
                                                                   ),
                                                                   SizedBox(
                                                                     height: size
@@ -2041,9 +2104,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   Text(
                                                                     "Tell us what you liked about the App",
                                                                     style: TextStyle(
-                                                                        fontSize:
-                                                                            size.width *
-                                                                                numD035,
+                                                                        fontSize: size.width *
+                                                                            AppDimensions
+                                                                                .numD035,
                                                                         color: Colors
                                                                             .black,
                                                                         fontFamily:
@@ -2054,7 +2117,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD018,
+                                                                        AppDimensions
+                                                                            .numD018,
                                                                   ),
                                                                   Wrap(
                                                                       children: List<
@@ -2075,9 +2139,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         labelStyle: TextStyle(
                                                                             color: dataList.contains(intList[index])
                                                                                 ? Colors.white
-                                                                                : colorGrey6,
+                                                                                : AppColorTheme.colorGrey6,
                                                                             fontFamily: "AirbnbCereal",
-                                                                            fontSize: size.width * numD035),
+                                                                            fontSize: size.width * AppDimensions.numD035),
                                                                         onSelected:
                                                                             (selected) {
                                                                           if (selected) {
@@ -2103,9 +2167,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               () {});
                                                                         },
                                                                         selectedColor:
-                                                                            colorThemePink,
-                                                                        disabledColor:
-                                                                            colorGreyChat.withOpacity(.3),
+                                                                            AppColorTheme.colorThemePink,
+                                                                        disabledColor: AppColorTheme
+                                                                            .colorGreyChat
+                                                                            .withOpacity(.3),
                                                                         selected: dataList.contains(intList[index])
                                                                             ? true
                                                                             : false,
@@ -2115,7 +2180,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD02,
+                                                                        AppDimensions
+                                                                            .numD02,
                                                                   ),
                                                                   Stack(
                                                                     children: [
@@ -2123,7 +2189,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         controller:
                                                                             ratingReviewController1,
                                                                         cursorColor:
-                                                                            colorTextFieldIcon,
+                                                                            AppColorTheme.colorTextFieldIcon,
                                                                         keyboardType:
                                                                             TextInputType.multiline,
                                                                         maxLines:
@@ -2135,7 +2201,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           color:
                                                                               Colors.black,
                                                                           fontSize:
-                                                                              size.width * numD035,
+                                                                              size.width * AppDimensions.numD035,
                                                                         ),
                                                                         onChanged:
                                                                             (v) {
@@ -2144,15 +2210,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                         decoration:
                                                                             InputDecoration(
                                                                           hintText:
-                                                                              textData,
+                                                                              AppStringsNew2.textData,
                                                                           contentPadding: EdgeInsets.only(
-                                                                              left: size.width * numD08,
-                                                                              right: size.width * numD02,
-                                                                              top: size.width * numD075),
+                                                                              left: size.width * AppDimensions.numD08,
+                                                                              right: size.width * AppDimensions.numD02,
+                                                                              top: size.width * AppDimensions.numD075),
                                                                           hintStyle: TextStyle(
                                                                               color: Colors.grey.shade400,
                                                                               wordSpacing: 2,
-                                                                              fontSize: size.width * numD035),
+                                                                              fontSize: size.width * AppDimensions.numD035),
                                                                           disabledBorder: OutlineInputBorder(
                                                                               borderRadius: BorderRadius.circular(size.width * 0.03),
                                                                               borderSide: BorderSide(width: 1, color: Colors.grey.shade300)),
@@ -2176,10 +2242,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                       ),
                                                                       Padding(
                                                                         padding: EdgeInsets.only(
-                                                                            top: size.width *
-                                                                                numD038,
-                                                                            left:
-                                                                                size.width * numD014),
+                                                                            top:
+                                                                                size.width * AppDimensions.numD038,
+                                                                            left: size.width * AppDimensions.numD014),
                                                                         child: Image
                                                                             .asset(
                                                                           "${iconsPath}docs.png",
@@ -2197,7 +2262,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   SizedBox(
                                                                       height: size
                                                                               .width *
-                                                                          numD017),
+                                                                          AppDimensions
+                                                                              .numD017),
                                                                   ratingReviewController1
                                                                           .text
                                                                           .isEmpty
@@ -2205,25 +2271,27 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           "Required",
                                                                           style: TextStyle(
                                                                               fontSize: 11,
-                                                                              color: colorThemePink,
+                                                                              color: AppColorTheme.colorThemePink,
                                                                               fontWeight: FontWeight.w400),
                                                                         )
                                                                       : Container(),
                                                                   SizedBox(
                                                                       height: size
                                                                               .width *
-                                                                          numD04),
+                                                                          AppDimensions
+                                                                              .numD04),
                                                                   SizedBox(
                                                                     height: size
                                                                             .width *
-                                                                        numD13,
+                                                                        AppDimensions
+                                                                            .numD13,
                                                                     width: size
                                                                         .width,
                                                                     child: commonElevatedButton(
-                                                                        isRatingGiven ? "Thanks a Ton" : submitText,
+                                                                        isRatingGiven ? "Thanks a Ton" : AppStringsNew2.submitText,
                                                                         size,
-                                                                        isRatingGiven ? TextStyle(color: Colors.black, fontSize: size.width * numD037, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold) : commonButtonTextStyle(size),
-                                                                        commonButtonStyle(size, isRatingGiven ? Colors.grey : colorThemePink),
+                                                                        isRatingGiven ? TextStyle(color: Colors.black, fontSize: size.width * AppDimensions.numD037, fontFamily: "AirbnbCereal", fontWeight: FontWeight.bold) : commonButtonTextStyle(size),
+                                                                        commonButtonStyle(size, isRatingGiven ? Colors.grey : AppColorTheme.colorThemePink),
                                                                         !isRatingGiven
                                                                             ? () {
                                                                                 if (ratingReviewController1.text.isNotEmpty) {
@@ -2264,7 +2332,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "Please refer to our ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               lineHeight: 1.2,
                                                                               fontWeight: FontWeight.w400),
@@ -2274,8 +2342,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "Terms & Conditions. ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
-                                                                                color: colorThemePink,
+                                                                                fontSize: size.width * AppDimensions.numD036,
+                                                                                color: AppColorTheme.colorThemePink,
                                                                                 lineHeight: 2,
                                                                                 fontWeight: FontWeight.w600),
                                                                             recognizer: TapGestureRecognizer()
@@ -2290,7 +2358,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "If you have any questions, please ",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
@@ -2299,8 +2367,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 "contact ",
                                                                             style: commonTextStyle(
                                                                                 size: size,
-                                                                                fontSize: size.width * numD036,
-                                                                                color: colorThemePink,
+                                                                                fontSize: size.width * AppDimensions.numD036,
+                                                                                color: AppColorTheme.colorThemePink,
                                                                                 fontWeight: FontWeight.w600),
                                                                             recognizer: TapGestureRecognizer()
                                                                               ..onTap = () {
@@ -2311,7 +2379,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               "our helpful teams who are available 24x7 to assist you. Thank you",
                                                                           style: commonTextStyle(
                                                                               size: size,
-                                                                              fontSize: size.width * numD036,
+                                                                              fontSize: size.width * AppDimensions.numD036,
                                                                               color: Colors.black,
                                                                               lineHeight: 1.4,
                                                                               fontWeight: FontWeight.w400),
@@ -2341,7 +2409,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                               ? Container()
                                               : Padding(
                                                   padding: EdgeInsets.all(
-                                                      size.width * numD03),
+                                                      size.width *
+                                                          AppDimensions.numD03),
                                                   child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -2349,32 +2418,35 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                     children: [
                                                       profilePicWidget(),
                                                       SizedBox(
-                                                        width:
-                                                            size.width * numD04,
+                                                        width: size.width *
+                                                            AppDimensions
+                                                                .numD04,
                                                       ),
                                                       Expanded(
                                                           child: Container(
                                                         padding: EdgeInsets.all(
                                                             size.width *
-                                                                numD02),
+                                                                AppDimensions
+                                                                    .numD02),
                                                         width: size.width,
                                                         decoration: BoxDecoration(
-                                                            color:
-                                                                colorLightGrey,
+                                                            color: AppColorTheme
+                                                                .colorLightGrey,
                                                             border: Border.all(
                                                                 color: Colors
                                                                     .black),
                                                             borderRadius: BorderRadius.only(
-                                                                topRight: Radius.circular(
-                                                                    size.width *
-                                                                        numD04),
+                                                                topRight: Radius.circular(size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD04),
                                                                 bottomLeft: Radius.circular(
                                                                     size.width *
-                                                                        numD04),
+                                                                        AppDimensions
+                                                                            .numD04),
                                                                 bottomRight:
                                                                     Radius.circular(
-                                                                        size.width *
-                                                                            numD04))),
+                                                                        size.width * AppDimensions.numD04))),
                                                         child: Column(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -2384,9 +2456,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   .start,
                                                           children: [
                                                             SizedBox(
-                                                              height:
-                                                                  size.width *
-                                                                      numD04,
+                                                              height: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD04,
                                                             ),
                                                             Text(
                                                               showRejectBtn
@@ -2396,7 +2469,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                   size: size,
                                                                   fontSize: size
                                                                           .width *
-                                                                      numD035,
+                                                                      AppDimensions
+                                                                          .numD035,
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
@@ -2404,9 +2478,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                           .normal),
                                                             ),
                                                             SizedBox(
-                                                              height:
-                                                                  size.width *
-                                                                      numD04,
+                                                              height: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD04,
                                                             ),
                                                           ],
                                                         ),
@@ -2417,13 +2492,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                           widgetDivider(),
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                bottom: size.height * numD01),
+                                                bottom: size.height *
+                                                    AppDimensions.numD01),
                                             child: Text(
                                               "Please refresh to view more offers.",
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize:
-                                                      size.width * numD035,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
                                                   color: Colors.black,
                                                   lineHeight: 1.2,
                                                   fontWeight: FontWeight.w400),
@@ -2441,11 +2517,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                       Expanded(
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD04,
-                                              vertical: size.width * numD02),
-                                          height: size.width * numD18,
+                                              horizontal: size.width *
+                                                  AppDimensions.numD04,
+                                              vertical: size.width *
+                                                  AppDimensions.numD02),
+                                          height:
+                                              size.width * AppDimensions.numD18,
                                           child: commonElevatedButton(
-                                              galleryText,
+                                              AppStringsNew2.galleryText,
                                               size,
                                               commonButtonTextStyle(size),
                                               commonButtonStyle(
@@ -2457,16 +2536,20 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                       Expanded(
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * numD04,
-                                              vertical: size.width * numD02),
+                                              horizontal: size.width *
+                                                  AppDimensions.numD04,
+                                              vertical: size.width *
+                                                  AppDimensions.numD02),
                                           margin: EdgeInsets.only(bottom: 8),
-                                          height: size.width * numD18,
+                                          height:
+                                              size.width * AppDimensions.numD18,
                                           child: commonElevatedButton(
-                                              cameraText,
+                                              AppStringsNew2.cameraText,
                                               size,
                                               commonButtonTextStyle(size),
-                                              commonButtonStyle(
-                                                  size, colorThemePink), () {
+                                              commonButtonStyle(size,
+                                                  AppColorTheme.colorThemePink),
+                                              () {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -2526,19 +2609,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         showMediaWidget(),
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD04,
-              vertical:
-                  widget.myContentData!.exclusive ? size.width * numD02 : 0),
+              horizontal: size.width * AppDimensions.numD04,
+              vertical: widget.myContentData!.exclusive
+                  ? size.width * AppDimensions.numD02
+                  : 0),
           child: headerWidget(),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+          padding: EdgeInsets.symmetric(
+              horizontal: size.width * AppDimensions.numD04),
           child: const Divider(
-            color: colorGrey1,
+            color: AppColorTheme.colorGrey1,
           ),
         ),
         SizedBox(
-          height: size.height * numD015,
+          height: size.height * AppDimensions.numD015,
         )
       ],
     );
@@ -2561,15 +2646,17 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               )
             : Container(),
         SizedBox(
-          height: size.width * numD03,
+          height: size.width * AppDimensions.numD03,
         ),
         Row(
           children: [
             Text(
-              widget.myContentData!.exclusive ? "" : multipleText.toUpperCase(),
+              widget.myContentData!.exclusive
+                  ? ""
+                  : AppStringsNew2.multipleText.toUpperCase(),
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD033,
+                  fontSize: size.width * AppDimensions.numD033,
                   color: Colors.black,
                   fontWeight: FontWeight.w400),
             ),
@@ -2580,16 +2667,18 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   widget.myContentData!.exclusive
                       ? "${iconsPath}ic_exclusive.png"
                       : "${iconsPath}ic_share.png",
-                  height: size.width * numD035,
+                  height: size.width * AppDimensions.numD035,
                 ),
                 SizedBox(
-                  width: size.width * numD02,
+                  width: size.width * AppDimensions.numD02,
                 ),
                 Text(
-                  widget.myContentData!.exclusive ? exclusiveText : sharedText,
+                  widget.myContentData!.exclusive
+                      ? AppStringsNew2.exclusiveText
+                      : AppStringsNew2.sharedText,
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD035,
+                      fontSize: size.width * AppDimensions.numD035,
                       color: Colors.black,
                       fontWeight: FontWeight.normal),
                 ),
@@ -2598,7 +2687,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD04,
+          height: size.width * AppDimensions.numD04,
         ),
 
         /// Title
@@ -2610,7 +2699,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD005,
+                    height: size.width * AppDimensions.numD005,
                   ),
                   Text(
                     widget.myContentData!.title,
@@ -2618,13 +2707,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     overflow: TextOverflow.ellipsis,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD04,
+                        fontSize: size.width * AppDimensions.numD04,
                         color: Colors.black,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w700),
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// Offers
@@ -2640,27 +2729,27 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                           ?.purchasedMediahouseCount ==
                                       0
                                   ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD042),
-                          SizedBox(width: size.width * numD018),
+                                  : AppColorTheme.colorThemePink,
+                              size: size.width * AppDimensions.numD042),
+                          SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData?.purchasedMediahouseCount} $sold',
+                            '${widget.myContentData?.purchasedMediahouseCount} ${AppStringsNew2.sold}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
+                                fontSize: size.width * AppDimensions.numD029,
                                 color: widget.myContentData
                                             ?.purchasedMediahouseCount ==
                                         0
                                     ? Colors.grey
-                                    : colorThemePink,
+                                    : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
                       SizedBox(
                           width: widget.myContentData!.offerCount >= 0
-                              ? size.width * numD04
-                              : size.width * numD02),
+                              ? size.width * AppDimensions.numD04
+                              : size.width * AppDimensions.numD02),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
@@ -2668,25 +2757,25 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
                               color: widget.myContentData?.offerCount == 0
                                   ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD042),
-                          SizedBox(width: size.width * numD018),
+                                  : AppColorTheme.colorThemePink,
+                              size: size.width * AppDimensions.numD042),
+                          SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData?.offerCount} ${widget.myContentData!.offerCount > 1 ? '${offerText}s' : offerText}',
+                            '${widget.myContentData?.offerCount} ${widget.myContentData!.offerCount > 1 ? '${AppStringsNew2.offerText}s' : AppStringsNew2.offerText}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
+                                fontSize: size.width * AppDimensions.numD029,
                                 color: widget.myContentData?.offerCount == 0
                                     ? Colors.grey
-                                    : colorThemePink,
+                                    : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
                       SizedBox(
                           width: widget.myContentData!.offerCount >= 0
-                              ? size.width * numD04
-                              : size.width * numD02),
+                              ? size.width * AppDimensions.numD04
+                              : size.width * AppDimensions.numD02),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
@@ -2694,21 +2783,21 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
                               color: widget.myContentData!.contentView == 0
                                   ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD05),
-                          SizedBox(width: size.width * numD018),
+                                  : AppColorTheme.colorThemePink,
+                              size: size.width * AppDimensions.numD05),
+                          SizedBox(width: size.width * AppDimensions.numD018),
                           Text(
-                            '${widget.myContentData!.contentView.toString()} ${widget.myContentData!.contentView > 1 ? '${viewsText}s' : viewsText}',
+                            '${widget.myContentData!.contentView.toString()} ${widget.myContentData!.contentView > 1 ? '${AppStringsNew2.viewsText}s' : AppStringsNew2.viewsText}',
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD029,
+                                fontSize: size.width * AppDimensions.numD029,
                                 color: (widget.myContentData!.paidStatus ==
-                                                paidText &&
+                                                AppStringsNew2.paidText &&
                                             widget.myContentData!.contentView ==
                                                 1) ||
                                         widget.myContentData!.contentView == 0
                                     ? Colors.grey
-                                    : colorThemePink,
+                                    : AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
@@ -2716,7 +2805,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// Time Date
@@ -2724,45 +2813,45 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     children: [
                       Image.asset(
                         "${iconsPath}ic_clock.png",
-                        height: size.width * numD04,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD04,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD018,
+                        width: size.width * AppDimensions.numD018,
                       ),
                       Text(
                         DateFormat('hh:mm a').format(
                             DateTime.parse(widget.myContentData!.dateTime)),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
+                            fontSize: size.width * AppDimensions.numD028,
+                            color: AppColorTheme.colorHint,
                             fontWeight: FontWeight.normal),
                       ),
                       SizedBox(
-                        width: size.width * numD012,
+                        width: size.width * AppDimensions.numD012,
                       ),
                       Image.asset(
                         "${iconsPath}ic_yearly_calendar.png",
-                        height: size.width * numD04,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD04,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       Text(
                         DateFormat("dd MMM yyyy").format(
                             DateTime.parse(widget.myContentData!.dateTime)),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
+                            fontSize: size.width * AppDimensions.numD028,
+                            color: AppColorTheme.colorHint,
                             fontWeight: FontWeight.normal),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// Location
@@ -2770,11 +2859,11 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     children: [
                       Image.asset(
                         "${iconsPath}ic_location.png",
-                        height: size.width * numD045,
-                        color: colorTextFieldIcon,
+                        height: size.width * AppDimensions.numD045,
+                        color: AppColorTheme.colorTextFieldIcon,
                       ),
                       SizedBox(
-                        width: size.width * numD01,
+                        width: size.width * AppDimensions.numD01,
                       ),
                       Expanded(
                         child: Text(
@@ -2782,8 +2871,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           overflow: TextOverflow.ellipsis,
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
+                              fontSize: size.width * AppDimensions.numD028,
+                              color: AppColorTheme.colorHint,
                               fontWeight: FontWeight.normal),
                         ),
                       )
@@ -2793,67 +2882,72 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               ),
             ),
             SizedBox(
-              width: size.width * numD07,
+              width: size.width * AppDimensions.numD07,
             ),
 
             /// price
             Column(
               children: [
                 Container(
-                  width: size.width * numD30,
-                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  width: size.width * AppDimensions.numD30,
+                  padding: EdgeInsets.symmetric(
+                      vertical: size.width * AppDimensions.numD012),
                   /*    padding: EdgeInsets.symmetric(
-                      horizontal: myContentData!.paidStatus == unPaidText
-                          ? size.width * numD06
-                          : myContentData!.paidStatus == paidText &&
+                      horizontal: myContentData!.paidStatus == AppStringsNew2.unPaidText
+                          ? size.width * AppDimensions.numD06
+                          : myContentData!.paidStatus == AppStringsNew2.paidText &&
                                   !myContentData!.isPaidStatusToHopper
-                              ? size.width * numD04
-                              : size.width * numD06,
-                      vertical: size.width * numD01),*/
+                              ? size.width * AppDimensions.numD04
+                              : size.width * AppDimensions.numD06,
+                      vertical: size.width * AppDimensions.numD01),*/
                   decoration: BoxDecoration(
-                      color: widget.myContentData!.paidStatus == unPaidText
-                          ? colorThemePink
-                          : /*myContentData!.paidStatus == paidText &&
+                      color: widget.myContentData!.paidStatus ==
+                              AppStringsNew2.unPaidText
+                          ? AppColorTheme.colorThemePink
+                          : /*myContentData!.paidStatus == AppStringsNew2.paidText &&
                                   !myContentData!.isPaidStatusToHopper
-                              ? colorThemePink
+                              ? AppColorTheme.colorThemePink
                               :*/
-                          colorLightGrey,
-                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                          AppColorTheme.colorLightGrey,
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD03)),
                   child: Column(
                     children: [
                       Text(
-                        widget.myContentData!.paidStatus == unPaidText
+                        widget.myContentData!.paidStatus ==
+                                AppStringsNew2.unPaidText
                             ? 'Published Price'
-                            : widget.myContentData!.paidStatus == paidText &&
+                            : widget.myContentData!.paidStatus ==
+                                        AppStringsNew2.paidText &&
                                     widget.myContentData!.isPaidStatusToHopper
-                                ? receivedText
-                                : soldText,
+                                ? AppStringsNew2.receivedText
+                                : AppStringsNew2.soldText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
-                            color:
-                                widget.myContentData!.paidStatus == unPaidText
-                                    ? Colors.white
-                                    : Colors.black,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: widget.myContentData!.paidStatus ==
+                                    AppStringsNew2.unPaidText
+                                ? Colors.white
+                                : Colors.black,
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
                         child: Container(
                           margin: EdgeInsets.only(
-                            left: size.width * numD02,
-                            right: size.width * numD02,
+                            left: size.width * AppDimensions.numD02,
+                            right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
                             "$currencySymbol${formatDouble(double.parse(widget.myContentData!.amount))}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD05,
+                                fontSize: size.width * AppDimensions.numD05,
                                 color: widget.myContentData!.paidStatus ==
-                                        unPaidText
+                                        AppStringsNew2.unPaidText
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold),
-                            /*myContentData!.paidStatus == paidText &&
+                            /*myContentData!.paidStatus == AppStringsNew2.paidText &&
                                             myContentData!.isPaidStatusToHopper
                                         ?
                             : Colors.white*/
@@ -2864,38 +2958,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ),
                 ),
                 SizedBox(
-                  height: size.height * numD015,
+                  height: size.height * AppDimensions.numD015,
                 ),
                 Container(
-                  width: size.width * numD30,
-                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                  width: size.width * AppDimensions.numD30,
+                  padding: EdgeInsets.symmetric(
+                      vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: colorGreyChat,
-                      borderRadius: BorderRadius.circular(size.width * numD03)),
+                      color: AppColorTheme.colorGreyChat,
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD03)),
                   child: Column(
                     children: [
                       Text(
                         'Total Earnings',
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400),
                       ),
                       FittedBox(
                         child: Container(
                           margin: EdgeInsets.only(
-                            left: size.width * numD02,
-                            right: size.width * numD02,
+                            left: size.width * AppDimensions.numD02,
+                            right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
                             "$currencySymbol${formatDouble(double.parse(widget.myContentData!.totalEarning))}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD05,
+                                fontSize: size.width * AppDimensions.numD05,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
-                            /*myContentData!.paidStatus == paidText &&
+                            /*myContentData!.paidStatus == AppStringsNew2.paidText &&
                                             myContentData!.isPaidStatusToHopper
                                         ?
                             : Colors.white*/
@@ -2915,7 +3011,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
   Widget showMediaWidget() {
     return SizedBox(
-      height: size.width * numD50,
+      height: size.width * AppDimensions.numD50,
       child: PageView.builder(
           onPageChanged: (value) {
             debugPrint('value:::::::$value');
@@ -2932,13 +3028,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           itemBuilder: (context, index) {
             var item = widget.myContentData!.contentMediaList[index];
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * numD04),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: InkWell(
                   onTap: () {
                     if (item.mediaType == "pdf" || item.mediaType == "doc") {
-                      openUrl(widget.myContentData!.paidStatus == paidText
+                      openUrl(widget.myContentData!.paidStatus ==
+                              AppStringsNew2.paidText
                           ? getMediaImageUrl(item.media)
                           : item.waterMark);
                     }
@@ -2952,8 +3051,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               // ? Container()
                               : item.mediaType == "pdf"
                                   ? Padding(
-                                      padding:
-                                          EdgeInsets.all(size.width * numD04),
+                                      padding: EdgeInsets.all(
+                                          size.width * AppDimensions.numD04),
                                       child: Image.asset(
                                         "${dummyImagePath}pngImage.png",
                                         fit: BoxFit.contain,
@@ -2962,8 +3061,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                     )
                                   : item.mediaType == "doc"
                                       ? Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD04),
+                                          padding: EdgeInsets.all(size.width *
+                                              AppDimensions.numD04),
                                           child: Image.asset(
                                             "${dummyImagePath}doc_black_icon.png",
                                             fit: BoxFit.contain,
@@ -2987,7 +3086,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                   .contentMediaList[index]
                                                   .media),
                                           width: double.infinity,
-                                          height: size.width * numD50,
+                                          height:
+                                              size.width * AppDimensions.numD50,
                                           fit: BoxFit.cover,
                                         ),
 
@@ -3014,22 +3114,22 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         ),
                       )*/
                       Positioned(
-                          right: size.width * numD02,
-                          top: size.width * numD02,
+                          right: size.width * AppDimensions.numD02,
+                          top: size.width * AppDimensions.numD02,
                           child: Column(
                               children: getMediaCount(
                                   widget.myContentData!.contentMediaList,
                                   size))),
                       // Positioned(
-                      //   right: size.width * numD02,
-                      //   bottom: size.width * numD02,
+                      //   right: size.width * AppDimensions.numD02,
+                      //   bottom: size.width * AppDimensions.numD02,
                       //   child: Visibility(
                       //     visible: myContentData!.contentMediaList.length > 1,
                       //     child: Text(
                       //       "+${myContentData!.contentMediaList.length - 1}",
                       //       style: commonTextStyle(
                       //           size: size,
-                      //           fontSize: size.width * numD04,
+                      //           fontSize: size.width * AppDimensions.numD04,
                       //           color: Colors.white,
                       //           fontWeight: FontWeight.w600),
                       //     ),
@@ -3055,24 +3155,24 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     return Container(
       width: size.width,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(size.width * numD04),
+      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
-        color: colorThemePink,
-        border: Border.all(color: colorGreyNew),
-        borderRadius: BorderRadius.circular(size.width * numD06),
+        color: AppColorTheme.colorThemePink,
+        border: Border.all(color: AppColorTheme.colorGreyNew),
+        borderRadius: BorderRadius.circular(size.width * AppDimensions.numD06),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           /*AudioFileWaveforms(
-            size: Size(size.width, size.width * numD20),
+            size: Size(size.width, size.width * AppDimensions.numD20),
             playerController: controller,
             enableSeekGesture: true,
             waveformType: WaveformType.long,
             continuousWaveform: true,
             playerWaveStyle: PlayerWaveStyle(
               fixedWaveColor: Colors.black,
-              liveWaveColor: colorThemePink,
+              liveWaveColor: AppColorTheme.colorThemePink,
               spacing: 6,
               liveWaveGradient: ui.Gradient.linear(
                 const Offset(70, 50),
@@ -3084,7 +3184,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 Offset(MediaQuery.of(context).size.width / 2, 0),
                 [Colors.red, Colors.green],
               ),
-              seekLineColor: colorThemePink,
+              seekLineColor: AppColorTheme.colorThemePink,
               seekLineThickness: 2,
               showSeekLine: true,
               showBottom: true,
@@ -3116,7 +3216,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
             child: Icon(
               audioPlaying ? Icons.pause : Icons.play_arrow_rounded,
               color: Colors.white,
-              size: size.width * numD15,
+              size: size.width * AppDimensions.numD15,
             ),
           ),
         ],
@@ -3140,7 +3240,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               flickVideoWithControls: const FlickVideoWithControls(
                 playerLoadingFallback: Center(
                   child: CircularProgressIndicator(
-                    color: colorThemePink,
+                    color: AppColorTheme.colorThemePink,
                   ),
                 ),
                 closedCaptionTextStyle: TextStyle(fontSize: 8),
@@ -3149,7 +3249,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               flickVideoWithControlsFullscreen: const FlickVideoWithControls(
                 playerLoadingFallback: Center(
                   child: CircularProgressIndicator(
-                    color: colorThemePink,
+                    color: AppColorTheme.colorThemePink,
                   ),
                 ),
                 controls: FlickLandscapeControls(),
@@ -3179,36 +3279,37 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
             child: ClipOval(
               clipBehavior: Clip.antiAlias,
               child: Padding(
-                padding: EdgeInsets.all(size.width * numD01),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
                   color: Colors.white,
-                  width: size.width * numD07,
-                  height: size.width * numD07,
+                  width: size.width * AppDimensions.numD07,
+                  height: size.width * AppDimensions.numD07,
                 ),
               ),
             )),
         SizedBox(
-          width: size.width * numD02,
+          width: size.width * AppDimensions.numD02,
         ),
         Expanded(
             child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: colorGoogleButtonBorder),
+              border: Border.all(color: AppColorTheme.colorGoogleButtonBorder),
               borderRadius: BorderRadius.only(
-                topRight: Radius.circular(size.width * numD04),
-                bottomLeft: Radius.circular(size.width * numD04),
-                bottomRight: Radius.circular(size.width * numD04),
+                topRight: Radius.circular(size.width * AppDimensions.numD04),
+                bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
+                bottomRight: Radius.circular(size.width * AppDimensions.numD04),
               )),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD002,
+                height: size.width * AppDimensions.numD002,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -3227,7 +3328,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             text: "Well done! You've received\nan offer from",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
+                                fontSize: size.width * AppDimensions.numD036,
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -3235,8 +3336,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             text: " ${item.mediaHouseName}",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD036,
-                                color: colorThemePink,
+                                fontSize: size.width * AppDimensions.numD036,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w600),
                           ),
 
@@ -3246,41 +3347,42 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           //       : "$currencySymbol${amountFormat(item.hopperPrice)} ",
                           //   style: commonTextStyle(
                           //       size: size,
-                          //       fontSize: size.width * numD036,
-                          //       color: colorThemePink,
+                          //       fontSize: size.width * AppDimensions.numD036,
+                          //       color: AppColorTheme.colorThemePink,
                           //       fontWeight: FontWeight.w600),
                           // ),
                         ])),
                   ),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD03),
                     child: CachedNetworkImage(
                       imageUrl: item.mediaHouseImage,
-                      height: size.width * numD11,
-                      width: size.width * numD12,
+                      height: size.width * AppDimensions.numD11,
+                      width: size.width * AppDimensions.numD12,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Image.asset(
                         "assets/dummyImages/placeholderImage.png",
                         fit: BoxFit.cover,
-                        height: size.width * numD11,
-                        width: size.width * numD12,
+                        height: size.width * AppDimensions.numD11,
+                        width: size.width * AppDimensions.numD12,
                       ),
                       errorWidget: (context, url, error) => Image.asset(
                         "${commonImagePath}rabbitLogo.png",
                         fit: BoxFit.cover,
-                        height: size.width * numD11,
-                        width: size.width * numD12,
+                        height: size.width * AppDimensions.numD11,
+                        width: size.width * AppDimensions.numD12,
                       ),
                     ),
                   ),
                   // Container(
-                  //     margin: EdgeInsets.only(left: size.width * numD01),
-                  //     width: size.width * numD13,
-                  //     height: size.width * numD13,
+                  //     margin: EdgeInsets.only(left: size.width * AppDimensions.numD01),
+                  //     width: size.width * AppDimensions.numD13,
+                  //     height: size.width * AppDimensions.numD13,
                   //     decoration: BoxDecoration(
                   //         color: Colors.white,
                   //         borderRadius:
-                  //             BorderRadius.circular(size.width * numD03),
+                  //             BorderRadius.circular(size.width * AppDimensions.numD03),
                   //         boxShadow: [
                   //           BoxShadow(
                   //               color: Colors.grey.shade200, spreadRadius: 1)
@@ -3290,15 +3392,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   //       child: Image.network(
                   //         item.mediaHouseImage,
                   //         fit: BoxFit.contain,
-                  //         height: size.width * numD20,
-                  //         width: size.width * numD20,
+                  //         height: size.width * AppDimensions.numD20,
+                  //         width: size.width * AppDimensions.numD20,
                   //         errorBuilder: (BuildContext context, Object exception,
                   //             StackTrace? stackTrace) {
                   //           return Image.asset(
                   //             "${dummyImagePath}news.png",
                   //             fit: BoxFit.contain,
-                  //             width: size.width * numD20,
-                  //             height: size.width * numD20,
+                  //             width: size.width * AppDimensions.numD20,
+                  //             height: size.width * AppDimensions.numD20,
                   //           );
                   //         },
                   //       ),
@@ -3306,13 +3408,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ],
               ),
               SizedBox(
-                height: size.width * numD01,
+                height: size.width * AppDimensions.numD01,
               ),
               /*Row(
                     children: [
                       Expanded(
                           child: SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: ElevatedButton(
                               onPressed: () {
@@ -3356,7 +3458,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                       : Colors.transparent,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                      BorderRadius.circular(size.width * numD04),
+                                      BorderRadius.circular(size.width * AppDimensions.numD04),
                                       side: (item.requestStatus == "false" ||
                                           item.requestStatus.isEmpty) &&
                                           !item.isMakeCounterOffer
@@ -3364,25 +3466,25 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                           : const BorderSide(
                                           color: Colors.black, width: 1))),
                               child: Text(
-                                rejectText,
+                                AppStringsNew2.rejectText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD037,
+                                    fontSize: size.width * AppDimensions.numD037,
                                     color: (item.requestStatus == "false" ||
                                         item.requestStatus.isEmpty) &&
                                         !item.isMakeCounterOffer
                                         ? Colors.white
-                                        : colorLightGreen,
+                                        : AppColorTheme.colorLightGreen,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
                           )),
                       SizedBox(
-                        width: size.width * numD04,
+                        width: size.width * AppDimensions.numD04,
                       ),
                       Expanded(
                           child: SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: ElevatedButton(
                               onPressed: () {
@@ -3417,13 +3519,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   elevation: 0,
                                   backgroundColor: item.requestStatus.isEmpty &&
                                       !item.isMakeCounterOffer
-                                      ? colorThemePink
+                                      ? AppColorTheme.colorThemePink
                                       : item.requestStatus == "true"
                                       ? Colors.grey
                                       : Colors.transparent,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                      BorderRadius.circular(size.width * numD04),
+                                      BorderRadius.circular(size.width * AppDimensions.numD04),
                                       side: (item.requestStatus == "true" ||
                                           item.requestStatus.isEmpty) &&
                                           !item.isMakeCounterOffer
@@ -3431,15 +3533,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                           : const BorderSide(
                                           color: Colors.black, width: 1))),
                               child: Text(
-                                acceptText,
+                                AppStringsNew2.acceptText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD037,
+                                    fontSize: size.width * AppDimensions.numD037,
                                     color: (item.requestStatus == "true" ||
                                         item.requestStatus.isEmpty) &&
                                         !item.isMakeCounterOffer
                                         ? Colors.white
-                                        : colorLightGreen,
+                                        : AppColorTheme.colorLightGreen,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -3449,7 +3551,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               /*
                        Expanded(
                           child: SizedBox(
-                            height: size.width * numD13,
+                            height: size.width * AppDimensions.numD13,
                             width: size.width,
                             child: ElevatedButton(
                               onPressed: () {
@@ -3475,22 +3577,22 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                   item.requestStatus.isEmpty
-                                      ? colorThemePink
+                                      ? AppColorTheme.colorThemePink
                                       :item.requestStatus == "true"
                                       ?  Colors.grey
                                       :  Colors.transparent,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
+                                        size.width * AppDimensions.numD04),
                                       side: item.requestStatus == "true" || item.requestStatus.isEmpty ? BorderSide.none : const BorderSide(
-                                          color: colorGrey1, width: 2)
+                                          color: AppColorTheme.colorGrey1, width: 2)
                                   )),
                               child: Text(
-                                yesText,
+                                AppStringsNew2.yesText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD04,
-                                    color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : colorLightGreen,
+                                    fontSize: size.width * AppDimensions.numD04,
+                                    color: item.requestStatus == "true" || item.requestStatus.isEmpty ? Colors.white : AppColorTheme.colorLightGreen,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -3498,15 +3600,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     ],
                   ),*/
               SizedBox(
-                height: size.width * numD03,
+                height: size.width * AppDimensions.numD03,
               ),
               Container(
                 width: double.infinity,
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(size.width * numD012),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD012),
                 decoration: BoxDecoration(
                     color: Colors.black,
-                    borderRadius: BorderRadius.circular(size.width * numD03),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD03),
                     border: Border.all(color: Colors.black, width: 2)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -3514,7 +3617,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     Text(
                       "Offered Price",
                       style: TextStyle(
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.white,
                           fontFamily: 'AirbnbCereal_W_Lt Light'),
                     ),
@@ -3523,7 +3626,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           ? ""
                           : "$currencySymbol${formatDouble(double.parse(item.amount))}",
                       style: TextStyle(
-                          fontSize: size.width * numD045,
+                          fontSize: size.width * AppDimensions.numD045,
                           color: Colors.white,
                           fontWeight: FontWeight.w900,
                           fontFamily: 'AirbnbCereal_W_Bd'),
@@ -3532,7 +3635,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ),
               ),
               SizedBox(
-                height: size.width * numD03,
+                height: size.width * AppDimensions.numD03,
               ),
             ],
           ),
@@ -3548,42 +3651,45 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       children: [
         presshopPicWidget(),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
-          margin: EdgeInsets.only(top: size.width * numD06),
+          margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Text(
                 "Make a counter offer to ${item.mediaHouseName} Media",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD036,
+                    fontSize: size.width * AppDimensions.numD036,
                     color: Colors.black,
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               TextFormField(
                 controller: item.priceController,
                 readOnly: item.finalCounterAmount.isNotEmpty,
-                cursorColor: colorTextFieldIcon,
+                cursorColor: AppColorTheme.colorTextFieldIcon,
                 keyboardType: const TextInputType.numberWithOptions(
                     decimal: true, signed: true),
                 textAlign: TextAlign.center,
@@ -3592,8 +3698,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     filled: false,
                     hintText: "Enter price here...",
                     hintStyle: TextStyle(
-                      color: colorHint,
-                      fontSize: size.width * numD035,
+                      color: AppColorTheme.colorHint,
+                      fontSize: size.width * AppDimensions.numD035,
                     ),
                     disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(size.width * 0.03),
@@ -3615,26 +3721,26 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         borderRadius: BorderRadius.circular(size.width * 0.03),
                         borderSide:
                             const BorderSide(width: 1, color: Colors.black)),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: size.width * numD02)),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD02)),
                 textAlignVertical: TextAlignVertical.center,
                 validator: null,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 width: size.width,
                 child: commonElevatedButton(
-                    submitText,
+                    AppStringsNew2.submitText,
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(
                         size,
                         item.finalCounterAmount.isEmpty
-                            ? colorThemePink
+                            ? AppColorTheme.colorThemePink
                             : Colors.grey), () {
                   var map = {
                     "finaloffer_price": item.priceController.text,
@@ -3658,10 +3764,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 children: [
                   Image.asset(
                     "${iconsPath}ic_tag.png",
-                    height: size.width * numD06,
+                    height: size.width * AppDimensions.numD06,
                   ),
                   SizedBox(
-                    width: size.width * numD02,
+                    width: size.width * AppDimensions.numD02,
                   ),
                   Expanded(
                     child: TextButton(
@@ -3679,8 +3785,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         "Check price tips, and learnings",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -3691,7 +3797,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 "You can make a counter offer only once",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD034,
+                    fontSize: size.width * AppDimensions.numD034,
                     color: Colors.black,
                     fontWeight: FontWeight.w500),
               ),
@@ -3704,12 +3810,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
   Widget showTaskPriceWidget() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+      padding:
+          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.only(top: size.width * numD055),
+            margin: EdgeInsets.only(top: size.width * AppDimensions.numD055),
             decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -3718,55 +3825,59 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ]),
             child: ClipOval(
               child: Padding(
-                padding: EdgeInsets.all(size.width * numD01),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
-                  width: size.width * numD075,
-                  height: size.width * numD075,
+                  width: size.width * AppDimensions.numD075,
+                  height: size.width * AppDimensions.numD075,
                   fit: BoxFit.contain,
                 ),
               ),
             ),
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           ),
           Expanded(
               child: Stack(
             children: [
               Container(
-                margin: EdgeInsets.only(top: size.width * numD055),
+                margin:
+                    EdgeInsets.only(top: size.width * AppDimensions.numD055),
                 padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD03,
-                    vertical: size.width * numD02),
+                    horizontal: size.width * AppDimensions.numD03,
+                    vertical: size.width * AppDimensions.numD02),
                 width: size.width,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade400),
                     borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(size.width * numD04),
-                        bottomLeft: Radius.circular(size.width * numD04),
-                        bottomRight: Radius.circular(size.width * numD04))),
+                        topRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomRight: Radius.circular(
+                            size.width * AppDimensions.numD04))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: size.width * numD025,
+                      height: size.width * AppDimensions.numD025,
                     ),
                     Row(
                       children: [
                         Text(
-                          // "$taskText ${widget.taskDetail?.status}",
+                          // "${AppStringsNew2.taskText} ${widget.taskDetail?.status}",
                           "TASK ACCEPTED",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w600),
                         ),
                         const Spacer(),
                         Container(
-                          height: size.width * numD12,
-                          width: size.width * numD12,
+                          height: size.width * AppDimensions.numD12,
+                          width: size.width * AppDimensions.numD12,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -3776,13 +3887,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                     spreadRadius: 2)
                               ]),
                           child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.circular(size.width * numD02),
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD02),
                             child: Padding(
-                              padding: EdgeInsets.all(size.width * numD013),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD013),
                               child: Image.network(
                                 widget.taskDetail!.mediaHouseImage.toString(),
-                                width: size.width * numD09,
+                                width: size.width * AppDimensions.numD09,
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -3791,19 +3903,19 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                     Text(
                       "${widget.taskDetail?.title}",
                       style: TextStyle(
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontFamily: "AirbnbCereal",
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     SizedBox(
-                      height: size.width * numD04,
+                      height: size.width * AppDimensions.numD04,
                     ),
                     Row(
                       children: [
@@ -3816,34 +3928,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD055,
-                                    color: colorThemePink,
+                                    fontSize:
+                                        size.width * AppDimensions.numD055,
+                                    color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w700),
                               ),
                               Text(
-                                offeredText,
+                                AppStringsNew2.offeredText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
-                                height: size.width * numD03,
+                                height: size.width * AppDimensions.numD03,
                               ),
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04,
-                                    vertical: size.width * numD02),
+                                    horizontal:
+                                        size.width * AppDimensions.numD04,
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
+                                        size.width * AppDimensions.numD02)),
                                 child: Text(
-                                  photoText,
+                                  AppStringsNew2.photoText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD033,
+                                      fontSize:
+                                          size.width * AppDimensions.numD033,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -3860,35 +3977,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD055,
-                                    color: colorThemePink,
+                                    fontSize:
+                                        size.width * AppDimensions.numD055,
+                                    color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w700),
                               ),
                               Text(
-                                offeredText,
+                                AppStringsNew2.offeredText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
-                                height: size.width * numD03,
+                                height: size.width * AppDimensions.numD03,
                               ),
                               Container(
                                 // alignment: Alignment.center,
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD018,
-                                    vertical: size.width * numD02),
+                                    horizontal:
+                                        size.width * AppDimensions.numD018,
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
+                                        size.width * AppDimensions.numD02)),
                                 child: Text(
-                                  interviewText,
+                                  AppStringsNew2.interviewText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD033,
+                                      fontSize:
+                                          size.width * AppDimensions.numD033,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -3905,34 +4027,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                     : "-",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD055,
-                                    color: colorThemePink,
+                                    fontSize:
+                                        size.width * AppDimensions.numD055,
+                                    color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w700),
                               ),
                               Text(
-                                offeredText,
+                                AppStringsNew2.offeredText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
-                                height: size.width * numD03,
+                                height: size.width * AppDimensions.numD03,
                               ),
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD04,
-                                    vertical: size.width * numD02),
+                                    horizontal:
+                                        size.width * AppDimensions.numD04,
+                                    vertical:
+                                        size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
-                                    color: colorThemePink,
+                                    color: AppColorTheme.colorThemePink,
                                     borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
+                                        size.width * AppDimensions.numD02)),
                                 child: Text(
-                                  videoText,
+                                  AppStringsNew2.videoText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD033,
+                                      fontSize:
+                                          size.width * AppDimensions.numD033,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -3943,7 +4070,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       ],
                     ),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                   ],
                 ),
@@ -3951,13 +4078,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               Align(
                 alignment: Alignment.center,
                 child: Container(
-                  padding: EdgeInsets.all(size.width * numD025),
+                  padding: EdgeInsets.all(size.width * AppDimensions.numD025),
                   decoration: const BoxDecoration(
                       color: Colors.black, shape: BoxShape.circle),
                   child: Icon(
                     Icons.check,
                     color: Colors.white,
-                    size: size.width * numD07,
+                    size: size.width * AppDimensions.numD07,
                   ),
                 ),
               ),
@@ -3975,7 +4102,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         Container(
           margin: EdgeInsets.only(
               top: uploadTextType == "request_more_content"
-                  ? size.width * numD04
+                  ? size.width * AppDimensions.numD04
                   : 0),
           decoration: BoxDecoration(
               color: Colors.white,
@@ -3985,41 +4112,45 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
           child: Container(
             margin: EdgeInsets.only(
                 top: uploadTextType == "request_more_content"
-                    ? size.width * numD05
+                    ? size.width * AppDimensions.numD05
                     : 0),
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD03, vertical: size.width * numD02),
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD02),
             width: size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04))),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
                     text: TextSpan(
                         style: TextStyle(
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontFamily: "AirbnbCereal",
                             height: 1.5),
@@ -4032,8 +4163,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       TextSpan(
                         text: " Gallery or Camera",
                         style: TextStyle(
-                          fontSize: size.width * numD035,
-                          color: colorThemePink,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: AppColorTheme.colorThemePink,
                           fontFamily: "AirbnbCereal",
                           fontWeight: FontWeight.bold,
                         ),
@@ -4043,7 +4174,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       ),
                     ])),
                 SizedBox(
-                  height: size.width * numD008,
+                  height: size.width * AppDimensions.numD008,
                 ),
               ],
             ),
@@ -4058,7 +4189,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: EdgeInsets.only(top: size.width * numD03),
+          margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
           decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -4067,36 +4198,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
           child: Container(
-            margin: EdgeInsets.only(top: size.width * numD03),
+            margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD03, vertical: size.width * numD03),
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD03),
             width: size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04))),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Text(
               "Thank you ever so much for a splendid job well done!",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD035,
+                  fontSize: size.width * AppDimensions.numD035,
                   color: Colors.black,
                   fontWeight: FontWeight.normal),
             ),
@@ -4119,54 +4254,58 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               ]),
           child: ClipOval(
             child: Padding(
-              padding: EdgeInsets.all(size.width * numD01),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               child: Image.asset(
                 "${commonImagePath}ic_black_rabbit.png",
-                width: size.width * numD075,
-                height: size.width * numD075,
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
           child: Container(
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD03, vertical: size.width * numD03),
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD03),
             width: size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04))),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: size.width * numD008,
+                  height: size.width * AppDimensions.numD008,
                 ),
                 Row(
                   children: [
                     Text("Thanks. you've uploaded",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.normal)),
                     Text(" 1 $type",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD035,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
                 SizedBox(
-                  height: size.width * numD008,
+                  height: size.width * AppDimensions.numD008,
                 ),
               ],
             ),
@@ -4180,7 +4319,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     debugPrint("----------------$videoUrl");
     debugPrint("-thumbnail---------------$thumbnail");
     return Container(
-      margin: EdgeInsets.only(top: size.width * numD04),
+      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -4199,7 +4338,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             )));
                   },
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(size.width * numD04),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD04),
                     child: Image.network(
                       thumbnail,
                       height: size.height / 3,
@@ -4209,16 +4349,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ),
                 ),
                 Positioned(
-                    top: size.width * numD02,
-                    left: size.width * numD02,
+                    top: size.width * AppDimensions.numD02,
+                    left: size.width * AppDimensions.numD02,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD006,
-                          vertical: size.width * numD002),
+                          horizontal: size.width * AppDimensions.numD006,
+                          vertical: size.width * AppDimensions.numD002),
                       decoration: BoxDecoration(
-                          color: colorLightGreen.withOpacity(0.8),
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD01)),
+                          color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD01)),
                       child: const Icon(
                         Icons.videocam_outlined,
                         color: Colors.white,
@@ -4237,38 +4377,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   child: Icon(
                     Icons.play_circle,
                     color: Colors.white,
-                    size: size.width * numD09,
+                    size: size.width * AppDimensions.numD09,
                   ),
                 )
               ],
             ),
           ),
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
           (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
               ? Container(
                   padding: EdgeInsets.all(
-                    size.width * numD01,
+                    size.width * AppDimensions.numD01,
                   ),
                   decoration: const BoxDecoration(
-                      color: colorLightGrey, shape: BoxShape.circle),
+                      color: AppColorTheme.colorLightGrey,
+                      shape: BoxShape.circle),
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
                         sharedPreferences!.getString(avatarKey) ?? "",
                         fit: BoxFit.cover,
-                        height: size.width * numD09,
-                        width: size.width * numD09,
+                        height: size.width * AppDimensions.numD09,
+                        width: size.width * AppDimensions.numD09,
                       )))
               : Container(
                   padding: EdgeInsets.all(
-                    size.width * numD01,
+                    size.width * AppDimensions.numD01,
                   ),
-                  height: size.width * numD09,
-                  width: size.width * numD09,
+                  height: size.width * AppDimensions.numD09,
+                  width: size.width * AppDimensions.numD09,
                   decoration: const BoxDecoration(
-                      color: colorSwitchBack, shape: BoxShape.circle),
+                      color: AppColorTheme.colorSwitchBack,
+                      shape: BoxShape.circle),
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     child: Image.asset("${commonImagePath}rabbitLogo.png",
@@ -4300,38 +4442,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               alignment: Alignment.center,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD04),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: Container(
-                    color: colorGrey2.withOpacity(.9),
-                    height: size.width * numD80,
+                    color: AppColorTheme.colorGrey2.withOpacity(.9),
+                    height: size.width * AppDimensions.numD80,
                     width: double.infinity,
                     child: Icon(
                       Icons.play_circle,
-                      color: colorThemePink,
-                      size: size.width * numD18,
+                      color: AppColorTheme.colorThemePink,
+                      size: size.width * AppDimensions.numD18,
                     ),
                   ),
                 ),
                 Positioned(
-                    top: size.width * numD02,
-                    left: size.width * numD02,
+                    top: size.width * AppDimensions.numD02,
+                    left: size.width * AppDimensions.numD02,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD008,
-                          vertical: size.width * numD005),
+                          horizontal: size.width * AppDimensions.numD008,
+                          vertical: size.width * AppDimensions.numD005),
                       decoration: BoxDecoration(
-                          color: colorLightGreen.withOpacity(0.8),
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD01)),
+                          color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD01)),
                       child: Image.asset(
                         "${iconsPath}ic_mic1.png",
                         fit: BoxFit.cover,
-                        height: size.width * numD05,
-                        width: size.width * numD05,
+                        height: size.width * AppDimensions.numD05,
+                        width: size.width * AppDimensions.numD05,
                       ),
                     )),
                 ClipRRect(
-                    borderRadius: BorderRadius.circular(size.width * numD04),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD04),
                     child: Image.asset(
                       "${commonImagePath}watermark1.png",
                       height: size.height / 3,
@@ -4342,31 +4486,33 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
             ),
           ),
           SizedBox(
-            width: size.width * numD02,
+            width: size.width * AppDimensions.numD02,
           ),
           (sharedPreferences!.getString(avatarKey) ?? "").isNotEmpty
               ? Container(
                   padding: EdgeInsets.all(
-                    size.width * numD01,
+                    size.width * AppDimensions.numD01,
                   ),
                   decoration: const BoxDecoration(
-                      color: colorLightGrey, shape: BoxShape.circle),
+                      color: AppColorTheme.colorLightGrey,
+                      shape: BoxShape.circle),
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
                         sharedPreferences!.getString(avatarKey) ?? "",
                         fit: BoxFit.cover,
-                        height: size.width * numD09,
-                        width: size.width * numD09,
+                        height: size.width * AppDimensions.numD09,
+                        width: size.width * AppDimensions.numD09,
                       )))
               : Container(
                   padding: EdgeInsets.all(
-                    size.width * numD01,
+                    size.width * AppDimensions.numD01,
                   ),
-                  height: size.width * numD09,
-                  width: size.width * numD09,
+                  height: size.width * AppDimensions.numD09,
+                  width: size.width * AppDimensions.numD09,
                   decoration: const BoxDecoration(
-                      color: colorSwitchBack, shape: BoxShape.circle),
+                      color: AppColorTheme.colorSwitchBack,
+                      shape: BoxShape.circle),
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     child: Image.asset("${commonImagePath}rabbitLogo.png",
@@ -4402,20 +4548,19 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                          color: colorGreyChat,
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          color: AppColorTheme.colorGreyChat,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           border: Border.all(
                               color: Colors.grey.shade300, width: 1)),
                       child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           child: Image.network(
                             imageUrl,
                             height: size.height / 3,
                             fit: BoxFit.cover,
-                            errorBuilder: (context,
-                                exception, stackTrace) {
+                            errorBuilder: (context, exception, stackTrace) {
                               return Center(
                                 child: Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
@@ -4428,24 +4573,25 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           )),
                     ),
                     Positioned(
-                        top: size.width * numD02,
-                        left: size.width * numD02,
+                        top: size.width * AppDimensions.numD02,
+                        left: size.width * AppDimensions.numD02,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD006,
-                              vertical: size.width * numD002),
+                              horizontal: size.width * AppDimensions.numD006,
+                              vertical: size.width * AppDimensions.numD002),
                           decoration: BoxDecoration(
-                              color: colorLightGreen.withOpacity(0.8),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD01)),
+                              color: AppColorTheme.colorLightGreen
+                                  .withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD01)),
                           child: const Icon(
                             Icons.camera_alt_outlined,
                             color: Colors.white,
                           ),
                         )),
                     ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${commonImagePath}watermark1.png",
                           height: size.height / 3,
@@ -4456,98 +4602,99 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ),
               ),
               SizedBox(
-                width: size.width * numD02,
+                width: size.width * AppDimensions.numD02,
               ),
               sharedPreferences!.getString(avatarKey).toString().isNotEmpty
                   ? Container(
                       padding: EdgeInsets.all(
-                        size.width * numD01,
+                        size.width * AppDimensions.numD01,
                       ),
                       decoration: const BoxDecoration(
-                          color: colorLightGrey, shape: BoxShape.circle),
+                          color: AppColorTheme.colorLightGrey,
+                          shape: BoxShape.circle),
                       child: ClipOval(
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
                               sharedPreferences!
                                   .getString(avatarKey)
                                   .toString(),
-                              height: size.width * numD09,
-                              width: size.width * numD09,
-                              fit: BoxFit.cover, errorBuilder:
-                                  (context, exception,
-                                      stackTrace) {
+                              height: size.width * AppDimensions.numD09,
+                              width: size.width * AppDimensions.numD09,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, exception, stackTrace) {
                             return Center(
                               child: Image.asset(
                                 "${commonImagePath}rabbitLogo.png",
-                                height: size.width * numD09,
-                                width: size.width * numD09,
+                                height: size.width * AppDimensions.numD09,
+                                width: size.width * AppDimensions.numD09,
                                 fit: BoxFit.contain,
                               ),
                             );
                           })))
                   : Container(
                       padding: EdgeInsets.all(
-                        size.width * numD01,
+                        size.width * AppDimensions.numD01,
                       ),
-                      height: size.width * numD09,
-                      width: size.width * numD09,
+                      height: size.width * AppDimensions.numD09,
+                      width: size.width * AppDimensions.numD09,
                       decoration: const BoxDecoration(
-                          color: colorSwitchBack, shape: BoxShape.circle),
+                          color: AppColorTheme.colorSwitchBack,
+                          shape: BoxShape.circle),
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Image.asset(
                           "${commonImagePath}rabbitLogo.png",
-                          height: size.width * numD09,
-                          width: size.width * numD09,
+                          height: size.width * AppDimensions.numD09,
+                          width: size.width * AppDimensions.numD09,
                         ),
                       ),
                     ),
             ],
           ),
           SizedBox(
-            height: size.width * numD018,
+            height: size.width * AppDimensions.numD018,
           ),
           Row(
             children: [
               Image.asset(
                 "${iconsPath}ic_clock.png",
-                height: size.width * numD038,
+                height: size.width * AppDimensions.numD038,
                 color: Colors.black,
               ),
               SizedBox(
-                width: size.width * numD012,
+                width: size.width * AppDimensions.numD012,
               ),
               Text(
                 dateTimeFormatter(dateTime: time, format: 'hh:mm a'),
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD028,
-                    color: colorHint,
+                    fontSize: size.width * AppDimensions.numD028,
+                    color: AppColorTheme.colorHint,
                     fontWeight: FontWeight.normal),
               ),
               SizedBox(
-                width: size.width * numD018,
+                width: size.width * AppDimensions.numD018,
               ),
               Image.asset(
                 "${iconsPath}ic_yearly_calendar.png",
-                height: size.width * numD035,
+                height: size.width * AppDimensions.numD035,
                 color: Colors.black,
               ),
               SizedBox(
-                width: size.width * numD01,
+                width: size.width * AppDimensions.numD01,
               ),
               Text(
                 dateTimeFormatter(dateTime: time, format: 'dd MMM yyyy'),
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD028,
-                    color: colorHint,
+                    fontSize: size.width * AppDimensions.numD028,
+                    color: AppColorTheme.colorHint,
                     fontWeight: FontWeight.normal),
               ),
             ],
           ),
           SizedBox(
-            height: size.width * numD018,
+            height: size.width * AppDimensions.numD018,
           ),
         ],
       ),
@@ -4570,38 +4717,42 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 child: ClipOval(
                   clipBehavior: Clip.antiAlias,
                   child: Padding(
-                    padding: EdgeInsets.all(size.width * numD01),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
                       color: Colors.white,
-                      width: size.width * numD07,
-                      height: size.width * numD07,
+                      width: size.width * AppDimensions.numD07,
+                      height: size.width * AppDimensions.numD07,
                     ),
                   ),
                 )),
             SizedBox(
-              width: size.width * numD025,
+              width: size.width * AppDimensions.numD025,
             ),
             Expanded(
                 child: Container(
-              // margin: EdgeInsets.only(top: size.width * numD06),
+              // margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: colorGoogleButtonBorder),
+                  border:
+                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
                   )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   RichText(
                       text: TextSpan(
@@ -4614,7 +4765,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: "Congratulations,",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -4622,15 +4773,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: " ${model.mediaHouseName}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD036,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                         TextSpan(
                           text: " have purchased your content for",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -4638,8 +4789,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: " $currencySymbol${model.amount}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD036,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                         // TextSpan(
@@ -4648,22 +4799,23 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         //       : "$currencySymbol${amountFormat(item.hopperPrice)} ",
                         //   style: commonTextStyle(
                         //       size: size,
-                        //       fontSize: size.width * numD036,
-                        //       color: colorThemePink,
+                        //       fontSize: size.width * AppDimensions.numD036,
+                        //       color: AppColorTheme.colorThemePink,
                         //       fontWeight: FontWeight.w600),
                         // ),
                       ])),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
                         "View Transaction Details",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink), () {
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
+                        () {
                       callDetailApi(model.mediaHouseId);
                     }),
                   )
@@ -4686,43 +4838,47 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 child: ClipOval(
                   clipBehavior: Clip.antiAlias,
                   child: Padding(
-                    padding: EdgeInsets.all(size.width * numD01),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
                       color: Colors.white,
-                      width: size.width * numD07,
-                      height: size.width * numD07,
+                      width: size.width * AppDimensions.numD07,
+                      height: size.width * AppDimensions.numD07,
                     ),
                   ),
                 )),
             SizedBox(
-              width: size.width * numD025,
+              width: size.width * AppDimensions.numD025,
             ),
             Expanded(
                 child: Container(
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: colorGoogleButtonBorder),
+                  border:
+                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
                   )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD01,
+                    height: size.width * AppDimensions.numD01,
                   ),
                   RichText(
                       text: TextSpan(
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: size.width * numD037,
+                            fontSize: size.width * AppDimensions.numD037,
                             fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.bold,
                           ),
@@ -4731,7 +4887,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: "Woohoo! We have paid ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -4741,15 +4897,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               : "$currencySymbol${formatDouble(double.parse(model.payableHopperPrice))}",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD036,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                         TextSpan(
                           text: " into your bank account. Please visit ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -4757,33 +4913,34 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: "My Earnings",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD036,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                         TextSpan(
                           text: " to view your transaction ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         )
                       ])),
                   SizedBox(
-                    height: size.width * numD025,
+                    height: size.width * AppDimensions.numD025,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: commonElevatedButton(
                             "View My Earnings",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MyEarningScreen(
                                     openDashboard: false,
@@ -4818,44 +4975,48 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 child: ClipOval(
                   clipBehavior: Clip.antiAlias,
                   child: Padding(
-                    padding: EdgeInsets.all(size.width * numD01),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD01),
                     child: Image.asset(
                       "${commonImagePath}ic_black_rabbit.png",
                       color: Colors.white,
-                      width: size.width * numD07,
-                      height: size.width * numD07,
+                      width: size.width * AppDimensions.numD07,
+                      height: size.width * AppDimensions.numD07,
                     ),
                   ),
                 )),
             SizedBox(
-              width: size.width * numD025,
+              width: size.width * AppDimensions.numD025,
             ),
             Expanded(
                 child: Container(
-              // margin: EdgeInsets.only(top: 0, right: size.width * numD04),
+              // margin: EdgeInsets.only(top: 0, right: size.width * AppDimensions.numD04),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: colorGoogleButtonBorder),
+                  border:
+                      Border.all(color: AppColorTheme.colorGoogleButtonBorder),
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * numD04),
-                    bottomLeft: Radius.circular(size.width * numD04),
-                    bottomRight: Radius.circular(size.width * numD04),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
                   )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD01,
+                    height: size.width * AppDimensions.numD01,
                   ),
                   RichText(
                       text: TextSpan(
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: size.width * numD037,
+                            fontSize: size.width * AppDimensions.numD037,
                             fontFamily: "AirbnbCereal",
                             fontWeight: FontWeight.bold,
                           ),
@@ -4865,7 +5026,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               "To maximise your chances of a sale, we’ve automatically adjusted the price from ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -4873,15 +5034,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: "$currencySymbol$hopperAmount ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD036,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                         TextSpan(
                           text: " to ",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
@@ -4889,22 +5050,22 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                           text: '$currencySymbol$amount',
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD036,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                         TextSpan(
                           text:
-                              ". Stay tuned—we’ll update you as soon as your content is sold",
+                              ". Stay tuned—we’ll update you as soon as your content is AppStringsNew2.sold",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD036,
+                              fontSize: size.width * AppDimensions.numD036,
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
                       ])),
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
                 ],
               ),
@@ -4917,7 +5078,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
   Widget profilePicWidget() {
     return Container(
-        //margin: EdgeInsets.only(top: size.width * numD03),
+        //margin: EdgeInsets.only(top: size.width * AppDimensions.numD03),
         decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
@@ -4926,14 +5087,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           clipBehavior: Clip.antiAlias,
           child: Image.network(
             widget.taskDetail?.mediaHouseImage ?? "",
-            width: size.width * numD09,
-            height: size.width * numD09,
+            width: size.width * AppDimensions.numD09,
+            height: size.width * AppDimensions.numD09,
             fit: BoxFit.contain,
             errorBuilder: (ctx, obj, stace) {
               return Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                width: size.width * numD09,
-                height: size.width * numD09,
+                width: size.width * AppDimensions.numD09,
+                height: size.width * AppDimensions.numD09,
               );
             },
           ),
@@ -4943,7 +5104,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
   /// PressHope Profile
   Widget presshopPicWidget() {
     return Container(
-        margin: EdgeInsets.only(top: size.width * numD04),
+        margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
         decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
@@ -4954,8 +5115,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           clipBehavior: Clip.antiAlias,
           child: Image.asset(
             "${commonImagePath}rabbitLogo.png",
-            width: size.width * numD09,
-            height: size.width * numD09,
+            width: size.width * AppDimensions.numD09,
+            height: size.width * AppDimensions.numD09,
           ),
         ));
   }
@@ -4967,42 +5128,45 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       children: [
         profilePicWidget(),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade400),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD023,
+                height: size.width * AppDimensions.numD023,
               ),
               Text(
                 "Do you have additional pictures related to the task?",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.normal),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Row(
                 children: [
                   Expanded(
                       child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: ElevatedButton(
                       onPressed: () {
@@ -5026,37 +5190,37 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: item.requestStatus.isEmpty
-                              ? colorThemePink
+                              ? AppColorTheme.colorThemePink
                               : item.requestStatus == "true"
                                   ? Colors.grey
                                   : Colors.transparent,
                           shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               side: item.requestStatus == "true" ||
                                       item.requestStatus.isEmpty
                                   ? BorderSide.none
                                   : const BorderSide(
                                       color: Colors.black, width: 1))),
                       child: Text(
-                        yesText,
+                        AppStringsNew2.yesText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD04,
+                            fontSize: size.width * AppDimensions.numD04,
                             color: item.requestStatus == "true" ||
                                     item.requestStatus.isEmpty
                                 ? Colors.white
-                                : colorLightGreen,
+                                : AppColorTheme.colorLightGreen,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
                   )),
                   SizedBox(
-                    width: size.width * numD04,
+                    width: size.width * AppDimensions.numD04,
                   ),
                   Expanded(
                       child: SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: ElevatedButton(
                       onPressed: () {
@@ -5095,22 +5259,22 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   ? Colors.grey
                                   : Colors.transparent,
                           shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               side: item.requestStatus == "false" ||
                                       item.requestStatus.isEmpty
                                   ? BorderSide.none
                                   : const BorderSide(
                                       color: Colors.black, width: 1))),
                       child: Text(
-                        noText,
+                        AppStringsNew2.noText,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD04,
+                            fontSize: size.width * AppDimensions.numD04,
                             color: item.requestStatus == "false" ||
                                     item.requestStatus.isEmpty
                                 ? Colors.white
-                                : colorLightGreen,
+                                : AppColorTheme.colorLightGreen,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -5118,7 +5282,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ],
               ),
               SizedBox(
-                height: size.width * numD023,
+                height: size.width * AppDimensions.numD023,
               ),
             ],
           ),
@@ -5133,51 +5297,55 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       children: [
         profilePicWidget(),
         SizedBox(
-          width: size.width * numD04,
+          width: size.width * AppDimensions.numD04,
         ),
         Expanded(
             child: Container(
           margin: EdgeInsets.only(
-              top: size.width * numD06, bottom: size.width * numD04),
+              top: size.width * AppDimensions.numD06,
+              bottom: size.width * AppDimensions.numD04),
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * numD05, vertical: size.width * numD02),
+              horizontal: size.width * AppDimensions.numD05,
+              vertical: size.width * AppDimensions.numD02),
           width: size.width,
           decoration: BoxDecoration(
-              color: colorLightGrey,
+              color: AppColorTheme.colorLightGrey,
               border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(size.width * numD04),
-                  bottomLeft: Radius.circular(size.width * numD04),
-                  bottomRight: Radius.circular(size.width * numD04))),
+                  topRight: Radius.circular(size.width * AppDimensions.numD04),
+                  bottomLeft:
+                      Radius.circular(size.width * AppDimensions.numD04),
+                  bottomRight:
+                      Radius.circular(size.width * AppDimensions.numD04))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               Text(
                 "Send the content for approval",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD035,
+                    fontSize: size.width * AppDimensions.numD035,
                     color: Colors.black,
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(
-                height: size.width * numD04,
+                height: size.width * AppDimensions.numD04,
               ),
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 width: size.width,
                 child: commonElevatedButton(
-                    uploadText,
+                    AppStringsNew2.uploadText,
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(
                         size,
                         item.requestStatus == "true"
                             ? Colors.grey
-                            : colorThemePink), () {
+                            : AppColorTheme.colorThemePink), () {
                   if (item.requestStatus.isEmpty) {
                     // _againUpload = true;
 
@@ -5208,56 +5376,60 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     return Column(
       children: [
         SizedBox(
-          height: size.width * numD08,
+          height: size.width * AppDimensions.numD08,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             profilePicWidget(),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Stack(
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: size.width * numD06),
+                  margin:
+                      EdgeInsets.only(top: size.width * AppDimensions.numD06),
                   padding: EdgeInsets.symmetric(
-                      horizontal: size.width * numD03,
-                      vertical: size.width * numD02),
+                      horizontal: size.width * AppDimensions.numD03,
+                      vertical: size.width * AppDimensions.numD02),
                   width: size.width,
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.black),
                       borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(size.width * numD04),
-                          bottomLeft: Radius.circular(size.width * numD04),
-                          bottomRight: Radius.circular(size.width * numD04))),
+                          topRight: Radius.circular(
+                              size.width * AppDimensions.numD04),
+                          bottomLeft: Radius.circular(
+                              size.width * AppDimensions.numD04),
+                          bottomRight: Radius.circular(
+                              size.width * AppDimensions.numD04))),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                       Text(
-                        "$taskText ${widget.taskDetail?.status}",
+                        "${AppStringsNew2.taskText} ${widget.taskDetail?.status}",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                       Text(
                           "Cate Blanchett and Rihanna while filming Oceans Eight",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.black,
                               fontWeight: FontWeight.w600)),
                       SizedBox(
-                        height: size.width * numD04,
+                        height: size.width * AppDimensions.numD04,
                       ),
                       Row(
                         children: [
@@ -5268,34 +5440,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   "${currencySymbol}150",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD055,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD055,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  offeredText,
+                                  AppStringsNew2.offeredText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorHint,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorHint,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD02,
-                                      vertical: size.width * numD02),
+                                      horizontal:
+                                          size.width * AppDimensions.numD02,
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
                                   decoration: BoxDecoration(
-                                      color: colorLightGrey,
+                                      color: AppColorTheme.colorLightGrey,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
+                                          size.width * AppDimensions.numD02)),
                                   child: Text(
-                                    photoText,
+                                    AppStringsNew2.photoText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -5310,34 +5487,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   "${currencySymbol}350",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD055,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD055,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  offeredText,
+                                  AppStringsNew2.offeredText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorHint,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorHint,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD02,
-                                      vertical: size.width * numD02),
+                                      horizontal:
+                                          size.width * AppDimensions.numD02,
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
                                   decoration: BoxDecoration(
-                                      color: colorLightGrey,
+                                      color: AppColorTheme.colorLightGrey,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
+                                          size.width * AppDimensions.numD02)),
                                   child: Text(
-                                    interviewText,
+                                    AppStringsNew2.interviewText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -5352,34 +5534,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   "${currencySymbol}500",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD055,
-                                      color: colorThemePink,
+                                      fontSize:
+                                          size.width * AppDimensions.numD055,
+                                      color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  offeredText,
+                                  AppStringsNew2.offeredText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorHint,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorHint,
                                       fontWeight: FontWeight.w700),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 ),
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD02,
-                                      vertical: size.width * numD02),
+                                      horizontal:
+                                          size.width * AppDimensions.numD02,
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
                                   decoration: BoxDecoration(
-                                      color: colorLightGrey,
+                                      color: AppColorTheme.colorLightGrey,
                                       borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
+                                          size.width * AppDimensions.numD02)),
                                   child: Text(
-                                    videoText,
+                                    AppStringsNew2.videoText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -5395,13 +5582,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 Align(
                   alignment: Alignment.center,
                   child: Container(
-                    padding: EdgeInsets.all(size.width * numD03),
+                    padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                     decoration: const BoxDecoration(
                         color: Colors.black, shape: BoxShape.circle),
                     child: Icon(
                       Icons.check,
                       color: Colors.white,
-                      size: size.width * numD07,
+                      size: size.width * AppDimensions.numD07,
                     ),
                   ),
                 ),
@@ -5410,7 +5597,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
         Align(
           alignment: Alignment.centerRight,
@@ -5421,7 +5608,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               Stack(
                 children: [
                   ClipRRect(
-                      borderRadius: BorderRadius.circular(size.width * numD04),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                       child: Image.asset(
                         "${dummyImagePath}walk5.png",
                         height: size.height / 3,
@@ -5431,12 +5619,12 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   Container(
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.2),
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                       ),
                       child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           child: Image.asset(
                             "${commonImagePath}watermark.png",
                             height: size.height / 3,
@@ -5446,14 +5634,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ],
               ),
               SizedBox(
-                width: size.width * numD02,
+                width: size.width * AppDimensions.numD02,
               ),
               ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD08),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD08),
                   child: Image.asset(
                     "${dummyImagePath}avatar.png",
-                    height: size.width * numD08,
-                    width: size.width * numD08,
+                    height: size.width * AppDimensions.numD08,
+                    width: size.width * AppDimensions.numD08,
                     fit: BoxFit.cover,
                   ))
             ],
@@ -5466,26 +5655,26 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           children: [
             const Expanded(
                 child: Divider(
-              color: colorGrey1,
+              color: AppColorTheme.colorGrey1,
               thickness: 1,
             )),
             Text(
               "Pending reviews from Reuters",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD035,
-                  color: colorGrey2,
+                  fontSize: size.width * AppDimensions.numD035,
+                  color: AppColorTheme.colorGrey2,
                   fontWeight: FontWeight.w600),
             ),
             const Expanded(
                 child: Divider(
-              color: colorGrey1,
+              color: AppColorTheme.colorGrey1,
               thickness: 1,
             )),
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
 
         /// payment recicved
@@ -5493,8 +5682,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: size.width * numD04),
-              padding: EdgeInsets.all(size.width * numD03),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD03),
               decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -5503,51 +5692,54 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ]),
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                width: size.width * numD07,
+                width: size.width * AppDimensions.numD07,
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "Congrats, you’ve received £200 from Reuters Media ",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
                         "View Transaction Details",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {}),
                   )
                 ],
@@ -5556,7 +5748,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
 
         /// More Content
@@ -5565,43 +5757,46 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           children: [
             profilePicWidget(),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: colorLightGrey,
+                  color: AppColorTheme.colorLightGrey,
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "Do you have additional pictures related to the task?",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Row(
                     children: [
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: ElevatedButton(
                           onPressed: () {},
@@ -5610,39 +5805,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               backgroundColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   side: const BorderSide(
-                                      color: colorGrey1, width: 2))),
+                                      color: AppColorTheme.colorGrey1,
+                                      width: 2))),
                           child: Text(
-                            noText,
+                            AppStringsNew2.noText,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
-                                color: colorLightGreen,
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: AppColorTheme.colorLightGreen,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
                       )),
                       SizedBox(
-                        width: size.width * numD04,
+                        width: size.width * AppDimensions.numD04,
                       ),
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: colorThemePink,
+                              backgroundColor: AppColorTheme.colorThemePink,
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                               )),
                           child: Text(
                             "View Transaction Details",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -5656,7 +5852,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
 
         /// send Approval
@@ -5664,8 +5860,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /*Container(
-              margin: EdgeInsets.only(top: size.width * numD04),
-              padding: EdgeInsets.all(size.width * numD03),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD03),
               decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -5674,51 +5870,54 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ]),
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                width: size.width * numD07,
+                width: size.width * AppDimensions.numD07,
               ),
             ),*/
             profilePicWidget(),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: colorLightGrey,
+                  color: AppColorTheme.colorLightGrey,
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "Send the content for approval",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
-                        uploadText,
+                        AppStringsNew2.uploadText,
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {}),
                   )
                 ],
@@ -5727,7 +5926,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
 
         /// Upload Video
@@ -5740,7 +5939,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
               Stack(
                 children: [
                   ClipRRect(
-                      borderRadius: BorderRadius.circular(size.width * numD04),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                       child: Image.asset(
                         "${dummyImagePath}walk6.png",
                         height: size.height / 3,
@@ -5750,12 +5950,12 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   Container(
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.2),
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                       ),
                       child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           child: Image.asset(
                             "${commonImagePath}watermark.png",
                             height: size.height / 3,
@@ -5765,14 +5965,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                 ],
               ),
               SizedBox(
-                width: size.width * numD02,
+                width: size.width * AppDimensions.numD02,
               ),
               ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * numD08),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD08),
                   child: Image.asset(
                     "${dummyImagePath}avatar.png",
-                    height: size.width * numD08,
-                    width: size.width * numD08,
+                    height: size.width * AppDimensions.numD08,
+                    width: size.width * AppDimensions.numD08,
                     fit: BoxFit.cover,
                   ))
             ],
@@ -5785,26 +5986,26 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           children: [
             const Expanded(
                 child: Divider(
-              color: colorGrey1,
+              color: AppColorTheme.colorGrey1,
               thickness: 1,
             )),
             Text(
               "Pending reviews from Reuters",
               style: commonTextStyle(
                   size: size,
-                  fontSize: size.width * numD035,
-                  color: colorGrey2,
+                  fontSize: size.width * AppDimensions.numD035,
+                  color: AppColorTheme.colorGrey2,
                   fontWeight: FontWeight.w600),
             ),
             const Expanded(
                 child: Divider(
-              color: colorGrey1,
+              color: AppColorTheme.colorGrey1,
               thickness: 1,
             )),
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
 
         /// Offers From Media House
@@ -5812,8 +6013,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /*   Container(
-              margin: EdgeInsets.only(top: size.width * numD04),
-              padding: EdgeInsets.all(size.width * numD01),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -5821,36 +6022,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
                   ]),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * numD04),
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: Image.asset(
                   "${dummyImagePath}news.png",
-                  height: size.width * numD09,
+                  height: size.width * AppDimensions.numD09,
                 ),
               ),
             ),*/
             profilePicWidget(),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: colorLightGrey,
+                  color: AppColorTheme.colorLightGrey,
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   RichText(
                       text: TextSpan(children: [
@@ -5858,7 +6062,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       text: "Reuters Media has offered ",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
@@ -5866,27 +6070,27 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       text: "${currencySymbol}150 ",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
-                          color: colorThemePink,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: AppColorTheme.colorThemePink,
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
                       text: "to buy your content",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
                   ])),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Row(
                     children: [
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: ElevatedButton(
                           onPressed: () {},
@@ -5895,39 +6099,39 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               backgroundColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   side: const BorderSide(
                                       color: Colors.black, width: 1))),
                           child: Text(
-                            rejectText,
+                            AppStringsNew2.rejectText,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
-                                color: colorLightGreen,
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: AppColorTheme.colorLightGreen,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
                       )),
                       SizedBox(
-                        width: size.width * numD04,
+                        width: size.width * AppDimensions.numD04,
                       ),
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: colorThemePink,
+                              backgroundColor: AppColorTheme.colorThemePink,
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                               )),
                           child: Text(
-                            acceptText,
+                            AppStringsNew2.acceptText,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -5940,45 +6144,45 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     children: [
                       const Expanded(
                           child: Divider(
-                        color: colorTextFieldIcon,
+                        color: AppColorTheme.colorTextFieldIcon,
                         thickness: 1,
                       )),
                       Text(
                         "or",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w600),
                       ),
                       const Expanded(
                           child: Divider(
-                        color: colorTextFieldIcon,
+                        color: AppColorTheme.colorTextFieldIcon,
                         thickness: 1,
                       )),
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
                         "Make a Counter Offer",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {}),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "You can make a counter offer only once",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
@@ -5988,7 +6192,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
 
         /// Counter Field
@@ -5996,8 +6200,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: size.width * numD04),
-              padding: EdgeInsets.all(size.width * numD03),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD03),
               decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -6006,47 +6210,50 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ]),
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                width: size.width * numD07,
+                width: size.width * AppDimensions.numD07,
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "Make a counter offer to Reuters Media",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: TextFormField(
-                      cursorColor: colorTextFieldIcon,
+                      cursorColor: AppColorTheme.colorTextFieldIcon,
                       keyboardType: const TextInputType.numberWithOptions(
                           decimal: true, signed: true),
                       textAlign: TextAlign.center,
@@ -6054,7 +6261,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                         filled: false,
                         hintText: "Enter price here...",
                         hintStyle: TextStyle(
-                            color: Colors.black, fontSize: size.width * numD04),
+                            color: Colors.black,
+                            fontSize: size.width * AppDimensions.numD04),
                         disabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
@@ -6087,51 +6295,51 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     ),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
-                        submitText,
+                        AppStringsNew2.submitText,
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {}),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         "${iconsPath}ic_tag.png",
-                        height: size.width * numD06,
+                        height: size.width * AppDimensions.numD06,
                       ),
                       SizedBox(
-                        width: size.width * numD02,
+                        width: size.width * AppDimensions.numD02,
                       ),
                       Expanded(
                         child: Text(
                           "Check price tips, and learnings",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
-                              color: colorThemePink,
+                              fontSize: size.width * AppDimensions.numD035,
+                              color: AppColorTheme.colorThemePink,
                               fontWeight: FontWeight.w600),
                         ),
                       )
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "You can make a counter offer only once",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD031,
+                        fontSize: size.width * AppDimensions.numD031,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
@@ -6142,14 +6350,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         ),
 
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /*  Container(
-              margin: EdgeInsets.only(top: size.width * numD04),
-              padding: EdgeInsets.all(size.width * numD01),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
               decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -6157,35 +6365,38 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                     BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
                   ]),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * numD04),
+                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: Image.asset(
                   "${dummyImagePath}news.png",
-                  height: size.width * numD09,
+                  height: size.width * AppDimensions.numD09,
                 ),
               ),
             ),*/
             profilePicWidget(),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
-                  color: colorLightGrey,
+                  color: AppColorTheme.colorLightGrey,
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   RichText(
                       text: TextSpan(children: [
@@ -6193,7 +6404,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       text: "Reuters Media have increased their offered to ",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
@@ -6201,27 +6412,27 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       text: "${currencySymbol}200 ",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
-                          color: colorThemePink,
+                          fontSize: size.width * AppDimensions.numD035,
+                          color: AppColorTheme.colorThemePink,
                           fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
                       text: "to buy your content",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
                   ])),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Row(
                     children: [
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: ElevatedButton(
                           onPressed: () {},
@@ -6230,40 +6441,40 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                               backgroundColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   side: const BorderSide(
                                       color: Colors.black, width: 1))),
                           child: Text(
-                            rejectText,
+                            AppStringsNew2.rejectText,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
-                                color: colorLightGreen,
+                                fontSize: size.width * AppDimensions.numD04,
+                                color: AppColorTheme.colorLightGreen,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
                       )),
                       SizedBox(
-                        width: size.width * numD04,
+                        width: size.width * AppDimensions.numD04,
                       ),
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD13,
+                        height: size.width * AppDimensions.numD13,
                         width: size.width,
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: colorThemePink,
+                              backgroundColor: AppColorTheme.colorThemePink,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      size.width * numD04),
+                                      size.width * AppDimensions.numD04),
                                   side: const BorderSide(
                                       color: Colors.black, width: 1))),
                           child: Text(
-                            acceptText,
+                            AppStringsNew2.acceptText,
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -6277,14 +6488,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           ],
         ),
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: size.width * numD04),
-              padding: EdgeInsets.all(size.width * numD03),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.all(size.width * AppDimensions.numD03),
               decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -6293,50 +6504,53 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ]),
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                width: size.width * numD07,
+                width: size.width * AppDimensions.numD07,
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "Congrats, you’ve received £200 from Reuters Media ",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
                         "View Transaction Details",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {}),
                   )
                 ],
@@ -6346,62 +6560,65 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         ),
 
         SizedBox(
-          height: size.width * numD07,
+          height: size.width * AppDimensions.numD07,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: EdgeInsets.all(
-                size.width * numD01,
+                size.width * AppDimensions.numD01,
               ),
-              height: size.width * numD09,
-              width: size.width * numD09,
+              height: size.width * AppDimensions.numD09,
+              width: size.width * AppDimensions.numD09,
               decoration: const BoxDecoration(
-                  color: colorSwitchBack, shape: BoxShape.circle),
+                  color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
               child: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD09,
-                  width: size.width * numD09,
+                  height: size.width * AppDimensions.numD09,
+                  width: size.width * AppDimensions.numD09,
                 ),
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             ),
             Expanded(
                 child: Container(
-              margin: EdgeInsets.only(top: size.width * numD06),
+              margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
               padding: EdgeInsets.symmetric(
-                  horizontal: size.width * numD05,
-                  vertical: size.width * numD02),
+                  horizontal: size.width * AppDimensions.numD05,
+                  vertical: size.width * AppDimensions.numD02),
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * numD04),
-                      bottomLeft: Radius.circular(size.width * numD04),
-                      bottomRight: Radius.circular(size.width * numD04))),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomRight:
+                          Radius.circular(size.width * AppDimensions.numD04))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Text(
                     "Rate your experience with Reuters Media",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   RatingBar(
                     ratingWidget: RatingWidget(
@@ -6410,14 +6627,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       half: Image.asset("${iconsPath}ic_half_star.png"),
                     ),
                     onRatingUpdate: (value) {},
-                    itemSize: size.width * numD09,
+                    itemSize: size.width * AppDimensions.numD09,
                     itemCount: 5,
                     initialRating: 0,
                     allowHalfRating: true,
-                    itemPadding: EdgeInsets.only(left: size.width * numD03),
+                    itemPadding: EdgeInsets.only(
+                        left: size.width * AppDimensions.numD03),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Align(
                     alignment: Alignment.topLeft,
@@ -6425,20 +6643,20 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       "Write your review here",
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w600),
                     ),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   Stack(
                     children: [
                       SizedBox(
-                        height: size.width * numD35,
+                        height: size.width * AppDimensions.numD35,
                         child: TextFormField(
-                          cursorColor: colorTextFieldIcon,
+                          cursorColor: AppColorTheme.colorTextFieldIcon,
                           keyboardType: TextInputType.multiline,
                           maxLines: 4,
                           decoration: InputDecoration(
@@ -6446,7 +6664,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                 "Please share your feedback on your experience with the publication. Your feedback is very important for improving your experience, and our service. Thank you",
                             hintStyle: TextStyle(
                                 color: Colors.grey.shade400,
-                                fontSize: size.width * numD035),
+                                fontSize: size.width * AppDimensions.numD035),
                             disabledBorder: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.circular(size.width * 0.03),
@@ -6473,10 +6691,10 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                 borderSide: const BorderSide(
                                     width: 1, color: Colors.black)),
                             contentPadding: EdgeInsets.only(
-                                left: size.width * numD08,
-                                right: size.width * numD03,
-                                top: size.width * numD04,
-                                bottom: size.width * numD04),
+                                left: size.width * AppDimensions.numD08,
+                                right: size.width * AppDimensions.numD03,
+                                top: size.width * AppDimensions.numD04,
+                                bottom: size.width * AppDimensions.numD04),
                             alignLabelWithHint: true,
                           ),
                           validator: checkRequiredValidator,
@@ -6485,31 +6703,31 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            top: size.width * numD04,
-                            left: size.width * numD01),
+                            top: size.width * AppDimensions.numD04,
+                            left: size.width * AppDimensions.numD01),
                         child: Icon(
                           Icons.sticky_note_2_outlined,
-                          size: size.width * numD06,
+                          size: size.width * AppDimensions.numD06,
                           color: Colors.grey.shade400,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                   SizedBox(
-                    height: size.width * numD13,
+                    height: size.width * AppDimensions.numD13,
                     width: size.width,
                     child: commonElevatedButton(
-                        submitText,
+                        AppStringsNew2.submitText,
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {}),
                   ),
                   SizedBox(
-                    height: size.width * numD04,
+                    height: size.width * AppDimensions.numD04,
                   ),
                 ],
               ),
@@ -6784,6 +7002,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         "🚀 callGetManageTaskListingApi: effective contentId='$contentId'");
 
     context.read<TaskBloc>().add(GetTaskChatEvent(
-        roomId: widget.roomId, type: widget.type, contentId: contentId));
+        roomId: widget.roomId,
+        type: widget.type,
+        contentId: contentId,
+        showLoader: false));
   }
 }

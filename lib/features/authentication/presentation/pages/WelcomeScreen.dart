@@ -59,7 +59,7 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
         child: Form(
           child: ListView(
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * numD06, vertical: size.width * numD05),
+                horizontal: size.width * AppDimensions.numD06, vertical: size.width * AppDimensions.numD05),
             children: [
               Text(
                 '${greeting()} ${userName.toCapitalized()},',
@@ -67,71 +67,71 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
                     fontFamily: "AirbnbCereal",
-                    fontSize: size.width * numD07),
+                    fontSize: size.width * AppDimensions.numD07),
               ),
               SizedBox(
-                height: size.width * numD02,
+                height: size.width * AppDimensions.numD02,
               ),
               Text(
-                welcomeSubTitleText,
+                AppStrings.welcomeSubTitleText,
                 style: TextStyle(
                     color: Colors.black,
                     fontFamily: "AirbnbCereal",
-                    fontSize: size.width * numD035),
+                    fontSize: size.width * AppDimensions.numD035),
               ),
               SizedBox(
-                height: size.width * numD08,
+                height: size.width * AppDimensions.numD08,
               ),
               Container(
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(size.width * numD03)),
-                padding: EdgeInsets.all(size.width * numD04),
+                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(welcomeSubTitle1Text,
+                    Text(AppStrings.welcomeSubTitle1Text,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.bold)),
                     SizedBox(
-                      height: size.width * numD04,
+                      height: size.width * AppDimensions.numD04,
                     ),
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
                             Icons.check_circle,
-                            color: colorThemePink,
-                            size: size.width * numD06,
+                            color: AppColorTheme.colorThemePink,
+                            size: size.width * AppDimensions.numD06,
                           ),
                           SizedBox(
-                            width: size.width * numD02,
+                            width: size.width * AppDimensions.numD02,
                           ),
                           Expanded(
-                            child: Text(acceptedTermsText,
+                            child: Text(AppStrings.acceptedTermsText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400)),
                           ),
                         ]),
                     SizedBox(
-                      height: size.width * numD03,
+                      height: size.width * AppDimensions.numD03,
                     ),
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
                             Icons.check_circle,
-                            color: colorThemePink,
-                            size: size.width * numD06,
+                            color: AppColorTheme.colorThemePink,
+                            size: size.width * AppDimensions.numD06,
                           ),
                           SizedBox(
-                            width: size.width * numD02,
+                            width: size.width * AppDimensions.numD02,
                           ),
                           Expanded(
                             child: Text(
@@ -140,20 +140,20 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                                     : "Verify your mobile number",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize: size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400)),
                           ),
                         ]),
                     SizedBox(
-                      height: size.width * numD06,
+                      height: size.width * AppDimensions.numD06,
                     ),
                     Text(
                       "* Set up your Stripe account now to receive payments within 2-7 days when your content is purchased. Just tap the CTA below to get started - it takes less than a minute.",
                       textAlign: TextAlign.start,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.black,
                           fontWeight: FontWeight.w400),
                     ),
@@ -162,69 +162,69 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     //     children: [
                     //       Icon(
                     //         Icons.check_circle,
-                    //         color: colorThemePink,
-                    //         size: size.width * numD06,
+                    //         color: AppColorTheme.colorThemePink,
+                    //         size: size.width * AppDimensions.numD06,
                     //       ),
                     //       SizedBox(
-                    //         width: size.width * numD02,
+                    //         width: size.width * AppDimensions.numD02,
                     //       ),
                     //       Expanded(
                     //         child: Text(
                     //             "Added your bank details to start receiving money",
                     //             style: commonTextStyle(
                     //                 size: size,
-                    //                 fontSize: size.width * numD035,
+                    //                 fontSize: size.width * AppDimensions.numD035,
                     //                 color: Colors.black,
                     //                 fontWeight: FontWeight.w400)),
                     //       ),
                     //     ]),
                     // SizedBox(
-                    //   height: size.width * numD03,
+                    //   height: size.width * AppDimensions.numD03,
                     // ),
                     // Row(
                     //     crossAxisAlignment: CrossAxisAlignment.start,
                     //     children: [
                     //       Icon(
                     //         Icons.check_circle,
-                    //         color: colorThemePink,
-                    //         size: size.width * numD06,
+                    //         color: AppColorTheme.colorThemePink,
+                    //         size: size.width * AppDimensions.numD06,
                     //       ),
                     //       SizedBox(
-                    //         width: size.width * numD02,
+                    //         width: size.width * AppDimensions.numD02,
                     //       ),
                     //       Expanded(
                     //         child: Text(
                     //             "Uploaded documents for your bank verification*",
                     //             style: commonTextStyle(
                     //                 size: size,
-                    //                 fontSize: size.width * numD035,
+                    //                 fontSize: size.width * AppDimensions.numD035,
                     //                 color: Colors.black,
                     //                 fontWeight: FontWeight.w400)),
                     //       ),
                     //     ]),
-                    //SizedBox(height: size.width * numD04),
+                    //SizedBox(height: size.width * AppDimensions.numD04),
                     // Text(
                     //   "* Your documents are in, and Stripe is now reviewing them. This process usually takes 2-3 days. Sit tight – we'll notify you once the verification is complete, and you'll be ready to receive your funds.",
                     //   textAlign: TextAlign.start,
                     //   style: TextStyle(
                     //       color: Colors.black,
                     //       fontFamily: "AirbnbCereal",
-                    //       fontSize: size.width * numD032),
+                    //       fontSize: size.width * AppDimensions.numD032),
                     // ),
                   ],
                 ),
               ),
               SizedBox(
-                height: size.width * numD15,
+                height: size.width * AppDimensions.numD15,
               ),
               /*     Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
                       child: SizedBox(
-                    height: size.width * numD15,
+                    height: size.width * AppDimensions.numD15,
                     child: commonElevatedButton(
-                        myAccountText,
+                        AppStrings.myAccountText,
                         size,
                         commonButtonTextStyle(size),
                         commonButtonStyle(size, Colors.black), () {
@@ -237,16 +237,16 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     }),
                   )),
                   SizedBox(
-                    width: size.width * numD04,
+                    width: size.width * AppDimensions.numD04,
                   ),
                   Expanded(
                       child: SizedBox(
-                    height: size.width * numD15,
+                    height: size.width * AppDimensions.numD15,
                     child: commonElevatedButton(
-                        cameraText,
+                        AppStrings.cameraText,
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink), () {
+                        commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -257,14 +257,14 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                 ],
               ),*/
               SizedBox(
-                height: size.width * numD13,
+                height: size.width * AppDimensions.numD13,
                 child: commonElevatedButton(
                     widget.screenType == "publish"
                         ? "Submit Your Content"
                         : "Finish",
                     size,
                     commonButtonTextStyle(size),
-                    commonButtonStyle(size, colorThemePink), () {
+                    commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                   if (widget.screenType == "publish") {
                     Navigator.push(
                         context,

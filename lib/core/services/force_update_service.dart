@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -45,13 +46,15 @@ class ForceUpdateService {
           backgroundColor: Colors.transparent,
           elevation: 0,
           contentPadding: EdgeInsets.zero,
-          insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+          insetPadding: EdgeInsets.symmetric(
+              horizontal: size.width * AppDimensions.numD04),
           content: StatefulBuilder(
             builder: (context, setState) {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(size.width * numD045),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD045),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -60,8 +63,8 @@ class ForceUpdateService {
                     // Header
                     Padding(
                       padding: EdgeInsets.only(
-                        left: size.width * numD04,
-                        top: size.width * numD02,
+                        left: size.width * AppDimensions.numD04,
+                        top: size.width * AppDimensions.numD02,
                       ),
                       child: Row(
                         children: [
@@ -69,7 +72,7 @@ class ForceUpdateService {
                             "Update Required",
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: size.width * numD04,
+                              fontSize: size.width * AppDimensions.numD04,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -81,7 +84,7 @@ class ForceUpdateService {
                     // Divider
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
+                        horizontal: size.width * AppDimensions.numD04,
                       ),
                       child: const Divider(
                         color: Colors.black,
@@ -89,12 +92,12 @@ class ForceUpdateService {
                       ),
                     ),
 
-                    SizedBox(height: size.width * numD02),
+                    SizedBox(height: size.width * AppDimensions.numD02),
 
                     // Content
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
+                        horizontal: size.width * AppDimensions.numD04,
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,23 +106,23 @@ class ForceUpdateService {
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
-                                size.width * numD04,
+                                size.width * AppDimensions.numD04,
                               ),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(
-                                size.width * numD04,
+                                size.width * AppDimensions.numD04,
                               ),
                               child: Image.asset(
                                 "assets/rabbits/update_rabbit.png",
-                                height: size.width * numD25,
-                                width: size.width * numD35,
+                                height: size.width * AppDimensions.numD25,
+                                width: size.width * AppDimensions.numD35,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ),
 
-                          SizedBox(width: size.width * numD04),
+                          SizedBox(width: size.width * AppDimensions.numD04),
 
                           // Message
                           Expanded(
@@ -127,7 +130,7 @@ class ForceUpdateService {
                               "A newer version of PressHop is available. Please update the app to continue using all features smoothly.",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
@@ -136,22 +139,22 @@ class ForceUpdateService {
                       ),
                     ),
 
-                    SizedBox(height: size.width * numD08),
+                    SizedBox(height: size.width * AppDimensions.numD08),
 
                     // Update button
                     SizedBox(
-                      height: size.width * numD12,
-                      width: size.width * numD35,
+                      height: size.width * AppDimensions.numD12,
+                      width: size.width * AppDimensions.numD35,
                       child: commonElevatedButton(
                         "Update Now",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size, colorThemePink),
+                        commonButtonStyle(size, AppColorTheme.colorThemePink),
                         openStore,
                       ),
                     ),
 
-                    SizedBox(height: size.width * numD05),
+                    SizedBox(height: size.width * AppDimensions.numD05),
                   ],
                 ),
               );

@@ -246,8 +246,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   : mediaList[index].mimeType.contains("doc")
                                       ? Center(
                                           child: SizedBox(
-                                            height: size.width * numD60,
-                                            width: size.width * numD55,
+                                            height: size.width * AppDimensions.numD60,
+                                            width: size.width * AppDimensions.numD55,
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
@@ -255,10 +255,10 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                 Image.asset(
                                                   "${dummyImagePath}doc_black_icon.png",
                                                   fit: BoxFit.contain,
-                                                  height: size.width * numD45,
+                                                  height: size.width * AppDimensions.numD45,
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * numD04,
+                                                  height: size.width * AppDimensions.numD04,
                                                 ),
                                                 Text(
                                                   path.basename(mediaList[index]
@@ -267,7 +267,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                   style: commonTextStyle(
                                                       size: size,
                                                       fontSize:
-                                                          size.width * numD03,
+                                                          size.width * AppDimensions.numD03,
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.normal),
@@ -282,8 +282,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                               .contains("pdf")
                                           ? Center(
                                               child: SizedBox(
-                                                height: size.width * numD60,
-                                                width: size.width * numD55,
+                                                height: size.width * AppDimensions.numD60,
+                                                width: size.width * AppDimensions.numD55,
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
@@ -292,11 +292,11 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                       "${dummyImagePath}pngImage.png",
                                                       fit: BoxFit.contain,
                                                       height:
-                                                          size.width * numD45,
+                                                          size.width * AppDimensions.numD45,
                                                     ),
                                                     SizedBox(
                                                       height:
-                                                          size.width * numD04,
+                                                          size.width * AppDimensions.numD04,
                                                     ),
                                                     Text(
                                                       path.basename(
@@ -307,7 +307,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                       style: commonTextStyle(
                                                           size: size,
                                                           fontSize: size.width *
-                                                              numD03,
+                                                              AppDimensions.numD03,
                                                           color: Colors.black,
                                                           fontWeight: FontWeight
                                                               .normal),
@@ -345,7 +345,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   bottom: mediaList[index]
                                           .mimeType
                                           .contains("video")
-                                      ? size.width * numD08
+                                      ? size.width * AppDimensions.numD08
                                       : 0,
                                   left: 0,
                                   right: 0,
@@ -359,8 +359,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       )))
                               : Container(),
                           Positioned(
-                            top: size.width * numD09,
-                            right: size.width * (isIpad ? numD1 : numD02),
+                            top: size.width * AppDimensions.numD09,
+                            right: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD02),
                             child: IconButton(
                               /// @aditya 17 sep
                               onPressed: () {
@@ -391,7 +391,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                 child: Icon(
                                   Icons.close,
                                   color: Colors.black,
-                                  size: size.width * numD06,
+                                  size: size.width * AppDimensions.numD06,
                                 ),
                               ),
                             ),
@@ -404,7 +404,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                         bottom: mediaList[index]
                                                 .mimeType
                                                 .contains("video")
-                                            ? size.width * numD08
+                                            ? size.width * AppDimensions.numD08
                                             : 0),
                                     child: DotsIndicator(
                                       mainAxisAlignment:
@@ -422,44 +422,44 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                           Container(
                             margin: EdgeInsets.only(
                                 bottom: mediaList[index].mimeType == "video"
-                                    ? size.width * numD11
+                                    ? size.width * AppDimensions.numD11
                                     : mediaList[index].mimeType == "audio"
-                                        ? size.width * numD03
+                                        ? size.width * AppDimensions.numD03
                                         : mediaList[index].mimeType == "image"
-                                            ? size.width * numD03
+                                            ? size.width * AppDimensions.numD03
                                             : 0),
                             padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
+                                horizontal: size.width * AppDimensions.numD04,
                                 vertical: mediaList[index].mimeType == "audio"
-                                    ? size.width * numD02
-                                    : size.width * numD04),
+                                    ? size.width * AppDimensions.numD02
+                                    : size.width * AppDimensions.numD04),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      height: size.width * numD11,
+                                      height: size.width * AppDimensions.numD11,
                                       decoration: BoxDecoration(
                                           color: Colors.grey[100],
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
+                                              size.width * AppDimensions.numD04)),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_clock.png",
-                                            width: size.width * numD04,
-                                            height: size.width * numD04,
+                                            width: size.width * AppDimensions.numD04,
+                                            height: size.width * AppDimensions.numD04,
                                           ),
                                           SizedBox(
-                                            width: size.width * numD02,
+                                            width: size.width * AppDimensions.numD02,
                                           ),
                                           Text(
                                             mediaList[index].dateTime,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * numD025,
+                                                fontSize: size.width * AppDimensions.numD025,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           )
@@ -467,36 +467,36 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       )),
                                 ),
                                 SizedBox(
-                                  width: size.width * numD04,
+                                  width: size.width * AppDimensions.numD04,
                                 ),
                                 Expanded(
                                   child: Container(
-                                      height: size.width * numD11,
+                                      height: size.width * AppDimensions.numD11,
                                       decoration: BoxDecoration(
                                           color: Colors.grey[100],
                                           borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
+                                              size.width * AppDimensions.numD04)),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_location.png",
-                                            width: size.width * numD04,
-                                            height: size.width * numD04,
+                                            width: size.width * AppDimensions.numD04,
+                                            height: size.width * AppDimensions.numD04,
                                             color: mediaList[index]
                                                     .location
                                                     .isEmpty
                                                 ? isLocationFetching
-                                                    ? colorGrey6
+                                                    ? AppColorTheme.colorGrey6
                                                     : Colors.red
                                                 : Colors.black,
                                           ),
                                           SizedBox(
-                                            width: size.width * numD02,
+                                            width: size.width * AppDimensions.numD02,
                                           ),
                                           SizedBox(
-                                            width: size.width * numD25,
+                                            width: size.width * AppDimensions.numD25,
                                             child: Text(
                                               mediaList[currentPage]
                                                       .location
@@ -512,14 +512,14 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                       mediaList[currentPage]
                                                               .location
                                                               .isEmpty
-                                                          ? size.width * numD025
+                                                          ? size.width * AppDimensions.numD025
                                                           : size.width *
-                                                              numD025,
+                                                              AppDimensions.numD025,
                                                   color: mediaList[currentPage]
                                                           .location
                                                           .isEmpty
                                                       ? isLocationFetching
-                                                          ? colorGrey6
+                                                          ? AppColorTheme.colorGrey6
                                                           : Colors.red
                                                       : Colors.black,
                                                   fontWeight:
@@ -547,25 +547,25 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
               ),
               widget.type == "draft"
                   ? Container(
-                      // height: size.width * numD17,
+                      // height: size.width * AppDimensions.numD17,
                       width: double.infinity,
                       color: Colors.white,
                       padding: EdgeInsets.only(
-                          left: size.width * numD03,
-                          top: size.width * numD02,
-                          bottom: size.width * numD08,
-                          right: size.width * numD03),
+                          left: size.width * AppDimensions.numD03,
+                          top: size.width * AppDimensions.numD02,
+                          bottom: size.width * AppDimensions.numD08,
+                          right: size.width * AppDimensions.numD03),
                       child: Row(
                         children: [
                           Expanded(
                             child: SizedBox(
-                              height: size.width * numD13,
+                              height: size.width * AppDimensions.numD13,
                               child: commonElevatedButton(
                                   "Add More",
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
                                   commonButtonStyle(
@@ -579,7 +579,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   showSnackBar(
                                       "PressHop",
                                       "Only 10 contents allowed!",
-                                      colorThemePink);
+                                      AppColorTheme.colorThemePink);
                                 } else {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
@@ -601,19 +601,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                               }),
                             ),
                           ),
-                          SizedBox(width: size.width * numD04),
+                          SizedBox(width: size.width * AppDimensions.numD04),
                           Expanded(
                             child: SizedBox(
-                              height: size.width * numD13,
+                              height: size.width * AppDimensions.numD13,
                               child: commonElevatedButton(
                                   "Next",
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink), () {
+                                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                                 if (widget.pickAgain) {
                                   Navigator.pop(context);
                                   if (widget.type == "draft") {
@@ -755,21 +755,21 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                   : Container(
                       color: Colors.white,
                       padding: EdgeInsets.only(
-                          left: size.width * numD03,
-                          top: size.width * numD04,
-                          bottom: size.width * numD08,
-                          right: size.width * numD03),
+                          left: size.width * AppDimensions.numD03,
+                          top: size.width * AppDimensions.numD04,
+                          bottom: size.width * AppDimensions.numD08,
+                          right: size.width * AppDimensions.numD03),
                       child: Row(
                         children: [
                           Expanded(
                             child: SizedBox(
-                              height: size.width * numD13,
+                              height: size.width * AppDimensions.numD13,
                               child: commonElevatedButton(
                                   "Add More",
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
                                   commonButtonStyle(
@@ -783,7 +783,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   showSnackBar(
                                       "PressHop",
                                       "Only 10 contents allowed!",
-                                      colorThemePink);
+                                      AppColorTheme.colorThemePink);
                                 } else {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
@@ -804,19 +804,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                               }),
                             ),
                           ),
-                          SizedBox(width: size.width * numD04),
+                          SizedBox(width: size.width * AppDimensions.numD04),
                           Expanded(
                             child: SizedBox(
-                              height: size.width * numD13,
+                              height: size.width * AppDimensions.numD13,
                               child: commonElevatedButton(
                                   "Next",
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
+                                      fontSize: size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink), () {
+                                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                                 if (widget.pickAgain) {
                                   Navigator.pop(context);
                                   if (widget.type == "draft") {

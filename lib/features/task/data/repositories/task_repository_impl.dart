@@ -23,11 +23,12 @@ class TaskRepositoryImpl implements TaskRepository {
   final NetworkInfo networkInfo;
 
   @override
-  Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(
-      String taskId) async {
+  Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String taskId,
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteTask = await remoteDataSource.getTaskDetail(taskId);
+        final remoteTask = await remoteDataSource.getTaskDetail(taskId,
+            showLoader: showLoader);
         return Right(remoteTask.data.toEntity());
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -61,11 +62,12 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, List<ManageTaskChatModel>>> getTaskChat(
-      String roomId, String type, String contentId) async {
+      String roomId, String type, String contentId,
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteChat =
-            await remoteDataSource.getTaskChat(roomId, type, contentId);
+        final remoteChat = await remoteDataSource
+            .getTaskChat(roomId, type, contentId, showLoader: showLoader);
         return Right(remoteChat);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -78,11 +80,12 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> uploadTaskMedia(
-      FormData data) async {
+  Future<Either<Failure, Map<String, dynamic>>> uploadTaskMedia(FormData data,
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
-        final response = await remoteDataSource.uploadTaskMedia(data);
+        final response = await remoteDataSource.uploadTaskMedia(data,
+            showLoader: showLoader);
         return Right(response);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -170,11 +173,15 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<Either<Failure, List<TaskAll>>> getAllTasks(
       {required int limit,
       required int offset,
-      Map<String, dynamic>? filterParams}) async {
+      Map<String, dynamic>? filterParams,
+      bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getAllTasks(
-            limit: limit, offset: offset, filterParams: filterParams);
+            limit: limit,
+            offset: offset,
+            filterParams: filterParams,
+            showLoader: showLoader);
         return Right(result);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -188,10 +195,12 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, List<Task>>> getLocalTasks(
-      Map<String, dynamic> filterParams) async {
+      Map<String, dynamic> filterParams,
+      {bool showLoader = true}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getLocalTasks(filterParams);
+        final result = await remoteDataSource.getLocalTasks(filterParams,
+            showLoader: showLoader);
         return Right(result);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));

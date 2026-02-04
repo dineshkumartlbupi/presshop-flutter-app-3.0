@@ -29,7 +29,7 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   @override
   Future<List<CategoryModel>> getContentCategories() async {
     try {
-      final response = await apiClient.get(categoryUrl);
+      final response = await apiClient.get(ApiConstantsNew.content.category);
       debugPrint("DEBUG: getContentCategories response: ${response.data}");
       if (response.data is List) {
         final data = response.data as List;
@@ -58,8 +58,9 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   @override
   Future<List<CategoryModel>> getTutorialCategories() async {
     try {
-      final response = await apiClient
-          .get(getHopperCategory, queryParameters: {"type": "tutorial"});
+      final response = await apiClient.get(
+          ApiConstantsNew.content.hopperCategory,
+          queryParameters: {"type": "tutorial"});
       if (response.data is! Map<String, dynamic>) {
         throw ServerException(response.data.toString());
       }
@@ -77,8 +78,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         "offset": offset,
         "limit": limit,
       };
-      final response =
-          await apiClient.get(allCharityUrl, queryParameters: params);
+      final response = await apiClient.get(ApiConstantsNew.misc.charityList,
+          queryParameters: params);
       final data = response.data['data'];
       if (data is List) {
         return data.map((e) => CharityModel.fromJson(e)).toList();
@@ -99,8 +100,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         "limit": limit,
         "category": category,
       };
-      final response =
-          await apiClient.get(getAllCmsUrl, queryParameters: params);
+      final response = await apiClient.get(ApiConstantsNew.misc.generalMgmt,
+          queryParameters: params);
       if (response.data is! Map<String, dynamic>) {
         throw ServerException(response.data.toString());
       }
@@ -118,7 +119,7 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         "type": "tutorial",
         "tutorial_id": tutorialId,
       };
-      await apiClient.post(addViewCountAPI, data: data);
+      await apiClient.post(ApiConstantsNew.content.mostViewed, data: data);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }
@@ -130,8 +131,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
       final Map<String, dynamic> params = {
         "type": "price",
       };
-      final response =
-          await apiClient.get(getAllCmsUrl, queryParameters: params);
+      final response = await apiClient.get(ApiConstantsNew.misc.generalMgmt,
+          queryParameters: params);
       final data = (response.data is Map)
           ? (response.data['status'] ?? response.data['data'])
           : null;
@@ -168,7 +169,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         }
       }
 
-      await apiClient.multipartPost(addContentUrl, formData: formData);
+      await apiClient.multipartPost(ApiConstantsNew.content.addContent,
+          formData: formData);
     } catch (e) {
       throw ApiErrorHandler.handle(e);
     }

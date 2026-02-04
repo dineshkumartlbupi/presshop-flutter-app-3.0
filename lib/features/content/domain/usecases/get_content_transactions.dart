@@ -8,7 +8,6 @@ import '../repositories/content_repository.dart';
 class GetContentTransactions
     implements
         UseCase<List<EarningTransactionDetail>, GetContentTransactionsParams> {
-
   GetContentTransactions(this.repository);
   final ContentRepository repository;
 
@@ -16,21 +15,25 @@ class GetContentTransactions
   Future<Either<Failure, List<EarningTransactionDetail>>> call(
       GetContentTransactionsParams params) async {
     return await repository.getContentTransactions(
-        params.contentId, params.limit, params.offset);
+        params.contentId, params.limit, params.offset,
+        showLoader: params.showLoader);
   }
 }
 
 class GetContentTransactionsParams extends Equatable {
+  final String contentId;
+  final int limit;
+  final int offset;
+  final bool showLoader;
 
   const GetContentTransactionsParams({
     required this.contentId,
     required this.limit,
     required this.offset,
+    this.showLoader = true,
   });
-  final String contentId;
-  final int limit;
-  final int offset;
 
   @override
-  List<Object?> get props => [contentId, limit, offset];
+  @override
+  List<Object?> get props => [contentId, limit, offset, showLoader];
 }

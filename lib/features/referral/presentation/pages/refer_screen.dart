@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:presshop/core/constants/string_constants.dart';
+import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -50,7 +52,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
           "Refer a Hopper",
           style: TextStyle(
               color: Colors.black,
-              fontSize: size.width * appBarHeadingFontSize,
+              fontSize: size.width * AppDimensions.appBarHeadingFontSize,
               fontWeight: FontWeight.w700),
         ),
         centerTitle: false,
@@ -70,19 +72,19 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
-              height: size.width * numD07,
-              width: size.width * numD07,
+              height: size.width * AppDimensions.numD07,
+              width: size.width * AppDimensions.numD07,
             ),
           ),
           SizedBox(
-            width: size.width * numD04,
+            width: size.width * AppDimensions.numD04,
           )
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(size.width * numD04),
+            padding: EdgeInsets.all(size.width * AppDimensions.numD04),
             child: Column(
               children: [
                 Center(
@@ -90,13 +92,13 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                     "Hoppers unite — let’s grow the army",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD048,
+                        fontSize: size.width * AppDimensions.numD048,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD06,
+                  height: size.width * AppDimensions.numD06,
                 ),
                 RichText(
                     textAlign: TextAlign.justify,
@@ -106,7 +108,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             "Invite your friends, colleagues and family members to join ",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal),
@@ -115,7 +117,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         text: "PressHop",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.bold),
@@ -125,7 +127,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             " and get 5% of everything they earn — every month, for as long as they’re active. It's simple. Click the names below and send an invitation link instantly.\n\n",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal),
@@ -135,18 +137,19 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             "Everyone you invite will be linked to you with a unique code — so both you and we can track your Hopper Army’s sales and your monthly earnings with ease!",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.black,
                             lineHeight: 2,
                             fontWeight: FontWeight.normal),
                       ),
                     ])),
                 SizedBox(
-                  height: size.height * numD04,
+                  height: size.height * AppDimensions.numD04,
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                      left: size.width * numD03, right: size.width * numD03),
+                      left: size.width * AppDimensions.numD03,
+                      right: size.width * AppDimensions.numD03),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
@@ -158,16 +161,17 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                   textAlign: TextAlign.center,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD04,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold)),
                               ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD06),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD06),
                                 child: Image.asset(
                                   "${iconsPath}amount_100.png",
-                                  height: size.width * numD40,
-                                  width: size.width * numD40,
+                                  height: size.width * AppDimensions.numD40,
+                                  width: size.width * AppDimensions.numD40,
                                 ),
                               ),
                             ],
@@ -180,16 +184,17 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                   textAlign: TextAlign.center,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD04,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold)),
                               ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD06),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD06),
                                 child: Image.asset(
                                   "${iconsPath}amount_5.png",
-                                  height: size.width * numD40,
-                                  width: size.width * numD40,
+                                  height: size.width * AppDimensions.numD40,
+                                  width: size.width * AppDimensions.numD40,
                                 ),
                               ),
                             ],
@@ -198,21 +203,22 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                       ]),
                 ),
                 SizedBox(
-                  height: size.height * numD03,
+                  height: size.height * AppDimensions.numD03,
                 ),
                 Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: colorGrey6),
+                        border: Border.all(color: AppColorTheme.colorGrey6),
                         color: Colors.grey[300],
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD03)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD03)),
                     padding: EdgeInsets.only(
-                        left: size.width * numD05,
-                        right: size.width * numD05,
-                        top: size.width * numD035,
-                        bottom: size.width * numD035),
+                        left: size.width * AppDimensions.numD05,
+                        right: size.width * AppDimensions.numD05,
+                        top: size.width * AppDimensions.numD035,
+                        bottom: size.width * AppDimensions.numD035),
                     margin: EdgeInsets.only(
-                        left: size.width * numD03, right: size.width * numD03),
+                        left: size.width * AppDimensions.numD03,
+                        right: size.width * AppDimensions.numD03),
                     child: Row(
                       mainAxisAlignment:
                           MainAxisAlignment.spaceBetween, // Ensure spacing
@@ -225,7 +231,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                     TextOverflow.ellipsis, // Valid for Text
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD044,
+                                    fontSize:
+                                        size.width * AppDimensions.numD044,
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold))),
                         // Spacer(), // Removed Spacer as we use MainAxisAlignment.spaceBetween and Expanded
@@ -239,14 +246,15 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             children: [
                               Icon(
                                 Icons.copy,
-                                color: colorGrey6,
-                                size: size.width * numD05,
+                                color: AppColorTheme.colorGrey6,
+                                size: size.width * AppDimensions.numD05,
                               ),
                               Text("Tap to copy",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorGrey6,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorGrey6,
                                       fontWeight: FontWeight.w400)),
                             ],
                           ),
@@ -254,29 +262,29 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                       ],
                     )),
                 SizedBox(
-                  height: size.height * numD05,
+                  height: size.height * AppDimensions.numD05,
                 ),
                 SizedBox(
-                  height: size.width * numD14,
-                  width: size.width * numD70,
+                  height: size.width * AppDimensions.numD14,
+                  width: size.width * AppDimensions.numD70,
                   child: commonElevatedButton(
                     "Invite Your Friends",
                     size,
                     commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
-                    commonButtonStyle(size, colorThemePink),
+                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                     () {
                       var shareText =
-                          '${sharedPreferences!.getString(firstNameKey)!.toTitleCase()} $referInviteText ${sharedPreferences!.getString(referralCode)}';
+                          '${sharedPreferences!.getString(firstNameKey)!.toTitleCase()} ${referInviteText} ${sharedPreferences!.getString(referralCode)}';
                       Share.share(shareText);
                     },
                   ),
                 ),
                 SizedBox(
-                  height: size.width * numD05,
+                  height: size.width * AppDimensions.numD05,
                 ),
                 RichText(
                     textAlign: TextAlign.start,
@@ -284,7 +292,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         text: "You have ",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
+                            fontSize: size.width * AppDimensions.numD03,
                             color: Colors.black,
                             fontWeight: FontWeight.w400),
                         children: [
@@ -293,7 +301,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                                 "${sharedPreferences!.getString(totalHopperArmy)} ",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w800),
                           ),
@@ -301,7 +309,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                             text: "Hoppers in your Army.",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD03,
+                                fontSize: size.width * AppDimensions.numD03,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400),
                           )
@@ -312,7 +320,7 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                     text: "Click here to",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD03,
+                        fontSize: size.width * AppDimensions.numD03,
                         color: Colors.black,
                         fontWeight: FontWeight.w400),
                     children: [
@@ -328,8 +336,8 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                         text: " Track your earnings",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD03,
-                            color: colorThemePink,
+                            fontSize: size.width * AppDimensions.numD03,
+                            color: AppColorTheme.colorThemePink,
                             fontWeight: FontWeight.w600),
                       ),
                     ],

@@ -140,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Center(
                   child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD15),
+                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD15),
                     child: Image.asset('${commonImagePath}ic_splash.png'),
                   ),
                 ),
@@ -235,7 +235,7 @@ class _SplashScreenState extends State<SplashScreen>
                     "Update Now",
                     size,
                     commonButtonTextStyle(size),
-                    commonButtonStyle(size, colorThemePink),
+                    commonButtonStyle(size, AppColorTheme.colorThemePink),
                     _openStore,
                   ),
                 ),

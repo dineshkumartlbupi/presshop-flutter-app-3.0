@@ -207,8 +207,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       height: size.height / 2,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(size.width * numD06),
-            bottomRight: Radius.circular(size.width * numD06)),
+            bottomLeft: Radius.circular(size.width * AppDimensions.numD06),
+            bottomRight: Radius.circular(size.width * AppDimensions.numD06)),
         child: GoogleMap(
           zoomControlsEnabled: false,
           myLocationEnabled: true,
@@ -243,20 +243,21 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             _googleMap(size),
             Container(
               margin: EdgeInsets.only(
-                left: size.width * numD02,
-                right: size.width * numD02,
-                top: size.width * numD03,
+                left: size.width * AppDimensions.numD02,
+                right: size.width * AppDimensions.numD02,
+                top: size.width * AppDimensions.numD03,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD02,
-                        vertical: size.width * numD02),
+                        horizontal: size.width * AppDimensions.numD02,
+                        vertical: size.width * AppDimensions.numD02),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(size.width * numD04),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                     ),
                     child: Column(
                       children: [
@@ -266,7 +267,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               Icons.my_location,
                             ),
                             SizedBox(
-                              width: size.width * numD02,
+                              width: size.width * AppDimensions.numD02,
                             ),
                             SizedBox(
                               width: size.width * 0.426,
@@ -274,18 +275,19 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 "$_hopperAcceptedCount Hoppers",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
                             ),
                             Container(
                               width: 1,
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                               color: Colors.grey,
                             ),
                             SizedBox(
-                              width: size.width * numD02,
+                              width: size.width * AppDimensions.numD02,
                             ),
                             Icon(
                               Icons.location_on_sharp,
@@ -297,20 +299,20 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               _distance,
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.normal),
                             ),
                             const Spacer(),
                             // Container(
                             //   width: 1,
-                            //   height: size.width * numD04,
+                            //   height: size.width * AppDimensions.numD04,
                             //   color: Colors.grey,
                             // ),
                           ],
                         ),
                         SizedBox(
-                          height: size.width * numD02,
+                          height: size.width * AppDimensions.numD02,
                         ),
                         Row(
                           children: [
@@ -318,39 +320,40 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               Icons.directions_walk,
                             ),
                             SizedBox(
-                              width: size.width * numD01,
+                              width: size.width * AppDimensions.numD01,
                             ),
                             SizedBox(
-                              width: size.width * numD44,
+                              width: size.width * AppDimensions.numD44,
                               child: Text(
                                 _walkingEstTime,
                                 overflow: TextOverflow.ellipsis,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
                             ),
                             Container(
                               width: 1,
-                              height: size.width * numD04,
+                              height: size.width * AppDimensions.numD04,
                               color: Colors.grey,
                             ),
                             SizedBox(
-                              width: size.width * numD02,
+                              width: size.width * AppDimensions.numD02,
                             ),
                             Icon(
                               Icons.directions_car,
                             ),
                             SizedBox(
-                              width: size.width * numD01,
+                              width: size.width * AppDimensions.numD01,
                             ),
                             Text(
                               _drivingEstTime,
                               style: commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.black,
                                   fontWeight: FontWeight.normal),
                             ),
@@ -360,38 +363,39 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     ),
                   ),
                   SizedBox(
-                    height: size.width * numD03,
+                    height: size.width * AppDimensions.numD03,
                   ),
 
                   Row(
                     children: [
                       ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           child: Image.network(
                             taskDetail!.mediaHouseImage,
-                            height: size.width * numD12,
-                            width: size.width * numD12,
+                            height: size.width * AppDimensions.numD12,
+                            width: size.width * AppDimensions.numD12,
                             fit: BoxFit.cover,
                             errorBuilder: (context, object, stacktrace) {
                               return Padding(
-                                padding: EdgeInsets.all(size.width * numD02),
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD02),
                                 child: Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * numD07,
-                                  width: size.width * numD07,
+                                  height: size.width * AppDimensions.numD07,
+                                  width: size.width * AppDimensions.numD07,
                                 ),
                               );
                             },
                           )),
                       SizedBox(
-                        width: size.width * numD03,
+                        width: size.width * AppDimensions.numD03,
                       ),
                       Text(
                         taskDetail!.mediaHouseName.toUpperCase(),
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD04,
+                            fontSize: size.width * AppDimensions.numD04,
                             color: Colors.black,
                             fontWeight: FontWeight.w600),
                       ),
@@ -401,7 +405,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   /// News Company Name
 
                   SizedBox(
-                    height: size.width * numD05,
+                    height: size.width * AppDimensions.numD05,
                   ),
 
                   /// News Headline
@@ -409,14 +413,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     taskDetail!.title,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD04,
+                        fontSize: size.width * AppDimensions.numD04,
                         color: Colors.black,
                         lineHeight: 1.5,
                         fontWeight: FontWeight.w600),
                   ),
 
                   SizedBox(
-                    height: size.width * numD02,
+                    height: size.width * AppDimensions.numD02,
                   ),
 
                   /// News Description
@@ -424,7 +428,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     "${taskDetail!.description}\n\n${taskDetail!.specialReq}",
                     style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * numD03,
+                      fontSize: size.width * AppDimensions.numD03,
                       color: Colors.black,
                       lineHeight: 1.8,
                       fontWeight: FontWeight.normal,
@@ -435,13 +439,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   /// Divider
                   const Divider(
                     thickness: 1,
-                    color: colorLightGrey,
+                    color: AppColorTheme.colorLightGrey,
                   ),
 
                   Container(
                     margin: EdgeInsets.only(
-                      top: size.width * numD04,
-                      bottom: size.width * numD05,
+                      top: size.width * AppDimensions.numD04,
+                      bottom: size.width * AppDimensions.numD05,
                     ),
                     child: Row(
                       children: [
@@ -449,12 +453,12 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           child: Container(
                             alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(
-                                vertical: size.width * numD055,
-                                horizontal: size.width * numD02),
+                                vertical: size.width * AppDimensions.numD055,
+                                horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
-                                color: colorLightGrey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD03)),
+                                color: AppColorTheme.colorLightGrey,
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -464,28 +468,29 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     Icon(
                                       Icons.access_time,
                                       color: Colors.black,
-                                      size: size.width * numD04,
+                                      size: size.width * AppDimensions.numD04,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Text(
-                                      deadlineText,
+                                      AppStrings.deadlineText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
                                 SizedBox(
-                                  width: size.width * numD01,
+                                  width: size.width * AppDimensions.numD01,
                                 ),
                                 Padding(
                                     padding: EdgeInsets.only(
-                                        left: size.width * numD01,
-                                        top: size.width * numD01),
+                                        left: size.width * AppDimensions.numD01,
+                                        top: size.width * AppDimensions.numD01),
                                     child: TimerCountdown(
                                       endTime: taskDetail!.deadLine,
                                       spacerWidth: 3,
@@ -505,14 +510,15 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                           CountDownTimerFormat.customFormats,
                                       timeTextStyle: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
                                           fontWeight: FontWeight.normal),
                                     ) /*Text(
                                                     "1h: 21m: 11s",
                                                     style: commonTextStyle(
                                                         size: size,
-                                                        fontSize: size.width * numD03,
+                                                        fontSize: size.width * AppDimensions.numD03,
                                                         color: Colors.black,
                                                         fontWeight: FontWeight.normal),
                                                   ),*/
@@ -522,18 +528,18 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           ),
                         ),
                         SizedBox(
-                          width: size.width * numD05,
+                          width: size.width * AppDimensions.numD05,
                         ),
                         Expanded(
                           child: Container(
-                            height: size.width * numD20,
+                            height: size.width * AppDimensions.numD20,
                             padding: EdgeInsets.symmetric(
-                                vertical: size.width * numD03,
-                                horizontal: size.width * numD02),
+                                vertical: size.width * AppDimensions.numD03,
+                                horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
-                                color: colorLightGrey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD03)),
+                                color: AppColorTheme.colorLightGrey,
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -542,16 +548,17 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_location.png",
-                                      width: size.width * numD03,
+                                      width: size.width * AppDimensions.numD03,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Text(
-                                      locationText.toUpperCase(),
+                                      AppStrings.locationText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
@@ -559,8 +566,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
-                                    left: size.width * numD01,
-                                    top: size.width * numD01,
+                                    left: size.width * AppDimensions.numD01,
+                                    top: size.width * AppDimensions.numD01,
                                   ),
                                   child: Text(
                                     taskDetail!.location,
@@ -568,7 +575,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     maxLines: 2,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD03,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -584,7 +592,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   priceOfferWidget(),
 
                   SizedBox(
-                    height: size.width * numD1,
+                    height: size.width * AppDimensions.numD1,
                   ),
 
                   /// Button
@@ -592,13 +600,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     children: [
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD15,
+                        height: size.width * AppDimensions.numD15,
                         child: commonElevatedButton(
-                            declineText.toTitleCase(),
+                            AppStrings.declineText.toTitleCase(),
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(size, Colors.black), () {
@@ -612,20 +620,21 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         }),
                       )),
                       SizedBox(
-                        width: size.width * numD03,
+                        width: size.width * AppDimensions.numD03,
                       ),
                       Expanded(
                           child: SizedBox(
-                        height: size.width * numD15,
+                        height: size.width * AppDimensions.numD15,
                         child: commonElevatedButton(
                             "Accept",
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD04,
+                                fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           _isAccepted = true;
                           //isDirection = true;
                           if (player.state == PlayerState.playing) {
@@ -641,7 +650,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   ),
 
                   SizedBox(
-                    height: size.height * numD07,
+                    height: size.height * AppDimensions.numD07,
                   ),
                 ],
               ),
@@ -657,14 +666,15 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               },
               child: Container(
                 margin: EdgeInsets.only(
-                    top: size.width * numD14, left: size.width * numD04),
-                padding: EdgeInsets.all(size.width * numD02),
+                    top: size.width * AppDimensions.numD14,
+                    left: size.width * AppDimensions.numD04),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: const BoxDecoration(
                     color: Colors.white, shape: BoxShape.circle),
                 child: Image.asset(
                   "${iconsPath}ic_arrow_left.png",
-                  height: size.width * numD06,
-                  width: size.width * numD06,
+                  height: size.width * AppDimensions.numD06,
+                  width: size.width * AppDimensions.numD06,
                 ),
               ),
             ),
@@ -672,21 +682,22 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               onTap: () async {
                 try {
                   Share.share(
-                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from ${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${taskDetail!.minimumPriceRange} to ${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
+                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task. Cheers");
                 } catch (e) {
                   debugPrint("Share Error: $e");
                 }
               },
               child: Container(
                 margin: EdgeInsets.only(
-                    top: size.width * numD14, left: size.width * numD04),
-                padding: EdgeInsets.all(size.width * numD02),
+                    top: size.width * AppDimensions.numD14,
+                    left: size.width * AppDimensions.numD04),
+                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: const BoxDecoration(
                     color: Colors.white, shape: BoxShape.circle),
                 child: Image.asset(
                   "${iconsPath}ic_share_now.png",
-                  height: size.width * numD06,
-                  width: size.width * numD06,
+                  height: size.width * AppDimensions.numD06,
+                  width: size.width * AppDimensions.numD06,
                 ),
               ),
             ),
@@ -702,7 +713,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       children: [
         const Divider(),
         SizedBox(
-          height: size.width * numD03,
+          height: size.width * AppDimensions.numD03,
         ),
 
         /// Price Offer
@@ -718,34 +729,34 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         : "-",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD06,
-                        color: colorThemePink,
+                        fontSize: size.width * AppDimensions.numD06,
+                        color: AppColorTheme.colorThemePink,
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    offeredText,
+                    AppStrings.offeredText,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
                   SizedBox(
-                    height: size.width * numD016,
+                    height: size.width * AppDimensions.numD016,
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD06,
-                        vertical: size.width * numD025),
+                        horizontal: size.width * AppDimensions.numD06,
+                        vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
-                        color: colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD02)),
+                        color: AppColorTheme.colorThemePink,
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02)),
                     child: Text(
-                      photoText.toUpperCase(),
+                      AppStrings.photoText.toUpperCase(),
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.white,
                           fontWeight: FontWeight.w500),
                     ),
@@ -762,34 +773,34 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         : "-",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD06,
-                        color: colorThemePink,
+                        fontSize: size.width * AppDimensions.numD06,
+                        color: AppColorTheme.colorThemePink,
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    offeredText,
+                    AppStrings.offeredText,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
                   SizedBox(
-                    height: size.width * numD016,
+                    height: size.width * AppDimensions.numD016,
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD025),
+                        horizontal: size.width * AppDimensions.numD04,
+                        vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
-                        color: colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD02)),
+                        color: AppColorTheme.colorThemePink,
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02)),
                     child: Text(
-                      interviewText.toUpperCase(),
+                      AppStrings.interviewText.toUpperCase(),
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.white,
                           fontWeight: FontWeight.w500),
                     ),
@@ -806,34 +817,34 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         : "-",
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD06,
-                        color: colorThemePink,
+                        fontSize: size.width * AppDimensions.numD06,
+                        color: AppColorTheme.colorThemePink,
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    offeredText,
+                    AppStrings.offeredText,
                     style: commonTextStyle(
                         size: size,
-                        fontSize: size.width * numD035,
+                        fontSize: size.width * AppDimensions.numD035,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
                   SizedBox(
-                    height: size.width * numD016,
+                    height: size.width * AppDimensions.numD016,
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD06,
-                        vertical: size.width * numD025),
+                        horizontal: size.width * AppDimensions.numD06,
+                        vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
-                        color: colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD02)),
+                        color: AppColorTheme.colorThemePink,
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02)),
                     child: Text(
-                      videoText.toUpperCase(),
+                      AppStrings.videoText.toUpperCase(),
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD035,
+                          fontSize: size.width * AppDimensions.numD035,
                           color: Colors.white,
                           fontWeight: FontWeight.w500),
                     ),
@@ -845,7 +856,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         ),
 
         SizedBox(
-          height: size.width * numD03,
+          height: size.width * AppDimensions.numD03,
         ),
       ],
     );
@@ -860,8 +871,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         useSafeArea: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(size.width * numD085),
-          topRight: Radius.circular(size.width * numD085),
+          topLeft: Radius.circular(size.width * AppDimensions.numD085),
+          topRight: Radius.circular(size.width * AppDimensions.numD085),
         )),
         builder: (context) {
           return StatefulBuilder(builder: (context, stateSetter) {
@@ -871,10 +882,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 /// Heading
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: size.width * numD05,
+                    horizontal: size.width * AppDimensions.numD05,
                   ).copyWith(
-                    top: size.width * numD05,
-                    bottom: size.width * numD02,
+                    top: size.width * AppDimensions.numD05,
+                    bottom: size.width * AppDimensions.numD02,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -884,11 +895,11 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
-                        splashRadius: size.width * numD05,
+                        splashRadius: size.width * AppDimensions.numD05,
                         icon: Icon(
                           Icons.close,
                           color: Colors.black,
-                          size: size.width * numD06,
+                          size: size.width * AppDimensions.numD06,
                         ),
                       ),
                       Expanded(
@@ -897,7 +908,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                             "Share the task",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD045,
+                                fontSize: size.width * AppDimensions.numD045,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w700),
                           ),
@@ -907,14 +918,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       /*    /// Share Button
                       isMultipleContact
                           ? commonElevatedButton(
-                              shareText,
+                              AppStrings.shareText,
                               size,
                               commonTextStyle(
                                   size: size,
-                                  fontSize: size.width * numD035,
+                                  fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600),
-                              commonButtonStyle(size, colorThemePink),
+                              commonButtonStyle(size, AppColorTheme.colorThemePink),
                               () {})
                           : Container(),*/
                     ],
@@ -925,28 +936,28 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   child: ListView(
                     shrinkWrap: true,
                     padding: EdgeInsets.symmetric(
-                      horizontal: size.width * numD04,
-                      vertical: size.width * numD04,
+                      horizontal: size.width * AppDimensions.numD04,
+                      vertical: size.width * AppDimensions.numD04,
                     ),
                     children: [
                       /// Share Sub Text
                       Text(
-                        boardCastShareSubText,
+                        AppStrings.boardCastShareSubText,
                         textAlign: TextAlign.center,
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400),
                       ),
                       SizedBox(
-                        height: size.width * numD03,
+                        height: size.width * AppDimensions.numD03,
                       ),
 
                       /// Search
                       TextFormField(
                         controller: contactSearchController,
-                        cursorColor: colorTextFieldIcon,
+                        cursorColor: AppColorTheme.colorTextFieldIcon,
                         onChanged: (value) {
                           contactSearch = contactsDataList
                               .where((element) => element.displayName!
@@ -960,47 +971,53 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           stateSetter(() {});
                         },
                         decoration: InputDecoration(
-                          fillColor: colorLightGrey,
+                          fillColor: AppColorTheme.colorLightGrey,
                           isDense: true,
                           filled: true,
-                          hintText: searchHintText,
+                          hintText: AppStrings.searchHintText,
                           hintStyle: TextStyle(
-                              color: colorHint, fontSize: size.width * numD04),
+                              color: AppColorTheme.colorHint,
+                              fontSize: size.width * AppDimensions.numD04),
                           disabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           errorBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           focusedErrorBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           suffixIcon: Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD02),
+                                horizontal: size.width * AppDimensions.numD02),
                             child: Image.asset(
                               "${iconsPath}ic_search.png",
                               color: Colors.black,
                             ),
                           ),
-                          suffixIconConstraints:
-                              BoxConstraints(maxHeight: size.width * numD06),
+                          suffixIconConstraints: BoxConstraints(
+                              maxHeight: size.width * AppDimensions.numD06),
                         ),
                         textAlignVertical: TextAlignVertical.center,
                       ),
@@ -1009,7 +1026,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       contactsDataList.isNotEmpty
                           ? ListView.separated(
                               padding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD06),
+                                  vertical: size.width * AppDimensions.numD06),
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
@@ -1027,10 +1044,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     setState(() {});*/
                                   },
                                   child: Container(
-                                    padding:
-                                        EdgeInsets.all(size.width * numD02),
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD02),
                                     color: item.isContactSelected
-                                        ? colorLightGrey
+                                        ? AppColorTheme.colorLightGrey
                                         : Colors.transparent,
                                     child: Row(
                                       mainAxisAlignment:
@@ -1039,21 +1056,27 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         Row(
                                           children: [
                                             Container(
-                                              height: size.width * numD15,
-                                              width: size.width * numD15,
+                                              height: size.width *
+                                                  AppDimensions.numD15,
+                                              width: size.width *
+                                                  AppDimensions.numD15,
                                               padding: EdgeInsets.all(
-                                                  size.width * numD01),
+                                                  size.width *
+                                                      AppDimensions.numD01),
                                               decoration: const BoxDecoration(
-                                                  color: colorThemePink,
+                                                  color: AppColorTheme
+                                                      .colorThemePink,
                                                   shape: BoxShape.circle),
                                               child: ClipOval(
                                                 child: item.avatar != null
                                                     ? Image.memory(
                                                         item.avatar!,
-                                                        height:
-                                                            size.width * numD09,
-                                                        width:
-                                                            size.width * numD09,
+                                                        height: size.width *
+                                                            AppDimensions
+                                                                .numD09,
+                                                        width: size.width *
+                                                            AppDimensions
+                                                                .numD09,
                                                         fit: BoxFit.contain,
                                                         errorBuilder:
                                                             (context, dd, v) {
@@ -1062,9 +1085,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                             item.displayName![0]
                                                                 .toString(),
                                                             style: TextStyle(
-                                                                fontSize:
-                                                                    size.width *
-                                                                        numD05,
+                                                                fontSize: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD05,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -1078,9 +1102,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                           item.displayName![0]
                                                               .toString(),
                                                           style: TextStyle(
-                                                              fontSize:
-                                                                  size.width *
-                                                                      numD05,
+                                                              fontSize: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD05,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -1091,14 +1116,16 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                               ),
                                             ),
                                             SizedBox(
-                                              width: size.width * numD025,
+                                              width: size.width *
+                                                  AppDimensions.numD025,
                                             ),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: size.width * numD30,
+                                                  width: size.width *
+                                                      AppDimensions.numD30,
                                                   child: Text(
                                                     item.displayName.toString(),
                                                     maxLines: 1,
@@ -1107,7 +1134,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                     style: commonTextStyle(
                                                         size: size,
                                                         fontSize: size.width *
-                                                            numD037,
+                                                            AppDimensions
+                                                                .numD037,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.w600),
@@ -1121,8 +1149,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       : '',
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize:
-                                                          size.width * numD035,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD035,
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.w400),
@@ -1144,44 +1172,46 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       path: phoneNumber,
                                                       queryParameters: {
                                                         'body':
-                                                            '${taskDetail!.title}\n${taskDetail!.description}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task.Cheers'
+                                                            '${taskDetail!.title}\n${taskDetail!.description}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task.Cheers'
                                                       });
                                                   if (await canLaunchUrl(uri)) {
                                                     await launchUrl(uri);
                                                   } else {
                                                     showSnackBar(
                                                         'PressHop',
-                                                        errorOpenSMS,
+                                                        AppStrings.errorOpenSMS,
                                                         Colors.black);
                                                     // Handle the case when the URL can't be launched.
                                                     throw 'Error launching Sms';
                                                   }
                                                 },
-                                                splashRadius:
-                                                    size.width * numD05,
+                                                splashRadius: size.width *
+                                                    AppDimensions.numD05,
                                                 icon: Image.asset(
                                                   "${iconsPath}message_icon.png",
-                                                  height: size.width * numD06,
+                                                  height: size.width *
+                                                      AppDimensions.numD06,
                                                 )),
                                             IconButton(
-                                                splashRadius:
-                                                    size.width * numD05,
+                                                splashRadius: size.width *
+                                                    AppDimensions.numD05,
                                                 onPressed: () async {
                                                   /*Uri whatsappUrl = Uri.parse(
                                                       "whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent("${taskDetail!.title}\n\n ${taskDetail!.description}"
                                                           "\n\n ${Uri.parse(appUrl)}")}"); */
 
                                                   Share.share(Uri.encodeComponent(
-                                                      "${taskDetail!.title}\n ${taskDetail!.description}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers"));
+                                                      "${taskDetail!.title}\n ${taskDetail!.description}\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(ApiConstantsNew.config.appUrl)} to download PressHop and review the task. Cheers"));
                                                 },
                                                 icon: Padding(
                                                   padding: EdgeInsets.only(
-                                                      bottom:
-                                                          size.width * numD006),
+                                                      bottom: size.width *
+                                                          AppDimensions
+                                                              .numD006),
                                                   child: Image.asset(
                                                     "${iconsPath}whatsapp_icon.png",
-                                                    height:
-                                                        size.width * numD058,
+                                                    height: size.width *
+                                                        AppDimensions.numD058,
                                                   ),
                                                 ))
                                           ],
@@ -1193,7 +1223,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               },
                               separatorBuilder: (context, index) {
                                 return SizedBox(
-                                  height: size.width * numD04,
+                                  height: size.width * AppDimensions.numD04,
                                 );
                               },
                               itemCount: contactSearchController.text.isNotEmpty
@@ -1201,7 +1231,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                   : contactsDataList.length)
                           : Center(
                               child: Padding(
-                                padding: EdgeInsets.all(size.width * numD05),
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD05),
                                 child: const Text("Not Contact Available"),
                               ),
                             ),
@@ -1210,23 +1241,23 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                       contactsDataList != null
                           ? Container(
                         width: size.width,
-                        height: size.width * numD14,
+                        height: size.width * AppDimensions.numD14,
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD08,
+                          horizontal: size.width * AppDimensions.numD08,
                         ),
                         margin: EdgeInsets.only(
-                          top: size.width * numD06,
-                          bottom: size.width * numD08,
+                          top: size.width * AppDimensions.numD06,
+                          bottom: size.width * AppDimensions.numD08,
                         ),
                         child: commonElevatedButton(
-                            shareText,
+                            AppStrings.shareText,
                             size,
                             commonTextStyle(
                                 size: size,
-                                fontSize: size.width * numD035,
+                                fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600),
-                            commonButtonStyle(size, colorThemePink),
+                            commonButtonStyle(size, AppColorTheme.colorThemePink),
                                 () {}),
                       )
                           : Container(),*/
@@ -1344,9 +1375,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     debugPrint("::: Inside estimate Time Fuc ::::");
     dynamic mapKey;
     if (Platform.isIOS) {
-      mapKey = appleMapAPiKey;
+      mapKey = ApiConstantsNew.config.appleMapApiKey;
     } else {
-      mapKey = googleMapAPiKey;
+      mapKey = ApiConstantsNew.config.googleMapApiKey;
     }
 
     String drivingMode =

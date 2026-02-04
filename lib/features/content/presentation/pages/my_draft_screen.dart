@@ -17,7 +17,6 @@ import '../../../../core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class MyDraftScreen extends StatefulWidget {
-
   MyDraftScreen(
       {super.key, required this.publishedContent, required this.screenType});
   bool publishedContent = false;
@@ -32,7 +31,7 @@ class MyDraftScreen extends StatefulWidget {
 class MyDraftScreenState extends State<MyDraftScreen> {
   late Size size;
   List<MyContentData> myDraftList = [];
-  String selectedSellType = sharedText;
+  String selectedSellType = AppStrings.sharedText;
   ScrollController listController = ScrollController();
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
@@ -72,11 +71,11 @@ class MyDraftScreenState extends State<MyDraftScreen> {
         appBar: CommonAppBar(
           elevation: 0,
           title: Text(
-            myDraftText,
+            AppStrings.myDraftText,
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+                fontSize: size.width * AppDimensions.appBarHeadingFontSize),
           ),
           centerTitle: false,
           titleSpacing: 0,
@@ -92,10 +91,11 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                 },
                 child: commonFilterIcon(size)),
             SizedBox(
-              width: size.width * numD02,
+              width: size.width * AppDimensions.numD02,
             ),
             Container(
-              margin: EdgeInsets.only(bottom: size.width * numD02),
+              margin:
+                  EdgeInsets.only(bottom: size.width * AppDimensions.numD02),
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).pushAndRemoveUntil(
@@ -105,13 +105,13 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                  height: size.width * AppDimensions.numD07,
+                  width: size.width * AppDimensions.numD07,
                 ),
               ),
             ),
             SizedBox(
-              width: size.width * numD04,
+              width: size.width * AppDimensions.numD04,
             )
           ],
           hideLeading: false,
@@ -126,8 +126,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                   controller: _refreshController,
                   child: ListView.separated(
                       padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD04,
-                          vertical: size.width * numD04),
+                          horizontal: size.width * AppDimensions.numD04,
+                          vertical: size.width * AppDimensions.numD04),
                       itemBuilder: (context, index) {
                         var item = myDraftList[index];
                         return InkWell(
@@ -143,9 +143,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                           },
                           child: Container(
                             padding: EdgeInsets.only(
-                                left: size.width * numD03,
-                                right: size.width * numD03,
-                                top: size.width * numD03),
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD03,
+                                top: size.width * AppDimensions.numD03),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -153,7 +153,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                     ? mediaWidget(item)
                                     : Text("No media found."),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -167,46 +167,51 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                           overflow: TextOverflow.ellipsis,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * numD035,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
                                               color: Colors.black,
                                               lineHeight: 1.5,
                                               fontWeight: FontWeight.w600)),
                                     ),
-                                    SizedBox(height: size.width * numD02),
+                                    SizedBox(
+                                        height:
+                                            size.width * AppDimensions.numD02),
                                     Image.asset(
                                       myDraftList[index].exclusive
                                           ? "${iconsPath}ic_exclusive.png"
                                           : "${iconsPath}ic_share.png",
-                                      height: size.width * numD035,
-                                      color: colorTextFieldIcon,
+                                      height:
+                                          size.width * AppDimensions.numD035,
+                                      color: AppColorTheme.colorTextFieldIcon,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD02,
+                                      width: size.width * AppDimensions.numD02,
                                     ),
                                     Text(
                                       myDraftList[index].exclusive
-                                          ? exclusiveText
-                                          : sharedText,
+                                          ? AppStrings.exclusiveText
+                                          : AppStrings.sharedText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.black,
                                           fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                                 Row(
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_clock.png",
-                                      height: size.width * numD04,
-                                      color: colorTextFieldIcon,
+                                      height: size.width * AppDimensions.numD04,
+                                      color: AppColorTheme.colorTextFieldIcon,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Text(
                                       dateTimeFormatter(
@@ -215,24 +220,26 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                           utc: true),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * numD028,
-                                          color: colorHint,
+                                          fontSize: size.width *
+                                              AppDimensions.numD028,
+                                          color: AppColorTheme.colorHint,
                                           fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                                 Row(
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_location.png",
-                                      height: size.width * numD045,
-                                      color: colorTextFieldIcon,
+                                      height:
+                                          size.width * AppDimensions.numD045,
+                                      color: AppColorTheme.colorTextFieldIcon,
                                     ),
                                     SizedBox(
-                                      width: size.width * numD01,
+                                      width: size.width * AppDimensions.numD01,
                                     ),
                                     Expanded(
                                       child: Text(
@@ -240,33 +247,36 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD028,
-                                            color: colorHint,
+                                            fontSize: size.width *
+                                                AppDimensions.numD028,
+                                            color: AppColorTheme.colorHint,
                                             fontWeight: FontWeight.normal),
                                       ),
                                     )
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                                 Text(
                                   "${myDraftList[index].leftPercent}% left to complete",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * numD03,
+                                      fontSize:
+                                          size.width * AppDimensions.numD03,
                                       color: Colors.black,
                                       lineHeight: 1.5,
                                       fontWeight: FontWeight.normal),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                                 SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
                                     overlayShape: SliderComponentShape.noThumb,
                                     thumbColor: Colors.transparent,
-                                    trackHeight: size.width * numD025,
+                                    trackHeight:
+                                        size.width * AppDimensions.numD025,
                                   ),
                                   child: Slider(
                                     value: 100.0 -
@@ -275,13 +285,13 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                             .toString()),
                                     min: 0.0,
                                     max: 100.0,
-                                    inactiveColor: colorLightGrey,
-                                    activeColor: colorThemePink,
-                                    onChanged: (newValue) {},
+                                    inactiveColor: AppColorTheme.colorLightGrey,
+                                    activeColor: AppColorTheme.colorThemePink,
+                                    onChanged: (double newValue) {},
                                   ),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  height: size.width * AppDimensions.numD02,
                                 ),
                               ],
                             ),
@@ -291,7 +301,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                       separatorBuilder: (context, index) {
                         return const Divider(
                           thickness: 1,
-                          color: colorLightGrey,
+                          color: AppColorTheme.colorLightGrey,
                         );
                       },
                       itemCount: myDraftList.length),
@@ -308,23 +318,27 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   void initializeFilter() {
     sortList.addAll([
       FilterModel(
-          name: viewMonthlyText,
+          name: AppStrings.viewMonthlyText,
           icon: "ic_monthly_calendar.png",
           isSelected: false),
       FilterModel(
-          name: viewYearlyText,
+          name: AppStrings.viewYearlyText,
           icon: "ic_yearly_calendar.png",
           isSelected: false),
       FilterModel(
-          name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
     ]);
     filterList.addAll([
       FilterModel(
-          name: allExclusiveContentText,
+          name: AppStrings.allExclusiveContentText,
           icon: "ic_exclusive.png",
           isSelected: false),
       FilterModel(
-          name: allSharedContentText, icon: "ic_share.png", isSelected: false),
+          name: AppStrings.allSharedContentText,
+          icon: "ic_share.png",
+          isSelected: false),
     ]);
   }
 
@@ -351,7 +365,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   Widget mediaWidget(item) {
     debugPrint("MediaWidget: ${item.contentMediaList.toString()}");
     return ClipRRect(
-      borderRadius: BorderRadius.circular(size.width * numD04),
+      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
       child: Stack(
         children: [
           showImage(
@@ -361,21 +375,21 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                 : item.contentMediaList.first.media,
           ), // item.contentMediaList
           Positioned(
-              right: size.width * numD02,
-              top: size.width * numD02,
+              right: size.width * AppDimensions.numD02,
+              top: size.width * AppDimensions.numD02,
               child: Column(
                 children: getMediaCount(item.contentMediaList, size),
               )),
           Visibility(
             visible: false,
             child: Positioned(
-              right: size.width * numD02,
-              bottom: size.width * numD02,
+              right: size.width * AppDimensions.numD02,
+              bottom: size.width * AppDimensions.numD02,
               child: Text(
                 "+${item.contentMediaList.length - 1}",
                 style: commonTextStyle(
                     size: size,
-                    fontSize: size.width * numD04,
+                    fontSize: size.width * AppDimensions.numD04,
                     color: Colors.white,
                     fontWeight: FontWeight.w600),
               ),
@@ -385,7 +399,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
             visible: true,
             child: Image.asset(
               "${commonImagePath}watermark1.png",
-              height: size.width * numD50,
+              height: size.width * AppDimensions.numD50,
               width: size.width,
               fit: BoxFit.cover,
             ),
@@ -401,25 +415,25 @@ class MyDraftScreenState extends State<MyDraftScreen> {
         ? Container(
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width * numD50,
-            color: colorThemePink,
+            height: MediaQuery.of(context).size.width * AppDimensions.numD50,
+            color: AppColorTheme.colorThemePink,
             child: Icon(
               Icons.play_arrow_rounded,
               color: Colors.white,
-              size: MediaQuery.of(context).size.width * numD15,
+              size: MediaQuery.of(context).size.width * AppDimensions.numD15,
             ),
           )
         : type == "pdf"
             ? Image.asset(
                 "${dummyImagePath}pngImage.png",
                 fit: BoxFit.contain,
-                height: size.width * numD50,
+                height: size.width * AppDimensions.numD50,
                 width: size.width,
               )
             : type == "doc"
                 ? Image.asset(
                     "${dummyImagePath}doc_black_icon.png",
-                    height: size.width * numD50,
+                    height: size.width * AppDimensions.numD50,
                     fit: BoxFit.contain,
                     width: size.width,
                   )
@@ -427,13 +441,13 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                     url.startsWith('http') || url.startsWith('https')
                         ? url
                         : getMediaImageUrl(url),
-                    height: size.width * numD50,
+                    height: size.width * AppDimensions.numD50,
                     width: size.width,
                     fit: BoxFit.cover,
                     errorBuilder: (c, s, o) {
                       return Container(
-                        color: colorLightGrey,
-                        height: size.width * numD50,
+                        color: AppColorTheme.colorLightGrey,
+                        height: size.width * AppDimensions.numD50,
                         width: size.width,
                       );
                     },
@@ -447,16 +461,16 @@ class MyDraftScreenState extends State<MyDraftScreen> {
         useSafeArea: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(size.width * numD085),
-          topRight: Radius.circular(size.width * numD085),
+          topLeft: Radius.circular(size.width * AppDimensions.numD085),
+          topRight: Radius.circular(size.width * AppDimensions.numD085),
         )),
         builder: (context) {
           return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
-                top: size.width * numD06,
-                left: size.width * numD05,
-                right: size.width * numD05,
+                top: size.width * AppDimensions.numD06,
+                left: size.width * AppDimensions.numD05,
+                right: size.width * AppDimensions.numD05,
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -468,21 +482,22 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          splashRadius: size.width * numD07,
+                          splashRadius: size.width * AppDimensions.numD07,
                           onPressed: () {
                             Navigator.pop(context);
                           },
                           icon: Icon(
                             Icons.close,
                             color: Colors.black,
-                            size: size.width * numD07,
+                            size: size.width * AppDimensions.numD07,
                           ),
                         ),
                         Text(
                           "Sort and Filter",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * appBarHeadingFontSizeNew,
+                              fontSize: size.width *
+                                  AppDimensions.appBarHeadingFontSizeNew,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
@@ -496,9 +511,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                           child: Text(
                             "Clear all",
                             style: TextStyle(
-                                color: colorThemePink,
+                                color: AppColorTheme.colorThemePink,
                                 fontWeight: FontWeight.w400,
-                                fontSize: size.width * numD035),
+                                fontSize: size.width * AppDimensions.numD035),
                           ),
                         ),
                       ],
@@ -506,15 +521,15 @@ class MyDraftScreenState extends State<MyDraftScreen> {
 
                     /// Sort
                     SizedBox(
-                      height: size.width * numD085,
+                      height: size.width * AppDimensions.numD085,
                     ),
 
                     /// Sort Heading
                     Text(
-                      sortText,
+                      AppStrings.sortText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD05,
+                          fontSize: size.width * AppDimensions.numD05,
                           color: Colors.black,
                           fontWeight: FontWeight.w500),
                     ),
@@ -523,48 +538,49 @@ class MyDraftScreenState extends State<MyDraftScreen> {
 
                     /// Filter
                     SizedBox(
-                      height: size.width * numD05,
+                      height: size.width * AppDimensions.numD05,
                     ),
 
                     /// Filter Heading
                     Text(
-                      filterText,
+                      AppStrings.filterText,
                       style: commonTextStyle(
                           size: size,
-                          fontSize: size.width * numD05,
+                          fontSize: size.width * AppDimensions.numD05,
                           color: Colors.black,
                           fontWeight: FontWeight.w500),
                     ),
 
                     filterListWidget(filterList, stateSetter, size, false),
                     SizedBox(
-                      height: size.width * numD06,
+                      height: size.width * AppDimensions.numD06,
                     ),
 
                     /// Button
                     Container(
                       width: size.width,
-                      height: size.width * numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      height: size.width * AppDimensions.numD13,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
                       padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
+                        horizontal: size.width * AppDimensions.numD04,
                       ),
                       child: commonElevatedButton(
-                          applyText,
+                          AppStrings.applyText,
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * numD035,
+                              fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () {
                         Navigator.pop(context);
                         myDraftApi();
                       }),
                     ),
                     SizedBox(
-                      height: size.width * numD02,
+                      height: size.width * AppDimensions.numD02,
                     ),
                   ],
                 ),
@@ -577,7 +593,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
   Widget filterListWidget(
       List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
-      padding: EdgeInsets.only(top: size.width * numD03),
+      padding: EdgeInsets.only(top: size.width * AppDimensions.numD03),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: list.length,
@@ -599,14 +615,14 @@ class MyDraftScreenState extends State<MyDraftScreen> {
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText
+              top: list[index].name == AppStrings.filterDateText
                   ? size.width * 0
-                  : size.width * numD025,
-              bottom: list[index].name == filterDateText
+                  : size.width * AppDimensions.numD025,
+              bottom: list[index].name == AppStrings.filterDateText
                   ? size.width * 0
-                  : size.width * numD025,
-              left: size.width * numD02,
-              right: size.width * numD02,
+                  : size.width * AppDimensions.numD025,
+              left: size.width * AppDimensions.numD02,
+              right: size.width * AppDimensions.numD02,
             ),
             color: item.isSelected ? Colors.grey.shade400 : null,
             child: Row(
@@ -614,17 +630,17 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                 Image.asset(
                   "$iconsPath${list[index].icon}",
                   color: Colors.black,
-                  height: list[index].name == soldContentText
-                      ? size.width * numD06
-                      : size.width * numD05,
-                  width: list[index].name == soldContentText
-                      ? size.width * numD06
-                      : size.width * numD05,
+                  height: list[index].name == AppStrings.soldContentText
+                      ? size.width * AppDimensions.numD06
+                      : size.width * AppDimensions.numD05,
+                  width: list[index].name == AppStrings.soldContentText
+                      ? size.width * AppDimensions.numD06
+                      : size.width * AppDimensions.numD05,
                 ),
                 SizedBox(
-                  width: size.width * numD03,
+                  width: size.width * AppDimensions.numD03,
                 ),
-                item.name == filterDateText
+                item.name == AppStrings.filterDateText
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -643,15 +659,15 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                top: size.width * numD01,
-                                bottom: size.width * numD01,
-                                left: size.width * numD03,
-                                right: size.width * numD01,
+                                top: size.width * AppDimensions.numD01,
+                                bottom: size.width * AppDimensions.numD01,
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD01,
                               ),
-                              width: size.width * numD32,
+                              width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -663,15 +679,16 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                     item.fromDate != null
                                         ? dateTimeFormatter(
                                             dateTime: item.fromDate.toString())
-                                        : fromText,
+                                        : AppStrings.fromText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD015,
+                                    width: size.width * AppDimensions.numD015,
                                   ),
                                   const Icon(
                                     Icons.arrow_drop_down_sharp,
@@ -682,7 +699,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                             ),
                           ),
                           SizedBox(
-                            width: size.width * numD03,
+                            width: size.width * AppDimensions.numD03,
                           ),
                           InkWell(
                             onTap: () async {
@@ -713,15 +730,15 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                             },
                             child: Container(
                               padding: EdgeInsets.only(
-                                top: size.width * numD01,
-                                bottom: size.width * numD01,
-                                left: size.width * numD03,
-                                right: size.width * numD01,
+                                top: size.width * AppDimensions.numD01,
+                                bottom: size.width * AppDimensions.numD01,
+                                left: size.width * AppDimensions.numD03,
+                                right: size.width * AppDimensions.numD01,
                               ),
-                              width: size.width * numD32,
+                              width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -733,15 +750,16 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                     item.toDate != null
                                         ? dateTimeFormatter(
                                             dateTime: item.toDate.toString())
-                                        : toText,
+                                        : AppStrings.toText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
-                                    width: size.width * numD02,
+                                    width: size.width * AppDimensions.numD02,
                                   ),
                                   const Icon(
                                     Icons.arrow_drop_down_sharp,
@@ -755,7 +773,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                       )
                     : Text(list[index].name,
                         style: TextStyle(
-                            fontSize: size.width * numD035,
+                            fontSize: size.width * AppDimensions.numD035,
                             color: Colors.black,
                             fontWeight: FontWeight.w400,
                             fontFamily: "AirbnbCereal_W_Bk"))
@@ -766,7 +784,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
       },
       separatorBuilder: (context, index) {
         return SizedBox(
-          height: size.width * numD01,
+          height: size.width * AppDimensions.numD01,
         );
       },
     );
@@ -785,12 +803,12 @@ class MyDraftScreenState extends State<MyDraftScreen> {
       if (offset == 0) {
         myDraftList.clear();
       }
-      if (sortList[pos].name == filterDateText) {
+      if (sortList[pos].name == AppStrings.filterDateText) {
         params["startdate"] = sortList[pos].fromDate!;
         params["endDate"] = sortList[pos].toDate!;
-      } else if (sortList[pos].name == viewMonthlyText) {
+      } else if (sortList[pos].name == AppStrings.viewMonthlyText) {
         params["posted_date"] = "31";
-      } else if (sortList[pos].name == viewYearlyText) {
+      } else if (sortList[pos].name == AppStrings.viewYearlyText) {
         params["posted_date"] = "365";
       }
     } else {
@@ -801,11 +819,11 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     for (var element in filterList) {
       if (element.isSelected) {
         switch (element.name) {
-          case allSharedContentText:
+          case AppStrings.allSharedContentText:
             params["sharedtype"] = "shared";
             break;
 
-          case allExclusiveContentText:
+          case AppStrings.allExclusiveContentText:
             params["type"] = "exclusive";
             break;
         }
@@ -813,8 +831,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     }
 
     try {
-      final response =
-          await sl<ApiClient>().get(myDraftUrl, queryParameters: params);
+      final response = await sl<ApiClient>()
+          .get(ApiConstantsNew.content.draftContent, queryParameters: params);
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -870,8 +888,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     };
 
     try {
-      final response =
-          await sl<ApiClient>().patch(removeFromDraftContentAPI, data: map);
+      final response = await sl<ApiClient>()
+          .patch(ApiConstantsNew.content.removeFromDraft, data: map);
       log("reqRemoveFromDraftContentAPI===> ${response.data}");
     } catch (e) {
       debugPrint("ApiError::::$e");
