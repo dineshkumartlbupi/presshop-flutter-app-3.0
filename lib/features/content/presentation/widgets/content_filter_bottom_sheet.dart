@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 
 class ContentFilterSheet extends StatefulWidget {
-  final Size size;
-  final List<FilterModel> sortList;
-  final List<FilterModel> filterList;
-  final VoidCallback onApply;
-  final VoidCallback onClear;
 
   const ContentFilterSheet({
     super.key,
@@ -16,6 +11,11 @@ class ContentFilterSheet extends StatefulWidget {
     required this.onApply,
     required this.onClear,
   });
+  final Size size;
+  final List<FilterModel> sortList;
+  final List<FilterModel> filterList;
+  final VoidCallback onApply;
+  final VoidCallback onClear;
 
   @override
   State<ContentFilterSheet> createState() => _ContentFilterSheetState();

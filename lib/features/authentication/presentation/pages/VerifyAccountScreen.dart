@@ -13,12 +13,6 @@ import '../bloc/verification_state.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 
 class VerifyAccountScreen extends StatefulWidget {
-  final String mobileNumberValue;
-  final String emailAddressValue;
-  final String countryCode;
-  final String imagePath;
-  final Map<String, String>? params;
-  final bool sociallogin;
 
   const VerifyAccountScreen({
     super.key,
@@ -29,6 +23,12 @@ class VerifyAccountScreen extends StatefulWidget {
     required this.imagePath,
     required this.sociallogin,
   });
+  final String mobileNumberValue;
+  final String emailAddressValue;
+  final String countryCode;
+  final String imagePath;
+  final Map<String, String>? params;
+  final bool sociallogin;
 
   @override
   State<StatefulWidget> createState() => VerifyAccountScreenState();
@@ -54,7 +54,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
 
   void startResendTime() {
     var endTime = DateTime.now().add(const Duration(minutes: 5));
-    myTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+    myTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
       var diff = endTime.difference(DateTime.now());
       if (diff.inSeconds > 0) {

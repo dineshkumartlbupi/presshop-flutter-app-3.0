@@ -9,13 +9,13 @@ import '../../domain/repositories/content_repository.dart';
 import '../datasources/content_remote_data_source.dart';
 
 class ContentRepositoryImpl implements ContentRepository {
-  final ContentRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   ContentRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final ContentRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<ContentItem>>> getMyContent({

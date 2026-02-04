@@ -13,27 +13,27 @@ class ProfileInitial extends ProfileState {}
 class ProfileLoading extends ProfileState {}
 
 class ProfileLoaded extends ProfileState {
-  final ProfileData profile;
 
   const ProfileLoaded(this.profile);
+  final ProfileData profile;
 
   @override
   List<Object> get props => [profile];
 }
 
 class ProfileUpdated extends ProfileState {
-  final ProfileData profile;
 
   const ProfileUpdated(this.profile);
+  final ProfileData profile;
 
   @override
   List<Object> get props => [profile];
 }
 
 class ProfileImageUploaded extends ProfileState {
-  final String imageUrl;
 
   const ProfileImageUploaded(this.imageUrl);
+  final String imageUrl;
 
   @override
   List<Object> get props => [imageUrl];
@@ -42,45 +42,45 @@ class ProfileImageUploaded extends ProfileState {
 class PasswordChanged extends ProfileState {}
 
 class ProfileError extends ProfileState {
-  final String message;
 
   const ProfileError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];
 }
 
 class UserNameChecked extends ProfileState {
-  final bool isAvailable;
 
   const UserNameChecked(this.isAvailable);
+  final bool isAvailable;
 
   @override
   List<Object> get props => [isAvailable];
 }
 
 class EmailChecked extends ProfileState {
-  final bool isAvailable;
 
   const EmailChecked(this.isAvailable);
+  final bool isAvailable;
 
   @override
   List<Object> get props => [isAvailable];
 }
 
 class PhoneChecked extends ProfileState {
-  final bool isAvailable;
 
   const PhoneChecked(this.isAvailable);
+  final bool isAvailable;
 
   @override
   List<Object> get props => [isAvailable];
 }
 
 class AvatarsLoaded extends ProfileState {
-  final List<Avatar> avatars;
 
   const AvatarsLoaded(this.avatars);
+  final List<Avatar> avatars;
 
   @override
   List<Object> get props => [avatars];

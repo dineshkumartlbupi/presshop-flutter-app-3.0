@@ -5,9 +5,9 @@ import '../repositories/auth_repository.dart';
 import '../entities/user.dart';
 
 class GetProfile implements UseCase<User, NoParams> {
-  final AuthRepository repository;
 
   GetProfile(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, User>> call(NoParams params) async {

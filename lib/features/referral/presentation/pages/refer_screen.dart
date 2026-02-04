@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:presshop/core/analytics/analytics_constants.dart';

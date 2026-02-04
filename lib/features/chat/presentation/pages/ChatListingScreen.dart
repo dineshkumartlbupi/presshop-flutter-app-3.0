@@ -17,9 +17,9 @@ const int getAdminListReq = 1;
 
 // ignore: must_be_immutable
 class ChatListingScreen extends StatefulWidget {
-  bool hideLeading = false;
 
   ChatListingScreen({super.key, required this.hideLeading});
+  bool hideLeading = false;
 
   @override
   State<ChatListingScreen> createState() => _ChatListingScreenState();
@@ -50,7 +50,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
     getPreferenceData();
   }
 
-  getPreferenceData() {
+  void getPreferenceData() {
     userName = sharedPreferences!.getString(userNameKey).toString();
     userProfileImage = sharedPreferences!.getString(avatarKey).toString();
     userId = sharedPreferences!.getString(hopperIdKey) ?? "";
@@ -219,8 +219,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
                         adminProfileUrl + item.profilePic,
-                        errorBuilder: (BuildContext context, Object exception,
-                            StackTrace? stackTrace) {
+                        errorBuilder: (context, exception,
+                            stackTrace) {
                           return Image.asset(
                             "${commonImagePath}rabbitLogo.png",
                           );
@@ -318,7 +318,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
           .collection("Chat2")
           .orderBy('date', descending: true)
           .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapShot) {
+      builder: (context, snapShot) {
         if (snapShot.hasError) {
           return const Center(child: Text("Something Wrong"));
         }
@@ -344,7 +344,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                 .toLowerCase()
                                 .contains(_searchController.text.toLowerCase()))
                         : snapShot.data!.docs)
-                    .map((DocumentSnapshot document) {
+                    .map((document) {
                   debugPrint("document :::${snapShot.data!.docs.length}");
 
                   if (document.get('senderId').toString() ==
@@ -392,9 +392,9 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                             ? adminProfileUrl +
                                                 document.get('receiverImage')
                                             : document.get('senderImage'),
-                                        errorBuilder: (BuildContext context,
-                                            Object exception,
-                                            StackTrace? stackTrace) {
+                                        errorBuilder: (context,
+                                            exception,
+                                            stackTrace) {
                                           return Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
                                             height: size.width * numD12,

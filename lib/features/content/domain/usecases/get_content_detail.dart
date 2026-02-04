@@ -6,9 +6,9 @@ import '../entities/content_item.dart';
 import '../repositories/content_repository.dart';
 
 class GetContentDetail implements UseCase<ContentItem, String> {
-  final ContentRepository repository;
 
   GetContentDetail(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, ContentItem>> call(String contentId) async {

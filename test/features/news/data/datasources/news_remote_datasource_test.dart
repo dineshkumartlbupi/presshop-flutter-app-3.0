@@ -4,7 +4,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/news/data/datasources/news_remote_datasource.dart';
-import 'package:presshop/features/news/data/models/news_model.dart';
 
 class MockApiClient extends Mock implements ApiClient {}
 

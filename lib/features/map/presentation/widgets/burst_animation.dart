@@ -2,10 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class BurstParticle {
-  Offset position;
-  double scale;
-  double opacity;
-  double speed;
 
   BurstParticle({
     required this.position,
@@ -13,13 +9,17 @@ class BurstParticle {
     required this.opacity,
     required this.speed,
   });
+  Offset position;
+  double scale;
+  double opacity;
+  double speed;
 }
 
 class BurstPainter extends CustomPainter {
-  final List<BurstParticle> particles;
-  final ui.Image? image;
 
   BurstPainter(this.particles, this.image);
+  final List<BurstParticle> particles;
+  final ui.Image? image;
 
   @override
   void paint(Canvas canvas, Size size) {

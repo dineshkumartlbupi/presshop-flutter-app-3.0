@@ -4,11 +4,6 @@ enum MenuLogoutStatus { initial, loading, success, failure }
 enum MenuStatus { initial, loading, success, failure }
 
 class MenuState extends Equatable {
-  final int notificationCount;
-  final int alertCount;
-  final MenuLogoutStatus logoutStatus;
-  final MenuStatus status;
-  final String? errorMessage;
 
   const MenuState({
     this.notificationCount = 0,
@@ -17,6 +12,11 @@ class MenuState extends Equatable {
     this.status = MenuStatus.initial,
     this.errorMessage,
   });
+  final int notificationCount;
+  final int alertCount;
+  final MenuLogoutStatus logoutStatus;
+  final MenuStatus status;
+  final String? errorMessage;
 
   MenuState copyWith({
     int? notificationCount,

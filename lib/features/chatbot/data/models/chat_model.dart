@@ -1,9 +1,4 @@
 class ChatModel {
-  String message = "";
-  String time = "";
-  bool isUser = false;
-  bool isNavigate = true;
-  bool hasShownFirstFailMsg = false;
 
   ChatModel(
       {required this.message,
@@ -21,4 +16,9 @@ class ChatModel {
             .contains("handing you over to a real person"),
         time: json['createdAt'] ?? json['time'] ?? "");
   }
+  String message = "";
+  String time = "";
+  bool isUser = false;
+  bool isNavigate = true;
+  bool hasShownFirstFailMsg = false;
 }

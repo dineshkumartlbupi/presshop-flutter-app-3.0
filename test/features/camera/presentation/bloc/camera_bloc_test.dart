@@ -110,7 +110,7 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
       photoManagerChannel,
-      (MethodCall methodCall) async {
+      (methodCall) async {
         if (methodCall.method == 'requestPermissionExtend') {
           return 1; // Authorized
         } else if (methodCall.method == 'getAssetPathList') {
@@ -126,7 +126,7 @@ void main() {
     // So we are safe from channel for MockCameraController methods we stubbed.
     // However, we should still mock availableCameras channel just in case.
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(cameraChannel, (MethodCall methodCall) async {
+        .setMockMethodCallHandler(cameraChannel, (methodCall) async {
       if (methodCall.method == 'availableCameras') {
         return [
           {'name': 'cam1', 'lensFacing': 'back', 'sensorOrientation': 90},

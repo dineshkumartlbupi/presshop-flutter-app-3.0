@@ -8,10 +8,6 @@ import 'bank_event.dart';
 import 'bank_state.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> {
-  final GetBanks getBanks;
-  final DeleteBank deleteBank;
-  final SetDefaultBank setDefaultBank;
-  final GetStripeOnboardingUrl getStripeOnboardingUrl;
 
   BankBloc({
     required this.getBanks,
@@ -24,6 +20,10 @@ class BankBloc extends Bloc<BankEvent, BankState> {
     on<SetDefaultBankEvent>(_onSetDefaultBank);
     on<GetStripeUrlEvent>(_onGetStripeUrl);
   }
+  final GetBanks getBanks;
+  final DeleteBank deleteBank;
+  final SetDefaultBank setDefaultBank;
+  final GetStripeOnboardingUrl getStripeOnboardingUrl;
 
   Future<void> _onFetchBanks(
     FetchBanksEvent event,

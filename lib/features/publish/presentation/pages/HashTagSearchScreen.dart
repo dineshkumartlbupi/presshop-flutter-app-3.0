@@ -12,10 +12,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class HashTagSearchScreen extends StatefulWidget {
-  final String country;
-  final String countryTagId;
-  final List<HashTagData> tagData;
-  final List<HashTagData> initialSelectedHashTags;
 
   HashTagSearchScreen(
       {super.key,
@@ -23,6 +19,10 @@ class HashTagSearchScreen extends StatefulWidget {
       required this.tagData,
       required this.initialSelectedHashTags,
       required this.countryTagId});
+  final String country;
+  final String countryTagId;
+  final List<HashTagData> tagData;
+  final List<HashTagData> initialSelectedHashTags;
 
   @override
   State<StatefulWidget> createState() {
@@ -477,15 +477,22 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
 }
 
 class HashTagData extends Equatable {
-  final String id;
-  final String name;
-  final bool selected;
 
   HashTagData({
     required this.id,
     required this.name,
     required this.selected,
   });
+
+  factory HashTagData.fromJson(Map<String, dynamic> json) {
+    return HashTagData(
+        id: json["id"] ?? json["_id"] ?? '',
+        name: json["name"] ?? '',
+        selected: false);
+  }
+  final String id;
+  final String name;
+  final bool selected;
 
   HashTagData copyWith({
     String? id,
@@ -497,13 +504,6 @@ class HashTagData extends Equatable {
       name: name ?? this.name,
       selected: selected ?? this.selected,
     );
-  }
-
-  factory HashTagData.fromJson(Map<String, dynamic> json) {
-    return HashTagData(
-        id: json["id"] ?? json["_id"] ?? '',
-        name: json["name"] ?? '',
-        selected: false);
   }
 
   @override

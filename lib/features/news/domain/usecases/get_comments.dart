@@ -6,9 +6,9 @@ import 'package:presshop/features/news/domain/entities/comment.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 
 class GetComments implements UseCase<List<Comment>, GetCommentsParams> {
-  final NewsRepository repository;
 
   GetComments(this.repository);
+  final NewsRepository repository;
 
   @override
   Future<Either<Failure, List<Comment>>> call(GetCommentsParams params) async {
@@ -17,10 +17,10 @@ class GetComments implements UseCase<List<Comment>, GetCommentsParams> {
 }
 
 class GetCommentsParams extends Equatable {
-  final String contentId;
-  final int limit;
 
   const GetCommentsParams({required this.contentId, this.limit = 15});
+  final String contentId;
+  final int limit;
 
   @override
   List<Object?> get props => [contentId, limit];

@@ -8,19 +8,19 @@ abstract class AccountSettingsEvent extends Equatable {
 }
 
 class DeleteAccountEvent extends AccountSettingsEvent {
-  final Map<String, String> reason;
 
   const DeleteAccountEvent({required this.reason});
+  final Map<String, String> reason;
 
   @override
   List<Object> get props => [reason];
 }
 
 class ChangePasswordEvent extends AccountSettingsEvent {
-  final String oldPassword;
-  final String newPassword;
 
   const ChangePasswordEvent({required this.oldPassword, required this.newPassword});
+  final String oldPassword;
+  final String newPassword;
 
 
   @override

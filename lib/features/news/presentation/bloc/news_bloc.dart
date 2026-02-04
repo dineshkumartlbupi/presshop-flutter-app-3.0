@@ -12,11 +12,6 @@ import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/core/error/failures.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
-  final GetAggregatedNews getAggregatedNews;
-  final GetNewsDetail getNewsDetail;
-  final GetComments getComments;
-  final SocketService socketService;
-  final SharedPreferences sharedPreferences;
 
   NewsBloc({
     required this.getAggregatedNews,
@@ -38,6 +33,11 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
     _initSocketListener();
   }
+  final GetAggregatedNews getAggregatedNews;
+  final GetNewsDetail getNewsDetail;
+  final GetComments getComments;
+  final SocketService socketService;
+  final SharedPreferences sharedPreferences;
 
   void _initSocketListener() {
     socketService.onNewsLike = (data) {

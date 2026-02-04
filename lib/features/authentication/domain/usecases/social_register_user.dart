@@ -6,9 +6,9 @@ import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 
 class SocialRegisterUser implements UseCase<User, SocialRegisterParams> {
-  final AuthRepository repository;
 
   SocialRegisterUser(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, User>> call(SocialRegisterParams params) async {
@@ -17,9 +17,9 @@ class SocialRegisterUser implements UseCase<User, SocialRegisterParams> {
 }
 
 class SocialRegisterParams extends Equatable {
-  final Map<String, dynamic> data;
 
   const SocialRegisterParams({required this.data});
+  final Map<String, dynamic> data;
 
   @override
   List<Object> get props => [data];

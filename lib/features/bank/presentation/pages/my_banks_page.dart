@@ -46,7 +46,7 @@ class _MyBanksViewState extends State<MyBanksView> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext dialogContext) {
+      builder: (dialogContext) {
         return AlertDialog(
           backgroundColor: Colors.transparent,
           elevation: 0,

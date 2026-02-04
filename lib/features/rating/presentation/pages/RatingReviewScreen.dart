@@ -15,10 +15,10 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/rating/domain/entities/review.dart';
 
 class FilterRatingData {
-  double ratingValue;
-  bool selected;
 
   FilterRatingData({required this.ratingValue, required this.selected});
+  double ratingValue;
+  bool selected;
 }
 
 class RatingReviewScreen extends StatefulWidget {
@@ -511,7 +511,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * numD06,
@@ -548,10 +548,12 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              sortList.forEach(
-                                  (element) => element.isSelected = false);
-                              filterRatingList.forEach(
-                                  (element) => element.selected = false);
+                              for (var element in sortList) {
+                                element.isSelected = false;
+                              }
+                              for (var element in filterRatingList) {
+                                element.selected = false;
+                              }
                               stateSetter(() {});
                               // Dispatch Clear Filter Event if needed
                             },
@@ -705,7 +707,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                   Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: size.width * numD02),
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       height: size.width * numD14,
                       child: ElevatedButton(

@@ -6,6 +6,22 @@ import '../../domain/entities/earning_transaction.dart';
 enum EarningStatus { initial, loading, success, failure, empty }
 
 class EarningState extends Equatable {
+
+  const EarningState({
+    this.status = EarningStatus.initial,
+    this.transactionStatus = EarningStatus.initial,
+    this.commissionStatus = EarningStatus.initial,
+    this.earningData,
+    this.transactions = const [],
+    this.commissions = const [],
+    this.hasReachedMaxTransactions = false,
+    this.hasReachedMaxCommissions = false,
+    this.errorMessage = '',
+    this.currentTabIndex = 0,
+    this.fromDate = '',
+    this.toDate = '',
+    this.monthlyEarnings = '',
+  });
   final EarningStatus status;
   final EarningStatus transactionStatus;
   final EarningStatus commissionStatus;
@@ -23,22 +39,6 @@ class EarningState extends Equatable {
   final String fromDate;
   final String toDate;
   final String monthlyEarnings;
-
-  const EarningState({
-    this.status = EarningStatus.initial,
-    this.transactionStatus = EarningStatus.initial,
-    this.commissionStatus = EarningStatus.initial,
-    this.earningData,
-    this.transactions = const [],
-    this.commissions = const [],
-    this.hasReachedMaxTransactions = false,
-    this.hasReachedMaxCommissions = false,
-    this.errorMessage = '',
-    this.currentTabIndex = 0,
-    this.fromDate = '',
-    this.toDate = '',
-    this.monthlyEarnings = '',
-  });
   
   EarningState copyWith({
       EarningStatus? status,

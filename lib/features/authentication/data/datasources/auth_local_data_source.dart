@@ -19,13 +19,13 @@ abstract class AuthLocalDataSource {
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  final SharedPreferences sharedPreferences;
-  final FlutterSecureStorage secureStorage;
 
   AuthLocalDataSourceImpl({
     required this.sharedPreferences,
     required this.secureStorage,
   });
+  final SharedPreferences sharedPreferences;
+  final FlutterSecureStorage secureStorage;
 
   @override
   Future<void> cacheToken(String token) async {

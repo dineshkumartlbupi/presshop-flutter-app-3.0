@@ -2,7 +2,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/earning/domain/entities/earning_profile.dart';
 import 'package:presshop/features/earning/domain/entities/earning_transaction.dart';
 import 'package:presshop/features/earning/domain/usecases/get_earning_profile.dart';

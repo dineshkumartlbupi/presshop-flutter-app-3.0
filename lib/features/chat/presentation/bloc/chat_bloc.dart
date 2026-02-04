@@ -13,14 +13,6 @@ import 'package:presshop/main.dart'; // Globals
 import 'package:record/record.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final FirebaseFirestore _firestore;
-  final FirebaseStorage _storage;
-  final AudioRecorder _audioRecorder;
-
-  StreamSubscription? _messagesSubscription;
-  StreamSubscription? _chatListSubscription;
-  StreamSubscription? _typingSubscription;
-  StreamSubscription? _onlineStatusSubscription;
 
   ChatBloc({
     FirebaseFirestore? firestore,
@@ -44,6 +36,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<OtherUserOnlineStatusUpdatedEvent>(_onOtherUserOnlineStatusUpdated);
     on<ChatListUpdatedEvent>(_onChatListUpdated);
   }
+  final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
+  final AudioRecorder _audioRecorder;
+
+  StreamSubscription? _messagesSubscription;
+  StreamSubscription? _chatListSubscription;
+  StreamSubscription? _typingSubscription;
+  StreamSubscription? _onlineStatusSubscription;
 
   @override
   Future<void> close() {
@@ -170,9 +170,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     final senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
     final senderName =
-        ("${sharedPreferences!.getString(firstNameKey) ?? ""} ${sharedPreferences!.getString(lastNameKey) ?? ""}")
+        "${sharedPreferences!.getString(firstNameKey) ?? ""} ${sharedPreferences!.getString(lastNameKey) ?? ""}"
             .trim();
-    final senderImage = (sharedPreferences!.getString(avatarKey) ?? "");
+    final senderImage = sharedPreferences!.getString(avatarKey) ?? "";
     final senderUserName = sharedPreferences!.getString(userNameKey) ?? "";
 
     String messageId = DateTime.now().toUtc().millisecondsSinceEpoch.toString();
@@ -187,12 +187,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       String fileName = event.messageType == 'video'
           ? '${DateTime.now().millisecondsSinceEpoch}.mp4'
           : '${DateTime.now().millisecondsSinceEpoch}.jpg'; // or png
-      if (event.messageType == 'audio')
+      if (event.messageType == 'audio') {
         fileName = '${DateTime.now().millisecondsSinceEpoch}.m4a';
+      }
 
       String path = 'Media/$fileName';
-      if (event.messageType == 'video')
+      if (event.messageType == 'video') {
         path = 'Media/$fileName'; // Matches ChatScreen logic somewhat
+      }
 
       Reference storageRef = _storage.ref().child(path);
       UploadTask uploadTask = storageRef.putFile(File(event.filePath!));

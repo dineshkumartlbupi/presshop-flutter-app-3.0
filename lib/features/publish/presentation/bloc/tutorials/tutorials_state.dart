@@ -3,15 +3,6 @@ part of 'tutorials_bloc.dart';
 enum TutorialsStatus { initial, loading, success, failure, loadingMore }
 
 class TutorialsState extends Equatable {
-  final TutorialsStatus status;
-  final List<CategoryDataModel> categories;
-  final List<TutorialsModel> videos;
-  final List<TutorialsModel> searchResults;
-  final int selectedCategoryIndex;
-  final String errorMessage;
-  final bool isSearch;
-  final bool hasReachedMax;
-  final int offset;
 
   const TutorialsState({
     this.status = TutorialsStatus.initial,
@@ -24,6 +15,15 @@ class TutorialsState extends Equatable {
     this.hasReachedMax = false,
     this.offset = 0,
   });
+  final TutorialsStatus status;
+  final List<CategoryDataModel> categories;
+  final List<TutorialsModel> videos;
+  final List<TutorialsModel> searchResults;
+  final int selectedCategoryIndex;
+  final String errorMessage;
+  final bool isSearch;
+  final bool hasReachedMax;
+  final int offset;
 
   TutorialsState copyWith({
     TutorialsStatus? status,

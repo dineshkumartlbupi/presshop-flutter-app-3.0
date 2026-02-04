@@ -16,9 +16,9 @@ class GetProfileData implements UseCase<ProfileData, GetProfileParams> {
 }
 
 class GetProfileParams extends Equatable {
-  final bool showLoader;
 
   const GetProfileParams({this.showLoader = true});
+  final bool showLoader;
 
   @override
   List<Object?> get props => [showLoader];

@@ -22,15 +22,15 @@ abstract class MapRemoteDataSource {
 }
 
 class MapRemoteDataSourceImpl implements MapRemoteDataSource {
-  final ApiClient apiClient;
-  final String googleApiKey;
-  final LocationService locationService;
 
   MapRemoteDataSourceImpl({
     required this.apiClient,
     required this.googleApiKey,
     required this.locationService,
   });
+  final ApiClient apiClient;
+  final String googleApiKey;
+  final LocationService locationService;
 
   @override
   Future<RouteInfo> getRoute(LatLng start, LatLng end) async {

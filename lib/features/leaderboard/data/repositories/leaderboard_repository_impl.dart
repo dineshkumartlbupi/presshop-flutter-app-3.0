@@ -5,9 +5,9 @@ import '../../domain/repositories/leaderboard_repository.dart';
 import '../datasources/leaderboard_remote_datasource.dart';
 
 class LeaderboardRepositoryImpl implements LeaderboardRepository {
-  final LeaderboardRemoteDataSource remoteDataSource;
 
   LeaderboardRepositoryImpl({required this.remoteDataSource});
+  final LeaderboardRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, LeaderboardEntity>> getLeaderboardData(String countryCode) async {

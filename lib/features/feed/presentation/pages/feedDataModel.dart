@@ -1,52 +1,4 @@
 class FeedsDataModel {
-  bool firstLevelCheckNudity = false;
-  bool firstLevelCheckAdult = false;
-  bool firstLevelCheckGDPR = false;
-  String saleStatus = "";
-  String paymentPending = "";
-  String feedImage = "";
-  String pressshop = "";
-  bool checkAndApprove = false;
-  String mode = "";
-  List<dynamic> tagIds = [];
-  String type = "";
-  String status = "";
-  String favouriteStatus = "";
-  bool isDraft = false;
-  String paidStatus = "";
-  bool paidStatusToHopper = false;
-  String id = "";
-  String description = "";
-  String location = "";
-  double latitude = 0.0;
-  double longitude = 0.0;
-  String categoryPercentage = "";
-  String categoryName = "";
-  String categoryId = "";
-  String categoryType = "";
-  String askPrice = "";
-  String total_earnings = "";
-  String displayPrice = "";
-  String displayCurrency = "";
-  String timestamp;
-  int viewCount = 0;
-  int offerCount = 0;
-
-  List<ContentDataModel> contentDataList = [];
-  String createdAt;
-  String updatedAt;
-  String heading = "";
-  String remarks = "";
-  String userId;
-  String amountPaid = '';
-  String feedsDataModelId;
-  bool showVideo = false;
-  bool mostViewed = false;
-
-  bool isFavourite = false;
-  bool isLiked = false;
-  bool isEmoji = false;
-  bool isClap = false;
 
   FeedsDataModel({
     required this.firstLevelCheckNudity,
@@ -158,13 +110,57 @@ class FeedsDataModel {
             ? (json["purchased_mediahouse"] as List).length
             : 0);
   }
+  bool firstLevelCheckNudity = false;
+  bool firstLevelCheckAdult = false;
+  bool firstLevelCheckGDPR = false;
+  String saleStatus = "";
+  String paymentPending = "";
+  String feedImage = "";
+  String pressshop = "";
+  bool checkAndApprove = false;
+  String mode = "";
+  List<dynamic> tagIds = [];
+  String type = "";
+  String status = "";
+  String favouriteStatus = "";
+  bool isDraft = false;
+  String paidStatus = "";
+  bool paidStatusToHopper = false;
+  String id = "";
+  String description = "";
+  String location = "";
+  double latitude = 0.0;
+  double longitude = 0.0;
+  String categoryPercentage = "";
+  String categoryName = "";
+  String categoryId = "";
+  String categoryType = "";
+  String askPrice = "";
+  String total_earnings = "";
+  String displayPrice = "";
+  String displayCurrency = "";
+  String timestamp;
+  int viewCount = 0;
+  int offerCount = 0;
+
+  List<ContentDataModel> contentDataList = [];
+  String createdAt;
+  String updatedAt;
+  String heading = "";
+  String remarks = "";
+  String userId;
+  String amountPaid = '';
+  String feedsDataModelId;
+  bool showVideo = false;
+  bool mostViewed = false;
+
+  bool isFavourite = false;
+  bool isLiked = false;
+  bool isEmoji = false;
+  bool isClap = false;
 }
 
 class ContentDataModel {
-  String mediaType = "";
-  String id = "";
-  String media = "";
-  String thumbnail = "";
 
   ContentDataModel({
     required this.mediaType,
@@ -180,4 +176,8 @@ class ContentDataModel {
         media: json["media"] ?? "",
         thumbnail: json["imageAndVideo"] ?? json["media"] ?? "",
       );
+  String mediaType = "";
+  String id = "";
+  String media = "";
+  String thumbnail = "";
 }

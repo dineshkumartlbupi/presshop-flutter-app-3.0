@@ -50,7 +50,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
     });
   }
 
-  initialData() {
+  void initialData() {
     nameController.text =
         "${sharedPreferences!.get(firstNameKey).toString()} ${sharedPreferences!.get(lastNameKey).toString()}";
     phoneNumberController.text = sharedPreferences!.get(phoneKey).toString();
@@ -686,8 +686,9 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri twitterUrl = Uri.parse(
                                   'https://twitter.com/Presshopuk'); // Replace with the desired Twitter URL
-                              if (await canLaunchUrl(twitterUrl))
+                              if (await canLaunchUrl(twitterUrl)) {
                                 await launchUrl(twitterUrl);
+                              }
                             },
                             child: Container(
                               height: size.width * numD1,
@@ -707,8 +708,9 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri linkedUrl = Uri.parse(
                                   'https://www.linkedin.com/company/presshop/');
-                              if (await canLaunchUrl(linkedUrl))
+                              if (await canLaunchUrl(linkedUrl)) {
                                 await launchUrl(linkedUrl);
+                              }
                             },
                             child: Container(
                               height: size.width * numD1,
@@ -728,8 +730,9 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri instagramUrl = Uri.parse(
                                   'https://www.instagram.com/presshopuk/'); // Replace with the desired Twitter URL
-                              if (await canLaunchUrl(instagramUrl))
+                              if (await canLaunchUrl(instagramUrl)) {
                                 await launchUrl(instagramUrl);
+                              }
                             },
                             child: Container(
                               height: size.width * numD1,
@@ -748,8 +751,9 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             onTap: () async {
                               Uri facebookUrl = Uri.parse(
                                   'https://www.facebook.com/presshopuk/'); // Replace with the desired Twitter URL
-                              if (await canLaunchUrl(facebookUrl))
+                              if (await canLaunchUrl(facebookUrl)) {
                                 await launchUrl(facebookUrl);
+                              }
                             },
                             child: Container(
                               height: size.width * numD1,

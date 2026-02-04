@@ -1,7 +1,7 @@
 import '../../domain/entities/task_all.dart';
 
 class AllTaskModel extends TaskAll {
-  AllTaskModel({
+  const AllTaskModel({
     super.id = "",
     super.userId = "",
     super.deadlineDate,
@@ -43,7 +43,7 @@ class AllTaskModel extends TaskAll {
 }
 
 class UploadContents extends UploadContentsEntity {
-  UploadContents({
+  const UploadContents({
     super.id = "",
     super.videothubnail = "",
     super.type = "",
@@ -61,7 +61,7 @@ class UploadContents extends UploadContentsEntity {
 }
 
 class AcceptedTask extends AcceptedTaskEntity {
-  AcceptedTask({
+  const AcceptedTask({
     super.id = "",
     super.taskId = "",
     super.taskStatus = "",
@@ -83,7 +83,7 @@ class AcceptedTask extends AcceptedTaskEntity {
 }
 
 class MediaHouseDetails extends MediaHouseDetailsEntity {
-  MediaHouseDetails({
+  const MediaHouseDetails({
     super.id = "",
     super.fullName = "",
     super.profileImage = "",

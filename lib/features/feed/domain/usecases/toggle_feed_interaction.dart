@@ -5,9 +5,9 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/feed_repository.dart';
 
 class ToggleFeedInteraction implements UseCase<bool, ToggleFeedInteractionParams> {
-  final FeedRepository repository;
 
   ToggleFeedInteraction(this.repository);
+  final FeedRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(ToggleFeedInteractionParams params) async {
@@ -22,11 +22,6 @@ class ToggleFeedInteraction implements UseCase<bool, ToggleFeedInteractionParams
 }
 
 class ToggleFeedInteractionParams extends Equatable {
-  final String id;
-  final bool isLike;
-  final bool isFav;
-  final bool isEmoji;
-  final bool isClap;
 
   const ToggleFeedInteractionParams({
     required this.id,
@@ -35,6 +30,11 @@ class ToggleFeedInteractionParams extends Equatable {
     required this.isEmoji,
     required this.isClap,
   });
+  final String id;
+  final bool isLike;
+  final bool isFav;
+  final bool isEmoji;
+  final bool isClap;
 
   @override
   List<Object> get props => [id, isLike, isFav, isEmoji, isClap];

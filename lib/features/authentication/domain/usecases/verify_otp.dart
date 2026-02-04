@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
 class VerifyOtp implements UseCase<bool, VerifyOtpParams> {
-  final AuthRepository repository;
 
   VerifyOtp(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(VerifyOtpParams params) async {
@@ -16,15 +16,15 @@ class VerifyOtp implements UseCase<bool, VerifyOtpParams> {
 }
 
 class VerifyOtpParams extends Equatable {
-  final String phone;
-  final String email;
-  final String otp;
 
   const VerifyOtpParams({
     required this.phone,
     required this.email,
     required this.otp,
   });
+  final String phone;
+  final String email;
+  final String otp;
 
   Map<String, dynamic> toMap() {
     return {

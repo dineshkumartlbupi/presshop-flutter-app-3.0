@@ -6,9 +6,9 @@ import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 
 class LoginUser implements UseCase<User, LoginParams> {
-  final AuthRepository repository;
 
   LoginUser(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, User>> call(LoginParams params) async {
@@ -17,10 +17,10 @@ class LoginUser implements UseCase<User, LoginParams> {
 }
 
 class LoginParams extends Equatable {
-  final String username;
-  final String password;
 
   const LoginParams({required this.username, required this.password});
+  final String username;
+  final String password;
 
   @override
   List<Object> get props => [username, password];

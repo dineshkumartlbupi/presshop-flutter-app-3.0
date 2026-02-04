@@ -5,9 +5,9 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/publish_repository.dart';
 
 class AddViewCount implements UseCase<void, AddViewCountParams> {
-  final PublishRepository repository;
 
   AddViewCount(this.repository);
+  final PublishRepository repository;
 
   @override
   Future<Either<Failure, void>> call(AddViewCountParams params) async {
@@ -16,9 +16,9 @@ class AddViewCount implements UseCase<void, AddViewCountParams> {
 }
 
 class AddViewCountParams extends Equatable {
-  final String tutorialId;
 
   const AddViewCountParams({required this.tutorialId});
+  final String tutorialId;
 
   @override
   List<Object> get props => [tutorialId];

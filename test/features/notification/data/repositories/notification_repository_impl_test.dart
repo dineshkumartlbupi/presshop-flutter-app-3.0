@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:presshop/features/notification/data/repositories/notification_repository_impl.dart';
 import 'package:presshop/features/notification/data/datasources/notification_remote_datasource.dart';
-import 'package:presshop/features/notification/domain/entities/notification_entity.dart';
 
 class MockNotificationRemoteDataSource extends Mock
     implements NotificationRemoteDataSource {}

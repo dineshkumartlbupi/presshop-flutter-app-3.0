@@ -23,15 +23,14 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 
 // ignore: must_be_immutable
 class TaskDetailNewScreen extends StatefulWidget {
-  String taskStatus = "";
-  String taskId = "";
-  String totalEarning = "";
-
   TaskDetailNewScreen(
       {super.key,
       required this.taskStatus,
       required this.taskId,
       required this.totalEarning});
+  String taskStatus = "";
+  String taskId = "";
+  String totalEarning = "";
 
   @override
   State<TaskDetailNewScreen> createState() => _TaskDetailNewScreenState();
@@ -202,8 +201,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                         mapType: MapType.normal,
                                         initialCameraPosition: _kGooglePlex,
                                         markers: marker.map((e) => e).toSet(),
-                                        onMapCreated:
-                                            (GoogleMapController controller) {
+                                        onMapCreated: (controller) {
                                           _controller.complete(controller);
                                         },
                                         compassEnabled: false,
@@ -648,8 +646,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           Column(
                             children: [
                               Text(
-                                  false
-                                      ? "$currencySymbol${formatDouble(double.parse("0"))}"
+                                  taskDetail != null &&
+                                          taskDetail!.task.isNeedPhoto
+                                      ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.photoPrice))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -686,8 +685,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           Column(
                             children: [
                               Text(
-                                  false
-                                      ? "$currencySymbol${formatDouble(double.parse("0"))}"
+                                  taskDetail != null &&
+                                          taskDetail!.task.isNeedInterview
+                                      ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.interviewPrice))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -724,8 +724,9 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                           Column(
                             children: [
                               Text(
-                                  false
-                                      ? "$currencySymbol${formatDouble(double.parse("0"))}"
+                                  taskDetail != null &&
+                                          taskDetail!.task.isNeedVideo
+                                      ? "${taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.task.videoPrice))}"
                                       : "-",
                                   style: commonTextStyle(
                                       size: size,
@@ -989,7 +990,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Text(
-                                      "${currencySymbol}0",
+                                      "${taskDetail != null && taskDetail!.task.currencySymbol.isNotEmpty ? taskDetail!.task.currencySymbol : currencySymbol}${widget.totalEarning.isNotEmpty ? widget.totalEarning : "0"}",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width * numD065,
@@ -1082,7 +1083,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
     }
   }
 
-  openUrl() async {
+  Future<void> openUrl() async {
     String googleUrl = isDirection
         ? 'https://www.google.com/maps/dir/?api=1&origin=${_latLng!.latitude},'
             '${_latLng!.longitude}&destination=${taskDetail!.task.addressLocation.coordinates[0]},'

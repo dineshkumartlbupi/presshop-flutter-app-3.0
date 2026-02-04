@@ -51,13 +51,6 @@ enum MenuAction {
 }
 
 class MenuData {
-  final String icon;
-  final String title;
-  final MenuAction action;
-  final Widget Function(BuildContext)? pageBuilder;
-  final bool showAlertBadge;
-  final bool isContactBrand;
-  final bool isVisible;
 
   const MenuData({
     required this.icon,
@@ -68,6 +61,13 @@ class MenuData {
     this.isContactBrand = false,
     this.isVisible = true,
   });
+  final String icon;
+  final String title;
+  final MenuAction action;
+  final Widget Function(BuildContext)? pageBuilder;
+  final bool showAlertBadge;
+  final bool isContactBrand;
+  final bool isVisible;
 }
 
 List<MenuData> buildMenu() => [

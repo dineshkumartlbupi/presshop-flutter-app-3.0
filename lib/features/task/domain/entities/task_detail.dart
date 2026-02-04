@@ -2,44 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'task_media.dart';
 
 class TaskDetail extends Equatable {
-  final String id;
-  final bool isNeedPhoto;
-  final bool isNeedVideo;
-  final bool isNeedInterview;
-  final String mode;
-  final String type;
-  final String status;
-  final String paidStatus;
-  final DateTime deadLine;
-  final String mediaHouseId;
-  final String mediaHouseImage;
-  final String mediaHouseName;
-  final String companyName;
-  final String title;
-  final String description;
-  final List<String> acceptedBy;
-  final String specialReq;
-  final String location;
-  final String photoPrice;
-  final String videoPrice;
-  final String interviewPrice;
-  final String receivedAmount;
-  final double latitude;
-  final double longitude;
-  final String role;
-  final String categoryId;
-  final String userId;
-  final String createdAt;
-  final String discountPercent;
-  final String miles;
-  final String byFeet;
-  final String byCar;
-  final List<TaskMedia> mediaList;
-  final String broadcastLocation;
-  final String roomId;
-  final String minimumPriceRange;
-  final String maximumPriceRange;
-
   const TaskDetail({
     required this.id,
     this.isNeedPhoto = false,
@@ -78,7 +40,48 @@ class TaskDetail extends Equatable {
     this.roomId = "",
     this.minimumPriceRange = "",
     this.maximumPriceRange = "",
+    this.currency = "",
+    this.currencySymbol = "",
   });
+  final String id;
+  final bool isNeedPhoto;
+  final bool isNeedVideo;
+  final bool isNeedInterview;
+  final String mode;
+  final String type;
+  final String status;
+  final String paidStatus;
+  final DateTime deadLine;
+  final String mediaHouseId;
+  final String mediaHouseImage;
+  final String mediaHouseName;
+  final String companyName;
+  final String title;
+  final String description;
+  final List<String> acceptedBy;
+  final String specialReq;
+  final String location;
+  final String photoPrice;
+  final String videoPrice;
+  final String interviewPrice;
+  final String receivedAmount;
+  final double latitude;
+  final double longitude;
+  final String role;
+  final String categoryId;
+  final String userId;
+  final String createdAt;
+  final String discountPercent;
+  final String miles;
+  final String byFeet;
+  final String byCar;
+  final List<TaskMedia> mediaList;
+  final String broadcastLocation;
+  final String roomId;
+  final String minimumPriceRange;
+  final String maximumPriceRange;
+  final String currency;
+  final String currencySymbol;
 
   TaskDetail copyWith({
     String? id,

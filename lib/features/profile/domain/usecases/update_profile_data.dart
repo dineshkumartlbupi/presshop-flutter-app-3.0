@@ -5,9 +5,9 @@ import '../entities/profile_data.dart';
 import '../repositories/profile_repository.dart';
 
 class UpdateProfileData implements UseCase<ProfileData, UpdateProfileParams> {
-  final ProfileRepository repository;
 
   UpdateProfileData(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, ProfileData>> call(UpdateProfileParams params) async {
@@ -16,7 +16,7 @@ class UpdateProfileData implements UseCase<ProfileData, UpdateProfileParams> {
 }
 
 class UpdateProfileParams {
-  final Map<String, dynamic> data;
 
   UpdateProfileParams({required this.data});
+  final Map<String, dynamic> data;
 }

@@ -6,9 +6,9 @@ import '../entities/charity.dart';
 import '../repositories/publish_repository.dart';
 
 class GetCharities implements UseCase<List<Charity>, GetCharitiesParams> {
-  final PublishRepository repository;
 
   GetCharities(this.repository);
+  final PublishRepository repository;
 
   @override
   Future<Either<Failure, List<Charity>>> call(GetCharitiesParams params) async {
@@ -17,10 +17,10 @@ class GetCharities implements UseCase<List<Charity>, GetCharitiesParams> {
 }
 
 class GetCharitiesParams extends Equatable {
-  final int offset;
-  final int limit;
 
   const GetCharitiesParams({required this.offset, required this.limit});
+  final int offset;
+  final int limit;
 
   @override
   List<Object> get props => [offset, limit];

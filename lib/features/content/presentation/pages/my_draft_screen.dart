@@ -17,11 +17,11 @@ import '../../../../core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class MyDraftScreen extends StatefulWidget {
-  bool publishedContent = false;
-  String screenType = "";
 
   MyDraftScreen(
       {super.key, required this.publishedContent, required this.screenType});
+  bool publishedContent = false;
+  String screenType = "";
 
   @override
   State<StatefulWidget> createState() {
@@ -277,7 +277,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                                     max: 100.0,
                                     inactiveColor: colorLightGrey,
                                     activeColor: colorThemePink,
-                                    onChanged: (double newValue) {},
+                                    onChanged: (newValue) {},
                                   ),
                                 ),
                                 SizedBox(
@@ -451,7 +451,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * numD06,
@@ -830,7 +830,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
             contentList = data['contentList'];
           }
 
-          var listModel = contentList as List;
+          var listModel = contentList;
           var list = listModel.map((e) => MyContentData.fromJson(e)).toList();
           if (list.isNotEmpty) {
             _refreshController.loadComplete();

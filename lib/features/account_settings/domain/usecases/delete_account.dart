@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/account_settings_repository.dart';
 
 class DeleteAccount implements UseCase<bool, DeleteAccountParams> {
-  final AccountSettingsRepository repository;
 
   DeleteAccount(this.repository);
+  final AccountSettingsRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(DeleteAccountParams params) async {
@@ -16,9 +16,9 @@ class DeleteAccount implements UseCase<bool, DeleteAccountParams> {
 }
 
 class DeleteAccountParams extends Equatable {
-  final Map<String, String> reason;
 
   const DeleteAccountParams({required this.reason});
+  final Map<String, String> reason;
 
   @override
   List<Object> get props => [reason];

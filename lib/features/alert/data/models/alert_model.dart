@@ -1,19 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 class AlertModel {
-  String id = "";
-  String description = "";
-  String location = "";
-  String image = "";
-  String distance = "";
-  String createdAt = "";
-  String miles = "";
-  String byFeet = "";
-  String byCar = "";
-  bool isEmergency = false;
-  String minEarning = "";
-  String maxEarning = "";
-  LocationModel? locationData;
 
   AlertModel({
     required this.id,
@@ -95,11 +82,22 @@ class AlertModel {
             ? LocationModel.fromJson(json['location'])
             : LocationModel());
   }
+  String id = "";
+  String description = "";
+  String location = "";
+  String image = "";
+  String distance = "";
+  String createdAt = "";
+  String miles = "";
+  String byFeet = "";
+  String byCar = "";
+  bool isEmergency = false;
+  String minEarning = "";
+  String maxEarning = "";
+  LocationModel? locationData;
 }
 
 class LocationModel {
-  String? type;
-  List<double>? coordinates;
 
   LocationModel({
     this.type,
@@ -114,4 +112,6 @@ class LocationModel {
           : [],
     );
   }
+  String? type;
+  List<double>? coordinates;
 }

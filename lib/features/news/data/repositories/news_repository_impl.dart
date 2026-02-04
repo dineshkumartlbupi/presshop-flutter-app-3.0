@@ -7,9 +7,9 @@ import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 
 class NewsRepositoryImpl implements NewsRepository {
-  final NewsRemoteDataSource remoteDataSource;
 
   NewsRepositoryImpl({required this.remoteDataSource});
+  final NewsRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, List<News>>> getAggregatedNews({

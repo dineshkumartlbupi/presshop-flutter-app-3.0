@@ -7,10 +7,6 @@ import 'verification_event.dart';
 import 'verification_state.dart';
 
 class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
-  final VerifyOtp verifyOtp;
-  final RegisterUser registerUser;
-  final SocialRegisterUser socialRegisterUser;
-  final SendOtp sendOtp;
 
   VerificationBloc({
     required this.verifyOtp,
@@ -22,6 +18,10 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
     on<ResendOtpRequested>(_onResendOtpRequested);
     on<RegistrationRequested>(_onRegistrationRequested);
   }
+  final VerifyOtp verifyOtp;
+  final RegisterUser registerUser;
+  final SocialRegisterUser socialRegisterUser;
+  final SendOtp sendOtp;
 
   Future<void> _onVerifyOtpSubmitted(
     VerifyOtpSubmitted event,

@@ -43,11 +43,11 @@ import 'package:presshop/core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class ConversationScreen extends StatefulWidget {
-  bool hideLeading = false;
-  final String message;
 
   ConversationScreen(
       {super.key, required this.hideLeading, required this.message});
+  bool hideLeading = false;
+  final String message;
 
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
@@ -85,10 +85,10 @@ class _ConversationScreenState extends State<ConversationScreen>
   /// Sender Information
   final String _senderId = sharedPreferences!.getString(hopperIdKey) ?? "";
   final String _senderProfilePic =
-      (sharedPreferences!.getString(avatarKey) ?? "");
+      sharedPreferences!.getString(avatarKey) ?? "";
   final String _senderName =
-      ("${sharedPreferences!.getString(firstNameKey) ?? ""} "
-          " ${sharedPreferences!.getString(lastNameKey) ?? ""}");
+      "${sharedPreferences!.getString(firstNameKey) ?? ""} "
+          " ${sharedPreferences!.getString(lastNameKey) ?? ""}";
   String audioPath = "", audioDuration = "";
 
   /// Receiver Information
@@ -233,8 +233,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                               clipBehavior: Clip.antiAlias,
                               child: Image.network(
                                 adminProfileUrl + _receiverProfilePic,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (context,
+                                    exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     height: size.width * numD07,
@@ -507,7 +507,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                       color: Colors.white),
                   child: ListView.separated(
                       shrinkWrap: true,
-                      itemBuilder: (BuildContext context, index) {
+                      itemBuilder: (context, index) {
                         return ListTile(
                           minLeadingWidth: 10,
                           minVerticalPadding: 5,
@@ -533,7 +533,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                           },
                         );
                       },
-                      separatorBuilder: (BuildContext context, index) {
+                      separatorBuilder: (context, index) {
                         return Divider(
                           thickness: 1,
                           color: Colors.grey.shade200,
@@ -579,9 +579,9 @@ class _ConversationScreenState extends State<ConversationScreen>
   void settingsDialog() {
     showDialog(
         context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return StatefulBuilder(
-              builder: (BuildContext context, StateSetter stateSetter) {
+              builder: (context, stateSetter) {
             return BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Column(
@@ -819,7 +819,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       child: SizedBox(
         height: 250,
         child: EmojiPicker(
-          onEmojiSelected: (Category? category, Emoji emoji) {
+          onEmojiSelected: (category, emoji) {
             _onEmojiSelected(emoji);
           },
           onBackspacePressed: onBackPress,
@@ -846,7 +846,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     );
   }
 
-  _onEmojiSelected(Emoji emoji) {
+  void _onEmojiSelected(Emoji emoji) {
     if (mounted) {
       setState(() {
         // messageController.text = messageController.text + emoji.emoji;
@@ -2430,11 +2430,11 @@ class _ConversationScreenState extends State<ConversationScreen>
     _timer?.cancel();
     _ampTimer?.cancel();
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       setState(() => _recordDuration++);
     });
     _ampTimer =
-        Timer.periodic(const Duration(milliseconds: 200), (Timer t) async {
+        Timer.periodic(const Duration(milliseconds: 200), (t) async {
       setState(() {});
     });
   }
@@ -3035,7 +3035,7 @@ class _ConversationScreenState extends State<ConversationScreen>
         });
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -3173,7 +3173,7 @@ class _ConversationScreenState extends State<ConversationScreen>
             receiverImage: _receiverProfilePic));
 
         // checkRoomExists(roomId);
-        timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+        timer = Timer.periodic(const Duration(seconds: 2), (t) {
           if (_receiverId.isNotEmpty) {
             checkOnlineOffline(context, size, _receiverId);
           }
@@ -3298,7 +3298,7 @@ class _ConversationScreenState extends State<ConversationScreen>
         ),
       );
 
-      thumbnailUploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+      thumbnailUploadTask.snapshotEvents.listen((snapshot) {
         var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         debugPrint('Thumbnail Task state---: ${snapshot.state}');
         debugPrint('Thumbnail Progress---: $progress %');
@@ -3359,7 +3359,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     debugPrint('Task file---Exist: ${await File(mediaPath).absolute.exists()}');
     UploadTask uploadTask = storageReference.putFile(File(mediaPath));
     debugPrint('uploaded Task---: $mediaPath');
-    uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+    uploadTask.snapshotEvents.listen((snapshot) {
       debugPrint('Task state---: ${snapshot.state}');
       debugPrint(
           'Progress aditya---: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
@@ -3591,7 +3591,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   ///  In Use
-  _deleteChat(var document) async {
+  Future<void> _deleteChat(var document) async {
     await FirebaseFirestore.instance
         .collection('Chat2')
         .doc(roomId)
@@ -3711,13 +3711,13 @@ class _ConversationScreenState extends State<ConversationScreen>
 }
 
 class AttachIconModel {
-  String iconName = "";
-  String icon = "";
 
   AttachIconModel({
     required this.icon,
     required this.iconName,
   });
+  String iconName = "";
+  String icon = "";
 }
 
 Future<bool> isInternetConnected() async {

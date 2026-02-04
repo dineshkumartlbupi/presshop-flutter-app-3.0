@@ -5,9 +5,9 @@ import 'package:presshop/features/bank/domain/entities/bank_detail.dart';
 import 'package:presshop/features/bank/domain/repositories/bank_repository.dart';
 
 class GetBanks implements UseCase<List<BankDetail>, NoParams> {
-  final BankRepository repository;
 
   GetBanks(this.repository);
+  final BankRepository repository;
 
   @override
   Future<Either<Failure, List<BankDetail>>> call(NoParams params) async {

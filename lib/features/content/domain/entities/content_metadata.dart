@@ -1,14 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ContentMetadata extends Equatable {
-  final String media;
-  final bool isNsfw;
-  final bool deepFake;
-  final String thumbnail;
-  final String mediaType;
-  final bool isWatermarked;
-  final String originalFileName;
-  final String watermarkedMedia;
 
   const ContentMetadata({
     required this.media,
@@ -20,6 +12,14 @@ class ContentMetadata extends Equatable {
     required this.originalFileName,
     required this.watermarkedMedia,
   });
+  final String media;
+  final bool isNsfw;
+  final bool deepFake;
+  final String thumbnail;
+  final String mediaType;
+  final bool isWatermarked;
+  final String originalFileName;
+  final String watermarkedMedia;
 
   // Getters for UI compatibility
   String get mediaUrl => media;

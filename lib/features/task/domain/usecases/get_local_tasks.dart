@@ -5,9 +5,9 @@ import '../entities/task.dart';
 import '../repositories/task_repository.dart';
 
 class GetLocalTasks implements UseCase<List<Task>, Map<String, dynamic>> {
-  final TaskRepository repository;
 
   GetLocalTasks(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<Task>>> call(Map<String, dynamic> params) async {

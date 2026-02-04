@@ -16,16 +16,6 @@ import 'content_event.dart';
 import 'content_state.dart';
 
 class ContentBloc extends Bloc<ContentEvent, ContentState> {
-  final GetMyContent getMyContent;
-  final PublishContent publishContent;
-  final SaveDraft saveDraft;
-  final UploadMedia uploadMedia;
-  final DeleteContent deleteContent;
-  final SearchHashtags searchHashtags;
-  final GetTrendingHashtags getTrendingHashtags;
-  final GetContentDetail getContentDetail;
-  final GetMediaHouseOffers getMediaHouseOffers;
-  final GetContentTransactions getContentTransactions;
 
   ContentBloc({
     required this.getMyContent,
@@ -50,6 +40,16 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     on<FetchMediaHouseOffersEvent>(_onFetchMediaHouseOffers);
     on<FetchContentTransactionsEvent>(_onFetchContentTransactions);
   }
+  final GetMyContent getMyContent;
+  final PublishContent publishContent;
+  final SaveDraft saveDraft;
+  final UploadMedia uploadMedia;
+  final DeleteContent deleteContent;
+  final SearchHashtags searchHashtags;
+  final GetTrendingHashtags getTrendingHashtags;
+  final GetContentDetail getContentDetail;
+  final GetMediaHouseOffers getMediaHouseOffers;
+  final GetContentTransactions getContentTransactions;
 
   Future<void> _onFetchMyContent(
     FetchMyContentEvent event,
@@ -102,6 +102,9 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           errorMessage: failure.message,
           isLoadingAll: isAll ? false : freshState.isLoadingAll,
           isLoadingMy: isAll ? freshState.isLoadingMy : false,
+          // Stop pagination on error to prevent repeated loading
+          hasMoreAll: isAll ? false : freshState.hasMoreAll,
+          hasMoreMy: isAll ? freshState.hasMoreMy : false,
         ));
       },
       (content) {

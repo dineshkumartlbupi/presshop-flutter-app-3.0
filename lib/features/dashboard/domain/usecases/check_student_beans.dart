@@ -5,9 +5,9 @@ import '../entities/student_beans_info.dart';
 import '../repositories/dashboard_repository.dart';
 
 class CheckStudentBeans implements UseCase<StudentBeansInfo, NoParams> {
-  final DashboardRepository repository;
 
   CheckStudentBeans(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, StudentBeansInfo>> call(NoParams params) async {

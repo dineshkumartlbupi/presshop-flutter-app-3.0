@@ -9,9 +9,9 @@ import 'package:presshop/features/authentication/data/models/document_data_model
 import 'package:presshop/features/authentication/data/models/document_instruction_model.dart';
 
 class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
-  final ApiClient apiClient;
 
   VerificationRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<List<DocumentInstructionModel>> getDocumentInstructions() async {

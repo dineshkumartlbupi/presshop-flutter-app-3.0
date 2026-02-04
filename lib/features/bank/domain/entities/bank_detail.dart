@@ -1,17 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class BankDetail extends Equatable {
-  final String id;
-  final String bankName;
-  final String bankImage;
-  final String bankLocation;
-  final String currency;
-  final bool isDefault;
-  final String accountHolderName;
-  final String sortCode;
-  final String accountNumber;
-  final String stripeBankId;
-  final List<String> availablePayoutMethods;
 
   const BankDetail({
     required this.id,
@@ -26,6 +15,17 @@ class BankDetail extends Equatable {
     required this.stripeBankId,
     required this.availablePayoutMethods,
   });
+  final String id;
+  final String bankName;
+  final String bankImage;
+  final String bankLocation;
+  final String currency;
+  final bool isDefault;
+  final String accountHolderName;
+  final String sortCode;
+  final String accountNumber;
+  final String stripeBankId;
+  final List<String> availablePayoutMethods;
 
   @override
   List<Object?> get props => [

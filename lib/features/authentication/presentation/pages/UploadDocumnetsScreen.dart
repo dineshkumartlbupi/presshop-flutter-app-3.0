@@ -18,11 +18,11 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 const String uploadDocumentsText = "Upload Documents";
 
 class UploadDocumentsScreen extends StatefulWidget {
-  final bool menuScreen;
-  final bool hideLeading;
 
   const UploadDocumentsScreen(
       {super.key, required this.menuScreen, required this.hideLeading});
+  final bool menuScreen;
+  final bool hideLeading;
 
   @override
   State<StatefulWidget> createState() {
@@ -311,7 +311,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           bottomNavigationBar: Padding(
             padding: EdgeInsets.all(size.width * numD05),
             child: Builder(builder: (context) {
-              return Container(
+              return SizedBox(
                 height: size.width * numD13,
                 child: commonElevatedButton(
                   "Upload Documents",
@@ -336,9 +336,9 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       context: contextValue,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext bc) {
+      builder: (bc) {
         return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
+            builder: (context, setModalState) {
           return Container(
             height: size.height * 0.85,
             decoration: BoxDecoration(
@@ -415,7 +415,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                             ),
                           ]);
                     },
-                    separatorBuilder: (BuildContext context, int index) {
+                    separatorBuilder: (context, index) {
                       return SizedBox(
                         height: size.width * numD025,
                       );
@@ -455,7 +455,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 SizedBox(height: size.width * numD06),
 
                 // Submit Button
-                Container(
+                SizedBox(
                   width: size.width,
                   height: size.width * numD13,
                   child: commonElevatedButton(
@@ -489,7 +489,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     return showModalBottomSheet<String>(
         context: context,
         backgroundColor: Colors.transparent,
-        builder: (BuildContext bc) {
+        builder: (bc) {
           return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -534,7 +534,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                               Navigator.pop(context, e.name);
                             },
                           ))
-                      .toList(),
+                      ,
                   SizedBox(height: size.width * numD05),
                 ],
               ));
@@ -545,7 +545,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext bc) {
+      builder: (bc) {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,

@@ -1,5 +1,4 @@
 class TermsResponse {
-  final TermsData data;
 
   TermsResponse({required this.data});
 
@@ -8,11 +7,10 @@ class TermsResponse {
       data: TermsData.fromJson(json['data']),
     );
   }
+  final TermsData data;
 }
 
 class TermsData {
-  final CmsItem privacyPolicy;
-  final CmsItem termAndCond;
 
   TermsData({
     required this.privacyPolicy,
@@ -59,11 +57,11 @@ class TermsData {
       termAndCond: termAndCond ?? CmsItem(id: '', description: ''),
     );
   }
+  final CmsItem privacyPolicy;
+  final CmsItem termAndCond;
 }
 
 class CmsItem {
-  final String id;
-  final String description;
 
   CmsItem({
     required this.id,
@@ -76,4 +74,6 @@ class CmsItem {
       description: (json['description'] ?? json['content'] ?? "").toString(),
     );
   }
+  final String id;
+  final String description;
 }

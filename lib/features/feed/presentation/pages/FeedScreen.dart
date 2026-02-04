@@ -262,7 +262,7 @@ class FeedScreenState extends State<FeedScreen>
     ]);
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);

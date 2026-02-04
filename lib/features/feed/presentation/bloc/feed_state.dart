@@ -5,14 +5,6 @@ enum FeedStatus { initial, loading, success, failure }
 enum FeedInteractionStatus { initial, loading, success, failure }
 
 class FeedState extends Equatable {
-  final FeedStatus status;
-  final List<Feed> feeds;
-  final bool hasReachedMax;
-  final String errorMessage;
-  final FeedInteractionStatus interactionStatus;
-  
-  // Filter states
-  final Map<String, dynamic> filters;
 
   const FeedState({
     this.status = FeedStatus.initial,
@@ -22,6 +14,14 @@ class FeedState extends Equatable {
     this.interactionStatus = FeedInteractionStatus.initial,
     this.filters = const {"limit": "10", "offset": "0"},
   });
+  final FeedStatus status;
+  final List<Feed> feeds;
+  final bool hasReachedMax;
+  final String errorMessage;
+  final FeedInteractionStatus interactionStatus;
+  
+  // Filter states
+  final Map<String, dynamic> filters;
 
   FeedState copyWith({
     FeedStatus? status,

@@ -1,7 +1,4 @@
 class ApiResponse<T> {
-  final bool success;
-  final String message;
-  final T? data;
 
   ApiResponse({
     required this.success,
@@ -19,6 +16,9 @@ class ApiResponse<T> {
       data: json['data'] != null ? fromJsonT(json['data']) : null,
     );
   }
+  final bool success;
+  final String message;
+  final T? data;
 
   Map<String, dynamic> toJson(
     dynamic Function(T value) toJsonT,

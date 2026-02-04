@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/main.dart';
 
 class CurrencySelectorSheet extends StatelessWidget {
-  final String selectedCurrency;
-  final ValueChanged<String> onSelected;
-
   const CurrencySelectorSheet({
     super.key,
     required this.selectedCurrency,
     required this.onSelected,
   });
+  final String selectedCurrency;
+  final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +27,7 @@ class CurrencySelectorSheet extends StatelessWidget {
             children: [
               _buildCurrencyRow("AUD", "\$"),
               _buildCurrencyRow("INR", "₹"),
-              _buildCurrencyRow("GBP", currencySymbol),
+              _buildCurrencyRow("GBP", "£"),
               _buildCurrencyRow("USD", "\$"),
             ],
           ),

@@ -6,9 +6,9 @@ import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 
 class SocialLoginUser implements UseCase<User, SocialLoginParams> {
-  final AuthRepository repository;
 
   SocialLoginUser(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, User>> call(SocialLoginParams params) async {
@@ -23,11 +23,6 @@ class SocialLoginUser implements UseCase<User, SocialLoginParams> {
 }
 
 class SocialLoginParams extends Equatable {
-  final String socialType;
-  final String socialId;
-  final String email;
-  final String name;
-  final String photoUrl;
 
   const SocialLoginParams({
     required this.socialType,
@@ -36,6 +31,11 @@ class SocialLoginParams extends Equatable {
     required this.name,
     required this.photoUrl,
   });
+  final String socialType;
+  final String socialId;
+  final String email;
+  final String name;
+  final String photoUrl;
 
   @override
   List<Object> get props => [socialType, socialId, email, name, photoUrl];

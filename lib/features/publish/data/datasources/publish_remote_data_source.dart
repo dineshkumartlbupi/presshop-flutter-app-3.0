@@ -22,9 +22,9 @@ abstract class PublishRemoteDataSource {
 }
 
 class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
-  final ApiClient apiClient;
 
   PublishRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<List<CategoryModel>> getContentCategories() async {

@@ -50,6 +50,8 @@ extension ContentItemMapper on ContentItem {
       contentView: totalView,
       purchasedMediahouseCount: purchasedMediahouseCount,
       totalEarning: "0",
+      currency: currency,
+      currencySymbol: currencySymbol,
     );
   }
 }

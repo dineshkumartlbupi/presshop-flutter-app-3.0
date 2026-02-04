@@ -6,8 +6,8 @@ import 'package:presshop/main.dart';
 
 // ignore: must_be_immutable
 class ManageContentWidget extends StatelessWidget {
-  Map<String, dynamic> data = {};
   ManageContentWidget(this.data, {super.key});
+  Map<String, dynamic> data = {};
   late Size size;
   @override
   Widget build(BuildContext context) {
@@ -36,8 +36,8 @@ class ManageContentWidget extends StatelessWidget {
                   fit: BoxFit.cover,
                   height: size.width * numD20,
                   width: size.width * numD20,
-                  errorBuilder: (BuildContext context, Object exception,
-                      StackTrace? stackTrace) {
+                  errorBuilder: (context, exception,
+                      stackTrace) {
                     return Image.asset(
                       "${commonImagePath}rabbitLogo.png",
                       fit: BoxFit.contain,

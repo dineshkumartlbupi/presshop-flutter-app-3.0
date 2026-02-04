@@ -30,9 +30,9 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final ApiClient apiClient;
 
   AuthRemoteDataSourceImpl(this.apiClient);
+  final ApiClient apiClient;
 
   @override
   Future<UserModel> login(String username, String password) async {

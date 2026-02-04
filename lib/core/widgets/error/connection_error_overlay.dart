@@ -4,14 +4,14 @@ import 'package:presshop/core/core_export.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
 class ConnectionErrorOverlay extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
 
   const ConnectionErrorOverlay({
     super.key,
     required this.message,
     required this.onRetry,
   });
+  final String message;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {

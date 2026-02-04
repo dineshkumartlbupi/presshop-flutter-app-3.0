@@ -3,17 +3,6 @@ part of 'notification_bloc.dart';
 enum NotificationStatus { initial, loading, success, failure, empty }
 
 class NotificationState extends Equatable {
-  final NotificationStatus status;
-  final List<NotificationEntity> notifications;
-  final bool hasReachedMax;
-  final int unreadCount;
-  final String errorMessage;
-
-  // Student Beans Logic
-  final bool shouldShowStudentBeansDialog;
-  final String studentBeansHeading;
-  final String studentBeansDescription;
-  final String? studentBeansActivationUrl;
 
   const NotificationState({
     this.status = NotificationStatus.initial,
@@ -26,6 +15,17 @@ class NotificationState extends Equatable {
     this.studentBeansDescription = '',
     this.studentBeansActivationUrl,
   });
+  final NotificationStatus status;
+  final List<NotificationEntity> notifications;
+  final bool hasReachedMax;
+  final int unreadCount;
+  final String errorMessage;
+
+  // Student Beans Logic
+  final bool shouldShowStudentBeansDialog;
+  final String studentBeansHeading;
+  final String studentBeansDescription;
+  final String? studentBeansActivationUrl;
 
   NotificationState copyWith({
     NotificationStatus? status,

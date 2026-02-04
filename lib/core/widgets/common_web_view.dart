@@ -4,8 +4,6 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:presshop/main.dart';
-import 'package:presshop/core/constants/app_dimensions.dart';
-import 'package:presshop/core/utils/ui_utils.dart';
 
 import 'package:presshop/core/widgets/common_widgets.dart';
 

@@ -1,15 +1,4 @@
 class CameraData {
-  String path;
-  String mimeType = "";
-  String videoImagePath = "";
-  String latitude = "";
-  String location = "";
-  String longitude = "";
-  String country = "";
-  String city = "";
-  String state = "";
-  String dateTime = "";
-  bool fromGallary = false;
 
   CameraData(
       {required this.path,
@@ -23,4 +12,15 @@ class CameraData {
       required this.state,
       this.fromGallary = false,
       required this.dateTime});
+  String path;
+  String mimeType = "";
+  String videoImagePath = "";
+  String latitude = "";
+  String location = "";
+  String longitude = "";
+  String country = "";
+  String city = "";
+  String state = "";
+  String dateTime = "";
+  bool fromGallary = false;
 }

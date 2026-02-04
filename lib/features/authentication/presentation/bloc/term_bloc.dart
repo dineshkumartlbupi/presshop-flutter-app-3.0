@@ -4,7 +4,6 @@ import 'package:presshop/features/authentication/presentation/bloc/term_event.da
 import 'package:presshop/features/authentication/presentation/bloc/term_state.dart';
 
 class TermsBloc extends Bloc<TermsEvent, TermsState> {
-  final TermsRepository repository;
 
   TermsBloc(this.repository) : super(TermsInitial()) {
     on<FetchTermsEvent>((event, emit) async {
@@ -23,4 +22,5 @@ class TermsBloc extends Bloc<TermsEvent, TermsState> {
       }
     });
   }
+  final TermsRepository repository;
 }

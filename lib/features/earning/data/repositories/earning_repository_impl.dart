@@ -10,13 +10,12 @@ import '../models/earning_model.dart';
 import '../../data/models/earning_model.dart';
 
 class EarningRepositoryImpl implements EarningRepository {
-  final EarningRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
-
   EarningRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final EarningRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, EarningProfile>> getEarningProfile(
@@ -122,6 +121,8 @@ class EarningRepositoryImpl implements EarningRepository {
                   lastName: e.lastName,
                   dateOfJoining: e.dateOfJoining,
                   avatar: e.avatar,
+                  currency: e.currency,
+                  currencySymbol: e.currencySymbol,
                 ))
             .toList();
 

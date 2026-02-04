@@ -5,9 +5,9 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 import '../repositories/dashboard_repository.dart';
 
 class GetDashboardTaskDetail implements UseCase<TaskAssignedEntity, String> {
-  final DashboardRepository repository;
 
   GetDashboardTaskDetail(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, TaskAssignedEntity>> call(String params) async {

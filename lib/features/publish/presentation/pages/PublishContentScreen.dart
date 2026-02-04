@@ -44,10 +44,6 @@ import 'AudioRecorderScreen.dart';
 
 // ignore: must_be_immutable
 class PublishContentScreen extends StatefulWidget {
-  PublishData? publishData;
-  MyContentData? myContentData;
-  bool hideDraft = false;
-  String docType = "";
 
   PublishContentScreen(
       {super.key,
@@ -55,6 +51,10 @@ class PublishContentScreen extends StatefulWidget {
       required this.myContentData,
       required this.docType,
       required this.hideDraft});
+  PublishData? publishData;
+  MyContentData? myContentData;
+  bool hideDraft = false;
+  String docType = "";
 
   @override
   State<StatefulWidget> createState() {
@@ -2838,10 +2838,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
           topRight: Radius.circular(size.width * numD07),
         ),
       ),
-      builder: (BuildContext context) {
+      builder: (context) {
         return BlocProvider.value(
           value: bloc,
-          child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          child: StatefulBuilder(builder: (context, stateSetter) {
             return Stack(
               alignment: Alignment.center,
               children: [
@@ -3011,7 +3011,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         );
                                       },
                                       separatorBuilder:
-                                          (BuildContext context, int index) {
+                                          (context, index) {
                                         return SizedBox(
                                           height: size.width * numD02,
                                         );
@@ -3053,7 +3053,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               inactiveColor: colorGreyChat,
                               divisions: 100,
                               label: currentSliderValue.round().toString(),
-                              onChanged: (double value) {
+                              onChanged: (value) {
                                 currentSliderValue = value;
                                 debugPrint("value:::::::$value");
                                 setState(() {});

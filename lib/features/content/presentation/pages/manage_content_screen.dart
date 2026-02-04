@@ -7,9 +7,9 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 
 // ignore: must_be_immutable
 class ManageContentScreen extends StatefulWidget {
-  String taskStatus = "";
 
   ManageContentScreen({super.key, required this.taskStatus});
+  String taskStatus = "";
 
   @override
   State<StatefulWidget> createState() {

@@ -16,16 +16,6 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  final GetTaskDetail getTaskDetail;
-  final AcceptRejectTask acceptRejectTask;
-  final GetTaskChat getTaskChat;
-  final UploadTaskMedia uploadTaskMedia;
-  final GetRoomId getRoomId;
-  final GetHopperAcceptedCount getHopperAcceptedCount;
-  final GetTaskTransactionDetails getTaskTransactionDetails;
-  final GetContentTransactionDetails getContentTransactionDetails;
-  final GetAllTasks getAllTasks;
-  final GetLocalTasks getLocalTasks;
 
   TaskBloc({
     required this.getTaskDetail,
@@ -52,6 +42,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<FetchTaskDetailEvent>(
         _onFetchTaskDetail); // Alias for GetTaskDetailEvent if needed or separate
   }
+  final GetTaskDetail getTaskDetail;
+  final AcceptRejectTask acceptRejectTask;
+  final GetTaskChat getTaskChat;
+  final UploadTaskMedia uploadTaskMedia;
+  final GetRoomId getRoomId;
+  final GetHopperAcceptedCount getHopperAcceptedCount;
+  final GetTaskTransactionDetails getTaskTransactionDetails;
+  final GetContentTransactionDetails getContentTransactionDetails;
+  final GetAllTasks getAllTasks;
+  final GetLocalTasks getLocalTasks;
 
   Future<void> _onGetTaskDetail(
       GetTaskDetailEvent event, Emitter<TaskState> emit) async {

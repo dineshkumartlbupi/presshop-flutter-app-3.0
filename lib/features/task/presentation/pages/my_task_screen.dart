@@ -21,10 +21,10 @@ import 'package:presshop/features/task/domain/entities/task_all.dart';
 
 // ignore: must_be_immutable
 class MyTaskScreen extends StatefulWidget {
-  bool hideLeading = false;
-  String? broadCastId;
 
   MyTaskScreen({super.key, required this.hideLeading, this.broadCastId});
+  bool hideLeading = false;
+  String? broadCastId;
 
   @override
   State<StatefulWidget> createState() {
@@ -381,8 +381,9 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                         fit: BoxFit.cover,
                                         loadingBuilder:
                                             (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
+                                          if (loadingProgress == null) {
                                             return child;
+                                          }
                                           return Container(
                                             alignment: Alignment.topCenter,
                                             child: Image.asset(
@@ -1011,7 +1012,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * numD06,

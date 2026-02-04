@@ -13,11 +13,6 @@ part 'menu_event.dart';
 part 'menu_state.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
-  final GetNotifications getNotifications;
-  final RemoveDevice removeDevice;
-  final LogoutUser logoutUser;
-  final MenuService menuService;
-  final AuthLocalDataSource authLocalDataSource;
 
   MenuBloc({
     required this.getNotifications,
@@ -29,6 +24,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<MenuLoadCounts>(_onLoadCounts);
     on<MenuLogoutRequested>(_onLogoutRequested);
   }
+  final GetNotifications getNotifications;
+  final RemoveDevice removeDevice;
+  final LogoutUser logoutUser;
+  final MenuService menuService;
+  final AuthLocalDataSource authLocalDataSource;
 
   Future<void> _onLoadCounts(
     MenuLoadCounts event,

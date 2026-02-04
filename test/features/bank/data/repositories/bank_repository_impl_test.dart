@@ -6,7 +6,6 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/bank/data/repositories/bank_repository_impl.dart';
 import 'package:presshop/features/bank/data/datasources/bank_remote_data_source.dart';
 import 'package:presshop/features/bank/data/models/bank_detail_model.dart';
-import 'package:presshop/features/bank/domain/entities/bank_detail.dart';
 
 class MockRemoteDataSource extends Mock implements BankRemoteDataSource {}
 

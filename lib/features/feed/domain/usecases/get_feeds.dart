@@ -6,9 +6,9 @@ import '../entities/feed.dart';
 import '../repositories/feed_repository.dart';
 
 class GetFeeds implements UseCase<List<Feed>, GetFeedsParams> {
-  final FeedRepository repository;
 
   GetFeeds(this.repository);
+  final FeedRepository repository;
 
   @override
   Future<Either<Failure, List<Feed>>> call(GetFeedsParams params) async {
@@ -17,9 +17,9 @@ class GetFeeds implements UseCase<List<Feed>, GetFeedsParams> {
 }
 
 class GetFeedsParams extends Equatable {
-  final Map<String, dynamic> params;
 
   const GetFeedsParams({required this.params});
+  final Map<String, dynamic> params;
 
   @override
   List<Object> get props => [params];

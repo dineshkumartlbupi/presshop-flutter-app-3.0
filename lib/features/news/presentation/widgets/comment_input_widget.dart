@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CommentInputWidget extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback onSend;
-  final String? hintText;
-  final double? height;
-  final bool autofocus;
 
   const CommentInputWidget({
     Key? key,
@@ -15,6 +10,11 @@ class CommentInputWidget extends StatelessWidget {
     this.height,
     this.autofocus = false,
   }) : super(key: key);
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  final String? hintText;
+  final double? height;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {

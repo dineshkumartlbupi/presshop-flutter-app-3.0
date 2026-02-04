@@ -22,12 +22,6 @@ import 'package:presshop/features/authentication/domain/entities/user.dart';
 
 // ignore: must_be_immutable
 class SocialSignUp extends StatefulWidget {
-  bool socialLogin = false;
-  String socialId = "";
-  String name = "";
-  String email = "";
-  String phoneNumber = "";
-  String socialType = "";
 
   SocialSignUp(
       {super.key,
@@ -37,6 +31,12 @@ class SocialSignUp extends StatefulWidget {
       required this.name,
       required this.socialType,
       required this.phoneNumber});
+  bool socialLogin = false;
+  String socialId = "";
+  String name = "";
+  String email = "";
+  String phoneNumber = "";
+  String socialType = "";
 
   @override
   State<SocialSignUp> createState() => _SocialSignUpState();
@@ -656,7 +656,7 @@ class _SocialSignUpState extends State<SocialSignUp>
     showCountryPicker(
       context: context,
       showPhoneCode: true,
-      onSelect: (Country country) {
+      onSelect: (country) {
         debugPrint('Select country: ${country.displayName}');
         debugPrint('Select country: ${country.countryCode}');
         debugPrint('Select country: ${country.hashCode}');
@@ -868,9 +868,9 @@ class _SocialSignUpState extends State<SocialSignUp>
                                             Image.network(
                                               item.avatar,
                                               errorBuilder:
-                                                  (BuildContext context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
+                                                  (context,
+                                                      exception,
+                                                      stackTrace) {
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   fit: BoxFit.contain,
@@ -1062,33 +1062,44 @@ class _SocialSignUpState extends State<SocialSignUp>
     sharedPreferences!.setString(lastNameKey, user.lastName);
     sharedPreferences!.setString(emailKey, user.email);
 
-    if (user.userName != null)
+    if (user.userName != null) {
       sharedPreferences!.setString(userNameKey, user.userName!);
+    }
     if (user.phone != null) sharedPreferences!.setString(phoneKey, user.phone!);
-    if (user.countryCode != null)
+    if (user.countryCode != null) {
       sharedPreferences!.setString(countryCodeKey, user.countryCode!);
-    if (user.address != null)
+    }
+    if (user.address != null) {
       sharedPreferences!.setString(addressKey, user.address!);
-    if (user.latitude != null)
+    }
+    if (user.latitude != null) {
       sharedPreferences!.setString(latitudeKey, user.latitude!);
-    if (user.longitude != null)
+    }
+    if (user.longitude != null) {
       sharedPreferences!.setString(longitudeKey, user.longitude!);
-    if (user.avatarId != null)
+    }
+    if (user.avatarId != null) {
       sharedPreferences!.setString(avatarIdKey, user.avatarId!);
-    if (user.receiveTaskNotification != null)
+    }
+    if (user.receiveTaskNotification != null) {
       sharedPreferences!
           .setBool(receiveTaskNotificationKey, user.receiveTaskNotification!);
-    if (user.isTermAccepted != null)
+    }
+    if (user.isTermAccepted != null) {
       sharedPreferences!.setBool(isTermAcceptedKey, user.isTermAccepted!);
-    if (user.profileImage != null)
+    }
+    if (user.profileImage != null) {
       sharedPreferences!.setString(profileImageKey, user.profileImage!);
-    if (user.referralCode != null)
+    }
+    if (user.referralCode != null) {
       sharedPreferences!.setString(referralCode, user.referralCode!);
+    }
     if (user.currencySymbol != null) {
       sharedPreferences!.setString(currencySymbolKey, user.currencySymbol!);
     }
-    if (user.totalHopperArmy != null)
+    if (user.totalHopperArmy != null) {
       sharedPreferences!.setString(totalHopperArmy, user.totalHopperArmy!);
+    }
 
     if (user.source != null) {
       var src = user.source!;
@@ -1119,12 +1130,12 @@ class _SocialSignUpState extends State<SocialSignUp>
 }
 
 class AvatarsData {
-  String id = "";
-  String avatar = "";
-  bool selected = false;
 
   AvatarsData.fromJson(json) {
     id = json["_id"] ?? "";
     avatar = json["avatar"] ?? "";
   }
+  String id = "";
+  String avatar = "";
+  bool selected = false;
 }

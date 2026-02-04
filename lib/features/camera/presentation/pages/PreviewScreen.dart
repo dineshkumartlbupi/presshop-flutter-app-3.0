@@ -24,12 +24,6 @@ import 'package:presshop/core/api/api_constant.dart';
 
 // ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
-  CameraData? cameraData;
-  List<CameraData> cameraListData;
-  List<MediaData> mediaList;
-  bool pickAgain = false;
-  String type = '';
-  MyContentData? myContentData;
 
   PreviewScreen(
       {super.key,
@@ -39,6 +33,12 @@ class PreviewScreen extends StatefulWidget {
       required this.mediaList,
       required this.type,
       this.myContentData});
+  CameraData? cameraData;
+  List<CameraData> cameraListData;
+  List<MediaData> mediaList;
+  bool pickAgain = false;
+  String type = '';
+  MyContentData? myContentData;
 
   @override
   State<StatefulWidget> createState() {
@@ -152,7 +152,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
     }
   }
 
-  requestLocationPermissions(
+  Future<void> requestLocationPermissions(
       {bool shouldShowSettingPopup = true,
       bool showErrorLocationPage = true}) async {
     try {
@@ -993,17 +993,6 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
 }
 
 class PublishData {
-  String imagePath = "";
-  String videoImagePath = "";
-  String mimeType = "";
-  String address = "";
-  String date = "";
-  String country = "";
-  String state = "";
-  String city = "";
-  String latitude = "";
-  String longitude = "";
-  List<MediaData> mediaList = [];
 
   PublishData({
     required this.imagePath,
@@ -1018,6 +1007,17 @@ class PublishData {
     required this.mimeType,
     required this.mediaList,
   });
+  String imagePath = "";
+  String videoImagePath = "";
+  String mimeType = "";
+  String address = "";
+  String date = "";
+  String country = "";
+  String state = "";
+  String city = "";
+  String latitude = "";
+  String longitude = "";
+  List<MediaData> mediaList = [];
 
   @override
   String toString() {
@@ -1028,15 +1028,6 @@ class PublishData {
 }
 
 class MediaData {
-  String mediaPath = "";
-  String mimeType = "";
-  String thumbnail = "";
-  String dateTime = "";
-  String location = "";
-  String latitude = "";
-  String longitude = "";
-  bool isFromGallery = false;
-  bool isLocalMedia = false;
 
   MediaData(
       {required this.mediaPath,
@@ -1048,6 +1039,15 @@ class MediaData {
       required this.dateTime,
       this.isFromGallery = false,
       this.isLocalMedia = false});
+  String mediaPath = "";
+  String mimeType = "";
+  String thumbnail = "";
+  String dateTime = "";
+  String location = "";
+  String latitude = "";
+  String longitude = "";
+  bool isFromGallery = false;
+  bool isLocalMedia = false;
 
   @override
   String toString() {

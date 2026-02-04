@@ -3,18 +3,12 @@ import 'package:presshop/features/map/domain/entities/map_marker.dart';
 
 class MapMarkerModel extends MapMarker {
   const MapMarkerModel({
-    required String id,
-    required LatLng position,
-    required String title,
-    required String description,
-    required String type,
-  }) : super(
-          id: id,
-          position: position,
-          title: title,
-          description: description,
-          type: type,
-        );
+    required super.id,
+    required super.position,
+    required super.title,
+    required super.description,
+    required super.type,
+  });
 
   factory MapMarkerModel.fromJson(Map<String, dynamic> json) {
     return MapMarkerModel(

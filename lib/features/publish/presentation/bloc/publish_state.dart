@@ -5,13 +5,6 @@ import '../../domain/entities/charity.dart';
 enum PublishStatus { initial, loading, loaded, submitting, success, failure }
 
 class PublishState extends Equatable {
-  final PublishStatus status;
-  final List<ContentCategory> categories;
-  final List<Charity> charities;
-  final Map<String, String> prices;
-  final String errorMessage;
-  final ContentCategory? selectedCategory;
-  final bool isCharitySelected;
 
   const PublishState({
     this.status = PublishStatus.initial,
@@ -22,6 +15,13 @@ class PublishState extends Equatable {
     this.selectedCategory,
     this.isCharitySelected = false,
   });
+  final PublishStatus status;
+  final List<ContentCategory> categories;
+  final List<Charity> charities;
+  final Map<String, String> prices;
+  final String errorMessage;
+  final ContentCategory? selectedCategory;
+  final bool isCharitySelected;
 
   PublishState copyWith({
     PublishStatus? status,

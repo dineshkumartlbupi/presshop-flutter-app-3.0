@@ -5,11 +5,6 @@ import '../../data/models/alert_model.dart';
 enum AlertStatus { initial, loading, success, failure }
 
 class AlertState extends Equatable {
-  final AlertStatus status;
-  final List<AlertModel> alerts;
-  final bool hasReachedMax;
-  final String errorMessage;
-  final LatLng? currentLocation;
 
   const AlertState({
     this.status = AlertStatus.initial,
@@ -18,6 +13,11 @@ class AlertState extends Equatable {
     this.errorMessage = '',
     this.currentLocation,
   });
+  final AlertStatus status;
+  final List<AlertModel> alerts;
+  final bool hasReachedMax;
+  final String errorMessage;
+  final LatLng? currentLocation;
 
   AlertState copyWith({
     AlertStatus? status,

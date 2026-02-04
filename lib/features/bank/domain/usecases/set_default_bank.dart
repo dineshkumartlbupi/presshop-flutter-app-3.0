@@ -4,9 +4,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/bank/domain/repositories/bank_repository.dart';
 
 class SetDefaultBank implements UseCase<void, SetDefaultBankParams> {
-  final BankRepository repository;
 
   SetDefaultBank(this.repository);
+  final BankRepository repository;
 
   @override
   Future<Either<Failure, void>> call(SetDefaultBankParams params) async {
@@ -16,9 +16,9 @@ class SetDefaultBank implements UseCase<void, SetDefaultBankParams> {
 }
 
 class SetDefaultBankParams {
-  final String stripeBankId;
-  final bool isDefault;
 
   const SetDefaultBankParams(
       {required this.stripeBankId, required this.isDefault});
+  final String stripeBankId;
+  final bool isDefault;
 }

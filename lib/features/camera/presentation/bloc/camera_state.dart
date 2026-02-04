@@ -16,18 +16,6 @@ enum CameraStatus {
 }
 
 class CameraState extends Equatable {
-  final CameraStatus status;
-  final CameraController? cameraController;
-  final RecorderController? recorderController;
-  final String selectedMode;
-  final bool isRecording;
-  final bool isAudioRecording;
-  final bool isFrontCamera;
-  final bool isFlashOn;
-  final String recordingTime;
-  final List<AssetEntity> galleryMedia;
-  final List<CameraData> capturedMedia;
-  final String errorMessage;
 
   const CameraState({
     this.status = CameraStatus.initial,
@@ -43,6 +31,18 @@ class CameraState extends Equatable {
     this.capturedMedia = const [],
     this.errorMessage = "",
   });
+  final CameraStatus status;
+  final CameraController? cameraController;
+  final RecorderController? recorderController;
+  final String selectedMode;
+  final bool isRecording;
+  final bool isAudioRecording;
+  final bool isFrontCamera;
+  final bool isFlashOn;
+  final String recordingTime;
+  final List<AssetEntity> galleryMedia;
+  final List<CameraData> capturedMedia;
+  final String errorMessage;
 
   CameraState copyWith({
     CameraStatus? status,

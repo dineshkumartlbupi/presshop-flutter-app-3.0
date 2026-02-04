@@ -7,11 +7,11 @@ import '../../data/models/tutorials_model.dart';
 import '../../data/models/category_data_model.dart';
 
 class TutorialsRepositoryImpl implements TutorialsRepository {
-  final TutorialsRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   TutorialsRepositoryImpl(
       {required this.remoteDataSource, required this.networkInfo});
+  final TutorialsRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<TutorialsModel>>> getTutorials(

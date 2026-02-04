@@ -23,9 +23,9 @@ abstract class NewsRemoteDataSource {
 }
 
 class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
-  final ApiClient client;
 
   NewsRemoteDataSourceImpl({required this.client});
+  final ApiClient client;
 
   @override
   Future<List<NewsModel>> getAggregatedNews({

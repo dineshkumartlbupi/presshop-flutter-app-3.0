@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class GetCurrentLocation implements UseCase<LatLng, NoParams> {
-  final MapRepository repository;
 
   GetCurrentLocation(this.repository);
+  final MapRepository repository;
 
   @override
   Future<Either<Failure, LatLng>> call(NoParams params) async {

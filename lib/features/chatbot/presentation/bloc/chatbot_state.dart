@@ -12,10 +12,10 @@ class ChatbotInitial extends ChatbotState {}
 class ChatbotLoading extends ChatbotState {}
 
 class ChatbotLoaded extends ChatbotState {
-  final List<ChatModel> chatList;
-  final bool isTyping;
 
   const ChatbotLoaded({this.chatList = const [], this.isTyping = false});
+  final List<ChatModel> chatList;
+  final bool isTyping;
 
   @override
   List<Object> get props => [chatList, isTyping];
@@ -29,9 +29,9 @@ class ChatbotLoaded extends ChatbotState {
 }
 
 class ChatbotError extends ChatbotState {
-  final String message;
   
   const ChatbotError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];

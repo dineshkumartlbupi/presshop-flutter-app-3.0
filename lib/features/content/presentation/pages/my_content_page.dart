@@ -308,6 +308,12 @@ class _MyContentViewState extends State<MyContentView>
                 )
               : GridView.builder(
                   padding: EdgeInsets.all(size.width * numD04),
+                  // Optimize scrolling performance
+                  physics:
+                      const AlwaysScrollableScrollPhysics(), // Smooth scrolling physics
+                  cacheExtent:
+                      size.height, // Cache 1 screen for optimal performance
+                  addAutomaticKeepAlives: true, // Keep scroll position
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.75,
@@ -318,6 +324,8 @@ class _MyContentViewState extends State<MyContentView>
                   itemBuilder: (context, index) {
                     final item = currentList[index];
                     return ContentItemWidget(
+                      key: ValueKey(
+                          item.id), // Add key for better widget recycling
                       item: item,
                       size: size,
                       onTap: () => _onItemTap(item),

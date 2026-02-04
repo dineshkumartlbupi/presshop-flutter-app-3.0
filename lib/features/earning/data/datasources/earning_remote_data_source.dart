@@ -10,9 +10,9 @@ abstract class EarningRemoteDataSource {
 }
 
 class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
-  final ApiClient apiClient;
 
   EarningRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<EarningProfileDataModel> getEarningProfile(

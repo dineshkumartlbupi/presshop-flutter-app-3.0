@@ -2,10 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AvatarMarker extends StatelessWidget {
-  final String imageUrl;
-  final double radius;
-  final VoidCallback? onTap;
-  final String? initials;
 
   const AvatarMarker({
     super.key,
@@ -14,6 +10,10 @@ class AvatarMarker extends StatelessWidget {
     this.onTap,
     this.initials,
   });
+  final String imageUrl;
+  final double radius;
+  final VoidCallback? onTap;
+  final String? initials;
 
   @override
   Widget build(BuildContext context) {

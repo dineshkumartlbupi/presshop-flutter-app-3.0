@@ -8,10 +8,10 @@ abstract class NotificationEvent extends Equatable {
 }
 
 class FetchNotificationsEvent extends NotificationEvent {
-  final int offset;
-  final int limit;
 
   const FetchNotificationsEvent({this.offset = 0, this.limit = 10});
+  final int offset;
+  final int limit;
 
   @override
   List<Object?> get props => [offset, limit];

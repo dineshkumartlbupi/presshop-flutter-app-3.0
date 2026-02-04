@@ -6,7 +6,6 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/account_settings/data/repositories/account_settings_repository_impl.dart';
 import 'package:presshop/features/account_settings/data/datasources/account_settings_remote_datasource.dart';
 import 'package:presshop/features/account_settings/data/models/admin_contact_info_model.dart';
-import 'package:presshop/features/account_settings/domain/entities/admin_contact_info.dart';
 
 class MockRemoteDataSource extends Mock
     implements AccountSettingsRemoteDataSource {}

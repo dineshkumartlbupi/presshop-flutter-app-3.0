@@ -5,13 +5,13 @@ import 'onboarding_event.dart';
 import 'onboarding_state.dart';
 
 class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
-  final SetOnboardingSeen setOnboardingSeen;
 
   OnboardingBloc({
     required this.setOnboardingSeen,
   }) : super(OnboardingInitial()) {
     on<CompleteOnboarding>(_onCompleteOnboarding);
   }
+  final SetOnboardingSeen setOnboardingSeen;
 
   Future<void> _onCompleteOnboarding(
     CompleteOnboarding event,

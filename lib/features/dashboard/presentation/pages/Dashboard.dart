@@ -541,7 +541,7 @@ class DashboardState extends State<Dashboard>
                   }
                 });
               } else if (state is DashboardRoomIdLoaded) {
-                var data = (state).roomData;
+                var data = state.roomData;
                 debugPrint("📦 Dashboard Received Room Data: $data");
 
                 String roomId = "";
@@ -558,7 +558,7 @@ class DashboardState extends State<Dashboard>
                   debugPrint("❌ Room Id NOT found in response");
                 }
               } else if (state is DashboardAppVersionChecked) {
-                var map = (state).versionData;
+                var map = state.versionData;
                 if (map["code"] == 200) {
                   var versionData = map["data"];
                   sharedPreferences!.setInt(
@@ -573,7 +573,7 @@ class DashboardState extends State<Dashboard>
                   //    map["message"] ?? "Unknown error", "error", Colors.red);
                 }
               } else if (state is DashboardTaskDetailLoaded) {
-                var task = (state).taskDetail;
+                var task = state.taskDetail;
                 player.play(
                   AssetSource('audio/task_sound.mp3'),
                   volume: 1,
@@ -597,7 +597,7 @@ class DashboardState extends State<Dashboard>
                   },
                 );
               } else if (state is StudentBeansActivated) {
-                var map = (state).data;
+                var map = state.data;
                 var studentBeansResponseUrl = map["url"];
 
                 if (studentBeansResponseUrl != null &&
@@ -622,14 +622,14 @@ class DashboardState extends State<Dashboard>
               } else if (state is DashboardMarkStudentBeansVisitedLoaded) {
                 // Visited state updated on server
               } else if (state is DashboardMyProfileLoaded) {
-                var user = (state).user;
+                var user = state.user;
                 if (user.avatar != null && user.avatar!.isNotEmpty) {
                   sharedPreferences!.setString(avatarKey, user.avatar!);
                 }
                 setState(() {});
               } else if (state is DashboardTabChanged) {
                 setState(() {
-                  currentIndex = (state).index;
+                  currentIndex = state.index;
                 });
               } else if (state is DashboardError) {
                 // Optional

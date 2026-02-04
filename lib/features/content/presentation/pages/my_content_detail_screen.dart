@@ -43,13 +43,6 @@ import '../../domain/mappers/content_item_mapper.dart';
 
 // ignore: must_be_immutable
 class MyContentDetailScreen extends StatefulWidget {
-  String hopperID = "";
-  final String contentId;
-  final String paymentStatus;
-  final bool exclusive;
-  final int offerCount;
-  final int purchasedMediahouseCount;
-
   MyContentDetailScreen(
       {super.key,
       required this.paymentStatus,
@@ -58,6 +51,12 @@ class MyContentDetailScreen extends StatefulWidget {
       required this.purchasedMediahouseCount,
       required this.contentId,
       this.hopperID = ""});
+  String hopperID = "";
+  final String contentId;
+  final String paymentStatus;
+  final bool exclusive;
+  final int offerCount;
+  final int purchasedMediahouseCount;
 
   @override
   State<StatefulWidget> createState() {
@@ -132,7 +131,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   }
 
   void _startTimer() {
-    if (contentItem == null || contentItem!.createdAt == null) return;
+    if (contentItem == null) return;
     DateTime createdTime = DateTime.parse(contentItem!.createdAt);
     DateTime endTime = createdTime.add(const Duration(hours: 24));
 
@@ -750,48 +749,47 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   ),
 
                   /// Time Date
-                  if (contentItem!.createdAt != null)
-                    Row(
-                      children: [
-                        Image.asset(
-                          "${iconsPath}ic_clock.png",
-                          height: size.width * numD04,
-                          color: colorTextFieldIcon,
-                        ),
-                        SizedBox(
-                          width: size.width * numD012,
-                        ),
-                        Text(
-                          DateFormat('hh:mm a')
-                              .format(DateTime.parse(contentItem!.createdAt)),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        SizedBox(
-                          width: size.width * numD02,
-                        ),
-                        Image.asset(
-                          "${iconsPath}ic_yearly_calendar.png",
-                          height: size.width * numD04,
-                          color: colorTextFieldIcon,
-                        ),
-                        SizedBox(
-                          width: size.width * numD018,
-                        ),
-                        Text(
-                          DateFormat("dd MMM yyyy")
-                              .format(DateTime.parse(contentItem!.createdAt)),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Image.asset(
+                        "${iconsPath}ic_clock.png",
+                        height: size.width * numD04,
+                        color: colorTextFieldIcon,
+                      ),
+                      SizedBox(
+                        width: size.width * numD012,
+                      ),
+                      Text(
+                        DateFormat('hh:mm a')
+                            .format(DateTime.parse(contentItem!.createdAt)),
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD028,
+                            color: colorHint,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      SizedBox(
+                        width: size.width * numD02,
+                      ),
+                      Image.asset(
+                        "${iconsPath}ic_yearly_calendar.png",
+                        height: size.width * numD04,
+                        color: colorTextFieldIcon,
+                      ),
+                      SizedBox(
+                        width: size.width * numD018,
+                      ),
+                      Text(
+                        DateFormat("dd MMM yyyy")
+                            .format(DateTime.parse(contentItem!.createdAt)),
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * numD028,
+                            color: colorHint,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
                   SizedBox(
                     height: size.width * numD02,
                   ),
@@ -879,7 +877,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * numD02,
                           ),
                           child: Text(
-                            "$currencySymbol${formatDouble(double.parse(contentItem!.price ?? "0"))}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : currencySymbol}${formatDouble(double.parse(contentItem!.price ?? "0"))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD05,
@@ -923,7 +921,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * numD02,
                           ),
                           child: Text(
-                            "$currencySymbol${contentItem!.totalSold}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : currencySymbol}${contentItem!.totalSold}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * numD05,
@@ -983,8 +981,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fit: BoxFit.contain,
                                 height: size.width * numD20,
                                 width: size.width * numD20,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (context, exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     fit: BoxFit.contain,
@@ -1107,7 +1104,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
-                            "$currencySymbol${numberFormatting(item.initialOfferAmount)}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : currencySymbol}${numberFormatting(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
@@ -1188,8 +1185,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
         children: [
           VideoThumbnailWidget(
             videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
-            thumbnailUrl:
-                item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
+            thumbnailUrl: fixS3Url(item.thumbnailUrl!),
             width: double.infinity,
             height: size.width * numD50,
             fit: BoxFit.cover,
@@ -1220,9 +1216,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   children: [
                     VideoThumbnailWidget(
                       videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
-                      thumbnailUrl: item.thumbnailUrl != null
-                          ? fixS3Url(item.thumbnailUrl!)
-                          : null,
+                      thumbnailUrl: fixS3Url(item.thumbnailUrl!),
                       width: double.infinity,
                       height: size.width * numD50,
                       fit: BoxFit.cover,
@@ -1242,9 +1236,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   children: [
                     VideoThumbnailWidget(
                       videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
-                      thumbnailUrl: item.thumbnailUrl != null
-                          ? fixS3Url(item.thumbnailUrl!)
-                          : null,
+                      thumbnailUrl: fixS3Url(item.thumbnailUrl!),
                       width: double.infinity,
                       height: size.width * numD50,
                       fit: BoxFit.cover,
@@ -1289,7 +1281,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     ];
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -1349,7 +1341,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
     h = value ~/ 3600;
 
-    m = ((value - h * 3600)) ~/ 60;
+    m = (value - h * 3600) ~/ 60;
 
     s = value - (h * 3600) - (m * 60);
 

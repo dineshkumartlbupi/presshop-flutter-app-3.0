@@ -2,7 +2,6 @@ import 'package:chewie/chewie.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/main.dart';
 import '../../domain/entities/feed.dart';
 import 'package:presshop/features/feed/presentation/pages/feed_description.dart';
 
@@ -10,15 +9,6 @@ import 'package:presshop/features/feed/presentation/widgets/feed_audio_player.da
 import 'package:presshop/features/feed/presentation/widgets/feed_video_player.dart';
 
 class FeedItemWidget extends StatefulWidget {
-  final Feed feed;
-  final Size size;
-  final PageController pageController;
-  final Function(Feed, int) initialController;
-  final Function(String) openUrl;
-  final VoidCallback onFavouriteToggle;
-  final VoidCallback onLikeToggle;
-  final VoidCallback onEmojiToggle;
-
   const FeedItemWidget({
     super.key,
     required this.feed,
@@ -30,6 +20,14 @@ class FeedItemWidget extends StatefulWidget {
     required this.onLikeToggle,
     required this.onEmojiToggle,
   });
+  final Feed feed;
+  final Size size;
+  final PageController pageController;
+  final Function(Feed, int) initialController;
+  final Function(String) openUrl;
+  final VoidCallback onFavouriteToggle;
+  final VoidCallback onLikeToggle;
+  final VoidCallback onEmojiToggle;
 
   @override
   State<FeedItemWidget> createState() => _FeedItemWidgetState();
@@ -471,7 +469,7 @@ class _FeedItemWidgetState extends State<FeedItemWidget> {
                   ),
                   FittedBox(
                     child: Text(
-                      "$currencySymbol${amountFormat(feed.displayPrice)}",
+                      "${feed.displayCurrency}${amountFormat(feed.displayPrice)}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: commonTextStyle(

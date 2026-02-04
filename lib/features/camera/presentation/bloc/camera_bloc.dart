@@ -27,18 +27,6 @@ import 'camera_event.dart';
 import 'camera_state.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
-  Timer? _recordingTimer;
-  DateTime? _startTime;
-  // Duration? _stopDurationDifference;
-  // double _currentZoom = 1.0;
-
-  // Dependency Injection for testing
-  final CameraControllerBuilder _cameraControllerBuilder;
-
-  // Location
-  final LocationService _locationService;
-  double _latitude = 0;
-  double _longitude = 0;
 
   CameraBloc(this._locationService,
       {CameraState? initialState,
@@ -66,6 +54,18 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         (event, emit) => emit(state.copyWith(recordingTime: event.time)));
     on<PickDocumentEvent>(_onPickDocument);
   }
+  Timer? _recordingTimer;
+  DateTime? _startTime;
+  // Duration? _stopDurationDifference;
+  // double _currentZoom = 1.0;
+
+  // Dependency Injection for testing
+  final CameraControllerBuilder _cameraControllerBuilder;
+
+  // Location
+  final LocationService _locationService;
+  double _latitude = 0;
+  double _longitude = 0;
 
   @override
   Future<void> close() {
@@ -104,14 +104,12 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
 
     RecorderController? recorderController = state.recorderController;
-    if (recorderController == null) {
-      recorderController = RecorderController()
+    recorderController ??= RecorderController()
         ..androidEncoder = AndroidEncoder.aac
         ..androidOutputFormat = AndroidOutputFormat.mpeg4
         ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
         ..sampleRate = 44100
         ..bitRate = 48000;
-    }
 
     // Safe Camera Permission Check before availableCameras()
     bool hasCameraPermission =
@@ -217,7 +215,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Future<void> _onToggleFlash(
       CameraFlashToggleEvent event, Emitter<CameraState> emit) async {
     if (state.cameraController == null ||
-        !state.cameraController!.value.isInitialized) return;
+        !state.cameraController!.value.isInitialized) {
+      return;
+    }
     final newFlash = !state.isFlashOn;
     try {
       await state.cameraController!
@@ -250,7 +250,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     final controller = state.cameraController;
     if (controller == null ||
         !controller.value.isInitialized ||
-        controller.value.isTakingPicture) return;
+        controller.value.isTakingPicture) {
+      return;
+    }
 
     try {
       await controller.setFlashMode(FlashMode.off);
@@ -295,7 +297,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     final controller = state.cameraController;
     if (controller == null ||
         !controller.value.isInitialized ||
-        controller.value.isRecordingVideo) return;
+        controller.value.isRecordingVideo) {
+      return;
+    }
 
     try {
       await controller.startVideoRecording();
@@ -474,10 +478,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       state.cameraController?.pausePreview();
 
       String mimeType = lookupMimeType(file.path) ?? "pdf";
-      if (mimeType == "application/msword")
+      if (mimeType == "application/msword") {
         mimeType = "doc";
-      else
+      } else {
         mimeType = "pdf";
+      }
 
       final data = CameraData(
         path: file.path,

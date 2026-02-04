@@ -8,12 +8,12 @@ import 'package:presshop/core/widgets/common_widgets.dart'; // Check path
 import '../../domain/entities/leaderboard_entity.dart';
 
 class LeadershipTableWidget extends StatelessWidget {
-  final List<MemberEntity> memberList;
 
   const LeadershipTableWidget({
     super.key,
     required this.memberList,
   });
+  final List<MemberEntity> memberList;
 
   @override
   Widget build(BuildContext context) {

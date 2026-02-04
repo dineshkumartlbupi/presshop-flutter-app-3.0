@@ -2,16 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
 class SearchAndFilterBar extends StatelessWidget {
-  final VoidCallback? onPressedOnNavigation;
-  final Function(String)? onChange;
-  final TextEditingController? searchController;
-  final FocusNode? searchFocusNode;
-  final String? selectedAlertType;
-  final String? selectedDistance;
-  final String? selectedCategory;
-  final Function(String?)? onAlertTypeChanged;
-  final Function(String?)? onDistanceChanged;
-  final Function(String?)? onCategoryChanged;
 
   const SearchAndFilterBar({
     super.key,
@@ -26,6 +16,16 @@ class SearchAndFilterBar extends StatelessWidget {
     this.onDistanceChanged,
     this.onCategoryChanged,
   });
+  final VoidCallback? onPressedOnNavigation;
+  final Function(String)? onChange;
+  final TextEditingController? searchController;
+  final FocusNode? searchFocusNode;
+  final String? selectedAlertType;
+  final String? selectedDistance;
+  final String? selectedCategory;
+  final Function(String?)? onAlertTypeChanged;
+  final Function(String?)? onDistanceChanged;
+  final Function(String?)? onCategoryChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -182,15 +182,15 @@ class SearchAndFilterBar extends StatelessWidget {
 }
 
 class _FilterDropdown extends StatelessWidget {
-  final List<String> items;
-  final String selected;
-  final Function(String?)? onChanged;
 
   const _FilterDropdown({
     required this.items,
     required this.selected,
     this.onChanged,
   });
+  final List<String> items;
+  final String selected;
+  final Function(String?)? onChanged;
 
   @override
   Widget build(BuildContext context) {

@@ -5,9 +5,9 @@ import '../entities/content_item.dart';
 import '../repositories/content_repository.dart';
 
 class SaveDraft implements UseCase<ContentItem, SaveDraftParams> {
-  final ContentRepository repository;
 
   SaveDraft(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, ContentItem>> call(SaveDraftParams params) async {
@@ -16,7 +16,7 @@ class SaveDraft implements UseCase<ContentItem, SaveDraftParams> {
 }
 
 class SaveDraftParams {
-  final Map<String, dynamic> data;
 
   SaveDraftParams({required this.data});
+  final Map<String, dynamic> data;
 }

@@ -2,28 +2,17 @@ import 'package:presshop/features/news/domain/entities/comment.dart';
 
 class CommentModel extends Comment {
   const CommentModel({
-    required String id,
-    required String contentId,
-    required String userId,
-    required String comment,
-    required String createdAt,
-    String? userImage,
-    String? userName,
-    List<Comment> replies = const [],
-    int likesCount = 0,
-    bool isLiked = false,
-  }) : super(
-          id: id,
-          contentId: contentId,
-          userId: userId,
-          comment: comment,
-          createdAt: createdAt,
-          userImage: userImage,
-          userName: userName,
-          replies: replies,
-          likesCount: likesCount,
-          isLiked: isLiked,
-        );
+    required super.id,
+    required super.contentId,
+    required super.userId,
+    required super.comment,
+    required super.createdAt,
+    super.userImage,
+    super.userName,
+    super.replies,
+    super.likesCount,
+    super.isLiked,
+  });
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(

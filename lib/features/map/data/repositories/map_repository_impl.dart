@@ -9,9 +9,9 @@ import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class MapRepositoryImpl implements MapRepository {
-  final MapRemoteDataSource remoteDataSource;
 
   MapRepositoryImpl({required this.remoteDataSource});
+  final MapRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, RouteInfo>> getRoute(LatLng start, LatLng end) async {

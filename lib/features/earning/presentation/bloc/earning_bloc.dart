@@ -7,9 +7,6 @@ import 'earning_event.dart';
 import 'earning_state.dart';
 
 class EarningBloc extends Bloc<EarningEvent, EarningState> {
-  final GetEarningProfile getEarningProfile;
-  final GetTransactions getTransactions;
-  final GetCommissions getCommissions;
 
   EarningBloc({
     required this.getEarningProfile,
@@ -22,6 +19,9 @@ class EarningBloc extends Bloc<EarningEvent, EarningState> {
     on<ChangeTabEvent>(_onChangeTab);
     on<UpdateDateEvent>(_onUpdateDate);
   }
+  final GetEarningProfile getEarningProfile;
+  final GetTransactions getTransactions;
+  final GetCommissions getCommissions;
 
   Future<void> _onFetchEarningData(
       FetchEarningDataEvent event, Emitter<EarningState> emit) async {

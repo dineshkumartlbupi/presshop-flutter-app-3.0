@@ -100,8 +100,9 @@ class ApiErrorHandler {
   }
 
   static ServerFailure _handleStatusCode(int? statusCode) {
-    if (statusCode == null)
+    if (statusCode == null) {
       return const ServerFailure(message: "Unknown server error");
+    }
 
     switch (statusCode) {
       case 400:

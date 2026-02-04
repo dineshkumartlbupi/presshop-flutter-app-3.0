@@ -5,9 +5,9 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/publish_repository.dart';
 
 class SubmitContent implements UseCase<void, SubmitContentParams> {
-  final PublishRepository repository;
 
   SubmitContent(this.repository);
+  final PublishRepository repository;
 
   @override
   Future<Either<Failure, void>> call(SubmitContentParams params) async {
@@ -16,10 +16,10 @@ class SubmitContent implements UseCase<void, SubmitContentParams> {
 }
 
 class SubmitContentParams extends Equatable {
-  final Map<String, dynamic> params;
-  final List<String> filePaths;
 
   const SubmitContentParams({required this.params, required this.filePaths});
+  final Map<String, dynamic> params;
+  final List<String> filePaths;
 
   @override
   List<Object> get props => [params, filePaths];

@@ -56,7 +56,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   void _showImagePicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext modalContext) {
+      builder: (modalContext) {
         return SafeArea(
           child: Wrap(
             children: <Widget>[

@@ -7,9 +7,9 @@ import 'package:presshop/core/common_models_export.dart';
 
 class GetTaskChat
     implements UseCase<List<ManageTaskChatModel>, GetTaskChatParams> {
-  final TaskRepository repository;
 
   GetTaskChat(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<ManageTaskChatModel>>> call(
@@ -20,12 +20,12 @@ class GetTaskChat
 }
 
 class GetTaskChatParams extends Equatable {
-  final String roomId;
-  final String type;
-  final String contentId;
 
   const GetTaskChatParams(
       {required this.roomId, required this.type, required this.contentId});
+  final String roomId;
+  final String type;
+  final String contentId;
 
   @override
   List<Object> get props => [roomId, type, contentId];

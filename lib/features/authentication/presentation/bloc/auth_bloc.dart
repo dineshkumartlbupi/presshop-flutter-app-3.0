@@ -12,11 +12,6 @@ import 'package:presshop/core/utils/app_logger.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final LoginUser loginUser;
-  final SocialLoginUser socialLoginUser;
-  final ForgotPassword forgotPassword;
-  final VerifyForgotPasswordOtp verifyForgotPasswordOtp;
-  final ResetPassword resetPassword;
 
   AuthBloc({
     required this.loginUser,
@@ -134,4 +129,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       });
     });
   }
+  final LoginUser loginUser;
+  final SocialLoginUser socialLoginUser;
+  final ForgotPassword forgotPassword;
+  final VerifyForgotPasswordOtp verifyForgotPasswordOtp;
+  final ResetPassword resetPassword;
 }

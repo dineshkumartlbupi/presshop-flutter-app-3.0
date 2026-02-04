@@ -5,12 +5,9 @@ import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import '../../domain/entities/content_item.dart';
 import 'category_data_model.dart';
 import 'content_metadata_model.dart';
+import 'package:presshop/core/utils/common_utils.dart';
 
 class MyContentResponseModel {
-  final int code;
-  final List<MyContentItemModel> data;
-  final int count;
-
   MyContentResponseModel({
     required this.code,
     required this.data,
@@ -26,6 +23,9 @@ class MyContentResponseModel {
       count: json['count'],
     );
   }
+  final int code;
+  final List<MyContentItemModel> data;
+  final int count;
 }
 
 class MyContentItemModel extends ContentItem {
@@ -65,6 +65,8 @@ class MyContentItemModel extends ContentItem {
     required super.isClap,
     required super.updatedAt,
     required super.categoryData,
+    super.currency = "",
+    super.currencySymbol = "",
   });
 
   factory MyContentItemModel.fromJson(Map<String, dynamic> json) {
@@ -106,43 +108,17 @@ class MyContentItemModel extends ContentItem {
       isClap: json['is_clap'],
       updatedAt: json['updated_at'],
       categoryData: CategoryDataModel.fromJson(json['categoryData']),
+      currency: (json['currency'] ?? '').toString(),
+      currencySymbol: (json['currency_symbol'] != null &&
+              json['currency_symbol'].toString().isNotEmpty)
+          ? json['currency_symbol'].toString()
+          : getCurrencySymbol(
+              (json['currency'] ?? json['currency_original'] ?? '').toString()),
     );
   }
 }
 
 class MyContentData {
-  String id;
-  String title;
-  String textValue;
-  String time;
-  String location;
-  String latitude;
-  String longitude;
-  String amount;
-  String originalAmount;
-  String status;
-  String soldStatus;
-  String paidStatus;
-  String contentType;
-  String dateTime;
-  bool isPaidStatusToHopper;
-  bool exclusive;
-  bool showVideo;
-  String audioDescription;
-  String audioDuration;
-  List<ContentMediaData> contentMediaList;
-  List<dynamic> hashTagList;
-  CategoryDataModel? categoryData;
-  String completionPercent;
-  String discountPercent;
-  int leftPercent;
-  int offerCount;
-  String mediaHouseName;
-  String categoryId;
-  int contentView;
-  int purchasedMediahouseCount;
-  String totalEarning;
-
   MyContentData({
     required this.id,
     required this.title,
@@ -175,6 +151,8 @@ class MyContentData {
     required this.contentView,
     required this.purchasedMediahouseCount,
     required this.totalEarning,
+    this.currency = "",
+    this.currencySymbol = "",
   });
 
   factory MyContentData.fromJson(Map<String, dynamic> json) {
@@ -250,17 +228,50 @@ class MyContentData {
       contentView: 0,
       purchasedMediahouseCount: 0,
       totalEarning: "0",
+      currency: (json['currency'] ?? '').toString(),
+      currencySymbol: (json['currency_symbol'] != null &&
+              json['currency_symbol'].toString().isNotEmpty)
+          ? json['currency_symbol'].toString()
+          : getCurrencySymbol(
+              (json['currency'] ?? json['currency_original'] ?? '').toString()),
     );
   }
+  String id;
+  String title;
+  String textValue;
+  String time;
+  String location;
+  String latitude;
+  String longitude;
+  String amount;
+  String originalAmount;
+  String status;
+  String soldStatus;
+  String paidStatus;
+  String contentType;
+  String dateTime;
+  bool isPaidStatusToHopper;
+  bool exclusive;
+  bool showVideo;
+  String audioDescription;
+  String audioDuration;
+  List<ContentMediaData> contentMediaList;
+  List<dynamic> hashTagList;
+  CategoryDataModel? categoryData;
+  String completionPercent;
+  String discountPercent;
+  int leftPercent;
+  int offerCount;
+  String mediaHouseName;
+  String categoryId;
+  int contentView;
+  int purchasedMediahouseCount;
+  String totalEarning;
+  String currency;
+  String currencySymbol;
 }
 
 class ContentMediaData {
-  String id = "";
-  String media = "";
-  String mediaType = "";
-  String thumbNail = "";
-  String waterMark = "";
-
   ContentMediaData(
       this.id, this.media, this.mediaType, this.thumbNail, this.waterMark);
 
@@ -272,6 +283,11 @@ class ContentMediaData {
     waterMark =
         (json["watermark"] ?? json["watermarked_media"] ?? "").toString();
   }
+  String id = "";
+  String media = "";
+  String mediaType = "";
+  String thumbNail = "";
+  String waterMark = "";
 
   Future<String> getVideoThumbNail(String path) async {
     debugPrint("MediaIs:::::: $path");

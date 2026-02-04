@@ -33,9 +33,9 @@ abstract class ContentRemoteDataSource {
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
-  final ApiClient apiClient;
 
   ContentRemoteDataSourceImpl(this.apiClient);
+  final ApiClient apiClient;
 
   @override
   Future<List<ContentItemModel>> getMyContent({

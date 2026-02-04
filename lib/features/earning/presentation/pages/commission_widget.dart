@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import '../../domain/entities/commission.dart';
-
 import 'package:presshop/main.dart';
 
 // ignore: must_be_immutable
 class CommissionWidget extends StatelessWidget {
-  final Commission commissionData;
-  late Size size;
-
   CommissionWidget({
     super.key,
     required this.commissionData,
   });
+  final Commission commissionData;
+  late Size size;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +123,7 @@ class CommissionWidget extends StatelessWidget {
                   color: colorThemePink,
                 ),
                 child: Text(
-                  "$currencySymbol${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
+                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.totalEarning.toString()))}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD04,
@@ -159,7 +157,7 @@ class CommissionWidget extends StatelessWidget {
                   color: Colors.black,
                 ),
                 child: Text(
-                  "$currencySymbol${formatDouble(double.parse(commissionData.commission.toString()))}",
+                  "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commission.toString()))}",
                   style: commonTextStyle(
                       size: size,
                       fontSize: size.width * numD04,
@@ -206,7 +204,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                "$currencySymbol${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
+                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionReceived.toString()))}",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * numD035,
@@ -229,7 +227,7 @@ class CommissionWidget extends StatelessWidget {
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                "$currencySymbol${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
+                "${commissionData.currencySymbol.isNotEmpty ? commissionData.currencySymbol : currencySymbol}${formatDouble(double.parse(commissionData.commissionPending.toString()))}",
                 style: commonTextStyle(
                     size: size,
                     fontSize: size.width * numD035,

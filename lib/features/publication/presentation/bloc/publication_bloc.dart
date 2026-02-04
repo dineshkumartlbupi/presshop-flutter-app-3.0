@@ -10,9 +10,6 @@ import 'publication_event.dart';
 import 'publication_state.dart';
 
 class PublicationBloc extends Bloc<PublicationEvent, PublicationState> {
-  final GetPublicationEarningStats getPublicationEarningStats;
-  final GetMediaHouses getMediaHouses;
-  final GetPublicationTransactions getPublicationTransactions;
 
   PublicationBloc({
     required this.getPublicationEarningStats,
@@ -22,6 +19,9 @@ class PublicationBloc extends Bloc<PublicationEvent, PublicationState> {
     on<LoadPublicationInitialData>(_onLoadInitialData);
     on<FilterPublicationTransactions>(_onFilterTransactions);
   }
+  final GetPublicationEarningStats getPublicationEarningStats;
+  final GetMediaHouses getMediaHouses;
+  final GetPublicationTransactions getPublicationTransactions;
 
   Future<void> _onLoadInitialData(
     LoadPublicationInitialData event,

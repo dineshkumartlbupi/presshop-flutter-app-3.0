@@ -7,13 +7,13 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const NewHomeAppBar({
-    Key? key,
+    super.key,
     required this.size,
     this.hideLeading = false,
     this.onFilterTap,
     this.showFilter = true,
     this.bottom,
-  }) : super(key: key);
+  });
   final Size size;
   final bool hideLeading;
   final Function()? onFilterTap;

@@ -10,11 +10,6 @@ import 'alert_event.dart';
 import 'alert_state.dart';
 
 class AlertBloc extends Bloc<AlertEvent, AlertState> {
-  final ApiClient apiClient;
-  final Location location;
-  int _limit = 10;
-  int _offset = 0;
-  bool _isFetching = false;
 
   AlertBloc({required this.apiClient, Location? location})
       : location = location ?? Location.instance,
@@ -24,6 +19,11 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
     on<LoadMoreAlertsEvent>(_onLoadMoreAlerts);
     on<GetCurrentLocationEvent>(_onGetCurrentLocation);
   }
+  final ApiClient apiClient;
+  final Location location;
+  final int _limit = 10;
+  int _offset = 0;
+  bool _isFetching = false;
 
   Future<void> _onFetchAlerts(
       FetchAlertsEvent event, Emitter<AlertState> emit) async {

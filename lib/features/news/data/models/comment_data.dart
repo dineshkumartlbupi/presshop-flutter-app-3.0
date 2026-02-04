@@ -1,13 +1,4 @@
-class CommentData {
-  String id;
-  String name;
-  String date;
-  String comment;
-  String avatarUrl;
-  int likes;
-  List<CommentData> replies;
-  bool isExpanded;
-  bool isLiked; // Added for persistence
+class CommentData { // Added for persistence
 
   CommentData({
     required this.id,
@@ -48,4 +39,13 @@ class CommentData {
       isLiked: json['is_liked'] ?? false, // Check API response key
     );
   }
+  String id;
+  String name;
+  String date;
+  String comment;
+  String avatarUrl;
+  int likes;
+  List<CommentData> replies;
+  bool isExpanded;
+  bool isLiked;
 }

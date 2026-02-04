@@ -3,21 +3,6 @@ import '../../../../features/earning/domain/entities/earning_transaction.dart';
 
 
 class NotificationEntity extends Equatable {
-  final String id;
-  final String title;
-  final String description;
-  final String time;
-  final String senderImage;
-  final String messageType;
-  final String senderId;
-  final String paymentStatus;
-  final String contentId;
-  final String broadcastId;
-  final String imageUrl;
-  final String videoUrl;
-  final bool exclusive;
-  final bool unread;
-  final EarningTransaction? transactionDetailData;
 
   const NotificationEntity({
     required this.id,
@@ -36,6 +21,21 @@ class NotificationEntity extends Equatable {
     required this.unread,
     this.transactionDetailData,
   });
+  final String id;
+  final String title;
+  final String description;
+  final String time;
+  final String senderImage;
+  final String messageType;
+  final String senderId;
+  final String paymentStatus;
+  final String contentId;
+  final String broadcastId;
+  final String imageUrl;
+  final String videoUrl;
+  final bool exclusive;
+  final bool unread;
+  final EarningTransaction? transactionDetailData;
 
   @override
   List<Object?> get props => [
@@ -58,15 +58,15 @@ class NotificationEntity extends Equatable {
 }
 
 class NotificationsResult extends Equatable {
-  final List<NotificationEntity> notifications;
-  final int unreadCount;
-  final int alertCount;
   
   const NotificationsResult({
     required this.notifications, 
     required this.unreadCount,
     this.alertCount = 0,
   });
+  final List<NotificationEntity> notifications;
+  final int unreadCount;
+  final int alertCount;
   
   @override
   List<Object?> get props => [notifications, unreadCount, alertCount];

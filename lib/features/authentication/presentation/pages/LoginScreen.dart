@@ -20,7 +20,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';

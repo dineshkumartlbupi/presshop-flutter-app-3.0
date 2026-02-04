@@ -29,9 +29,6 @@ const String notesText = "Notes";
 const String interviewText = "Interview";
 
 class CameraScreen extends StatefulWidget {
-  final bool picAgain;
-  final ScreenNameEnum previousScreen;
-  final bool autoInitialize;
 
   const CameraScreen({
     super.key,
@@ -39,6 +36,9 @@ class CameraScreen extends StatefulWidget {
     required this.previousScreen,
     this.autoInitialize = true,
   });
+  final bool picAgain;
+  final ScreenNameEnum previousScreen;
+  final bool autoInitialize;
 
   @override
   State<StatefulWidget> createState() {

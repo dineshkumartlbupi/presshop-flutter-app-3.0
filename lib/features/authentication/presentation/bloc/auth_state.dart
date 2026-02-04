@@ -13,20 +13,15 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
-  final User user;
 
   const AuthAuthenticated({required this.user});
+  final User user;
 
   @override
   List<Object> get props => [user];
 }
 
 class AuthSocialSignUpRequired extends AuthState {
-  final String socialType;
-  final String socialId;
-  final String email;
-  final String name;
-  final String photoUrl;
 
   const AuthSocialSignUpRequired({
     required this.socialType,
@@ -35,22 +30,27 @@ class AuthSocialSignUpRequired extends AuthState {
     required this.name,
     required this.photoUrl,
   });
+  final String socialType;
+  final String socialId;
+  final String email;
+  final String name;
+  final String photoUrl;
   @override
   List<Object> get props => [socialType, socialId, email, name, photoUrl];
 }
 
 class AuthError extends AuthState {
-  final String message;
 
   const AuthError({required this.message});
+  final String message;
 
   @override
   List<Object> get props => [message];
 }
 
 class ForgotPasswordSent extends AuthState {
-  final String otp;
   const ForgotPasswordSent({this.otp = ""});
+  final String otp;
   @override
   List<Object> get props => [otp];
 }

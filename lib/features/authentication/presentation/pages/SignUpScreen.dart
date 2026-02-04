@@ -35,11 +35,6 @@ import 'VerifyAccountScreen.dart';
 
 // ignore: must_be_immutable
 class SignUpScreen extends StatefulWidget {
-  bool socialLogin = false;
-  String socialId = "";
-  String name = "";
-  String email = "";
-  String phoneNumber = "";
 
   SignUpScreen(
       {super.key,
@@ -48,6 +43,11 @@ class SignUpScreen extends StatefulWidget {
       required this.email,
       required this.name,
       required this.phoneNumber});
+  bool socialLogin = false;
+  String socialId = "";
+  String name = "";
+  String email = "";
+  String phoneNumber = "";
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -238,8 +238,9 @@ class _SignUpScreenState extends State<SignUpScreen>
 
               List<String> nameParts = state.name.split(' ');
               if (nameParts.isNotEmpty) firstNameController.text = nameParts[0];
-              if (nameParts.length > 1)
+              if (nameParts.length > 1) {
                 lastNameController.text = nameParts.sublist(1).join(" ");
+              }
               emailController.text = state.email;
             });
           } else if (state is AuthError) {
@@ -660,7 +661,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   filled: false,
                                   filledColor: Colors.transparent,
                                   autofocus: false,
-                                  onChanged: (String? val) {
+                                  onChanged: (val) {
                                     if (val == null || val.trim().isEmpty) {
                                       emailAlreadyExists = false;
                                       setState(() {});
@@ -1631,9 +1632,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                                             Image.network(
                                               item.avatar,
                                               errorBuilder:
-                                                  (BuildContext context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
+                                                  (context,
+                                                      exception,
+                                                      stackTrace) {
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   fit: BoxFit.contain,
@@ -1777,7 +1778,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     showCountryPicker(
       context: context,
       showPhoneCode: true,
-      onSelect: (Country country) {
+      onSelect: (country) {
         debugPrint('Select country: ${country.displayName}');
         debugPrint('Select country: ${country.countryCode}');
         debugPrint('Select country: ${country.hashCode}');
@@ -1960,12 +1961,12 @@ class _SignUpScreenState extends State<SignUpScreen>
 }
 
 class AvatarsData {
-  String id = "";
-  String avatar = "";
-  bool selected = false;
 
   AvatarsData.fromJson(json) {
     id = json["_id"] ?? "";
     avatar = json["avatar"] ?? "";
   }
+  String id = "";
+  String avatar = "";
+  bool selected = false;
 }

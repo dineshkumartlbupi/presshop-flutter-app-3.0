@@ -9,9 +9,9 @@ abstract class LeaderboardRemoteDataSource {
 }
 
 class LeaderboardRemoteDataSourceImpl implements LeaderboardRemoteDataSource {
-  final ApiClient apiClient;
 
   LeaderboardRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<LeaderboardModel> getLeaderboardData(String countryCode) async {

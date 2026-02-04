@@ -15,9 +15,9 @@ import 'package:presshop/core/di/injection_container.dart'; // For sl
 
 // ignore: must_be_immutable
 class TermCheckScreen extends StatefulWidget {
-  String type = "";
 
   TermCheckScreen({super.key, required this.type});
+  String type = "";
 
   @override
   State<TermCheckScreen> createState() => _TermCheckScreenState();
@@ -34,7 +34,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   var scrollController = ScrollController();
   List<String> htmlDataList = [];
 
-  scrollToBottom() {
+  void scrollToBottom() {
     scrollController.jumpTo(scrollController.position.maxScrollExtent);
   }
 
@@ -877,7 +877,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   void declinedDialog(String message, Size size, VoidCallback pressed) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -885,7 +885,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               insetPadding:
                   EdgeInsets.symmetric(horizontal: size.width * numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,

@@ -36,9 +36,9 @@ abstract class TaskRemoteDataSource {
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
-  final ApiClient apiClient;
 
   TaskRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<TaskAssignedResponseModel> getTaskDetail(String taskId) async {

@@ -16,8 +16,8 @@ class CameraSwitchEvent extends CameraEvent {}
 class CameraFlashToggleEvent extends CameraEvent {}
 
 class CameraModeChangeEvent extends CameraEvent {
-  final String mode;
   const CameraModeChangeEvent(this.mode);
+  final String mode;
 
   @override
   List<Object> get props => [mode];
@@ -38,40 +38,40 @@ class AudioStopRecordingEvent extends CameraEvent {}
 class LoadGalleryMediaEvent extends CameraEvent {}
 
 class UpdateExposureEvent extends CameraEvent {
-  final double exposure;
   const UpdateExposureEvent(this.exposure);
+  final double exposure;
 
   @override
   List<Object> get props => [exposure];
 }
 
 class UpdateZoomEvent extends CameraEvent {
-  final double zoom;
   const UpdateZoomEvent(this.zoom);
+  final double zoom;
 
   @override
   List<Object> get props => [zoom];
 }
 
 class CameraLifecycleEvent extends CameraEvent {
-  final AppLifecycleState state;
   const CameraLifecycleEvent(this.state);
+  final AppLifecycleState state;
 
   @override
   List<Object> get props => [state];
 }
 
 class CameraTimerTickEvent extends CameraEvent {
-  final String time;
   const CameraTimerTickEvent(this.time);
+  final String time;
 
   @override
   List<Object> get props => [time];
 }
 
 class UpdateCapturedMediaEvent extends CameraEvent {
-  final List<CameraData> media;
   const UpdateCapturedMediaEvent(this.media);
+  final List<CameraData> media;
 
   @override
   List<Object> get props => [media];

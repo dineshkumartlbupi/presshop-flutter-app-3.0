@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/utils/app_logger.dart';
-import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class LocationService {
   final Location _location = Location();

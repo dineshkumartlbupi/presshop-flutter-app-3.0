@@ -8,13 +8,13 @@ import 'package:presshop/features/authentication/domain/entities/document_instru
 import 'package:presshop/features/authentication/domain/repositories/verification_repository.dart';
 
 class VerificationRepositoryImpl implements VerificationRepository {
-  final VerificationRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   VerificationRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final VerificationRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<DocumentInstruction>>>

@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/task/domain/repositories/task_repository.dart';
 
 class UploadTaskMedia implements UseCase<Map<String, dynamic>, FormData> {
-  final TaskRepository repository;
 
   UploadTaskMedia(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, Map<String, dynamic>>> call(FormData params) async {

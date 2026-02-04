@@ -6,9 +6,9 @@ import '../entities/task_all.dart';
 import '../repositories/task_repository.dart';
 
 class GetAllTasks implements UseCase<List<TaskAll>, GetAllTasksParams> {
-  final TaskRepository repository;
 
   GetAllTasks(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<TaskAll>>> call(GetAllTasksParams params) async {
@@ -20,12 +20,12 @@ class GetAllTasks implements UseCase<List<TaskAll>, GetAllTasksParams> {
 }
 
 class GetAllTasksParams extends Equatable {
-  final int limit;
-  final int offset;
-  final Map<String, dynamic>? filterParams;
 
   const GetAllTasksParams(
       {required this.limit, required this.offset, this.filterParams});
+  final int limit;
+  final int offset;
+  final Map<String, dynamic>? filterParams;
 
   @override
   List<Object?> get props => [limit, offset, filterParams];

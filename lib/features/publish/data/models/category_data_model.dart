@@ -5,16 +5,6 @@ part 'category_data_model.g.dart';
 
 @HiveType(typeId: 1)
 class CategoryDataModel extends ContentCategory {
-  @HiveField(0)
-  final String id;
-  @HiveField(1)
-  final String name;
-  @HiveField(2)
-  final String type;
-  @HiveField(3)
-  final String percentage;
-  @HiveField(4)
-  final bool selected;
 
   CategoryDataModel({
     required this.id,
@@ -37,6 +27,21 @@ class CategoryDataModel extends ContentCategory {
         percentage: json['percentage'] ?? "",
         selected: false);
   }
+  @override
+  @HiveField(0)
+  final String id;
+  @override
+  @HiveField(1)
+  final String name;
+  @override
+  @HiveField(2)
+  final String type;
+  @override
+  @HiveField(3)
+  final String percentage;
+  @override
+  @HiveField(4)
+  final bool selected;
 
   @override
   CategoryDataModel copyWith({

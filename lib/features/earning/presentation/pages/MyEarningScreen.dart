@@ -23,10 +23,9 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MyEarningScreen extends StatefulWidget {
-  final bool openDashboard;
-
   const MyEarningScreen(
       {super.key, this.openDashboard = false, required int initialTapPosition});
+  final bool openDashboard;
 
   @override
   State<MyEarningScreen> createState() => _MyEarningScreenState();
@@ -285,7 +284,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                     borderRadius: BorderRadius.circular(
                                         size.width * numD04),
                                     child: CachedNetworkImage(
-                                      imageUrl: (earningData?.avatar ?? ""),
+                                      imageUrl: earningData?.avatar ?? "",
                                       imageBuilder: (context, imageProvider) =>
                                           Container(
                                         height: size.width * numD32,
@@ -947,7 +946,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       borderRadius: BorderRadius.circular(
                                           size.width * numD03),
                                       child: CachedNetworkImage(
-                                        imageUrl: (item.hopperAvatar),
+                                        imageUrl: item.hopperAvatar,
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 Container(
@@ -1216,10 +1215,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             Text(
                               item.type == "content"
                                   ? item.totalEarningAmt != "null"
-                                      ? '$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
                                       : "£0"
                                   : item.totalEarningAmt != "null"
-                                      ? '$currencySymbol${formatDouble(double.parse(item.totalEarningAmt))}'
+                                      ? '${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.totalEarningAmt))}'
                                       : "£0",
                               style: commonTextStyle(
                                   size: size,
@@ -1247,7 +1246,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               item.payableCommission.isNotEmpty
-                                  ? "$currencySymbol${formatDouble(double.parse(item.payableCommission))}"
+                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableCommission))}"
                                   : "£0",
                               style: commonTextStyle(
                                   size: size,
@@ -1273,7 +1272,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              "$currencySymbol${formatDouble(double.parse(item.stripefee))}",
+                              "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.stripefee))}",
                               style: commonTextStyle(
                                   size: size,
                                   fontSize: size.width * numD035,
@@ -1300,7 +1299,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             ),
                             Text(
                               item.amount.isNotEmpty
-                                  ? "$currencySymbol${formatDouble(double.parse(item.payableT0Hopper))}"
+                                  ? "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.parse(item.payableT0Hopper))}"
                                   : "",
                               style: commonTextStyle(
                                   size: size,
@@ -1421,7 +1420,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                 list[pos].fromDate = null;
                 list[pos].toDate = null;
               }
-              filterList.forEach((element) => element.isSelected = false);
+              for (var element in filterList) {
+                element.isSelected = false;
+              }
             }
             // Logic to clear other sort if one selected?
             // Simply toggling for now
@@ -1619,7 +1620,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * numD06,
@@ -1652,8 +1653,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                       ),
                       TextButton(
                         onPressed: () {
-                          filterList.forEach((e) => e.isSelected = false);
-                          sortList.forEach((e) => e.isSelected = false);
+                          for (var e in filterList) {
+                            e.isSelected = false;
+                          }
+                          for (var e in sortList) {
+                            e.isSelected = false;
+                          }
                           fromDate = "";
                           toDate = "";
                           initializeFilter();

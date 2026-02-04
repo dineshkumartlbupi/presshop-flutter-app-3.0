@@ -5,9 +5,9 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/features/authentication/data/models/term_model.dart';
 
 class TermsRepository {
-  final ApiClient apiClient;
 
   TermsRepository(this.apiClient);
+  final ApiClient apiClient;
 
   Future<TermsResponse> fetchTerms(String type) async {
     try {

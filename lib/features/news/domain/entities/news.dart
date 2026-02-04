@@ -1,25 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class News extends Equatable {
-  final String id;
-  final String title;
-  final String description;
-  final String? mediaUrl;
-  final String? mediaType;
-  final String? location;
-  final String? createdAt;
-  final int? likesCount;
-  final int? commentsCount;
-  final int? sharesCount;
-  final int? viewCount;
-  final bool? isLiked;
-  final bool? isMostViewed;
-  final String? userImage;
-  final String? userName;
-  final double? latitude;
-  final double? longitude;
-  final String? type;
-  final String? markerType;
 
   const News({
     required this.id,
@@ -42,6 +23,25 @@ class News extends Equatable {
     this.type,
     this.markerType,
   });
+  final String id;
+  final String title;
+  final String description;
+  final String? mediaUrl;
+  final String? mediaType;
+  final String? location;
+  final String? createdAt;
+  final int? likesCount;
+  final int? commentsCount;
+  final int? sharesCount;
+  final int? viewCount;
+  final bool? isLiked;
+  final bool? isMostViewed;
+  final String? userImage;
+  final String? userName;
+  final double? latitude;
+  final double? longitude;
+  final String? type;
+  final String? markerType;
 
   News copyWith({
     String? id,

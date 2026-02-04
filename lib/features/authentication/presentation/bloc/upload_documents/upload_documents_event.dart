@@ -13,16 +13,16 @@ class GetDocumentInstructionsEvent extends UploadDocumentsEvent {}
 class GetUploadedDocumentsEvent extends UploadDocumentsEvent {}
 
 class UploadFilesEvent extends UploadDocumentsEvent {
-  final List<File> files;
   const UploadFilesEvent(this.files);
+  final List<File> files;
 
   @override
   List<Object?> get props => [files];
 }
 
 class DeleteDocumentEvent extends UploadDocumentsEvent {
-  final String documentId;
   const DeleteDocumentEvent(this.documentId);
+  final String documentId;
 
   @override
   List<Object?> get props => [documentId];

@@ -6,9 +6,9 @@ import '../repositories/content_repository.dart';
 
 class GetMediaHouseOffers
     implements UseCase<List<ManageTaskChatModel>, String> {
-  final ContentRepository repository;
 
   GetMediaHouseOffers(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, List<ManageTaskChatModel>>> call(

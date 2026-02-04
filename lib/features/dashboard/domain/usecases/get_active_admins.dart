@@ -5,9 +5,9 @@ import '../entities/admin_detail.dart';
 import '../repositories/dashboard_repository.dart';
 
 class GetActiveAdmins implements UseCase<List<AdminDetail>, NoParams> {
-  final DashboardRepository repository;
 
   GetActiveAdmins(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, List<AdminDetail>>> call(NoParams params) async {

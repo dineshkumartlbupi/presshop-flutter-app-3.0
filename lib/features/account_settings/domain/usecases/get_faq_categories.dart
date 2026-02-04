@@ -7,9 +7,9 @@ import '../repositories/account_settings_repository.dart';
 
 class GetFAQCategories
     implements UseCase<List<ContentCategory>, GetFAQCategoriesParams> {
-  final AccountSettingsRepository repository;
 
   GetFAQCategories(this.repository);
+  final AccountSettingsRepository repository;
 
   @override
   Future<Either<Failure, List<ContentCategory>>> call(
@@ -19,7 +19,7 @@ class GetFAQCategories
 }
 
 class GetFAQCategoriesParams {
-  final String type;
 
   GetFAQCategoriesParams({required this.type});
+  final String type;
 }

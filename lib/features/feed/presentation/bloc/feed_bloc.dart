@@ -6,8 +6,6 @@ import 'feed_state.dart';
 import '../../domain/entities/feed.dart';
 
 class FeedBloc extends Bloc<FeedEvent, FeedState> {
-  final GetFeeds getFeeds;
-  final ToggleFeedInteraction toggleFeedInteraction;
 
   FeedBloc({
     required this.getFeeds,
@@ -20,6 +18,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     on<ToggleEmojiFeed>(_onToggleEmoji);
     on<ToggleClapFeed>(_onToggleClap);
   }
+  final GetFeeds getFeeds;
+  final ToggleFeedInteraction toggleFeedInteraction;
 
   Future<void> _onFetchFeeds(FetchFeeds event, Emitter<FeedState> emit) async {
     Map<String, dynamic> filters = Map.from(state.filters); // Copy existing

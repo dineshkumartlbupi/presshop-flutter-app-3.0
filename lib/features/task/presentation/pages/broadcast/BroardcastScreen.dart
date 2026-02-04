@@ -29,11 +29,10 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 
 // ignore: must_be_immutable
 class BroadCastScreen extends StatefulWidget {
-  String taskId = "";
-  String mediaHouseId = "";
-
   BroadCastScreen(
       {super.key, required this.taskId, required this.mediaHouseId});
+  String taskId = "";
+  String mediaHouseId = "";
 
   @override
   State<BroadCastScreen> createState() => _BroadCastScreenState();
@@ -44,9 +43,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   late Size size;
   LatLng? _latLng;
   String _hopperAcceptedCount = "";
-  String _distance = "";
-  String _drivingEstTime = "";
-  String _walkingEstTime = "";
+  final String _distance = "";
+  final String _drivingEstTime = "";
+  final String _walkingEstTime = "";
 
   bool _isAccepted = false;
   bool isDirection = false;
@@ -144,6 +143,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             photoPrice: "0",
             videoPrice: "0",
             interviewPrice: "0",
+            currency: assignedEntity.task.currency,
+            currencySymbol: assignedEntity.task.currencySymbol,
           );
           if (taskDetail != null) {
             _updateGoogleMap(
@@ -218,7 +219,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 taskDetail?.longitude ?? longitude),
             zoom: 14.4746,
           ),
-          onMapCreated: (GoogleMapController controller) {
+          onMapCreated: (controller) {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
             }
@@ -671,7 +672,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               onTap: () async {
                 try {
                   Share.share(
-                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from $currencySymbol${taskDetail!.minimumPriceRange} to $currencySymbol${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
+                      "${taskDetail!.title}\n ${taskDetail!.description}.\n\n Hi there, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from ${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${taskDetail!.minimumPriceRange} to ${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${taskDetail!.maximumPriceRange} with you. Please click this ${Uri.parse(appUrl)} to download PressHop and review the task. Cheers");
                 } catch (e) {
                   debugPrint("Share Error: $e");
                 }
@@ -713,7 +714,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedPhoto
-                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.photoPrice))}"
+                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.photoPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -757,7 +758,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedInterview
-                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.interviewPrice))}"
+                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.interviewPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -801,7 +802,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedVideo
-                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.videoPrice))}"
+                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.videoPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -863,7 +864,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
           topRight: Radius.circular(size.width * numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -1153,7 +1154,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                         errorOpenSMS,
                                                         Colors.black);
                                                     // Handle the case when the URL can't be launched.
-                                                    throw ('Error launching Sms');
+                                                    throw 'Error launching Sms';
                                                   }
                                                 },
                                                 splashRadius:
@@ -1428,11 +1429,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 }
 
 class ContactListModel {
-  String? identifier, displayName, givenName, middleName;
-  List<Phone>? phones = [];
-  Uint8List? avatar;
-  bool isContactSelected = false;
-
   ContactListModel(
       {required this.displayName,
       required this.givenName,
@@ -1440,6 +1436,10 @@ class ContactListModel {
       required this.phones,
       required this.avatar,
       required this.isContactSelected});
+  String? identifier, displayName, givenName, middleName;
+  List<Phone>? phones = [];
+  Uint8List? avatar;
+  bool isContactSelected = false;
 }
 
 /// Show loader dialog

@@ -17,9 +17,9 @@ abstract class AccountSettingsRemoteDataSource {
 
 class AccountSettingsRemoteDataSourceImpl
     implements AccountSettingsRemoteDataSource {
-  final ApiClient apiClient;
 
   AccountSettingsRemoteDataSourceImpl(this.apiClient);
+  final ApiClient apiClient;
 
   @override
   Future<bool> deleteAccount(Map<String, String> reason) async {

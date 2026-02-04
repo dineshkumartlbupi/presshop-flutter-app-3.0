@@ -11,14 +11,14 @@ void commonDialog(BuildContext context, String message, VoidCallback pressed) {
   var screenWidth = MediaQuery.of(context).size.width;
   showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
             contentPadding:
                 EdgeInsets.symmetric(horizontal: screenWidth * numD04),
             content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
+              builder: (context, setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -80,7 +80,7 @@ void broadcastDialog({
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (context) {
         return WillPopScope(
           onWillPop: () {
             return Future.value(false);
@@ -92,7 +92,7 @@ void broadcastDialog({
               insetPadding:
                   EdgeInsets.symmetric(horizontal: size.width * numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     width: size.width,
                     decoration: BoxDecoration(
@@ -549,14 +549,14 @@ void commonErrorDialogDialog(
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
             contentPadding: EdgeInsets.zero,
             insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
             content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
+              builder: (context, setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -670,14 +670,14 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
   showDialog(
       context: navigatorKey.currentState!.context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
             contentPadding: EdgeInsets.zero,
             insetPadding: EdgeInsets.symmetric(horizontal: size.width * numD04),
             content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
+              builder: (context, setState) {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -820,7 +820,7 @@ void showLoaderDialog(BuildContext context) {
     barrierDismissible: false,
     barrierColor: Colors.white.withOpacity(0),
     context: context,
-    builder: (BuildContext context) {
+    builder: (context) {
       return alertDialog!;
     },
   );

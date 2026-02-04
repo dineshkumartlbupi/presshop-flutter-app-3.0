@@ -7,8 +7,8 @@ import 'package:presshop/features/map/presentation/utils/helper.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
 
 class MapService {
-  final String googleApiKey;
   MapService({required this.googleApiKey});
+  final String googleApiKey;
 
   Future<RouteInfo> getRouteInfo(LatLng start, LatLng end) async {
     final url =
@@ -18,8 +18,9 @@ class MapService {
     if (response.statusCode != 200) throw 'HTTP Error: ${response.statusCode}';
 
     final data = json.decode(response.body);
-    if (data['status'] != 'OK')
+    if (data['status'] != 'OK') {
       throw 'Google Directions Error: ${data['status']}';
+    }
 
     final route = data['routes'][0];
     final leg = route['legs'][0];

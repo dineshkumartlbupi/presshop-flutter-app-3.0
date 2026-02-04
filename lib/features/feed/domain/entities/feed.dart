@@ -1,30 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Feed extends Equatable {
-  final String id;
-  final String heading;
-  final String description;
-  final String location;
-  final String categoryName;
-  final String askPrice;
-  final String displayPrice;
-  final String displayCurrency;
-  final int viewCount;
-  final int offerCount;
-  final String createdAt;
-  final String timeAgo; // timestamp?
-  final String feedImage; // Avatar?
-  final String status;
-  final bool isFavourite;
-  final bool isLiked;
-  final bool isEmoji;
-  final bool isClap;
-  final List<FeedContent> contentList;
-  final String type;
-  final bool isDraft;
-  final String userId;
-  final String saleStatus;
-  final String paidStatus;
 
   const Feed({
     required this.id,
@@ -52,6 +28,30 @@ class Feed extends Equatable {
     required this.saleStatus,
     required this.paidStatus,
   });
+  final String id;
+  final String heading;
+  final String description;
+  final String location;
+  final String categoryName;
+  final String askPrice;
+  final String displayPrice;
+  final String displayCurrency;
+  final int viewCount;
+  final int offerCount;
+  final String createdAt;
+  final String timeAgo; // timestamp?
+  final String feedImage; // Avatar?
+  final String status;
+  final bool isFavourite;
+  final bool isLiked;
+  final bool isEmoji;
+  final bool isClap;
+  final List<FeedContent> contentList;
+  final String type;
+  final bool isDraft;
+  final String userId;
+  final String saleStatus;
+  final String paidStatus;
 
   @override
   List<Object?> get props => [
@@ -77,10 +77,6 @@ class Feed extends Equatable {
 }
 
 class FeedContent extends Equatable {
-  final String id;
-  final String mediaType;
-  final String mediaUrl;
-  final String thumbnail;
 
   const FeedContent({
     required this.id,
@@ -88,6 +84,10 @@ class FeedContent extends Equatable {
     required this.mediaUrl,
     required this.thumbnail,
   });
+  final String id;
+  final String mediaType;
+  final String mediaUrl;
+  final String thumbnail;
 
   @override
   List<Object?> get props => [id, mediaType, mediaUrl, thumbnail];

@@ -6,9 +6,9 @@ import 'package:presshop/core/core_export.dart';
 
 // ignore: must_be_immutable
 class AudioWaveFormWidgetScreen extends StatefulWidget {
-  String mediaPath = "";
 
   AudioWaveFormWidgetScreen({super.key, required this.mediaPath});
+  String mediaPath = "";
 
   @override
   State<StatefulWidget> createState() {

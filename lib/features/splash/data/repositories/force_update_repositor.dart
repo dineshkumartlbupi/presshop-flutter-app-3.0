@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/dashboard/presentation/pages/version_checker.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

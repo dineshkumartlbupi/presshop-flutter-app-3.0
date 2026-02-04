@@ -9,10 +9,6 @@ import 'splash_event.dart';
 import 'splash_state.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  final CheckAuthStatus checkAuthStatus;
-  final GetProfile getProfile;
-  final CheckSplashVersion checkAppVersion;
-  final CheckOnboardingStatus checkOnboardingStatus;
 
   SplashBloc({
     required this.checkAuthStatus,
@@ -22,6 +18,10 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }) : super(SplashInitial()) {
     on<AppStarted>(_onAppStarted);
   }
+  final CheckAuthStatus checkAuthStatus;
+  final GetProfile getProfile;
+  final CheckSplashVersion checkAppVersion;
+  final CheckOnboardingStatus checkOnboardingStatus;
 
   Future<void> _onAppStarted(
       AppStarted event, Emitter<SplashState> emit) async {

@@ -5,9 +5,9 @@ import '../repositories/splash_repository.dart';
 import 'package:presshop/features/splash/domain/entities/version.dart';
 
 class CheckSplashVersion implements UseCase<Version, NoParams> {
-  final SplashRepository repository;
 
   CheckSplashVersion(this.repository);
+  final SplashRepository repository;
 
   @override
   Future<Either<Failure, Version>> call(NoParams params) async {

@@ -9,10 +9,6 @@ import 'publish_event.dart';
 import 'publish_state.dart';
 
 class PublishBloc extends Bloc<PublishEvent, PublishState> {
-  final GetContentCategories getContentCategories;
-  final GetCharities getCharities;
-  final GetShareExclusivePrice getShareExclusivePrice;
-  final SubmitContent submitContent;
 
   PublishBloc({
     required this.getContentCategories,
@@ -27,6 +23,10 @@ class PublishBloc extends Bloc<PublishEvent, PublishState> {
     on<SelectCharityEvent>(_onSelectCharity);
     on<SubmitContentEvent>(_onSubmitContent);
   }
+  final GetContentCategories getContentCategories;
+  final GetCharities getCharities;
+  final GetShareExclusivePrice getShareExclusivePrice;
+  final SubmitContent submitContent;
 
   Future<void> _onLoadPublishData(
       LoadPublishDataEvent event, Emitter<PublishState> emit) async {

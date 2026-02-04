@@ -10,8 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:presshop/core/api/api_constant.dart';
-import 'package:presshop/core/utils/extensions.dart';
-import 'package:presshop/core/services/location_service.dart';
 
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -26,8 +24,6 @@ import 'package:presshop/features/task/presentation/pages/broadcast_chat/MediaPr
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/common_models_export.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';

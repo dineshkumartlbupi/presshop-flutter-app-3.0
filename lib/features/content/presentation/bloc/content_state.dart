@@ -16,15 +16,6 @@ class ContentInitial extends ContentState {}
 class ContentLoading extends ContentState {}
 
 class MyContentLoaded extends ContentState {
-  final List<ContentItem> allContent;
-  final List<ContentItem> myContent;
-  final int allPage;
-  final int myPage;
-  final bool hasMoreAll;
-  final bool hasMoreMy;
-  final String? errorMessage;
-  final bool isLoadingAll;
-  final bool isLoadingMy;
 
   const MyContentLoaded({
     this.allContent = const [],
@@ -37,6 +28,15 @@ class MyContentLoaded extends ContentState {
     this.isLoadingAll = false,
     this.isLoadingMy = false,
   });
+  final List<ContentItem> allContent;
+  final List<ContentItem> myContent;
+  final int allPage;
+  final int myPage;
+  final bool hasMoreAll;
+  final bool hasMoreMy;
+  final String? errorMessage;
+  final bool isLoadingAll;
+  final bool isLoadingMy;
 
   @override
   List<Object> get props => [
@@ -77,90 +77,90 @@ class MyContentLoaded extends ContentState {
 }
 
 class ContentDetailLoaded extends ContentState {
-  final ContentItem content;
 
   const ContentDetailLoaded(this.content);
+  final ContentItem content;
 
   @override
   List<Object> get props => [content];
 }
 
 class ContentPublished extends ContentState {
-  final ContentItem content;
 
   const ContentPublished(this.content);
+  final ContentItem content;
 
   @override
   List<Object> get props => [content];
 }
 
 class DraftSaved extends ContentState {
-  final ContentItem draft;
 
   const DraftSaved(this.draft);
+  final ContentItem draft;
 
   @override
   List<Object> get props => [draft];
 }
 
 class MediaUploaded extends ContentState {
-  final List<String> mediaUrls;
 
   const MediaUploaded(this.mediaUrls);
+  final List<String> mediaUrls;
 
   @override
   List<Object> get props => [mediaUrls];
 }
 
 class ContentDeleted extends ContentState {
-  final String contentId;
 
   const ContentDeleted(this.contentId);
+  final String contentId;
 
   @override
   List<Object> get props => [contentId];
 }
 
 class HashtagsSearched extends ContentState {
-  final List<Hashtag> hashtags;
 
   const HashtagsSearched(this.hashtags);
+  final List<Hashtag> hashtags;
 
   @override
   List<Object> get props => [hashtags];
 }
 
 class TrendingHashtagsLoaded extends ContentState {
-  final List<Hashtag> hashtags;
 
   const TrendingHashtagsLoaded(this.hashtags);
+  final List<Hashtag> hashtags;
 
   @override
   List<Object> get props => [hashtags];
 }
 
 class MediaHouseOffersLoaded extends ContentState {
-  final List<ManageTaskChatModel> offers;
 
   const MediaHouseOffersLoaded(this.offers);
+  final List<ManageTaskChatModel> offers;
 
   @override
   List<Object> get props => [offers];
 }
 
 class ContentTransactionsLoaded extends ContentState {
-  final List<EarningTransactionDetail> transactions;
 
   const ContentTransactionsLoaded(this.transactions);
+  final List<EarningTransactionDetail> transactions;
 
   @override
   List<Object> get props => [transactions];
 }
 
 class ContentError extends ContentState {
-  final String message;
 
   const ContentError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];

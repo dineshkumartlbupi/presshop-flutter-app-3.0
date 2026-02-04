@@ -1,4 +1,5 @@
 import '../../domain/entities/feed.dart';
+import 'package:presshop/core/core_export.dart';
 
 class FeedModel extends Feed {
   const FeedModel({
@@ -94,8 +95,11 @@ class FeedModel extends Feed {
           json['original_ask_price']?.toString() ??
           "",
       displayPrice: json['display_price']?.toString() ?? "",
-      displayCurrency:
-          json['currency_symbol'] ?? json['display_currency'] ?? "£",
+      displayCurrency: (json['currency_symbol'] != null &&
+              json['currency_symbol'].toString().isNotEmpty)
+          ? json['currency_symbol'].toString()
+          : getCurrencySymbol(
+              (json['display_currency'] ?? json['currency'] ?? '').toString()),
       viewCount: json['content_view_count_by_marketplace_for_app'] ??
           json['view_count'] ??
           0,

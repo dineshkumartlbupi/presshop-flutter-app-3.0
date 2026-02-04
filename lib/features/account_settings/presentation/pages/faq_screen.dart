@@ -11,10 +11,6 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class FAQScreen extends StatefulWidget {
-  final bool priceTipsSelected;
-  final String type;
-  final String benefits;
-  final int index;
 
   const FAQScreen({
     super.key,
@@ -23,6 +19,10 @@ class FAQScreen extends StatefulWidget {
     this.benefits = "",
     required this.index,
   });
+  final bool priceTipsSelected;
+  final String type;
+  final String benefits;
+  final int index;
 
   @override
   State<FAQScreen> createState() => _FAQScreenState();

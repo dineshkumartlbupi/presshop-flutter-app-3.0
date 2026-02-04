@@ -6,47 +6,51 @@ import 'package:presshop/features/content/domain/entities/content_item.dart';
 import 'package:presshop/main.dart';
 
 class ContentItemWidget extends StatelessWidget {
-  final ContentItem item;
-  final Size size;
-  final VoidCallback onTap;
-
   const ContentItemWidget({
     super.key,
     required this.item,
     required this.size,
     required this.onTap,
   });
+  final ContentItem item;
+  final Size size;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: size.width * numD03,
-          right: size.width * numD03,
-          top: size.width * numD03,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              spreadRadius: 2,
-              blurRadius: 1,
-            )
-          ],
-          borderRadius: BorderRadius.circular(size.width * numD04),
-        ),
-        child: Column(
-          children: [
-            MediaThumbnailWidget(item: item, size: size),
-            SizedBox(height: size.width * numD02),
-            _buildInfoRow(),
-            const Spacer(),
-            _buildStatusRow(),
-            SizedBox(height: size.width * numD02),
-          ],
+    // RepaintBoundary prevents unnecessary repaints of this widget
+    return RepaintBoundary(
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.only(
+            left: size.width * numD03,
+            right: size.width * numD03,
+            top: size.width * numD03,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            // Simplified shadow for better performance
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0xFFEEEEEE),
+                spreadRadius: 1,
+                blurRadius: 2,
+                offset: Offset(0, 1),
+              )
+            ],
+            borderRadius: BorderRadius.circular(size.width * numD04),
+          ),
+          child: Column(
+            children: [
+              MediaThumbnailWidget(item: item, size: size),
+              SizedBox(height: size.width * numD02),
+              _buildInfoRow(),
+              const Spacer(),
+              _buildStatusRow(),
+              SizedBox(height: size.width * numD02),
+            ],
+          ),
         ),
       ),
     );
@@ -81,6 +85,9 @@ class ContentItemWidget extends StatelessWidget {
               ? size.width * numD03
               : size.width * numD04,
           color: colorTextFieldIcon,
+          // Cache icons for better performance
+          cacheWidth: (size.width * numD04 * 3).toInt(),
+          cacheHeight: (size.width * numD04 * 3).toInt(),
         )
       ],
     );
@@ -135,6 +142,9 @@ class ContentItemWidget extends StatelessWidget {
           height: size.width * numD025,
           width: size.width * numD025,
           color: isActive ? colorThemePink : Colors.grey,
+          // Cache small icons for better performance
+          cacheWidth: (size.width * numD025 * 3).toInt(),
+          cacheHeight: (size.width * numD025 * 3).toInt(),
         ),
         SizedBox(width: size.width * numD014),
         Text(
@@ -211,7 +221,7 @@ class ContentItemWidget extends StatelessWidget {
             ),
           ),
           Text(
-            "$currencySymbol${formatDouble(double.tryParse(item.price ?? '0') ?? 0)}",
+            "${item.currencySymbol.isNotEmpty ? item.currencySymbol : currencySymbol}${formatDouble(double.tryParse(item.price ?? '0') ?? 0)}",
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
@@ -227,14 +237,13 @@ class ContentItemWidget extends StatelessWidget {
 }
 
 class MediaThumbnailWidget extends StatelessWidget {
-  final ContentItem item;
-  final Size size;
-
   const MediaThumbnailWidget({
     super.key,
     required this.item,
     required this.size,
   });
+  final ContentItem item;
+  final Size size;
 
   @override
   Widget build(BuildContext context) {
@@ -249,12 +258,16 @@ class MediaThumbnailWidget extends StatelessWidget {
               height: size.width * numD29,
               width: size.width,
               fit: BoxFit.cover,
+              // Cache the watermark image for better performance
+              cacheWidth: (size.width * 2).toInt(),
+              cacheHeight: (size.width * numD29 * 2).toInt(),
             ),
-          Positioned(
-            right: size.width * numD02,
-            top: size.width * numD02,
-            child: _buildCountBadge(),
-          ),
+          if (item.mediaUrls.length > 1)
+            Positioned(
+              right: size.width * numD02,
+              top: size.width * numD02,
+              child: _buildCountBadge(),
+            ),
         ],
       ),
     );
@@ -352,8 +365,15 @@ class MediaThumbnailWidget extends StatelessWidget {
           height: size.width * numD30,
           width: size.width,
           fit: BoxFit.cover,
-          placeholder: (_, __) => _buildImagePlaceholder(),
-          errorWidget: (_, __, ___) => _buildImagePlaceholder(),
+          // Optimize memory usage by caching at display size
+          memCacheWidth: (size.width * 2).toInt(), // 2x for retina displays
+          memCacheHeight: (size.width * numD30 * 2).toInt(),
+          // Smooth fade-in transition
+          fadeInDuration: const Duration(milliseconds: 200),
+          fadeOutDuration: const Duration(milliseconds: 100),
+          // Lightweight placeholder for better performance
+          placeholder: (_, __) => _buildLightweightPlaceholder(),
+          errorWidget: (_, __, ___) => _buildLightweightPlaceholder(),
         );
     }
   }
@@ -378,17 +398,17 @@ class MediaThumbnailWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePlaceholder() {
+  // Lightweight placeholder using simple Container instead of loading PNG asset
+  Widget _buildLightweightPlaceholder() {
     return Container(
-      alignment: Alignment.topCenter,
+      alignment: Alignment.center,
       height: size.width * numD30,
       width: size.width,
-      child: Center(
-        child: Image.asset(
-          "${commonImagePath}rabbitLogo.png",
-          height: size.width * numD15,
-          width: size.width * numD15,
-        ),
+      color: const Color(0xFFF5F5F5),
+      child: Icon(
+        Icons.image_outlined,
+        size: size.width * numD15,
+        color: const Color(0xFFE0E0E0),
       ),
     );
   }

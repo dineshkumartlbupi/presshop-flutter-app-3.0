@@ -6,9 +6,9 @@ import '../entities/earning_profile.dart';
 import '../repositories/earning_repository.dart';
 
 class GetEarningProfile implements UseCase<EarningProfile, GetEarningProfileParams> {
-  final EarningRepository repository;
 
   GetEarningProfile(this.repository);
+  final EarningRepository repository;
 
   @override
   Future<Either<Failure, EarningProfile>> call(GetEarningProfileParams params) async {
@@ -17,10 +17,10 @@ class GetEarningProfile implements UseCase<EarningProfile, GetEarningProfilePara
 }
 
 class GetEarningProfileParams extends Equatable {
-  final String year;
-  final String month;
 
   const GetEarningProfileParams({required this.year, required this.month});
+  final String year;
+  final String month;
 
   @override
   List<Object> get props => [year, month];

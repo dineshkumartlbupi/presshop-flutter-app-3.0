@@ -9,13 +9,13 @@ import 'package:presshop/features/rating/domain/repositories/rating_repository.d
 import 'package:presshop/core/error/exceptions.dart';
 
 class RatingRepositoryImpl implements RatingRepository {
-  final RatingRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   RatingRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final RatingRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<Review>>> getReviews({
@@ -38,8 +38,9 @@ class RatingRepositoryImpl implements RatingRepository {
         };
         if (startDate != null) params['startdate'] = startDate;
         if (endDate != null) params['endDate'] = endDate;
-        if (publicationId != null && publicationId.isNotEmpty)
+        if (publicationId != null && publicationId.isNotEmpty) {
           params['publication'] = publicationId;
+        }
         if (rating != null) params['rating'] = rating;
         if (startRating != null) params['startrating'] = startRating;
         if (endRating != null) params['endrating'] = endRating;

@@ -1,37 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Incident {
-  final String id;
-  final String markerType; // "icon", "content", "hopper"
-  final String? type; // e.g. accident, fire (only for icon)
-  final LatLng position;
-  final String? address;
-  final String? time;
-  final String? image; // For content/hopper markers
-  final String? title;
-  final String? description;
-  final String? name;
-  final String? rating;
-  final String? specialization;
-  final String? distance;
-  final String? statusColor;
-  final String? category; // e.g. "Accident", "Crime", "Event"
-  final String? alertType; // e.g. "Alert", "Info", "Warning"
-  final String? author;
-  final String? date;
-  final int? soldCount;
-  final double? earnings;
-  final int? viewCount;
-  final bool? isPublished;
-  final bool? isMostViewed;
-  final int? likesCount;
-  final int? commentsCount;
-  final int? sharesCount;
-  final bool? isLiked;
-  final String? mediaType;
-  final String? temperature;
-  final String? wind;
-  final String? heading;
 
   Incident({
     required this.id,
@@ -151,6 +120,37 @@ class Incident {
       heading: json['heading']?.toString(),
     );
   }
+  final String id;
+  final String markerType; // "icon", "content", "hopper"
+  final String? type; // e.g. accident, fire (only for icon)
+  final LatLng position;
+  final String? address;
+  final String? time;
+  final String? image; // For content/hopper markers
+  final String? title;
+  final String? description;
+  final String? name;
+  final String? rating;
+  final String? specialization;
+  final String? distance;
+  final String? statusColor;
+  final String? category; // e.g. "Accident", "Crime", "Event"
+  final String? alertType; // e.g. "Alert", "Info", "Warning"
+  final String? author;
+  final String? date;
+  final int? soldCount;
+  final double? earnings;
+  final int? viewCount;
+  final bool? isPublished;
+  final bool? isMostViewed;
+  final int? likesCount;
+  final int? commentsCount;
+  final int? sharesCount;
+  final bool? isLiked;
+  final String? mediaType;
+  final String? temperature;
+  final String? wind;
+  final String? heading;
 
   Incident copyWith({
     String? id,
@@ -222,11 +222,6 @@ class Incident {
 }
 
 class DangerZone {
-  final String id;
-  final String name;
-  final String description;
-  final List<LatLng> points;
-  final String? icon;
 
   DangerZone({
     required this.id,
@@ -235,14 +230,14 @@ class DangerZone {
     required this.points,
     this.icon,
   });
+  final String id;
+  final String name;
+  final String description;
+  final List<LatLng> points;
+  final String? icon;
 }
 
 class Listing {
-  final String id;
-  final String title;
-  final String subtitle;
-  final LatLng location;
-  final String imageUrl;
 
   Listing({
     required this.id,
@@ -251,12 +246,17 @@ class Listing {
     required this.location,
     required this.imageUrl,
   });
+  final String id;
+  final String title;
+  final String subtitle;
+  final LatLng location;
+  final String imageUrl;
 }
 
 class LocationModel {
+
+  LocationModel({this.currentPosition, this.targetPosition, this.distance});
   LatLng? currentPosition;
   LatLng? targetPosition;
   double? distance;
-
-  LocationModel({this.currentPosition, this.targetPosition, this.distance});
 }

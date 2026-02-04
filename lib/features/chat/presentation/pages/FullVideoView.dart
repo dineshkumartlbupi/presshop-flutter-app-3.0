@@ -21,15 +21,15 @@ enum MediaTypeEnum {
 }
 
 class MediaViewScreen extends StatefulWidget {
-  final String mediaFile;
-  final MediaTypeEnum type;
-  final isFromTutorialScreen;
 
   const MediaViewScreen(
       {super.key,
       required this.mediaFile,
       required this.type,
       this.isFromTutorialScreen = false});
+  final String mediaFile;
+  final MediaTypeEnum type;
+  final isFromTutorialScreen;
 
   @override
   _MediaViewScreenState createState() => _MediaViewScreenState();
