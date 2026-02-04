@@ -1,5 +1,3 @@
-/*-----------Common Numbers---------*/
-
 class AppDimensions {
   static const numD002 = 0.002;
   static const numD003 = 0.003;

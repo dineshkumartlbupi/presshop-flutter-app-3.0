@@ -37,9 +37,7 @@ class TaskAssignedDataModel {
     return TaskAssignedDataModel(
       code: SafeParser.parseInt(json['code']),
       task: TaskAssignedItemModel.fromJson(json['task']),
-      resp: (json['resp'] != null &&
-              json['resp'] is Map &&
-              json['resp'].containsKey('participants'))
+      resp: (json['resp'] != null && json['resp'] is Map)
           ? ChatRoomDataModel.fromJson(json['resp'])
           : ChatRoomDataModel(
               id: "dummy",
