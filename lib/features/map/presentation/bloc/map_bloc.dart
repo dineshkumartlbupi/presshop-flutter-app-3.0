@@ -177,7 +177,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     await result.fold(
       (failure) async {
         final defaultLocation = const LatLng(51.5074, -0.1278); // London
-        print("Using default location due to error: ${failure.message}");
+        debugPrint("Using default location due to error: ${failure.message}");
 
         emit(state.copyWith(
           errorMessage: failure.message,
@@ -229,7 +229,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         final addressResult =
             await repository.getAddressFromCoordinates(location);
         addressResult.fold(
-          (failure) => print("Failed to get address: ${failure.message}"),
+          (failure) => debugPrint("Failed to get address: ${failure.message}"),
           (addr) => address = addr,
         );
 
@@ -285,7 +285,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             60,
           );
         } catch (e) {
-          print("Error loading route markers: $e");
+          debugPrint("Error loading route markers: $e");
         }
 
         final startMarker = Marker(
@@ -333,7 +333,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     FetchNewsEvent event,
     Emitter<MapState> emit,
   ) async {
-    print(
+    debugPrint(
         "DEBUG: _onFetchNews triggered. Lat: ${event.lat}, Lng: ${event.lng}");
     emit(state.copyWith(isLoadingNews: true));
     final result = await newsRepository.getAggregatedNews(
@@ -345,13 +345,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     await result.fold(
       (failure) async {
-        print("DEBUG: FetchNews Failed: ${failure.message}");
+        debugPrint("DEBUG: FetchNews Failed: ${failure.message}");
         emit(state.copyWith(
-            isLoadingNews: false,
-            errorMessage: failure.message ?? "Failed to fetch news"));
+            isLoadingNews: false, errorMessage: failure.message));
       },
       (newsList) async {
-        print("DEBUG: FetchNews Success. Items found: ${newsList.length}");
+        debugPrint("DEBUG: FetchNews Success. Items found: ${newsList.length}");
         try {
           final List<Incident> incidents = newsList.map((news) {
             double lat = news.latitude ?? 0.0;
@@ -362,7 +361,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               lng = double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
             }
 
-            print("DEBUG: News ID: ${news.id}, Lat: $lat, Lng: $lng");
+            // Removed noisy per-item print
 
             return Incident(
                 id: news.id,
@@ -437,19 +436,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               markers: {...state.markers, ...newMarkers},
             ));
 
-            print(
-                "DEBUG: Loaded batch ${(i / batchSize).ceil() + 1}/${(incidents.length / batchSize).ceil()} (${newMarkers.length}/${incidents.length} markers)");
+            // Removed noisy batch print
           }
 
-          print("DEBUG: Created ${newMarkers.length} markers for news.");
+          debugPrint("DEBUG: Created ${newMarkers.length} markers for news.");
           emit(state.copyWith(
             isLoadingNews: false,
             newsList: incidents,
             markers: {...state.markers, ...newMarkers},
           ));
         } catch (e, stack) {
-          print("Error parsing news for map: $e");
-          print(stack);
+          debugPrint("Error parsing news for map: $e");
+          debugPrint(stack.toString());
           emit(state.copyWith(
               isLoadingNews: false, errorMessage: "Error displaying news"));
         }
@@ -526,7 +524,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     final userId = sharedPreferences.getString(hopperIdKey) ?? '';
     if (userId.isEmpty) {
-      print("Cannot emit alert: userId is empty");
+      debugPrint("Cannot emit alert: userId is empty");
       return;
     }
 
@@ -540,7 +538,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       // We rely on the socket 'incident:created'/'incident:new' event to add the marker back to the map.
       // This ensures we have the correct server-generated ID and data.
     } catch (e) {
-      print("Error emitting alert: $e");
+      debugPrint("Error emitting alert: $e");
     }
   }
 
@@ -649,9 +647,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       center: state.myLocation!,
       radius: radius,
       fillColor: const Color.fromARGB(255, 247, 70, 70)
-          .withOpacity(event.opacity * 0.5),
-      strokeColor:
-          const Color.fromARGB(255, 255, 84, 84).withOpacity(event.opacity),
+          .withValues(alpha: event.opacity * 0.5),
+      strokeColor: const Color.fromARGB(255, 255, 84, 84)
+          .withValues(alpha: event.opacity),
       strokeWidth: 1,
     );
 
@@ -700,10 +698,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final result = await repository.getIncidents();
     await result.fold(
       (failure) async {
-        print("Failed to fetch initial incidents: ${failure.message}");
+        debugPrint("Failed to fetch initial incidents: ${failure.message}");
       },
       (incidents) async {
-        print("Fetched ${incidents.length} initial incidents");
+        debugPrint("Fetched ${incidents.length} initial incidents");
 
         final List<Future<Marker>> markerFutures =
             incidents.map((incident) async {

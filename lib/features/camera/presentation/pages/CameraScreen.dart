@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -29,7 +28,6 @@ const String notesText = "Notes";
 const String interviewText = "Interview";
 
 class CameraScreen extends StatefulWidget {
-
   const CameraScreen({
     super.key,
     required this.picAgain,
@@ -125,8 +123,10 @@ class CameraScreenState extends State<CameraScreen>
         listener: (context, state) async {
           // Update local limits when camera is ready
           if (state.status == CameraStatus.ready &&
-              state.cameraController != null) {
+              state.cameraController != null &&
+              state.cameraController!.value.isInitialized) {
             try {
+              // Wrap property access in try-catch to avoid Disposed CameraController errors
               _minAvailableExposureOffset =
                   await state.cameraController!.getMinExposureOffset();
               _maxAvailableExposureOffset =
@@ -135,30 +135,33 @@ class CameraScreenState extends State<CameraScreen>
                   await state.cameraController!.getMaxZoomLevel();
               _minAvailableZoom =
                   await state.cameraController!.getMinZoomLevel();
+
               if (mounted) setState(() {});
 
               // Force resume preview on UI side to prevent black screen
               try {
                 await state.cameraController!.resumePreview();
               } catch (e) {
-                debugPrint("Error resuming preview in UI: $e");
+                // Ignore resume preview errors
               }
             } catch (e) {
-              debugPrint("Error getting camera info: $e");
+              debugPrint("Error getting camera info (ignored): $e");
             }
           }
 
           if (state.status == CameraStatus.failure) {
             if (state.errorMessage.contains("Permission") ||
                 state.errorMessage.contains("denied")) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PermissionErrorScreen(
-                              permissionsStatus: {
-                                Permission.camera: false,
-                                Permission.microphone: false
-                              })));
+              if (mounted) {
+                await Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PermissionErrorScreen(
+                                permissionsStatus: {
+                                  Permission.camera: false,
+                                  Permission.microphone: false
+                                })));
+              }
             }
           }
 
@@ -172,36 +175,42 @@ class CameraScreenState extends State<CameraScreen>
               // "camListData.add(...)". So it builds up.
               // Here state.capturedMedia has the list.
 
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PreviewScreen(
-                            cameraData: null,
-                            pickAgain: widget.picAgain,
-                            type: state.selectedMode.toLowerCase() == "video"
-                                ? "video"
-                                : state.selectedMode.toLowerCase() ==
-                                        AppStrings.scanText.toLowerCase()
-                                    ? "scan"
-                                    : state.selectedMode.toLowerCase() == "pdf"
-                                        ? "pdf"
-                                        : "camera",
-                            cameraListData: state.capturedMedia,
-                            mediaList: [],
-                          ))).then((value) {
-                // On return
-                _bloc!.state.cameraController?.resumePreview();
-              });
+              if (mounted) {
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PreviewScreen(
+                              cameraData: null,
+                              pickAgain: widget.picAgain,
+                              type: state.selectedMode.toLowerCase() == "video"
+                                  ? "video"
+                                  : state.selectedMode.toLowerCase() ==
+                                          AppStrings.scanText.toLowerCase()
+                                      ? "scan"
+                                      : state.selectedMode.toLowerCase() ==
+                                              "pdf"
+                                          ? "pdf"
+                                          : "camera",
+                              cameraListData: state.capturedMedia,
+                              mediaList: [],
+                            ))).then((value) {
+                  // On return
+                  _bloc!.state.cameraController?.resumePreview();
+                });
+              }
             }
           }
 
           if (state.status == CameraStatus.permissionDenied) {
             // Handle specific permission denial (audio)
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PermissionErrorScreen(
-                        permissionsStatus: {Permission.microphone: false})));
+            // Handle specific permission denial (audio)
+            if (mounted) {
+              await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PermissionErrorScreen(
+                          permissionsStatus: {Permission.microphone: false})));
+            }
           }
         },
         builder: (context, state) {
@@ -333,7 +342,7 @@ class CameraScreenState extends State<CameraScreen>
               child: Container(
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     shape: BoxShape.circle),
                 child: Image.asset("${iconsPath}ic_plus.png",
                     color: Colors.white,
@@ -347,20 +356,26 @@ class CameraScreenState extends State<CameraScreen>
         Align(
           alignment: Alignment.bottomCenter,
           child: InkWell(
-            onTap: () {
-              if (state.selectedMode == AppStrings.videoText) {
-                if (state.isRecording) {
-                  context.read<CameraBloc>().add(CameraStopRecordingEvent());
-                } else {
-                  context.read<CameraBloc>().add(CameraStartRecordingEvent());
-                }
-              } else if (state.selectedMode == AppStrings.scanText) {
-                context.read<CameraBloc>().add(CameraScanDocEvent());
-              } else {
-                // Photo
-                context.read<CameraBloc>().add(CameraCaptureImageEvent());
-              }
-            },
+            onTap: state.isVideoLoading
+                ? null
+                : () {
+                    if (state.selectedMode == AppStrings.videoText) {
+                      if (state.isRecording) {
+                        context
+                            .read<CameraBloc>()
+                            .add(CameraStopRecordingEvent());
+                      } else {
+                        context
+                            .read<CameraBloc>()
+                            .add(CameraStartRecordingEvent());
+                      }
+                    } else if (state.selectedMode == AppStrings.scanText) {
+                      context.read<CameraBloc>().add(CameraScanDocEvent());
+                    } else {
+                      // Photo
+                      context.read<CameraBloc>().add(CameraCaptureImageEvent());
+                    }
+                  },
             child: Container(
               margin:
                   EdgeInsets.only(bottom: size.width * AppDimensions.numD05),
@@ -369,14 +384,27 @@ class CameraScreenState extends State<CameraScreen>
                   color: Colors.transparent,
                   shape: BoxShape.circle,
                   border: Border.all(color: AppColorTheme.colorThemePink)),
-              child: Icon(
-                (state.selectedMode == AppStrings.videoText &&
-                        state.isRecording)
-                    ? Icons.stop_circle_outlined
-                    : Icons.circle,
-                color: AppColorTheme.colorThemePink,
-                size: size.width * AppDimensions.numD13,
-              ),
+              child: state.isVideoLoading
+                  ? SizedBox(
+                      width: size.width * AppDimensions.numD13,
+                      height: size.width * AppDimensions.numD13,
+                      child: Padding(
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD03),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColorTheme.colorThemePink,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      (state.selectedMode == AppStrings.videoText &&
+                              state.isRecording)
+                          ? Icons.stop_circle_outlined
+                          : Icons.circle,
+                      color: AppColorTheme.colorThemePink,
+                      size: size.width * AppDimensions.numD13,
+                    ),
             ),
           ),
         ),
@@ -395,6 +423,8 @@ class CameraScreenState extends State<CameraScreen>
                                 CustomGallery(picAgain: widget.picAgain)))
                     .then((value) {
                   if (value != null) {
+                    // ignore: use_build_context_synchronously
+                    if (!context.mounted) return;
                     context.read<CameraBloc>().add(
                         UpdateCapturedMediaEvent(value as List<CameraData>));
                     if (widget.picAgain) Navigator.pop(context, value);
@@ -555,7 +585,9 @@ class CameraScreenState extends State<CameraScreen>
     if (state.status == CameraStatus.loading ||
         state.cameraController == null ||
         !state.cameraController!.value.isInitialized) {
-      return Center(child: CircularProgressIndicator(color: AppColorTheme.colorThemePink));
+      return Center(
+          child:
+              CircularProgressIndicator(color: AppColorTheme.colorThemePink));
     }
 
     return Listener(

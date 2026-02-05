@@ -4,11 +4,11 @@ import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/core_export.dart';
 import '../models/all_content_model.dart';
 import '../models/hashtag_model.dart';
-import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
+// Removed for redundancy
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import 'package:presshop/core/api/api_constant.dart';
+// Removed unused import
 
 abstract class ContentRemoteDataSource {
   Future<List<ContentItemModel>> getMyContent({
@@ -36,7 +36,6 @@ abstract class ContentRemoteDataSource {
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
-
   ContentRemoteDataSourceImpl(this.apiClient);
   final ApiClient apiClient;
 
@@ -59,11 +58,12 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         showLoader: showLoader,
       );
 
-      debugPrint("DEBUG: getMyContent response: ${response.data}");
+      // Truncated by PrettyDioLogger, no need for redundant prints here
+      // debugPrint("DEBUG: getMyContent response: ${response.data}");
 
       if (response.statusCode == 200) {
         var data = response.data;
-        debugPrint("DEBUG: getMyContent data: $data");
+        // debugPrint("DEBUG: getMyContent data: $data");
 
         // Handle "success": true case or "code": 200 case
         if (data['code'] == 200 || data['success'] == true) {

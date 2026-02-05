@@ -9,8 +9,6 @@ import 'package:native_exif/native_exif.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:presshop/core/services/location_service.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/main.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
@@ -27,7 +25,6 @@ import 'camera_event.dart';
 import 'camera_state.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
-
   CameraBloc(this._locationService,
       {CameraState? initialState,
       CameraControllerBuilder? cameraControllerBuilder})
@@ -83,66 +80,74 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       return;
     }
 
-    // Prevent double initialization
-    if (state.status == CameraStatus.loading) return;
-
-    emit(state.copyWith(status: CameraStatus.loading));
-
-    // Init Location
-    try {
-      if (navigatorKey.currentContext != null) {
-        final loc = await _locationService.getCurrentLocation(
-            navigatorKey.currentContext!,
-            shouldShowSettingPopup: false);
-        if (loc != null) {
-          _latitude = loc.latitude ?? 0;
-          _longitude = loc.longitude ?? 0;
-        }
-      }
-    } catch (e) {
-      debugPrint("Location error in Bloc: $e");
-    }
-
-    RecorderController? recorderController = state.recorderController;
-    recorderController ??= RecorderController()
-        ..androidEncoder = AndroidEncoder.aac
-        ..androidOutputFormat = AndroidOutputFormat.mpeg4
-        ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-        ..sampleRate = 44100
-        ..bitRate = 48000;
-
-    // Safe Camera Permission Check before availableCameras()
-    bool hasCameraPermission =
-        await _locationService.requestPermission(Permission.camera);
-    if (!hasCameraPermission) {
-      emit(state.copyWith(
-          status: CameraStatus.failure,
-          errorMessage: "Camera permission denied",
-          recorderController: recorderController));
+    // Prevent double initialization or initialization during disposal
+    if (state.status == CameraStatus.loading ||
+        state.status == CameraStatus.disposing) {
       return;
     }
 
-    // Init Camera
-    if (cameras.isEmpty) {
+    emit(state.copyWith(status: CameraStatus.loading));
+
+    // Ensure previous controller is fully disposed before starting new one
+    if (state.cameraController != null) {
       try {
-        cameras = await availableCameras();
-      } catch (_) {}
+        await state.cameraController!.dispose();
+      } catch (e) {
+        debugPrint("Error disposing previous controller during init: $e");
+      }
     }
 
-    if (cameras.isNotEmpty) {
-      final cameraDescription =
-          state.isFrontCamera && cameras.length > 1 ? cameras[1] : cameras[0];
-      // Dispose previous controller if exists to free resources
-      await state.cameraController?.dispose();
+    // Parallelize initialization tasks
+    // 1. Kick off non-blocking location fetch
+    unawaited(_initLocation());
 
-      final controller = _cameraControllerBuilder.create(
-        cameraDescription,
-        ResolutionPreset.medium, // Changed to medium for compatibility
-        imageFormatGroup: ImageFormatGroup.jpeg,
-        enableAudio: true,
-      );
+    // 2. Setup recorder (fast)
+    RecorderController? recorderController = state.recorderController;
+    recorderController ??= RecorderController()
+      ..androidEncoder = AndroidEncoder.aac
+      ..androidOutputFormat = AndroidOutputFormat.mpeg4
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..sampleRate = 44100
+      ..bitRate = 48000;
 
-      try {
+    try {
+      // 3. Parallel check for camera/mic permissions
+      final results = await Future.wait([
+        _locationService.requestPermission(Permission.camera),
+        // Pre-check microphone if possible to avoid later delays in audio/video
+        _locationService.requestPermission(Permission.microphone),
+      ]);
+
+      bool hasCameraPermission = results[0];
+
+      if (!hasCameraPermission) {
+        emit(state.copyWith(
+            status: CameraStatus.failure,
+            errorMessage: "Camera permission denied",
+            recorderController: recorderController));
+        return;
+      }
+
+      // 4. Init Camera list if empty (fast usually)
+      if (cameras.isEmpty) {
+        try {
+          cameras = await availableCameras();
+        } catch (_) {}
+      }
+
+      if (cameras.isNotEmpty) {
+        final cameraDescription =
+            state.isFrontCamera && cameras.length > 1 ? cameras[1] : cameras[0];
+        // Dispose previous controller if exists to free resources
+        await state.cameraController?.dispose();
+
+        final controller = _cameraControllerBuilder.create(
+          cameraDescription,
+          ResolutionPreset.medium, // Optimized for startup speed
+          imageFormatGroup: ImageFormatGroup.jpeg,
+          enableAudio: true,
+        );
+
         await controller.initialize();
         // Explicitly start preview to avoid black screen on some devices
         await controller.resumePreview();
@@ -152,23 +157,43 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           cameraController: controller,
           recorderController: recorderController,
         ));
-      } catch (e) {
+      } else {
         emit(state.copyWith(
-          status: CameraStatus.failure,
-          errorMessage: e.toString(),
-          recorderController: recorderController,
-        ));
+            status: CameraStatus.failure,
+            errorMessage: "No cameras found",
+            recorderController: recorderController));
       }
-    } else {
+    } catch (e) {
+      debugPrint("Camera initialization exception: $e");
       emit(state.copyWith(
-          status: CameraStatus.failure,
-          errorMessage: "No cameras found",
-          recorderController: recorderController));
+        status: CameraStatus.failure,
+        errorMessage: e.toString(),
+        recorderController: recorderController,
+      ));
     }
 
-    // Load Gallery
+    // Load Gallery in background
     if (!isClosed) {
       add(LoadGalleryMediaEvent());
+    }
+  }
+
+  /// Non-blocking location initialization
+  Future<void> _initLocation() async {
+    try {
+      if (navigatorKey.currentContext != null) {
+        final loc = await _locationService.getCurrentLocation(
+            navigatorKey.currentContext!,
+            shouldShowSettingPopup: false);
+        if (loc != null) {
+          _latitude = loc.latitude ?? 0;
+          _longitude = loc.longitude ?? 0;
+          debugPrint(
+              "🚀 CameraBloc: Location fetched successfully: $_latitude, $_longitude");
+        }
+      }
+    } catch (e) {
+      debugPrint("🚀 CameraBloc: Location error (silenced): $e");
     }
   }
 
@@ -177,10 +202,40 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (event.state == AppLifecycleState.inactive ||
         event.state == AppLifecycleState.paused ||
         event.state == AppLifecycleState.detached) {
+      // Avoid redundant disposal cycles
+      if (state.status == CameraStatus.disposing) return;
+
       final controller = state.cameraController;
-      emit(state.copyWith(clearController: true, status: CameraStatus.initial));
-      await controller?.dispose();
+      if (controller != null) {
+        // Set state to disposing and clear controller immediately to prevent other events from using it
+        emit(state.copyWith(
+            status: CameraStatus.disposing, clearController: true));
+
+        try {
+          if (controller.value.isInitialized &&
+              controller.value.isRecordingVideo) {
+            await controller.stopVideoRecording();
+          }
+          _stopTimer();
+        } catch (e) {
+          debugPrint("Error stopping recording during lifecycle change: $e");
+        }
+
+        try {
+          await controller.dispose();
+        } catch (e) {
+          debugPrint("Error disposing camera during lifecycle change: $e");
+        }
+
+        emit(state.copyWith(status: CameraStatus.initial));
+      } else {
+        emit(state.copyWith(status: CameraStatus.initial));
+      }
     } else if (event.state == AppLifecycleState.resumed) {
+      // If we were disposing, wait a bit or ensure we can re-init
+      if (state.status == CameraStatus.disposing) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
       add(CameraInitializeEvent());
     }
   }
@@ -302,28 +357,104 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
 
     try {
+      emit(state.copyWith(isVideoLoading: true));
       await controller.startVideoRecording();
       _startTimer();
-      emit(state.copyWith(isRecording: true, status: CameraStatus.recording));
+      emit(state.copyWith(
+          isRecording: true,
+          status: CameraStatus.recording,
+          isVideoLoading: false));
     } catch (e) {
-      emit(state.copyWith(errorMessage: "Failed to start recording: $e"));
+      emit(state.copyWith(
+          errorMessage: "Failed to start recording: $e",
+          isVideoLoading: false));
     }
   }
 
   Future<void> _onStopVideoRecording(
       CameraStopRecordingEvent event, Emitter<CameraState> emit) async {
     final controller = state.cameraController;
-    if (controller == null || !controller.value.isRecordingVideo) return;
+    if (controller == null ||
+        !controller.value.isInitialized ||
+        !controller.value.isRecordingVideo) {
+      return;
+    }
 
     try {
-      XFile file = await controller.stopVideoRecording();
-      _stopTimer();
+      emit(state.copyWith(isVideoLoading: true));
 
-      File recordedFile = File(file.path);
-      if (!await recordedFile.exists() || await recordedFile.length() == 0) {
-        debugPrint("DEBUG: Video file is empty or missing: ${file.path}");
+      // Enforce a minimum recording duration of 1.5 seconds to avoid empty files
+      final duration = DateTime.now().difference(_startTime ?? DateTime.now());
+      if (duration.inMilliseconds < 1500) {
+        await Future.delayed(
+            Duration(milliseconds: 1500 - duration.inMilliseconds));
+      }
+
+      // Check if controller was disposed while we were waiting
+      if (state.cameraController == null ||
+          state.status == CameraStatus.disposing) {
         emit(state.copyWith(
             isRecording: false,
+            isVideoLoading: false,
+            status: CameraStatus.failure,
+            errorMessage: "Recording failed: Camera was closed."));
+        return;
+      }
+
+      XFile? file;
+      try {
+        if (controller.value.isInitialized &&
+            controller.value.isRecordingVideo) {
+          file = await controller.stopVideoRecording();
+        } else {
+          debugPrint(
+              "DEBUG: stopVideoRecording skipped - not recording or already stopped");
+        }
+      } catch (e) {
+        debugPrint("DEBUG: Native error during stopVideoRecording: $e");
+        // Check for common "Disposed" or "Abandoned" errors
+        if (e.toString().contains("disposed") ||
+            e.toString().contains("abandoned")) {
+          emit(state.copyWith(
+              isRecording: false,
+              isVideoLoading: false,
+              status: CameraStatus.initial));
+          return;
+        }
+      }
+
+      _stopTimer();
+
+      if (file == null) {
+        emit(state.copyWith(
+            isRecording: false,
+            isVideoLoading: false,
+            status: CameraStatus.failure,
+            errorMessage:
+                "Recording failed: Could not stop recording correctly."));
+        return;
+      }
+
+      File recordedFile = File(file.path);
+      bool fileExists = false;
+      int retryCount = 0;
+
+      // Retry mechanism to ensure file is written and flushed
+      while (retryCount < 5) {
+        if (await recordedFile.exists() && await recordedFile.length() > 0) {
+          fileExists = true;
+          break;
+        }
+        await Future.delayed(const Duration(milliseconds: 300));
+        retryCount++;
+      }
+
+      if (!fileExists) {
+        debugPrint(
+            "DEBUG: Video file is empty or missing after retries: ${file.path}");
+        emit(state.copyWith(
+            isRecording: false,
+            isVideoLoading: false,
             status: CameraStatus.failure,
             errorMessage: "Recording failed: Video file is empty."));
         return;
@@ -366,13 +497,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       List<CameraData> newList = List.from(state.capturedMedia)..add(data);
       emit(state.copyWith(
           isRecording: false,
+          isVideoLoading: false,
           capturedMedia: newList,
           status: CameraStatus.success,
           recordingTime: "00:00:00"));
     } catch (e) {
       debugPrint("DEBUG: _onStopVideoRecording exception: $e");
       emit(state.copyWith(
-          status: CameraStatus.failure, errorMessage: e.toString()));
+          status: CameraStatus.failure,
+          isRecording: false, // Ensure recording state is reset
+          isVideoLoading: false,
+          errorMessage: e.toString()));
     }
   }
 
@@ -440,7 +575,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     try {
       List<String>? imageList = await CunningDocumentScanner.getPictures();
       if (imageList != null && imageList.isNotEmpty) {
-        state.cameraController?.pausePreview();
+        await state.cameraController?.pausePreview();
         List<CameraData> newMedia = [];
         for (var path in imageList) {
           newMedia.add(CameraData(
@@ -475,7 +610,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
     if (result != null) {
       File file = File(result.files.single.path!);
-      state.cameraController?.pausePreview();
+      await state.cameraController?.pausePreview();
 
       String mimeType = lookupMimeType(file.path) ?? "pdf";
       if (mimeType == "application/msword") {

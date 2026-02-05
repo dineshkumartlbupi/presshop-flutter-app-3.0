@@ -13,6 +13,8 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
+  static int _lastProgress = -1;
+
   /// Upload media files using Dio with progress notifications
   static Future<bool> uploadMedia({
     required String endUrl,
@@ -82,16 +84,18 @@ class MediaUploadService {
           _handleUploadProgress(sent, total, jsonBody);
         },
         options: Options(
-          sendTimeout: const Duration(minutes: 5), // Extended timeout for media
+          sendTimeout: const Duration(minutes: 5),
           receiveTimeout: const Duration(minutes: 5),
         ),
+        showLoader: false,
       );
 
       debugPrint("Upload completed: ${response.data}");
 
       if (response.statusCode! <= 201) {
         debugPrint("Upload successful: ${response.data}");
-        localNotificationService.flutterLocalNotificationsPlugin.cancel(0);
+        await localNotificationService.flutterLocalNotificationsPlugin
+            .cancel(0);
         _showCompletionNotification(
           localNotificationService.flutterLocalNotificationsPlugin,
           isDraft: jsonBody?['is_draft'] == 'true',
@@ -126,37 +130,22 @@ class MediaUploadService {
     int total,
     Map<String, String>? jsonBody,
   ) {
+    if (total <= 0) return;
     int progress = ((sent / total) * 100).toInt();
-    debugPrint("Upload progress: $progress%");
 
-    if ((progress >= 1 &&
-            progress <= 10 &&
-            (sharedPreferences!.getBool('notify_10') ?? true)) ||
-        (progress >= 30 &&
-            progress <= 40 &&
-            (sharedPreferences!.getBool('notify_40') ?? true)) ||
-        (progress >= 80 &&
-            progress <= 90 &&
-            (sharedPreferences!.getBool('notify_90') ?? true))) {
+    if (progress > _lastProgress) {
+      _lastProgress = progress;
+      debugPrint("Upload progress: $progress%");
+
       _showProgressNotification(
         localNotificationService.flutterLocalNotificationsPlugin,
         progress,
         isDraft: jsonBody?['is_draft'] == 'true',
       );
+    }
 
-      if (progress <= 10) sharedPreferences!.setBool('notify_10', false);
-      if (progress <= 40) sharedPreferences!.setBool('notify_40', false);
-      if (progress <= 90) sharedPreferences!.setBool('notify_90', false);
-    } else if (progress == 100) {
-      // Reset notification flags for next upload
-      sharedPreferences!.remove('notify_10');
-      sharedPreferences!.remove('notify_40');
-      sharedPreferences!.remove('notify_90');
-      _showProgressNotification(
-        localNotificationService.flutterLocalNotificationsPlugin,
-        progress,
-        isDraft: jsonBody?['is_draft'] == 'true',
-      );
+    if (progress == 100) {
+      _lastProgress = -1; // Reset for next upload
     }
   }
 
@@ -179,6 +168,8 @@ class MediaUploadService {
           showProgress: true,
           maxProgress: 100,
           progress: progress,
+          onlyAlertOnce: true,
+          ongoing: true,
         ),
       ),
     );

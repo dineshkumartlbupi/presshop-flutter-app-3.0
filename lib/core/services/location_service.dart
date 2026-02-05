@@ -10,6 +10,11 @@ class LocationService {
 
   // Check and request any permission safely
   Future<bool> requestPermission(Permission permission) async {
+    // If already granted, return immediately to avoid blocking initialization
+    if (await permission.isGranted) {
+      return true;
+    }
+
     if (_currentRequest != null) {
       debugPrint(
           "🚀 LocationService: Another Permission request already in progress, waiting...");

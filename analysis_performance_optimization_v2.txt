@@ -1,0 +1,8 @@
+Analyzing 2 items...                                            
+
+warning • The left operand can't be null, so the right operand is never executed • lib/features/map/presentation/bloc/map_bloc.dart:351:46 • dead_null_aware_expression
+   info • Don't invoke 'print' in production code • lib/features/map/presentation/bloc/map_bloc.dart:451:11 • avoid_print
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/map/presentation/bloc/map_bloc.dart:651:12 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/map/presentation/bloc/map_bloc.dart:653:50 • deprecated_member_use
+
+4 issues found. (ran in 1.8s)
