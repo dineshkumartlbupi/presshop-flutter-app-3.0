@@ -417,9 +417,9 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   Future<List<Task>> getLocalTasks(Map<String, dynamic> filterParams,
       {bool showLoader = true}) async {
     try {
-      final response = await apiClient.post(
+      final response = await apiClient.get(
         ApiConstantsNew.tasks.myTasks,
-        data: filterParams,
+        queryParameters: filterParams,
         showLoader: showLoader,
       );
 
