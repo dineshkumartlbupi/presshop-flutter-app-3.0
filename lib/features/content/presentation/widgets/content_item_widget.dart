@@ -36,7 +36,8 @@ class ContentItemWidget extends StatelessWidget {
               blurRadius: 1,
             )
           ],
-          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD04),
         ),
         child: Column(
           children: [
@@ -160,7 +161,8 @@ class ContentItemWidget extends StatelessWidget {
         width: size.width * AppDimensions.numD17,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD015),
         ),
         child: Center(
           child: Text(
@@ -186,14 +188,17 @@ class ContentItemWidget extends StatelessWidget {
         vertical: size.width * AppDimensions.numD01,
       ),
       decoration: BoxDecoration(
-        color: !item.paidStatus ? AppColorTheme.colorThemePink : AppColorTheme.colorLightGrey,
+        color: !item.paidStatus
+            ? AppColorTheme.colorThemePink
+            : AppColorTheme.colorLightGrey,
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
       ),
       child: Column(
         children: [
           Padding(
             padding: item.paidStatus && !item.isPaidStatusToHopper
-                ? EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD028)
+                ? EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD028)
                 : EdgeInsets.zero,
             child: Text(
               !item.paidStatus
@@ -279,10 +284,11 @@ class MediaThumbnailWidget extends StatelessWidget {
         (item.mediaList.isNotEmpty &&
             item.mediaList.first.mediaType == 'video');
 
-    if (isVideo && item.mediaList.isNotEmpty) {
+    if (isVideo) {
       return VideoThumbnailWidget(
         videoUrl: getMediaImageUrl(item.mediaUrls.first, isVideo: true),
-        thumbnailUrl: item.mediaList.first.thumbnailUrl.isNotEmpty
+        thumbnailUrl: item.mediaList.isNotEmpty &&
+                item.mediaList.first.thumbnailUrl.isNotEmpty
             ? fixS3Url(item.mediaList.first.thumbnailUrl)
             : null,
         width: size.width,
@@ -321,6 +327,13 @@ class MediaThumbnailWidget extends StatelessWidget {
 
   Widget _showImage(String type, String url) {
     switch (type) {
+      case "video":
+        return VideoThumbnailWidget(
+          videoUrl: getMediaImageUrl(url, isVideo: true),
+          width: size.width,
+          height: size.height * AppDimensions.numD30,
+          fit: BoxFit.cover,
+        );
       case "audio":
         return _buildPlaceholder(
           color: AppColorTheme.colorThemePink,

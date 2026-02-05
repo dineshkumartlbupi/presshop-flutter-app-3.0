@@ -11,12 +11,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:presshop/features/onboarding/presentation/pages/WalkThrough.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/splash_bloc.dart';
 import '../bloc/splash_event.dart';
@@ -96,31 +94,11 @@ class _SplashScreenState extends State<SplashScreen>
       child: BlocConsumer<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashAuthenticated) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                settings: const RouteSettings(name: '/dashboard'),
-                builder: (_) => Dashboard(
-                  initialPosition: 2,
-                  openChatScreen: openChatScreen,
-                  openNotification: openNotification,
-                ),
-              ),
-              (route) => false,
-            );
+            context.go(AppRoutes.dashboardPath);
           } else if (state is SplashUnauthenticated) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  settings: const RouteSettings(name: '/login'),
-                  builder: (_) => const LoginScreen()),
-              (route) => false,
-            );
+            context.go(AppRoutes.loginPath);
           } else if (state is SplashNavigateToOnboarding) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  settings: const RouteSettings(name: '/walkthrough'),
-                  builder: (_) => const Walkthrough()),
-              (route) => false,
-            );
+            context.go(AppRoutes.walkthroughPath);
           } else if (state is SplashForceUpdate) {
             setState(() {
               mustForceUpdate = true;
@@ -139,8 +117,8 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 Center(
                   child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD15),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD15),
                     child: Image.asset('${commonImagePath}ic_splash.png'),
                   ),
                 ),

@@ -8,7 +8,7 @@ import 'package:presshop/features/authentication/presentation/pages/TermCheckScr
 import 'package:presshop/features/authentication/presentation/pages/UploadDocumnetsScreen.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
 import 'package:presshop/features/chatbot/presentation/pages/chatBotScreen.dart';
-import 'package:presshop/features/content/presentation/pages/my_content_page.dart';
+import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
@@ -19,7 +19,7 @@ import 'package:presshop/features/profile/presentation/pages/my_profile_screen.d
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
 import 'package:presshop/features/referral/presentation/pages/refer_screen.dart';
-import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
+import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 
 enum MenuAction {
   digitalId,

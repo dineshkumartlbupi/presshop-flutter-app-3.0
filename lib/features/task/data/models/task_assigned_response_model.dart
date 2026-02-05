@@ -85,16 +85,26 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedItemModel(
       id: SafeParser.parseString(json['_id']),
-      mediaHouse: (json['mediahouse_id'] is String)
-          ? MediaHouseDataModel(
-              id: SafeParser.parseString(json['mediahouse_id']),
+      mediaHouse: (json['mediahouse_id'] != null &&
+              (json['mediahouse_id'] is Map || json['mediahouse_id'] is String))
+          ? (json['mediahouse_id'] is String)
+              ? MediaHouseDataModel(
+                  id: SafeParser.parseString(json['mediahouse_id']),
+                  firstName: "",
+                  lastName: "",
+                  email: "",
+                  phone: "",
+                  role: "",
+                  profileImage: "")
+              : MediaHouseDataModel.fromJson(json['mediahouse_id'])
+          : MediaHouseDataModel(
+              id: "",
               firstName: "",
               lastName: "",
               email: "",
               phone: "",
               role: "",
-              profileImage: "")
-          : MediaHouseDataModel.fromJson(json['mediahouse_id']),
+              profileImage: ""),
       deadlineDate: SafeParser.parseDateTime(json['deadline_date']),
       heading: SafeParser.parseString(json['heading']),
       description: SafeParser.parseString(json['description']),
@@ -179,13 +189,30 @@ class TaskContentDataModel extends TaskContentEntity {
         );
 
   factory TaskContentDataModel.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> contentMap =
+        (json['content'] != null && json['content'] is Map)
+            ? json['content']
+            : json;
+
+    String mType =
+        SafeParser.parseString(contentMap['media_type'] ?? json['media_type'])
+            .toLowerCase();
+
     return TaskContentDataModel(
-      media: SafeParser.parseString(json['media']),
-      mediaType: SafeParser.parseString(json['media_type']),
-      watermark: SafeParser.parseString(json['watermark']),
+      media: SafeParser.parseString(contentMap['media'] ?? json['media']),
+      mediaType: mType.contains("video")
+          ? "video"
+          : mType.contains("audio")
+              ? "audio"
+              : "image",
+      watermark: SafeParser.parseString(contentMap['watermark'] ??
+          contentMap['thumbnail'] ??
+          json['watermark']),
       hopperId: SafeParser.parseString(json['hopper_id']),
-      imageId: SafeParser.parseString(json['image_id']),
-      timeStamp: SafeParser.parseDateTime(json['time_stamp']),
+      imageId: SafeParser.parseString(
+          json['imageId'] ?? json['image_id'] ?? json['_id']),
+      timeStamp:
+          SafeParser.parseDateTime(json['time_stamp'] ?? json['createdAt']),
     );
   }
 }

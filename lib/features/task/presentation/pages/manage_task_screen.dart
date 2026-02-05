@@ -621,8 +621,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                 var item = chatList[index];
                                                 if (item.messageType ==
                                                     "media") {
-                                                  if (item.media!.type ==
-                                                      "video") {
+                                                  if (item.media!.type
+                                                      .contains("video")) {
                                                     return Column(
                                                       children: [
                                                         rightVideoChatWidget(
@@ -644,8 +644,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                         ),
                                                       ],
                                                     );
-                                                  } else if (item.media!.type ==
-                                                      "audio") {
+                                                  } else if (item.media!.type
+                                                      .contains("audio")) {
                                                     return Column(
                                                       children: [
                                                         rightAudioChatWidget(
@@ -669,9 +669,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                     return Column(
                                                       children: [
                                                         rightImageChatWidget(
-                                                          item.media!
-                                                                      .type ==
-                                                                  "video"
+                                                          item.media!.type
+                                                                  .contains(
+                                                                      "video")
                                                               ? item.media!
                                                                   .thumbnail
                                                               : item.media!
@@ -6961,7 +6961,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     socket.on("media message", refreshChat);
     socket.on("offer message", refreshChat);
     socket.on("rating", refreshChat);
-    socket.on("room join", refreshChat);
+    // socket.on("room join", refreshChat);
     socket.on("initialoffer", refreshChat);
     socket.on("updateOffer", refreshChat);
     socket.on("leave room", refreshChat);

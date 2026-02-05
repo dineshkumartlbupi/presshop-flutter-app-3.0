@@ -14,8 +14,8 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/core/widgets/error/location_error_screen.dart';
-import 'package:presshop/features/content/presentation/pages/my_content_page.dart';
-import 'package:presshop/features/task/presentation/pages/my_task_screen.dart';
+import 'package:presshop/features/content/presentation/pages/content_page.dart';
+import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
@@ -472,24 +472,12 @@ class DashboardState extends State<Dashboard>
                                       "Confirm",
                                       size,
                                       commonButtonTextStyle(size),
-                                      commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                      commonButtonStyle(
+                                          size, AppColorTheme.colorThemePink),
                                       () async {
                                     try {
                                       final url =
                                           setIsClickForBeansActivation();
-
-                                      // Note: setIsClickForBeansActivation returns void because it calls Bloc.
-                                      // The original code expected a URL return.
-                                      // We need to wait for state change 'StudentBeansActivated' to get the URL.
-                                      // However, this dialog logic is tricky.
-                                      // To fix this without major refactor:
-                                      // We can dispatch event, wait for state listener to handle URL launching.
-                                      // OR just pop here and let listener handle it.
-                                      // But original code tried to await it.
-
-                                      // For now, let's keep it simple: dispatch and close.
-                                      // We can't await a Bloc event outcome easily here without a Completer or Listener.
-                                      // The BlocListener in build method handles StudentBeansActivated.
 
                                       Navigator.pop(context);
                                     } catch (e) {

@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:presshop/core/core_export.dart';
+import 'package:presshop/core/router/router_constants.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SocialSignUpScreen.dart';
-import 'SignUpScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -28,8 +28,6 @@ import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
-import '../bloc/signup_bloc.dart';
-import '../bloc/signup_event.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -152,7 +150,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                           text:
                                               "Ready to dive in? Sign up or Log in to start making headlines with Press",
                                           style: TextStyle(
-                                              fontSize: size.width * AppDimensions.numD035,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD035,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.w400,
@@ -161,8 +160,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                             TextSpan(
                                               text: "Hop",
                                               style: TextStyle(
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD035,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontFamily: "AirbnbCereal",
                                                   fontWeight: FontWeight.w400,
@@ -171,8 +170,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                             TextSpan(
                                               text: " !",
                                               style: TextStyle(
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD038,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD038,
                                                   color: Colors.black,
                                                   fontFamily: "AirbnbCereal",
                                                   fontWeight: FontWeight.w400,
@@ -184,7 +183,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                     : Text(AppStrings.loginSubTitleText,
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: size.width * AppDimensions.numD035))),
+                                            fontSize: size.width *
+                                                AppDimensions.numD035))),
 
                             SizedBox(
                               height: size.width * AppDimensions.numD08,
@@ -204,7 +204,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                 ),
                                 size: size.width * AppDimensions.numD04,
                               ),
-                              prefixIconHeight: size.width * AppDimensions.numD05,
+                              prefixIconHeight:
+                                  size.width * AppDimensions.numD05,
                               suffixIconIconHeight: 0,
                               suffixIcon: null,
                               hidePassword: false,
@@ -241,8 +242,10 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                 ),
                                 size: size.width * AppDimensions.numD04,
                               ),
-                              prefixIconHeight: size.width * AppDimensions.numD07,
-                              suffixIconIconHeight: size.width * AppDimensions.numD065,
+                              prefixIconHeight:
+                                  size.width * AppDimensions.numD07,
+                              suffixIconIconHeight:
+                                  size.width * AppDimensions.numD065,
                               suffixIcon: InkWell(
                                 onTap: () {
                                   hidePassword = !hidePassword;
@@ -289,7 +292,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                       "${AppStrings.forgotPasswordText}?",
                                       style: TextStyle(
                                           color: AppColorTheme.colorThemePink,
-                                          fontSize: size.width * AppDimensions.numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           fontWeight: FontWeight.w500),
                                     ))),
 
@@ -300,16 +304,21 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                             /// SignIn Button
                             SizedBox(
                               width: size.width,
-                              height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
+                              height: size.width *
+                                  (isIpad
+                                      ? AppDimensions.numD1
+                                      : AppDimensions.numD14),
                               child: commonElevatedButton(
                                   AppStrings.signInText,
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                  commonButtonStyle(
+                                      size, AppColorTheme.colorThemePink),
                                   () async {
                                 if (formKey.currentState!.validate()) {
                                   FocusScope.of(context)
@@ -331,25 +340,31 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                 AppStrings.orText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD04),
+                                    fontSize:
+                                        size.width * AppDimensions.numD04),
                               ),
                             ),
 
                             SizedBox(
-                              height: Platform.isIOS ? size.width * AppDimensions.numD036 : 0,
+                              height: Platform.isIOS
+                                  ? size.width * AppDimensions.numD036
+                                  : 0,
                             ),
                             Platform.isIOS
                                 ? Container(
                                     width: size.width,
-                                    height:
-                                        size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
+                                    height: size.width *
+                                        (isIpad
+                                            ? AppDimensions.numD1
+                                            : AppDimensions.numD14),
                                     alignment: Alignment.centerLeft,
                                     decoration: BoxDecoration(
                                         color: Colors.black,
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD04),
                                         border: Border.all(
-                                            color: AppColorTheme.colorGoogleButtonBorder)),
+                                            color: AppColorTheme
+                                                .colorGoogleButtonBorder)),
                                     child: InkWell(
                                       splashColor: Colors.grey.shade300,
                                       onTap: () async {
@@ -361,19 +376,23 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                         children: [
                                           Image.asset(
                                             "${iconsPath}appleLogo.png",
-                                            height: size.width * AppDimensions.numD045,
-                                            width: size.width * AppDimensions.numD045,
+                                            height: size.width *
+                                                AppDimensions.numD045,
+                                            width: size.width *
+                                                AppDimensions.numD045,
                                             color: Colors.white,
                                           ),
-                                          SizedBox(width: size.width * AppDimensions.numD01),
+                                          SizedBox(
+                                              width: size.width *
+                                                  AppDimensions.numD01),
                                           Align(
                                             alignment: Alignment.center,
                                             child: Text(
                                               "Sign in with Apple",
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD036,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD036,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                           )
@@ -389,35 +408,43 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                             /// Google SignIn
                             InkWell(
                               splashColor: Colors.grey.shade300,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * AppDimensions.numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               onTap: () async {
                                 googleSignIn.signOut();
                                 googleLogin(context);
                               },
                               child: Container(
                                 width: size.width,
-                                height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
+                                height: size.width *
+                                    (isIpad
+                                        ? AppDimensions.numD1
+                                        : AppDimensions.numD14),
                                 alignment: Alignment.centerLeft,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04),
                                     border: Border.all(
-                                        color: AppColorTheme.colorGoogleButtonBorder)),
+                                        color: AppColorTheme
+                                            .colorGoogleButtonBorder)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
                                       "${iconsPath}ic_google.png",
-                                      height: size.width * AppDimensions.numD045,
+                                      height:
+                                          size.width * AppDimensions.numD045,
                                       width: size.width * AppDimensions.numD045,
                                     ),
-                                    SizedBox(width: size.width * AppDimensions.numD01),
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD01),
                                     Text(
                                       AppStrings.continueGoogleText,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * AppDimensions.numD036,
+                                          fontSize: size.width *
+                                              AppDimensions.numD036,
                                           fontWeight: FontWeight.w500),
                                     )
                                   ],
@@ -437,7 +464,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                       text: AppStrings.donotHaveAccountText,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * AppDimensions.numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           fontWeight: FontWeight.normal)),
                                   WidgetSpan(
                                       child: SizedBox(
@@ -449,33 +477,15 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                         splashColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
                                         onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MultiBlocProvider(
-                                                        providers: [
-                                                          BlocProvider(
-                                                              create: (context) => sl<
-                                                                  SignUpBloc>()
-                                                                ..add(
-                                                                    FetchAvatarsEvent())),
-                                                          BlocProvider(
-                                                              create: (context) =>
-                                                                  sl<AuthBloc>()),
-                                                        ],
-                                                        child: SignUpScreen(
-                                                          socialLogin: false,
-                                                          socialId: "",
-                                                          name: "",
-                                                          email: "",
-                                                          phoneNumber: '',
-                                                        ),
-                                                      )));
+                                          context.push(AppRoutes.signupPath);
                                         },
-                                        child: Text(AppStrings.clickHereToJoinText,
+                                        child: Text(
+                                            AppStrings.clickHereToJoinText,
                                             style: TextStyle(
-                                                color: AppColorTheme.colorThemePink,
-                                                fontSize: size.width * AppDimensions.numD035,
+                                                color: AppColorTheme
+                                                    .colorThemePink,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD035,
                                                 fontWeight: FontWeight.w500)),
                                       ))
                                 ]),
@@ -727,19 +737,9 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
     if (source.containsKey('bank_detail_missing') &&
         source['bank_detail_missing'] == true) {
       // Handle logic if needed, or simply navigate
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    initialPosition: 2,
-                  )),
-          (route) => false);
+      context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
     } else {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    initialPosition: 0,
-                  )),
-          (route) => false);
+      context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 0});
     }
   }
 

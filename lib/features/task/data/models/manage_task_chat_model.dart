@@ -32,7 +32,12 @@ class ManageTaskChatModel {
 
   ManageTaskChatModel.fromJsonNew(Map<String, dynamic> json) {
     id = (json["_id"] ?? "").toString();
-    messageType = (json["message_type"] ?? "").toString();
+    String mType = (json["message_type"] ?? "").toString();
+    if (mType == "image" || mType == "video" || mType == "audio") {
+      messageType = "media";
+    } else {
+      messageType = mType;
+    }
     amount = json["amount"] ?? "";
     hopperPrice = json["hopper_price"] ?? "";
     Map<String, dynamic> mediaHouseDetailMap =
@@ -54,7 +59,12 @@ class ManageTaskChatModel {
     }
 
     id = (json["_id"] ?? "").toString();
-    messageType = (json["message_type"] ?? "").toString();
+    String mType = (json["message_type"] ?? "").toString();
+    if (mType == "image" || mType == "video" || mType == "audio") {
+      messageType = "media";
+    } else {
+      messageType = mType;
+    }
     senderType = (json["sender_type"] ?? "").toString();
     amount = numberFormatting((json["amount"] ?? "")).toString();
     hopperPrice = numberFormatting((json["hopper_price"] ?? "")).toString();
@@ -75,6 +85,9 @@ class ManageTaskChatModel {
     paidStatus = json['paid_status'] ?? false;
     isRatingGiven = json["review"] != null;
     mediaList = mediaListTem;
+    if (mediaList.isNotEmpty) {
+      media = mediaList.first;
+    }
 
     // Handle media counts if not provided by API
     if (json["imageCount"] != null) {

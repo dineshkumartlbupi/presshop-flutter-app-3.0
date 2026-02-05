@@ -181,39 +181,47 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         List<ManageTaskChatModel> chatList = [];
         final rawData = response.data;
 
-        // Handle List response directly (common for getAllchat)
-        if (rawData["response"] != null && rawData["response"] is List) {
-          for (var v in rawData["response"]) {
+        // Try to find the chat list in various possible locations
+        dynamic possibleList;
+
+        if (rawData["response"] is List) {
+          possibleList = rawData["response"];
+        } else if (rawData["resposne"] is List) {
+          possibleList = rawData["resposne"];
+        } else if (rawData["data"] != null && rawData["data"] is Map) {
+          final nested = rawData["data"];
+          if (nested["response"] is List) {
+            possibleList = nested["response"];
+          } else if (nested["resposne"] is List) {
+            possibleList = nested["resposne"];
+          } else if (nested["chat"] is List) {
+            possibleList = nested["chat"];
+          }
+        }
+
+        if (possibleList != null && possibleList is List) {
+          debugPrint(
+              "🚀 getTaskChat Found List Length: ${possibleList.length}");
+          for (var v in possibleList) {
             chatList.add(ManageTaskChatModel.fromJson(v));
           }
           return chatList;
         }
 
-        // Try to find the data object which contains 'chat' (common for get-offer-payment-chat)
         Map<String, dynamic>? dataObj;
-
-        if (rawData["response"] != null && rawData["response"] is Map) {
-          dataObj = rawData["response"];
-        } else if (rawData["resposne"] != null && rawData["resposne"] is Map) {
-          dataObj = rawData["resposne"];
-        } else if (rawData["data"] != null && rawData["data"] is Map) {
-          final nested = rawData["data"];
-          dataObj = nested["response"] ??
-              nested["resposne"] ??
-              (nested is Map ? nested : null);
-        } else {
-          dataObj = rawData is Map<String, dynamic> ? rawData : null;
+        if (rawData["data"] is Map) {
+          dataObj = rawData["data"];
+        } else if (rawData is Map<String, dynamic>) {
+          dataObj = rawData;
         }
 
-        if (dataObj != null && dataObj["chat"] != null) {
+        if (dataObj != null && dataObj["chat"] is List) {
+          final list = dataObj["chat"] as List;
           debugPrint(
-              "🚀 getTaskChat Found Chat List Length: ${(dataObj["chat"] as List).length}");
-          for (var v in dataObj["chat"]) {
+              "🚀 getTaskChat Found 'chat' key List Length: ${list.length}");
+          for (var v in list) {
             chatList.add(ManageTaskChatModel.fromJson(v));
           }
-        } else if (dataObj != null) {
-          debugPrint(
-              "🚀 getTaskChat: No 'chat' key found, check if it's already a list or has other keys");
         }
 
         return chatList;
@@ -420,18 +428,24 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         final data = response.data["data"];
 
         if (data != null) {
-          // Parsing My Tasks (Accepted/Completed)
-          if (data["data"] != null && data["data"] is List) {
-            for (var v in data["data"]) {
+          if (data is List) {
+            // Case where data is a direct list of tasks
+            for (var v in data) {
               list.add(MyTaskModel.fromJson(v));
             }
-          }
+          } else if (data is Map) {
+            // Case where data is a map containing nested lists
+            if (data["data"] != null && data["data"] is List) {
+              for (var v in data["data"]) {
+                list.add(MyTaskModel.fromJson(v));
+              }
+            }
 
-          // Parsing Pending Tasks
-          if (data["pending_unaccepted"] != null &&
-              data["pending_unaccepted"] is List) {
-            for (var v in data["pending_unaccepted"]) {
-              list.add(PendingTask.fromJson(v));
+            if (data["pending_unaccepted"] != null &&
+                data["pending_unaccepted"] is List) {
+              for (var v in data["pending_unaccepted"]) {
+                list.add(PendingTask.fromJson(v));
+              }
             }
           }
         }

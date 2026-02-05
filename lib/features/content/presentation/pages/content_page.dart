@@ -6,7 +6,7 @@ import 'package:presshop/features/content/domain/entities/content_item.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_state.dart';
-import 'package:presshop/features/content/presentation/pages/my_content_detail_screen.dart';
+import 'package:presshop/features/content/presentation/pages/content_detail_screen.dart';
 import 'package:presshop/features/content/presentation/widgets/content_filter_bottom_sheet.dart';
 import 'package:presshop/features/content/presentation/widgets/content_item_widget.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
@@ -79,7 +79,9 @@ class _MyContentViewState extends State<MyContentView>
           name: photosText, icon: "ic_camera_publish.png", isSelected: false),
       FilterModel(name: videosText, icon: "ic_v_cam.png", isSelected: false),
       FilterModel(
-          name: AppStrings.soldContentText, icon: "dollar1.png", isSelected: false),
+          name: AppStrings.soldContentText,
+          icon: "dollar1.png",
+          isSelected: false),
       FilterModel(
           name: AppStrings.filterDateText,
           icon: "ic_yearly_calendar.png",
@@ -172,7 +174,8 @@ class _MyContentViewState extends State<MyContentView>
       MaterialPageRoute(
         builder: (context) => MyContentDetailScreen(
           contentId: item.id,
-          paymentStatus: item.paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
+          paymentStatus:
+              item.paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
           exclusive: item.isExclusive ?? false,
           offerCount: item.totalOffer,
           purchasedMediahouseCount: item.purchasedMediahouseCount,
@@ -197,7 +200,8 @@ class _MyContentViewState extends State<MyContentView>
           children: [
             SizedBox(height: size.width * AppDimensions.numD04),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               child: TabBar(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
@@ -206,7 +210,8 @@ class _MyContentViewState extends State<MyContentView>
                 unselectedLabelColor: Colors.black,
                 indicator: BoxDecoration(
                   color: AppColorTheme.colorThemePink,
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD02),
                 ),
                 labelStyle: commonTextStyle(
                   size: size,

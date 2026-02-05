@@ -121,12 +121,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     debugPrint("class name :::$runtimeType");
     super.initState();
     socketConnectionFunc();
-    isLoading = true;
-    context.read<TaskBloc>().add(GetTaskChatEvent(
-        roomId: widget.roomId,
-        type: "task_content",
-        contentId: widget.taskDetail?.task.id ?? "",
-        showLoader: false));
+    // Only fetch if list is empty to avoid double fetch on rebuilds if any
+    if (chatList.isEmpty) {
+      isLoading = true;
+      context.read<TaskBloc>().add(GetTaskChatEvent(
+          roomId: widget.roomId,
+          type: "task_content",
+          contentId: widget.taskDetail?.task.id ?? "",
+          showLoader: false));
+    }
     getCurrentLocation();
   }
 
@@ -691,14 +694,14 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                   var item1 = item.mediaList[idx];
                                   if (item.messageType == "media" ||
                                       item.messageType == "task_content") {
-                                    if (item1.type == "video") {
+                                    if (item1.type.contains("video")) {
                                       return rightVideoChatWidget(
                                           item1.thumbnail,
                                           item1.imageVideoUrl,
                                           item.createdAtTime,
                                           size,
                                           item1.address);
-                                    } else if (item1.type == "audio") {
+                                    } else if (item1.type.contains("audio")) {
                                       return rightAudioChatWidget(
                                           item1.imageVideoUrl,
                                           item.createdAtTime,
@@ -1238,8 +1241,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          getMediaImageUrl(videoUrl,
-                              isVideo: true, isTask: true),
+                          thumbnail.isNotEmpty
+                              ? thumbnail
+                              : getMediaImageUrl(videoUrl,
+                                  isVideo: true, isTask: true),
                           height: size.height / 3,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -3302,7 +3307,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     socket.on("media message", refreshChat);
     socket.on("offer message", refreshChat);
     socket.on("rating", refreshChat);
-    socket.on("room join", refreshChat);
+    // socket.on("room join", refreshChat);
     socket.on("initialoffer", refreshChat);
     socket.on("updateOffer", refreshChat);
     socket.on("leave room", refreshChat);

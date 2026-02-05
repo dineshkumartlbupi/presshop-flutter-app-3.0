@@ -7,17 +7,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:force_update_helper/force_update_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:presshop/core/analytics/analytics_helper.dart';
-import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/services/force_update_service.dart';
 import 'package:presshop/features/splash/data/repositories/force_update_repositor.dart';
-import 'package:presshop/features/splash/presentation/pages/splash_screen.dart';
 import 'package:presshop/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
+import 'package:presshop/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:presshop/core/router/app_router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -30,12 +29,14 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => sl<TaskBloc>()),
           BlocProvider(create: (_) => sl<EarningBloc>()),
           BlocProvider(create: (_) => sl<ContentBloc>()),
+          BlocProvider(create: (_) => sl<AuthBloc>()),
         ],
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
+        child: MaterialApp.router(
+          routerConfig: AppRouter.router,
           builder: (context, child) {
             return ForceUpdateWidget(
-              navigatorKey: navigatorKey,
+              navigatorKey:
+                  navigatorKey, // Keep passing navigatorKey for force update dialogs
               forceUpdateClient: ForceUpdateClient(
                 fetchRequiredVersion: _fetchRequiredVersion,
                 iosAppStoreId: '6744651614',
@@ -47,16 +48,11 @@ class MyApp extends StatelessWidget {
             );
           },
           debugShowCheckedModeBanner: false,
-          navigatorObservers: [
-            AnalyticsHelper.observer,
-            AnalyticsRouteObserver(),
-          ],
           theme: ThemeData(
             fontFamily: "AirbnbCereal",
             scaffoldBackgroundColor: Colors.white,
             useMaterial3: false,
           ),
-          home: const SplashScreen(),
         ),
       ),
     );

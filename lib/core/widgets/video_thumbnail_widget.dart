@@ -99,7 +99,15 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
       );
     }
 
-    if (widget.thumbnailUrl != null && widget.thumbnailUrl!.isNotEmpty) {
+    final isThumbnailAVideo = widget.thumbnailUrl != null &&
+        (widget.thumbnailUrl!.toLowerCase().endsWith(".mp4") ||
+            widget.thumbnailUrl!.toLowerCase().endsWith(".mov") ||
+            widget.thumbnailUrl!.toLowerCase().endsWith(".m4v") ||
+            widget.thumbnailUrl!.toLowerCase().endsWith(".quicktime"));
+
+    if (widget.thumbnailUrl != null &&
+        widget.thumbnailUrl!.isNotEmpty &&
+        !isThumbnailAVideo) {
       return CachedNetworkImage(
         imageUrl: widget.thumbnailUrl!,
         width: widget.width,

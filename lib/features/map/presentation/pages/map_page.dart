@@ -135,7 +135,9 @@ class _MapPageContentState extends State<_MapPageContent>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..addListener(() {
+        if (!mounted) return;
         final val = Curves.easeOutQuad.transform(_pulseController.value);
+        // Only update if BLoC is available/open - hard to check, but mounted check helps
         context.read<MapBloc>().add(UpdatePulseCircleEvent(
               radiusMultiplier: 1.0 + val * 0.5,
               opacity: 1.0 - val,
@@ -150,6 +152,8 @@ class _MapPageContentState extends State<_MapPageContent>
 
   @override
   void dispose() {
+    _burstController.stop();
+    _pulseController.stop();
     _burstController.dispose();
     _pulseController.dispose();
     _searchController.dispose();

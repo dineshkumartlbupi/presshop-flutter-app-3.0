@@ -6,7 +6,8 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/core/router/router_constants.dart';
+import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
 class WelcomeScreen extends StatefulWidget {
@@ -59,7 +60,8 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
         child: Form(
           child: ListView(
             padding: EdgeInsets.symmetric(
-                horizontal: size.width * AppDimensions.numD06, vertical: size.width * AppDimensions.numD05),
+                horizontal: size.width * AppDimensions.numD06,
+                vertical: size.width * AppDimensions.numD05),
             children: [
               Text(
                 '${greeting()} ${userName.toCapitalized()},',
@@ -85,7 +87,8 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
               Container(
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD03)),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +117,8 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                             child: Text(AppStrings.acceptedTermsText,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400)),
                           ),
@@ -140,7 +144,8 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                                     : "Verify your mobile number",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400)),
                           ),
@@ -279,18 +284,16 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     //   firstName: sharedPreferences!.getString(firstNameKey),
                     //   lastName: sharedPreferences!.getString(lastNameKey),
                     // );
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Dashboard(
-                                initialPosition: 2,
-                                sourceDataIsOpened: widget.sourceDataIsOpened,
-                                sourceDataType: widget.sourceDataType,
-                                sourceDataUrl: widget.sourceDataUrl,
-                                sourceDataHeading: widget.sourceDataHeading,
-                                sourceDataDescription:
-                                    widget.sourceDataDescription,
-                                isClick: widget.isClick)));
+                    // );
+                    context.go(AppRoutes.dashboardPath, extra: {
+                      'initialPosition': 2,
+                      'sourceDataIsOpened': widget.sourceDataIsOpened,
+                      'sourceDataType': widget.sourceDataType,
+                      'sourceDataUrl': widget.sourceDataUrl,
+                      'sourceDataHeading': widget.sourceDataHeading,
+                      'sourceDataDescription': widget.sourceDataDescription,
+                      'isClick': widget.isClick
+                    });
                   }
                 }),
               ),

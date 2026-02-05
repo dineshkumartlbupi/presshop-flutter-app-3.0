@@ -137,6 +137,15 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
           }
         },
         builder: (context, state) {
+          // Sync local variable with state if needed
+          if (state is TaskDetailLoaded) {
+            taskDetail = state.taskDetail;
+          }
+
+          if (state is TaskError) {
+            return Center(child: Text(state.message));
+          }
+
           if (taskDetail == null) {
             return showLoader();
           }
@@ -1108,14 +1117,23 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
   /// Update Map Location
   Future<void> _updateGoogleMap(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
-    marker.add(Marker(
-      markerId: const MarkerId("1"),
-      position: latLng,
-      icon: mapIcon!,
-    ));
-    controller.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(latLng.latitude, latLng.longitude), 14));
-    setState(() {});
+    if (!mounted) return;
+    try {
+      marker.add(Marker(
+        markerId: const MarkerId("1"),
+        position: latLng,
+        icon: mapIcon ??
+            BitmapDescriptor
+                .defaultMarker, // Fallback if mapIcon not loaded yet
+      ));
+      await controller.animateCamera(CameraUpdate.newLatLngZoom(
+          LatLng(latLng.latitude, latLng.longitude), 14));
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint("Error updating map: $e");
+    }
   }
 
   /// Current Lat Lng

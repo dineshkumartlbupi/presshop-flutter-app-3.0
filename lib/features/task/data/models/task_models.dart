@@ -30,13 +30,15 @@ class TaskVideoModel {
 
   TaskVideoModel.fromJson(Map<String, dynamic> json) {
     id = (json["_id"] ?? json["image_id"] ?? "").toString();
-    type = (json["mime"] ?? "").toString();
+    type = (json["mime"] ?? json["media_type"] ?? "").toString();
     thumbnail = (json["thumbnail_url"] ??
             json["watermarkimage_url"] ??
             json["thumbnail"] ??
+            json["watermark"] ??
             "")
         .toString();
-    imageVideoUrl = (json["url"] ?? json["name"] ?? "").toString();
+    imageVideoUrl =
+        (json["url"] ?? json["name"] ?? json["media"] ?? "").toString();
     paidStatus = json["paid_status"] ?? false;
     amount = json["amount"].toString();
     paidStatusToHopper = json["paid_status_to_hopper"] ?? false;
