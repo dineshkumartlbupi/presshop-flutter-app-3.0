@@ -8,10 +8,6 @@ import 'package:presshop/features/authentication/presentation/bloc/upload_docume
 
 class UploadDocumentsBloc
     extends Bloc<UploadDocumentsEvent, UploadDocumentsState> {
-  final GetDocumentInstructions getDocumentInstructions;
-  final GetUploadedDocuments getUploadedDocuments;
-  final UploadDocument uploadDocument;
-  final DeleteDocument deleteDocument;
 
   UploadDocumentsBloc({
     required this.getDocumentInstructions,
@@ -24,6 +20,10 @@ class UploadDocumentsBloc
     on<UploadFilesEvent>(_onUploadFiles);
     on<DeleteDocumentEvent>(_onDeleteDocument);
   }
+  final GetDocumentInstructions getDocumentInstructions;
+  final GetUploadedDocuments getUploadedDocuments;
+  final UploadDocument uploadDocument;
+  final DeleteDocument deleteDocument;
 
   Future<void> _onGetDocumentInstructions(GetDocumentInstructionsEvent event,
       Emitter<UploadDocumentsState> emit) async {

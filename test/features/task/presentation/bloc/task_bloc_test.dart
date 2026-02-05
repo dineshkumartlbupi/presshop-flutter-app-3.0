@@ -8,8 +8,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/features/earning/data/models/earning_model.dart';
-import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/task/domain/entities/task.dart';
 import 'package:presshop/features/task/domain/entities/task_all.dart';
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';

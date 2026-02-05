@@ -12,29 +12,18 @@ enum CameraStatus {
   permissionDenied,
   recording,
   recordingPaused,
-  success
+  success,
+  disposing,
 }
 
 class CameraState extends Equatable {
-  final CameraStatus status;
-  final CameraController? cameraController;
-  final RecorderController? recorderController;
-  final String selectedMode;
-  final bool isRecording;
-  final bool isAudioRecording;
-  final bool isFrontCamera;
-  final bool isFlashOn;
-  final String recordingTime;
-  final List<AssetEntity> galleryMedia;
-  final List<CameraData> capturedMedia;
-  final String errorMessage;
-
   const CameraState({
     this.status = CameraStatus.initial,
     this.cameraController,
     this.recorderController,
     this.selectedMode = "Photo",
     this.isRecording = false,
+    this.isVideoLoading = false, // New field
     this.isAudioRecording = false,
     this.isFrontCamera = false,
     this.isFlashOn = false,
@@ -44,6 +33,20 @@ class CameraState extends Equatable {
     this.errorMessage = "",
   });
 
+  final CameraStatus status;
+  final CameraController? cameraController;
+  final RecorderController? recorderController;
+  final String selectedMode;
+  final bool isRecording;
+  final bool isVideoLoading; // New field
+  final bool isAudioRecording;
+  final bool isFrontCamera;
+  final bool isFlashOn;
+  final String recordingTime;
+  final List<AssetEntity> galleryMedia;
+  final List<CameraData> capturedMedia;
+  final String errorMessage;
+
   CameraState copyWith({
     CameraStatus? status,
     CameraController? cameraController,
@@ -51,6 +54,7 @@ class CameraState extends Equatable {
     RecorderController? recorderController,
     String? selectedMode,
     bool? isRecording,
+    bool? isVideoLoading, // New parameter
     bool? isAudioRecording,
     bool? isFrontCamera,
     bool? isFlashOn,
@@ -66,6 +70,7 @@ class CameraState extends Equatable {
       recorderController: recorderController ?? this.recorderController,
       selectedMode: selectedMode ?? this.selectedMode,
       isRecording: isRecording ?? this.isRecording,
+      isVideoLoading: isVideoLoading ?? this.isVideoLoading, // New assignment
       isAudioRecording: isAudioRecording ?? this.isAudioRecording,
       isFrontCamera: isFrontCamera ?? this.isFrontCamera,
       isFlashOn: isFlashOn ?? this.isFlashOn,
@@ -83,6 +88,7 @@ class CameraState extends Equatable {
         recorderController,
         selectedMode,
         isRecording,
+        isVideoLoading, // New prop
         isAudioRecording,
         isFrontCamera,
         isFlashOn,

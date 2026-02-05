@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 class DangerZoneInfoWindow extends StatelessWidget {
-  final String name;
-  final String description;
-  final VoidCallback onPressed;
 
   const DangerZoneInfoWindow({
     super.key,
@@ -11,6 +8,9 @@ class DangerZoneInfoWindow extends StatelessWidget {
     required this.description,
     required this.onPressed,
   });
+  final String name;
+  final String description;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

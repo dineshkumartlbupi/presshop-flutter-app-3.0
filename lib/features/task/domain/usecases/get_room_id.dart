@@ -5,9 +5,9 @@ import 'package:presshop/features/task/domain/repositories/task_repository.dart'
 import 'package:equatable/equatable.dart';
 
 class GetRoomId implements UseCase<String, GetRoomIdParams> {
-  final TaskRepository repository;
 
   GetRoomId(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, String>> call(GetRoomIdParams params) async {
@@ -17,10 +17,6 @@ class GetRoomId implements UseCase<String, GetRoomIdParams> {
 }
 
 class GetRoomIdParams extends Equatable {
-  final String receiverId;
-  final String taskId;
-  final String roomType;
-  final String type;
 
   const GetRoomIdParams({
     required this.receiverId,
@@ -28,6 +24,10 @@ class GetRoomIdParams extends Equatable {
     required this.roomType,
     required this.type,
   });
+  final String receiverId;
+  final String taskId;
+  final String roomType;
+  final String type;
 
   @override
   List<Object> get props => [receiverId, taskId, roomType, type];

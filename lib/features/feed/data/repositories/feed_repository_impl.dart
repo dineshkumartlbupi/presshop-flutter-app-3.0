@@ -8,13 +8,13 @@ import '../datasources/feed_remote_data_source.dart';
 import '../models/feed_model.dart';
 
 class FeedRepositoryImpl implements FeedRepository {
-  final FeedRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   FeedRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final FeedRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<Feed>>> getFeeds(

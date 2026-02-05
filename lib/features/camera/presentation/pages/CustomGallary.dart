@@ -25,9 +25,9 @@ import 'package:video_player/video_player.dart';
 
 // ignore: must_be_immutable
 class CustomGallery extends StatefulWidget {
-  bool picAgain = false;
 
   CustomGallery({super.key, required this.picAgain});
+  bool picAgain = false;
 
   @override
   State<StatefulWidget> createState() {
@@ -180,7 +180,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
               itemCount: _mediaList.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 5),
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 if (index == _mediaList.length - 20 &&
                     !isLoadingMore &&
                     hasMoreToLoad) {
@@ -604,8 +604,8 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 }
 
 class GalleryModel {
-  Uint8List? thumbPath;
-  AssetEntity? assetData;
 
   GalleryModel({required this.thumbPath, required this.assetData});
+  Uint8List? thumbPath;
+  AssetEntity? assetData;
 }

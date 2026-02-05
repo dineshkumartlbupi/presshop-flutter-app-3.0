@@ -5,12 +5,12 @@ import 'leaderboard_event.dart';
 import 'leaderboard_state.dart';
 
 class LeaderboardBloc extends Bloc<LeaderboardEvent, LeaderboardState> {
-  final GetLeaderboardData getLeaderboardData;
 
   LeaderboardBloc({required this.getLeaderboardData})
       : super(LeaderboardInitial()) {
     on<GetLeaderboard>(_onGetLeaderboard);
   }
+  final GetLeaderboardData getLeaderboardData;
 
   Future<void> _onGetLeaderboard(
       GetLeaderboard event, Emitter<LeaderboardState> emit) async {

@@ -6,9 +6,8 @@ import 'package:presshop/features/task/domain/repositories/task_repository.dart'
 
 class GetTaskDetail
     implements UseCase<TaskAssignedEntity, GetTaskDetailParams> {
-  final TaskRepository repository;
-
   GetTaskDetail(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, TaskAssignedEntity>> call(

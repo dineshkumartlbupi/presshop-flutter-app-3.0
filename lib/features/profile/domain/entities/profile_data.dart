@@ -1,29 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ProfileData extends Equatable {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String phone;
-  final String userName;
-  final String role;
-  final String status;
-  final String hopperStatus;
-  final String chatStatus;
-  final String profileImage;
-  final bool isVerified;
-  final bool isOnboard;
-  final bool isDeleted;
-  final double latitude;
-  final double longitude;
-  final int totalEarnings;
-  final int totalHopperArmy;
-  final Location location;
-  final PreferredCurrencySign preferredCurrencySign;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime lastLogin;
 
   const ProfileData({
     required this.id,
@@ -50,6 +27,29 @@ class ProfileData extends Equatable {
     required this.updatedAt,
     required this.lastLogin,
   });
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+  final String userName;
+  final String role;
+  final String status;
+  final String hopperStatus;
+  final String chatStatus;
+  final String profileImage;
+  final bool isVerified;
+  final bool isOnboard;
+  final bool isDeleted;
+  final double latitude;
+  final double longitude;
+  final int totalEarnings;
+  final int totalHopperArmy;
+  final Location location;
+  final PreferredCurrencySign preferredCurrencySign;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime lastLogin;
 
   @override
   List<Object?> get props => [
@@ -80,25 +80,19 @@ class ProfileData extends Equatable {
 }
 
 class Location extends Equatable {
-  final String type;
-  final List<double> coordinates;
 
   const Location({
     required this.type,
     required this.coordinates,
   });
+  final String type;
+  final List<double> coordinates;
 
   @override
   List<Object?> get props => [type, coordinates];
 }
 
 class PreferredCurrencySign extends Equatable {
-  final String symbol;
-  final String code;
-  final String name;
-  final String countryName;
-  final String countryCode;
-  final String dialCode;
 
   const PreferredCurrencySign({
     required this.symbol,
@@ -108,6 +102,12 @@ class PreferredCurrencySign extends Equatable {
     required this.countryCode,
     required this.dialCode,
   });
+  final String symbol;
+  final String code;
+  final String name;
+  final String countryName;
+  final String countryCode;
+  final String dialCode;
 
   @override
   List<Object?> get props => [

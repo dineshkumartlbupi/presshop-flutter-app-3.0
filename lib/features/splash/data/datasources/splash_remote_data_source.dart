@@ -11,9 +11,9 @@ abstract class SplashRemoteDataSource {
 }
 
 class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
-  final ApiClient apiClient;
 
   SplashRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<VersionModel> checkAppVersion() async {

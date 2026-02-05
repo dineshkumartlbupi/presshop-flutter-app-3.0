@@ -1,12 +1,9 @@
 import '../../domain/entities/content_item.dart';
 import 'category_data_model.dart';
 import 'content_metadata_model.dart';
+import 'package:presshop/core/core_export.dart';
 
 class ContentListResponseModel {
-  final int code;
-  final List<ContentItemModel> data;
-  final int count;
-
   ContentListResponseModel({
     required this.code,
     required this.data,
@@ -22,6 +19,9 @@ class ContentListResponseModel {
       count: json['count'],
     );
   }
+  final int code;
+  final List<ContentItemModel> data;
+  final int count;
 
   Map<String, dynamic> toJson() => {
         'code': code,
@@ -62,6 +62,8 @@ class ContentItemModel extends ContentItem {
     super.totalOffer = 0,
     super.isExclusive,
     super.isPaidStatusToHopper = false,
+    super.currency = "",
+    super.currencySymbol = "",
   });
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
@@ -105,6 +107,12 @@ class ContentItemModel extends ContentItem {
       isExclusive: json['is_exclusive'] ?? (json['type'] != 'shared'),
       isPaidStatusToHopper: json['paid_status_to_hopper'] == true ||
           json['paid_status_to_hopper'] == "paid",
+      currency: (json['currency'] ?? '').toString(),
+      currencySymbol: (json['currency_symbol'] != null &&
+              json['currency_symbol'].toString().isNotEmpty)
+          ? json['currency_symbol'].toString()
+          : getCurrencySymbol(
+              (json['currency'] ?? json['currency_original'] ?? '').toString()),
     );
   }
 
@@ -142,5 +150,7 @@ class ContentItemModel extends ContentItem {
         'offer_content_size': totalOffer,
         'is_exclusive': isExclusive,
         'paid_status_to_hopper': isPaidStatusToHopper,
+        'currency': currency,
+        'currency_symbol': currencySymbol,
       };
 }

@@ -29,11 +29,10 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 
 // ignore: must_be_immutable
 class BroadCastScreen extends StatefulWidget {
-  String taskId = "";
-  String mediaHouseId = "";
-
   BroadCastScreen(
       {super.key, required this.taskId, required this.mediaHouseId});
+  String taskId = "";
+  String mediaHouseId = "";
 
   @override
   State<BroadCastScreen> createState() => _BroadCastScreenState();
@@ -44,9 +43,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   late Size size;
   LatLng? _latLng;
   String _hopperAcceptedCount = "";
-  String _distance = "";
-  String _drivingEstTime = "";
-  String _walkingEstTime = "";
+  final String _distance = "";
+  final String _drivingEstTime = "";
+  final String _walkingEstTime = "";
 
   bool _isAccepted = false;
   bool isDirection = false;
@@ -144,6 +143,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             photoPrice: "0",
             videoPrice: "0",
             interviewPrice: "0",
+            currency: assignedEntity.task.currency,
+            currencySymbol: assignedEntity.task.currencySymbol,
           );
           if (taskDetail != null) {
             _updateGoogleMap(
@@ -218,7 +219,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 taskDetail?.longitude ?? longitude),
             zoom: 14.4746,
           ),
-          onMapCreated: (GoogleMapController controller) {
+          onMapCreated: (controller) {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
             }
@@ -255,7 +256,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         vertical: size.width * AppDimensions.numD02),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                     ),
                     child: Column(
                       children: [
@@ -273,7 +275,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 "$_hopperAcceptedCount Hoppers",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -326,7 +329,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 overflow: TextOverflow.ellipsis,
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -365,8 +369,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                   Row(
                     children: [
                       ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD04),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD04),
                           child: Image.network(
                             taskDetail!.mediaHouseImage,
                             height: size.width * AppDimensions.numD12,
@@ -374,7 +378,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                             fit: BoxFit.cover,
                             errorBuilder: (context, object, stacktrace) {
                               return Padding(
-                                padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD02),
                                 child: Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
                                   height: size.width * AppDimensions.numD07,
@@ -452,8 +457,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD03)),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -472,7 +477,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                       AppStrings.deadlineText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
@@ -504,7 +510,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                           CountDownTimerFormat.customFormats,
                                       timeTextStyle: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
                                           fontWeight: FontWeight.normal),
                                     ) /*Text(
@@ -531,8 +538,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 horizontal: size.width * AppDimensions.numD02),
                             decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD03)),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -550,7 +557,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                       AppStrings.locationText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD03,
+                                          fontSize:
+                                              size.width * AppDimensions.numD03,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
@@ -567,7 +575,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     maxLines: 2,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD03,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -624,7 +633,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                 fontSize: size.width * AppDimensions.numD04,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           _isAccepted = true;
                           //isDirection = true;
                           if (player.state == PlayerState.playing) {
@@ -656,7 +666,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               },
               child: Container(
                 margin: EdgeInsets.only(
-                    top: size.width * AppDimensions.numD14, left: size.width * AppDimensions.numD04),
+                    top: size.width * AppDimensions.numD14,
+                    left: size.width * AppDimensions.numD04),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: const BoxDecoration(
                     color: Colors.white, shape: BoxShape.circle),
@@ -678,7 +689,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
               },
               child: Container(
                 margin: EdgeInsets.only(
-                    top: size.width * AppDimensions.numD14, left: size.width * AppDimensions.numD04),
+                    top: size.width * AppDimensions.numD14,
+                    left: size.width * AppDimensions.numD04),
                 padding: EdgeInsets.all(size.width * AppDimensions.numD02),
                 decoration: const BoxDecoration(
                     color: Colors.white, shape: BoxShape.circle),
@@ -713,7 +725,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedPhoto
-                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.photoPrice))}"
+                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.photoPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -738,8 +750,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD02)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02)),
                     child: Text(
                       AppStrings.photoText.toUpperCase(),
                       style: commonTextStyle(
@@ -757,7 +769,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedInterview
-                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.interviewPrice))}"
+                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.interviewPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -782,8 +794,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD02)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02)),
                     child: Text(
                       AppStrings.interviewText.toUpperCase(),
                       style: commonTextStyle(
@@ -801,7 +813,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 children: [
                   Text(
                     taskDetail!.isNeedVideo
-                        ? "$currencySymbol${formatDouble(double.parse(taskDetail!.videoPrice))}"
+                        ? "${taskDetail!.currencySymbol.isNotEmpty ? taskDetail!.currencySymbol : currencySymbol}${formatDouble(double.parse(taskDetail!.videoPrice))}"
                         : "-",
                     style: commonTextStyle(
                         size: size,
@@ -826,8 +838,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         vertical: size.width * AppDimensions.numD025),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD02)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD02)),
                     child: Text(
                       AppStrings.videoText.toUpperCase(),
                       style: commonTextStyle(
@@ -863,7 +875,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
           topRight: Radius.circular(size.width * AppDimensions.numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -964,32 +976,38 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           filled: true,
                           hintText: AppStrings.searchHintText,
                           hintStyle: TextStyle(
-                              color: AppColorTheme.colorHint, fontSize: size.width * AppDimensions.numD04),
+                              color: AppColorTheme.colorHint,
+                              fontSize: size.width * AppDimensions.numD04),
                           disabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: AppColorTheme.colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: AppColorTheme.colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: AppColorTheme.colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           errorBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: AppColorTheme.colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           focusedErrorBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(size.width * 0.03),
                               borderSide: const BorderSide(
-                                  width: 0, color: AppColorTheme.colorLightGrey)),
+                                  width: 0,
+                                  color: AppColorTheme.colorLightGrey)),
                           suffixIcon: Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: size.width * AppDimensions.numD02),
@@ -998,8 +1016,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                               color: Colors.black,
                             ),
                           ),
-                          suffixIconConstraints:
-                              BoxConstraints(maxHeight: size.width * AppDimensions.numD06),
+                          suffixIconConstraints: BoxConstraints(
+                              maxHeight: size.width * AppDimensions.numD06),
                         ),
                         textAlignVertical: TextAlignVertical.center,
                       ),
@@ -1026,8 +1044,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                     setState(() {});*/
                                   },
                                   child: Container(
-                                    padding:
-                                        EdgeInsets.all(size.width * AppDimensions.numD02),
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD02),
                                     color: item.isContactSelected
                                         ? AppColorTheme.colorLightGrey
                                         : Colors.transparent,
@@ -1038,21 +1056,27 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         Row(
                                           children: [
                                             Container(
-                                              height: size.width * AppDimensions.numD15,
-                                              width: size.width * AppDimensions.numD15,
+                                              height: size.width *
+                                                  AppDimensions.numD15,
+                                              width: size.width *
+                                                  AppDimensions.numD15,
                                               padding: EdgeInsets.all(
-                                                  size.width * AppDimensions.numD01),
+                                                  size.width *
+                                                      AppDimensions.numD01),
                                               decoration: const BoxDecoration(
-                                                  color: AppColorTheme.colorThemePink,
+                                                  color: AppColorTheme
+                                                      .colorThemePink,
                                                   shape: BoxShape.circle),
                                               child: ClipOval(
                                                 child: item.avatar != null
                                                     ? Image.memory(
                                                         item.avatar!,
-                                                        height:
-                                                            size.width * AppDimensions.numD09,
-                                                        width:
-                                                            size.width * AppDimensions.numD09,
+                                                        height: size.width *
+                                                            AppDimensions
+                                                                .numD09,
+                                                        width: size.width *
+                                                            AppDimensions
+                                                                .numD09,
                                                         fit: BoxFit.contain,
                                                         errorBuilder:
                                                             (context, dd, v) {
@@ -1061,9 +1085,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                             item.displayName![0]
                                                                 .toString(),
                                                             style: TextStyle(
-                                                                fontSize:
-                                                                    size.width *
-                                                                        AppDimensions.numD05,
+                                                                fontSize: size
+                                                                        .width *
+                                                                    AppDimensions
+                                                                        .numD05,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -1077,9 +1102,10 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                           item.displayName![0]
                                                               .toString(),
                                                           style: TextStyle(
-                                                              fontSize:
-                                                                  size.width *
-                                                                      AppDimensions.numD05,
+                                                              fontSize: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD05,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -1090,14 +1116,16 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                               ),
                                             ),
                                             SizedBox(
-                                              width: size.width * AppDimensions.numD025,
+                                              width: size.width *
+                                                  AppDimensions.numD025,
                                             ),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: size.width * AppDimensions.numD30,
+                                                  width: size.width *
+                                                      AppDimensions.numD30,
                                                   child: Text(
                                                     item.displayName.toString(),
                                                     maxLines: 1,
@@ -1106,7 +1134,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                     style: commonTextStyle(
                                                         size: size,
                                                         fontSize: size.width *
-                                                            AppDimensions.numD037,
+                                                            AppDimensions
+                                                                .numD037,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.w600),
@@ -1120,8 +1149,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                       : '',
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize:
-                                                          size.width * AppDimensions.numD035,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD035,
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.w400),
@@ -1153,18 +1182,19 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                         AppStrings.errorOpenSMS,
                                                         Colors.black);
                                                     // Handle the case when the URL can't be launched.
-                                                    throw ('Error launching Sms');
+                                                    throw 'Error launching Sms';
                                                   }
                                                 },
-                                                splashRadius:
-                                                    size.width * AppDimensions.numD05,
+                                                splashRadius: size.width *
+                                                    AppDimensions.numD05,
                                                 icon: Image.asset(
                                                   "${iconsPath}message_icon.png",
-                                                  height: size.width * AppDimensions.numD06,
+                                                  height: size.width *
+                                                      AppDimensions.numD06,
                                                 )),
                                             IconButton(
-                                                splashRadius:
-                                                    size.width * AppDimensions.numD05,
+                                                splashRadius: size.width *
+                                                    AppDimensions.numD05,
                                                 onPressed: () async {
                                                   /*Uri whatsappUrl = Uri.parse(
                                                       "whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent("${taskDetail!.title}\n\n ${taskDetail!.description}"
@@ -1175,12 +1205,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                 },
                                                 icon: Padding(
                                                   padding: EdgeInsets.only(
-                                                      bottom:
-                                                          size.width * AppDimensions.numD006),
+                                                      bottom: size.width *
+                                                          AppDimensions
+                                                              .numD006),
                                                   child: Image.asset(
                                                     "${iconsPath}whatsapp_icon.png",
-                                                    height:
-                                                        size.width * AppDimensions.numD058,
+                                                    height: size.width *
+                                                        AppDimensions.numD058,
                                                   ),
                                                 ))
                                           ],
@@ -1200,7 +1231,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                   : contactsDataList.length)
                           : Center(
                               child: Padding(
-                                padding: EdgeInsets.all(size.width * AppDimensions.numD05),
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD05),
                                 child: const Text("Not Contact Available"),
                               ),
                             ),
@@ -1428,11 +1460,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 }
 
 class ContactListModel {
-  String? identifier, displayName, givenName, middleName;
-  List<Phone>? phones = [];
-  Uint8List? avatar;
-  bool isContactSelected = false;
-
   ContactListModel(
       {required this.displayName,
       required this.givenName,
@@ -1440,6 +1467,10 @@ class ContactListModel {
       required this.phones,
       required this.avatar,
       required this.isContactSelected});
+  String? identifier, displayName, givenName, middleName;
+  List<Phone>? phones = [];
+  Uint8List? avatar;
+  bool isContactSelected = false;
 }
 
 /// Show loader dialog

@@ -7,9 +7,9 @@ import 'package:presshop/features/news/domain/repositories/news_repository.dart'
 
 class GetAggregatedNews
     implements UseCase<List<News>, GetAggregatedNewsParams> {
-  final NewsRepository repository;
 
   GetAggregatedNews(this.repository);
+  final NewsRepository repository;
 
   @override
   Future<Either<Failure, List<News>>> call(
@@ -27,13 +27,6 @@ class GetAggregatedNews
 }
 
 class GetAggregatedNewsParams extends Equatable {
-  final double lat;
-  final double lng;
-  final double km;
-  final String category;
-  final String? alertType;
-  final int limit;
-  final int offset;
 
   const GetAggregatedNewsParams({
     required this.lat,
@@ -44,6 +37,13 @@ class GetAggregatedNewsParams extends Equatable {
     this.limit = 10,
     this.offset = 0,
   });
+  final double lat;
+  final double lng;
+  final double km;
+  final String category;
+  final String? alertType;
+  final int limit;
+  final int offset;
 
   @override
   List<Object?> get props => [lat, lng, km, category, alertType, limit, offset];

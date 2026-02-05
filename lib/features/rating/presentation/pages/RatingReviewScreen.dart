@@ -15,10 +15,9 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/rating/domain/entities/review.dart';
 
 class FilterRatingData {
+  FilterRatingData({required this.ratingValue, required this.selected});
   double ratingValue;
   bool selected;
-
-  FilterRatingData({required this.ratingValue, required this.selected});
 }
 
 class RatingReviewScreen extends StatefulWidget {
@@ -45,9 +44,17 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
     initializeFilter();
     super.initState();
     priceTipsCategoryList.add(CategoryDataModel(
-        name: AppStrings.receivedText, selected: true, id: '', type: '', percentage: ''));
+        name: AppStrings.receivedText,
+        selected: true,
+        id: '',
+        type: '',
+        percentage: ''));
     priceTipsCategoryList.add(CategoryDataModel(
-        name: AppStrings.givenText, selected: false, id: '', type: '', percentage: ''));
+        name: AppStrings.givenText,
+        selected: false,
+        id: '',
+        type: '',
+        percentage: ''));
   }
 
   void initializeFilter() {
@@ -65,7 +72,9 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
           icon: "ic_yearly_calendar.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
     ]);
     filterRatingList.addAll([
       FilterRatingData(ratingValue: 5.0, selected: false),
@@ -146,8 +155,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     height: size.width * AppDimensions.numD04,
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD04),
                     child: Row(
                       children: [
                         Text(
@@ -165,7 +174,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               showBottomSheet(context, size, state);
                             },
                             child: Container(
-                                padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD04),
                                 child: Image.asset(
                                   "${iconsPath}ic_filter.png",
                                   height: size.width * AppDimensions.numD05,
@@ -194,8 +204,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               },
                               child: ListView.separated(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * AppDimensions.numD04,
-                                      vertical: size.width * AppDimensions.numD02),
+                                      horizontal:
+                                          size.width * AppDimensions.numD04,
+                                      vertical:
+                                          size.width * AppDimensions.numD02),
                                   itemBuilder: (context, index) {
                                     final review = state.reviews[index];
                                     return _buildReviewItem(size, review);
@@ -220,10 +232,12 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
   Widget _buildReviewItem(Size size, Review review) {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: size.width * AppDimensions.numD03, vertical: size.width * AppDimensions.numD04),
+          horizontal: size.width * AppDimensions.numD03,
+          vertical: size.width * AppDimensions.numD04),
       decoration: BoxDecoration(
           color: AppColorTheme.colorLightGrey,
-          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04)),
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -235,7 +249,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                 height: size.width * AppDimensions.numD20,
                 width: size.width * AppDimensions.numD20,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD04),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.shade200,
@@ -243,7 +258,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                       )
                     ]),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: CachedNetworkImage(
                       imageUrl: review.hopperImage,
                       imageBuilder: (context, imageProvider) => Container(
@@ -260,9 +276,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                             height: size.width * AppDimensions.numD20,
                             width: size.width * AppDimensions.numD20,
                             decoration: BoxDecoration(
-                                color: AppColorTheme.colorGreyChat.withOpacity(.3),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD03)),
+                                color:
+                                    AppColorTheme.colorGreyChat.withOpacity(.3),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03)),
                           )),
                 ),
               ),
@@ -277,7 +294,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     width: size.width * AppDimensions.numD20,
                     decoration: BoxDecoration(
                       color: Colors.grey.withOpacity(.1),
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD02),
                     ),
                     child: Column(
                       children: [
@@ -357,8 +375,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD02),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD02),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -389,8 +407,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         vertical: size.width * AppDimensions.numD02),
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD025)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD025)),
                     child: Row(
                       children: [
                         Text(
@@ -482,7 +500,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                 height: size.width * AppDimensions.numD03,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD02),
+                padding: EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD02),
                 child: Text(
                   review.review,
                   style: TextStyle(
@@ -511,7 +530,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
           topRight: Radius.circular(size.width * AppDimensions.numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * AppDimensions.numD06,
@@ -542,16 +561,19 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                             "Sort and Filter",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
+                                fontSize: size.width *
+                                    AppDimensions.appBarHeadingFontSizeNew,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
                           TextButton(
                             onPressed: () {
-                              sortList.forEach(
-                                  (element) => element.isSelected = false);
-                              filterRatingList.forEach(
-                                  (element) => element.selected = false);
+                              for (var element in sortList) {
+                                element.isSelected = false;
+                              }
+                              for (var element in filterRatingList) {
+                                element.selected = false;
+                              }
                               stateSetter(() {});
                               // Dispatch Clear Filter Event if needed
                             },
@@ -621,7 +643,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(
                                     vertical: size.width * AppDimensions.numD02,
-                                    horizontal: size.width * AppDimensions.numD01),
+                                    horizontal:
+                                        size.width * AppDimensions.numD01),
                                 decoration: BoxDecoration(
                                     color: filterRatingList[index].selected
                                         ? Colors.grey.shade400
@@ -638,7 +661,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                             "${iconsPath}ic_half_star.png"),
                                       ),
                                       onRatingUpdate: (value) {},
-                                      itemSize: size.width * AppDimensions.numD04,
+                                      itemSize:
+                                          size.width * AppDimensions.numD04,
                                       itemCount: 5,
                                       ignoreGestures: true,
                                       initialRating:
@@ -654,7 +678,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                       "${AppStrings.andText} up",
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD04,
+                                          fontSize:
+                                              size.width * AppDimensions.numD04,
                                           color: Colors.black,
                                           fontWeight: FontWeight.normal),
                                     )
@@ -703,8 +728,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                     ],
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD02),
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD02),
                     child: Container(
                       width: double.infinity,
                       height: size.width * AppDimensions.numD14,
@@ -712,8 +737,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(size.width * AppDimensions.numD02),
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD02),
                           ),
                         ),
                         onPressed: () {
@@ -818,8 +843,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               ),
                               width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -834,7 +859,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                         : AppStrings.fromText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -888,8 +914,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                               ),
                               width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -904,7 +930,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                                         : AppStrings.toText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),

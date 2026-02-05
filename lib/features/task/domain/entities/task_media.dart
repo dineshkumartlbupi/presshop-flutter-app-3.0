@@ -1,16 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class TaskMedia extends Equatable {
-  final String id;
-  final String type;
-  final String thumbnail;
-  final String imageVideoUrl;
-  final bool paidStatus;
-  final String amount;
-  final bool paidStatusToHopper;
-  final String paidAmount;
-  final String payableAmount;
-  final String commitionAmount;
 
   const TaskMedia({
     required this.id,
@@ -24,6 +14,16 @@ class TaskMedia extends Equatable {
     required this.payableAmount,
     required this.commitionAmount,
   });
+  final String id;
+  final String type;
+  final String thumbnail;
+  final String imageVideoUrl;
+  final bool paidStatus;
+  final String amount;
+  final bool paidStatusToHopper;
+  final String paidAmount;
+  final String payableAmount;
+  final String commitionAmount;
 
   @override
   List<Object?> get props => [

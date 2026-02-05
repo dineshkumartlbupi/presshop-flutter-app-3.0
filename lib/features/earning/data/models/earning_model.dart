@@ -4,11 +4,6 @@ import 'package:presshop/features/feed/presentation/pages/feedDataModel.dart';
 import '../../domain/entities/earning_transaction.dart';
 
 class EarningProfileDataModel {
-  String id = '';
-  String avatarId = '';
-  String avatar = '';
-  String totalEarning = "";
-
   EarningProfileDataModel({
     required this.id,
     required this.avatarId,
@@ -29,31 +24,13 @@ class EarningProfileDataModel {
           "0.0",
     );
   }
+  String id = '';
+  String avatarId = '';
+  String avatar = '';
+  String totalEarning = "";
 }
 
 class CommissionData {
-  CommissionData({
-    required this.totalEarning,
-    required this.commission,
-    required this.commissionReceived,
-    required this.commissionPending,
-    required this.paidOn,
-    required this.firstName,
-    required this.lastName,
-    required this.dateOfJoining,
-    required this.avatar,
-  });
-
-  double totalEarning;
-  double commission;
-  double commissionReceived;
-  double commissionPending;
-  String? paidOn;
-  String firstName;
-  String lastName;
-  String dateOfJoining;
-  String avatar;
-
   factory CommissionData.fromJson(Map<String, dynamic> json) {
     return CommissionData(
       totalEarning: json['totalEarning']?.toDouble() ?? 0.0,
@@ -67,59 +44,38 @@ class CommissionData {
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
       dateOfJoining: dateTimeFormatter(dateTime: json['dateOfJoining']),
+      currency: (json['currency'] ?? '').toString(),
+      currencySymbol: (json['currency_symbol'] ?? '').toString(),
     );
   }
+  CommissionData({
+    required this.totalEarning,
+    required this.commission,
+    required this.commissionReceived,
+    required this.commissionPending,
+    required this.paidOn,
+    required this.firstName,
+    required this.lastName,
+    required this.dateOfJoining,
+    required this.avatar,
+    this.currency = "",
+    this.currencySymbol = "",
+  });
+
+  double totalEarning;
+  double commission;
+  double commissionReceived;
+  double commissionPending;
+  String? paidOn;
+  String firstName;
+  String lastName;
+  String dateOfJoining;
+  String avatar;
+  String currency;
+  String currencySymbol;
 }
 
 class EarningTransactionDetail {
-  String id = '';
-  bool paidStatus = false;
-  String adminFullName = "";
-  String adminProfileImage = "";
-  String adminCountryCode = "";
-  int adminPhoneNumber = 0;
-  String adminEmail = "";
-  String adminAccountName = "";
-  String adminBankName = "";
-  String adminSortCode = "";
-  String adminAccountNumber = "";
-  String adminUserName = "";
-  String adminRole = "";
-  String adminStatus = "";
-  String saleStatus = "";
-  String stripefee = "";
-  String contentType = "";
-  List<ContentDataModel> contentDataList = [];
-  List<BankDataModel> userBankDetailList = [];
-  String userFirstName = "";
-  String userLastName = "";
-  String userEmail = "";
-  // int userPhone = 0;
-  String userPhone = "";
-  String userAddress = "";
-  String vat = '';
-  String amount = '';
-  String allAmount = "";
-  String totalEarningAmt = "";
-  String payableT0Hopper = '';
-  String payableCommission = '';
-  String type = '';
-  String percentage = '';
-  bool typesOfContent = false;
-  String createdAT = '';
-  String dueDate = '';
-  String updatedAT = '';
-  String contentId = "";
-  String hopperAvatar = "";
-  String hopperBankName = "";
-  String hopperBankLogo = "";
-  String mediaHouseCompanyImage = "";
-  String mediaHouseCompanyName = "";
-  String contentTitle = "";
-  String companyLogo = "";
-  String contentImage = "";
-  String mediaTypeImage = "";
-
   EarningTransactionDetail(
       {required this.id,
       required this.paidStatus,
@@ -164,37 +120,9 @@ class EarningTransactionDetail {
       this.hopperAvatar = "",
       this.hopperBankName = "",
       this.hopperBankLogo = "",
-      this.contentImage = ""});
-
-  EarningTransaction toEntity() {
-    return EarningTransaction(
-      id: id,
-      amount: amount,
-      totalEarningAmt: totalEarningAmt,
-      status: paidStatus ? "Paid" : "Pending",
-      paidStatus: paidStatus,
-      contentTitle: contentTitle,
-      contentType: contentType,
-      createdAt: createdAT,
-      dueDate: dueDate,
-      adminFullName: adminFullName,
-      companyLogo: companyLogo,
-      contentImage: contentImage,
-      payableT0Hopper: payableT0Hopper,
-      payableCommission: payableCommission,
-      stripefee: stripefee,
-      hopperBankLogo: hopperBankLogo,
-      hopperBankName: hopperBankName,
-      userFirstName: userFirstName,
-      userLastName: userLastName,
-      contentDataList: contentDataList,
-      type: type,
-      typesOfContent: typesOfContent,
-      hopperAvatar: hopperAvatar,
-      uploadContent: "",
-      contentId: contentId,
-    );
-  }
+      this.contentImage = "",
+      this.currency = "",
+      this.currencySymbol = ""});
 
   factory EarningTransactionDetail.fromJson(Map<String, dynamic> json) {
     List<BankDataModel> bankData = [];
@@ -316,6 +244,8 @@ class EarningTransactionDetail {
         amount: double.tryParse(amount?.toString() ?? "")?.toString() ?? "0.0",
         contentTitle: json['content_id'] != null ? json['content_id']['heading'] : '',
         contentImage: contentsImage,
+        currency: (json['currency'] ?? '').toString(),
+        currencySymbol: (json['currency_symbol'] != null && json['currency_symbol'].toString().isNotEmpty) ? json['currency_symbol'].toString() : getCurrencySymbol(json['currency']?.toString()),
         adminUserName: '');
   }
 
@@ -374,18 +304,94 @@ class EarningTransactionDetail {
               json['purchased_task_content'].isNotEmpty
           ? json['purchased_task_content'][0]['videothubnail'] ?? ""
           : "",
+      currency: (json['currency'] ?? '').toString(),
+      currencySymbol: (json['currency_symbol'] ?? '').toString(),
+    );
+  }
+  String id = '';
+  bool paidStatus = false;
+  String adminFullName = "";
+  String adminProfileImage = "";
+  String adminCountryCode = "";
+  int adminPhoneNumber = 0;
+  String adminEmail = "";
+  String adminAccountName = "";
+  String adminBankName = "";
+  String adminSortCode = "";
+  String adminAccountNumber = "";
+  String adminUserName = "";
+  String adminRole = "";
+  String adminStatus = "";
+  String saleStatus = "";
+  String stripefee = "";
+  String contentType = "";
+  List<ContentDataModel> contentDataList = [];
+  List<BankDataModel> userBankDetailList = [];
+  String userFirstName = "";
+  String userLastName = "";
+  String userEmail = "";
+  // int userPhone = 0;
+  String userPhone = "";
+  String userAddress = "";
+  String vat = '';
+  String amount = '';
+  String allAmount = "";
+  String totalEarningAmt = "";
+  String payableT0Hopper = '';
+  String payableCommission = '';
+  String type = '';
+  String percentage = '';
+  bool typesOfContent = false;
+  String createdAT = '';
+  String dueDate = '';
+  String updatedAT = '';
+  String contentId = "";
+  String hopperAvatar = "";
+  String hopperBankName = "";
+  String hopperBankLogo = "";
+  String mediaHouseCompanyImage = "";
+  String mediaHouseCompanyName = "";
+  String contentTitle = "";
+  String companyLogo = "";
+  String contentImage = "";
+  String mediaTypeImage = "";
+  String currency = "";
+  String currencySymbol = "";
+
+  EarningTransaction toEntity() {
+    return EarningTransaction(
+      id: id,
+      amount: amount,
+      totalEarningAmt: totalEarningAmt,
+      status: paidStatus ? "Paid" : "Pending",
+      paidStatus: paidStatus,
+      contentTitle: contentTitle,
+      contentType: contentType,
+      createdAt: createdAT,
+      dueDate: dueDate,
+      adminFullName: adminFullName,
+      companyLogo: companyLogo,
+      contentImage: contentImage,
+      payableT0Hopper: payableT0Hopper,
+      payableCommission: payableCommission,
+      stripefee: stripefee,
+      hopperBankLogo: hopperBankLogo,
+      hopperBankName: hopperBankName,
+      userFirstName: userFirstName,
+      userLastName: userLastName,
+      contentDataList: contentDataList,
+      type: type,
+      typesOfContent: typesOfContent,
+      hopperAvatar: hopperAvatar,
+      uploadContent: "",
+      contentId: contentId,
+      currency: currency,
+      currencySymbol: currencySymbol,
     );
   }
 }
 
 class BankDataModel {
-  bool isDefault = false;
-  String id = '';
-  String accountHolderName = '';
-  String bankName = '';
-  String sortCode = '';
-  int accountNumber = 0;
-
   BankDataModel({
     required this.isDefault,
     required this.id,
@@ -404,16 +410,15 @@ class BankDataModel {
         sortCode: json['sort_code'] ?? '',
         accountNumber: json['acc_number'] ?? 0);
   }
+  bool isDefault = false;
+  String id = '';
+  String accountHolderName = '';
+  String bankName = '';
+  String sortCode = '';
+  int accountNumber = 0;
 }
 
 class FilterModel {
-  String name = "";
-  String icon = "";
-  String? value;
-  String? fromDate;
-  String? toDate;
-  bool isSelected = false;
-
   FilterModel({
     required this.name,
     required this.icon,
@@ -422,4 +427,10 @@ class FilterModel {
     this.fromDate,
     this.toDate,
   });
+  String name = "";
+  String icon = "";
+  String? value;
+  String? fromDate;
+  String? toDate;
+  bool isSelected = false;
 }

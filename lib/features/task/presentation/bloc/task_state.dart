@@ -25,66 +25,63 @@ class TaskInitial extends TaskState {}
 class TaskLoading extends TaskState {}
 
 class TaskDetailLoaded extends TaskState {
-  final TaskAssignedEntity taskDetail;
   const TaskDetailLoaded(this.taskDetail);
+  @override
+  final TaskAssignedEntity taskDetail;
   @override
   List<Object> get props => [taskDetail];
 }
 
 class TaskChatLoaded extends TaskState {
-  final List<ManageTaskChatModel> chatList;
   const TaskChatLoaded(this.chatList);
+  final List<ManageTaskChatModel> chatList;
   @override
   List<Object> get props => [chatList];
 }
 
 class TaskMediaUploaded extends TaskState {
-  final Map<String, dynamic> response;
   const TaskMediaUploaded(this.response);
+  final Map<String, dynamic> response;
   @override
   List<Object> get props => [response];
 }
 
 class RoomIdLoaded extends TaskState {
-  final String roomId;
   const RoomIdLoaded(this.roomId);
+  final String roomId;
   @override
   List<Object> get props => [roomId];
 }
 
 class HopperAcceptedCountLoaded extends TaskState {
-  final String count;
   const HopperAcceptedCountLoaded(this.count);
+  final String count;
   @override
   List<Object> get props => [count];
 }
 
 class TaskError extends TaskState {
-  final String message;
   const TaskError(this.message);
+  final String message;
   @override
   List<Object> get props => [message];
 }
 
 class TaskActionSuccess extends TaskState {
-  final String message;
   const TaskActionSuccess(this.message);
+  final String message;
   @override
   List<Object> get props => [message];
 }
 
 class TransactionDetailsLoaded extends TaskState {
-  final List<EarningTransactionDetail> transactions;
   const TransactionDetailsLoaded(this.transactions);
+  final List<EarningTransactionDetail> transactions;
   @override
   List<Object> get props => [transactions];
 }
 
 class TasksLoaded extends TaskState {
-  final List<TaskAll> allTasks;
-  final List<Task> localTasks;
-  final TaskStatus allTasksStatus;
-  final TaskStatus localTasksStatus;
 
   const TasksLoaded({
     this.allTasks = const [],
@@ -92,6 +89,14 @@ class TasksLoaded extends TaskState {
     this.allTasksStatus = TaskStatus.initial,
     this.localTasksStatus = TaskStatus.initial,
   });
+  @override
+  final List<TaskAll> allTasks;
+  @override
+  final List<Task> localTasks;
+  @override
+  final TaskStatus allTasksStatus;
+  @override
+  final TaskStatus localTasksStatus;
 
   @override
   List<Object> get props =>

@@ -12,8 +12,8 @@ class OnboardingInitial extends OnboardingState {}
 class OnboardingSuccess extends OnboardingState {}
 
 class OnboardingError extends OnboardingState {
-  final String message;
   const OnboardingError({required this.message});
+  final String message;
   @override
   List<Object> get props => [message];
 }

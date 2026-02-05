@@ -6,9 +6,8 @@ import '../entities/task_all.dart';
 import '../repositories/task_repository.dart';
 
 class GetAllTasks implements UseCase<List<TaskAll>, GetAllTasksParams> {
-  final TaskRepository repository;
-
   GetAllTasks(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<TaskAll>>> call(GetAllTasksParams params) async {

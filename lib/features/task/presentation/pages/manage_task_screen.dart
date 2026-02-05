@@ -55,15 +55,6 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 
 // ignore: must_be_immutable
 class ManageTaskScreen extends StatefulWidget {
-  final TaskDetail? taskDetail;
-  MyContentData? myContentData;
-  final String roomId;
-  final Widget? contentMedia;
-  final Widget? contentHeader;
-  final String? contentId;
-  final ManageTaskChatModel? mediaHouseDetail;
-  final String type;
-
   ManageTaskScreen(
       {super.key,
       this.mediaHouseDetail,
@@ -74,6 +65,14 @@ class ManageTaskScreen extends StatefulWidget {
       this.contentMedia,
       this.myContentData,
       this.contentHeader});
+  final TaskDetail? taskDetail;
+  MyContentData? myContentData;
+  final String roomId;
+  final Widget? contentMedia;
+  final Widget? contentHeader;
+  final String? contentId;
+  final ManageTaskChatModel? mediaHouseDetail;
+  final String type;
 
   @override
   State<StatefulWidget> createState() {
@@ -918,7 +917,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               0.1,
                                                                           children: List<Widget>.generate(
                                                                               intList.length,
-                                                                              (int index) {
+                                                                              (index) {
                                                                             return Container(
                                                                               margin: EdgeInsets.only(left: size.width * 0.012, right: size.width * 0.012),
                                                                               child: ChoiceChip(
@@ -2126,8 +2125,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               Widget>.generate(
                                                                           intList
                                                                               .length,
-                                                                          (int
-                                                                              index) {
+                                                                          (index) {
                                                                     return Container(
                                                                       margin: EdgeInsets.only(
                                                                           left: size.width *
@@ -2145,8 +2143,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             fontFamily: "AirbnbCereal",
                                                                             fontSize: size.width * AppDimensions.numD035),
                                                                         onSelected:
-                                                                            (bool
-                                                                                selected) {
+                                                                            (selected) {
                                                                           if (selected) {
                                                                             for (int i = 0;
                                                                                 i < intList.length;
@@ -2514,7 +2511,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   ),
                                 ),
                                 Visibility(
-                                  visible: (widget.type != "content"),
+                                  visible: widget.type != "content",
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -4400,7 +4397,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        (sharedPreferences!.getString(avatarKey) ?? ""),
+                        sharedPreferences!.getString(avatarKey) ?? "",
                         fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD09,
                         width: size.width * AppDimensions.numD09,
@@ -4502,7 +4499,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        (sharedPreferences!.getString(avatarKey) ?? ""),
+                        sharedPreferences!.getString(avatarKey) ?? "",
                         fit: BoxFit.cover,
                         height: size.width * AppDimensions.numD09,
                         width: size.width * AppDimensions.numD09,
@@ -4563,8 +4560,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             imageUrl,
                             height: size.height / 3,
                             fit: BoxFit.cover,
-                            errorBuilder: (BuildContext context,
-                                Object exception, StackTrace? stackTrace) {
+                            errorBuilder: (context, exception, stackTrace) {
                               return Center(
                                 child: Image.asset(
                                   "${commonImagePath}rabbitLogo.png",
@@ -4624,9 +4620,8 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                   .toString(),
                               height: size.width * AppDimensions.numD09,
                               width: size.width * AppDimensions.numD09,
-                              fit: BoxFit.cover, errorBuilder:
-                                  (BuildContext context, Object exception,
-                                      StackTrace? stackTrace) {
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, exception, stackTrace) {
                             return Center(
                               child: Image.asset(
                                 "${commonImagePath}rabbitLogo.png",
@@ -6818,7 +6813,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     }
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);

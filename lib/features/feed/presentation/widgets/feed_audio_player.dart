@@ -7,14 +7,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/core_export.dart';
 
 class FeedAudioPlayer extends StatefulWidget {
-  final String audioUrl;
-  final Size size;
 
   const FeedAudioPlayer({
     super.key,
     required this.audioUrl,
     required this.size,
   });
+  final String audioUrl;
+  final Size size;
 
   @override
   State<FeedAudioPlayer> createState() => _FeedAudioPlayerState();

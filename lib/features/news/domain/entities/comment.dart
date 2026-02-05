@@ -1,17 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Comment extends Equatable {
-  final String id;
-  final String contentId;
-  final String userId;
-  final String comment;
-  final String createdAt;
-  final String? userImage;
-  final String? userName;
-
-  final List<Comment> replies;
-  final int likesCount;
-  final bool isLiked;
 
   const Comment({
     required this.id,
@@ -25,6 +14,17 @@ class Comment extends Equatable {
     this.likesCount = 0,
     this.isLiked = false,
   });
+  final String id;
+  final String contentId;
+  final String userId;
+  final String comment;
+  final String createdAt;
+  final String? userImage;
+  final String? userName;
+
+  final List<Comment> replies;
+  final int likesCount;
+  final bool isLiked;
 
   Comment copyWith({
     String? id,

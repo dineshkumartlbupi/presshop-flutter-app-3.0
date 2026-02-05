@@ -6,13 +6,13 @@ import '../datasources/splash_remote_data_source.dart';
 import 'package:presshop/features/splash/domain/entities/version.dart';
 
 class SplashRepositoryImpl implements SplashRepository {
-  final SplashRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   SplashRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final SplashRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, Version>> checkAppVersion() async {

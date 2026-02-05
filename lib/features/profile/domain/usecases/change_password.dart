@@ -4,9 +4,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/profile_repository.dart';
 
 class ChangePassword implements UseCase<void, ChangePasswordParams> {
-  final ProfileRepository repository;
 
   ChangePassword(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, void>> call(ChangePasswordParams params) async {
@@ -16,11 +16,11 @@ class ChangePassword implements UseCase<void, ChangePasswordParams> {
 }
 
 class ChangePasswordParams {
-  final String oldPassword;
-  final String newPassword;
 
   const ChangePasswordParams({
     required this.oldPassword,
     required this.newPassword,
   });
+  final String oldPassword;
+  final String newPassword;
 }

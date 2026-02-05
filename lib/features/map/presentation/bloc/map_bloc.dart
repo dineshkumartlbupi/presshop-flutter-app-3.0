@@ -17,14 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  final GetCurrentLocation getCurrentLocation;
-  final GetRoute getRoute;
-  final MapRepository repository;
-  final SocketService socketService;
-  final NewsRepository newsRepository;
-  final MarkerService markerService;
-  final SharedPreferences sharedPreferences;
-
   MapBloc({
     required this.getCurrentLocation,
     required this.getRoute,
@@ -33,7 +25,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required this.newsRepository,
     required this.markerService,
     required this.sharedPreferences,
-  }) : super(const MapState()) {
+  }) : super(MapState(
+          // Set default initial camera position to prevent null crashes
+          initialCamera: const CameraPosition(
+            target: LatLng(51.5074, -0.1278), // London as default
+            zoom: 14,
+          ),
+        )) {
     on<GetCurrentLocationEvent>(_onGetCurrentLocation);
     on<GetRouteEvent>(_onGetRoute);
     on<SearchPlacesEvent>(_onSearchPlaces);
@@ -60,6 +58,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     _initSocket();
   }
+  final GetCurrentLocation getCurrentLocation;
+  final GetRoute getRoute;
+  final MapRepository repository;
+  final SocketService socketService;
+  final NewsRepository newsRepository;
+  final MarkerService markerService;
+  final SharedPreferences sharedPreferences;
 
   void _onToggleGetDirectionCard(
     ToggleGetDirectionCardEvent event,
@@ -97,7 +102,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       BitmapDescriptor icon;
       if (incident.markerType == 'content') {
-        icon = await markerService.createContentMarker(incident.image ?? '');
+        icon = await markerService.createContentMarker(
+          incident.image ?? '',
+          size: 90, // Use smaller size for better performance
+        );
       } else {
         String assetPath = markerService.markerIcons[incident.type] ??
             markerService.markerIcons['accident']!;
@@ -117,7 +125,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markers: {...state.markers, marker},
       ));
     } catch (e) {
-      print("Error handling new incident: $e");
+      debugPrint("Error handling new incident: $e");
     }
   }
 
@@ -130,7 +138,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       BitmapDescriptor icon;
       if (incident.markerType == 'content') {
-        icon = await markerService.createContentMarker(incident.image ?? '');
+        icon = await markerService.createContentMarker(
+          incident.image ?? '',
+          size: 90, // Use smaller size for better performance
+        );
       } else {
         String assetPath = markerService.markerIcons[incident.type] ??
             markerService.markerIcons['accident']!;
@@ -154,7 +165,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markers: updatedMarkers,
       ));
     } catch (e) {
-      print("Error handling updated incident: $e");
+      debugPrint("Error handling updated incident: $e");
     }
   }
 
@@ -166,7 +177,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     await result.fold(
       (failure) async {
         final defaultLocation = const LatLng(51.5074, -0.1278); // London
-        print("Using default location due to error: ${failure.message}");
+        debugPrint("Using default location due to error: ${failure.message}");
 
         emit(state.copyWith(
           errorMessage: failure.message,
@@ -179,16 +190,31 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             km: 10));
       },
       (location) async {
+        // Emit location IMMEDIATELY for instant camera positioning
+        emit(state.copyWith(
+          myLocation: location,
+          initialCamera: CameraPosition(target: location, zoom: 14),
+        ));
+
+        // Small delay to let map platform channel initialize
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        // Fetch news immediately (non-blocking)
+        add(FetchNewsEvent(
+            lat: location.latitude, lng: location.longitude, km: 10));
+
+        // Create avatar marker in background (non-blocking for camera)
         final profileImage = sharedPreferences.getString(profileImageKey) ?? '';
         BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
 
+        // Reduce avatar size for better performance (100x100 instead of 150x150)
         if (profileImage.isNotEmpty) {
           icon = await markerService.createAvatarMarker(profileImage,
-              size: const Size(150, 150));
+              size: const Size(100, 100));
         } else {
           icon = await markerService.createCircularAssetMarker(
               "assets/markers/avatar.png",
-              size: const Size(150, 150));
+              size: const Size(100, 100));
         }
 
         final meMarker = Marker(
@@ -198,23 +224,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           anchor: const Offset(0.5, 0.5),
         );
 
-        // Fetch address
+        // Fetch address in background (non-blocking for camera)
         String? address;
         final addressResult =
             await repository.getAddressFromCoordinates(location);
         addressResult.fold(
-          (failure) => print("Failed to get address: ${failure.message}"),
+          (failure) => debugPrint("Failed to get address: ${failure.message}"),
           (addr) => address = addr,
         );
 
+        // Update with avatar marker and address after they're ready
         emit(state.copyWith(
-          myLocation: location,
           myLocationAddress: address,
-          initialCamera: CameraPosition(target: location, zoom: 14),
           markers: {...state.markers, meMarker},
         ));
-        add(FetchNewsEvent(
-            lat: location.latitude, lng: location.longitude, km: 10));
+
         await _fetchInitialIncidents(emit);
       },
     );
@@ -261,7 +285,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             60,
           );
         } catch (e) {
-          print("Error loading route markers: $e");
+          debugPrint("Error loading route markers: $e");
         }
 
         final startMarker = Marker(
@@ -309,7 +333,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     FetchNewsEvent event,
     Emitter<MapState> emit,
   ) async {
-    print(
+    debugPrint(
         "DEBUG: _onFetchNews triggered. Lat: ${event.lat}, Lng: ${event.lng}");
     emit(state.copyWith(isLoadingNews: true));
     final result = await newsRepository.getAggregatedNews(
@@ -321,13 +345,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     await result.fold(
       (failure) async {
-        print("DEBUG: FetchNews Failed: ${failure.message}");
+        debugPrint("DEBUG: FetchNews Failed: ${failure.message}");
         emit(state.copyWith(
-            isLoadingNews: false,
-            errorMessage: failure.message ?? "Failed to fetch news"));
+            isLoadingNews: false, errorMessage: failure.message));
       },
       (newsList) async {
-        print("DEBUG: FetchNews Success. Items found: ${newsList.length}");
+        debugPrint("DEBUG: FetchNews Success. Items found: ${newsList.length}");
         try {
           final List<Incident> incidents = newsList.map((news) {
             double lat = news.latitude ?? 0.0;
@@ -338,7 +361,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               lng = double.tryParse(news.location?.split(',')[1] ?? '0') ?? 0.0;
             }
 
-            print("DEBUG: News ID: ${news.id}, Lat: $lat, Lng: $lng");
+            // Removed noisy per-item print
 
             return Incident(
                 id: news.id,
@@ -355,54 +378,76 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 mediaType: news.mediaType);
           }).toList();
 
-          final List<Future<Marker>> markerFutures =
-              incidents.map((incident) async {
-            BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+          // Load markers progressively in batches for better performance
+          final Set<Marker> newMarkers = {};
+          const int batchSize = 5; // Process 5 markers at a time
 
-            if (incident.markerType == 'icon') {
-              String assetPath = markerService.markerIcons[incident.type] ??
-                  markerService.markerIcons['accident']!;
-              icon = await markerService.bitmapResize(assetPath, width: 50);
-            } else if (incident.markerType == 'news' ||
-                incident.markerType == 'content') {
-              try {
-                String overlayIcon = incident.mediaType == 'video'
-                    ? 'assets/markers/video-icon.png'
-                    : 'assets/markers/image-icon.png';
-                icon = await markerService.createContentMarker(
-                  incident.image ?? '',
-                  size: 110, // Slightly smaller than 120 for better fit
-                  overlayIcon: overlayIcon,
-                );
-              } catch (e) {
-                print(
-                    "DEBUG: Failed to load image for marker ${incident.id}, using default. Error: $e");
-                icon = BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueViolet);
+          for (int i = 0; i < incidents.length; i += batchSize) {
+            final end = (i + batchSize < incidents.length)
+                ? i + batchSize
+                : incidents.length;
+            final batch = incidents.sublist(i, end);
+
+            final List<Future<Marker>> batchFutures =
+                batch.map((incident) async {
+              BitmapDescriptor icon = BitmapDescriptor.defaultMarker;
+
+              if (incident.markerType == 'icon') {
+                String assetPath = markerService.markerIcons[incident.type] ??
+                    markerService.markerIcons['accident']!;
+                icon = await markerService.bitmapResize(assetPath, width: 50);
+              } else if (incident.markerType == 'news' ||
+                  incident.markerType == 'content') {
+                try {
+                  String overlayIcon = incident.mediaType == 'video'
+                      ? 'assets/markers/video-icon.png'
+                      : 'assets/markers/image-icon.png';
+                  icon = await markerService.createContentMarker(
+                    incident.image ?? '',
+                    size: 90, // Reduced from 110 for better performance
+                    overlayIcon: overlayIcon,
+                  );
+                } catch (e) {
+                  debugPrint(
+                      "DEBUG: Failed to load image for marker ${incident.id}, using default. Error: $e");
+                  icon = BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueViolet);
+                }
               }
-            }
 
-            return Marker(
-              markerId: MarkerId(incident.id),
-              position: incident.position,
-              icon: icon,
-              onTap: () {
-                add(SetSelectedIncidentEvent(incident));
-              },
-            );
-          }).toList();
+              return Marker(
+                markerId: MarkerId(incident.id),
+                position: incident.position,
+                icon: icon,
+                onTap: () {
+                  add(SetSelectedIncidentEvent(incident));
+                },
+              );
+            }).toList();
 
-          final List<Marker> newMarkersList = await Future.wait(markerFutures);
-          print("DEBUG: Created ${newMarkersList.length} markers for news.");
-          final Set<Marker> newMarkers = newMarkersList.toSet();
+            // Wait for this batch to complete
+            final batchMarkers = await Future.wait(batchFutures);
+            newMarkers.addAll(batchMarkers);
+
+            // Update UI progressively after each batch
+            emit(state.copyWith(
+              isLoadingNews: i + batchSize >= incidents.length ? false : true,
+              newsList: incidents,
+              markers: {...state.markers, ...newMarkers},
+            ));
+
+            // Removed noisy batch print
+          }
+
+          debugPrint("DEBUG: Created ${newMarkers.length} markers for news.");
           emit(state.copyWith(
             isLoadingNews: false,
             newsList: incidents,
             markers: {...state.markers, ...newMarkers},
           ));
         } catch (e, stack) {
-          print("Error parsing news for map: $e");
-          print(stack);
+          debugPrint("Error parsing news for map: $e");
+          debugPrint(stack.toString());
           emit(state.copyWith(
               isLoadingNews: false, errorMessage: "Error displaying news"));
         }
@@ -479,7 +524,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) async {
     final userId = sharedPreferences.getString(hopperIdKey) ?? '';
     if (userId.isEmpty) {
-      print("Cannot emit alert: userId is empty");
+      debugPrint("Cannot emit alert: userId is empty");
       return;
     }
 
@@ -493,7 +538,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       // We rely on the socket 'incident:created'/'incident:new' event to add the marker back to the map.
       // This ensures we have the correct server-generated ID and data.
     } catch (e) {
-      print("Error emitting alert: $e");
+      debugPrint("Error emitting alert: $e");
     }
   }
 
@@ -602,9 +647,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       center: state.myLocation!,
       radius: radius,
       fillColor: const Color.fromARGB(255, 247, 70, 70)
-          .withOpacity(event.opacity * 0.5),
-      strokeColor:
-          const Color.fromARGB(255, 255, 84, 84).withOpacity(event.opacity),
+          .withValues(alpha: event.opacity * 0.5),
+      strokeColor: const Color.fromARGB(255, 255, 84, 84)
+          .withValues(alpha: event.opacity),
       strokeWidth: 1,
     );
 
@@ -653,10 +698,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final result = await repository.getIncidents();
     await result.fold(
       (failure) async {
-        print("Failed to fetch initial incidents: ${failure.message}");
+        debugPrint("Failed to fetch initial incidents: ${failure.message}");
       },
       (incidents) async {
-        print("Fetched ${incidents.length} initial incidents");
+        debugPrint("Fetched ${incidents.length} initial incidents");
 
         final List<Future<Marker>> markerFutures =
             incidents.map((incident) async {

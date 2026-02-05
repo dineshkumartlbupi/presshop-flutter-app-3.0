@@ -1,0 +1,6 @@
+Analyzing media_upload_service.dart...                          
+
+   info • The imported package 'http_parser' isn't a dependency of the importing package • lib/core/services/media_upload_service.dart:5:8 • depend_on_referenced_packages
+   info • The imported package 'wakelock_plus' isn't a dependency of the importing package • lib/core/services/media_upload_service.dart:7:8 • depend_on_referenced_packages
+
+2 issues found. (ran in 3.8s)

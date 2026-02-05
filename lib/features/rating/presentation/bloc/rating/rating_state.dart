@@ -2,14 +2,7 @@ part of 'rating_bloc.dart';
 
 enum RatingStatus { initial, loading, success, failure }
 
-class RatingState extends Equatable {
-  final RatingStatus status;
-  final List<Review> reviews;
-  final List<MediaHouse> mediaHouses;
-  final bool hasReachedMax;
-  final String errorMessage;
-  final String type; // 'Received' or 'Given'
-  final Map<String, dynamic> filters; // Store filter params
+class RatingState extends Equatable { // Store filter params
 
   const RatingState({
     this.status = RatingStatus.initial,
@@ -20,6 +13,13 @@ class RatingState extends Equatable {
     this.type = 'Received',
     this.filters = const {},
   });
+  final RatingStatus status;
+  final List<Review> reviews;
+  final List<MediaHouse> mediaHouses;
+  final bool hasReachedMax;
+  final String errorMessage;
+  final String type; // 'Received' or 'Given'
+  final Map<String, dynamic> filters;
 
   RatingState copyWith({
     RatingStatus? status,

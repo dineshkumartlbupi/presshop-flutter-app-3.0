@@ -13,15 +13,6 @@ import '../../domain/usecases/social_exists.dart';
 import '../../domain/usecases/social_register_user.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  final RegisterUser registerUser;
-  final SendOtp sendOtp;
-  final CheckUserName checkUserName;
-  final CheckEmail checkEmail;
-  final CheckPhone checkPhone;
-  final GetAvatars getAvatars;
-  final VerifyReferralCode verifyReferralCode;
-  final SocialExists socialExists;
-  final SocialRegisterUser socialRegisterUser;
 
   SignUpBloc({
     required this.registerUser,
@@ -43,6 +34,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<VerifyReferralCodeEvent>(_onVerifyReferralCode);
     on<CheckSocialExistsEvent>(_onCheckSocialExists);
   }
+  final RegisterUser registerUser;
+  final SendOtp sendOtp;
+  final CheckUserName checkUserName;
+  final CheckEmail checkEmail;
+  final CheckPhone checkPhone;
+  final GetAvatars getAvatars;
+  final VerifyReferralCode verifyReferralCode;
+  final SocialExists socialExists;
+  final SocialRegisterUser socialRegisterUser;
 
   Future<void> _onSocialSignUpSubmitted(
     SocialSignUpSubmitted event,

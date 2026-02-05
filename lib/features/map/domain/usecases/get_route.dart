@@ -7,9 +7,9 @@ import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class GetRoute implements UseCase<RouteInfo, GetRouteParams> {
-  final MapRepository repository;
 
   GetRoute(this.repository);
+  final MapRepository repository;
 
   @override
   Future<Either<Failure, RouteInfo>> call(GetRouteParams params) async {
@@ -18,10 +18,10 @@ class GetRoute implements UseCase<RouteInfo, GetRouteParams> {
 }
 
 class GetRouteParams extends Equatable {
-  final LatLng start;
-  final LatLng end;
 
   const GetRouteParams({required this.start, required this.end});
+  final LatLng start;
+  final LatLng end;
 
   @override
   List<Object?> get props => [start, end];

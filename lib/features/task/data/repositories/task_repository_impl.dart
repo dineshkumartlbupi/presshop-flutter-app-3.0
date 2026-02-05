@@ -14,13 +14,13 @@ import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart
 import 'package:presshop/features/task/domain/mappers/task_assigned_mapper.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
-  final TaskRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   TaskRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final TaskRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, TaskAssignedEntity>> getTaskDetail(String taskId,

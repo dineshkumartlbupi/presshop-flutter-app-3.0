@@ -11,9 +11,9 @@ import 'package:presshop/core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class ResetPasswordScreen extends StatefulWidget {
-  String emailAddressValue = "";
 
   ResetPasswordScreen({super.key, required this.emailAddressValue});
+  String emailAddressValue = "";
 
   @override
   State<StatefulWidget> createState() => ResetPasswordScreenState();

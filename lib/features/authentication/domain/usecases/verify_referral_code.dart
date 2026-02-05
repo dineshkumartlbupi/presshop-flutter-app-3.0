@@ -4,9 +4,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
 class VerifyReferralCode implements UseCase<Map<String, dynamic>, String> {
-  final AuthRepository repository;
 
   VerifyReferralCode(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, Map<String, dynamic>>> call(String code) async {

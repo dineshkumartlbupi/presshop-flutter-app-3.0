@@ -100,8 +100,9 @@ class ApiErrorHandler {
   }
 
   static ServerFailure _handleStatusCode(int? statusCode) {
-    if (statusCode == null)
+    if (statusCode == null) {
       return const ServerFailure(message: "Unknown server error");
+    }
 
     switch (statusCode) {
       case 400:
@@ -122,7 +123,7 @@ class ApiErrorHandler {
       case 500:
         return const ServerFailure(message: "Internal server error");
       case 502:
-        return const ServerFailure(message: "Bad Gateway. Server is down.");
+      // return const ServerFailure(message: "Bad Gateway. Server is down.");
       case 503:
         return const ServerFailure(
             message: "Service unavailable. Please try again later.");

@@ -17,15 +17,15 @@ import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
 
 class PublicationListScreen extends StatefulWidget {
-  String contentId = "";
-  String contentType = "";
-  String publicationCount = "";
 
   PublicationListScreen(
       {super.key,
       required this.contentId,
       required this.publicationCount,
       required this.contentType});
+  String contentId = "";
+  String contentType = "";
+  String publicationCount = "";
 
   @override
   State<PublicationListScreen> createState() => _PublicationListScreenState();
@@ -901,7 +901,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
         : Container();
   }
 
-  initializeFilter() {
+  void initializeFilter() {
     sortList.addAll([
       FilterModel(
           name: "View first payment received",
@@ -939,7 +939,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
         builder: (context) {
           return BlocProvider.value(
             value: bloc,
-            child: StatefulBuilder(builder: (context, StateSetter stateSetter) {
+            child: StatefulBuilder(builder: (context, stateSetter) {
               return Padding(
                 padding: EdgeInsets.only(
                   top: size.width * AppDimensions.numD06,
@@ -1358,12 +1358,6 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 }
 
 class FilterModel {
-  String name = "";
-  String icon = "";
-  String? fromDate;
-  String? toDate;
-  bool isSelected = false;
-  String? id = "";
 
   FilterModel({
     this.fromDate,
@@ -1373,4 +1367,10 @@ class FilterModel {
     required this.icon,
     required this.isSelected,
   });
+  String name = "";
+  String icon = "";
+  String? fromDate;
+  String? toDate;
+  bool isSelected = false;
+  String? id = "";
 }

@@ -15,15 +15,15 @@ class PublicationInitial extends PublicationState {}
 class PublicationLoading extends PublicationState {}
 
 class PublicationLoaded extends PublicationState {
-  final PublicationEarningStats stats;
-  final List<MediaHouse> mediaHouses;
-  final PublicationTransactionsResult transactionsResult;
 
   const PublicationLoaded({
     required this.stats,
     required this.mediaHouses,
     required this.transactionsResult,
   });
+  final PublicationEarningStats stats;
+  final List<MediaHouse> mediaHouses;
+  final PublicationTransactionsResult transactionsResult;
 
   @override
   List<Object> get props => [stats, mediaHouses, transactionsResult];
@@ -42,8 +42,8 @@ class PublicationLoaded extends PublicationState {
 }
 
 class PublicationError extends PublicationState {
-  final String message;
   const PublicationError({required this.message});
+  final String message;
   @override
   List<Object> get props => [message];
 }

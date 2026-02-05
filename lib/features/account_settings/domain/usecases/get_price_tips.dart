@@ -7,9 +7,9 @@ import '../entities/faq.dart';
 import '../repositories/account_settings_repository.dart';
 
 class GetPriceTips implements UseCase<List<FAQ>, GetPriceTipsParams> {
-  final AccountSettingsRepository repository;
 
   GetPriceTips(this.repository);
+  final AccountSettingsRepository repository;
 
   @override
   Future<Either<Failure, List<FAQ>>> call(GetPriceTipsParams params) async {
@@ -19,15 +19,15 @@ class GetPriceTips implements UseCase<List<FAQ>, GetPriceTipsParams> {
 }
 
 class GetPriceTipsParams extends Equatable {
-  final String category;
-  final int offset;
-  final int limit;
 
   const GetPriceTipsParams({
     required this.category,
     required this.offset,
     required this.limit,
   });
+  final String category;
+  final int offset;
+  final int limit;
 
   @override
   List<Object?> get props => [category, offset, limit];

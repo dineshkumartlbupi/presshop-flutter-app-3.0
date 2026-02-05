@@ -1,0 +1,5 @@
+Analyzing 2 items...                                            
+
+   info • 'desiredAccuracy' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings • lib/core/services/location_service.dart:97:13 • deprecated_member_use
+
+1 issue found. (ran in 3.7s)

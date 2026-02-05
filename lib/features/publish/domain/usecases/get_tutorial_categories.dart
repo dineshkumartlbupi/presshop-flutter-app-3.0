@@ -7,9 +7,9 @@ import '../repositories/tutorials_repository.dart';
 
 class GetTutorialCategories
     implements UseCase<List<CategoryDataModel>, NoParams> {
-  final TutorialsRepository repository;
 
   GetTutorialCategories(this.repository);
+  final TutorialsRepository repository;
 
   @override
   Future<Either<Failure, List<CategoryDataModel>>> call(NoParams params) async {

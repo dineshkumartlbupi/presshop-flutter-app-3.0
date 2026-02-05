@@ -6,9 +6,9 @@ import '../entities/commission.dart';
 import '../repositories/earning_repository.dart';
 
 class GetCommissions implements UseCase<List<Commission>, GetCommissionsParams> {
-  final EarningRepository repository;
 
   GetCommissions(this.repository);
+  final EarningRepository repository;
 
   @override
   Future<Either<Failure, List<Commission>>> call(GetCommissionsParams params) async {
@@ -17,9 +17,9 @@ class GetCommissions implements UseCase<List<Commission>, GetCommissionsParams> 
 }
 
 class GetCommissionsParams extends Equatable {
-  final Map<String, dynamic> params;
 
   const GetCommissionsParams({required this.params});
+  final Map<String, dynamic> params;
 
   @override
   List<Object> get props => [params];

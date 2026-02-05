@@ -5,9 +5,9 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/profile_repository.dart';
 
 class CheckUserName implements UseCase<bool, CheckUserNameParams> {
-  final ProfileRepository repository;
 
   CheckUserName(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(CheckUserNameParams params) async {
@@ -16,9 +16,9 @@ class CheckUserName implements UseCase<bool, CheckUserNameParams> {
 }
 
 class CheckUserNameParams extends Equatable {
-  final String username;
 
   const CheckUserNameParams({required this.username});
+  final String username;
 
   @override
   List<Object?> get props => [username];

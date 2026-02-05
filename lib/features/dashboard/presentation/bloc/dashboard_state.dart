@@ -16,9 +16,9 @@ class DashboardInitial extends DashboardState {}
 class DashboardLoading extends DashboardState {}
 
 class DashboardActiveAdminsLoaded extends DashboardState {
-  final List<AdminDetail> admins;
 
   const DashboardActiveAdminsLoaded(this.admins);
+  final List<AdminDetail> admins;
 
   @override
   List<Object> get props => [admins];
@@ -29,72 +29,72 @@ class DashboardLocationUpdated extends DashboardState {}
 class DashboardDeviceAdded extends DashboardState {}
 
 class DashboardTaskDetailLoaded extends DashboardState {
-  final TaskAssignedEntity taskDetail;
 
   const DashboardTaskDetailLoaded(this.taskDetail);
+  final TaskAssignedEntity taskDetail;
 
   @override
   List<Object> get props => [taskDetail];
 }
 
 class DashboardRoomIdLoaded extends DashboardState {
-  final Map<String, dynamic> roomData;
 
   const DashboardRoomIdLoaded(this.roomData);
+  final Map<String, dynamic> roomData;
 
   @override
   List<Object> get props => [roomData];
 }
 
 class DashboardAppVersionChecked extends DashboardState {
-  final Map<String, dynamic> versionData;
 
   const DashboardAppVersionChecked(this.versionData);
+  final Map<String, dynamic> versionData;
 
   @override
   List<Object> get props => [versionData];
 }
 
 class StudentBeansActivated extends DashboardState {
-  final Map<String, dynamic> data;
 
   const StudentBeansActivated(this.data);
+  final Map<String, dynamic> data;
 
   @override
   List<Object> get props => [data];
 }
 
 class DashboardMyProfileLoaded extends DashboardState {
-  final User user;
 
   const DashboardMyProfileLoaded(this.user);
+  final User user;
 
   @override
   List<Object> get props => [user];
 }
 
 class DashboardTabChanged extends DashboardState {
-  final int index;
 
   const DashboardTabChanged(this.index);
+  final int index;
 
   @override
   List<Object> get props => [index];
 }
 
 class DashboardError extends DashboardState {
-  final String message;
 
   const DashboardError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];
 }
 
 class DashboardStudentBeansInfoLoaded extends DashboardState {
-  final StudentBeansInfo info;
 
   const DashboardStudentBeansInfoLoaded(this.info);
+  final StudentBeansInfo info;
 
   @override
   List<Object> get props => [info];

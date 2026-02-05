@@ -17,9 +17,9 @@ abstract class ProfileRemoteDataSource {
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-  final ApiClient apiClient;
 
   ProfileRemoteDataSourceImpl(this.apiClient);
+  final ApiClient apiClient;
 
   @override
   Future<UserProfileModel> getProfile(String userId,

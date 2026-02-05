@@ -20,7 +20,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -501,12 +500,13 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                   ),
                 ),
                 if (state is AuthLoading)
-                  Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
+                  // Container(
+                  //   color: Colors.black.withOpacity(0.5),
+                  //   child: const Center(
+                  //     child: CircularProgressIndicator(),
+                  //   ),
+                  // )
+                  const SizedBox.shrink()
               ],
             ),
           );

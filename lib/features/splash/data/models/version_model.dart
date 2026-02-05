@@ -1,9 +1,6 @@
 import 'package:presshop/features/splash/domain/entities/version.dart';
 
 class AppVersionData {
-  final String ios;
-  final String android;
-  final bool forceUpdate;
 
   AppVersionData({
     required this.ios,
@@ -18,6 +15,9 @@ class AppVersionData {
       forceUpdate: json['force_update'] ?? false,
     );
   }
+  final String ios;
+  final String android;
+  final bool forceUpdate;
 
   Map<String, dynamic> toJson() {
     return {
@@ -30,14 +30,10 @@ class AppVersionData {
 
 class VersionModel extends Version {
   const VersionModel({
-    required String ios,
-    required String android,
-    required bool forceUpdate,
-  }) : super(
-          ios: ios,
-          android: android,
-          forceUpdate: forceUpdate,
-        );
+    required super.ios,
+    required super.android,
+    required super.forceUpdate,
+  });
 
   factory VersionModel.fromJson(Map<String, dynamic> json) {
     return VersionModel(

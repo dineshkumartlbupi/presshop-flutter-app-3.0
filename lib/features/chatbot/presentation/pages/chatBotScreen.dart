@@ -16,8 +16,8 @@ import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
 class ChatBotScreen extends StatefulWidget {
-  final bool hideLeading;
   const ChatBotScreen({this.hideLeading = true, super.key});
+  final bool hideLeading;
   @override
   State<ChatBotScreen> createState() => _ChatBotScreenState();
 }
@@ -26,12 +26,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> with AnalyticsPageMixin {
   final bool _alwaysShowChatButton = false;
   final messageController = TextEditingController();
   final scrollController = ScrollController();
-  String senderPic = (sharedPreferences!.getString(avatarKey) ?? "");
+  String senderPic = sharedPreferences!.getString(avatarKey) ?? "";
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {

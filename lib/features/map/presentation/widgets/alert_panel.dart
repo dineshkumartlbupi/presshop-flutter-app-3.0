@@ -4,9 +4,9 @@ import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 
 class AlertPanel extends StatelessWidget {
+  const AlertPanel({super.key, required this.onClose, this.onAlertSelected});
   final VoidCallback onClose;
   final Function(String alertType)? onAlertSelected;
-  const AlertPanel({super.key, required this.onClose, this.onAlertSelected});
 
   @override
   Widget build(BuildContext context) {

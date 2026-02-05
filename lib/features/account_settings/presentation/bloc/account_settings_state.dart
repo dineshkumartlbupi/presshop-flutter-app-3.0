@@ -13,18 +13,18 @@ class AccountSettingsInitial extends AccountSettingsState {}
 class AccountSettingsLoading extends AccountSettingsState {}
 
 class AdminContactInfoLoaded extends AccountSettingsState {
-  final AdminContactInfo adminContactInfo;
 
   const AdminContactInfoLoaded({required this.adminContactInfo});
+  final AdminContactInfo adminContactInfo;
 
   @override
   List<Object> get props => [adminContactInfo];
 }
 
 class AccountDeleted extends AccountSettingsState {
-  final String message;
 
   const AccountDeleted({this.message = 'Account deleted successfully'});
+  final String message;
 
   @override
   List<Object> get props => [message];
@@ -35,9 +35,9 @@ class PasswordChangedSuccess extends AccountSettingsState {
 }
 
 class AccountSettingsError extends AccountSettingsState {
-  final String message;
 
   const AccountSettingsError({required this.message});
+  final String message;
 
   @override
   List<Object> get props => [message];

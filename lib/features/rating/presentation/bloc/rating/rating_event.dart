@@ -10,25 +10,25 @@ abstract class RatingEvent extends Equatable {
 class RatingLoadInitial extends RatingEvent {}
 
 class RatingLoadReviews extends RatingEvent {
-  final bool isRefresh;
-  final bool isLoadMore;
 
   const RatingLoadReviews({this.isRefresh = false, this.isLoadMore = false});
+  final bool isRefresh;
+  final bool isLoadMore;
 }
 
-class RatingTypeChanged extends RatingEvent {
-  final String type; // 'Received' or 'Given'
+class RatingTypeChanged extends RatingEvent { // 'Received' or 'Given'
 
   const RatingTypeChanged(this.type);
+  final String type;
 
   @override
   List<Object> get props => [type];
 }
 
 class RatingFilterUpdated extends RatingEvent {
-  final Map<String, dynamic> filters;
 
   const RatingFilterUpdated(this.filters);
+  final Map<String, dynamic> filters;
 
   @override
   List<Object> get props => [filters];

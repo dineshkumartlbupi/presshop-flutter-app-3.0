@@ -259,12 +259,6 @@ class _WalkthroughState extends State<Walkthrough> {
 }
 
 class WalkthroughData {
-  String image = "";
-  String title1 = "";
-  String title2 = "";
-  String description = "";
-  String buttonText = "";
-  bool showButton = false;
 
   WalkthroughData(
       {required this.image,
@@ -273,4 +267,10 @@ class WalkthroughData {
       required this.description,
       required this.buttonText,
       required this.showButton});
+  String image = "";
+  String title1 = "";
+  String title2 = "";
+  String description = "";
+  String buttonText = "";
+  bool showButton = false;
 }

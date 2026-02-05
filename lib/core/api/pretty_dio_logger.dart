@@ -71,7 +71,7 @@ DATA   : ${_prettyJson(err.response?.data)}
     if (masked.containsKey(headerKey)) {
       debugPrint("Token coming in headers: ${masked[headerKey]}");
       masked[headerKey] = "****TOKEN****";
-      print("Token masked final: ${masked[headerKey]}");
+      debugPrint("Token masked final: ${masked[headerKey]}");
     }
     return masked;
   }
@@ -103,18 +103,45 @@ DATA   : ${_prettyJson(err.response?.data)}
   String _prettyJson(dynamic data) {
     if (data == null) return "null";
     try {
+      // Avoid expensive formatting for very large collections
+      if (data is List && data.length > 100) {
+        return "[LIST of ${data.length} items] (Too large to format safely)";
+      }
+      if (data is Map && data.length > 100) {
+        return "[MAP with ${data.length} keys] (Too large to format safely)";
+      }
+
       const encoder = JsonEncoder.withIndent('  ');
+      String result = "";
       if (data is String) {
         try {
           final decoded = jsonDecode(data);
-          return encoder.convert(decoded);
+          // Check decoded size too
+          if (decoded is List && decoded.length > 100) {
+            return "[DECODED LIST of ${decoded.length} items]";
+          }
+          if (decoded is Map && decoded.length > 100) {
+            return "[DECODED MAP with ${decoded.length} keys]";
+          }
+          result = encoder.convert(decoded);
         } catch (_) {
-          return data;
+          result = data;
         }
+      } else {
+        result = encoder.convert(data);
       }
-      return encoder.convert(data);
+
+      // Truncate string result if still too large
+      if (result.length > 2000) {
+        return "${result.substring(0, 2000)}\n... [TRUNCATED ${result.length - 2000} characters]";
+      }
+      return result;
     } catch (e) {
-      return data.toString();
+      final fallback = data.toString();
+      if (fallback.length > 2000) {
+        return "${fallback.substring(0, 2000)}\n... [TRUNCATED ${fallback.length - 2000} characters]";
+      }
+      return fallback;
     }
   }
 }

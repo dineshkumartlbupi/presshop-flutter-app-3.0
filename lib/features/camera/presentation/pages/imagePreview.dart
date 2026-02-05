@@ -4,8 +4,8 @@ import 'package:presshop/core/core_export.dart';
 
 // ignore: must_be_immutable
 class ImagePreview extends StatefulWidget {
-  String imageURL = "";
   ImagePreview({super.key, required this.imageURL});
+  String imageURL = "";
 
   @override
   State<ImagePreview> createState() => _ImagePreviewState();

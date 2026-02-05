@@ -7,9 +7,9 @@ import 'package:presshop/features/task/domain/repositories/task_repository.dart'
 
 class GetTaskTransactionDetails
     implements UseCase<List<EarningTransactionDetail>, String> {
-  final TaskRepository repository;
 
   GetTaskTransactionDetails(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<EarningTransactionDetail>>> call(

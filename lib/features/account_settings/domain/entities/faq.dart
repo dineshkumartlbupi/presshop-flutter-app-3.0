@@ -1,11 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class FAQ extends Equatable {
-  final String id;
-  final String question;
-  final String answer;
-  final String category;
-  final bool selected;
 
   const FAQ({
     required this.id,
@@ -14,6 +9,11 @@ class FAQ extends Equatable {
     required this.category,
     this.selected = false,
   });
+  final String id;
+  final String question;
+  final String answer;
+  final String category;
+  final bool selected;
 
   @override
   List<Object?> get props => [id, question, answer, category, selected];

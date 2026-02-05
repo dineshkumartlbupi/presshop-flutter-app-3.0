@@ -2,7 +2,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/account_settings/domain/entities/admin_contact_info.dart';
 import 'package:presshop/features/account_settings/domain/usecases/delete_account.dart';

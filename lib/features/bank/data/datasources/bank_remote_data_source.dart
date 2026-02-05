@@ -12,9 +12,9 @@ abstract class BankRemoteDataSource {
 }
 
 class BankRemoteDataSourceImpl implements BankRemoteDataSource {
-  final ApiClient apiClient;
 
   BankRemoteDataSourceImpl(this.apiClient);
+  final ApiClient apiClient;
 
   @override
   Future<List<BankDetailModel>> getBanks() async {

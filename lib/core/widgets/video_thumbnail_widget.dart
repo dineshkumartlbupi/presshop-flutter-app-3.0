@@ -6,13 +6,13 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideoThumbnailWidget extends StatefulWidget {
   const VideoThumbnailWidget({
-    Key? key,
+    super.key,
     required this.videoUrl,
     this.thumbnailUrl,
     this.width,
     this.height,
     this.fit,
-  }) : super(key: key);
+  });
   final String videoUrl;
   final String? thumbnailUrl;
   final double? width;
@@ -69,8 +69,8 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         video: widget.videoUrl,
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.PNG,
-        maxHeight: 500, // Adjust quality as needed
-        quality: 75,
+        maxHeight: 250, // Reduced from 500 for better performance in grid views
+        quality: 70, // Slightly reduced quality for faster processing
       );
       if (mounted) {
         setState(() {
@@ -113,6 +113,9 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         width: widget.width,
         height: widget.height,
         fit: widget.fit ?? BoxFit.cover,
+        // Optimize memory usage for thumbnails
+        memCacheWidth: widget.width != null ? (widget.width! * 2).toInt() : null,
+        memCacheHeight: widget.height != null ? (widget.height! * 2).toInt() : null,
         placeholder: (context, url) => Container(
           width: widget.width,
           height: widget.height,

@@ -7,9 +7,8 @@ import 'package:presshop/core/common_models_export.dart';
 
 class GetTaskChat
     implements UseCase<List<ManageTaskChatModel>, GetTaskChatParams> {
-  final TaskRepository repository;
-
   GetTaskChat(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<ManageTaskChatModel>>> call(

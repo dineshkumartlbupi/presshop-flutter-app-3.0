@@ -10,42 +10,42 @@ abstract class PublishEvent extends Equatable {
 class LoadPublishDataEvent extends PublishEvent {}
 
 class SelectCategoryEvent extends PublishEvent {
-  final String categoryId;
   const SelectCategoryEvent(this.categoryId);
+  final String categoryId;
 
   @override
   List<Object> get props => [categoryId];
 }
 
 class FetchCharitiesEvent extends PublishEvent {
+  const FetchCharitiesEvent({this.offset = 0, this.limit = 10});
   final int offset;
   final int limit;
-  const FetchCharitiesEvent({this.offset = 0, this.limit = 10});
 
   @override
   List<Object> get props => [offset, limit];
 }
 
 class ToggleCharityEvent extends PublishEvent {
-  final bool isSelected;
   const ToggleCharityEvent(this.isSelected);
+  final bool isSelected;
 
   @override
   List<Object> get props => [isSelected];
 }
 
 class SelectCharityEvent extends PublishEvent {
-  final String charityId;
   const SelectCharityEvent(this.charityId);
+  final String charityId;
 
   @override
   List<Object> get props => [charityId];
 }
 
 class SubmitContentEvent extends PublishEvent {
+  const SubmitContentEvent(this.params, this.filePaths);
   final Map<String, dynamic> params;
   final List<String> filePaths;
-  const SubmitContentEvent(this.params, this.filePaths);
 
   @override
   List<Object> get props => [params, filePaths];

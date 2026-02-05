@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image/image.dart' as img_pkg;
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 class MarkerService {
   final Map<String, String> markerIcons = {
@@ -18,6 +19,9 @@ class MarkerService {
     "content": "assets/markers/bg-removed-content.png",
     "hopper": "assets/markers/avatar.png",
   };
+
+  // Cache for bitmap descriptors to avoid reprocessing same images
+  final Map<String, BitmapDescriptor> _bitmapCache = {};
 
   List<Incident> getIncidents() => [];
 
@@ -55,27 +59,56 @@ class MarkerService {
     int width = 70,
     String defaultAsset = "assets/markers/bg-removed-content.png",
   }) async {
+    // Check cache first
+    final cacheKey = '$url:$width';
+    if (_bitmapCache.containsKey(cacheKey)) {
+      return _bitmapCache[cacheKey]!;
+    }
+
     try {
       if (url.isEmpty) {
         return bitmapResize(defaultAsset, width: width);
       }
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final bytes = response.bodyBytes;
-        final img = img_pkg.decodeImage(bytes);
-        if (img == null) return bitmapResize(defaultAsset, width: width);
 
-        final resized = img_pkg.copyResize(img, width: width);
-        final rounded = img_pkg.copyCropCircle(resized);
+      // Download and process in background isolate
+      final result = await compute(_processImageFromUrl, {
+        'url': url,
+        'width': width,
+      });
 
-        return BitmapDescriptor.fromBytes(
-          Uint8List.fromList(img_pkg.encodePng(rounded)),
-        );
+      if (result != null) {
+        final bitmap = BitmapDescriptor.bytes(result);
+        _bitmapCache[cacheKey] = bitmap;
+        return bitmap;
       }
+
       return bitmapResize(defaultAsset, width: width);
     } catch (e) {
       print("Error loading marker from URL: $e");
       return bitmapResize(defaultAsset, width: width);
+    }
+  }
+
+  // Static function to run in isolate
+  static Future<Uint8List?> _processImageFromUrl(Map<String, dynamic> params) async {
+    try {
+      final url = params['url'] as String;
+      final width = params['width'] as int;
+
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        final img = img_pkg.decodeImage(bytes);
+        if (img == null) return null;
+
+        final resized = img_pkg.copyResize(img, width: width);
+        final rounded = img_pkg.copyCropCircle(resized);
+
+        return Uint8List.fromList(img_pkg.encodePng(rounded));
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -188,13 +221,28 @@ class MarkerService {
     String defaultAsset = "assets/markers/bg-removed-content.png",
     String? overlayIcon,
   }) async {
+    // Check cache first
+    final cacheKey = '$url:$size:$overlayIcon';
+    if (_bitmapCache.containsKey(cacheKey)) {
+      return _bitmapCache[cacheKey]!;
+    }
+
     try {
       Uint8List bytes;
       if (url.isNotEmpty) {
-        final response = await http.get(Uri.parse(url));
-        if (response.statusCode == 200) {
-          bytes = response.bodyBytes;
-        } else {
+        try {
+          // Use timeout to prevent hanging on slow networks
+          final response = await http.get(Uri.parse(url)).timeout(
+            const Duration(seconds: 5),
+            onTimeout: () => throw Exception('Image download timeout'),
+          );
+          if (response.statusCode == 200) {
+            bytes = response.bodyBytes;
+          } else {
+            bytes = (await rootBundle.load(defaultAsset)).buffer.asUint8List();
+          }
+        } catch (e) {
+          debugPrint("Failed to download image from $url, using default: $e");
           bytes = (await rootBundle.load(defaultAsset)).buffer.asUint8List();
         }
       } else {
@@ -263,11 +311,21 @@ class MarkerService {
       final byteData =
           await finalImage.toByteData(format: ui.ImageByteFormat.png);
 
-      return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+      final bitmap = BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+
+      // Cache the result
+      _bitmapCache[cacheKey] = bitmap;
+
+      return bitmap;
     } catch (e) {
       print("Error creating content marker: $e");
       return bitmapResize(defaultAsset, width: size);
     }
+  }
+
+  // Clear cache if needed (call when memory is low)
+  void clearCache() {
+    _bitmapCache.clear();
   }
 
   Rect _centerCrop(Size src, Size dst) {

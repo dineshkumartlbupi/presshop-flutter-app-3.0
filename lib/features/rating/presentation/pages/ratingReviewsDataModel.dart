@@ -1,21 +1,4 @@
 class RatingReviewData {
-  String newsName = "";
-  String image = "";
-  String dateTime = "";
-  String date = "";
-  String time = "";
-  String ratingValue = '0.0';
-  String id;
-  String from;
-  String to;
-  String rating = "";
-  String senderType;
-  String review = "";
-  String hopperImage = "";
-  String userName = "";
-  String totalEarning = "";
-  String hopperCreatedAt = "";
-  List<String> featureList = [];
 
   // DateTime createdAt;
   // DateTime updatedAt;
@@ -91,11 +74,28 @@ class RatingReviewData {
       //  updatedAT: dateTimeFormatter(dateTime: json['updatedAt']),
     );
   }
+  String newsName = "";
+  String image = "";
+  String dateTime = "";
+  String date = "";
+  String time = "";
+  String ratingValue = '0.0';
+  String id;
+  String from;
+  String to;
+  String rating = "";
+  String senderType;
+  String review = "";
+  String hopperImage = "";
+  String userName = "";
+  String totalEarning = "";
+  String hopperCreatedAt = "";
+  List<String> featureList = [];
 }
 
 class FilterRatingData {
-  double ratingValue = 0;
-  bool selected = false;
 
   FilterRatingData({required this.ratingValue, required this.selected});
+  double ratingValue = 0;
+  bool selected = false;
 }

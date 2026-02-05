@@ -20,11 +20,6 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class ContentSubmittedScreen extends StatefulWidget {
-  MyContentData? myContentDetail;
-  PublishData? publishData;
-  String price = "";
-  String sellType = "";
-  bool isBeta = false;
 
   ContentSubmittedScreen({
     super.key,
@@ -34,6 +29,11 @@ class ContentSubmittedScreen extends StatefulWidget {
     required this.sellType,
     required this.isBeta,
   });
+  MyContentData? myContentDetail;
+  PublishData? publishData;
+  String price = "";
+  String sellType = "";
+  bool isBeta = false;
 
   @override
   State<StatefulWidget> createState() {

@@ -5,9 +5,9 @@ import '../entities/content_item.dart';
 import '../repositories/content_repository.dart';
 
 class PublishContent implements UseCase<ContentItem, PublishContentParams> {
-  final ContentRepository repository;
 
   PublishContent(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, ContentItem>> call(PublishContentParams params) async {
@@ -16,7 +16,7 @@ class PublishContent implements UseCase<ContentItem, PublishContentParams> {
 }
 
 class PublishContentParams {
-  final Map<String, dynamic> data;
 
   PublishContentParams({required this.data});
+  final Map<String, dynamic> data;
 }

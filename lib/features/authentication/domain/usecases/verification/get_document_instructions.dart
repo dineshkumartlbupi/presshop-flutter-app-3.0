@@ -4,9 +4,9 @@ import 'package:presshop/features/authentication/domain/entities/document_instru
 import 'package:presshop/features/authentication/domain/repositories/verification_repository.dart';
 
 class GetDocumentInstructions {
-  final VerificationRepository repository;
 
   GetDocumentInstructions(this.repository);
+  final VerificationRepository repository;
 
   Future<Either<Failure, List<DocumentInstruction>>> call() async {
     return await repository.getDocumentInstructions();

@@ -15,9 +15,9 @@ abstract class TutorialsRemoteDataSource {
 }
 
 class TutorialsRemoteDataSourceImpl implements TutorialsRemoteDataSource {
-  final ApiClient apiClient;
 
   TutorialsRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<List<TutorialsModel>> getTutorials(

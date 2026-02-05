@@ -15,14 +15,6 @@ import 'package:presshop/features/authentication/domain/usecases/check_email.dar
 import 'package:presshop/features/authentication/domain/usecases/check_phone.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetProfileData getProfileData;
-  final UpdateProfileData updateProfileData;
-  final UploadProfileImage uploadProfileImage;
-  final ChangePassword changePassword;
-  final CheckUserName checkUserName;
-  final GetAvatars getAvatars;
-  final CheckEmail checkEmail;
-  final CheckPhone checkPhone;
 
   ProfileBloc({
     required this.getProfileData,
@@ -43,6 +35,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<CheckEmailEvent>(_onCheckEmail);
     on<CheckPhoneEvent>(_onCheckPhone);
   }
+  final GetProfileData getProfileData;
+  final UpdateProfileData updateProfileData;
+  final UploadProfileImage uploadProfileImage;
+  final ChangePassword changePassword;
+  final CheckUserName checkUserName;
+  final GetAvatars getAvatars;
+  final CheckEmail checkEmail;
+  final CheckPhone checkPhone;
 
   Future<void> _onFetchProfile(
     FetchProfileEvent event,

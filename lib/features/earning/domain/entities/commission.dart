@@ -1,16 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Commission extends Equatable {
-  final double totalEarning;
-  final double commission;
-  final double commissionReceived;
-  final double commissionPending;
-  final String? paidOn;
-  final String firstName;
-  final String lastName;
-  final String dateOfJoining;
-  final String avatar;
-
   const Commission({
     required this.totalEarning,
     required this.commission,
@@ -21,18 +11,33 @@ class Commission extends Equatable {
     required this.lastName,
     required this.dateOfJoining,
     required this.avatar,
+    this.currency = "",
+    this.currencySymbol = "",
   });
+  final double totalEarning;
+  final double commission;
+  final double commissionReceived;
+  final double commissionPending;
+  final String? paidOn;
+  final String firstName;
+  final String lastName;
+  final String dateOfJoining;
+  final String avatar;
+  final String currency;
+  final String currencySymbol;
 
   @override
   List<Object?> get props => [
-    totalEarning,
-    commission,
-    commissionReceived,
-    commissionPending,
-    paidOn,
-    firstName,
-    lastName,
-    dateOfJoining,
-    avatar,
-  ];
+        totalEarning,
+        commission,
+        commissionReceived,
+        commissionPending,
+        paidOn,
+        firstName,
+        lastName,
+        dateOfJoining,
+        avatar,
+        currency,
+        currencySymbol,
+      ];
 }

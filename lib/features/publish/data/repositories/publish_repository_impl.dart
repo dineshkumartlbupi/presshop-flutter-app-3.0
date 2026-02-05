@@ -9,13 +9,13 @@ import '../../domain/repositories/publish_repository.dart';
 import '../datasources/publish_remote_data_source.dart';
 
 class PublishRepositoryImpl implements PublishRepository {
-  final PublishRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   PublishRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final PublishRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<ContentCategory>>> getCategories() async {

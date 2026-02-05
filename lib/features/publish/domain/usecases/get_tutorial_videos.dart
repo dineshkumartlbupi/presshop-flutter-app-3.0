@@ -7,9 +7,9 @@ import '../repositories/tutorials_repository.dart';
 
 class GetTutorialVideos
     implements UseCase<List<TutorialsModel>, GetTutorialVideosParams> {
-  final TutorialsRepository repository;
 
   GetTutorialVideos(this.repository);
+  final TutorialsRepository repository;
 
   @override
   Future<Either<Failure, List<TutorialsModel>>> call(
@@ -20,12 +20,12 @@ class GetTutorialVideos
 }
 
 class GetTutorialVideosParams extends Equatable {
-  final String category;
-  final int offset;
-  final int limit;
 
   const GetTutorialVideosParams(
       {required this.category, required this.offset, required this.limit});
+  final String category;
+  final int offset;
+  final int limit;
 
   @override
   List<Object> get props => [category, offset, limit];

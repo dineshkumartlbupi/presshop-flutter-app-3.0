@@ -14,12 +14,6 @@ part 'notification_event.dart';
 part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  final GetNotifications getNotifications;
-  final MarkNotificationsAsRead markNotificationsAsRead;
-  final ClearAllNotifications clearAllNotifications;
-  final CheckStudentBeans checkStudentBeans;
-  final dashboard_beans.ActivateStudentBeans activateStudentBeans;
-  final MarkStudentBeansVisited markStudentBeansVisited;
 
   NotificationBloc({
     required this.getNotifications,
@@ -36,6 +30,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<StudentBeansActivationEvent>(_onStudentBeansActivation);
     on<MarkStudentBeansVisitedEvent>(_onMarkStudentBeansVisited);
   }
+  final GetNotifications getNotifications;
+  final MarkNotificationsAsRead markNotificationsAsRead;
+  final ClearAllNotifications clearAllNotifications;
+  final CheckStudentBeans checkStudentBeans;
+  final dashboard_beans.ActivateStudentBeans activateStudentBeans;
+  final MarkStudentBeansVisited markStudentBeansVisited;
 
   Future<void> _onFetchNotifications(
       FetchNotificationsEvent event, Emitter<NotificationState> emit) async {

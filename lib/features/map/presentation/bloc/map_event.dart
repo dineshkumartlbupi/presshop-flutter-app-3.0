@@ -14,43 +14,39 @@ class GetCurrentLocationEvent extends MapEvent {
 }
 
 class GetRouteEvent extends MapEvent {
-  final LatLng start;
-  final LatLng end;
 
   const GetRouteEvent({required this.start, required this.end});
+  final LatLng start;
+  final LatLng end;
 
   @override
   List<Object> get props => [start, end];
 }
 
 class SearchPlacesEvent extends MapEvent {
-  final String query;
 
   const SearchPlacesEvent({required this.query});
+  final String query;
 
   @override
   List<Object> get props => [query];
 }
 
 class OnIncidentNewEvent extends MapEvent {
-  final dynamic data;
   const OnIncidentNewEvent(this.data);
+  final dynamic data;
   @override
   List<Object> get props => [data];
 }
 
 class OnIncidentUpdatedEvent extends MapEvent {
-  final dynamic data;
   const OnIncidentUpdatedEvent(this.data);
+  final dynamic data;
   @override
   List<Object> get props => [data];
 }
 
 class FetchNewsEvent extends MapEvent {
-  final double lat;
-  final double lng;
-  final double km;
-  final String category;
 
   const FetchNewsEvent({
     required this.lat,
@@ -58,21 +54,25 @@ class FetchNewsEvent extends MapEvent {
     required this.km,
     this.category = "all",
   });
+  final double lat;
+  final double lng;
+  final double km;
+  final String category;
 
   @override
   List<Object> get props => [lat, lng, km, category];
 }
 
 class SetSearchedLocationEvent extends MapEvent {
-  final LatLng location;
   const SetSearchedLocationEvent(this.location);
+  final LatLng location;
   @override
   List<Object> get props => [location];
 }
 
 class SetSelectedPositionEvent extends MapEvent {
-  final LatLng position;
   const SetSelectedPositionEvent(this.position);
+  final LatLng position;
   @override
   List<Object> get props => [position];
 }
@@ -90,54 +90,54 @@ class ClearSelectedPolygonEvent extends MapEvent {
 }
 
 class UpdateFiltersEvent extends MapEvent {
+
+  const UpdateFiltersEvent({this.alertType, this.distance, this.category});
   final String? alertType;
   final String? distance;
   final String? category;
-
-  const UpdateFiltersEvent({this.alertType, this.distance, this.category});
 
   @override
   List<Object> get props => [alertType ?? '', distance ?? '', category ?? ''];
 }
 
 class AddAlertMarkerEvent extends MapEvent {
-  final String type;
-  final LatLng position;
 
   const AddAlertMarkerEvent({required this.type, required this.position});
+  final String type;
+  final LatLng position;
 
   @override
   List<Object> get props => [type, position];
 }
 
 class SetPreviewAlertMarkerEvent extends MapEvent {
-  final String type;
-  final LatLng position;
 
   const SetPreviewAlertMarkerEvent(
       {required this.type, required this.position});
+  final String type;
+  final LatLng position;
 
   @override
   List<Object> get props => [type, position];
 }
 
 class SetSelectedIncidentEvent extends MapEvent {
-  final Incident incident;
   const SetSelectedIncidentEvent(this.incident);
+  final Incident incident;
   @override
   List<Object> get props => [incident];
 }
 
 class SetMapSelectedLocationEvent extends MapEvent {
-  final LatLng position;
-  final String address;
-  final bool isOrigin;
 
   const SetMapSelectedLocationEvent({
     required this.position,
     required this.address,
     required this.isOrigin,
   });
+  final LatLng position;
+  final String address;
+  final bool isOrigin;
 
   @override
   List<Object> get props => [position, address, isOrigin];
@@ -160,13 +160,13 @@ class ToggleGetDirectionCardEvent extends MapEvent {
 }
 
 class SetDestinationSelectionModeEvent extends MapEvent {
-  final bool isSelectionMode;
-  final bool isOrigin;
 
   const SetDestinationSelectionModeEvent({
     required this.isSelectionMode,
     this.isOrigin = false,
   });
+  final bool isSelectionMode;
+  final bool isOrigin;
 
   @override
   List<Object> get props => [isSelectionMode, isOrigin];
@@ -177,15 +177,15 @@ class ClearRouteEvent extends MapEvent {
 }
 
 class UpdatePulseCircleEvent extends MapEvent {
-  final double radiusMultiplier;
-  final double opacity;
-  final double zoomLevel;
 
   const UpdatePulseCircleEvent({
     required this.radiusMultiplier,
     required this.opacity,
     required this.zoomLevel,
   });
+  final double radiusMultiplier;
+  final double opacity;
+  final double zoomLevel;
 
   @override
   List<Object> get props => [radiusMultiplier, opacity, zoomLevel];

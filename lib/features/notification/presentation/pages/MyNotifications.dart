@@ -24,9 +24,9 @@ import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 
 class MyNotificationScreen extends StatefulWidget {
-  final int count;
 
   const MyNotificationScreen({super.key, required this.count});
+  final int count;
 
   @override
   State<MyNotificationScreen> createState() => _MyNotificationScreenState();
@@ -56,7 +56,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
     showDialog(
         barrierDismissible: false,
         context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -64,7 +64,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
               insetPadding: EdgeInsets.symmetric(
                   horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -80,8 +80,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                           child: Row(
                             children: [
                               Text(
-                                (sourceDataHeading ??
-                                    "Brains, beans, and breaking news!"),
+                                sourceDataHeading ??
+                                    "Brains, beans, and breaking news!",
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: size.width * AppDimensions.numD04,
@@ -140,8 +140,8 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                               ),
                               Expanded(
                                 child: Text(
-                                  (sourceDataDescription ??
-                                      "Please confirm your student status to continue"),
+                                  sourceDataDescription ??
+                                      "Please confirm your student status to continue",
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize:
@@ -214,7 +214,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
   void deleteNotificationDialog(NotificationBloc bloc) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -222,7 +222,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
             insetPadding: EdgeInsets.symmetric(
                 horizontal: size.width * AppDimensions.numD02),
             content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
               return Container(
                 width: size.width * AppDimensions.num1,
                 height: size.width * AppDimensions.numD52,
@@ -500,8 +500,9 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                     horizontal:
                                         size.width * AppDimensions.numD045),
                                 itemBuilder: (context, index) {
-                                  if (index >= state.notifications.length)
+                                  if (index >= state.notifications.length) {
                                     return Container();
+                                  }
                                   final item = state.notifications[index];
                                   return InkWell(
                                     onTap: () {

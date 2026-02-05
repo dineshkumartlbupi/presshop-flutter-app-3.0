@@ -4,42 +4,6 @@ import 'package:presshop/features/map/domain/entities/route_info.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class MapState extends Equatable {
-  final LatLng? myLocation;
-  final CameraPosition? initialCamera;
-  final Set<Marker> markers;
-  final Set<Polyline> polylines;
-  final Set<Polygon> polygons;
-  final Set<Circle> circles;
-  final bool showAlertPanel;
-  final bool showGetDirectionCard;
-  final String? myLocationAddress;
-  final LatLng? destination;
-  final RouteInfo? routeInfo;
-  final Incident? selectedIncident;
-  final LatLng? selectedPosition;
-  final bool isDragging;
-  final String? selectedPolygonId;
-  final LatLng? selectedPolygonPosition;
-  final String? selectedAlertType;
-  final String? selectedDistance;
-  final String? selectedCategory;
-  final bool isDestinationSelectionMode;
-  final bool isSelectingOrigin;
-  final bool isNavigating;
-  final LatLng? currentNavigationPosition;
-  final LatLng? mapSelectedLocation;
-  final String? mapSelectedAddress;
-  final bool? mapSelectedIsOrigin;
-  final LatLng? routeMidpoint;
-
-  final String? previewAlertMarkerId;
-  final String? previewAlertType;
-  final LatLng? previewAlertPosition;
-  final bool isLoadingNews;
-  final LatLng? searchedLocation;
-  final List<Incident> newsList;
-  final List<Map<String, dynamic>> placeSuggestions;
-  final String? errorMessage;
 
   const MapState({
     this.myLocation,
@@ -78,6 +42,42 @@ class MapState extends Equatable {
     this.placeSuggestions = const [],
     this.errorMessage,
   });
+  final LatLng? myLocation;
+  final CameraPosition? initialCamera;
+  final Set<Marker> markers;
+  final Set<Polyline> polylines;
+  final Set<Polygon> polygons;
+  final Set<Circle> circles;
+  final bool showAlertPanel;
+  final bool showGetDirectionCard;
+  final String? myLocationAddress;
+  final LatLng? destination;
+  final RouteInfo? routeInfo;
+  final Incident? selectedIncident;
+  final LatLng? selectedPosition;
+  final bool isDragging;
+  final String? selectedPolygonId;
+  final LatLng? selectedPolygonPosition;
+  final String? selectedAlertType;
+  final String? selectedDistance;
+  final String? selectedCategory;
+  final bool isDestinationSelectionMode;
+  final bool isSelectingOrigin;
+  final bool isNavigating;
+  final LatLng? currentNavigationPosition;
+  final LatLng? mapSelectedLocation;
+  final String? mapSelectedAddress;
+  final bool? mapSelectedIsOrigin;
+  final LatLng? routeMidpoint;
+
+  final String? previewAlertMarkerId;
+  final String? previewAlertType;
+  final LatLng? previewAlertPosition;
+  final bool isLoadingNews;
+  final LatLng? searchedLocation;
+  final List<Incident> newsList;
+  final List<Map<String, dynamic>> placeSuggestions;
+  final String? errorMessage;
 
   MapState copyWith({
     LatLng? myLocation,

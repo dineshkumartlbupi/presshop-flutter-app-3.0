@@ -1,11 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class CategoryData extends Equatable {
-  final String id;
-  final String name;
-  final String? icon;
-  final String percentage;
-  final String type;
 
   const CategoryData({
     required this.id,
@@ -14,6 +9,11 @@ class CategoryData extends Equatable {
     required this.percentage,
     required this.type,
   });
+  final String id;
+  final String name;
+  final String? icon;
+  final String percentage;
+  final String type;
 
   @override
   List<Object?> get props => [

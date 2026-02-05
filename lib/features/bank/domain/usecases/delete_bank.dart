@@ -4,9 +4,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/bank/domain/repositories/bank_repository.dart';
 
 class DeleteBank implements UseCase<void, DeleteBankParams> {
-  final BankRepository repository;
 
   DeleteBank(this.repository);
+  final BankRepository repository;
 
   @override
   Future<Either<Failure, void>> call(DeleteBankParams params) async {
@@ -15,8 +15,8 @@ class DeleteBank implements UseCase<void, DeleteBankParams> {
 }
 
 class DeleteBankParams {
-  final String id;
-  final String stripeBankId;
 
   const DeleteBankParams({required this.id, required this.stripeBankId});
+  final String id;
+  final String stripeBankId;
 }

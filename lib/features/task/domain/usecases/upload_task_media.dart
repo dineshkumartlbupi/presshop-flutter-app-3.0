@@ -13,9 +13,8 @@ class UploadTaskMediaParams {
 
 class UploadTaskMedia
     implements UseCase<Map<String, dynamic>, UploadTaskMediaParams> {
-  final TaskRepository repository;
-
   UploadTaskMedia(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, Map<String, dynamic>>> call(

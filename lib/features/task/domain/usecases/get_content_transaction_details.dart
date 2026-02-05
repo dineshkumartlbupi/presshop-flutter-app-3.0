@@ -8,9 +8,9 @@ import 'package:presshop/features/task/domain/repositories/task_repository.dart'
 class GetContentTransactionDetails
     implements
         UseCase<List<EarningTransactionDetail>, ContentTransactionParams> {
-  final TaskRepository repository;
 
   GetContentTransactionDetails(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<EarningTransactionDetail>>> call(
@@ -21,13 +21,13 @@ class GetContentTransactionDetails
 }
 
 class ContentTransactionParams extends Equatable {
-  final String roomId;
-  final String mediaHouseId;
 
   const ContentTransactionParams({
     required this.roomId,
     required this.mediaHouseId,
   });
+  final String roomId;
+  final String mediaHouseId;
 
   @override
   List<Object> get props => [roomId, mediaHouseId];

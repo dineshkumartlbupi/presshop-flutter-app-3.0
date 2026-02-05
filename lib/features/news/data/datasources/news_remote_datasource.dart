@@ -23,9 +23,8 @@ abstract class NewsRemoteDataSource {
 }
 
 class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
-  final ApiClient client;
-
   NewsRemoteDataSourceImpl({required this.client});
+  final ApiClient client;
 
   @override
   Future<List<NewsModel>> getAggregatedNews({
@@ -57,7 +56,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
       );
       debugPrint(
           "DEBUG: getAggregatedNews response keys: ${response.data is Map ? (response.data as Map).keys.toList() : 'Not a Map'}");
-      debugPrint("DEBUG: getAggregatedNews response data: ${response.data}");
+      // debugPrint("DEBUG: getAggregatedNews response data: ${response.data}");
 
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
@@ -71,8 +70,7 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
         if (data['data'] != null && data['data']['news'] != null) {
           final List<dynamic> newsList = data['data']['news'];
           if (newsList.isNotEmpty) {
-            debugPrint(
-                "DEBUG: getAggregatedNews first news item: ${newsList[0]}");
+            // debugPrint("DEBUG: getAggregatedNews first news item: ${newsList[0]}");
             if (newsList[0] is Map) {
               debugPrint(
                   "DEBUG: first news item keys: ${(newsList[0] as Map).keys.toList()}");

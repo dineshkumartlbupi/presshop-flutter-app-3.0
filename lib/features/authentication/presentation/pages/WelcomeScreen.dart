@@ -11,15 +11,6 @@ import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
 class WelcomeScreen extends StatefulWidget {
-  bool hideLeading = false;
-  String screenType = "";
-  bool isSocialLogin = false;
-  String? sourceDataType = "";
-  bool? sourceDataIsOpened = false;
-  String? sourceDataUrl = "";
-  String? sourceDataHeading = "";
-  String? sourceDataDescription = "";
-  bool isClick = false;
 
   WelcomeScreen({
     super.key,
@@ -33,6 +24,15 @@ class WelcomeScreen extends StatefulWidget {
     this.sourceDataDescription = "",
     this.isClick = false,
   });
+  bool hideLeading = false;
+  String screenType = "";
+  bool isSocialLogin = false;
+  String? sourceDataType = "";
+  bool? sourceDataIsOpened = false;
+  String? sourceDataUrl = "";
+  String? sourceDataHeading = "";
+  String? sourceDataDescription = "";
+  bool isClick = false;
 
   @override
   State<StatefulWidget> createState() => WelcomeScreenState();

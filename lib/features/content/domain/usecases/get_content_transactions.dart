@@ -8,9 +8,8 @@ import '../repositories/content_repository.dart';
 class GetContentTransactions
     implements
         UseCase<List<EarningTransactionDetail>, GetContentTransactionsParams> {
-  final ContentRepository repository;
-
   GetContentTransactions(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, List<EarningTransactionDetail>>> call(

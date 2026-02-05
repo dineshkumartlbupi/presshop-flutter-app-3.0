@@ -24,18 +24,17 @@ import '../../../../features/feed/presentation/pages/feedDataModel.dart';
 enum PageType { CONTENT, TASK }
 
 class TransactionDetailScreen extends StatefulWidget {
-  final String type;
-  bool shouldShowPublication = false;
-  final PageType pageType;
-
-  EarningTransaction? transactionData;
-
   TransactionDetailScreen(
       {super.key,
       required this.type,
       required this.transactionData,
       required this.pageType,
       this.shouldShowPublication = false});
+  final String type;
+  bool shouldShowPublication = false;
+  final PageType pageType;
+
+  EarningTransaction? transactionData;
 
   @override
   State<TransactionDetailScreen> createState() =>
@@ -195,7 +194,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                         SizedBox(width: 6),
                         Text(
                           widget.transactionData!.payableT0Hopper != "null"
-                              ? "$currencySymbol${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
+                              ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol}${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
                               : "",
                           style: commonTextStyle(
                               size: size,
@@ -692,8 +691,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.totalEarningAmt != "null"
-                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
-                          : "$currencySymbol 0",
+                          ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
+                          : "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} 0",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -723,7 +722,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
+                      "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -752,7 +751,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.stripefee))}",
+                      "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.stripefee))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -783,7 +782,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.payableT0Hopper != "null"
-                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
+                          ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}"
                           : "",
                       style: commonTextStyle(
                           size: size,
@@ -1023,7 +1022,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               fontFamily: "AirbnbCereal"),
                         ),
                         Text(
-                          " $currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
+                          " ${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
@@ -1352,8 +1351,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.totalEarningAmt != "null"
-                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
-                          : "$currencySymbol 0",
+                          ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
+                          : "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} 0",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -1383,7 +1382,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
+                      "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -1412,8 +1411,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     Text(
                       widget.transactionData!.stripefee.isNotEmpty
-                          ? "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.stripefee))}"
-                          : "$currencySymbol 0",
+                          ? "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.stripefee))}"
+                          : "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} 0",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -1443,7 +1442,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "$currencySymbol ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
+                      "${widget.transactionData!.currencySymbol.isNotEmpty ? widget.transactionData!.currencySymbol : currencySymbol} ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * AppDimensions.numD035,
@@ -1488,7 +1487,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
     );
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);

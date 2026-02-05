@@ -169,7 +169,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
   void showDeleteDialog(Size size) {
     showDialog(
         context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -177,7 +177,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               insetPadding:
                   EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,

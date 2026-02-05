@@ -1,19 +1,13 @@
 import '../../domain/entities/faq.dart';
 
 class FAQModel extends FAQ {
-  FAQModel({
-    required String id,
-    required String question,
-    required String answer,
-    required String category,
-    bool selected = false,
-  }) : super(
-          id: id,
-          question: question,
-          answer: answer,
-          category: category,
-          selected: selected,
-        );
+  const FAQModel({
+    required super.id,
+    required super.question,
+    required super.answer,
+    required super.category,
+    super.selected,
+  });
 
   factory FAQModel.fromJson(dynamic json) {
     var data = json;

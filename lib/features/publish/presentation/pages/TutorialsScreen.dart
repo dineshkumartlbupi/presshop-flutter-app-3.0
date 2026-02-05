@@ -304,10 +304,9 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                                     width: size.width,
                                                     fit: BoxFit.cover,
                                                     errorBuilder:
-                                                        (BuildContext context,
-                                                            Object exception,
-                                                            StackTrace?
-                                                                stackTrace) {
+                                                        (context,
+                                                            exception,
+                                                            stackTrace) {
                                                       return Image.asset(
                                                         "${commonImagePath}rabbitLogo.png",
                                                         width: size.width,

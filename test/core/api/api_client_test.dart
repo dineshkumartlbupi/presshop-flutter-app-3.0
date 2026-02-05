@@ -145,8 +145,8 @@ void main() {
 }
 
 class TestRequestInterceptorHandler extends RequestInterceptorHandler {
-  final Completer<void> completer;
   TestRequestInterceptorHandler(this.completer);
+  final Completer<void> completer;
 
   @override
   void next(RequestOptions requestOptions) {
@@ -155,8 +155,8 @@ class TestRequestInterceptorHandler extends RequestInterceptorHandler {
 }
 
 class TestErrorInterceptorHandler extends ErrorInterceptorHandler {
-  final Completer<void> completer;
   TestErrorInterceptorHandler(this.completer);
+  final Completer<void> completer;
 
   @override
   void next(DioException err) {

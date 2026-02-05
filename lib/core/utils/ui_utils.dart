@@ -79,7 +79,7 @@ Widget commonLeading(Size size) {
   );
 }
 
-amountFormat(String? price) {
+String amountFormat(String? price) {
   if (price == null || price.isEmpty || price.toLowerCase() == "nan") {
     return "0";
   }

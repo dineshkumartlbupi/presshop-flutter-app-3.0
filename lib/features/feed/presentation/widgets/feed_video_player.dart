@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class FeedVideoPlayer extends StatelessWidget {
-  final Key videoKey;
-  final ChewieController? chewieController;
 
   const FeedVideoPlayer({
     super.key,
     required this.videoKey,
     required this.chewieController,
   });
+  final Key videoKey;
+  final ChewieController? chewieController;
 
   @override
   Widget build(BuildContext context) {

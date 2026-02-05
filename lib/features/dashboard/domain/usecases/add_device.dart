@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/dashboard_repository.dart';
 
 class AddDevice implements UseCase<void, AddDeviceParams> {
-  final DashboardRepository repository;
 
   AddDevice(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, void>> call(AddDeviceParams params) async {
@@ -16,9 +16,9 @@ class AddDevice implements UseCase<void, AddDeviceParams> {
 }
 
 class AddDeviceParams extends Equatable {
-  final Map<String, dynamic> data;
 
   const AddDeviceParams(this.data);
+  final Map<String, dynamic> data;
 
   @override
   List<Object> get props => [data];

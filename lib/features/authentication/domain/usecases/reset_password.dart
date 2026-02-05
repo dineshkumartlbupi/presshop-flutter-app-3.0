@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
 class ResetPassword implements UseCase<bool, ResetPasswordParams> {
-  final AuthRepository repository;
 
   ResetPassword(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(ResetPasswordParams params) async {
@@ -16,10 +16,10 @@ class ResetPassword implements UseCase<bool, ResetPasswordParams> {
 }
 
 class ResetPasswordParams extends Equatable {
-  final String email;
-  final String password;
 
   const ResetPasswordParams({required this.email, required this.password});
+  final String email;
+  final String password;
 
   @override
   List<Object> get props => [email, password];

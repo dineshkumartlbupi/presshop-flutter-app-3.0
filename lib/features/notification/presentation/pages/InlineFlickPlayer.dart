@@ -5,14 +5,14 @@ import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 import 'InlineVideoControllerManager.dart';
 
 class InlineFlickPlayer extends StatefulWidget {
-  final String videoUrl;
-  final double height;
 
   const InlineFlickPlayer({
     super.key,
     required this.videoUrl,
     this.height = 220,
   });
+  final String videoUrl;
+  final double height;
 
   @override
   State<InlineFlickPlayer> createState() => _InlineFlickPlayerState();

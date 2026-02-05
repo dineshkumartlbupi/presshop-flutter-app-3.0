@@ -14,9 +14,6 @@ part 'faq_event.dart';
 part 'faq_state.dart';
 
 class FAQBloc extends Bloc<FAQEvent, FAQState> {
-  final GetFAQs getFAQs;
-  final GetPriceTips getPriceTips;
-  final GetFAQCategories getFAQCategories;
 
   FAQBloc({
     required this.getFAQs,
@@ -29,6 +26,9 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
     on<FAQToggleItem>(_onToggleItem);
     on<FAQSearch>(_onSearch);
   }
+  final GetFAQs getFAQs;
+  final GetPriceTips getPriceTips;
+  final GetFAQCategories getFAQCategories;
 
   Future<void> _onLoadCategories(
     FAQLoadCategories event,
@@ -51,7 +51,7 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
         await getFAQCategories(GetFAQCategoriesParams(type: apiType));
 
     result.fold(
-      (Failure failure) => emit(state.copyWith(
+      (failure) => emit(state.copyWith(
           status: FAQStatus.failure, errorMessage: failure.message)),
       (categories) {
         if (categories.isNotEmpty) {
@@ -148,7 +148,7 @@ class FAQBloc extends Bloc<FAQEvent, FAQState> {
     }
 
     result.fold(
-      (Failure failure) => emit(state.copyWith(
+      (failure) => emit(state.copyWith(
           status: FAQStatus.failure, errorMessage: failure.message)),
       (items) {
         emit(state.copyWith(

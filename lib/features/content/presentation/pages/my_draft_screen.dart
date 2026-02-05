@@ -17,11 +17,10 @@ import '../../../../core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class MyDraftScreen extends StatefulWidget {
-  bool publishedContent = false;
-  String screenType = "";
-
   MyDraftScreen(
       {super.key, required this.publishedContent, required this.screenType});
+  bool publishedContent = false;
+  String screenType = "";
 
   @override
   State<StatefulWidget> createState() {
@@ -327,7 +326,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
           icon: "ic_yearly_calendar.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
     ]);
     filterList.addAll([
       FilterModel(
@@ -335,7 +336,9 @@ class MyDraftScreenState extends State<MyDraftScreen> {
           icon: "ic_exclusive.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.allSharedContentText, icon: "ic_share.png", isSelected: false),
+          name: AppStrings.allSharedContentText,
+          icon: "ic_share.png",
+          isSelected: false),
     ]);
   }
 
@@ -462,7 +465,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
           topRight: Radius.circular(size.width * AppDimensions.numD085),
         )),
         builder: (context) {
-          return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return Padding(
               padding: EdgeInsets.only(
                 top: size.width * AppDimensions.numD06,
@@ -493,7 +496,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                           "Sort and Filter",
                           style: commonTextStyle(
                               size: size,
-                              fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
+                              fontSize: size.width *
+                                  AppDimensions.appBarHeadingFontSizeNew,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
@@ -569,7 +573,8 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                               fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () {
                         Navigator.pop(context);
                         myDraftApi();
                       }),
@@ -843,7 +848,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
             contentList = data['contentList'];
           }
 
-          var listModel = contentList as List;
+          var listModel = contentList;
           var list = listModel.map((e) => MyContentData.fromJson(e)).toList();
           if (list.isNotEmpty) {
             _refreshController.loadComplete();

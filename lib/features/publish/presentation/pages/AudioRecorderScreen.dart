@@ -203,7 +203,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
     debugPrint("NewStartTime: $startTime");
     debugPrint("CurrentTime: ${DateTime.now()}");
 
-    myTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+    myTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       var diff = DateTime.now().difference(startTime!);
 
       int hoursDiff = diff.inHours < 60 ? diff.inHours : 0;

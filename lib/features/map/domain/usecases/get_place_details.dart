@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class GetPlaceDetails implements UseCase<LatLng, String> {
-  final MapRepository repository;
 
   GetPlaceDetails(this.repository);
+  final MapRepository repository;
 
   @override
   Future<Either<Failure, LatLng>> call(String placeId) async {

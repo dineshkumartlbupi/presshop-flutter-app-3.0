@@ -3,13 +3,6 @@ part of 'faq_bloc.dart';
 enum FAQStatus { initial, loading, success, failure }
 
 class FAQState extends Equatable {
-  final FAQStatus status;
-  final List<ContentCategory> categories;
-  final int selectedCategoryIndex;
-  final List<FAQ> items; // Items to display (filtered or all)
-  final List<FAQ> allItems; // All items for the category (for searching)
-  final String searchQuery;
-  final String errorMessage;
 
   const FAQState({
     this.status = FAQStatus.initial,
@@ -20,6 +13,13 @@ class FAQState extends Equatable {
     this.searchQuery = '',
     this.errorMessage = '',
   });
+  final FAQStatus status;
+  final List<ContentCategory> categories;
+  final int selectedCategoryIndex;
+  final List<FAQ> items; // Items to display (filtered or all)
+  final List<FAQ> allItems; // All items for the category (for searching)
+  final String searchQuery;
+  final String errorMessage;
 
   FAQState copyWith({
     FAQStatus? status,

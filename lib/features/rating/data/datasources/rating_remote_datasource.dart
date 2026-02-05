@@ -11,9 +11,9 @@ abstract class RatingRemoteDataSource {
 }
 
 class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
-  final ApiClient apiClient;
 
   RatingRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<List<RatingReviewModel>> getReviews(

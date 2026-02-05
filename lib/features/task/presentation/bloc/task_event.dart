@@ -17,14 +17,14 @@ class GetTaskDetailEvent extends TaskEvent {
 }
 
 class AcceptRejectTaskEvent extends TaskEvent {
-  final String taskId;
-  final String mediaHouseId;
-  final String status;
   const AcceptRejectTaskEvent({
     required this.taskId,
     required this.mediaHouseId,
     required this.status,
   });
+  final String taskId;
+  final String mediaHouseId;
+  final String status;
   @override
   List<Object> get props => [taskId, mediaHouseId, status];
 }
@@ -51,41 +51,41 @@ class UploadTaskMediaEvent extends TaskEvent {
 }
 
 class GetRoomIdEvent extends TaskEvent {
-  final String receiverId;
-  final String taskId;
-  final String roomType;
-  final String type;
   const GetRoomIdEvent({
     required this.receiverId,
     required this.taskId,
     required this.roomType,
     required this.type,
   });
+  final String receiverId;
+  final String taskId;
+  final String roomType;
+  final String type;
   @override
   List<Object> get props => [receiverId, taskId, roomType, type];
 }
 
 class GetHopperAcceptedCountEvent extends TaskEvent {
-  final String taskId;
   const GetHopperAcceptedCountEvent(this.taskId);
+  final String taskId;
   @override
   List<Object> get props => [taskId];
 }
 
 class GetTaskTransactionDetailsEvent extends TaskEvent {
-  final String transactionId;
   const GetTaskTransactionDetailsEvent(this.transactionId);
+  final String transactionId;
   @override
   List<Object> get props => [transactionId];
 }
 
 class GetContentTransactionDetailsEvent extends TaskEvent {
-  final String roomId;
-  final String mediaHouseId;
   const GetContentTransactionDetailsEvent({
     required this.roomId,
     required this.mediaHouseId,
   });
+  final String roomId;
+  final String mediaHouseId;
   @override
   List<Object> get props => [roomId, mediaHouseId];
 }

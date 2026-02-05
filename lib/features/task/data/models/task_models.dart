@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:presshop/core/core_export.dart';
 import '../../domain/entities/task_detail.dart';
 import '../../domain/entities/task_media.dart';
 
 class TaskVideoModel {
-  String id = "";
-  String type = "";
-  String thumbnail = "";
-  String imageVideoUrl = "";
-  bool paidStatus = false;
-  String amount = "";
-  bool paidStatusToHopper = false;
-  String paidAmount = "";
-  String payableAmount = "";
-  String commitionAmount = "";
-  String address = "";
-
   TaskVideoModel(
       {this.id = "",
       this.type = "",
@@ -47,10 +36,21 @@ class TaskVideoModel {
     commitionAmount = json["commition_to_payable"].toString();
     address = json["location"] ?? "";
   }
+  String id = "";
+  String type = "";
+  String thumbnail = "";
+  String imageVideoUrl = "";
+  bool paidStatus = false;
+  String amount = "";
+  bool paidStatusToHopper = false;
+  String paidAmount = "";
+  String payableAmount = "";
+  String commitionAmount = "";
+  String address = "";
 }
 
 class TaskDetailMediaModel extends TaskMedia {
-  TaskDetailMediaModel({
+  const TaskDetailMediaModel({
     super.id = "",
     super.type = "",
     super.thumbnail = "",
@@ -80,7 +80,7 @@ class TaskDetailMediaModel extends TaskMedia {
 }
 
 class TaskDetailModel extends TaskDetail {
-  TaskDetailModel({
+  const TaskDetailModel({
     super.id = "",
     super.isNeedPhoto = false,
     super.isNeedVideo = false,
@@ -118,6 +118,8 @@ class TaskDetailModel extends TaskDetail {
     super.roomId = "",
     super.minimumPriceRange = "",
     super.maximumPriceRange = "",
+    super.currency = "",
+    super.currencySymbol = "",
   });
 
   factory TaskDetailModel.fromJson(Map<String, dynamic> json,
@@ -237,6 +239,11 @@ class TaskDetailModel extends TaskDetail {
       longitude: longitude,
       minimumPriceRange: minimumPriceRange,
       maximumPriceRange: maximumPriceRange,
+      currency: (json["currency"] ?? "").toString(),
+      currencySymbol: (json["currency_symbol"] != null &&
+              json["currency_symbol"].toString().isNotEmpty)
+          ? json["currency_symbol"].toString()
+          : getCurrencySymbol(json["currency"]?.toString()),
       roomId: roomId,
     );
   }
@@ -280,6 +287,8 @@ class TaskDetailModel extends TaskDetail {
       roomId: entity.roomId,
       minimumPriceRange: entity.minimumPriceRange,
       maximumPriceRange: entity.maximumPriceRange,
+      currency: entity.currency,
+      currencySymbol: entity.currencySymbol,
     );
   }
 }

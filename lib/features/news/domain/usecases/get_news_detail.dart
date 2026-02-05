@@ -6,9 +6,9 @@ import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/domain/repositories/news_repository.dart';
 
 class GetNewsDetail implements UseCase<News, GetNewsDetailParams> {
-  final NewsRepository repository;
 
   GetNewsDetail(this.repository);
+  final NewsRepository repository;
 
   @override
   Future<Either<Failure, News>> call(GetNewsDetailParams params) async {
@@ -17,9 +17,9 @@ class GetNewsDetail implements UseCase<News, GetNewsDetailParams> {
 }
 
 class GetNewsDetailParams extends Equatable {
-  final String id;
 
   const GetNewsDetailParams({required this.id});
+  final String id;
 
   @override
   List<Object?> get props => [id];

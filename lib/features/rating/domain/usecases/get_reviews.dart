@@ -6,9 +6,9 @@ import 'package:presshop/features/rating/domain/entities/review.dart';
 import 'package:presshop/features/rating/domain/repositories/rating_repository.dart';
 
 class GetReviews implements UseCase<List<Review>, GetReviewsParams> {
-  final RatingRepository repository;
 
   GetReviews(this.repository);
+  final RatingRepository repository;
 
   @override
   Future<Either<Failure, List<Review>>> call(GetReviewsParams params) async {
@@ -27,15 +27,6 @@ class GetReviews implements UseCase<List<Review>, GetReviewsParams> {
 }
 
 class GetReviewsParams extends Equatable {
-  final String type;
-  final int offset;
-  final int limit;
-  final String? startDate;
-  final String? endDate;
-  final String? publicationId;
-  final String? rating;
-  final String? startRating;
-  final String? endRating;
 
   const GetReviewsParams({
     required this.type,
@@ -48,6 +39,15 @@ class GetReviewsParams extends Equatable {
     this.startRating,
     this.endRating,
   });
+  final String type;
+  final int offset;
+  final int limit;
+  final String? startDate;
+  final String? endDate;
+  final String? publicationId;
+  final String? rating;
+  final String? startRating;
+  final String? endRating;
 
   @override
   List<Object?> get props => [

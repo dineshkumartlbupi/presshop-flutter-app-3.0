@@ -13,16 +13,16 @@ abstract class ChatEvent extends Equatable {
 class LoadChatListEvent extends ChatEvent {}
 
 class SearchUserEvent extends ChatEvent {
-  final String query;
   const SearchUserEvent(this.query);
+  final String query;
 
   @override
   List<Object> get props => [query];
 }
 
 class CheckOnlineStatusEvent extends ChatEvent {
-  final String userId;
   const CheckOnlineStatusEvent(this.userId);
+  final String userId;
 
   @override
   List<Object> get props => [userId];
@@ -30,16 +30,16 @@ class CheckOnlineStatusEvent extends ChatEvent {
 
 /// Events for Conversation
 class EnterChatRoomEvent extends ChatEvent {
-  final String roomId;
-  final String receiverId;
-  final String receiverName;
-  final String receiverImage;
   const EnterChatRoomEvent({
     required this.roomId,
     required this.receiverId,
     required this.receiverName,
     required this.receiverImage,
   });
+  final String roomId;
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
 
   @override
   List<Object> get props => [roomId, receiverId, receiverName, receiverImage];
@@ -48,13 +48,6 @@ class EnterChatRoomEvent extends ChatEvent {
 class LeaveChatRoomEvent extends ChatEvent {}
 
 class SendMessageEvent extends ChatEvent {
-  final String message;
-  final String messageType; // text, image, video, audio
-  final String? filePath; // For media
-  final String? thumbnailPath; // For video
-  final String? audioDuration;
-  final String? replyToMessageId; // For reply
-  final String? replyMessageContent;
 
   const SendMessageEvent(
       {required this.message,
@@ -64,6 +57,13 @@ class SendMessageEvent extends ChatEvent {
       this.audioDuration,
       this.replyToMessageId,
       this.replyMessageContent});
+  final String message;
+  final String messageType; // text, image, video, audio
+  final String? filePath; // For media
+  final String? thumbnailPath; // For video
+  final String? audioDuration;
+  final String? replyToMessageId; // For reply
+  final String? replyMessageContent;
 
   @override
   List<Object> get props => [
@@ -77,26 +77,26 @@ class SendMessageEvent extends ChatEvent {
 }
 
 class UpdateTypingStatusEvent extends ChatEvent {
+  const UpdateTypingStatusEvent({required this.isTyping, required this.roomId});
   final bool isTyping;
   final String roomId;
-  const UpdateTypingStatusEvent({required this.isTyping, required this.roomId});
 
   @override
   List<Object> get props => [isTyping, roomId];
 }
 
 class ReceiveMessageEvent extends ChatEvent {
-  final List<DocumentSnapshot> messages;
   const ReceiveMessageEvent(this.messages);
+  final List<DocumentSnapshot> messages;
 
   @override
   List<Object> get props => [messages];
 }
 
 /// Media Picking
-class PickChatAttachmentEvent extends ChatEvent {
-  final String type; // 'camera', 'gallery', 'video'
+class PickChatAttachmentEvent extends ChatEvent { // 'camera', 'gallery', 'video'
   const PickChatAttachmentEvent(this.type);
+  final String type;
 
   @override
   List<Object> get props => [type];
@@ -109,32 +109,32 @@ class StopAudioRecordingEvent extends ChatEvent {}
 
 /// App Lifecycle for Online Status
 class UpdateAppLifecycleEvent extends ChatEvent {
+  const UpdateAppLifecycleEvent({required this.isOnline, required this.roomId});
   final bool isOnline;
   final String roomId;
-  const UpdateAppLifecycleEvent({required this.isOnline, required this.roomId});
   @override
   List<Object> get props => [isOnline, roomId];
 }
 
 class OtherUserTypingUpdatedEvent extends ChatEvent {
-  final bool isTyping;
   const OtherUserTypingUpdatedEvent(this.isTyping);
+  final bool isTyping;
 
   @override
   List<Object> get props => [isTyping];
 }
 
 class ChatListUpdatedEvent extends ChatEvent {
-  final List<DocumentSnapshot> chatList;
   const ChatListUpdatedEvent(this.chatList);
+  final List<DocumentSnapshot> chatList;
 
   @override
   List<Object> get props => [chatList];
 }
 
 class OtherUserOnlineStatusUpdatedEvent extends ChatEvent {
-  final bool isOnline;
   const OtherUserOnlineStatusUpdatedEvent(this.isOnline);
+  final bool isOnline;
 
   @override
   List<Object> get props => [isOnline];

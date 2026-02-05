@@ -6,13 +6,13 @@ import 'package:presshop/features/bank/domain/entities/bank_detail.dart';
 import 'package:presshop/features/bank/domain/repositories/bank_repository.dart';
 
 class BankRepositoryImpl implements BankRepository {
-  final BankRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   BankRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final BankRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, List<BankDetail>>> getBanks() async {

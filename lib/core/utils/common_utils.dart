@@ -80,3 +80,21 @@ String getMediaImageUrl(String? url,
 
   return fixS3Url("$baseUrl$trimmedUrl");
 }
+
+String getCurrencySymbol(String? currencyCode) {
+  if (currencyCode == null || currencyCode.isEmpty) return "";
+  switch (currencyCode.toUpperCase()) {
+    case 'GBP':
+      return '£';
+    case 'USD':
+    case 'AUD':
+    case 'CAD':
+      return '\$';
+    case 'EUR':
+      return '€';
+    case 'INR':
+      return '₹';
+    default:
+      return currencyCode;
+  }
+}

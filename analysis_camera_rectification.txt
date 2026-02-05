@@ -1,0 +1,9 @@
+Analyzing 3 items...                                            
+
+   info • The file name 'CameraScreen.dart' isn't a lower_case_with_underscores identifier • lib/features/camera/presentation/pages/CameraScreen.dart:1:1 • file_names
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/camera/presentation/pages/CameraScreen.dart:157:21 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/camera/presentation/pages/CameraScreen.dart:170:29 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/camera/presentation/pages/CameraScreen.dart:180:21 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/camera/presentation/pages/CameraScreen.dart:209:19 • use_build_context_synchronously
+
+5 issues found. (ran in 3.7s)

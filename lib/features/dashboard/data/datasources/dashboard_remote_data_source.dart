@@ -22,9 +22,9 @@ abstract class DashboardRemoteDataSource {
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
-  final ApiClient apiClient;
 
   DashboardRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<List<AdminDetailModel>> getActiveAdmins() async {

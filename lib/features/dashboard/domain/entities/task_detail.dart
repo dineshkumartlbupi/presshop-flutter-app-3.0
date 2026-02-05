@@ -1,39 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class TaskDetail extends Equatable {
-  final String id;
-  final bool isNeedPhoto;
-  final bool isNeedVideo;
-  final bool isNeedInterview;
-  final String mode;
-  final String type;
-  final String status;
-  final String paidStatus;
-  final DateTime deadLine;
-  final String mediaHouseId;
-  final String mediaHouseImage;
-  final String mediaHouseName;
-  final String companyName;
-  final String title;
-  final String description;
-  final List<String> acceptedBy;
-  final String specialReq;
-  final String location;
-  final String photoPrice;
-  final String videoPrice;
-  final String interviewPrice;
-  final String receivedAmount;
-  final double latitude;
-  final double longitude;
-  final String role;
-  final String categoryId;
-  final String userId;
-  final String createdAt;
-  final String discountPercent;
-  final String miles;
-  final String byFeet;
-  final String byCar;
-  final String broadcastLocation;
 
   const TaskDetail({
     required this.id,
@@ -70,6 +37,39 @@ class TaskDetail extends Equatable {
     this.byCar = "",
     this.broadcastLocation = "",
   });
+  final String id;
+  final bool isNeedPhoto;
+  final bool isNeedVideo;
+  final bool isNeedInterview;
+  final String mode;
+  final String type;
+  final String status;
+  final String paidStatus;
+  final DateTime deadLine;
+  final String mediaHouseId;
+  final String mediaHouseImage;
+  final String mediaHouseName;
+  final String companyName;
+  final String title;
+  final String description;
+  final List<String> acceptedBy;
+  final String specialReq;
+  final String location;
+  final String photoPrice;
+  final String videoPrice;
+  final String interviewPrice;
+  final String receivedAmount;
+  final double latitude;
+  final double longitude;
+  final String role;
+  final String categoryId;
+  final String userId;
+  final String createdAt;
+  final String discountPercent;
+  final String miles;
+  final String byFeet;
+  final String byCar;
+  final String broadcastLocation;
 
   @override
   List<Object?> get props => [

@@ -3,14 +3,14 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class ExpandableText extends StatefulWidget {
-  final String text;
-  final int trimLines;
 
   const ExpandableText({
     super.key,
     required this.text,
     this.trimLines = 4,
   });
+  final String text;
+  final int trimLines;
 
   @override
   State<ExpandableText> createState() => _ExpandableTextState();

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 class RouteInfoWindow extends StatelessWidget {
-  final String distance;
-  final String duration;
-  final VoidCallback onClose;
 
   const RouteInfoWindow({
     super.key,
@@ -11,6 +8,9 @@ class RouteInfoWindow extends StatelessWidget {
     required this.duration,
     required this.onClose,
   });
+  final String distance;
+  final String duration;
+  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {

@@ -4,9 +4,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class ReportIncident implements UseCase<void, ReportIncidentParams> {
-  final MapRepository repository;
 
   ReportIncident(this.repository);
+  final MapRepository repository;
 
   @override
   Future<Either<Failure, void>> call(ReportIncidentParams params) async {
@@ -15,7 +15,7 @@ class ReportIncident implements UseCase<void, ReportIncidentParams> {
 }
 
 class ReportIncidentParams {
-  final Map<String, dynamic> data;
 
   ReportIncidentParams(this.data);
+  final Map<String, dynamic> data;
 }

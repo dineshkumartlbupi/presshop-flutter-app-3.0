@@ -1,0 +1,12 @@
+Analyzing PublishContentScreen.dart...                          
+
+   info • The file name 'PublishContentScreen.dart' isn't a lower_case_with_underscores identifier • lib/features/publish/presentation/pages/PublishContentScreen.dart:1:1 • file_names
+   info • Don't use 'BuildContext's across async gaps • lib/features/publish/presentation/pages/PublishContentScreen.dart:2725:49 • use_build_context_synchronously
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/publish/presentation/pages/PublishContentScreen.dart:2803:37 • unawaited_futures
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/publish/presentation/pages/PublishContentScreen.dart:2806:37 • unawaited_futures
+   info • Don't use 'BuildContext's across async gaps • lib/features/publish/presentation/pages/PublishContentScreen.dart:3251:53 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/features/publish/presentation/pages/PublishContentScreen.dart:3607:9 • avoid_print
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/publish/presentation/pages/PublishContentScreen.dart:3624:21 • unawaited_futures
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/publish/presentation/pages/PublishContentScreen.dart:3659:23 • unawaited_futures
+
+8 issues found. (ran in 3.6s)

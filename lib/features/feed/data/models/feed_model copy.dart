@@ -1,8 +1,6 @@
 // hopper_feed_model.dart
 
 class HopperFeedResponse {
-  final int code;
-  final List<HopperFeed> response;
 
   HopperFeedResponse({
     required this.code,
@@ -17,32 +15,13 @@ class HopperFeedResponse {
           .toList(),
     );
   }
+  final int code;
+  final List<HopperFeed> response;
 }
 
 // ---------------------------------------------------------------------------
 
 class HopperFeed {
-  final String id;
-  final String? description;
-  final String? location;
-  final String? latitude;
-  final String? longitude;
-  final String? categoryId;
-  final HopperUser? hopper;
-  final String? type;
-  final String? askPrice;
-  final String? timestamp;
-  final bool isDraft;
-  final bool isCharity;
-  final String? charity;
-  final List<String> images;
-  final List<String> videos;
-  final String status;
-  final List<ContentMetadata> contentMetadata;
-  final double displayPrice;
-  final String displayCurrency;
-  final bool isFavourite;
-  final bool isLiked;
 
   HopperFeed({
     required this.id,
@@ -97,16 +76,32 @@ class HopperFeed {
       isLiked: json['is_liked'] ?? false,
     );
   }
+  final String id;
+  final String? description;
+  final String? location;
+  final String? latitude;
+  final String? longitude;
+  final String? categoryId;
+  final HopperUser? hopper;
+  final String? type;
+  final String? askPrice;
+  final String? timestamp;
+  final bool isDraft;
+  final bool isCharity;
+  final String? charity;
+  final List<String> images;
+  final List<String> videos;
+  final String status;
+  final List<ContentMetadata> contentMetadata;
+  final double displayPrice;
+  final String displayCurrency;
+  final bool isFavourite;
+  final bool isLiked;
 }
 
 // ---------------------------------------------------------------------------
 
 class HopperUser {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String phone;
-  final Avatar? avatar;
 
   HopperUser({
     required this.id,
@@ -126,13 +121,16 @@ class HopperUser {
           json['avatar_id'] != null ? Avatar.fromJson(json['avatar_id']) : null,
     );
   }
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String phone;
+  final Avatar? avatar;
 }
 
 // ---------------------------------------------------------------------------
 
 class Avatar {
-  final String id;
-  final String avatar;
 
   Avatar({
     required this.id,
@@ -145,17 +143,13 @@ class Avatar {
       avatar: json['avatar'] ?? '',
     );
   }
+  final String id;
+  final String avatar;
 }
 
 // ---------------------------------------------------------------------------
 
 class ContentMetadata {
-  final String media;
-  final bool isNsfw;
-  final bool deepFake;
-  final String mediaType;
-  final bool isWatermarked;
-  final String? watermarkedMedia;
 
   ContentMetadata({
     required this.media,
@@ -176,4 +170,10 @@ class ContentMetadata {
       watermarkedMedia: json['watermarked_media'],
     );
   }
+  final String media;
+  final bool isNsfw;
+  final bool deepFake;
+  final String mediaType;
+  final bool isWatermarked;
+  final String? watermarkedMedia;
 }

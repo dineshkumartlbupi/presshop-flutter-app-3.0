@@ -7,9 +7,8 @@ import '../repositories/task_repository.dart';
 import 'package:equatable/equatable.dart';
 
 class GetLocalTasks implements UseCase<List<Task>, GetLocalTasksParams> {
-  final TaskRepository repository;
-
   GetLocalTasks(this.repository);
+  final TaskRepository repository;
 
   @override
   Future<Either<Failure, List<Task>>> call(GetLocalTasksParams params) async {

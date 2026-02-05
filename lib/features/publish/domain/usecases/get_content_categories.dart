@@ -5,9 +5,9 @@ import '../entities/content_category.dart';
 import '../repositories/publish_repository.dart';
 
 class GetContentCategories implements UseCase<List<ContentCategory>, NoParams> {
-  final PublishRepository repository;
 
   GetContentCategories(this.repository);
+  final PublishRepository repository;
 
   @override
   Future<Either<Failure, List<ContentCategory>>> call(NoParams params) async {

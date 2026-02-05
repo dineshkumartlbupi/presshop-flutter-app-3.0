@@ -433,7 +433,7 @@ class _AlertScreenState extends State<AlertScreen> {
                                   );
                                 },
                                 separatorBuilder:
-                                    (BuildContext context, int index) {
+                                    (context, index) {
                                   return Container(
                                     margin: EdgeInsets.only(
                                         top: size.width * AppDimensions.numD05,

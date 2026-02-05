@@ -10,20 +10,20 @@ abstract class BankEvent extends Equatable {
 class FetchBanksEvent extends BankEvent {}
 
 class DeleteBankEvent extends BankEvent {
-  final String id;
-  final String stripeBankId;
 
   const DeleteBankEvent({required this.id, required this.stripeBankId});
+  final String id;
+  final String stripeBankId;
 
   @override
   List<Object> get props => [id, stripeBankId];
 }
 
 class SetDefaultBankEvent extends BankEvent {
-  final String stripeBankId;
-  final bool isDefault;
 
   const SetDefaultBankEvent({required this.stripeBankId, required this.isDefault});
+  final String stripeBankId;
+  final bool isDefault;
 
   @override
   List<Object> get props => [stripeBankId, isDefault];

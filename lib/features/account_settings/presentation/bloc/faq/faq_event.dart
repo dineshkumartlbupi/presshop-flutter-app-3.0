@@ -8,15 +8,15 @@ abstract class FAQEvent extends Equatable {
 }
 
 class FAQLoadCategories extends FAQEvent {
-  final String? initialCategoryName;
-  final int? initialCategoryIndex;
-  final String type;
 
   const FAQLoadCategories({
     this.initialCategoryName,
     this.initialCategoryIndex,
     this.type = 'FAQ',
   });
+  final String? initialCategoryName;
+  final int? initialCategoryIndex;
+  final String type;
 
   @override
   List<Object> get props => [
@@ -27,37 +27,37 @@ class FAQLoadCategories extends FAQEvent {
 }
 
 class FAQSelectCategory extends FAQEvent {
-  final int index;
 
   const FAQSelectCategory(this.index);
+  final int index;
 
   @override
   List<Object> get props => [index];
 }
 
 class FAQLoadData extends FAQEvent {
-  final bool isRefresh;
-  final bool isLoadMore;
 
   const FAQLoadData({this.isRefresh = false, this.isLoadMore = false});
+  final bool isRefresh;
+  final bool isLoadMore;
 
   @override
   List<Object> get props => [isRefresh, isLoadMore];
 }
 
 class FAQToggleItem extends FAQEvent {
-  final int index;
 
   const FAQToggleItem(this.index);
+  final int index;
 
   @override
   List<Object> get props => [index];
 }
 
 class FAQSearch extends FAQEvent {
-  final String query;
 
   const FAQSearch(this.query);
+  final String query;
 
   @override
   List<Object> get props => [query];

@@ -5,9 +5,9 @@ import 'package:presshop/core/usecases/usecase.dart';
 import '../repositories/dashboard_repository.dart';
 
 class UpdateLocation implements UseCase<void, UpdateLocationParams> {
-  final DashboardRepository repository;
 
   UpdateLocation(this.repository);
+  final DashboardRepository repository;
 
   @override
   Future<Either<Failure, void>> call(UpdateLocationParams params) async {
@@ -16,9 +16,9 @@ class UpdateLocation implements UseCase<void, UpdateLocationParams> {
 }
 
 class UpdateLocationParams extends Equatable {
-  final Map<String, dynamic> data;
 
   const UpdateLocationParams(this.data);
+  final Map<String, dynamic> data;
 
   @override
   List<Object> get props => [data];

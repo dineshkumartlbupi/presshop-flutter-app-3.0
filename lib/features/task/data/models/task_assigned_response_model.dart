@@ -3,10 +3,6 @@ import 'package:presshop/core/utils/safe_parser.dart';
 import '../../domain/entities/task_assigned_entity.dart';
 
 class TaskAssignedResponseModel extends TaskAssignedEntity {
-  final bool success;
-  final String message;
-  final TaskAssignedDataModel data;
-
   TaskAssignedResponseModel({
     required this.success,
     required this.message,
@@ -20,13 +16,12 @@ class TaskAssignedResponseModel extends TaskAssignedEntity {
       data: TaskAssignedDataModel.fromJson(json['data']),
     );
   }
+  final bool success;
+  final String message;
+  final TaskAssignedDataModel data;
 }
 
 class TaskAssignedDataModel {
-  final int code;
-  final TaskAssignedItemModel task;
-  final ChatRoomDataModel resp;
-
   TaskAssignedDataModel({
     required this.code,
     required this.task,
@@ -49,38 +44,35 @@ class TaskAssignedDataModel {
               createdAt: DateTime.now()),
     );
   }
+  final int code;
+  final TaskAssignedItemModel task;
+  final ChatRoomDataModel resp;
 }
 
 class TaskAssignedItemModel extends TaskAssignedDetailEntity {
-  TaskAssignedItemModel({
-    required String id,
-    required MediaHouseDataModel mediaHouse,
-    required DateTime deadlineDate,
-    required String heading,
-    required String description,
-    required String location,
-    required AddressLocationDataModel addressLocation,
-    required String status,
-    required bool isDraft,
-    required String paidStatus,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    required List<TaskContentDataModel> content,
-  }) : super(
-          id: id,
-          mediaHouse: mediaHouse,
-          deadlineDate: deadlineDate,
-          heading: heading,
-          description: description,
-          location: location,
-          addressLocation: addressLocation,
-          status: status,
-          isDraft: isDraft,
-          paidStatus: paidStatus,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          content: content,
-        );
+  const TaskAssignedItemModel({
+    required super.id,
+    required MediaHouseDataModel super.mediaHouse,
+    required super.deadlineDate,
+    required super.heading,
+    required super.description,
+    required super.location,
+    required AddressLocationDataModel super.addressLocation,
+    required super.status,
+    required super.isDraft,
+    required super.paidStatus,
+    required super.createdAt,
+    required super.updatedAt,
+    required List<TaskContentDataModel> super.content,
+    super.isNeedPhoto = false,
+    super.isNeedVideo = false,
+    super.isNeedInterview = false,
+    super.photoPrice = "0",
+    super.videoPrice = "0",
+    super.interviewPrice = "0",
+    super.currency = "",
+    super.currencySymbol = "",
+  });
 
   factory TaskAssignedItemModel.fromJson(Map<String, dynamic> json) {
     return TaskAssignedItemModel(
@@ -125,23 +117,15 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
 }
 
 class MediaHouseDataModel extends MediaHouseEntity {
-  MediaHouseDataModel({
-    required String id,
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String phone,
-    required String role,
-    required String profileImage,
-  }) : super(
-          id: id,
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phone: phone,
-          role: role,
-          profileImage: profileImage,
-        );
+  const MediaHouseDataModel({
+    required super.id,
+    required super.firstName,
+    required super.lastName,
+    required super.email,
+    required super.phone,
+    required super.role,
+    required super.profileImage,
+  });
 
   factory MediaHouseDataModel.fromJson(Map<String, dynamic> json) {
     return MediaHouseDataModel(
@@ -157,10 +141,10 @@ class MediaHouseDataModel extends MediaHouseEntity {
 }
 
 class AddressLocationDataModel extends AddressLocationEntity {
-  AddressLocationDataModel({
-    required String type,
-    required List<double> coordinates,
-  }) : super(type: type, coordinates: coordinates);
+  const AddressLocationDataModel({
+    required super.type,
+    required super.coordinates,
+  });
 
   factory AddressLocationDataModel.fromJson(Map<String, dynamic> json) {
     return AddressLocationDataModel(
@@ -172,21 +156,14 @@ class AddressLocationDataModel extends AddressLocationEntity {
 }
 
 class TaskContentDataModel extends TaskContentEntity {
-  TaskContentDataModel({
-    required String media,
-    required String mediaType,
-    required String watermark,
-    required String hopperId,
-    required String imageId,
-    required DateTime timeStamp,
-  }) : super(
-          media: media,
-          mediaType: mediaType,
-          watermark: watermark,
-          hopperId: hopperId,
-          imageId: imageId,
-          timeStamp: timeStamp,
-        );
+  const TaskContentDataModel({
+    required super.media,
+    required super.mediaType,
+    required super.watermark,
+    required super.hopperId,
+    required super.imageId,
+    required super.timeStamp,
+  });
 
   factory TaskContentDataModel.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> contentMap =
@@ -218,23 +195,15 @@ class TaskContentDataModel extends TaskContentEntity {
 }
 
 class ChatRoomDataModel extends ChatRoomEntity {
-  ChatRoomDataModel({
-    required String id,
-    required List<String> participants,
-    required String type,
-    required String roomId,
-    required String senderId,
-    required String taskId,
-    required DateTime createdAt,
-  }) : super(
-          id: id,
-          participants: participants,
-          type: type,
-          roomId: roomId,
-          senderId: senderId,
-          taskId: taskId,
-          createdAt: createdAt,
-        );
+  const ChatRoomDataModel({
+    required super.id,
+    required super.participants,
+    required super.type,
+    required super.roomId,
+    required super.senderId,
+    required super.taskId,
+    required super.createdAt,
+  });
 
   factory ChatRoomDataModel.fromJson(Map<String, dynamic> json) {
     return ChatRoomDataModel(

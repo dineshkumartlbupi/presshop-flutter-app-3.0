@@ -10,14 +10,14 @@ import 'package:presshop/features/camera/presentation/pages/AudioWaveFormWidgetS
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
-  final List<MediaData> mediaList;
-  final Function(List<MediaData>) onMediaUpdated;
 
   const MediaPreviewScreen({
     super.key,
     required this.mediaList,
     required this.onMediaUpdated,
   });
+  final List<MediaData> mediaList;
+  final Function(List<MediaData>) onMediaUpdated;
 
   @override
   State<MediaPreviewScreen> createState() => _MediaPreviewScreenState();

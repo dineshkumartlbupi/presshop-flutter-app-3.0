@@ -1,15 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 class TaskAssignedEntity extends Equatable {
-  final int code;
-  final TaskAssignedDetailEntity task;
-  final ChatRoomEntity resp;
-
   const TaskAssignedEntity({
     required this.code,
     required this.task,
     required this.resp,
   });
+  final int code;
+  final TaskAssignedDetailEntity task;
+  final ChatRoomEntity resp;
 
   @override
   List<Object?> get props => [code, task, resp];
@@ -29,6 +28,14 @@ class TaskAssignedDetailEntity extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<TaskContentEntity> content;
+  final bool isNeedPhoto;
+  final bool isNeedVideo;
+  final bool isNeedInterview;
+  final String photoPrice;
+  final String videoPrice;
+  final String interviewPrice;
+  final String currency;
+  final String currencySymbol;
 
   const TaskAssignedDetailEntity({
     required this.id,
@@ -44,6 +51,14 @@ class TaskAssignedDetailEntity extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.content,
+    this.isNeedPhoto = false,
+    this.isNeedVideo = false,
+    this.isNeedInterview = false,
+    this.photoPrice = "0",
+    this.videoPrice = "0",
+    this.interviewPrice = "0",
+    this.currency = "",
+    this.currencySymbol = "",
   });
 
   @override
@@ -61,18 +76,18 @@ class TaskAssignedDetailEntity extends Equatable {
         createdAt,
         updatedAt,
         content,
+        isNeedPhoto,
+        isNeedVideo,
+        isNeedInterview,
+        photoPrice,
+        videoPrice,
+        interviewPrice,
+        currency,
+        currencySymbol,
       ];
 }
 
 class MediaHouseEntity extends Equatable {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String phone;
-  final String role;
-  final String profileImage;
-
   const MediaHouseEntity({
     required this.id,
     required this.firstName,
@@ -82,6 +97,13 @@ class MediaHouseEntity extends Equatable {
     required this.role,
     required this.profileImage,
   });
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+  final String role;
+  final String profileImage;
 
   @override
   List<Object?> get props =>
@@ -89,26 +111,18 @@ class MediaHouseEntity extends Equatable {
 }
 
 class AddressLocationEntity extends Equatable {
-  final String type;
-  final List<double> coordinates;
-
   const AddressLocationEntity({
     required this.type,
     required this.coordinates,
   });
+  final String type;
+  final List<double> coordinates;
 
   @override
   List<Object?> get props => [type, coordinates];
 }
 
 class TaskContentEntity extends Equatable {
-  final String media;
-  final String mediaType;
-  final String watermark;
-  final String hopperId;
-  final String imageId;
-  final DateTime timeStamp;
-
   const TaskContentEntity({
     required this.media,
     required this.mediaType,
@@ -117,6 +131,12 @@ class TaskContentEntity extends Equatable {
     required this.imageId,
     required this.timeStamp,
   });
+  final String media;
+  final String mediaType;
+  final String watermark;
+  final String hopperId;
+  final String imageId;
+  final DateTime timeStamp;
 
   @override
   List<Object?> get props =>
@@ -124,14 +144,6 @@ class TaskContentEntity extends Equatable {
 }
 
 class ChatRoomEntity extends Equatable {
-  final String id;
-  final List<String> participants;
-  final String type;
-  final String roomId;
-  final String senderId;
-  final String taskId;
-  final DateTime createdAt;
-
   const ChatRoomEntity({
     required this.id,
     required this.participants,
@@ -141,6 +153,13 @@ class ChatRoomEntity extends Equatable {
     required this.taskId,
     required this.createdAt,
   });
+  final String id;
+  final List<String> participants;
+  final String type;
+  final String roomId;
+  final String senderId;
+  final String taskId;
+  final DateTime createdAt;
 
   @override
   List<Object?> get props =>

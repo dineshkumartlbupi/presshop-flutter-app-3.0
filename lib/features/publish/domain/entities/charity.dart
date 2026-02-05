@@ -1,12 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Charity extends Equatable {
-  final String id;
-  final String organisationNumber;
-  final String charityName;
-  final String charityImage;
-  final String country;
-  final bool isSelectCharity;
 
   const Charity({
     required this.id,
@@ -16,6 +10,12 @@ class Charity extends Equatable {
     required this.country,
     required this.isSelectCharity,
   });
+  final String id;
+  final String organisationNumber;
+  final String charityName;
+  final String charityImage;
+  final String country;
+  final bool isSelectCharity;
 
   Charity copyWith({
     String? id,

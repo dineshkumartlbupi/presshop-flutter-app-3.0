@@ -3,9 +3,6 @@ import 'package:presshop/features/profile/domain/entities/profile_data.dart'
     as entity;
 
 class UserProfileResponse {
-  final bool success;
-  final String message;
-  final UserProfileModel data;
 
   UserProfileResponse({
     required this.success,
@@ -26,6 +23,9 @@ class UserProfileResponse {
       data: UserProfileModel.fromJson(userData),
     );
   }
+  final bool success;
+  final String message;
+  final UserProfileModel data;
 
   Map<String, dynamic> toJson() {
     return {
@@ -37,29 +37,6 @@ class UserProfileResponse {
 }
 
 class UserProfileModel {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String phone;
-  final String userName;
-  final String role;
-  final String status;
-  final String hopperStatus;
-  final String chatStatus;
-  final String profileImage;
-  final bool isVerified;
-  final bool isOnboard;
-  final bool isDeleted;
-  final double latitude;
-  final double longitude;
-  final int totalEarnings;
-  final int totalHopperArmy;
-  final LocationModel location;
-  final PreferredCurrencySignModel preferredCurrencySign;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime lastLogin;
 
   UserProfileModel({
     required this.id,
@@ -146,6 +123,29 @@ class UserProfileModel {
           : DateTime.now(),
     );
   }
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+  final String userName;
+  final String role;
+  final String status;
+  final String hopperStatus;
+  final String chatStatus;
+  final String profileImage;
+  final bool isVerified;
+  final bool isOnboard;
+  final bool isDeleted;
+  final double latitude;
+  final double longitude;
+  final int totalEarnings;
+  final int totalHopperArmy;
+  final LocationModel location;
+  final PreferredCurrencySignModel preferredCurrencySign;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime lastLogin;
 
   Map<String, dynamic> toJson() {
     return {
@@ -205,8 +205,6 @@ class UserProfileModel {
 }
 
 class LocationModel {
-  final String type;
-  final List<double> coordinates;
 
   LocationModel({
     required this.type,
@@ -221,6 +219,8 @@ class LocationModel {
       ),
     );
   }
+  final String type;
+  final List<double> coordinates;
 
   Map<String, dynamic> toJson() {
     return {
@@ -238,12 +238,6 @@ class LocationModel {
 }
 
 class PreferredCurrencySignModel {
-  final String symbol;
-  final String code;
-  final String name;
-  final String countryName;
-  final String countryCode;
-  final String dialCode;
 
   PreferredCurrencySignModel({
     required this.symbol,
@@ -264,6 +258,12 @@ class PreferredCurrencySignModel {
       dialCode: json['dial_code'] ?? '',
     );
   }
+  final String symbol;
+  final String code;
+  final String name;
+  final String countryName;
+  final String countryCode;
+  final String dialCode;
 
   Map<String, dynamic> toJson() {
     return {

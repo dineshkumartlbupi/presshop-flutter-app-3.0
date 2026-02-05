@@ -8,19 +8,19 @@ abstract class PublicationEvent extends Equatable {
 }
 
 class LoadPublicationInitialData extends PublicationEvent {
-  final String contentId;
-  final String contentType;
 
   const LoadPublicationInitialData({required this.contentId, required this.contentType});
+  final String contentId;
+  final String contentType;
 
   @override
   List<Object> get props => [contentId, contentType];
 }
 
 class FilterPublicationTransactions extends PublicationEvent {
-  final Map<String, dynamic> params;
 
   const FilterPublicationTransactions(this.params);
+  final Map<String, dynamic> params;
 
   @override
   List<Object> get props => [params];

@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class ContentMarkerPopup extends StatelessWidget {
-  final Incident incident;
-  final VoidCallback onViewPressed;
 
   const ContentMarkerPopup({
     Key? key,
     required this.incident,
     required this.onViewPressed,
   }) : super(key: key);
+  final Incident incident;
+  final VoidCallback onViewPressed;
 
   @override
   Widget build(BuildContext context) {

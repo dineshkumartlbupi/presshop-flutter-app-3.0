@@ -21,10 +21,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewsDetailsScreen extends StatefulWidget {
-  final String newsId;
-  final News? initialNews;
-  final bool scrollToComments;
-  final String? initialCommentId;
 
   const NewsDetailsScreen({
     Key? key,
@@ -33,6 +29,10 @@ class NewsDetailsScreen extends StatefulWidget {
     this.scrollToComments = false,
     this.initialCommentId,
   }) : super(key: key);
+  final String newsId;
+  final News? initialNews;
+  final bool scrollToComments;
+  final String? initialCommentId;
 
   @override
   State<NewsDetailsScreen> createState() => _NewsDetailsScreenState();
@@ -625,7 +625,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                           replies: "${comment.replies.length} replies",
                         );
                       }
-                    }).toList(),
+                    }),
 
                     Container(
                       padding: const EdgeInsets.symmetric(

@@ -13,7 +13,7 @@ void main() {
   });
 
   testWidgets('ReferScreen displays referral code',
-      (WidgetTester tester) async {
+      (tester) async {
     // 1. Mock SharedPreferences
     SharedPreferences.setMockInitialValues({
       referralCode: 'TEST_CODE_123',

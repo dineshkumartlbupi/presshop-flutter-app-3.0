@@ -12,10 +12,6 @@ enum UploadDocumentsStatus {
 }
 
 class UploadDocumentsState extends Equatable {
-  final UploadDocumentsStatus status;
-  final List<DocumentInstruction> instructions;
-  final List<DocumentData> uploadedDocuments;
-  final String errorMessage;
 
   const UploadDocumentsState({
     this.status = UploadDocumentsStatus.initial,
@@ -23,6 +19,10 @@ class UploadDocumentsState extends Equatable {
     this.uploadedDocuments = const [],
     this.errorMessage = '',
   });
+  final UploadDocumentsStatus status;
+  final List<DocumentInstruction> instructions;
+  final List<DocumentData> uploadedDocuments;
+  final String errorMessage;
 
   UploadDocumentsState copyWith({
     UploadDocumentsStatus? status,

@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
 import 'package:presshop/features/content/domain/entities/content_item.dart';
-import 'package:presshop/main.dart';
 
 class ContentItemWidget extends StatelessWidget {
-  final ContentItem item;
-  final Size size;
-  final VoidCallback onTap;
-
   const ContentItemWidget({
     super.key,
     required this.item,
     required this.size,
     required this.onTap,
   });
+  final ContentItem item;
+  final Size size;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +101,7 @@ class ContentItemWidget extends StatelessWidget {
       children: [
         _buildMetricItem(
           icon: "dollar1.png",
-          value: "${item.purchasedMediahouseCount} ${AppStrings.sold}",
+          value: "${item.purchasedMediahouseCount} ${AppStrings.soldText}",
           isActive: item.purchasedMediahouseCount > 0,
         ),
         SizedBox(height: size.width * AppDimensions.numD01),
@@ -216,7 +214,7 @@ class ContentItemWidget extends StatelessWidget {
             ),
           ),
           Text(
-            "$currencySymbol${formatDouble(double.tryParse(item.price ?? '0') ?? 0)}",
+            "${item.currencySymbol.isNotEmpty ? item.currencySymbol : getCurrencySymbol(item.currency)}${formatDouble(double.tryParse(item.price ?? '0') ?? 0)}",
             textAlign: TextAlign.center,
             style: commonTextStyle(
               size: size,
@@ -232,14 +230,13 @@ class ContentItemWidget extends StatelessWidget {
 }
 
 class MediaThumbnailWidget extends StatelessWidget {
-  final ContentItem item;
-  final Size size;
-
   const MediaThumbnailWidget({
     super.key,
     required this.item,
     required this.size,
   });
+  final ContentItem item;
+  final Size size;
 
   @override
   Widget build(BuildContext context) {
@@ -254,6 +251,15 @@ class MediaThumbnailWidget extends StatelessWidget {
               height: size.width * AppDimensions.numD29,
               width: size.width,
               fit: BoxFit.cover,
+              // Cache the watermark image for better performance
+              cacheWidth: (size.width * 2).toInt(),
+              cacheHeight: (size.width * AppDimensions.numD29 * 2).toInt(),
+            ),
+          if (item.mediaUrls.length > 1)
+            Positioned(
+              right: size.width * AppDimensions.numD02,
+              top: size.width * AppDimensions.numD02,
+              child: _buildCountBadge(),
             ),
           Positioned(
             right: size.width * AppDimensions.numD02,
@@ -307,7 +313,7 @@ class MediaThumbnailWidget extends StatelessWidget {
         vertical: size.width * 0.005,
       ),
       decoration: BoxDecoration(
-        color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+        color: AppColorTheme.colorLightGreen.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
       ),
       child: Center(
@@ -365,8 +371,15 @@ class MediaThumbnailWidget extends StatelessWidget {
           height: size.width * AppDimensions.numD30,
           width: size.width,
           fit: BoxFit.cover,
-          placeholder: (_, __) => _buildImagePlaceholder(),
-          errorWidget: (_, __, ___) => _buildImagePlaceholder(),
+          // Optimize memory usage by caching at display size
+          memCacheWidth: (size.width * 2).toInt(), // 2x for retina displays
+          memCacheHeight: (size.width * AppDimensions.numD30 * 2).toInt(),
+          // Smooth fade-in transition
+          fadeInDuration: const Duration(milliseconds: 200),
+          fadeOutDuration: const Duration(milliseconds: 100),
+          // Lightweight placeholder for better performance
+          placeholder: (_, __) => _buildLightweightPlaceholder(),
+          errorWidget: (_, __, ___) => _buildLightweightPlaceholder(),
         );
     }
   }
@@ -391,7 +404,8 @@ class MediaThumbnailWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePlaceholder() {
+  // Lightweight placeholder using simple Container instead of loading PNG asset
+  Widget _buildLightweightPlaceholder() {
     return Container(
       alignment: Alignment.topCenter,
       height: size.width * AppDimensions.numD30,

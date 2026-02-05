@@ -8,13 +8,13 @@ import '../../domain/entities/publication_transactions_result.dart';
 import '../datasources/publication_remote_data_source.dart';
 
 class PublicationRepositoryImpl implements PublicationRepository {
-  final PublicationRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   PublicationRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final PublicationRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, PublicationEarningStats>> getEarningStats(String type) async {

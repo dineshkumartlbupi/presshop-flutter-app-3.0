@@ -3,10 +3,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_filter_sheet.dart';
 
 class FeedFilterBottomSheet extends StatefulWidget {
-  final List<FilterModel> sortList;
-  final List<FilterModel> filterList;
-  final Function(Map<String, dynamic>) onApply;
-  final VoidCallback onClearAll;
 
   const FeedFilterBottomSheet({
     super.key,
@@ -15,6 +11,10 @@ class FeedFilterBottomSheet extends StatefulWidget {
     required this.onApply,
     required this.onClearAll,
   });
+  final List<FilterModel> sortList;
+  final List<FilterModel> filterList;
+  final Function(Map<String, dynamic>) onApply;
+  final VoidCallback onClearAll;
 
   @override
   State<FeedFilterBottomSheet> createState() => _FeedFilterBottomSheetState();

@@ -6,9 +6,9 @@ import '../entities/earning_transaction.dart';
 import '../repositories/earning_repository.dart';
 
 class GetTransactions implements UseCase<TransactionsResult, GetTransactionsParams> {
-  final EarningRepository repository;
 
   GetTransactions(this.repository);
+  final EarningRepository repository;
 
   @override
   Future<Either<Failure, TransactionsResult>> call(GetTransactionsParams params) async {
@@ -17,9 +17,9 @@ class GetTransactions implements UseCase<TransactionsResult, GetTransactionsPara
 }
 
 class GetTransactionsParams extends Equatable {
-  final Map<String, dynamic> params;
 
   const GetTransactionsParams({required this.params});
+  final Map<String, dynamic> params;
 
   @override
   List<Object> get props => [params];

@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
               ),
               allowCancel: false,
               showForceUpdateAlert: ForceUpdateService.showForceUpdateDialog,
-              showStoreListing: (Uri storeUrl) async {},
+              showStoreListing: (storeUrl) async {},
               child: ConnectivityWrapper(child: child ?? const SizedBox()),
             );
           },
@@ -77,8 +77,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ConnectivityWrapper extends StatefulWidget {
-  final Widget child;
   const ConnectivityWrapper({super.key, required this.child});
+  final Widget child;
 
   @override
   State<ConnectivityWrapper> createState() => _ConnectivityWrapperState();

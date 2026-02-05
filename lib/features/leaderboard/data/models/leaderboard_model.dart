@@ -64,10 +64,10 @@ class LeaderboardModel extends LeaderboardEntity {
 
     // Ensure "Global" is at the start if countryListRaw is not empty
     if (countryListRaw.isNotEmpty) {
-      bool hasGlobal = countryListRaw.any((c) => (c is Map &&
+      bool hasGlobal = countryListRaw.any((c) => c is Map &&
           (c['country_code'] == '' ||
               c['countryCode'] == '' ||
-              c['country'] == 'Global')));
+              c['country'] == 'Global'));
       if (!hasGlobal) {
         countryListRaw.insert(0, {'country': 'Global', 'country_code': ''});
         debugPrint("DEBUG: LeaderboardModel.fromJson Prepended Global country");

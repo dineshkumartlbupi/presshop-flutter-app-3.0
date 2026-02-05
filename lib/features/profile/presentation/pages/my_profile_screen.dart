@@ -28,11 +28,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 
 class MyProfile extends StatefulWidget {
-  bool editProfileScreen;
-  String screenType;
 
   MyProfile(
       {super.key, required this.editProfileScreen, required this.screenType});
+  bool editProfileScreen;
+  String screenType;
 
   @override
   State<StatefulWidget> createState() {
@@ -1108,7 +1108,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   debounceTime: 200,
                   countries: const ["uk", "in"],
                   isLatLngRequired: true,
-                  getPlaceDetailWithLatLng: (Prediction prediction) {
+                  getPlaceDetailWithLatLng: (prediction) {
                     latitude = prediction.lat.toString();
                     longitude = prediction.lng.toString();
                     getCurrentLocationFxn(
@@ -1122,7 +1122,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     showAddressError = false;
                     setState(() {});
                   },
-                  itemClick: (Prediction prediction) {
+                  itemClick: (prediction) {
                     addressController.text = prediction.description ?? "";
                     latitude = prediction.lat ?? "";
                     longitude = prediction.lng ?? "";
@@ -1222,7 +1222,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   debounceTime: 200,
                   countries: const ["uk", "in"],
                   isLatLngRequired: true,
-                  getPlaceDetailWithLatLng: (Prediction prediction) {
+                  getPlaceDetailWithLatLng: (prediction) {
                     latitude = prediction.lat.toString();
                     longitude = prediction.lng.toString();
                     getCurrentLocationFxn(
@@ -1236,7 +1236,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                     showAddressError = false;
                     setState(() {});
                   },
-                  itemClick: (Prediction prediction) {
+                  itemClick: (prediction) {
                     addressController.text = prediction.description ?? "";
                     latitude = prediction.lat ?? "";
                     longitude = prediction.lng ?? "";
@@ -1380,7 +1380,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       context: context,
       showPhoneCode: true,
       // optional. Shows phone code before the country name.
-      onSelect: (Country country) {
+      onSelect: (country) {
         debugPrint('Select country: ${country.displayName}');
         debugPrint('Select country: ${country.countryCode}');
         debugPrint('Select country: ${country.hashCode}');
@@ -1678,7 +1678,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     showDialog(
         barrierDismissible: false,
         context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -1686,7 +1686,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               insetPadding:
                   EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -1853,28 +1853,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 }
 
 class MyProfileData {
-  MyProfileData();
-  String firstName = "";
-  String lastName = "";
-  String userName = "";
-  String countryCode = "";
-  String phoneNumber = "";
-  String email = "";
-  String address = "";
-  String postCode = "";
-  String latitude = "";
-  String longitude = "";
-  String avatarImage = "";
-  String avatarId = "";
-  String joinedDate = "";
-  String earnings = "0";
-  String validDegree = "";
-  String validMemberShip = "";
-  String apartment = "";
-  String cityName = "";
-  String countryName = "";
-  String validBritishPassport = "";
-  String totalIncome = "";
 
   MyProfileData.fromJson(json) {
     firstName = json[firstNameKey] ?? json['firstName'] ?? "";
@@ -1935,4 +1913,26 @@ class MyProfileData {
             .toString()
         : "";
   }
+  MyProfileData();
+  String firstName = "";
+  String lastName = "";
+  String userName = "";
+  String countryCode = "";
+  String phoneNumber = "";
+  String email = "";
+  String address = "";
+  String postCode = "";
+  String latitude = "";
+  String longitude = "";
+  String avatarImage = "";
+  String avatarId = "";
+  String joinedDate = "";
+  String earnings = "0";
+  String validDegree = "";
+  String validMemberShip = "";
+  String apartment = "";
+  String cityName = "";
+  String countryName = "";
+  String validBritishPassport = "";
+  String totalIncome = "";
 }

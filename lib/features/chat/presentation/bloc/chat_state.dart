@@ -4,20 +4,6 @@ import 'package:equatable/equatable.dart';
 enum ChatStatus { initial, loading, loaded, failure, sending, recording }
 
 class ChatState extends Equatable {
-  final ChatStatus status;
-  final List<DocumentSnapshot> chatList;
-  final List<DocumentSnapshot> searchResult;
-  final List<DocumentSnapshot> messages;
-  final bool isTyping; // Received typing status from other user
-  final bool isSelfTyping;
-  final bool isRecording;
-  final bool isOnline; // Other user status
-  final String errorMessage;
-  final String currentRoomId;
-  final String receiverId;
-  final String receiverName;
-  final String receiverImage;
-  final String uploadProgress;
 
   const ChatState({
     this.status = ChatStatus.initial,
@@ -35,6 +21,20 @@ class ChatState extends Equatable {
     this.receiverImage = '',
     this.uploadProgress = '0.0',
   });
+  final ChatStatus status;
+  final List<DocumentSnapshot> chatList;
+  final List<DocumentSnapshot> searchResult;
+  final List<DocumentSnapshot> messages;
+  final bool isTyping; // Received typing status from other user
+  final bool isSelfTyping;
+  final bool isRecording;
+  final bool isOnline; // Other user status
+  final String errorMessage;
+  final String currentRoomId;
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
+  final String uploadProgress;
 
   ChatState copyWith({
     ChatStatus? status,

@@ -6,9 +6,9 @@ import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
 
 class NewsDetailPage extends StatelessWidget {
-  final String newsId;
 
   const NewsDetailPage({Key? key, required this.newsId}) : super(key: key);
+  final String newsId;
 
   @override
   Widget build(BuildContext context) {

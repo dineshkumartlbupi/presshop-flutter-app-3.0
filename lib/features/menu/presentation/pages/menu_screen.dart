@@ -139,7 +139,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
     showDialog(
         context: context,
-        builder: (BuildContext dialogContext) {
+        builder: (dialogContext) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -285,14 +285,14 @@ class _MenuScreenState extends State<MenuScreen> {
 }
 
 class MenuTile extends StatelessWidget {
-  final MenuData item;
-  final VoidCallback onTap;
 
   const MenuTile({
     super.key,
     required this.item,
     required this.onTap,
   });
+  final MenuData item;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

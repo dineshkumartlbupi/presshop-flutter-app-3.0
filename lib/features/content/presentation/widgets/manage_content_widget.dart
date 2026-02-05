@@ -6,8 +6,8 @@ import 'package:presshop/main.dart';
 
 // ignore: must_be_immutable
 class ManageContentWidget extends StatelessWidget {
-  Map<String, dynamic> data = {};
   ManageContentWidget(this.data, {super.key});
+  Map<String, dynamic> data = {};
   late Size size;
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,14 @@ class ManageContentWidget extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
-                border: Border.all(color: AppColorTheme.lightGrey.withOpacity(.6)),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                border:
+                    Border.all(color: AppColorTheme.lightGrey.withOpacity(.6)),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD04),
                 child: Image.network(
                   data['userDetails'][0]['profile_image'],
                   fit: BoxFit.cover,
@@ -104,12 +107,14 @@ class ManageContentWidget extends StatelessWidget {
             ),
             Container(
               width: size.width * AppDimensions.numD30,
-              padding: EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD012),
+              padding: EdgeInsets.symmetric(
+                  vertical: size.width * AppDimensions.numD012),
               decoration: BoxDecoration(
                   color: data['message_type'] == "Offered"
                       ? Colors.black
                       : AppColorTheme.lightGrey,
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03)),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD03)),
               child: Column(
                 children: [
                   Text(

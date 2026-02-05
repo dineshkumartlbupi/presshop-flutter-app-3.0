@@ -11,9 +11,6 @@ part 'tutorials_event.dart';
 part 'tutorials_state.dart';
 
 class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
-  final GetTutorialCategories getTutorialCategories;
-  final GetTutorialVideos getTutorialVideos;
-  final AddTutorialViewCount addTutorialViewCount;
 
   TutorialsBloc({
     required this.getTutorialCategories,
@@ -26,6 +23,9 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
     on<TutorialsSearchVideos>(_onSearchVideos);
     on<TutorialsAddViewCount>(_onAddViewCount);
   }
+  final GetTutorialCategories getTutorialCategories;
+  final GetTutorialVideos getTutorialVideos;
+  final AddTutorialViewCount addTutorialViewCount;
 
   Future<void> _onLoadCategories(
     TutorialsLoadCategories event,
@@ -65,8 +65,9 @@ class TutorialsBloc extends Bloc<TutorialsEvent, TutorialsState> {
       if (state.hasReachedMax) return;
       // emit loading more? usually just keep ui showing loading at bottom
     } else {
-      if (!event.isRefresh)
+      if (!event.isRefresh) {
         emit(state.copyWith(status: TutorialsStatus.loading));
+      }
     }
 
     int offset = event.isRefresh || (!event.isLoadMore) ? 0 : state.offset + 10;

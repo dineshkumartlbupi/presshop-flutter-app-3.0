@@ -34,8 +34,8 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
 class MapPage extends StatefulWidget {
-  final bool hideLeading;
   const MapPage({Key? key, this.hideLeading = false}) : super(key: key);
+  final bool hideLeading;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -66,8 +66,8 @@ class _MapPageState extends State<MapPage> {
 }
 
 class _MapPageContent extends StatefulWidget {
-  final bool hideLeading;
   const _MapPageContent({Key? key, this.hideLeading = false}) : super(key: key);
+  final bool hideLeading;
 
   @override
   State<_MapPageContent> createState() => _MapPageContentState();
@@ -86,7 +86,7 @@ class _MapPageContentState extends State<_MapPageContent>
 
   late AnimationController _burstController;
   late AnimationController _pulseController;
-  List<BurstParticle> _particles = [];
+  final List<BurstParticle> _particles = [];
 
   ui.Image? _burstImage;
 
@@ -530,11 +530,17 @@ class _MapPageContentState extends State<_MapPageContent>
           body: Stack(
             children: [
               GoogleMap(
-                onMapCreated: (c) {
+                onMapCreated: (c) async {
                   if (!_controller.isCompleted) {
                     _controller.complete(c);
+                    // Camera position is already set via initialCameraPosition from bloc state
+                    // No need for additional animation - this prevents duplicate loading states
                   }
-                  _updateInfoWindow();
+
+                  // Update info window asynchronously without blocking
+                  if (mounted) {
+                    unawaited(_updateInfoWindow());
+                  }
                 },
                 onCameraMoveStarted: () {
                   // mapController.setDragging(true); // Add event if needed
@@ -600,8 +606,11 @@ class _MapPageContentState extends State<_MapPageContent>
                   });
                 },
                 initialCameraPosition: state.initialCamera ??
-                    CameraPosition(
-                        target: state.myLocation!, zoom: _currentZoom),
+                    const CameraPosition(
+                      target:
+                          LatLng(51.5074, -0.1278), // Safe fallback to London
+                      zoom: 14,
+                    ),
                 markers: state.markers,
                 polylines: state.polylines,
                 polygons: state.polygons,

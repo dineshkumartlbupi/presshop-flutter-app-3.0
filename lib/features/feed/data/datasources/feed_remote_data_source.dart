@@ -9,9 +9,9 @@ abstract class FeedRemoteDataSource {
 }
 
 class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
-  final ApiClient apiClient;
 
   FeedRemoteDataSourceImpl({required this.apiClient});
+  final ApiClient apiClient;
 
   @override
   Future<Map<String, dynamic>> getFeeds(Map<String, dynamic> params) async {

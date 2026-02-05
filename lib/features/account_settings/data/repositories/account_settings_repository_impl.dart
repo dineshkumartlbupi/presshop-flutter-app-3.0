@@ -8,13 +8,13 @@ import '../../../publish/domain/entities/content_category.dart';
 import '../datasources/account_settings_remote_datasource.dart';
 
 class AccountSettingsRepositoryImpl implements AccountSettingsRepository {
-  final AccountSettingsRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   AccountSettingsRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final AccountSettingsRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, bool>> deleteAccount(

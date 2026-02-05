@@ -14,9 +14,9 @@ abstract class PublicationRemoteDataSource {
 }
 
 class PublicationRemoteDataSourceImpl implements PublicationRemoteDataSource {
-  final ApiClient apiClient;
 
   PublicationRemoteDataSourceImpl(this.apiClient);
+  final ApiClient apiClient;
 
   @override
   Future<PublicationEarningStats> getEarningStats(String type) async {

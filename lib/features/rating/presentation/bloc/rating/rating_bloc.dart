@@ -11,8 +11,6 @@ part 'rating_event.dart';
 part 'rating_state.dart';
 
 class RatingBloc extends Bloc<RatingEvent, RatingState> {
-  final GetReviews getReviews;
-  final GetMediaHouses getMediaHouses;
 
   RatingBloc({
     required this.getReviews,
@@ -23,6 +21,8 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
     on<RatingTypeChanged>(_onTypeChanged);
     on<RatingFilterUpdated>(_onFilterUpdated);
   }
+  final GetReviews getReviews;
+  final GetMediaHouses getMediaHouses;
 
   Future<void> _onLoadInitial(
     RatingLoadInitial event,
@@ -72,7 +72,7 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
     ));
 
     result.fold(
-      (Failure failure) => emit(state.copyWith(
+      (failure) => emit(state.copyWith(
           status: RatingStatus.failure, errorMessage: failure.message)),
       (newReviews) {
         final allReviews = event.isRefresh

@@ -10,10 +10,6 @@ part 'chatbot_event.dart';
 part 'chatbot_state.dart';
 
 class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
-  final ApiClient apiClient;
-  DialogFlowtter? dialogFlowtter;
-  int failCount = 0;
-  List<ChatModel> chatList = [];
 
   ChatbotBloc({
     required this.apiClient,
@@ -27,14 +23,15 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
     on<MessagesReceivedEvent>(_onMessagesReceived);
     on<ChatbotErrorEvent>(_onChatbotError);
   }
+  final ApiClient apiClient;
+  DialogFlowtter? dialogFlowtter;
+  int failCount = 0;
+  List<ChatModel> chatList = [];
 
   Future<void> _onInitChatbot(
       InitChatbotEvent event, Emitter<ChatbotState> emit) async {
     try {
-      if (dialogFlowtter == null) {
-        dialogFlowtter =
-            await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
-      }
+      dialogFlowtter ??= await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
       add(FetchMessagesEvent());
     } catch (e) {
       emit(ChatbotError("Failed to initialize chatbot: $e"));

@@ -92,9 +92,9 @@ class BroadcastDataModel extends BroadcastData {
       mediaHouseId: mediaHouseId,
       latitude: latitude,
       longitude: longitude,
-      showPhotoPrice: (json["need_photos"] ?? false),
-      showVideoPrice: (json["need_videos"] ?? false),
-      showInterviewPrice: (json["need_interview"] ?? false),
+      showPhotoPrice: json["need_photos"] ?? false,
+      showVideoPrice: json["need_videos"] ?? false,
+      showInterviewPrice: json["need_interview"] ?? false,
       minimumPriceRange: minimumPriceRange,
       maximumPriceRange: maximumPriceRange,
     );

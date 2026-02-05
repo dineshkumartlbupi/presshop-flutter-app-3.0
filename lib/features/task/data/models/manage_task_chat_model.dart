@@ -3,32 +3,6 @@ import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/features/task/data/models/task_models.dart';
 
 class ManageTaskChatModel {
-  String id = "";
-  bool paidStatus = false;
-  TaskVideoModel? media;
-  List<TaskVideoModel> mediaList = [];
-  String messageType = "";
-  String initialOfferAmount = "";
-  String senderType = "";
-  String hopperPrice = "";
-  String payableHopperPrice = "";
-  String finalCounterAmount = "";
-  String amount = "";
-  String requestStatus = "";
-  bool isMakeCounterOffer = false;
-  String mediaHouseImage = "";
-  String mediaHouseName = "";
-  String mediaHouseId = "";
-  String createdAtTime = "";
-  String imageCount = "";
-  String videoCount = "";
-  String audioCount = "";
-  double rating = 0;
-  String roomId = "";
-  bool isRatingGiven = false;
-  String transactionId = "";
-  TextEditingController priceController = TextEditingController();
-  TextEditingController ratingReviewController = TextEditingController();
 
   ManageTaskChatModel.fromJsonNew(Map<String, dynamic> json) {
     id = (json["_id"] ?? "").toString();
@@ -131,4 +105,30 @@ class ManageTaskChatModel {
     }
     transactionId = json["transaction_id"] ?? "";
   }
+  String id = "";
+  bool paidStatus = false;
+  TaskVideoModel? media;
+  List<TaskVideoModel> mediaList = [];
+  String messageType = "";
+  String initialOfferAmount = "";
+  String senderType = "";
+  String hopperPrice = "";
+  String payableHopperPrice = "";
+  String finalCounterAmount = "";
+  String amount = "";
+  String requestStatus = "";
+  bool isMakeCounterOffer = false;
+  String mediaHouseImage = "";
+  String mediaHouseName = "";
+  String mediaHouseId = "";
+  String createdAtTime = "";
+  String imageCount = "";
+  String videoCount = "";
+  String audioCount = "";
+  double rating = 0;
+  String roomId = "";
+  bool isRatingGiven = false;
+  String transactionId = "";
+  TextEditingController priceController = TextEditingController();
+  TextEditingController ratingReviewController = TextEditingController();
 }

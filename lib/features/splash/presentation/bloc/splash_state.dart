@@ -20,8 +20,8 @@ class SplashForceUpdate extends SplashState {}
 class SplashNavigateToOnboarding extends SplashState {}
 
 class SplashError extends SplashState {
-  final String message;
   const SplashError({required this.message});
+  final String message;
   @override
   List<Object> get props => [message];
 }

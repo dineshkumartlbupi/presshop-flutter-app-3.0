@@ -47,7 +47,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     debugPrint("NewStartTime: $startTime");
     debugPrint("CurrentTime: ${DateTime.now()}");
 
-    myTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+    myTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       var diff = endTime.difference(DateTime.now());
       if (diff.inSeconds > 0) {
         // debugPrint("Difference:$diff");
@@ -267,14 +267,14 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 }
 
 class OtpBottomSheet extends StatefulWidget {
-  final String email;
-  final VoidCallback onResend;
 
   const OtpBottomSheet({
     super.key,
     required this.email,
     required this.onResend,
   });
+  final String email;
+  final VoidCallback onResend;
 
   @override
   State<OtpBottomSheet> createState() => _OtpBottomSheetState();

@@ -15,29 +15,29 @@ class VerificationLoading extends VerificationState {}
 class VerifyOtpSuccess extends VerificationState {}
 
 class ResendOtpSuccess extends VerificationState {
-  final String message;
   const ResendOtpSuccess(this.message);
+  final String message;
   @override
   List<Object> get props => [message];
 }
 
 class RegistrationSuccess extends VerificationState {
-  final User user;
-  final bool isSourceDataOpened; // Legacy flags
-  final String sourceDataType;
 
   const RegistrationSuccess(this.user, {
       this.isSourceDataOpened = false,
       this.sourceDataType = '',
   });
+  final User user;
+  final bool isSourceDataOpened; // Legacy flags
+  final String sourceDataType;
 
   @override
   List<Object> get props => [user, isSourceDataOpened, sourceDataType];
 }
 
 class VerificationError extends VerificationState {
-  final String message;
   const VerificationError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];

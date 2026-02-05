@@ -10,27 +10,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:presshop/core/constants/string_constants.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
+import 'package:presshop/core/core_export.dart';
 import 'package:video_player/video_player.dart';
-import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
-import 'package:presshop/core/constants/string_constants_new.dart';
-import 'package:presshop/core/theme/app_colors.dart';
-import 'package:presshop/core/utils/date_time_utils.dart';
-import 'package:presshop/core/utils/extensions.dart';
-import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
-import 'package:presshop/core/utils/common_utils.dart';
-import 'package:presshop/features/content/presentation/widgets/manage_content_widget.dart';
 import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
-import 'package:presshop/features/task/data/models/manage_task_chat_model.dart';
 import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
-import 'package:presshop/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -45,13 +34,6 @@ import '../../domain/mappers/content_item_mapper.dart';
 
 // ignore: must_be_immutable
 class MyContentDetailScreen extends StatefulWidget {
-  String hopperID = "";
-  final String contentId;
-  final String paymentStatus;
-  final bool exclusive;
-  final int offerCount;
-  final int purchasedMediahouseCount;
-
   MyContentDetailScreen(
       {super.key,
       required this.paymentStatus,
@@ -60,6 +42,12 @@ class MyContentDetailScreen extends StatefulWidget {
       required this.purchasedMediahouseCount,
       required this.contentId,
       this.hopperID = ""});
+  String hopperID = "";
+  final String contentId;
+  final String paymentStatus;
+  final bool exclusive;
+  final int offerCount;
+  final int purchasedMediahouseCount;
 
   @override
   State<StatefulWidget> createState() {
@@ -123,7 +111,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     String currentUserId = prefs.getString("_id") ?? "";
 
     if (contentItem != null) {
-      isOwner = currentUserId == (contentItem!.id ?? widget.hopperID);
+      isOwner = currentUserId == (contentItem!.id);
     } else {
       isOwner = currentUserId == widget.hopperID;
     }
@@ -134,7 +122,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
   }
 
   void _startTimer() {
-    if (contentItem == null || contentItem!.createdAt == null) return;
+    if (contentItem == null) return;
     DateTime createdTime = DateTime.parse(contentItem!.createdAt);
     DateTime endTime = createdTime.add(const Duration(hours: 24));
 
@@ -312,7 +300,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                               size.width * AppDimensions.numD02,
                                         ),
                                         if (isOwner)
-                                          const Divider(color: AppColorTheme.colorGrey1),
+                                          const Divider(
+                                              color: AppColorTheme.colorGrey1),
                                         SizedBox(
                                           height:
                                               size.width * AppDimensions.numD02,
@@ -349,7 +338,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                             size.width * AppDimensions.numD02,
                                       ),
                                       if (isOwner)
-                                        const Divider(color: AppColorTheme.colorGrey1),
+                                        const Divider(
+                                            color: AppColorTheme.colorGrey1),
 
                                       Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -453,8 +443,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                                         .width *
                                                                     AppDimensions
                                                                         .numD03,
-                                                                color:
-                                                                    AppColorTheme.colorThemePink,
+                                                                color: AppColorTheme
+                                                                    .colorThemePink,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400)),
@@ -618,7 +608,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
             ),
           ),
 
-        (contentItem!.mediaList.length >= 0)
+        (contentItem!.mediaList.isNotEmpty)
             ? SizedBox(
                 height: size.width * AppDimensions.numD02,
               )
@@ -758,8 +748,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD029,
-                                color: (contentItem!.paidStatus ==
-                                                AppStrings.paidText &&
+                                color: (contentItem!.paidStatus &&
                                             contentItem!.totalView == 1) ||
                                         contentItem!.totalView == 0
                                     ? Colors.grey
@@ -775,48 +764,47 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   ),
 
                   /// Time Date
-                  if (contentItem!.createdAt != null)
-                    Row(
-                      children: [
-                        Image.asset(
-                          "${iconsPath}ic_clock.png",
-                          height: size.width * AppDimensions.numD04,
-                          color: AppColorTheme.colorTextFieldIcon,
-                        ),
-                        SizedBox(
-                          width: size.width * AppDimensions.numD012,
-                        ),
-                        Text(
-                          DateFormat('hh:mm a')
-                              .format(DateTime.parse(contentItem!.createdAt)),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD028,
-                              color: AppColorTheme.colorHint,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        SizedBox(
-                          width: size.width * AppDimensions.numD02,
-                        ),
-                        Image.asset(
-                          "${iconsPath}ic_yearly_calendar.png",
-                          height: size.width * AppDimensions.numD04,
-                          color: AppColorTheme.colorTextFieldIcon,
-                        ),
-                        SizedBox(
-                          width: size.width * AppDimensions.numD018,
-                        ),
-                        Text(
-                          DateFormat("dd MMM yyyy")
-                              .format(DateTime.parse(contentItem!.createdAt)),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * AppDimensions.numD028,
-                              color: AppColorTheme.colorHint,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Image.asset(
+                        "${iconsPath}ic_clock.png",
+                        height: size.width * AppDimensions.numD04,
+                        color: AppColorTheme.colorTextFieldIcon,
+                      ),
+                      SizedBox(
+                        width: size.width * AppDimensions.numD012,
+                      ),
+                      Text(
+                        DateFormat('hh:mm a')
+                            .format(DateTime.parse(contentItem!.createdAt)),
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD028,
+                            color: AppColorTheme.colorHint,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      SizedBox(
+                        width: size.width * AppDimensions.numD02,
+                      ),
+                      Image.asset(
+                        "${iconsPath}ic_yearly_calendar.png",
+                        height: size.width * AppDimensions.numD04,
+                        color: AppColorTheme.colorTextFieldIcon,
+                      ),
+                      SizedBox(
+                        width: size.width * AppDimensions.numD018,
+                      ),
+                      Text(
+                        DateFormat("dd MMM yyyy")
+                            .format(DateTime.parse(contentItem!.createdAt)),
+                        style: commonTextStyle(
+                            size: size,
+                            fontSize: size.width * AppDimensions.numD028,
+                            color: AppColorTheme.colorHint,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
                   SizedBox(
                     height: size.width * AppDimensions.numD02,
                   ),
@@ -834,7 +822,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          contentItem!.location ?? "",
+                          contentItem!.location,
                           overflow: TextOverflow.ellipsis,
                           style: commonTextStyle(
                               size: size,
@@ -863,7 +851,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   padding: EdgeInsets.symmetric(
                       vertical: size.width * AppDimensions.numD012),
                   decoration: BoxDecoration(
-                      color: contentItem!.paidStatus == AppStrings.unPaidText
+                      color: !contentItem!.paidStatus
                           ? AppColorTheme.colorThemePink
                           : /*myContentData!.paidStatus == AppStrings.paidText &&
                                   !myContentData!.isPaidStatusToHopper
@@ -875,19 +863,18 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   child: Column(
                     children: [
                       Text(
-                        contentItem!.paidStatus == AppStrings.unPaidText
+                        contentItem!.paidStatus == false
                             ? 'Published Price'
-                            : contentItem!.paidStatus == AppStrings.paidText &&
+                            : contentItem!.paidStatus == true &&
                                     (contentItem!.isPaidStatusToHopper)
                                 ? AppStrings.receivedText
                                 : AppStrings.soldText,
                         style: commonTextStyle(
                             size: size,
                             fontSize: size.width * AppDimensions.numD035,
-                            color:
-                                contentItem!.paidStatus == AppStrings.unPaidText
-                                    ? Colors.white
-                                    : Colors.black,
+                            color: !contentItem!.paidStatus
+                                ? Colors.white
+                                : Colors.black,
                             fontWeight: FontWeight.w400),
                         /*myContentData!.paidStatus == AppStrings.unPaidText
                                 ? size.width * AppDimensions.numD035
@@ -907,12 +894,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "$currencySymbol${formatDouble(double.parse(contentItem!.price ?? "0"))}",
+                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${formatDouble(double.parse(contentItem!.price ?? "0"))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
-                                color: contentItem!.paidStatus ==
-                                        AppStrings.unPaidText
+                                color: !contentItem!.paidStatus
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold),
@@ -954,7 +940,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "$currencySymbol${contentItem!.totalSold}",
+                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${contentItem!.totalSold}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,
@@ -1004,8 +990,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   size.width * AppDimensions.numD04),
-                              border:
-                                  Border.all(color: AppColorTheme.lightGrey.withOpacity(.6)),
+                              border: Border.all(
+                                  color:
+                                      AppColorTheme.lightGrey.withOpacity(.6)),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(
@@ -1142,7 +1129,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                 fontWeight: FontWeight.w400),
                           ),
                           Text(
-                            "$currencySymbol${numberFormatting(item.initialOfferAmount)}",
+                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${numberFormatting(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: commonTextStyle(
@@ -1223,8 +1210,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
         children: [
           VideoThumbnailWidget(
             videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
-            thumbnailUrl:
-                item.thumbnailUrl != null ? fixS3Url(item.thumbnailUrl!) : null,
+            thumbnailUrl: fixS3Url(item.thumbnailUrl),
             width: double.infinity,
             height: size.width * AppDimensions.numD50,
             fit: BoxFit.cover,
@@ -1255,9 +1241,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   children: [
                     VideoThumbnailWidget(
                       videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
-                      thumbnailUrl: item.thumbnailUrl != null
-                          ? fixS3Url(item.thumbnailUrl!)
-                          : null,
+                      thumbnailUrl: fixS3Url(item.thumbnailUrl),
                       width: double.infinity,
                       height: size.width * AppDimensions.numD50,
                       fit: BoxFit.cover,
@@ -1277,9 +1261,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                   children: [
                     VideoThumbnailWidget(
                       videoUrl: getMediaImageUrl(item.mediaUrl, isVideo: true),
-                      thumbnailUrl: item.thumbnailUrl != null
-                          ? fixS3Url(item.thumbnailUrl!)
-                          : null,
+                      thumbnailUrl: fixS3Url(item.thumbnailUrl),
                       width: double.infinity,
                       height: size.width * AppDimensions.numD50,
                       fit: BoxFit.cover,
@@ -1325,7 +1307,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
     ];
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       debugPrint('launching com googleUrl');
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -1385,7 +1367,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
     h = value ~/ 3600;
 
-    m = ((value - h * 3600)) ~/ 60;
+    m = (value - h * 3600) ~/ 60;
 
     s = value - (h * 3600) - (m * 60);
 

@@ -5,9 +5,9 @@ import '../entities/media_house.dart';
 import '../repositories/publication_repository.dart';
 
 class GetMediaHouses implements UseCase<List<MediaHouse>, NoParams> {
-  final PublicationRepository repository;
 
   GetMediaHouses(this.repository);
+  final PublicationRepository repository;
 
   @override
   Future<Either<Failure, List<MediaHouse>>> call(NoParams params) async {

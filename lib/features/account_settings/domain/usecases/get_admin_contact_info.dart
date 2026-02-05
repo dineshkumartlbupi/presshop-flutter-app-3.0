@@ -5,9 +5,9 @@ import '../entities/admin_contact_info.dart';
 import '../repositories/account_settings_repository.dart';
 
 class GetAdminContactInfo implements UseCase<AdminContactInfo, NoParams> {
-  final AccountSettingsRepository repository;
 
   GetAdminContactInfo(this.repository);
+  final AccountSettingsRepository repository;
 
   @override
   Future<Either<Failure, AdminContactInfo>> call(NoParams params) async {

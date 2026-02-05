@@ -5,9 +5,9 @@ import '../entities/hashtag.dart';
 import '../repositories/content_repository.dart';
 
 class GetTrendingHashtags implements UseCase<List<Hashtag>, NoParams> {
-  final ContentRepository repository;
 
   GetTrendingHashtags(this.repository);
+  final ContentRepository repository;
 
   @override
   Future<Either<Failure, List<Hashtag>>> call(NoParams params) async {

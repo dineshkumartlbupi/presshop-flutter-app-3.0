@@ -1,0 +1,21 @@
+Analyzing 2 items...                                            
+
+   info • The import of 'package:presshop/core/services/location_service.dart' is unnecessary because all of the used elements are also provided by the import of 'package:presshop/core/core_export.dart' • lib/features/camera/presentation/bloc/camera_bloc.dart:12:8 • unnecessary_import
+   info • The import of 'package:presshop/core/utils/shared_preferences.dart' is unnecessary because all of the used elements are also provided by the import of 'package:presshop/core/core_export.dart' • lib/features/camera/presentation/bloc/camera_bloc.dart:13:8 • unnecessary_import
+   info • Statements in an if should be enclosed in a block • lib/features/camera/presentation/bloc/camera_bloc.dart:327:45 • curly_braces_in_flow_control_structures
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/camera/presentation/bloc/camera_bloc.dart:454:33 • unawaited_futures
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/camera/presentation/bloc/camera_bloc.dart:489:31 • unawaited_futures
+   info • The file name 'CameraScreen.dart' isn't a lower_case_with_underscores identifier • lib/features/camera/presentation/pages/CameraScreen.dart:1:1 • file_names
+   info • The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/features/camera/presentation/pages/CameraScreen.dart:7:8 • unnecessary_import
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/camera/presentation/pages/CameraScreen.dart:156:25 • unawaited_futures
+   info • Don't use 'BuildContext's across async gaps • lib/features/camera/presentation/pages/CameraScreen.dart:157:19 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/camera/presentation/pages/CameraScreen.dart:169:29 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/camera/presentation/pages/CameraScreen.dart:178:19 • use_build_context_synchronously
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/camera/presentation/pages/CameraScreen.dart:193:31 • unawaited_futures
+   info • Missing an 'await' for the 'Future' computed by this expression • lib/features/camera/presentation/pages/CameraScreen.dart:202:23 • unawaited_futures
+   info • Don't use 'BuildContext's across async gaps • lib/features/camera/presentation/pages/CameraScreen.dart:203:17 • use_build_context_synchronously
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/camera/presentation/pages/CameraScreen.dart:338:41 • deprecated_member_use
+   info • Don't use 'BuildContext's across async gaps • lib/features/camera/presentation/pages/CameraScreen.dart:400:21 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/camera/presentation/pages/CameraScreen.dart:402:56 • use_build_context_synchronously
+
+17 issues found. (ran in 3.7s)

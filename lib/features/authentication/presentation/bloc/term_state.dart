@@ -5,13 +5,13 @@ class TermsInitial extends TermsState {}
 class TermsLoading extends TermsState {}
 
 class TermsLoaded extends TermsState {
-  final String htmlContent;
 
   TermsLoaded({required this.htmlContent});
+  final String htmlContent;
 }
 
 class TermsError extends TermsState {
-  final String message;
 
   TermsError({required this.message});
+  final String message;
 }

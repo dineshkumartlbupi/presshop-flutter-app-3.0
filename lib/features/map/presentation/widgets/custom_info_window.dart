@@ -3,14 +3,14 @@ import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 
 class CustomInfoWindow extends StatelessWidget {
-  final Incident incident;
-  final VoidCallback onPressed;
 
   const CustomInfoWindow({
     super.key,
     required this.incident,
     required this.onPressed,
   });
+  final Incident incident;
+  final VoidCallback onPressed;
 
   String _getDisplayName() {
     if (incident.type != null) {

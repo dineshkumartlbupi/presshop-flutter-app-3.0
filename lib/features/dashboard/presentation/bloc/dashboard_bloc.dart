@@ -14,16 +14,6 @@ import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.da
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  final GetActiveAdmins getActiveAdmins;
-  final UpdateLocation updateLocation;
-  final AddDevice addDevice;
-  final GetDashboardTaskDetail getDashboardTaskDetail;
-  final GetRoomId getRoomId;
-  final CheckAppVersion checkAppVersion;
-  final ActivateStudentBeans activateStudentBeans;
-  final CheckStudentBeans checkStudentBeans;
-  final MarkStudentBeansVisited markStudentBeansVisited;
-  final GetProfile getProfile;
 
   DashboardBloc({
     required this.getActiveAdmins,
@@ -49,6 +39,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<DashboardCheckStudentBeansEvent>(_onCheckStudentBeans);
     on<DashboardMarkStudentBeansVisitedEvent>(_onMarkStudentBeansVisited);
   }
+  final GetActiveAdmins getActiveAdmins;
+  final UpdateLocation updateLocation;
+  final AddDevice addDevice;
+  final GetDashboardTaskDetail getDashboardTaskDetail;
+  final GetRoomId getRoomId;
+  final CheckAppVersion checkAppVersion;
+  final ActivateStudentBeans activateStudentBeans;
+  final CheckStudentBeans checkStudentBeans;
+  final MarkStudentBeansVisited markStudentBeansVisited;
+  final GetProfile getProfile;
 
   Future<void> _onFetchActiveAdmins(
     FetchActiveAdmins event,

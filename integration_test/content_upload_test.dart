@@ -14,7 +14,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Content Upload Flow Integration Test',
-      (WidgetTester tester) async {
+      (tester) async {
     app.main();
     await tester.pumpAndSettle();
 

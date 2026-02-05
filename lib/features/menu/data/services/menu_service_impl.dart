@@ -6,9 +6,9 @@ import 'package:presshop/features/menu/domain/services/menu_service.dart';
 import 'package:presshop/main.dart';
 
 class MenuServiceImpl implements MenuService {
-  final GoogleSignIn googleSignIn;
 
   MenuServiceImpl({required this.googleSignIn});
+  final GoogleSignIn googleSignIn;
 
   @override
   Future<String> getDeviceId() async {

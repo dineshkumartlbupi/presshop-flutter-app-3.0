@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 class SideActionPanel extends StatelessWidget {
-  final VoidCallback? onCurrentLocation;
-  final VoidCallback? onZoomIn;
-  final VoidCallback? onZoomOut;
 
   const SideActionPanel({
     super.key,
@@ -11,6 +8,9 @@ class SideActionPanel extends StatelessWidget {
     this.onZoomIn,
     this.onZoomOut,
   });
+  final VoidCallback? onCurrentLocation;
+  final VoidCallback? onZoomIn;
+  final VoidCallback? onZoomOut;
 
   @override
   Widget build(BuildContext context) {

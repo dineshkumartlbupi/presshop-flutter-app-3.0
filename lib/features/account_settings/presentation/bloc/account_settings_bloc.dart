@@ -10,9 +10,6 @@ import '../../domain/usecases/get_admin_contact_info.dart';
 
 class AccountSettingsBloc
     extends Bloc<AccountSettingsEvent, AccountSettingsState> {
-  final DeleteAccount deleteAccount;
-  final ChangePassword changePassword;
-  final GetAdminContactInfo getAdminContactInfo;
 
   AccountSettingsBloc({
     required this.deleteAccount,
@@ -23,6 +20,9 @@ class AccountSettingsBloc
     on<ChangePasswordEvent>(_onChangePassword);
     on<GetAdminContactInfoEvent>(_onGetAdminContactInfo);
   }
+  final DeleteAccount deleteAccount;
+  final ChangePassword changePassword;
+  final GetAdminContactInfo getAdminContactInfo;
 
   Future<void> _onGetAdminContactInfo(
     GetAdminContactInfoEvent event,

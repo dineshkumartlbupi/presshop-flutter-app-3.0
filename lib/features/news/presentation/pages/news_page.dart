@@ -25,12 +25,12 @@ import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
 
 class NewsPage extends StatefulWidget {
-  final bool hideLeading;
-  final double? latitude;
-  final double? longitude;
   const NewsPage(
       {Key? key, this.hideLeading = false, this.latitude, this.longitude})
       : super(key: key);
+  final bool hideLeading;
+  final double? latitude;
+  final double? longitude;
 
   @override
   State<NewsPage> createState() => _NewsPageState();
@@ -552,11 +552,6 @@ class _NewsPageState extends State<NewsPage>
 }
 
 class _FilterBottomSheetContent extends StatefulWidget {
-  final Size size;
-  final String initialAlertType;
-  final String initialDistance;
-  final String initialCategory;
-  final Function(String, String, String) onApply;
 
   const _FilterBottomSheetContent({
     Key? key,
@@ -566,6 +561,11 @@ class _FilterBottomSheetContent extends StatefulWidget {
     required this.initialCategory,
     required this.onApply,
   }) : super(key: key);
+  final Size size;
+  final String initialAlertType;
+  final String initialDistance;
+  final String initialCategory;
+  final Function(String, String, String) onApply;
 
   @override
   _FilterBottomSheetContentState createState() =>

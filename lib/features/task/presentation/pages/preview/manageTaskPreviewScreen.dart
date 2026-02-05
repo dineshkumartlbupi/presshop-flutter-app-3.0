@@ -13,8 +13,8 @@ import 'package:path/path.dart' as path;
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 
 class ManageTaskPreviewScreen extends StatefulWidget {
-  final List<CameraData> cameraListData;
   const ManageTaskPreviewScreen({super.key, required this.cameraListData});
+  final List<CameraData> cameraListData;
 
   @override
   State<ManageTaskPreviewScreen> createState() =>
