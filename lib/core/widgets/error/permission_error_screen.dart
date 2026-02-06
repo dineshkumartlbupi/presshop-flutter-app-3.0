@@ -4,6 +4,7 @@ import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
+// ignore: must_be_immutable
 class PermissionErrorScreen extends StatefulWidget {
   PermissionErrorScreen({super.key, required this.permissionsStatus});
   Map<Permission, bool> permissionsStatus;
@@ -158,7 +159,8 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                                         : "Allow saving captured content to your device's gallery.",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.grey,
                                     fontWeight: FontWeight.w400),
                               ),

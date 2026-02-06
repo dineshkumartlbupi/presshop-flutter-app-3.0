@@ -201,20 +201,23 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
     size = MediaQuery.of(context).size;
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state is TaskChatLoaded) {
+        if (state.chatList.isNotEmpty) {
           chatList = state.chatList;
           isDataLoaded = true;
           setState(() {});
-        } else if (state is TaskLoading) {
+        } else if (state.allTasksStatus == TaskStatus.loading ||
+            state.taskDetailStatus == TaskStatus.loading ||
+            state.localTasksStatus == TaskStatus.loading) {
           isDataLoaded = false;
           setState(() {});
-        } else if (state is TaskDetailLoaded) {
+        } else if (state.taskDetail != null &&
+            state.taskDetailStatus == TaskStatus.success) {
           isDataLoaded = true;
           setState(() {});
-        } else if (state is TaskMediaUploaded) {
+        } else if (state.actionStatus == TaskStatus.success) {
           showSnackBar("Success", "Media uploaded successfully", Colors.green);
           _onRefresh();
-        } else if (state is TransactionDetailsLoaded) {
+        } else if (state.transactions.isNotEmpty) {
           if (state.transactions.isNotEmpty) {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => TransactionDetailScreen(
@@ -226,9 +229,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                       shouldShowPublication: true,
                     )));
           }
-        } else if (state is TaskError) {
+        } else if (state.errorMessage != null) {
           isDataLoaded = true;
-          showSnackBar("Error", state.message, Colors.red);
+          showSnackBar("Error", state.errorMessage!, Colors.red);
           setState(() {});
         }
       },
@@ -280,8 +283,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   ],
                 ),
                 body:
-                    (state is TaskLoading && !isDataLoaded) ||
-                            (state is TaskInitial && !isDataLoaded)
+                    ((state.allTasksStatus == TaskStatus.loading ||
+                                    state.taskDetailStatus ==
+                                        TaskStatus.loading ||
+                                    state.localTasksStatus ==
+                                        TaskStatus.loading) &&
+                                !isDataLoaded) ||
+                            (state.allTasksStatus == TaskStatus.initial &&
+                                !isDataLoaded)
                         ? Center(child: showLoader())
                         : SafeArea(
                             child: Column(

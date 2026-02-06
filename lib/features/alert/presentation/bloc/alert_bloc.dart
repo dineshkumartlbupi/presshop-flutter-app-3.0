@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/api_client.dart';
 import '../../data/models/alert_model.dart';
@@ -10,7 +9,6 @@ import 'alert_event.dart';
 import 'alert_state.dart';
 
 class AlertBloc extends Bloc<AlertEvent, AlertState> {
-
   AlertBloc({required this.apiClient, Location? location})
       : location = location ?? Location.instance,
         super(const AlertState()) {

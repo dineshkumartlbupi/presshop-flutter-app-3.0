@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/core/constants/app_dimensions_new.dart';
 
-
+// ignore: must_be_immutable
 class CommonTextField extends StatefulWidget {
   CommonTextField({
     super.key,
@@ -111,8 +111,8 @@ class CommonTextFieldState extends State<CommonTextField> {
               borderRadius: BorderRadius.circular(widget.size.width * 0.03),
               borderSide: BorderSide(width: 1, color: widget.borderColor)),
           prefixIcon: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD02),
+            padding: EdgeInsets.symmetric(
+                horizontal: widget.size.width * AppDimensions.numD02),
             child: widget.prefixIcon,
           ),
           prefix: widget.prefix,
@@ -120,16 +120,17 @@ class CommonTextFieldState extends State<CommonTextField> {
               BoxConstraints(maxHeight: widget.prefixIconHeight),
           prefixIconColor: AppColorTheme.colorTextFieldIcon,
           suffixIcon: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD02),
+            padding: EdgeInsets.symmetric(
+                horizontal: widget.size.width * AppDimensions.numD02),
             child: widget.suffixIcon,
           ),
           suffixIconConstraints:
               BoxConstraints(maxHeight: widget.suffixIconIconHeight),
-          suffixIconColor:
-              widget.hidePassword ? AppColorTheme.colorTextFieldIcon : Colors.grey,
-          contentPadding:
-              EdgeInsets.symmetric(vertical: widget.size.width * AppDimensions.numD02)),
+          suffixIconColor: widget.hidePassword
+              ? AppColorTheme.colorTextFieldIcon
+              : Colors.grey,
+          contentPadding: EdgeInsets.symmetric(
+              vertical: widget.size.width * AppDimensions.numD02)),
       textAlignVertical: TextAlignVertical.center,
       textCapitalization: widget.textCapitalization,
       onChanged: widget.onChanged,

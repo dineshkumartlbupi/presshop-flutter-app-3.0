@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:presshop/core/constants/string_constants.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
@@ -116,7 +115,8 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
       ),
       body: BlocConsumer<TaskBloc, TaskState>(
         listener: (context, state) {
-          if (state is TaskDetailLoaded) {
+          if (state.taskDetail != null &&
+              state.taskDetailStatus == TaskStatus.success) {
             taskDetail = state.taskDetail;
             roomId = taskDetail!.resp.roomId;
             _updateGoogleMap(LatLng(
@@ -124,25 +124,26 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                 taskDetail!.task.addressLocation.coordinates[1]));
 
             SharedPreferences.getInstance().then((input) {
-              var myId = input.getString(hopperIdKey) ?? "";
+              input.getString(hopperIdKey) ?? "";
               // acceptedBy is not in new model, assuming false or skipping check
               isOwner = false;
               if (mounted) {
                 setState(() {});
               }
             });
-          } else if (state is TaskError) {
-            showSnackBar("Error", state.message, Colors.red);
+          } else if (state.errorMessage != null) {
+            showSnackBar("Error", state.errorMessage!, Colors.red);
           }
         },
         builder: (context, state) {
           // Sync local variable with state if needed
-          if (state is TaskDetailLoaded) {
+          if (state.taskDetail != null &&
+              state.taskDetailStatus == TaskStatus.success) {
             taskDetail = state.taskDetail;
           }
 
-          if (state is TaskError) {
-            return Center(child: Text(state.message));
+          if (state.errorMessage != null && taskDetail == null) {
+            return Center(child: Text(state.errorMessage!));
           }
 
           if (taskDetail == null) {

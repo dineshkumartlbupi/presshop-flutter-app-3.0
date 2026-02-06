@@ -1,7 +1,0 @@
-Analyzing 2 items...                                            
-
-   info • Don't invoke 'print' in production code • lib/core/api/pretty_dio_logger.dart:74:7 • avoid_print
-   info • The import of 'package:presshop/features/task/data/models/manage_task_chat_model.dart' is unnecessary because all of the used elements are also provided by the import of 'package:presshop/core/core_export.dart' • lib/features/content/data/datasources/content_remote_data_source.dart:7:8 • unnecessary_import
-warning • Unused import: 'package:presshop/core/api/api_constant.dart' • lib/features/content/data/datasources/content_remote_data_source.dart:11:8 • unused_import
-
-3 issues found. (ran in 3.8s)

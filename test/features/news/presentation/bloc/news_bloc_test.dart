@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
-import 'package:presshop/features/news/domain/entities/comment.dart';
 import 'package:presshop/features/news/domain/usecases/get_aggregated_news.dart';
 import 'package:presshop/features/news/domain/usecases/get_comments.dart';
 import 'package:presshop/features/news/domain/usecases/get_news_detail.dart';
@@ -59,13 +58,13 @@ void main() {
   });
 
   const tNews = News(id: '1', title: 'Test News', description: 'Description');
-  const tComment = Comment(
-    id: 'c1',
-    contentId: '1',
-    userId: 'u1',
-    comment: 'Test Comment',
-    createdAt: '2023-01-01',
-  );
+  // const tComment = Comment(
+  //   id: 'c1',
+  //   contentId: '1',
+  //   userId: 'u1',
+  //   comment: 'Test Comment',
+  //   createdAt: '2023-01-01',
+  // );
 
   group('GetAggregatedNewsEvent', () {
     const tLat = 51.5;

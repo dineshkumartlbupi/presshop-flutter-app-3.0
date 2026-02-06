@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
-import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 import 'package:presshop/features/chatbot/presentation/bloc/chatbot_bloc.dart';
 
 class MockApiClient extends Mock implements ApiClient {}
@@ -45,13 +44,13 @@ void main() {
     });
 
     group('FetchMessagesEvent', () {
-      final tChatList = [
-        ChatModel(
-            message: 'Hello',
-            isUser: false,
-            isNavigate: false,
-            time: '2023-01-01')
-      ];
+      // final tChatList = [
+      //   ChatModel(
+      //       message: 'Hello',
+      //       isUser: false,
+      //       isNavigate: false,
+      //       time: '2023-01-01')
+      // ];
       final tResponseData = [
         {
           'message': 'Hello',

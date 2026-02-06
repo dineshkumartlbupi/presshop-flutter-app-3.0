@@ -4,22 +4,19 @@ import 'package:presshop/main.dart';
 
 class GlobalLoader {
   static int _requestCount = 0;
-  static bool _isLoading = false;
+  static OverlayEntry? _overlayEntry;
 
   static void show() {
     debugPrint(
         "🐰 GlobalLoader.show() called from:\n${StackTrace.current.toString().split('\n').take(3).join('\n')}");
     _requestCount++;
-    if (!_isLoading) {
-      _isLoading = true;
-      if (navigatorKey.currentContext != null) {
-        showDialog(
-          context: navigatorKey.currentContext!,
-          barrierDismissible: false,
-          useRootNavigator: true,
-          barrierColor: Colors.black.withOpacity(0.5),
-          builder: (context) {
-            return WillPopScope(
+    if (_overlayEntry == null) {
+      final overlay = navigatorKey.currentState?.overlay;
+      if (overlay != null) {
+        _overlayEntry = OverlayEntry(
+          builder: (context) => Material(
+            color: Colors.black.withOpacity(0.5),
+            child: WillPopScope(
               onWillPop: () async => false,
               child: Center(
                 child: SizedBox(
@@ -28,9 +25,12 @@ class GlobalLoader {
                   child: Lottie.asset("assets/lottieFiles/emily_loader.json"),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         );
+        overlay.insert(_overlayEntry!);
+      } else {
+        debugPrint("GlobalLoader.show() failed: No overlay available");
       }
     }
   }
@@ -40,15 +40,16 @@ class GlobalLoader {
       _requestCount--;
     }
 
-    if (_requestCount == 0 && _isLoading) {
-      _isLoading = false;
-      if (navigatorKey.currentContext != null) {
-        // Use root navigator to ensure we pop the dialog
-        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
-        // Note: checking if canPop or just pop might be safer.
-        // But popDialog isn't a standard method. It should be pop().
-        // However, standard pop() might pop the screen if dialog is already gone?
-        // We track _isLoading so we believe dialog is there.
+    if (_requestCount == 0 && _overlayEntry != null) {
+      final entryToRemove = _overlayEntry;
+      _overlayEntry =
+          null; // Clear reference before removal to avoid re-entry issues
+      try {
+        // OverlayEntry doesn't have a public 'mounted' property but 'remove'
+        // will throw if it's not currently in an overlay.
+        entryToRemove?.remove();
+      } catch (e) {
+        debugPrint("GlobalLoader.hide() safeguard: ${e.toString()}");
       }
     }
   }
@@ -56,14 +57,14 @@ class GlobalLoader {
   /// Force hide in case of errors/resets
   static void forceHide() {
     _requestCount = 0;
-    if (_isLoading) {
-      _isLoading = false;
-      if (navigatorKey.currentContext != null) {
-        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
+    if (_overlayEntry != null) {
+      final entryToRemove = _overlayEntry;
+      _overlayEntry = null;
+      try {
+        entryToRemove?.remove();
+      } catch (e) {
+        debugPrint("GlobalLoader.forceHide() safeguard: ${e.toString()}");
       }
     }
   }
 }
-
-// Extension to safely pop dialogs if needed?
-// Actually standard pop() is fine if we are sure it's the top. Use rootNavigator: true.

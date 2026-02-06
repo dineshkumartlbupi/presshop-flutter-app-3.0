@@ -1,5 +1,4 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -18,7 +17,6 @@ abstract class AccountSettingsRemoteDataSource {
 
 class AccountSettingsRemoteDataSourceImpl
     implements AccountSettingsRemoteDataSource {
-
   AccountSettingsRemoteDataSourceImpl(this.apiClient);
   final ApiClient apiClient;
 

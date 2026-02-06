@@ -4,12 +4,10 @@ import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/core/error/failures.dart';
 import 'package:presshop/features/map/data/datasources/map_remote_data_source.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
-import 'package:presshop/features/map/domain/entities/map_marker.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 class MapRepositoryImpl implements MapRepository {
-
   MapRepositoryImpl({required this.remoteDataSource});
   final MapRemoteDataSource remoteDataSource;
 

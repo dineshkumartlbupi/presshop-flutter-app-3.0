@@ -1,7 +1,6 @@
 import 'package:presshop/core/api/api_constant_new.dart';
 import '../../../../core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
-import 'package:presshop/core/error/exceptions.dart';
 
 abstract class FeedRemoteDataSource {
   Future<Map<String, dynamic>> getFeeds(Map<String, dynamic> params);
@@ -9,7 +8,6 @@ abstract class FeedRemoteDataSource {
 }
 
 class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
-
   FeedRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

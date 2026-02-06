@@ -170,7 +170,7 @@ void main() {
 
   group('GetTaskDetailEvent', () {
     blocTest<TaskBloc, TaskState>(
-      'emits [TaskLoading, TaskDetailLoaded] when successful',
+      'emits [loading, success] when successful',
       build: () {
         when(() => mockGetTaskDetail(any()))
             .thenAnswer((_) async => Right(tTaskAssignedEntity));
@@ -178,13 +178,16 @@ void main() {
       },
       act: (bloc) => bloc.add(const GetTaskDetailEvent(tTaskId)),
       expect: () => [
-        TaskLoading(),
-        TaskDetailLoaded(tTaskAssignedEntity),
+        const TaskState(taskDetailStatus: TaskStatus.loading),
+        TaskState(
+          taskDetail: tTaskAssignedEntity,
+          taskDetailStatus: TaskStatus.success,
+        ),
       ],
     );
 
     blocTest<TaskBloc, TaskState>(
-      'emits [TaskLoading, TaskError] when failed',
+      'emits [loading, failure] when failed',
       build: () {
         when(() => mockGetTaskDetail(any())).thenAnswer(
             (_) async => const Left(ServerFailure(message: 'Error')));
@@ -192,15 +195,16 @@ void main() {
       },
       act: (bloc) => bloc.add(const GetTaskDetailEvent(tTaskId)),
       expect: () => [
-        TaskLoading(),
-        const TaskError('Error'),
+        const TaskState(taskDetailStatus: TaskStatus.loading),
+        const TaskState(
+            taskDetailStatus: TaskStatus.failure, errorMessage: 'Error'),
       ],
     );
   });
 
   group('AcceptRejectTaskEvent', () {
     blocTest<TaskBloc, TaskState>(
-        'emits [TaskLoading, TaskActionSuccess] and tracks acceptance',
+        'emits [loading, success] and tracks acceptance',
         build: () {
           when(() => mockAcceptRejectTask(any()))
               .thenAnswer((_) async => const Right(null));
@@ -209,8 +213,8 @@ void main() {
         act: (bloc) => bloc.add(const AcceptRejectTaskEvent(
             taskId: '1', mediaHouseId: 'MH1', status: 'accepted')),
         expect: () => [
-              TaskLoading(),
-              const TaskActionSuccess('Task accepted successfully'),
+              const TaskState(actionStatus: TaskStatus.loading),
+              const TaskState(actionStatus: TaskStatus.success),
             ],
         verify: (_) {
           verify(() => mockAnalytics.logEvent(
@@ -223,7 +227,7 @@ void main() {
     final tTaskAll = TaskAll(
         id: '1',
         userId: 'u1',
-        heading: 'Task 1', // Corrected parameter
+        heading: 'Task 1',
         createdAt: 'date',
         description: 'desc',
         location: 'loc',
@@ -231,7 +235,7 @@ void main() {
     final tTasks = <TaskAll>[tTaskAll];
 
     blocTest<TaskBloc, TaskState>(
-      'emits [TasksLoaded(loading), TasksLoaded(success)] on first load',
+      'emits [loading, success] on first load',
       build: () {
         when(() => mockGetAllTasks(any()))
             .thenAnswer((_) async => Right(tTasks));
@@ -239,8 +243,8 @@ void main() {
       },
       act: (bloc) => bloc.add(const FetchAllTasksEvent(offset: 0)),
       expect: () => [
-        const TasksLoaded(allTasksStatus: TaskStatus.loading),
-        TasksLoaded(allTasks: tTasks, allTasksStatus: TaskStatus.success),
+        const TaskState(allTasksStatus: TaskStatus.loading),
+        TaskState(allTasks: tTasks, allTasksStatus: TaskStatus.success),
       ],
     );
   });
@@ -248,14 +252,14 @@ void main() {
   group('FetchLocalTasksEvent', () {
     final tTask = TaskPending(
         status: 'pending',
-        totalAmount: '100', // Task abstract param
-        title: 'Start Task', // TaskPending specific param
+        totalAmount: '100',
+        title: 'Start Task',
         body: 'body',
         broadCastId: 'bid');
     final tTasks = <Task>[tTask];
 
     blocTest<TaskBloc, TaskState>(
-      'emits [TasksLoaded(loading), TasksLoaded(success)]',
+      'emits [loading, success]',
       build: () {
         when(() => mockGetLocalTasks(any()))
             .thenAnswer((_) async => Right(tTasks));
@@ -263,8 +267,8 @@ void main() {
       },
       act: (bloc) => bloc.add(const FetchLocalTasksEvent()),
       expect: () => [
-        const TasksLoaded(localTasksStatus: TaskStatus.loading),
-        TasksLoaded(localTasks: tTasks, localTasksStatus: TaskStatus.success),
+        const TaskState(localTasksStatus: TaskStatus.loading),
+        TaskState(localTasks: tTasks, localTasksStatus: TaskStatus.success),
       ],
     );
   });
@@ -279,7 +283,7 @@ void main() {
         },
         act: (bloc) => bloc.add(const GetRoomIdEvent(
             receiverId: 'r1', taskId: 't1', roomType: 'rt', type: 't')),
-        expect: () => [const RoomIdLoaded(tRoomId)]);
+        expect: () => [const TaskState(roomId: tRoomId)]);
   });
 
   group('GetHopperAcceptedCountEvent', () {
@@ -292,6 +296,6 @@ void main() {
           return bloc;
         },
         act: (bloc) => bloc.add(const GetHopperAcceptedCountEvent('t1')),
-        expect: () => [const HopperAcceptedCountLoaded(tCount)]);
+        expect: () => [const TaskState(hopperAcceptedCount: tCount)]);
   });
 }

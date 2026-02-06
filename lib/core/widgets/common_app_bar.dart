@@ -7,6 +7,7 @@ import 'package:presshop/main.dart';
 
 const double kToolbarHeightIpad = 80.0; // Define the iPad toolbar height
 
+// ignore: must_be_immutable
 class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   CommonAppBar(
       {super.key,
@@ -67,7 +68,9 @@ class CommonAppBarState extends State<CommonAppBar> {
                 : widget.appBarbackgroundColor,
             elevation: 8,
             title: widget.title,
-            titleSpacing: widget.hideLeading ? 0 : widget.size.width * AppDimensions.numD03,
+            titleSpacing: widget.hideLeading
+                ? 0
+                : widget.size.width * AppDimensions.numD03,
             centerTitle: widget.centerTitle,
             titleTextStyle: TextStyle(
               fontSize: widget.size.width * AppDimensions.numD015,

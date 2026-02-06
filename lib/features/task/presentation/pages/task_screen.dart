@@ -78,6 +78,10 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   Position? _currentPosition;
 
+  // Flags to track if we've initiated fetch for each tab
+  bool _allTasksFetchInitiated = false;
+  bool _localTasksFetchInitiated = false;
+
   Future<void> _fetchLocationAndLoadTasks(TaskBloc bloc) async {
     try {
       LocationPermission permission = await Geolocator.checkPermission();
@@ -151,8 +155,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
     return BlocProvider(
       create: (context) {
         final bloc = di.sl<TaskBloc>();
-        // Initial Fetch with Location
-        _fetchLocationAndLoadTasks(bloc);
+        // Don't fetch tasks here - let the BlocBuilder handle it based on active tab
+        // This prevents both loaders from appearing when switching tabs
 
         if (widget.broadCastId != null) {
           bloc.add(FetchTaskDetailEvent(widget.broadCastId!));
@@ -160,124 +164,131 @@ class MyTaskScreenState extends State<MyTaskScreen>
         return bloc;
       },
       child: BlocListener<TaskBloc, TaskState>(
+        listenWhen: (previous, current) =>
+            previous.taskDetail != current.taskDetail &&
+            current.taskDetail != null,
         listener: (context, state) {
-          debugPrint(
-              "🚀 UI: TaskBloc State Changed. TaskDetail: ${state.taskDetail?.task.heading}");
-          if (state.taskDetail != null) {
-            debugPrint("🚀 UI: Showing Broadcast Dialog");
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              broadcastDialog(
-                size: size,
-                taskDetail: state.taskDetail!,
-                onTapView: () {
-                  if (widget.broadCastId != null) {
-                    Navigator.pop(context);
-                  }
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => BroadCastScreen(
-                            taskId: state.taskDetail!.task.id,
-                            mediaHouseId: state.taskDetail!.task.mediaHouse.id,
-                          )));
-                },
-              );
-            });
-          }
-
-          if (state.allTasksStatus == TaskStatus.success ||
-              state.allTasksStatus == TaskStatus.failure) {
-            _allRefreshController.refreshCompleted();
-            _allRefreshController.loadComplete();
-            if (state.allTasksStatus == TaskStatus.failure) {
-              _allRefreshController.refreshFailed();
-              _allRefreshController.loadFailed();
-            }
-          }
-
-          if (state.localTasksStatus == TaskStatus.success ||
-              state.localTasksStatus == TaskStatus.failure) {
-            _localRefreshController.refreshCompleted();
-            _localRefreshController.loadComplete();
-            if (state.localTasksStatus == TaskStatus.failure) {
-              _localRefreshController.refreshFailed();
-              _localRefreshController.loadFailed();
-            }
-          }
-        },
-        child: Builder(builder: (context) {
-          return Scaffold(
-            appBar: NewHomeAppBar(
+          debugPrint("🚀 UI: Showing Broadcast Dialog");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            broadcastDialog(
               size: size,
-              hideLeading: widget.hideLeading,
-              onFilterTap: () {
-                showBottomSheet(size);
+              taskDetail: state.taskDetail!,
+              onTapView: () {
+                if (widget.broadCastId != null) {
+                  Navigator.pop(context);
+                }
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => BroadCastScreen(
+                          taskId: state.taskDetail!.task.id,
+                          mediaHouseId: state.taskDetail!.task.mediaHouse.id,
+                        )));
               },
-            ),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  SizedBox(height: size.width * AppDimensions.numD04),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * AppDimensions.numD04),
-                    child: TabBar(
-                      controller: _tabController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      labelColor: Colors.white,
-                      dividerColor: AppColorTheme.colorThemePink,
-                      unselectedLabelColor: Colors.black,
-                      indicator: BoxDecoration(
-                        color: AppColorTheme.colorThemePink,
-                        borderRadius: BorderRadius.circular(
-                            size.width * AppDimensions.numD02),
-                      ),
-                      labelStyle: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * AppDimensions.numD038,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      tabs: [
-                        Tab(
-                          text: "All Tasks",
-                        ),
-                        Tab(
-                          text: "Local Tasks", // as
-                        ),
-                      ],
-                      onTap: (index) {
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                  const Divider(
-                    color: Color(0xFFD8D8D8),
-                    thickness: 1.5,
-                  ),
-                  Flexible(child: BlocBuilder<TaskBloc, TaskState>(
-                    builder: (context, state) {
-                      // Check if we need to fetch tasks
-                      if (_tabController.index == 0 &&
-                          state.allTasks.isEmpty &&
-                          state.allTasksStatus == TaskStatus.initial) {
-                        _fetchLocationAndLoadTasks(context.read<TaskBloc>());
-                      } else if (_tabController.index == 1 &&
-                          state.localTasks.isEmpty &&
-                          state.localTasksStatus == TaskStatus.initial) {
-                        context.read<TaskBloc>().add(FetchLocalTasksEvent(
-                            filterParams: getFilterParams()));
-                      }
-
-                      return _tabController.index == 0
-                          ? allTaskWidget(state.allTasks, context)
-                          : showLocalTasksDataWidget(state.localTasks, context);
-                    },
-                  )),
-                ],
+            );
+          });
+        },
+        child: BlocListener<TaskBloc, TaskState>(
+          listenWhen: (previous, current) =>
+              previous.allTasksStatus != current.allTasksStatus ||
+              previous.localTasksStatus != current.localTasksStatus,
+          listener: (context, state) {
+            // Complete refresh controllers when loading finishes
+            if (state.allTasksStatus != TaskStatus.loading) {
+              _allRefreshController.refreshCompleted();
+              _allRefreshController.loadComplete();
+            }
+            if (state.localTasksStatus != TaskStatus.loading) {
+              _localRefreshController.refreshCompleted();
+              _localRefreshController.loadComplete();
+            }
+          },
+          child: Builder(builder: (context) {
+            return Scaffold(
+              appBar: NewHomeAppBar(
+                size: size,
+                hideLeading: widget.hideLeading,
+                onFilterTap: () {
+                  showBottomSheet(size);
+                },
               ),
-            ),
-          );
-        }),
+              body: SafeArea(
+                child: Column(
+                  children: [
+                    SizedBox(height: size.width * AppDimensions.numD04),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
+                      child: TabBar(
+                        controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        labelColor: Colors.white,
+                        dividerColor: AppColorTheme.colorThemePink,
+                        unselectedLabelColor: Colors.black,
+                        indicator: BoxDecoration(
+                          color: AppColorTheme.colorThemePink,
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02),
+                        ),
+                        labelStyle: commonTextStyle(
+                          size: size,
+                          fontSize: size.width * AppDimensions.numD038,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        tabs: [
+                          const Tab(
+                            text: "All Tasks",
+                          ),
+                          const Tab(
+                            text: "Local Tasks",
+                          ),
+                        ],
+                        onTap: (index) {
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    const Divider(
+                      color: Color(0xFFD8D8D8),
+                      thickness: 1.5,
+                    ),
+                    Flexible(child: BlocBuilder<TaskBloc, TaskState>(
+                      builder: (context, state) {
+                        // Check if we need to fetch tasks for All Tasks tab
+                        if (_tabController.index == 0 &&
+                            !_allTasksFetchInitiated &&
+                            state.allTasks.isEmpty &&
+                            state.allTasksStatus == TaskStatus.initial) {
+                          _allTasksFetchInitiated = true;
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _fetchLocationAndLoadTasks(
+                                context.read<TaskBloc>());
+                          });
+                        }
+                        // Check if we need to fetch tasks for Local Tasks tab
+                        else if (_tabController.index == 1 &&
+                            !_localTasksFetchInitiated &&
+                            state.localTasks.isEmpty &&
+                            state.localTasksStatus == TaskStatus.initial) {
+                          _localTasksFetchInitiated = true;
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            context.read<TaskBloc>().add(FetchLocalTasksEvent(
+                                filterParams: getFilterParams()));
+                          });
+                        }
+
+                        return _tabController.index == 0
+                            ? allTaskWidget(state.allTasks, context)
+                            : showLocalTasksDataWidget(
+                                state.localTasks, context);
+                      },
+                    )),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

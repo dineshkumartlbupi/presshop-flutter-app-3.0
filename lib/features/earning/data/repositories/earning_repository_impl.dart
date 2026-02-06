@@ -7,7 +7,6 @@ import '../../domain/entities/earning_transaction.dart';
 import '../../domain/repositories/earning_repository.dart';
 import '../datasources/earning_remote_data_source.dart';
 import '../models/earning_model.dart';
-import '../../data/models/earning_model.dart';
 
 class EarningRepositoryImpl implements EarningRepository {
   EarningRepositoryImpl({

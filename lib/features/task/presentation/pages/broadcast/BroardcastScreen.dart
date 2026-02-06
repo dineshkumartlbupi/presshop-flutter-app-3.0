@@ -8,9 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as PH;
 import 'package:permission_handler/permission_handler.dart';
-
 import 'package:presshop/core/analytics/analytics_mixin.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
@@ -85,7 +83,6 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     getCurrentLocation();
     //requestContactsPermission();
     context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));
-    context.read<TaskBloc>().add(GetTaskDetailEvent(widget.taskId));
     _getSharedPrefs();
     super.initState();
   }
@@ -113,8 +110,9 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     size = MediaQuery.of(context).size;
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state is TaskDetailLoaded) {
-          TaskAssignedEntity assignedEntity = state.taskDetail;
+        if (state.taskDetail != null &&
+            state.taskDetailStatus == TaskStatus.success) {
+          TaskAssignedEntity assignedEntity = state.taskDetail!;
           taskDetail = TaskDetail(
             id: assignedEntity.task.id,
             deadLine: assignedEntity.task.deadlineDate,
@@ -136,13 +134,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
             status: assignedEntity.task.status,
             paidStatus: assignedEntity.task.paidStatus,
             createdAt: assignedEntity.task.createdAt.toIso8601String(),
-            // Map other fields as needed or leave defaults for missing ones
-            isNeedPhoto: false, // Default or infer if possible
-            isNeedVideo: false,
-            isNeedInterview: false,
-            photoPrice: "0",
-            videoPrice: "0",
-            interviewPrice: "0",
+            // Map actual requirements from the entity
+            isNeedPhoto: assignedEntity.task.isNeedPhoto,
+            isNeedVideo: assignedEntity.task.isNeedVideo,
+            isNeedInterview: assignedEntity.task.isNeedInterview,
+            photoPrice: assignedEntity.task.photoPrice,
+            videoPrice: assignedEntity.task.videoPrice,
+            interviewPrice: assignedEntity.task.interviewPrice,
             currency: assignedEntity.task.currency,
             currencySymbol: assignedEntity.task.currencySymbol,
           );
@@ -156,7 +154,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 .read<TaskBloc>()
                 .add(GetHopperAcceptedCountEvent(taskDetail!.id));
           }
-        } else if (state is TaskActionSuccess) {
+        } else if (state.actionStatus == TaskStatus.success) {
           if (_isAccepted) {
             context.read<TaskBloc>().add(GetRoomIdEvent(
                   receiverId: taskDetail!.mediaHouseId,
@@ -174,29 +172,24 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         Dashboard(initialPosition: 1, taskStatus: "rejected")),
                 (route) => false);
           }
-        } else if (state is RoomIdLoaded) {
+        } else if (state.roomId != null) {
           Navigator.pushAndRemoveUntil(
               navigatorKey.currentState!.context,
               MaterialPageRoute(
                   builder: (context) =>
                       Dashboard(initialPosition: 1, taskStatus: "accepted")),
               (route) => false);
-        } else if (state is HopperAcceptedCountLoaded) {
-          _hopperAcceptedCount = state.count;
-        } else if (state is TaskError) {
-          showSnackBar("Error", state.message, Colors.red);
+        } else if (state.hopperAcceptedCount != null) {
+          _hopperAcceptedCount = state.hopperAcceptedCount!;
+        } else if (state.errorMessage != null) {
+          showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
       builder: (context, state) {
         return Scaffold(
           body: taskDetail == null
               ? const Center(child: CircularProgressIndicator())
-              : Stack(
-                  children: [
-                    _googleMap(size),
-                    _body(size),
-                  ],
-                ),
+              : _body(size),
         );
       },
     );

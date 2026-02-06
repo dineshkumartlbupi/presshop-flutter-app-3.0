@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/constants/string_constants.dart';
-import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';

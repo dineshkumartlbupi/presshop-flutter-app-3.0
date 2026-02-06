@@ -333,8 +333,8 @@ class DashboardState extends State<Dashboard>
         );
       } else if (link.split("&").last == "type=Group") {
         String groupId = link.substring(link.lastIndexOf("?") + 1, link.length);
-        String id =
-            groupId.replaceAll("group_id=", "").replaceAll("&type=Group", "");
+        // String id =
+        //     groupId.replaceAll("group_id=", "").replaceAll("&type=Group", "");
         debugPrint(
             "groupId : ${groupId.replaceAll("group_id=", "").replaceAll("&type=Group", "")}");
       }
@@ -476,8 +476,8 @@ class DashboardState extends State<Dashboard>
                                           size, AppColorTheme.colorThemePink),
                                       () async {
                                     try {
-                                      final url =
-                                          setIsClickForBeansActivation();
+                                      // final url =
+                                      //     setIsClickForBeansActivation();
 
                                       Navigator.pop(context);
                                     } catch (e) {

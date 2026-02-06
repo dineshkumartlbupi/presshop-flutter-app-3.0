@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/core_export.dart';
 
 abstract class EarningEvent extends Equatable {
   const EarningEvent();
@@ -9,7 +8,6 @@ abstract class EarningEvent extends Equatable {
 }
 
 class FetchEarningDataEvent extends EarningEvent {
-
   const FetchEarningDataEvent({required this.fromDate, required this.toDate});
   final String fromDate;
   final String toDate;
@@ -18,9 +16,7 @@ class FetchEarningDataEvent extends EarningEvent {
   List<Object> get props => [fromDate, toDate];
 }
 
-
 class FetchTransactionsEvent extends EarningEvent {
-
   const FetchTransactionsEvent({
     required this.limit,
     required this.offset,
@@ -35,7 +31,6 @@ class FetchTransactionsEvent extends EarningEvent {
 }
 
 class FetchCommissionsEvent extends EarningEvent {
-
   const FetchCommissionsEvent({
     required this.limit,
     required this.offset,
@@ -44,7 +39,7 @@ class FetchCommissionsEvent extends EarningEvent {
   final int limit;
   final int offset;
   final Map<String, dynamic> filterParams;
-   @override
+  @override
   List<Object> get props => [limit, offset, filterParams];
 }
 
@@ -57,11 +52,9 @@ class ChangeTabEvent extends EarningEvent {
 }
 
 class UpdateDateEvent extends EarningEvent {
-
   const UpdateDateEvent({required this.fromDate, required this.toDate});
   final String fromDate;
   final String toDate;
-    @override
+  @override
   List<Object> get props => [fromDate, toDate];
-
 }

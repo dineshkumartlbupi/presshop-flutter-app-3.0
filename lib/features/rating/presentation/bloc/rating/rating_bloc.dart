@@ -5,13 +5,11 @@ import 'package:presshop/features/rating/domain/entities/media_house.dart';
 import 'package:presshop/features/rating/domain/entities/review.dart';
 import 'package:presshop/features/rating/domain/usecases/get_media_houses.dart';
 import 'package:presshop/features/rating/domain/usecases/get_reviews.dart';
-import 'package:presshop/core/error/failures.dart';
 
 part 'rating_event.dart';
 part 'rating_state.dart';
 
 class RatingBloc extends Bloc<RatingEvent, RatingState> {
-
   RatingBloc({
     required this.getReviews,
     required this.getMediaHouses,

@@ -3,7 +3,6 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';
 import 'package:presshop/features/map/domain/entities/route_info.dart';
-import 'package:presshop/features/map/domain/entities/map_marker.dart';
 import 'package:presshop/features/map/data/models/marker_model.dart';
 import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +21,6 @@ abstract class MapRemoteDataSource {
 }
 
 class MapRemoteDataSourceImpl implements MapRemoteDataSource {
-
   MapRemoteDataSourceImpl({
     required this.apiClient,
     required this.googleApiKey,

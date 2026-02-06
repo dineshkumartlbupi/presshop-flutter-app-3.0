@@ -209,14 +209,14 @@ class ApiClient {
     }
   }
 
-  Future<void> _clearSession() async {
-    debugPrint("🧹 Clearing User Session (ApiClient)...");
-    await _secureStorage.delete(key: tokenKey);
-    await _secureStorage.delete(key: refreshtokenKey);
-    await _sharedPreferences.remove(tokenKey);
-    await _sharedPreferences.remove(refreshtokenKey);
-    await _sharedPreferences.remove(rememberKey);
-  }
+  // Future<void> _clearSession() async {
+  //   debugPrint("🧹 Clearing User Session (ApiClient)...");
+  //   await _secureStorage.delete(key: tokenKey);
+  //   await _secureStorage.delete(key: refreshtokenKey);
+  //   await _sharedPreferences.remove(tokenKey);
+  //   await _sharedPreferences.remove(refreshtokenKey);
+  //   await _sharedPreferences.remove(rememberKey);
+  // }
 
   Future<Response> get(
     String path, {

@@ -1,7 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/features/notification/presentation/pages/InlineFlickPlayer.dart';
@@ -24,7 +20,6 @@ import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 
 class MyNotificationScreen extends StatefulWidget {
-
   const MyNotificationScreen({super.key, required this.count});
   final int count;
 
@@ -221,8 +216,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
             contentPadding: EdgeInsets.zero,
             insetPadding: EdgeInsets.symmetric(
                 horizontal: size.width * AppDimensions.numD02),
-            content: StatefulBuilder(
-                builder: (context, setState) {
+            content: StatefulBuilder(builder: (context, setState) {
               return Container(
                 width: size.width * AppDimensions.num1,
                 height: size.width * AppDimensions.numD52,

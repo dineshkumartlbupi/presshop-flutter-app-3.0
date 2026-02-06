@@ -6,13 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:equatable/equatable.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class HashTagSearchScreen extends StatefulWidget {
-
   HashTagSearchScreen(
       {super.key,
       required this.country,
@@ -109,41 +107,42 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                         color: AppColorTheme.colorHint,
                         fontWeight: FontWeight.normal),
                     disabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD08),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD08),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD08),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     errorBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD08),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
                     focusedErrorBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD08),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD08),
                         borderSide: const BorderSide(
                           width: 0,
                           style: BorderStyle.none,
                         )),
-                    contentPadding: EdgeInsets.only(left: size.width * AppDimensions.numD06)),
+                    contentPadding: EdgeInsets.only(
+                        left: size.width * AppDimensions.numD06)),
               ),
             ),
             /*    SizedBox(
@@ -168,7 +167,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+          padding: EdgeInsets.symmetric(
+              horizontal: size.width * AppDimensions.numD06),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -179,7 +179,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                 Wrap(
                   children: List.generate(selectedHashTagList.length, (index) {
                     return Container(
-                      margin: EdgeInsets.only(right: size.width * AppDimensions.numD02),
+                      margin: EdgeInsets.only(
+                          right: size.width * AppDimensions.numD02),
                       child: Chip(
                           label: Text(
                             "#${selectedHashTagList[index].name}",
@@ -217,7 +218,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
               if (hashTagController.text.isEmpty &&
                   hashtagSearchList.isNotEmpty)
                 Padding(
-                  padding: EdgeInsets.only(bottom: size.width * AppDimensions.numD02),
+                  padding: EdgeInsets.only(
+                      bottom: size.width * AppDimensions.numD02),
                   child: Text(
                     "Suggested Tags",
                     style: commonTextStyle(
@@ -255,8 +257,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                           child: Container(
                             decoration: BoxDecoration(
                                 color: AppColorTheme.colorLightGrey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD02)),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD02)),
                             padding: EdgeInsets.symmetric(
                                 vertical: size.width * AppDimensions.numD02,
                                 horizontal: size.width * AppDimensions.numD02),
@@ -266,7 +268,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                   "#${hashtagSearchList[index].name}",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -288,18 +291,23 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                         },
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * AppDimensions.numD02,
-                                              vertical: size.width * AppDimensions.numD005),
+                                              horizontal: size.width *
+                                                  AppDimensions.numD02,
+                                              vertical: size.width *
+                                                  AppDimensions.numD005),
                                           decoration: BoxDecoration(
-                                              color: AppColorTheme.colorThemePink,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * AppDimensions.numD025)),
+                                                  BorderRadius.circular(size
+                                                          .width *
+                                                      AppDimensions.numD025)),
                                           child: Text(
                                             "Add",
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * AppDimensions.numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w500),
                                           ),
@@ -309,7 +317,8 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                                         ? Icon(
                                             Icons.check,
                                             color: Colors.black,
-                                            size: size.width * AppDimensions.numD06,
+                                            size: size.width *
+                                                AppDimensions.numD06,
                                           )
                                         : Container())
                               ],
@@ -477,7 +486,6 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
 }
 
 class HashTagData extends Equatable {
-
   HashTagData({
     required this.id,
     required this.name,

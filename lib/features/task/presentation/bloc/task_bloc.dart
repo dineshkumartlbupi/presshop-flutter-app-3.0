@@ -16,7 +16,6 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-
   TaskBloc({
     required this.getTaskDetail,
     required this.acceptRejectTask,
@@ -28,7 +27,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     required this.getContentTransactionDetails,
     required this.getAllTasks,
     required this.getLocalTasks,
-  }) : super(TaskInitial()) {
+  }) : super(TaskState.initial()) {
     on<GetTaskDetailEvent>(_onGetTaskDetail);
     on<AcceptRejectTaskEvent>(_onAcceptRejectTask);
     on<GetTaskChatEvent>(_onGetTaskChat);
@@ -39,8 +38,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<GetContentTransactionDetailsEvent>(_onGetContentTransactionDetails);
     on<FetchAllTasksEvent>(_onFetchAllTasks);
     on<FetchLocalTasksEvent>(_onFetchLocalTasks);
-    on<FetchTaskDetailEvent>(
-        _onFetchTaskDetail); // Alias for GetTaskDetailEvent if needed or separate
+    on<FetchTaskDetailEvent>(_onFetchTaskDetail);
   }
   final GetTaskDetail getTaskDetail;
   final AcceptRejectTask acceptRejectTask;
@@ -55,18 +53,27 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onGetTaskDetail(
       GetTaskDetailEvent event, Emitter<TaskState> emit) async {
-    if (event.showLoader) emit(TaskLoading());
+    if (event.showLoader) {
+      emit(state.copyWith(
+          taskDetailStatus: TaskStatus.loading, clearErrorMessage: true));
+    }
     final result = await getTaskDetail(GetTaskDetailParams(
         taskId: event.taskId, showLoader: event.showLoader));
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (taskAssignedEntity) => emit(TaskDetailLoaded(taskAssignedEntity)),
+      (failure) => emit(state.copyWith(
+          taskDetailStatus: TaskStatus.failure, errorMessage: failure.message)),
+      (taskAssignedEntity) => emit(state.copyWith(
+          taskDetailStatus: TaskStatus.success,
+          taskDetail: taskAssignedEntity)),
     );
   }
 
   Future<void> _onAcceptRejectTask(
       AcceptRejectTaskEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
+    emit(state.copyWith(
+        actionStatus: TaskStatus.loading,
+        clearErrorMessage: true,
+        clearSuccessMessage: true));
     final result = await acceptRejectTask(AcceptRejectParams(
       taskId: event.taskId,
       mediaHouseId: event.mediaHouseId,
@@ -76,7 +83,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       (failure) {
         AppLogger.error("Failed to ${event.status} task: ${failure.message}",
             trackAnalytics: true);
-        emit(TaskError(failure.message));
+        emit(state.copyWith(
+            actionStatus: TaskStatus.failure, errorMessage: failure.message));
       },
       (_) {
         final eventName = event.status == 'accepted'
@@ -86,35 +94,46 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           'task_id': event.taskId,
           'media_house_id': event.mediaHouseId,
         });
-        emit(TaskActionSuccess("Task ${event.status} successfully"));
+        emit(state.copyWith(
+            actionStatus: TaskStatus.success,
+            successMessage: "Task ${event.status} successfully"));
       },
     );
   }
 
   Future<void> _onGetTaskChat(
       GetTaskChatEvent event, Emitter<TaskState> emit) async {
-    if (event.showLoader) emit(TaskLoading());
+    if (event.showLoader) {
+      emit(state.copyWith(
+          actionStatus: TaskStatus.loading, clearErrorMessage: true));
+    }
     final result = await getTaskChat(GetTaskChatParams(
         roomId: event.roomId,
         type: event.type,
         contentId: event.contentId,
         showLoader: event.showLoader));
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (chatList) => emit(TaskChatLoaded(chatList)),
+      (failure) => emit(state.copyWith(
+          actionStatus: TaskStatus.failure, errorMessage: failure.message)),
+      (chatList) => emit(
+          state.copyWith(actionStatus: TaskStatus.success, chatList: chatList)),
     );
   }
 
   Future<void> _onUploadTaskMedia(
       UploadTaskMediaEvent event, Emitter<TaskState> emit) async {
-    if (event.showLoader) emit(TaskLoading());
+    if (event.showLoader) {
+      emit(state.copyWith(
+          actionStatus: TaskStatus.loading, clearErrorMessage: true));
+    }
     final result = await uploadTaskMedia(
         UploadTaskMediaParams(data: event.data, showLoader: event.showLoader));
     result.fold(
       (failure) {
         AppLogger.error("Task media upload failed: ${failure.message}",
             trackAnalytics: true);
-        emit(TaskError(failure.message));
+        emit(state.copyWith(
+            actionStatus: TaskStatus.failure, errorMessage: failure.message));
       },
       (response) {
         final taskId = event.data.fields
@@ -124,19 +143,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         AppLogger.trackEvent(EventNames.taskSubmitted, parameters: {
           'task_id': taskId,
         });
-        emit(TaskMediaUploaded(response));
+        emit(state.copyWith(
+            actionStatus: TaskStatus.success, uploadResponse: response));
       },
     );
   }
 
   Future<void> _onGetRoomId(
       GetRoomIdEvent event, Emitter<TaskState> emit) async {
-    // Only emit loading for room ID if it's a blocking operation?
-    // Usually Room ID fetch is background or quick. Let's keep it safe.
-    // emit(TaskLoading());
-    // Maybe don't emit loading for minor fetches to avoid full screen loaders jumping?
-    // But for consistency let's emit loading or handle in UI.
-
     final result = await getRoomId(GetRoomIdParams(
       receiverId: event.receiverId,
       taskId: event.taskId,
@@ -145,8 +159,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     ));
 
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (roomId) => emit(RoomIdLoaded(roomId)),
+      (failure) => emit(state.copyWith(errorMessage: failure.message)),
+      (roomId) => emit(state.copyWith(roomId: roomId)),
     );
   }
 
@@ -156,8 +170,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         "🚀 TaskBloc: Getting Hopper Accepted Count for taskId: '${event.taskId}'");
     final result = await getHopperAcceptedCount(event.taskId);
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (count) => emit(HopperAcceptedCountLoaded(count)),
+      (failure) => emit(state.copyWith(errorMessage: failure.message)),
+      (count) => emit(state.copyWith(hopperAcceptedCount: count)),
     );
   }
 
@@ -165,8 +179,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       GetTaskTransactionDetailsEvent event, Emitter<TaskState> emit) async {
     final result = await getTaskTransactionDetails(event.transactionId);
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (transactions) => emit(TransactionDetailsLoaded(transactions)),
+      (failure) => emit(state.copyWith(errorMessage: failure.message)),
+      (transactions) => emit(state.copyWith(transactions: transactions)),
     );
   }
 
@@ -177,26 +191,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       mediaHouseId: event.mediaHouseId,
     ));
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (transactions) => emit(TransactionDetailsLoaded(transactions)),
+      (failure) => emit(state.copyWith(errorMessage: failure.message)),
+      (transactions) => emit(state.copyWith(transactions: transactions)),
     );
   }
 
   Future<void> _onFetchAllTasks(
       FetchAllTasksEvent event, Emitter<TaskState> emit) async {
-    TasksLoaded currentState;
-    if (state is TasksLoaded) {
-      currentState = state as TasksLoaded;
-      emit(TasksLoaded(
-        allTasks: currentState.allTasks,
-        localTasks: currentState.localTasks,
-        allTasksStatus: TaskStatus.loading,
-        localTasksStatus: currentState.localTasksStatus,
-      ));
-    } else {
-      currentState = const TasksLoaded(allTasksStatus: TaskStatus.loading);
-      emit(currentState);
-    }
+    emit(state.copyWith(
+        allTasksStatus: TaskStatus.loading, clearErrorMessage: true));
 
     final result = await getAllTasks(GetAllTasksParams(
       limit: 10,
@@ -206,64 +209,52 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     ));
 
     result.fold(
-      (failure) => emit(TasksLoaded(
-        allTasks: currentState.allTasks,
-        localTasks: currentState.localTasks,
-        allTasksStatus: TaskStatus.failure,
-        localTasksStatus: currentState.localTasksStatus,
-      )),
-      (tasks) => emit(TasksLoaded(
-        allTasks: tasks,
-        localTasks: currentState.localTasks,
-        allTasksStatus: TaskStatus.success,
-        localTasksStatus: currentState.localTasksStatus,
-      )),
-    );
+        (failure) => emit(state.copyWith(
+            allTasksStatus: TaskStatus.failure,
+            errorMessage: failure.message)), (tasks) {
+      final updatedTasks =
+          event.offset == 0 ? tasks : [...state.allTasks, ...tasks];
+      emit(state.copyWith(
+          allTasksStatus: TaskStatus.success, allTasks: updatedTasks));
+    });
   }
 
   Future<void> _onFetchLocalTasks(
       FetchLocalTasksEvent event, Emitter<TaskState> emit) async {
-    TasksLoaded currentState;
-    if (state is TasksLoaded) {
-      currentState = state as TasksLoaded;
-      emit(TasksLoaded(
-        allTasks: currentState.allTasks,
-        localTasks: currentState.localTasks,
-        allTasksStatus: currentState.allTasksStatus,
-        localTasksStatus: TaskStatus.loading,
-      ));
-    } else {
-      currentState = const TasksLoaded(localTasksStatus: TaskStatus.loading);
-      emit(currentState);
-    }
+    emit(state.copyWith(
+        localTasksStatus: TaskStatus.loading, clearErrorMessage: true));
 
     final result = await getLocalTasks(GetLocalTasksParams(
         filterParams: event.filterParams ?? {}, showLoader: event.showLoader));
 
     result.fold(
-      (failure) => emit(TasksLoaded(
-        allTasks: currentState.allTasks,
-        localTasks: currentState.localTasks,
-        allTasksStatus: currentState.allTasksStatus,
-        localTasksStatus: TaskStatus.failure,
-      )),
-      (tasks) => emit(TasksLoaded(
-        allTasks: currentState.allTasks,
-        localTasks: tasks,
-        allTasksStatus: currentState.allTasksStatus,
-        localTasksStatus: TaskStatus.success,
-      )),
+      (failure) => emit(state.copyWith(
+          localTasksStatus: TaskStatus.failure, errorMessage: failure.message)),
+      (tasks) => emit(state.copyWith(
+          localTasksStatus: TaskStatus.success, localTasks: tasks)),
     );
   }
 
   Future<void> _onFetchTaskDetail(
       FetchTaskDetailEvent event, Emitter<TaskState> emit) async {
-    if (event.showLoader) emit(TaskLoading());
+    if (event.showLoader) {
+      emit(state.copyWith(
+          taskDetailStatus: TaskStatus.loading, clearErrorMessage: true));
+    }
     final result = await getTaskDetail(GetTaskDetailParams(
         taskId: event.taskId, showLoader: event.showLoader));
     result.fold(
-      (failure) => emit(TaskError(failure.message)),
-      (taskAssignedEntity) => emit(TaskDetailLoaded(taskAssignedEntity)),
+      (failure) => emit(state.copyWith(
+          taskDetailStatus: TaskStatus.failure, errorMessage: failure.message)),
+      (taskAssignedEntity) => emit(state.copyWith(
+          taskDetailStatus: TaskStatus.success,
+          taskDetail: taskAssignedEntity)),
     );
+  }
+
+  @override
+  void onTransition(Transition<TaskEvent, TaskState> transition) {
+    super.onTransition(transition);
+    // debugPrint("🚀 TaskBloc Transition: ${transition.event} -> ${transition.nextState}");
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/services/location_service.dart';
-import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_controller_builder.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';

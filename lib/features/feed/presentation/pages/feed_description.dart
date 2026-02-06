@@ -3,7 +3,6 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 class ExpandableText extends StatefulWidget {
-
   const ExpandableText({
     super.key,
     required this.text,
@@ -20,7 +19,7 @@ class _ExpandableTextState extends State<ExpandableText> {
   bool _readMore = true;
   late String firstHalf;
   late String secondHalf;
-  bool _isOverflow = false;
+  // bool _isOverflow = false;
 
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _ExpandableTextState extends State<ExpandableText> {
     );
     tp.layout(maxWidth: MediaQuery.of(context).size.width);
     setState(() {
-      _isOverflow = tp.didExceedMaxLines;
+      // _isOverflow = tp.didExceedMaxLines;
     });
   }
 

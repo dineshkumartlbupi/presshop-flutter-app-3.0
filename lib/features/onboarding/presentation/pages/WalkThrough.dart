@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart' hide Navigator;
+import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
@@ -90,9 +90,9 @@ class _WalkthroughState extends State<Walkthrough> {
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
                 (route) => false);
           } else if (state is OnboardingError) {
-             // Fallback to login anyway or show error?
-             // Usually just log and proceed
-             Navigator.of(context).pushAndRemoveUntil(
+            // Fallback to login anyway or show error?
+            // Usually just log and proceed
+            Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
                 (route) => false);
           }
@@ -104,8 +104,8 @@ class _WalkthroughState extends State<Walkthrough> {
                 controller: controller,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD06),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -125,7 +125,9 @@ class _WalkthroughState extends State<Walkthrough> {
                               )
                             : Container(),
                         SizedBox(
-                            height: index % 2 == 0 ? size.width * AppDimensions.numD04 : 0),
+                            height: index % 2 == 0
+                                ? size.width * AppDimensions.numD04
+                                : 0),
                         Container(
                           decoration: const BoxDecoration(
                               image: DecorationImage(
@@ -156,7 +158,9 @@ class _WalkthroughState extends State<Walkthrough> {
                                 fontFamily: 'AirbnbCereal_W_Bk',
                                 fontSize: size.width * AppDimensions.numD035)),
                         SizedBox(
-                            height: index % 2 == 0 ? 0 : size.width * AppDimensions.numD04),
+                            height: index % 2 == 0
+                                ? 0
+                                : size.width * AppDimensions.numD04),
                         index % 2 == 0
                             ? Container()
                             : Expanded(
@@ -175,20 +179,25 @@ class _WalkthroughState extends State<Walkthrough> {
                             index == 0
                                 ? InkWell(
                                     onTap: () {
-                                      context.read<OnboardingBloc>().add(CompleteOnboarding());
+                                      context
+                                          .read<OnboardingBloc>()
+                                          .add(CompleteOnboarding());
                                     },
                                     splashColor: Colors.grey.shade300,
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * AppDimensions.numD02,
-                                          vertical: size.width * AppDimensions.numD03),
+                                          horizontal:
+                                              size.width * AppDimensions.numD02,
+                                          vertical: size.width *
+                                              AppDimensions.numD03),
                                       child: Text(
                                         AppStrings.skipText,
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.normal,
                                             fontFamily: 'AirbnbCereal_W_Md',
-                                            fontSize: size.width * AppDimensions.numD03),
+                                            fontSize: size.width *
+                                                AppDimensions.numD03),
                                       ),
                                     ))
                                 : Container(),
@@ -196,20 +205,27 @@ class _WalkthroughState extends State<Walkthrough> {
                             walkthroughList[index].showButton
                                 ? ElevatedButton(
                                     onPressed: () {
-                                      context.read<OnboardingBloc>().add(CompleteOnboarding());
+                                      context
+                                          .read<OnboardingBloc>()
+                                          .add(CompleteOnboarding());
                                     },
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: size.width * AppDimensions.numD012,
-                                            horizontal: size.width * AppDimensions.numD04),
-                                        backgroundColor: AppColorTheme.colorThemePink,
+                                            vertical: size.width *
+                                                AppDimensions.numD012,
+                                            horizontal: size.width *
+                                                AppDimensions.numD04),
+                                        backgroundColor:
+                                            AppColorTheme.colorThemePink,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * AppDimensions.numD05))),
+                                                size.width *
+                                                    AppDimensions.numD05))),
                                     child: Text(
                                       walkthroughList[index].buttonText,
                                       style: TextStyle(
-                                          fontSize: size.width * AppDimensions.numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           color: Colors.white,
                                           fontFamily: 'AirbnbCereal_W_Md',
                                           fontWeight: FontWeight.w700),
@@ -219,23 +235,29 @@ class _WalkthroughState extends State<Walkthrough> {
                             InkWell(
                                 onTap: () {
                                   if (index == (walkthroughList.length - 1)) {
-                                    context.read<OnboardingBloc>().add(CompleteOnboarding());
+                                    context
+                                        .read<OnboardingBloc>()
+                                        .add(CompleteOnboarding());
                                   } else {
                                     controller.animateToPage(index + 1,
-                                        duration: const Duration(milliseconds: 100),
+                                        duration:
+                                            const Duration(milliseconds: 100),
                                         curve: Curves.linear);
                                   }
                                 },
                                 splashColor: Colors.grey.shade300,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * AppDimensions.numD02,
-                                      vertical: size.width * AppDimensions.numD03),
+                                      horizontal:
+                                          size.width * AppDimensions.numD02,
+                                      vertical:
+                                          size.width * AppDimensions.numD03),
                                   child: Text(
                                     AppStrings.nextText,
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: size.width * AppDimensions.numD03,
+                                        fontSize:
+                                            size.width * AppDimensions.numD03,
                                         fontWeight: FontWeight.normal),
                                   ),
                                 )),
@@ -259,7 +281,6 @@ class _WalkthroughState extends State<Walkthrough> {
 }
 
 class WalkthroughData {
-
   WalkthroughData(
       {required this.image,
       required this.title1,

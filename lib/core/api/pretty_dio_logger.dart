@@ -104,10 +104,10 @@ DATA   : ${_prettyJson(err.response?.data)}
     if (data == null) return "null";
     try {
       // Avoid expensive formatting for very large collections
-      if (data is List && data.length > 100) {
+      if (data is List && data.length > 500) {
         return "[LIST of ${data.length} items] (Too large to format safely)";
       }
-      if (data is Map && data.length > 100) {
+      if (data is Map && data.length > 500) {
         return "[MAP with ${data.length} keys] (Too large to format safely)";
       }
 
@@ -117,10 +117,10 @@ DATA   : ${_prettyJson(err.response?.data)}
         try {
           final decoded = jsonDecode(data);
           // Check decoded size too
-          if (decoded is List && decoded.length > 100) {
+          if (decoded is List && decoded.length > 500) {
             return "[DECODED LIST of ${decoded.length} items]";
           }
-          if (decoded is Map && decoded.length > 100) {
+          if (decoded is Map && decoded.length > 500) {
             return "[DECODED MAP with ${decoded.length} keys]";
           }
           result = encoder.convert(decoded);
@@ -132,14 +132,14 @@ DATA   : ${_prettyJson(err.response?.data)}
       }
 
       // Truncate string result if still too large
-      if (result.length > 2000) {
-        return "${result.substring(0, 2000)}\n... [TRUNCATED ${result.length - 2000} characters]";
+      if (result.length > 30000) {
+        return "${result.substring(0, 30000)}\n... [TRUNCATED ${result.length - 30000} characters]";
       }
       return result;
     } catch (e) {
       final fallback = data.toString();
-      if (fallback.length > 2000) {
-        return "${fallback.substring(0, 2000)}\n... [TRUNCATED ${fallback.length - 2000} characters]";
+      if (fallback.length > 30000) {
+        return "${fallback.substring(0, 30000)}\n... [TRUNCATED ${fallback.length - 30000} characters]";
       }
       return fallback;
     }

@@ -16,8 +16,8 @@ import '../bloc/publication_event.dart';
 import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
 
+// ignore: must_be_immutable
 class PublicationListScreen extends StatefulWidget {
-
   PublicationListScreen(
       {super.key,
       required this.contentId,
@@ -133,8 +133,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                     padding: EdgeInsets.all(size.width * AppDimensions.numD05),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD05)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD05)),
                     child: Column(
                       children: [
                         Row(
@@ -172,8 +172,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   )),
                             ),
                             Padding(
-                              padding:
-                                  EdgeInsets.only(left: size.width * AppDimensions.numD06),
+                              padding: EdgeInsets.only(
+                                  left: size.width * AppDimensions.numD06),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -182,7 +182,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                     AppStrings.publicationsText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -192,7 +193,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                         : '0',
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD08,
+                                        fontSize:
+                                            size.width * AppDimensions.numD08,
                                         color: AppColorTheme.colorThemePink,
                                         fontWeight: FontWeight.w800),
                                   ),
@@ -204,7 +206,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                     //"Total amount",
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -215,7 +218,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           : '£0',
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD075,
+                                          fontSize: size.width *
+                                              AppDimensions.numD075,
                                           color: AppColorTheme.colorThemePink,
                                           fontWeight: FontWeight.w800),
                                     ),
@@ -245,15 +249,18 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       },
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
-                                          vertical: size.width * AppDimensions.numD02,
-                                          horizontal: size.width * AppDimensions.numD02,
+                                          vertical:
+                                              size.width * AppDimensions.numD02,
+                                          horizontal:
+                                              size.width * AppDimensions.numD02,
                                         ),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 width: 1.2,
                                                 color: Colors.black),
                                             borderRadius: BorderRadius.circular(
-                                                size.width * AppDimensions.numD02)),
+                                                size.width *
+                                                    AppDimensions.numD02)),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -266,8 +273,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                                   : "From date",
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD035,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w600),
                                             ),
@@ -322,15 +329,18 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       },
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
-                                          vertical: size.width * AppDimensions.numD02,
-                                          horizontal: size.width * AppDimensions.numD02,
+                                          vertical:
+                                              size.width * AppDimensions.numD02,
+                                          horizontal:
+                                              size.width * AppDimensions.numD02,
                                         ),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 width: 1.2,
                                                 color: Colors.black),
                                             borderRadius: BorderRadius.circular(
-                                                size.width * AppDimensions.numD02)),
+                                                size.width *
+                                                    AppDimensions.numD02)),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -343,8 +353,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                                   : "To date",
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD035,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD035,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w700),
                                             ),
@@ -416,8 +426,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                       ),
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorLightGrey,
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD02)),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02)),
                       child: Column(
                         children: [
                           Row(
@@ -426,20 +436,23 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                               Container(
                                 padding: EdgeInsets.symmetric(
                                     vertical: size.width * AppDimensions.numD01,
-                                    horizontal: size.width * AppDimensions.numD04),
+                                    horizontal:
+                                        size.width * AppDimensions.numD04),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD015),
                                     border: Border.all(
-                                        color: AppColorTheme.colorGrey3, width: 1)),
+                                        color: AppColorTheme.colorGrey3,
+                                        width: 1)),
                                 child: Text(
                                   item.payableT0Hopper.isNotEmpty
                                       ? "$currencySymbol${currencyFormat.format(double.parse(item.payableT0Hopper))}"
                                       : "£0",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD04,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -471,15 +484,19 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           Image.asset(
                                         "assets/dummyImages/placeholderImage.png",
                                         fit: BoxFit.cover,
-                                        height: size.width * AppDimensions.numD11,
-                                        width: size.width * AppDimensions.numD12,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
                                       ),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         "${commonImagePath}rabbitLogo.png",
                                         fit: BoxFit.cover,
-                                        height: size.width * AppDimensions.numD11,
-                                        width: size.width * AppDimensions.numD12,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
                                       ),
                                     ),
                                   ),
@@ -490,15 +507,19 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD03),
                                     child: Image.network(item.companyLogo,
-                                        height: size.width * AppDimensions.numD11,
-                                        width: size.width * AppDimensions.numD12,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
                                         fit: BoxFit.contain,
                                         errorBuilder: (context, i, b) =>
                                             Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
-                                              height: size.width * AppDimensions.numD11,
-                                              width: size.width * AppDimensions.numD12,
+                                              height: size.width *
+                                                  AppDimensions.numD11,
+                                              width: size.width *
+                                                  AppDimensions.numD12,
                                             )),
                                   )
                                 ],
@@ -508,7 +529,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Payment Detail
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD04),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -516,7 +538,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.paymentDetailText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -524,7 +547,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   item.createdAT,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -534,7 +558,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Payment made time
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -542,7 +567,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.paymentMadeTimeText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -553,7 +579,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       format: "hh:mm a"),
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -563,7 +590,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Transaction ID
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -571,7 +599,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.transactionIdText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -579,7 +608,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   item.id,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -619,7 +649,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   "View transaction details",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -643,8 +674,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                       ),
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorLightGrey,
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD02)),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD02)),
                       child: Column(
                         children: [
                           Row(
@@ -653,7 +684,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                               Container(
                                 padding: EdgeInsets.symmetric(
                                     vertical: size.width * AppDimensions.numD01,
-                                    horizontal: size.width * AppDimensions.numD04),
+                                    horizontal:
+                                        size.width * AppDimensions.numD04),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: AppColorTheme.colorThemePink,
@@ -666,7 +698,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD04,
+                                      fontSize:
+                                          size.width * AppDimensions.numD04,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -689,15 +722,19 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD03),
                                     child: Image.network(item.companyLogo,
-                                        height: size.width * AppDimensions.numD11,
-                                        width: size.width * AppDimensions.numD12,
+                                        height:
+                                            size.width * AppDimensions.numD11,
+                                        width:
+                                            size.width * AppDimensions.numD12,
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, i, b) =>
                                             Image.asset(
                                               "${commonImagePath}rabbitLogo.png",
                                               fit: BoxFit.cover,
-                                              height: size.width * AppDimensions.numD11,
-                                              width: size.width * AppDimensions.numD12,
+                                              height: size.width *
+                                                  AppDimensions.numD11,
+                                              width: size.width *
+                                                  AppDimensions.numD12,
                                             )),
                                   )
                                 ],
@@ -707,7 +744,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Your earnings
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD04),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -715,7 +753,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   'Content Sold',
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -725,7 +764,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "0",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -735,7 +775,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// PressHop fees
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -743,7 +784,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.presshopCommissionText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -753,7 +795,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -762,7 +805,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                           ),
 
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -770,7 +814,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.processingFeeText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -780,7 +825,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -790,7 +836,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Amount pending
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -798,7 +845,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.amountPendingText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -808,7 +856,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       : "",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -818,7 +867,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           /// Payment due date
                           Padding(
-                            padding: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                            padding: EdgeInsets.only(
+                                top: size.width * AppDimensions.numD02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -826,7 +876,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   AppStrings.paymentDueDateText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -836,7 +887,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                       format: "dd MMM yyyy"),
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -876,7 +928,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                   "View transaction details",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -920,7 +973,9 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
           icon: "ic_graph_down.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+          name: AppStrings.filterDateText,
+          icon: "ic_eye_outlined.png",
+          isSelected: false),
     ]);
   }
 
@@ -970,7 +1025,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                             "Sort and Filter",
                             style: commonTextStyle(
                                 size: size,
-                                fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
+                                fontSize: size.width *
+                                    AppDimensions.appBarHeadingFontSizeNew,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1050,7 +1106,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                 fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           Navigator.pop(context);
                           _applyFilter(context);
                         }),
@@ -1117,36 +1174,44 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                   list[index].icon.isNotEmpty
                       ? list[index].icon.contains('https')
                           ? Image.network(list[index].icon,
-                              height: list[index].name == AppStrings.soldContentText
-                                  ? size.width * AppDimensions.numD06
-                                  : size.width * AppDimensions.numD05,
-                              width: list[index].name == AppStrings.soldContentText
-                                  ? size.width * AppDimensions.numD06
-                                  : size.width * AppDimensions.numD05,
+                              height:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
+                              width:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
                               errorBuilder: (context, i, d) => Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
-                                    height: list[index].name == AppStrings.soldContentText
+                                    height: list[index].name ==
+                                            AppStrings.soldContentText
                                         ? size.width * AppDimensions.numD06
                                         : size.width * AppDimensions.numD05,
-                                    width: list[index].name == AppStrings.soldContentText
+                                    width: list[index].name ==
+                                            AppStrings.soldContentText
                                         ? size.width * AppDimensions.numD06
                                         : size.width * AppDimensions.numD05,
                                   ))
                           : Image.asset(
                               "$iconsPath${list[index].icon}",
                               color: Colors.black,
-                              height: list[index].name == AppStrings.soldContentText
-                                  ? size.width * AppDimensions.numD06
-                                  : size.width * AppDimensions.numD05,
-                              width: list[index].name == AppStrings.soldContentText
-                                  ? size.width * AppDimensions.numD06
-                                  : size.width * AppDimensions.numD05,
+                              height:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
+                              width:
+                                  list[index].name == AppStrings.soldContentText
+                                      ? size.width * AppDimensions.numD06
+                                      : size.width * AppDimensions.numD05,
                               errorBuilder: (context, i, d) => Image.asset(
                                 "${commonImagePath}rabbitLogo.png",
-                                height: list[index].name == AppStrings.soldContentText
+                                height: list[index].name ==
+                                        AppStrings.soldContentText
                                     ? size.width * AppDimensions.numD06
                                     : size.width * AppDimensions.numD05,
-                                width: list[index].name == AppStrings.soldContentText
+                                width: list[index].name ==
+                                        AppStrings.soldContentText
                                     ? size.width * AppDimensions.numD06
                                     : size.width * AppDimensions.numD05,
                               ),
@@ -1199,7 +1264,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           : AppStrings.fromText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD032,
+                                          fontSize: size.width *
+                                              AppDimensions.numD032,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -1273,7 +1339,8 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                           : AppStrings.toText,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD032,
+                                          fontSize: size.width *
+                                              AppDimensions.numD032,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -1358,7 +1425,6 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 }
 
 class FilterModel {
-
   FilterModel({
     this.fromDate,
     this.toDate,

@@ -429,12 +429,10 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
         if (data != null) {
           if (data is List) {
-            // Case where data is a direct list of tasks
             for (var v in data) {
               list.add(MyTaskModel.fromJson(v));
             }
           } else if (data is Map) {
-            // Case where data is a map containing nested lists
             if (data["data"] != null && data["data"] is List) {
               for (var v in data["data"]) {
                 list.add(MyTaskModel.fromJson(v));

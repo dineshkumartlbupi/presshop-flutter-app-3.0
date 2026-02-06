@@ -230,7 +230,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     var size = MediaQuery.of(context).size;
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state is TaskLoading) {
+        if (state.allTasksStatus == TaskStatus.loading ||
+            state.taskDetailStatus == TaskStatus.loading ||
+            state.localTasksStatus == TaskStatus.loading) {
           setState(() {
             isLoading = true;
           });
@@ -240,11 +242,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           });
         }
 
-        if (state is TaskChatLoaded) {
+        if (state.chatList.isNotEmpty) {
           setState(() {
             chatList = state.chatList;
           });
-        } else if (state is TransactionDetailsLoaded) {
+        } else if (state.transactions.isNotEmpty) {
           earningTransactionDataList = state.transactions;
           if (earningTransactionDataList.isNotEmpty) {
             Navigator.push(
@@ -258,7 +260,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
               ),
             );
           }
-        } else if (state is TaskMediaUploaded) {
+        } else if (state.actionStatus == TaskStatus.success) {
           showSnackBar("Success", "Media uploaded successfully", Colors.green);
           if (mounted) {
             context.read<TaskBloc>().add(GetTaskChatEvent(
@@ -267,8 +269,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                 contentId: widget.taskDetail?.task.id ?? "",
                 showLoader: false));
           }
-        } else if (state is TaskError) {
-          showSnackBar("Error", state.message, Colors.red);
+        } else if (state.errorMessage != null) {
+          showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
       builder: (context, state) {
@@ -479,9 +481,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      false
-                                          ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
-                                          : "-",
+                                      // false
+                                      // ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
+                                      // :
+                                      "-",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
@@ -533,9 +536,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      false
-                                          ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
-                                          : "-",
+                                      // false
+                                      //     ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
+                                      //     :
+                                      "-",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
@@ -587,9 +591,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      false
-                                          ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
-                                          : "-",
+                                      // false
+                                      //     ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
+                                      //     :
+                                      "-",
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width *
@@ -889,9 +894,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                                 fontWeight: FontWeight.normal),
                                           ),
                                           TextSpan(
-                                            text: true
-                                                ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
-                                                : "-",
+                                            text:
+                                                // true
+                                                // ? "$currencySymbol${formatDouble(double.tryParse("0") ?? 0.0)}"
+                                                "-",
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *

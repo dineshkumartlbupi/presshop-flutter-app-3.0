@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 
 import 'package:presshop/core/widgets/common_widgets.dart';
 
+// ignore: must_be_immutable
 class VideoWidget extends StatefulWidget {
   VideoWidget({
     super.key,
@@ -73,7 +74,8 @@ class VideoWidgetState extends State<VideoWidget> {
                 Expanded(child: VideoPlayer(_controller!)),
                 Container(
                   padding: EdgeInsets.only(
-                      left: size.width * AppDimensions.numD02, right: size.width * AppDimensions.numD04),
+                      left: size.width * AppDimensions.numD02,
+                      right: size.width * AppDimensions.numD04),
                   child: Row(
                     children: [
                       InkWell(

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:country_picker/country_picker.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
@@ -27,8 +25,8 @@ import 'package:presshop/features/profile/constants/profile_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 
+// ignore: must_be_immutable
 class MyProfile extends StatefulWidget {
-
   MyProfile(
       {super.key, required this.editProfileScreen, required this.screenType});
   bool editProfileScreen;
@@ -61,7 +59,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   List<AvatarsData> avatarList = [];
   MyProfileData? myProfileData;
-  Completer<String?>? _studentBeansCompleter;
+  // Completer<String?>? _studentBeansCompleter;
 
   String selectedCountryCode = "",
       userImagePath = "",
@@ -311,15 +309,16 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             child: Form(
               key: formKey,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                padding: EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD06),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (isLoading)
                       const LinearProgressIndicator(
                         backgroundColor: AppColorTheme.colorLightGrey,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColorTheme.colorThemePink),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColorTheme.colorThemePink),
                       ),
                     topProfileWidget(),
                     SizedBox(
@@ -352,7 +351,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () {
                         if (!widget.editProfileScreen) {
                           widget.editProfileScreen = !widget.editProfileScreen;
                           scrollController.animateTo(
@@ -391,7 +391,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       height: size.width * AppDimensions.numD35,
       decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04)),
+          borderRadius:
+              BorderRadius.circular(size.width * AppDimensions.numD04)),
       child: Row(
         children: [
           Stack(
@@ -399,14 +400,17 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(size.width * AppDimensions.numD04),
-                      bottomLeft: Radius.circular(size.width * AppDimensions.numD04)),
+                      topLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04)),
                   child: CachedNetworkImage(
                     imageUrl:
                         myProfileData != null ? myProfileData!.avatarImage : "",
                     placeholder: (context, url) => Center(
                       child: Padding(
-                        padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${commonImagePath}rabbitLogo.png",
                           fit: BoxFit.contain,
@@ -416,7 +420,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       ),
                     ),
                     errorWidget: (context, url, error) => Padding(
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD04),
                       child: Image.asset(
                         "${commonImagePath}rabbitLogo.png",
                         fit: BoxFit.contain,
@@ -702,7 +707,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                  padding:
+                      EdgeInsets.only(left: size.width * AppDimensions.numD04),
                   child: Row(
                     children: [
                       Text(
@@ -798,7 +804,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: userNameController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.userText} ${AppStrings.nameText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.userText} ${AppStrings.nameText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_user.png"),
@@ -809,7 +816,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           autofocus: userNameAutoFocus,
           readOnly: widget.editProfileScreen ? false : true,
           onChanged: _onUserNameChanged,
@@ -837,7 +846,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: firstNameController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.firstText} ${AppStrings.nameText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.firstText} ${AppStrings.nameText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_user.png"),
@@ -850,7 +860,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: firstNameValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -874,7 +886,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: lastNameController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.lastText} ${AppStrings.nameText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.lastText} ${AppStrings.nameText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_user.png"),
@@ -887,7 +900,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: lastNameValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -950,7 +965,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkSignupPhoneValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           autofocus: false,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -975,7 +992,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: emailAddressController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.emailAddressText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.emailAddressText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_email.png"),
@@ -988,7 +1006,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           autofocus: false,
           readOnly: widget.editProfileScreen ? false : true,
         ),
@@ -1026,7 +1046,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: apartmentAndHouseNameController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.apartmentNoHintText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.apartmentNoHintText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_location.png"),
@@ -1039,7 +1060,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkRequiredValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -1069,8 +1092,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   boxDecoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(size.width * 0.03),
-                      border:
-                          Border.all(color: AppColorTheme.colorTextFieldBorder, width: 1)),
+                      border: Border.all(
+                          color: AppColorTheme.colorTextFieldBorder, width: 1)),
                   textStyle: TextStyle(
                       color: Colors.black,
                       fontSize: size.width * AppDimensions.numD032,
@@ -1078,8 +1101,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   inputDecoration: InputDecoration(
                     border: InputBorder.none,
                     filled: false,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD038),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD038),
                     hintText:
                         "${AppStrings.enterText.toTitleCase()} ${AppStrings.postalCodeText.toLowerCase()}",
                     hintStyle: TextStyle(
@@ -1087,8 +1110,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                         fontSize: size.width * AppDimensions.numD035,
                         fontFamily: 'AirbnbCereal_W_Md'),
                     prefixIcon: Container(
-                      margin:
-                          EdgeInsets.only(right: size.width * AppDimensions.numD02, left: 12),
+                      margin: EdgeInsets.only(
+                          right: size.width * AppDimensions.numD02, left: 12),
                       child: Image.asset("${iconsPath}ic_location.png"),
                     ),
                     suffixIcon: InkWell(
@@ -1096,13 +1119,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(Icons.close,
-                            color: Colors.black, size: size.width * AppDimensions.numD058),
+                            color: Colors.black,
+                            size: size.width * AppDimensions.numD058),
                       ),
                     ),
-                    prefixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * AppDimensions.numD045),
-                    suffixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * AppDimensions.numD07),
+                    prefixIconConstraints: BoxConstraints(
+                        maxHeight: size.width * AppDimensions.numD045),
+                    suffixIconConstraints: BoxConstraints(
+                        maxHeight: size.width * AppDimensions.numD07),
                     prefixIconColor: AppColorTheme.colorTextFieldIcon,
                   ),
                   debounceTime: 200,
@@ -1143,7 +1167,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 textInputFormatters: null,
                 borderColor: AppColorTheme.colorTextFieldBorder,
                 controller: postCodeController,
-                hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.postalCodeText}",
+                hintText:
+                    "${AppStrings.enterText.toTitleCase()} ${AppStrings.postalCodeText}",
                 prefixIcon: Image.asset("${iconsPath}ic_location.png"),
                 prefixIconHeight: size.width * AppDimensions.numD045,
                 suffixIconIconHeight: 0,
@@ -1183,8 +1208,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   boxDecoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(size.width * 0.03),
-                      border:
-                          Border.all(color: AppColorTheme.colorTextFieldBorder, width: 1)),
+                      border: Border.all(
+                          color: AppColorTheme.colorTextFieldBorder, width: 1)),
                   textStyle: TextStyle(
                       color: Colors.black,
                       fontSize: size.width * AppDimensions.numD032,
@@ -1192,8 +1217,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   inputDecoration: InputDecoration(
                     border: InputBorder.none,
                     filled: false,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD038),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD038),
                     hintText:
                         "${AppStrings.enterText.toTitleCase()} ${AppStrings.addressText.toLowerCase()}",
                     hintStyle: TextStyle(
@@ -1201,8 +1226,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                         fontSize: size.width * AppDimensions.numD035,
                         fontFamily: 'AirbnbCereal_W_Md'),
                     prefixIcon: Container(
-                      margin:
-                          EdgeInsets.only(right: size.width * AppDimensions.numD02, left: 12),
+                      margin: EdgeInsets.only(
+                          right: size.width * AppDimensions.numD02, left: 12),
                       child: Image.asset("${iconsPath}ic_location.png"),
                     ),
                     suffixIcon: InkWell(
@@ -1210,13 +1235,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(Icons.close,
-                            color: Colors.black, size: size.width * AppDimensions.numD058),
+                            color: Colors.black,
+                            size: size.width * AppDimensions.numD058),
                       ),
                     ),
-                    prefixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * AppDimensions.numD045),
-                    suffixIconConstraints:
-                        BoxConstraints(maxHeight: size.width * AppDimensions.numD07),
+                    prefixIconConstraints: BoxConstraints(
+                        maxHeight: size.width * AppDimensions.numD045),
+                    suffixIconConstraints: BoxConstraints(
+                        maxHeight: size.width * AppDimensions.numD07),
                     prefixIconColor: AppColorTheme.colorTextFieldIcon,
                   ),
                   debounceTime: 200,
@@ -1254,7 +1280,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 textInputFormatters: null,
                 borderColor: AppColorTheme.colorTextFieldBorder,
                 controller: addressController,
-                hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.addressText}",
+                hintText:
+                    "${AppStrings.enterText.toTitleCase()} ${AppStrings.addressText}",
                 prefixIcon: Image.asset("${iconsPath}ic_location.png"),
                 prefixIconHeight: size.width * AppDimensions.numD045,
                 suffixIconIconHeight: 0,
@@ -1298,7 +1325,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: cityNameController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.cityText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.cityText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_location.png"),
@@ -1311,7 +1339,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkRequiredValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -1335,7 +1365,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
           controller: countryNameController,
-          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.countryText}",
+          hintText:
+              "${AppStrings.enterText.toTitleCase()} ${AppStrings.countryText}",
           prefixIcon: Container(
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
             child: Image.asset("${iconsPath}ic_location.png"),
@@ -1348,7 +1379,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: checkRequiredValidator,
           enableValidations: true,
           filled: true,
-          filledColor: widget.editProfileScreen ? Colors.white : AppColorTheme.colorLightGrey,
+          filledColor: widget.editProfileScreen
+              ? Colors.white
+              : AppColorTheme.colorLightGrey,
           readOnly: widget.editProfileScreen ? false : true,
         ),
       ],
@@ -1683,21 +1716,22 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD045)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
@@ -1765,7 +1799,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                       "Please confirm your student status to continue",
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
@@ -1807,7 +1842,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                       "Confirm",
                                       size,
                                       commonButtonTextStyle(size),
-                                      commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                      commonButtonStyle(
+                                          size, AppColorTheme.colorThemePink),
                                       () async {
                                     try {
                                       final url =
@@ -1853,7 +1889,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 }
 
 class MyProfileData {
-
   MyProfileData.fromJson(json) {
     firstName = json[firstNameKey] ?? json['firstName'] ?? "";
     lastName = json[lastNameKey] ?? json['lastName'] ?? "";

@@ -355,7 +355,8 @@ void broadcastDialog({
                                                 AppDimensions.numD01,
                                           ),
                                           Text(
-                                            AppStrings.locationText.toUpperCase(),
+                                            AppStrings.locationText
+                                                .toUpperCase(),
                                             style: commonTextStyle(
                                                 size: size,
                                                 fontSize: size.width *
@@ -400,8 +401,12 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    false && (double.tryParse("0") ?? 0) > 0
-                                        ? "$currencySymbol${formatDouble(double.parse("0"))}"
+                                    taskDetail.task.isNeedPhoto &&
+                                            (double.tryParse(taskDetail
+                                                        .task.photoPrice) ??
+                                                    0) >
+                                                0
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.task.photoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -449,8 +454,12 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    false && (double.tryParse("0") ?? 0) > 0
-                                        ? "$currencySymbol${formatDouble(double.parse("0"))}"
+                                    taskDetail.task.isNeedInterview &&
+                                            (double.tryParse(taskDetail
+                                                        .task.interviewPrice) ??
+                                                    0) >
+                                                0
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.task.interviewPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -498,8 +507,12 @@ void broadcastDialog({
                               child: Column(
                                 children: [
                                   Text(
-                                    false && (double.tryParse("0") ?? 0) > 0
-                                        ? "$currencySymbol${formatDouble(double.parse("0"))}"
+                                    taskDetail.task.isNeedVideo &&
+                                            (double.tryParse(taskDetail
+                                                        .task.videoPrice) ??
+                                                    0) >
+                                                0
+                                        ? "$currencySymbol${formatDouble(double.parse(taskDetail.task.videoPrice))}"
                                         : "-",
                                     style: commonTextStyle(
                                         size: size,
@@ -564,7 +577,8 @@ void broadcastDialog({
                                   fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700),
-                              commonButtonStyle(size, AppColorTheme.colorThemePink),
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink),
                               onTapView,
                             ),
                           ),
@@ -691,7 +705,8 @@ void commonErrorDialogDialog(
                             actionButton,
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink),
                             callback),
                       ),
                       SizedBox(
@@ -813,7 +828,8 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                             "Let's go",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           func();
                         }),
                       ),

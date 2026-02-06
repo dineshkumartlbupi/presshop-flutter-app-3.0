@@ -1,5 +1,4 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import '../../../../core/api/api_constant_new.dart';
 
@@ -10,7 +9,6 @@ abstract class NotificationRemoteDataSource {
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
-
   NotificationRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

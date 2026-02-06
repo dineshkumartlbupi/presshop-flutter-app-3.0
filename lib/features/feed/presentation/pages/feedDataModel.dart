@@ -1,5 +1,4 @@
 class FeedsDataModel {
-
   FeedsDataModel({
     required this.firstLevelCheckNudity,
     required this.firstLevelCheckAdult,
@@ -89,7 +88,7 @@ class FeedsDataModel {
         heading: json["heading"] ?? "",
         remarks: json["remarks"] ?? "",
         userId: json["user_id"] ?? "",
-        amountPaid: json["amount_paid"].toString() ?? '',
+        amountPaid: json["amount_paid"].toString(),
         feedsDataModelId: json["id"] ?? "",
         firstLevelCheckNudity: json['firstLevelCheck']['nudity'] ?? false,
         firstLevelCheckAdult: json['firstLevelCheck']['isAdult'] ?? false,
@@ -161,7 +160,6 @@ class FeedsDataModel {
 }
 
 class ContentDataModel {
-
   ContentDataModel({
     required this.mediaType,
     required this.id,

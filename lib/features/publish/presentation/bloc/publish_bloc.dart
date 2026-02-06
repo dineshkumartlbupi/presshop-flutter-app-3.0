@@ -9,7 +9,6 @@ import 'publish_event.dart';
 import 'publish_state.dart';
 
 class PublishBloc extends Bloc<PublishEvent, PublishState> {
-
   PublishBloc({
     required this.getContentCategories,
     required this.getCharities,
@@ -41,7 +40,7 @@ class PublishBloc extends Bloc<PublishEvent, PublishState> {
 
     // Combine results
     // Simpler sequential handling for now
-    List<dynamic> results = [failureOrCategories, failureOrPrices];
+    // List<dynamic> results = [failureOrCategories, failureOrPrices];
 
     failureOrCategories.fold((failure) {
       debugPrint(

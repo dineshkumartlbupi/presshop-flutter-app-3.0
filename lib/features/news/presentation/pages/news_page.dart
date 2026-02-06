@@ -7,11 +7,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/di/injection_container.dart';
-
-import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
-import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
@@ -120,10 +116,11 @@ class _NewsPageState extends State<NewsPage>
                           ),
                         )
                       : ListView.separated(
-                          padding: EdgeInsets.all(size.width * AppDimensions.numD04),
+                          padding:
+                              EdgeInsets.all(size.width * AppDimensions.numD04),
                           itemCount: newsList.length,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: size.width * AppDimensions.numD06),
+                          separatorBuilder: (context, index) => SizedBox(
+                              height: size.width * AppDimensions.numD06),
                           itemBuilder: (context, index) {
                             return _buildNewsCard(
                                 context, newsList[index], size);
@@ -165,7 +162,8 @@ class _NewsPageState extends State<NewsPage>
         Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+              borderRadius:
+                  BorderRadius.circular(size.width * AppDimensions.numD04),
               child: CachedNetworkImage(
                 imageUrl: item.mediaUrl ?? "",
                 height: size.width * AppDimensions.numD50,
@@ -194,7 +192,8 @@ class _NewsPageState extends State<NewsPage>
                       vertical: size.width * AppDimensions.numD015),
                   decoration: BoxDecoration(
                     color: AppColorTheme.colorThemePink,
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD05),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD05),
                   ),
                   child: Text(
                     "Most viewed",
@@ -371,7 +370,8 @@ class _NewsPageState extends State<NewsPage>
         Row(
           children: [
             Image.asset("assets/icons/news_location.png",
-                height: size.width * AppDimensions.numD04, color: Colors.grey[500]),
+                height: size.width * AppDimensions.numD04,
+                color: Colors.grey[500]),
             SizedBox(width: size.width * AppDimensions.numD01),
             Expanded(
               child: Text(
@@ -408,7 +408,8 @@ class _NewsPageState extends State<NewsPage>
                   _handleShare(context, item);
                 },
                 child: Image.asset("assets/icons/news_send.png",
-                    width: size.width * AppDimensions.numD06, height: size.width * AppDimensions.numD05),
+                    width: size.width * AppDimensions.numD06,
+                    height: size.width * AppDimensions.numD05),
               );
             }),
             SizedBox(width: size.width * AppDimensions.numD04),
@@ -417,7 +418,8 @@ class _NewsPageState extends State<NewsPage>
                 _navigateToDetails(context, item, scrollToComments: true);
               },
               child: Image.asset("assets/icons/news_message.png",
-                  width: size.width * AppDimensions.numD06, height: size.width * AppDimensions.numD05),
+                  width: size.width * AppDimensions.numD06,
+                  height: size.width * AppDimensions.numD05),
             ),
 
             const Spacer(),
@@ -552,7 +554,6 @@ class _NewsPageState extends State<NewsPage>
 }
 
 class _FilterBottomSheetContent extends StatefulWidget {
-
   const _FilterBottomSheetContent({
     Key? key,
     required this.size,
@@ -632,7 +633,8 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                 "Sort and Filter",
                 style: commonTextStyle(
                     size: widget.size,
-                    fontSize: widget.size.width * AppDimensions.appBarHeadingFontSizeNew,
+                    fontSize: widget.size.width *
+                        AppDimensions.appBarHeadingFontSizeNew,
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
@@ -681,8 +683,8 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
           Container(
             width: widget.size.width,
             height: widget.size.width * AppDimensions.numD13,
-            margin:
-                EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD04),
+            margin: EdgeInsets.symmetric(
+                horizontal: widget.size.width * AppDimensions.numD04),
             padding: EdgeInsets.symmetric(
               horizontal: widget.size.width * AppDimensions.numD04,
             ),
@@ -694,7 +696,8 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
                     fontSize: widget.size.width * AppDimensions.numD035,
                     color: Colors.white,
                     fontWeight: FontWeight.w700),
-                commonButtonStyle(widget.size, AppColorTheme.colorThemePink), () {
+                commonButtonStyle(widget.size, AppColorTheme.colorThemePink),
+                () {
               widget.onApply(tempAlertType, tempDistance, tempCategory);
             }),
           ),

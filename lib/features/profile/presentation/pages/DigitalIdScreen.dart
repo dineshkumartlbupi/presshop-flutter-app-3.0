@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +9,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -36,7 +33,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
   String fullName = "";
   final bool _isUploading = false;
 
-  File? _imageFile;
+  // File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -170,7 +167,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
               ),
               decoration: BoxDecoration(
                   color: AppColorTheme.colorLightGrey,
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD03),
                   border: Border.all(width: 1.0, color: Colors.black)),
               child: Stack(
                 alignment: Alignment.centerRight,
@@ -211,7 +209,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         Text(
                                           "press",
                                           style: TextStyle(
-                                              fontSize: size.width * AppDimensions.numD065,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD065,
                                               color: Colors.black,
                                               fontFamily: "AirbnbCereal",
                                               fontWeight: FontWeight.normal),
@@ -219,7 +218,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         Text(
                                           "hop",
                                           style: TextStyle(
-                                              fontSize: size.width * AppDimensions.numD065,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD065,
                                               color: Colors.black,
                                               letterSpacing: 0,
                                               fontFamily: "AirbnbCereal",
@@ -231,7 +231,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                     Text(
                                       "news delivered",
                                       style: TextStyle(
-                                          fontSize: size.width * AppDimensions.numD04,
+                                          fontSize:
+                                              size.width * AppDimensions.numD04,
                                           color: Colors.black,
                                           fontFamily: "AirbnbCereal",
                                           fontWeight: FontWeight.normal),
@@ -254,26 +255,33 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       // Actually better to check isLoading generally for profile fetch too if we want.
                                       // But matching original:
                                       ? Container(
-                                          height: size.width * AppDimensions.numD60,
-                                          width: size.width * AppDimensions.numD70,
+                                          height:
+                                              size.width * AppDimensions.numD60,
+                                          width:
+                                              size.width * AppDimensions.numD70,
                                           alignment: Alignment.center,
                                           child:
                                               const CircularProgressIndicator(),
                                         )
                                       : ClipRRect(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04),
+                                              size.width *
+                                                  AppDimensions.numD04),
                                           child: CachedNetworkImage(
                                             imageUrl: userImage.isEmpty
                                                 ? "https://via.placeholder.com/300"
                                                 : userImage,
-                                            height: size.width * AppDimensions.numD60,
-                                            width: size.width * AppDimensions.numD70,
+                                            height: size.width *
+                                                AppDimensions.numD60,
+                                            width: size.width *
+                                                AppDimensions.numD70,
                                             fit: BoxFit.cover,
                                             placeholder: (context, url) =>
                                                 Container(
-                                              height: size.width * AppDimensions.numD60,
-                                              width: size.width * AppDimensions.numD70,
+                                              height: size.width *
+                                                  AppDimensions.numD60,
+                                              width: size.width *
+                                                  AppDimensions.numD70,
                                               alignment: Alignment.center,
                                               child:
                                                   const CircularProgressIndicator(
@@ -283,16 +291,19 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             errorWidget:
                                                 (context, url, error) =>
                                                     Container(
-                                              height: size.width * AppDimensions.numD65,
-                                              width: size.width * AppDimensions.numD70,
+                                              height: size.width *
+                                                  AppDimensions.numD65,
+                                              width: size.width *
+                                                  AppDimensions.numD70,
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
                                                     color: const Color.fromARGB(
                                                         255, 223, 223, 223)),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width * AppDimensions.numD04),
+                                                    BorderRadius.circular(size
+                                                            .width *
+                                                        AppDimensions.numD04),
                                               ),
                                               child: Column(
                                                 mainAxisAlignment:
@@ -300,12 +311,13 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                                 children: [
                                                   Image.asset(
                                                     "${iconsPath}ic_user.png",
-                                                    width: size.width * AppDimensions.numD11,
+                                                    width: size.width *
+                                                        AppDimensions.numD11,
                                                     color: Colors.grey,
                                                   ),
                                                   SizedBox(
-                                                      height:
-                                                          size.width * AppDimensions.numD03),
+                                                      height: size.width *
+                                                          AppDimensions.numD03),
                                                   Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
@@ -315,9 +327,11 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                                       "Upload a recent photo or take a selfie. It’s helps you show that you're a verified Hopper, and part of the  PressHop community. Cheers",
                                                       style: commonTextStyle(
                                                         size: size,
-                                                        fontSize:
-                                                            size.width * AppDimensions.numD03,
-                                                        color: AppColorTheme.colorHint,
+                                                        fontSize: size.width *
+                                                            AppDimensions
+                                                                .numD03,
+                                                        color: AppColorTheme
+                                                            .colorHint,
                                                         fontWeight:
                                                             FontWeight.normal,
                                                       ),
@@ -355,7 +369,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             child: Icon(
                                               Icons.edit_outlined,
                                               color: Colors.white,
-                                              size: size.width * AppDimensions.numD04,
+                                              size: size.width *
+                                                  AppDimensions.numD04,
                                             ),
                                           ),
                                         ),
@@ -417,7 +432,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                       textAlign: TextAlign.start,
                                       style: commonTextStyle(
                                           size: size,
-                                          fontSize: size.width * AppDimensions.numD05,
+                                          fontSize:
+                                              size.width * AppDimensions.numD05,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -428,8 +444,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                             Container(
                                 width: size.width * AppDimensions.numD60,
                                 alignment: Alignment.center,
-                                margin:
-                                    EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                                margin: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD04),
                                 padding: EdgeInsets.symmetric(
                                   vertical: size.width * AppDimensions.numD03,
                                   horizontal: size.width * AppDimensions.numD03,
@@ -444,7 +460,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                   text: TextSpan(
                                     text: AppStrings.digitalIdExpireOnText,
                                     style: TextStyle(
-                                        fontSize: size.width * AppDimensions.numD036,
+                                        fontSize:
+                                            size.width * AppDimensions.numD036,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400,
                                         height: 1.5),
@@ -453,7 +470,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                         text: DateFormat("dd MMM yyyy")
                                             .format(DateTime.now()),
                                         style: TextStyle(
-                                            fontSize: size.width * AppDimensions.numD036,
+                                            fontSize: size.width *
+                                                AppDimensions.numD036,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600,
                                             height: 1.5),
@@ -505,7 +523,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "PressHop Media UK Limited",
                                             style: TextStyle(
-                                                fontSize: size.width * AppDimensions.numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600,
                                                 height: 1.5),
@@ -513,7 +532,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "167-169, Great Portland St",
                                             style: TextStyle(
-                                                fontSize: size.width * AppDimensions.numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
@@ -521,7 +541,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "London, United Kingdom",
                                             style: TextStyle(
-                                                fontSize: size.width * AppDimensions.numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
@@ -529,7 +550,8 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                           Text(
                                             "Company No: 13522872",
                                             style: TextStyle(
-                                                fontSize: size.width * AppDimensions.numD03,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD03,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
                                                 height: 1.5),
@@ -556,8 +578,10 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(size.width * AppDimensions.numD03),
-                            topRight: Radius.circular(size.width * AppDimensions.numD03),
+                            topLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            topRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
                           )),
                       child: Text("PRESS",
                           style: TextStyle(
@@ -617,13 +641,13 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
     showSnackBar("Success", "Profile image updated successfully", Colors.green);
   }
 
-  void _launchURL() async {
-    const url = 'https://www.presshop.co.uk';
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  // void _launchURL() async {
+  //   const url = 'https://www.presshop.co.uk';
+  //   final uri = Uri.parse(url);
+  //   if (await canLaunchUrl(uri)) {
+  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
 }
