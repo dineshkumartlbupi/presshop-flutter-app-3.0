@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/chatbot/presentation/bloc/chatbot_bloc.dart';
 
 class MockApiClient extends Mock implements ApiClient {}

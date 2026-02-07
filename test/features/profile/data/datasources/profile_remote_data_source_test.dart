@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:presshop/features/profile/data/models/user_profile_response.dart';

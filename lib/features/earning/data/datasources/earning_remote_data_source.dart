@@ -1,5 +1,5 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 
@@ -10,7 +10,6 @@ abstract class EarningRemoteDataSource {
 }
 
 class EarningRemoteDataSourceImpl implements EarningRemoteDataSource {
-
   EarningRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

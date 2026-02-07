@@ -1,5 +1,5 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/bank/data/models/bank_detail_model.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/failures.dart';
@@ -12,7 +12,6 @@ abstract class BankRemoteDataSource {
 }
 
 class BankRemoteDataSourceImpl implements BankRemoteDataSource {
-
   BankRemoteDataSourceImpl(this.apiClient);
   final ApiClient apiClient;
 
@@ -37,7 +36,8 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
   @override
   Future<void> deleteBank(String id, String stripeBankId) async {
     try {
-      final response = await apiClient.delete("${ApiConstantsNew.profile.deleteBank}$id/$stripeBankId");
+      final response = await apiClient
+          .delete("${ApiConstantsNew.profile.deleteBank}$id/$stripeBankId");
       if (response.statusCode == 200) {
         return;
       }
@@ -55,7 +55,8 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
         "stripe_bank_id": stripeBankId,
       };
       // NetworkClass used patch for editBankUrl
-      final response = await apiClient.patch(ApiConstantsNew.profile.updateBank, data: map);
+      final response =
+          await apiClient.patch(ApiConstantsNew.profile.updateBank, data: map);
       if (response.statusCode == 200) {
         return;
       }
@@ -69,7 +70,8 @@ class BankRemoteDataSourceImpl implements BankRemoteDataSource {
   Future<String> getStripeOnboardingUrl() async {
     try {
       // Endpoint found: "hopper/add-express-bank-account" assigned to generateStripeBankApi constant
-      final response = await apiClient.get(ApiConstantsNew.payments.addExpressBank);
+      final response =
+          await apiClient.get(ApiConstantsNew.payments.addExpressBank);
       if (response.statusCode == 200) {
         final data = response.data;
         // Legacy code: Navigator.push(CommonWebView(webUrl: data['accountLink']))

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
@@ -275,7 +275,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                 padding: EdgeInsets.all(size.width * AppDimensions.numD032),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD042),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD042),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black26,
@@ -339,11 +340,14 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                     hintText: 'Your Location',
                                     filled: true,
                                     hintStyle: TextStyle(
-                                        fontSize: size.width * AppDimensions.numD032),
+                                        fontSize:
+                                            size.width * AppDimensions.numD032),
                                     fillColor: Colors.grey.shade100,
                                     contentPadding: EdgeInsets.symmetric(
-                                      vertical: size.width * AppDimensions.numD021,
-                                      horizontal: size.width * AppDimensions.numD032,
+                                      vertical:
+                                          size.width * AppDimensions.numD021,
+                                      horizontal:
+                                          size.width * AppDimensions.numD032,
                                     ),
                                     isDense: true,
                                     enabledBorder: OutlineInputBorder(
@@ -369,14 +373,16 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                           icon: Icon(
                                             Icons.my_location,
                                             size: size.width *
-                                                AppDimensions.numD048, // Adjusted size logic
+                                                AppDimensions
+                                                    .numD048, // Adjusted size logic
                                           ),
                                           onPressed: _useCurrentLocation,
                                           tooltip: 'Use Current Location',
                                         ),
                                         IconButton(
                                           icon: Icon(Icons.map,
-                                              size: size.width * AppDimensions.numD048),
+                                              size: size.width *
+                                                  AppDimensions.numD048),
                                           onPressed: () {
                                             context.read<MapBloc>().add(
                                                 SetDestinationSelectionModeEvent(
@@ -406,7 +412,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: size.width * AppDimensions.numD032),
+                              SizedBox(
+                                  height: size.width * AppDimensions.numD032),
                               CompositedTransformTarget(
                                 link: _destinationLayerLink,
                                 child: TextField(
@@ -417,12 +424,15 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                   decoration: InputDecoration(
                                     hintText: 'Destination',
                                     hintStyle: TextStyle(
-                                        fontSize: size.width * AppDimensions.numD032),
+                                        fontSize:
+                                            size.width * AppDimensions.numD032),
                                     filled: true,
                                     fillColor: Colors.grey.shade100,
                                     contentPadding: EdgeInsets.symmetric(
-                                      vertical: size.width * AppDimensions.numD021,
-                                      horizontal: size.width * AppDimensions.numD032,
+                                      vertical:
+                                          size.width * AppDimensions.numD021,
+                                      horizontal:
+                                          size.width * AppDimensions.numD032,
                                     ),
                                     isDense: true,
                                     enabledBorder: OutlineInputBorder(
@@ -443,7 +453,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                                     ),
                                     suffixIcon: IconButton(
                                       icon: Icon(Icons.map,
-                                          size: size.width * AppDimensions.numD048),
+                                          size: size.width *
+                                              AppDimensions.numD048),
                                       onPressed: () {
                                         context.read<MapBloc>().add(
                                             SetDestinationSelectionModeEvent(
@@ -512,8 +523,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                           elevation: 0.0,
                           backgroundColor: Colors.redAccent,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(size.width * AppDimensions.numD021),
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD021),
                           ),
                         ),
                         child: _isLoading
@@ -544,7 +555,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
 
               /// ------- POINTER TRIANGLE -------
               Positioned(
-                right: size.width * AppDimensions.numD03, // Align towards the right
+                right: size.width *
+                    AppDimensions.numD03, // Align towards the right
                 top: -size.width * AppDimensions.numD021,
                 child: Transform.rotate(
                   angle: math.pi / 4,
@@ -564,12 +576,14 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                   offset: Offset(0.0, size.width * AppDimensions.numD10),
                   child: Material(
                     elevation: 4.0,
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD021),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD021),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         maxHeight: size.width * AppDimensions.numD40,
                         maxWidth: size.width *
-                            AppDimensions.numD53, // Match approx width of text field
+                            AppDimensions
+                                .numD53, // Match approx width of text field
                       ),
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -592,8 +606,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                               ),
                               child: Text(
                                 prediction['description'],
-                                style:
-                                    TextStyle(fontSize: size.width * AppDimensions.numD032),
+                                style: TextStyle(
+                                    fontSize:
+                                        size.width * AppDimensions.numD032),
                               ),
                             ),
                           );
@@ -611,7 +626,8 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                   offset: Offset(0.0, size.width * AppDimensions.numD10),
                   child: Material(
                     elevation: 4.0,
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD021),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD021),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         maxHeight: size.width * AppDimensions.numD40,
@@ -638,8 +654,9 @@ class _GetDirectionCardState extends State<GetDirectionCard> {
                               ),
                               child: Text(
                                 prediction['description'],
-                                style:
-                                    TextStyle(fontSize: size.width * AppDimensions.numD032),
+                                style: TextStyle(
+                                    fontSize:
+                                        size.width * AppDimensions.numD032),
                               ),
                             ),
                           );

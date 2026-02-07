@@ -1666,11 +1666,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         data: params,
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
 
         if (map["code"] == 200 || map["success"] == true) {
+          String message = map["message"] ?? "Request successful";
+          showSnackBar("Success", message, Colors.green);
+
           widget.editProfileScreen = false;
           debugPrint("heloooo::::${myProfileData!.avatarId}");
 
@@ -1907,16 +1910,18 @@ class MyProfileData {
     longitude = (json[longitudeKey] ?? "").toString();
     totalIncome =
         json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
-    String tempAvatar = "";
-    if (json["avatarData"] is Map) {
-      tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
-    } else if (json["avatarData"] is String &&
-        json["avatarData"].toString().startsWith("http")) {
-      tempAvatar = json["avatarData"];
-    }
+    String tempAvatar = json["profile_image"]?.toString() ??
+        json["profileImage"]?.toString() ??
+        json["avatar"]?.toString() ??
+        "";
 
     if (tempAvatar.isEmpty) {
-      tempAvatar = json["avatar"]?.toString() ?? "";
+      if (json["avatarData"] is Map) {
+        tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
+      } else if (json["avatarData"] is String &&
+          json["avatarData"].toString().startsWith("http")) {
+        tempAvatar = json["avatarData"];
+      }
     }
 
     if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {

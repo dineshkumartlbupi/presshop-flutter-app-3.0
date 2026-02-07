@@ -1,5 +1,5 @@
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/rating/data/models/rating_review_model.dart';
 import 'package:presshop/core/models/publication_model.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
@@ -11,7 +11,6 @@ abstract class RatingRemoteDataSource {
 }
 
 class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
-
   RatingRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

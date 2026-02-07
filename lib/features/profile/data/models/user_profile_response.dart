@@ -3,7 +3,6 @@ import 'package:presshop/features/profile/domain/entities/profile_data.dart'
     as entity;
 
 class UserProfileResponse {
-
   UserProfileResponse({
     required this.success,
     required this.message,
@@ -37,7 +36,6 @@ class UserProfileResponse {
 }
 
 class UserProfileModel {
-
   UserProfileModel({
     required this.id,
     required this.firstName,
@@ -66,19 +64,20 @@ class UserProfileModel {
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     String extractImage(Map<String, dynamic> json) {
-      String tempAvatar = "";
-      if (json["avatarData"] is Map) {
-        tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
-      } else if (json["avatarData"] is String &&
-          json["avatarData"].toString().startsWith("http")) {
-        tempAvatar = json["avatarData"];
-      }
+      // Check for profile image first
+      String tempAvatar = json["profile_image"]?.toString() ??
+          json["profileImage"]?.toString() ??
+          json["avatar"]?.toString() ??
+          "";
 
+      // If empty, fallback to avatarData
       if (tempAvatar.isEmpty) {
-        tempAvatar = json["avatar"]?.toString() ??
-            json["profile_image"]?.toString() ??
-            json["profileImage"]?.toString() ??
-            "";
+        if (json["avatarData"] is Map) {
+          tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
+        } else if (json["avatarData"] is String &&
+            json["avatarData"].toString().startsWith("http")) {
+          tempAvatar = json["avatarData"];
+        }
       }
 
       if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
@@ -205,7 +204,6 @@ class UserProfileModel {
 }
 
 class LocationModel {
-
   LocationModel({
     required this.type,
     required this.coordinates,
@@ -238,7 +236,6 @@ class LocationModel {
 }
 
 class PreferredCurrencySignModel {
-
   PreferredCurrencySignModel({
     required this.symbol,
     required this.code,

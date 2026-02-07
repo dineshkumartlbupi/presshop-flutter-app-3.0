@@ -20,7 +20,6 @@ import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'AudioWaveFormWidgetScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
-import 'package:presshop/core/api/api_constant.dart';
 
 // ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
@@ -338,9 +337,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                           gaplessPlayback: true,
                                                         )
                                                       : Image.network(
-                                                          contentImageUrl +
-                                                              mediaList[index]
-                                                                  .mediaPath,
+                                                          mediaList[index]
+                                                              .mediaPath,
                                                           fit: BoxFit.fill,
                                                           gaplessPlayback: true,
                                                         ),

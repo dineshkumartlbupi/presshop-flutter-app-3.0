@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/features/chatbot/data/models/chat_model.dart';
 
 part 'chatbot_event.dart';
 part 'chatbot_state.dart';
 
 class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
-
   ChatbotBloc({
     required this.apiClient,
     this.dialogFlowtter,
@@ -31,7 +30,8 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
   Future<void> _onInitChatbot(
       InitChatbotEvent event, Emitter<ChatbotState> emit) async {
     try {
-      dialogFlowtter ??= await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
+      dialogFlowtter ??=
+          await DialogFlowtter(jsonPath: "assets/dialog_flow_auth.json");
       add(FetchMessagesEvent());
     } catch (e) {
       emit(ChatbotError("Failed to initialize chatbot: $e"));

@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
@@ -244,8 +243,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                                       AppDimensions.numD38,
                                                 )
                                               : Image.network(
-                                                  docImageUrl +
-                                                      doc.documentName, // Assuming doc is an image for preview
+                                                  doc.documentName, // Assuming doc is an image for preview
                                                   fit: BoxFit.cover,
                                                   width: double.infinity,
                                                   height: double.infinity,

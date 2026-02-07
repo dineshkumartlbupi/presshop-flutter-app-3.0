@@ -17,7 +17,6 @@ import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
@@ -6943,9 +6942,9 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
 
   void socketConnectionFunc() {
     debugPrint(":::: Inside Socket Func :::::");
-    debugPrint("socketUrl:::::$socketUrl");
-    socket =
-        IO.io(socketUrl, OptionBuilder().setTransports(['websocket']).build());
+    debugPrint("socketUrl:::::${ApiConstantsNew.config.socketUrl2}");
+    socket = IO.io(ApiConstantsNew.config.socketUrl2,
+        OptionBuilder().setTransports(['websocket']).build());
 
     socket.connect();
 
