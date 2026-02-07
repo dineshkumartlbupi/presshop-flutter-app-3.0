@@ -1,11 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/core_export.dart';
 
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 
 class LocationErrorScreen extends StatefulWidget {
   const LocationErrorScreen({super.key});
@@ -67,14 +66,14 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                         vertical: size.width * AppDimensions.numD04),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD04)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04)),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ClipRRect(
-                            borderRadius:
-                                BorderRadius.circular(size.width * AppDimensions.numD06),
+                            borderRadius: BorderRadius.circular(
+                                size.width * AppDimensions.numD06),
                             child: Image.asset("${commonImagePath}dog.png",
                                 height: size.width * AppDimensions.numD30,
                                 width: size.width * AppDimensions.numD30,
@@ -129,8 +128,11 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                         "Enable Location",
                         size,
                         commonButtonTextStyle(size),
-                        commonButtonStyle(size,
-                            isFetchingLocation ? Colors.grey : AppColorTheme.colorThemePink),
+                        commonButtonStyle(
+                            size,
+                            isFetchingLocation
+                                ? Colors.grey
+                                : AppColorTheme.colorThemePink),
                         () async {
                           // if (isFetchingLocation) {
                           //   return; // Prevent multiple taps while fetching location
@@ -176,6 +178,4 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
       ),
     );
   }
-
-
 }

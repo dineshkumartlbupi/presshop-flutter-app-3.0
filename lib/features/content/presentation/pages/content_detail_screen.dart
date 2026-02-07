@@ -16,7 +16,7 @@ import 'package:video_player/video_player.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
 import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';

@@ -112,6 +112,21 @@ class TaskAssignedItemModel extends TaskAssignedDetailEntity {
       updatedAt: SafeParser.parseDateTime(json['updatedAt']),
       content: SafeParser.parseList<TaskContentDataModel>(
           json['content'], (e) => TaskContentDataModel.fromJson(e)),
+      isNeedPhoto: SafeParser.parseBool(json['need_photos']),
+      isNeedVideo: SafeParser.parseBool(json['need_videos']),
+      isNeedInterview: SafeParser.parseBool(json['need_interview']),
+      photoPrice: SafeParser.parseString(
+          json['hopper_photo_price'] ?? json['photo_price'],
+          defaultValue: "0"),
+      videoPrice: SafeParser.parseString(
+          json['hopper_videos_price'] ?? json['hopper_video_price'],
+          defaultValue: "0"),
+      interviewPrice: SafeParser.parseString(
+          json['hopper_interview_price'] ?? json['interview_price'],
+          defaultValue: "0"),
+      currency: SafeParser.parseString(json['currency']),
+      currencySymbol: SafeParser.parseString(
+          json['currency_symbol'] ?? json['currencySymbol']),
     );
   }
 }

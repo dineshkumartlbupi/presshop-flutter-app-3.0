@@ -9,7 +9,7 @@ import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
@@ -20,7 +20,6 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class ContentSubmittedScreen extends StatefulWidget {
-
   ContentSubmittedScreen({
     super.key,
     required this.myContentDetail,
@@ -150,16 +149,16 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * AppDimensions.numD04),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD04,
                         vertical: size.width * AppDimensions.numD04),
                     decoration: BoxDecoration(
                         color: AppColorTheme.colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD04)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04)),
                     child: Column(
                       children: [
                         Row(
@@ -214,22 +213,25 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                   )),
                                             ),
                                             Positioned(
-                                              right: size.width * AppDimensions.numD02,
-                                              top: size.width * AppDimensions.numD02,
+                                              right: size.width *
+                                                  AppDimensions.numD02,
+                                              top: size.width *
+                                                  AppDimensions.numD02,
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * AppDimensions.numD015,
+                                                    horizontal: size.width *
+                                                        AppDimensions.numD015,
                                                     vertical:
                                                         size.width * 0.005,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                      color: AppColorTheme.colorLightGreen
+                                                      color: AppColorTheme
+                                                          .colorLightGreen
                                                           .withOpacity(0.8),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              size.width *
-                                                                  AppDimensions.numD015)),
+                                                      borderRadius: BorderRadius
+                                                          .circular(size.width *
+                                                              AppDimensions
+                                                                  .numD015)),
                                                   child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -239,9 +241,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                         "${widget.myContentDetail!.contentMediaList.length} ",
                                                         style: commonTextStyle(
                                                             size: size,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD038,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD038,
                                                             color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight
@@ -315,19 +318,23 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           visible: widget.publishData!.mimeType
                                               .contains("doc"),
                                           child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * AppDimensions.numD01),
+                                            padding: EdgeInsets.all(size.width *
+                                                AppDimensions.numD01),
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: AppColorTheme.colorGreyNew),
+                                                  color: AppColorTheme
+                                                      .colorGreyNew),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * AppDimensions.numD06),
+                                                      size.width *
+                                                          AppDimensions.numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
-                                              width: size.width * AppDimensions.numD30,
-                                              height: size.width * AppDimensions.numD35,
+                                              width: size.width *
+                                                  AppDimensions.numD30,
+                                              height: size.width *
+                                                  AppDimensions.numD35,
                                             ),
                                           ),
                                         ),
@@ -335,19 +342,23 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           visible: widget.publishData!.mimeType
                                               .contains("pdf"),
                                           child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * AppDimensions.numD01),
+                                            padding: EdgeInsets.all(size.width *
+                                                AppDimensions.numD01),
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: AppColorTheme.colorGreyNew),
+                                                  color: AppColorTheme
+                                                      .colorGreyNew),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * AppDimensions.numD06),
+                                                      size.width *
+                                                          AppDimensions.numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}pngImage.png",
-                                              width: size.width * AppDimensions.numD30,
-                                              height: size.width * AppDimensions.numD35,
+                                              width: size.width *
+                                                  AppDimensions.numD30,
+                                              height: size.width *
+                                                  AppDimensions.numD35,
                                             ),
                                           ),
                                         ),
@@ -356,22 +367,28 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                   .first.mimeType ==
                                               "audio",
                                           child: Container(
-                                            width: size.width * AppDimensions.numD30,
-                                            height: size.width * AppDimensions.numD35,
-                                            padding: EdgeInsets.all(
-                                                size.width * AppDimensions.numD01),
+                                            width: size.width *
+                                                AppDimensions.numD30,
+                                            height: size.width *
+                                                AppDimensions.numD35,
+                                            padding: EdgeInsets.all(size.width *
+                                                AppDimensions.numD01),
                                             decoration: BoxDecoration(
-                                              color: AppColorTheme.colorThemePink,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
                                               border: Border.all(
-                                                  color: AppColorTheme.colorGreyNew),
+                                                  color: AppColorTheme
+                                                      .colorGreyNew),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * AppDimensions.numD04),
+                                                      size.width *
+                                                          AppDimensions.numD04),
                                             ),
                                             child: Icon(
                                               Icons.play_arrow_rounded,
                                               color: Colors.white,
-                                              size: size.width * AppDimensions.numD15,
+                                              size: size.width *
+                                                  AppDimensions.numD15,
                                             ),
                                           ),
                                         ),
@@ -382,8 +399,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           child: Image.file(
                                             File(widget.publishData!.mediaList
                                                 .first.thumbnail),
-                                            width: size.width * AppDimensions.numD30,
-                                            height: size.width * AppDimensions.numD35,
+                                            width: size.width *
+                                                AppDimensions.numD30,
+                                            height: size.width *
+                                                AppDimensions.numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -394,22 +413,29 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                           child: Image.file(
                                             File(widget.publishData!.mediaList
                                                 .first.mediaPath),
-                                            width: size.width * AppDimensions.numD30,
-                                            height: size.width * AppDimensions.numD35,
+                                            width: size.width *
+                                                AppDimensions.numD30,
+                                            height: size.width *
+                                                AppDimensions.numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                         Image.asset(
                                           "${commonImagePath}watermark1.png",
-                                          width: size.width * AppDimensions.numD30,
-                                          height: size.width * AppDimensions.numD35,
+                                          width:
+                                              size.width * AppDimensions.numD30,
+                                          height:
+                                              size.width * AppDimensions.numD35,
                                           fit: BoxFit.cover,
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: size.width * AppDimensions.numD02,
-                                              bottom: size.width * AppDimensions.numD02,
-                                              right: size.width * AppDimensions.numD02),
+                                              top: size.width *
+                                                  AppDimensions.numD02,
+                                              bottom: size.width *
+                                                  AppDimensions.numD02,
+                                              right: size.width *
+                                                  AppDimensions.numD02),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -422,7 +448,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             size.width *
-                                                                AppDimensions.numD013)),
+                                                                AppDimensions
+                                                                    .numD013)),
                                                 child: Row(
                                                   children: [
                                                     Text(
@@ -432,9 +459,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                                             .toString(),
                                                         style: TextStyle(
                                                             color: Colors.white,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD03,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD03,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w600)),
@@ -718,8 +746,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             ),
                             Expanded(
                               child: Padding(
-                                padding:
-                                    EdgeInsets.only(top: size.width * AppDimensions.numD04),
+                                padding: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD04),
                                 child: Text(
                                   // isUserOutSideOfUnitedKingdom
                                   //     ? "PressHop’s en route to your city ✈"
@@ -731,7 +759,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                       : AppStrings.contentSubmittedHeadingText,
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD038,
+                                      fontSize:
+                                          size.width * AppDimensions.numD038,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -768,7 +797,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                             : "Exclusive",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD04,
+                                            fontSize: size.width *
+                                                AppDimensions.numD04,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700),
                                       )
@@ -793,19 +823,22 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                         AppStrings.amountQuoted,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD035,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
                                             color: Colors.white,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
-                                        height: size.width * AppDimensions.numD01,
+                                        height:
+                                            size.width * AppDimensions.numD01,
                                       ),
                                       Text(
                                         widget.price,
                                         //   "$currencySymbol ${amountFormat(widget.myContentDetail!.originalAmount.toString())}",
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD045,
+                                            fontSize: size.width *
+                                                AppDimensions.numD045,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w700),
                                       )
@@ -826,8 +859,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                 // if (isUserOutSideOfUnitedKingdom) ...[
                 if (widget.isBeta) ...[
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD04),
                     child: RichText(
                         textAlign: TextAlign.justify,
                         text: TextSpan(children: [
@@ -1031,8 +1064,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
 
                 else ...[
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD04),
                     child: RichText(
                         textAlign: TextAlign.justify,
                         text: TextSpan(children: [
@@ -1066,7 +1099,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             ),
                           )),
                           TextSpan(
-                            text: " ${AppStrings.contentSubmittedMessage1Text}\n\n",
+                            text:
+                                " ${AppStrings.contentSubmittedMessage1Text}\n\n",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD03,
@@ -1153,7 +1187,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             "Home",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                   builder: (context) =>
@@ -1193,7 +1228,8 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   "Home",
                                   size,
                                   commonButtonTextStyle(size),
-                                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                                  commonButtonStyle(
+                                      size, AppColorTheme.colorThemePink), () {
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
                                         builder: (context) =>

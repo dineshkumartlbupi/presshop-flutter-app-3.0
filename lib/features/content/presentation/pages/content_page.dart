@@ -146,22 +146,22 @@ class _MyContentViewState extends State<MyContentView>
         ));
   }
 
-  void _onRefresh() {
-    if (_tabController.index == 0) {
-      _loadAllContent(true);
-    } else {
-      _loadMyContent(true);
-    }
+  void _onAllRefresh() {
+    _loadAllContent(true);
   }
 
-  void _onLoading() {
-    if (_tabController.index == 0) {
-      allPage++;
-      _loadAllContent(false);
-    } else {
-      myPage++;
-      _loadMyContent(false);
-    }
+  void _onMyRefresh() {
+    _loadMyContent(true);
+  }
+
+  void _onAllLoading() {
+    allPage++;
+    _loadAllContent(false);
+  }
+
+  void _onMyLoading() {
+    myPage++;
+    _loadMyContent(false);
   }
 
   void _onItemTap(ContentItem item) {
@@ -291,46 +291,54 @@ class _MyContentViewState extends State<MyContentView>
           isLoading = isAll ? state.isLoadingAll : state.isLoadingMy;
         }
 
-        if ((state is ContentLoading || isLoading) && currentList.isEmpty) {
-          return showLoader();
-        }
-
         return SmartRefresher(
           controller: controller,
           enablePullDown: true,
           enablePullUp: true,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
+          onRefresh: isAll ? _onAllRefresh : _onMyRefresh,
+          onLoading: isAll ? _onAllLoading : _onMyLoading,
           header: const WaterDropHeader(),
           footer: const CustomFooter(builder: commonRefresherFooter),
-          child: currentList.isEmpty && state is! ContentLoading
+          child: currentList.isEmpty &&
+                  (state is ContentLoading ||
+                      isLoading ||
+                      state is ContentInitial)
               ? ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
                     SizedBox(height: size.height * 0.3),
-                    errorMessageWidget(emptyMessage),
+                    showLoader(),
                   ],
                 )
-              : GridView.builder(
-                  padding: EdgeInsets.all(size.width * AppDimensions.numD04),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    mainAxisSpacing: size.width * AppDimensions.numD04,
-                    crossAxisSpacing: size.width * AppDimensions.numD04,
-                  ),
-                  itemCount: currentList.length,
-                  itemBuilder: (context, index) {
-                    final item = currentList[index];
-                    return ContentItemWidget(
-                      key: ValueKey(
-                          item.id), // Add key for better widget recycling
-                      item: item,
-                      size: size,
-                      onTap: () => _onItemTap(item),
-                    );
-                  },
-                ),
+              : currentList.isEmpty
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: size.height * 0.3),
+                        errorMessageWidget(emptyMessage),
+                      ],
+                    )
+                  : GridView.builder(
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD04),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.75,
+                        mainAxisSpacing: size.width * AppDimensions.numD04,
+                        crossAxisSpacing: size.width * AppDimensions.numD04,
+                      ),
+                      itemCount: currentList.length,
+                      itemBuilder: (context, index) {
+                        final item = currentList[index];
+                        return ContentItemWidget(
+                          key: ValueKey(
+                              item.id), // Add key for better widget recycling
+                          item: item,
+                          size: size,
+                          onTap: () => _onItemTap(item),
+                        );
+                      },
+                    ),
         );
       },
     );

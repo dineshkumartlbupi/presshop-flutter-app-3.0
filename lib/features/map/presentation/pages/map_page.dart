@@ -630,7 +630,7 @@ class _MapPageContentState extends State<_MapPageContent>
                   top: _infoOffset!.dy -
                       ((state.selectedIncident!.markerType == 'content' ||
                               state.selectedIncident!.markerType == 'news')
-                          ? 245 // Reduced from 260
+                          ? 215 // Reduced from 245 to match smaller marker size
                           : 180), // Reduced from 195
                   child: (state.selectedIncident!.markerType == 'content' ||
                           state.selectedIncident!.markerType == 'news')

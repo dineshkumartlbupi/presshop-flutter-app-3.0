@@ -90,7 +90,8 @@ class MarkerService {
   }
 
   // Static function to run in isolate
-  static Future<Uint8List?> _processImageFromUrl(Map<String, dynamic> params) async {
+  static Future<Uint8List?> _processImageFromUrl(
+      Map<String, dynamic> params) async {
     try {
       final url = params['url'] as String;
       final width = params['width'] as int;
@@ -217,7 +218,7 @@ class MarkerService {
 
   Future<BitmapDescriptor> createContentMarker(
     String url, {
-    int size = 70,
+    int size = 60,
     String defaultAsset = "assets/markers/bg-removed-content.png",
     String? overlayIcon,
   }) async {
@@ -233,9 +234,9 @@ class MarkerService {
         try {
           // Use timeout to prevent hanging on slow networks
           final response = await http.get(Uri.parse(url)).timeout(
-            const Duration(seconds: 5),
-            onTimeout: () => throw Exception('Image download timeout'),
-          );
+                const Duration(seconds: 5),
+                onTimeout: () => throw Exception('Image download timeout'),
+              );
           if (response.statusCode == 200) {
             bytes = response.bodyBytes;
           } else {

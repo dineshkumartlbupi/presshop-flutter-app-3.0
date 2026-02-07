@@ -16,7 +16,7 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'AudioWaveFormWidgetScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
@@ -24,7 +24,6 @@ import 'package:presshop/core/api/api_constant.dart';
 
 // ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
-
   PreviewScreen(
       {super.key,
       required this.cameraData,
@@ -246,8 +245,10 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   : mediaList[index].mimeType.contains("doc")
                                       ? Center(
                                           child: SizedBox(
-                                            height: size.width * AppDimensions.numD60,
-                                            width: size.width * AppDimensions.numD55,
+                                            height: size.width *
+                                                AppDimensions.numD60,
+                                            width: size.width *
+                                                AppDimensions.numD55,
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
@@ -255,10 +256,12 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                 Image.asset(
                                                   "${dummyImagePath}doc_black_icon.png",
                                                   fit: BoxFit.contain,
-                                                  height: size.width * AppDimensions.numD45,
+                                                  height: size.width *
+                                                      AppDimensions.numD45,
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * AppDimensions.numD04,
+                                                  height: size.width *
+                                                      AppDimensions.numD04,
                                                 ),
                                                 Text(
                                                   path.basename(mediaList[index]
@@ -266,8 +269,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                   textAlign: TextAlign.center,
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize:
-                                                          size.width * AppDimensions.numD03,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.normal),
@@ -282,8 +285,10 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                               .contains("pdf")
                                           ? Center(
                                               child: SizedBox(
-                                                height: size.width * AppDimensions.numD60,
-                                                width: size.width * AppDimensions.numD55,
+                                                height: size.width *
+                                                    AppDimensions.numD60,
+                                                width: size.width *
+                                                    AppDimensions.numD55,
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
@@ -291,12 +296,12 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                     Image.asset(
                                                       "${dummyImagePath}pngImage.png",
                                                       fit: BoxFit.contain,
-                                                      height:
-                                                          size.width * AppDimensions.numD45,
+                                                      height: size.width *
+                                                          AppDimensions.numD45,
                                                     ),
                                                     SizedBox(
-                                                      height:
-                                                          size.width * AppDimensions.numD04,
+                                                      height: size.width *
+                                                          AppDimensions.numD04,
                                                     ),
                                                     Text(
                                                       path.basename(
@@ -307,7 +312,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                       style: commonTextStyle(
                                                           size: size,
                                                           fontSize: size.width *
-                                                              AppDimensions.numD03,
+                                                              AppDimensions
+                                                                  .numD03,
                                                           color: Colors.black,
                                                           fontWeight: FontWeight
                                                               .normal),
@@ -360,7 +366,10 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                               : Container(),
                           Positioned(
                             top: size.width * AppDimensions.numD09,
-                            right: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD02),
+                            right: size.width *
+                                (isIpad
+                                    ? AppDimensions.numD1
+                                    : AppDimensions.numD02),
                             child: IconButton(
                               /// @aditya 17 sep
                               onPressed: () {
@@ -442,24 +451,29 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       decoration: BoxDecoration(
                                           color: Colors.grey[100],
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04)),
+                                              size.width *
+                                                  AppDimensions.numD04)),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_clock.png",
-                                            width: size.width * AppDimensions.numD04,
-                                            height: size.width * AppDimensions.numD04,
+                                            width: size.width *
+                                                AppDimensions.numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD02,
+                                            width: size.width *
+                                                AppDimensions.numD02,
                                           ),
                                           Text(
                                             mediaList[index].dateTime,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * AppDimensions.numD025,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD025,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           )
@@ -475,15 +489,18 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       decoration: BoxDecoration(
                                           color: Colors.grey[100],
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04)),
+                                              size.width *
+                                                  AppDimensions.numD04)),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_location.png",
-                                            width: size.width * AppDimensions.numD04,
-                                            height: size.width * AppDimensions.numD04,
+                                            width: size.width *
+                                                AppDimensions.numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
                                             color: mediaList[index]
                                                     .location
                                                     .isEmpty
@@ -493,10 +510,12 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                 : Colors.black,
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD02,
+                                            width: size.width *
+                                                AppDimensions.numD02,
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD25,
+                                            width: size.width *
+                                                AppDimensions.numD25,
                                             child: Text(
                                               mediaList[currentPage]
                                                       .location
@@ -508,18 +527,20 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                                       .location,
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize:
-                                                      mediaList[currentPage]
-                                                              .location
-                                                              .isEmpty
-                                                          ? size.width * AppDimensions.numD025
-                                                          : size.width *
-                                                              AppDimensions.numD025,
+                                                  fontSize: mediaList[
+                                                              currentPage]
+                                                          .location
+                                                          .isEmpty
+                                                      ? size.width *
+                                                          AppDimensions.numD025
+                                                      : size.width *
+                                                          AppDimensions.numD025,
                                                   color: mediaList[currentPage]
                                                           .location
                                                           .isEmpty
                                                       ? isLocationFetching
-                                                          ? AppColorTheme.colorGrey6
+                                                          ? AppColorTheme
+                                                              .colorGrey6
                                                           : Colors.red
                                                       : Colors.black,
                                                   fontWeight:
@@ -565,7 +586,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
                                   commonButtonStyle(
@@ -610,10 +632,12 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                                  commonButtonStyle(
+                                      size, AppColorTheme.colorThemePink), () {
                                 if (widget.pickAgain) {
                                   Navigator.pop(context);
                                   if (widget.type == "draft") {
@@ -769,7 +793,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
                                   commonButtonStyle(
@@ -813,10 +838,12 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   size,
                                   commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                                  commonButtonStyle(
+                                      size, AppColorTheme.colorThemePink), () {
                                 if (widget.pickAgain) {
                                   Navigator.pop(context);
                                   if (widget.type == "draft") {
@@ -993,7 +1020,6 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
 }
 
 class PublishData {
-
   PublishData({
     required this.imagePath,
     required this.address,
@@ -1028,7 +1054,6 @@ class PublishData {
 }
 
 class MediaData {
-
   MediaData(
       {required this.mediaPath,
       required this.mimeType,

@@ -8,7 +8,7 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/bank/presentation/bloc/bank_bloc.dart';
 import 'package:presshop/features/bank/presentation/bloc/bank_event.dart';
 import 'package:presshop/features/bank/presentation/bloc/bank_state.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 
@@ -51,11 +51,13 @@ class _MyBanksViewState extends State<MyBanksView> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           contentPadding: EdgeInsets.zero,
-          insetPadding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+          insetPadding: EdgeInsets.symmetric(
+              horizontal: size.width * AppDimensions.numD04),
           content: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(size.width * AppDimensions.numD045),
+              borderRadius:
+                  BorderRadius.circular(size.width * AppDimensions.numD045),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -63,7 +65,8 @@ class _MyBanksViewState extends State<MyBanksView> {
               children: [
                 SizedBox(height: size.width * AppDimensions.numD02),
                 Padding(
-                  padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                  padding:
+                      EdgeInsets.only(left: size.width * AppDimensions.numD04),
                   child: Row(
                     children: [
                       Text(
@@ -91,8 +94,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                 const Divider(color: Colors.black, thickness: 0.5),
                 SizedBox(height: size.width * AppDimensions.numD02),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD035),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * AppDimensions.numD035),
                   child: Text(
                     "Are you sure you wish to delete this bank account?",
                     style: TextStyle(
@@ -106,8 +109,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                 ),
                 SizedBox(height: size.width * AppDimensions.numD05),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD035),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * AppDimensions.numD035),
                   child: Row(
                     children: [
                       Expanded(
@@ -130,7 +133,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                             "Delete",
                             size,
                             commonButtonTextStyle(size),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink),
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink),
                             () {
                               Navigator.pop(dialogContext);
                               context.read<BankBloc>().add(
@@ -268,7 +272,8 @@ class _MyBanksViewState extends State<MyBanksView> {
             Container(
               decoration: BoxDecoration(
                 color: AppColorTheme.colorLightWhite,
-                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD03),
                 border: Border.all(color: Colors.black),
               ),
               padding: EdgeInsets.all(size.width * AppDimensions.numD04),
@@ -288,7 +293,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                   Container(
                     decoration: BoxDecoration(
                       color: AppColorTheme.colorLightWhite,
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD03),
                       border: Border.all(color: Colors.black),
                     ),
                     padding: EdgeInsets.all(size.width * AppDimensions.numD02),
@@ -298,8 +304,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                         Row(
                           children: [
                             ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * AppDimensions.numD02),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD02),
                               child: Image.network(
                                 firstBank.bankImage,
                                 height: size.width * AppDimensions.numD11,
@@ -331,14 +337,17 @@ class _MyBanksViewState extends State<MyBanksView> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * AppDimensions.numD028,
+                                          fontSize: size.width *
+                                              AppDimensions.numD028,
                                           fontFamily: "AirbnbCereal",
                                           overflow: TextOverflow.ellipsis,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: size.width * AppDimensions.numD01),
+                                    SizedBox(
+                                        width:
+                                            size.width * AppDimensions.numD01),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 2),
@@ -351,7 +360,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * AppDimensions.numD028,
+                                          fontSize: size.width *
+                                              AppDimensions.numD028,
                                           fontFamily: "AirbnbCereal",
                                           overflow: TextOverflow.ellipsis,
                                           fontWeight: FontWeight.normal,
@@ -360,12 +370,14 @@ class _MyBanksViewState extends State<MyBanksView> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: size.width * AppDimensions.numD015),
+                                SizedBox(
+                                    height: size.width * AppDimensions.numD015),
                                 Text(
                                   "********${firstBank.accountNumber}",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD025,
+                                    fontSize:
+                                        size.width * AppDimensions.numD025,
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal,
                                   ),
@@ -381,7 +393,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                             if (firstBank.isDefault)
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * AppDimensions.numD028,
+                                  horizontal:
+                                      size.width * AppDimensions.numD028,
                                   vertical: size.width * AppDimensions.numD01,
                                 ),
                                 decoration: BoxDecoration(
@@ -393,7 +406,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                                   "Default",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD028,
+                                    fontSize:
+                                        size.width * AppDimensions.numD028,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -407,8 +421,8 @@ class _MyBanksViewState extends State<MyBanksView> {
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.green,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD03),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD03),
                               ),
                               child: Text(
                                 "Verified",
@@ -517,7 +531,8 @@ class _MyBanksViewState extends State<MyBanksView> {
             Container(
               decoration: BoxDecoration(
                 color: AppColorTheme.colorLightWhite,
-                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD03),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD03),
                 border: Border.all(color: Colors.black),
               ),
               padding: EdgeInsets.all(size.width * AppDimensions.numD04),

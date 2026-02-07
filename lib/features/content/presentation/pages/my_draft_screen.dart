@@ -7,7 +7,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';

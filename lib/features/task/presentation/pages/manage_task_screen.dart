@@ -45,7 +45,7 @@ import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 

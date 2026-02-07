@@ -9,7 +9,7 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 
 import '../bloc/alert_bloc.dart';
@@ -63,7 +63,8 @@ class _AlertScreenState extends State<AlertScreen> {
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: size.width * AppDimensions.appBarHeadingFontSize),
+                      fontSize:
+                          size.width * AppDimensions.appBarHeadingFontSize),
                 ),
                 centerTitle: false,
                 titleSpacing: 0,
@@ -96,7 +97,8 @@ class _AlertScreenState extends State<AlertScreen> {
               body: state.status == AlertStatus.loading && state.alerts.isEmpty
                   ? showLoader()
                   : Padding(
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD03),
                       child: SmartRefresher(
                         controller: refreshController,
                         enablePullDown: true,
@@ -125,45 +127,53 @@ class _AlertScreenState extends State<AlertScreen> {
                                         children: [
                                           ClipRRect(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * AppDimensions.numD03),
+                                                size.width *
+                                                    AppDimensions.numD03),
                                             child: Image.network(
                                               item.image,
                                               width: double.infinity,
-                                              height: size.width * AppDimensions.numD50,
+                                              height: size.width *
+                                                  AppDimensions.numD50,
                                               fit: BoxFit.cover,
                                               errorBuilder: (c, s, v) {
                                                 return Container(
                                                   width: double.infinity,
-                                                  height: size.width * AppDimensions.numD50,
+                                                  height: size.width *
+                                                      AppDimensions.numD50,
                                                   decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               size.width *
-                                                                  AppDimensions.numD03),
-                                                      color: AppColorTheme.colorLightGrey),
+                                                                  AppDimensions
+                                                                      .numD03),
+                                                      color: AppColorTheme
+                                                          .colorLightGrey),
                                                 );
                                               },
                                             ),
                                           ),
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                vertical: size.width * AppDimensions.numD02,
-                                                horizontal:
-                                                    size.width * AppDimensions.numD045),
-                                            margin: EdgeInsets.all(
-                                                size.width * AppDimensions.numD03),
+                                                vertical: size.width *
+                                                    AppDimensions.numD02,
+                                                horizontal: size.width *
+                                                    AppDimensions.numD045),
+                                            margin: EdgeInsets.all(size.width *
+                                                AppDimensions.numD03),
                                             decoration: BoxDecoration(
-                                              color: AppColorTheme.colorThemePink,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      size.width * AppDimensions.numD06),
+                                                      size.width *
+                                                          AppDimensions.numD06),
                                             ),
                                             child: Text(
                                                 "Earn $currencySymbol${item.minEarning} - $currencySymbol${item.maxEarning}",
                                                 style: commonTextStyle(
                                                     size: size,
-                                                    fontSize:
-                                                        size.width * AppDimensions.numD035,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD035,
                                                     color: Colors.white,
                                                     fontWeight:
                                                         FontWeight.bold)),
@@ -171,19 +181,22 @@ class _AlertScreenState extends State<AlertScreen> {
                                         ],
                                       ),
                                       SizedBox(
-                                        height: size.width * AppDimensions.numD035,
+                                        height:
+                                            size.width * AppDimensions.numD035,
                                       ),
                                       Text(
                                         item.description.trim().toCapitalized(),
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD035,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
                                             color: Colors.black,
                                             lineHeight: 1.5,
                                             fontWeight: FontWeight.normal),
                                       ),
                                       SizedBox(
-                                        height: size.width * AppDimensions.numD035,
+                                        height:
+                                            size.width * AppDimensions.numD035,
                                       ),
                                       Row(
                                         crossAxisAlignment:
@@ -199,13 +212,13 @@ class _AlertScreenState extends State<AlertScreen> {
                                                   children: [
                                                     Image.asset(
                                                       "${iconsPath}ic_yearly_calendar.png",
-                                                      height:
-                                                          size.width * AppDimensions.numD038,
+                                                      height: size.width *
+                                                          AppDimensions.numD038,
                                                       color: Colors.black,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD018,
+                                                      width: size.width *
+                                                          AppDimensions.numD018,
                                                     ),
                                                     Text(
                                                         dateTimeFormatter(
@@ -215,26 +228,28 @@ class _AlertScreenState extends State<AlertScreen> {
                                                                 "dd MMM yyyy"),
                                                         style: commonTextStyle(
                                                             size: size,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD028,
-                                                            color: AppColorTheme.colorHint,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD028,
+                                                            color: AppColorTheme
+                                                                .colorHint,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .normal)),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD02,
+                                                      width: size.width *
+                                                          AppDimensions.numD02,
                                                     ),
                                                     Image.asset(
                                                       "${iconsPath}ic_clock.png",
-                                                      height:
-                                                          size.width * AppDimensions.numD038,
+                                                      height: size.width *
+                                                          AppDimensions.numD038,
                                                       color: Colors.black,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD018,
+                                                      width: size.width *
+                                                          AppDimensions.numD018,
                                                     ),
                                                     Text(
                                                         dateTimeFormatter(
@@ -243,17 +258,20 @@ class _AlertScreenState extends State<AlertScreen> {
                                                             format: "hh:mm a"),
                                                         style: commonTextStyle(
                                                             size: size,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD028,
-                                                            color: AppColorTheme.colorHint,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD028,
+                                                            color: AppColorTheme
+                                                                .colorHint,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .normal)),
                                                   ],
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * AppDimensions.numD025,
+                                                  height: size.width *
+                                                      AppDimensions.numD025,
                                                 ),
 
                                                 /// Location
@@ -265,22 +283,26 @@ class _AlertScreenState extends State<AlertScreen> {
                                                   children: [
                                                     Image.asset(
                                                       "${iconsPath}ic_location.png",
-                                                      height:
-                                                          size.width * AppDimensions.numD04,
-                                                      color: AppColorTheme.colorHint,
+                                                      height: size.width *
+                                                          AppDimensions.numD04,
+                                                      color: AppColorTheme
+                                                          .colorHint,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD02,
+                                                      width: size.width *
+                                                          AppDimensions.numD02,
                                                     ),
                                                     Expanded(
                                                       child: Text(item.location,
                                                           style: commonTextStyle(
                                                               size: size,
-                                                              fontSize:
-                                                                  size.width *
-                                                                      AppDimensions.numD028,
-                                                              color: AppColorTheme.colorHint,
+                                                              fontSize: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD028,
+                                                              color:
+                                                                  AppColorTheme
+                                                                      .colorHint,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .normal)),
@@ -288,130 +310,145 @@ class _AlertScreenState extends State<AlertScreen> {
                                                   ],
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * AppDimensions.numD025,
+                                                  height: size.width *
+                                                      AppDimensions.numD025,
                                                 ),
                                                 Row(
                                                   children: [
                                                     Image.asset(
                                                       "${iconsPath}ic_location.png",
-                                                      height:
-                                                          size.width * AppDimensions.numD04,
-                                                      color: AppColorTheme.colorHint,
+                                                      height: size.width *
+                                                          AppDimensions.numD04,
+                                                      color: AppColorTheme
+                                                          .colorHint,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD02,
+                                                      width: size.width *
+                                                          AppDimensions.numD02,
                                                     ),
                                                     Text(item.miles,
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: commonTextStyle(
                                                             size: size,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD028,
-                                                            color: AppColorTheme.colorHint,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD028,
+                                                            color: AppColorTheme
+                                                                .colorHint,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .normal)),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD018,
+                                                      width: size.width *
+                                                          AppDimensions.numD018,
                                                     ),
                                                     Container(
                                                       width: 1,
-                                                      height:
-                                                          size.width * AppDimensions.numD04,
+                                                      height: size.width *
+                                                          AppDimensions.numD04,
                                                       color: Colors.grey,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD02,
+                                                      width: size.width *
+                                                          AppDimensions.numD02,
                                                     ),
                                                     Image.asset(
                                                       "${iconsPath}ic_man_walking.png",
-                                                      height:
-                                                          size.width * AppDimensions.numD036,
+                                                      height: size.width *
+                                                          AppDimensions.numD036,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD01,
+                                                      width: size.width *
+                                                          AppDimensions.numD01,
                                                     ),
                                                     Text(item.byFeet,
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: commonTextStyle(
                                                             size: size,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD028,
-                                                            color: AppColorTheme.colorHint,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD028,
+                                                            color: AppColorTheme
+                                                                .colorHint,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .normal)),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD01,
+                                                      width: size.width *
+                                                          AppDimensions.numD01,
                                                     ),
                                                     Container(
                                                       width: 1,
-                                                      height:
-                                                          size.width * AppDimensions.numD04,
+                                                      height: size.width *
+                                                          AppDimensions.numD04,
                                                       color: Colors.grey,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD02,
+                                                      width: size.width *
+                                                          AppDimensions.numD02,
                                                     ),
                                                     Image.asset(
                                                       "${iconsPath}ic_car.png",
-                                                      width:
-                                                          size.width * AppDimensions.numD038,
+                                                      width: size.width *
+                                                          AppDimensions.numD038,
                                                     ),
                                                     SizedBox(
-                                                      width:
-                                                          size.width * AppDimensions.numD01,
+                                                      width: size.width *
+                                                          AppDimensions.numD01,
                                                     ),
                                                     Text(item.byCar,
                                                         style: commonTextStyle(
                                                             size: size,
-                                                            fontSize:
-                                                                size.width *
-                                                                    AppDimensions.numD028,
-                                                            color: AppColorTheme.colorHint,
+                                                            fontSize: size
+                                                                    .width *
+                                                                AppDimensions
+                                                                    .numD028,
+                                                            color: AppColorTheme
+                                                                .colorHint,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .normal)),
                                                   ],
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * AppDimensions.numD02,
+                                                  height: size.width *
+                                                      AppDimensions.numD02,
                                                 ),
                                               ],
                                             ),
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD075,
+                                            width: size.width *
+                                                AppDimensions.numD075,
                                           ),
                                         ],
                                       ),
                                       SizedBox(
-                                        height: size.width * AppDimensions.numD07,
+                                        height:
+                                            size.width * AppDimensions.numD07,
                                       ),
                                       Container(
-                                        height: size.width * AppDimensions.numD13,
+                                        height:
+                                            size.width * AppDimensions.numD13,
                                         width: double.infinity,
                                         margin: EdgeInsets.only(
-                                            left: size.width * AppDimensions.numD09,
-                                            right: size.width * AppDimensions.numD09),
+                                            left: size.width *
+                                                AppDimensions.numD09,
+                                            right: size.width *
+                                                AppDimensions.numD09),
                                         child: commonElevatedButton(
                                             item.isEmergency
                                                 ? "Emergency Tips"
                                                 : "Let's Go",
                                             size,
                                             commonButtonTextStyle(size),
-                                            commonButtonStyle(
-                                                size, AppColorTheme.colorThemePink), () {
+                                            commonButtonStyle(size,
+                                                AppColorTheme.colorThemePink),
+                                            () {
                                           if (!item.isEmergency) {
                                             openUrl(
                                                 item.locationData?.coordinates,
@@ -432,12 +469,12 @@ class _AlertScreenState extends State<AlertScreen> {
                                     ],
                                   );
                                 },
-                                separatorBuilder:
-                                    (context, index) {
+                                separatorBuilder: (context, index) {
                                   return Container(
                                     margin: EdgeInsets.only(
                                         top: size.width * AppDimensions.numD05,
-                                        bottom: size.width * AppDimensions.numD05),
+                                        bottom:
+                                            size.width * AppDimensions.numD05),
                                     child: Divider(
                                       thickness: 1,
                                       color: Colors.grey.withOpacity(.5),

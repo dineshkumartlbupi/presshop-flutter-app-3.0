@@ -27,7 +27,8 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
   @override
   Future<List<CategoryModel>> getContentCategories() async {
     try {
-      final response = await apiClient.get(ApiConstantsNew.content.category);
+      final response = await apiClient.get(ApiConstantsNew.content.category,
+          showLoader: false);
       debugPrint("DEBUG: getContentCategories response: ${response.data}");
       if (response.data is List) {
         final data = response.data as List;
@@ -77,7 +78,7 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         "limit": limit,
       };
       final response = await apiClient.get(ApiConstantsNew.misc.charityList,
-          queryParameters: params);
+          queryParameters: params, showLoader: false);
       final data = response.data['data'];
       if (data is List) {
         return data.map((e) => CharityModel.fromJson(e)).toList();
@@ -130,7 +131,7 @@ class PublishRemoteDataSourceImpl implements PublishRemoteDataSource {
         "type": "price",
       };
       final response = await apiClient.get(ApiConstantsNew.misc.generalMgmt,
-          queryParameters: params);
+          queryParameters: params, showLoader: false);
       final data = (response.data is Map)
           ? (response.data['status'] ?? response.data['data'])
           : null;

@@ -12,7 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import '../../../dashboard/presentation/pages/Dashboard.dart';
+import '../../../dashboard/presentation/pages/dashboard.dart';
 import '../../presentation/bloc/profile_bloc.dart';
 import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';

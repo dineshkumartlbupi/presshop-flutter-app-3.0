@@ -119,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD15),
-                    child: Image.asset('${commonImagePath}ic_splash.png'),
+                    child: Image.asset('assets/logo/cmplogo2.png'),
                   ),
                 ),
                 if (mustForceUpdate) _forceUpdateOverlay(size),

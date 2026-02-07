@@ -650,6 +650,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           await _locationService.requestPermission(Permission.photos);
 
       if (status) {
+        // We still check PhotoManager for actual authorization state if needed,
+        // but requestPermission already handled the UX and settings redirection.
         final PermissionState ps = await PhotoManager.requestPermissionExtend();
         if (ps.isAuth) {
           List<AssetPathEntity> albums =

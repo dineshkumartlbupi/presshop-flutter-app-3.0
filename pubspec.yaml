@@ -140,6 +140,7 @@ flutter:
     - assets/rabbits/
     - assets/chatIcons/
     - assets/dialog_flow_auth.json
+    - assets/logo/
 
   fonts:
     - family: AirbnbCereal

@@ -13,6 +13,14 @@ class AllTaskModel extends TaskAll {
     super.mediaHouseDetails,
     super.acceptedTasks = const [],
     super.uploadContents,
+    super.isNeedPhoto = false,
+    super.isNeedVideo = false,
+    super.isNeedInterview = false,
+    super.photoPrice = "0",
+    super.videoPrice = "0",
+    super.interviewPrice = "0",
+    super.currency = "",
+    super.currencySymbol = "",
   });
 
   factory AllTaskModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +46,28 @@ class AllTaskModel extends TaskAll {
       uploadContents: json['uploadContents'] != null
           ? UploadContents.fromJson(json['uploadContents'])
           : null,
+      isNeedPhoto: (json['need_photos'] ?? false) is bool
+          ? (json['need_photos'] ?? false)
+          : (json['need_photos'] == "true" || json['need_photos'] == "1"),
+      isNeedVideo: (json['need_videos'] ?? false) is bool
+          ? (json['need_videos'] ?? false)
+          : (json['need_videos'] == "true" || json['need_videos'] == "1"),
+      isNeedInterview: (json['need_interview'] ?? false) is bool
+          ? (json['need_interview'] ?? false)
+          : (json['need_interview'] == "true" || json['need_interview'] == "1"),
+      photoPrice:
+          (json['hopper_photo_price'] ?? json['photo_price'] ?? "0").toString(),
+      videoPrice: (json['hopper_videos_price'] ??
+              json['hopper_video_price'] ??
+              json['videos_price'] ??
+              "0")
+          .toString(),
+      interviewPrice:
+          (json['hopper_interview_price'] ?? json['interview_price'] ?? "0")
+              .toString(),
+      currency: (json['currency'] ?? "").toString(),
+      currencySymbol:
+          (json['currency_symbol'] ?? json['currencySymbol'] ?? "").toString(),
     );
   }
 }

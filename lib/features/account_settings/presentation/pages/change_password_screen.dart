@@ -5,7 +5,7 @@ import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/account_settings_bloc.dart';
 import '../bloc/account_settings_event.dart';
@@ -113,13 +113,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             child: Form(
               key: formKey,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD05),
+                padding: EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD05),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                          left: size.width * AppDimensions.numD11, right: size.width * AppDimensions.numD1),
+                          left: size.width * AppDimensions.numD11,
+                          right: size.width * AppDimensions.numD1),
                       child: Text(
                         AppStrings.changePasswordSubTitleText,
                         style: TextStyle(
@@ -156,7 +158,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ),
                           ),
                           prefixIconHeight: size.width * AppDimensions.numD08,
-                          suffixIconIconHeight: size.width * AppDimensions.numD08,
+                          suffixIconIconHeight:
+                              size.width * AppDimensions.numD08,
                           suffixIcon: InkWell(
                             onTap: () {
                               hideCurrentPassword = !hideCurrentPassword;
@@ -215,7 +218,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ),
                           ),
                           prefixIconHeight: size.width * AppDimensions.numD08,
-                          suffixIconIconHeight: size.width * AppDimensions.numD08,
+                          suffixIconIconHeight:
+                              size.width * AppDimensions.numD08,
                           onChanged: (text) {
                             if (text.toString().length < 8) {
                               showMincase = false;
@@ -481,7 +485,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ),
                           ),
                           prefixIconHeight: size.width * AppDimensions.numD08,
-                          suffixIconIconHeight: size.width * AppDimensions.numD08,
+                          suffixIconIconHeight:
+                              size.width * AppDimensions.numD08,
                           suffixIcon: InkWell(
                             onTap: () {
                               hideConfirmPassword = !hideConfirmPassword;
@@ -533,10 +538,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 size,
                                 commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink), () {
                               if (formKey.currentState!.validate()) {
                                 context.read<AccountSettingsBloc>().add(
                                       ChangePasswordEvent(

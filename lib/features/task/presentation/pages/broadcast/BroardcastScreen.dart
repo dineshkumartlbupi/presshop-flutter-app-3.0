@@ -17,7 +17,7 @@ import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/main.dart';
 import 'package:fast_contacts/fast_contacts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -187,9 +187,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       },
       builder: (context, state) {
         return Scaffold(
-          body: taskDetail == null
-              ? const Center(child: CircularProgressIndicator())
-              : _body(size),
+          body: taskDetail == null ? SizedBox() : _body(size),
         );
       },
     );

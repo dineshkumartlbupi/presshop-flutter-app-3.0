@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/main.dart';
 import '../bloc/leaderboard_bloc.dart';
@@ -186,7 +186,8 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                         .add(GetLeaderboard(selectedCountryCode));
                   },
                   child: Container(
-                    margin: EdgeInsets.only(right: size.width * AppDimensions.numD03),
+                    margin: EdgeInsets.only(
+                        right: size.width * AppDimensions.numD03),
                     padding: EdgeInsets.symmetric(
                         horizontal: size.width * AppDimensions.numD03,
                         vertical: size.width * AppDimensions.numD015),
@@ -194,7 +195,8 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                       color: selectedCountryCode == countryItem.countryCode
                           ? AppColorTheme.colorThemePink
                           : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD02),
                     ),
                     child: Center(
                       child: Text(countryItem.country,
@@ -255,7 +257,8 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                   debugPrint(
                       "DEBUG: Rendering list item $index: ${memberItem.userName} (${memberItem.country})");
                   return Padding(
-                    padding: EdgeInsets.only(bottom: size.height * AppDimensions.numD02),
+                    padding: EdgeInsets.only(
+                        bottom: size.height * AppDimensions.numD02),
                     child: Row(
                       children: [
                         Container(
@@ -291,7 +294,8 @@ class _LeaderboardViewState extends State<LeaderboardView> {
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500),
                             ),
-                            SizedBox(height: size.height * AppDimensions.numD005),
+                            SizedBox(
+                                height: size.height * AppDimensions.numD005),
                             Text(
                               "Hopper since ${getFormattedDate(memberItem.createdAt)}",
                               style: commonTextStyle(

@@ -5,7 +5,6 @@ import 'package:presshop/main.dart' as app;
 import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart'; // For PublishData, MediaData
 import 'package:presshop/core/constants/string_constants.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart'; // Verify this path. Usually it is dependency_injection.dart or injection_container.dart
 import 'package:presshop/features/publish/presentation/bloc/publish_bloc.dart';
@@ -13,8 +12,7 @@ import 'package:presshop/features/publish/presentation/bloc/publish_bloc.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Content Upload Flow Integration Test',
-      (tester) async {
+  testWidgets('Content Upload Flow Integration Test', (tester) async {
     app.main();
     await tester.pumpAndSettle();
 

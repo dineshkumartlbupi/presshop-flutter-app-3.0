@@ -3,7 +3,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_screen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 
 class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const NewHomeAppBar({
@@ -26,7 +26,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       hideLeading: hideLeading,
       title: Padding(
-        padding: EdgeInsets.only(left: hideLeading ? size.width * AppDimensions.numD04 : 0),
+        padding: EdgeInsets.only(
+            left: hideLeading ? size.width * AppDimensions.numD04 : 0),
         child: InkWell(
           onTap: () {
             Navigator.of(context).pushAndRemoveUntil(
@@ -72,7 +73,8 @@ class NewHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.all(size.width * AppDimensions.numD025),
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD035),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD035),
               ),
               child: Image.asset(
                 'assets/icons/menu3.png',

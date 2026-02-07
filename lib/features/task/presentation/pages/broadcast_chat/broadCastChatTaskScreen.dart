@@ -34,7 +34,7 @@ import 'package:presshop/features/authentication/presentation/pages/TermCheckScr
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 

@@ -6,7 +6,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import '../../../dashboard/presentation/pages/Dashboard.dart';
+import '../../../dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/authentication/presentation/bloc/term_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/term_event.dart';
 import 'package:presshop/features/authentication/presentation/bloc/term_state.dart';
@@ -15,7 +15,6 @@ import 'package:presshop/core/di/injection_container.dart'; // For sl
 
 // ignore: must_be_immutable
 class TermCheckScreen extends StatefulWidget {
-
   TermCheckScreen({super.key, required this.type});
   String type = "";
 
@@ -155,7 +154,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: size.width * AppDimensions.appBarHeadingFontSize)),
+                      fontSize:
+                          size.width * AppDimensions.appBarHeadingFontSize)),
               centerTitle: false,
               titleSpacing: 0,
               size: size,
@@ -200,12 +200,14 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             !rememberMe
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * AppDimensions.numD04),
+                                        horizontal:
+                                            size.width * AppDimensions.numD04),
                                     child: Text(
                                       "PLEASE READ THESE LICENCE TERMS CAREFULLY. BY CLICKING ON THE ${"ACCEPT"} BUTTON BELOW YOU AGREE TO THESE TERMS WHICH WILL BIND YOU. IF YOU DO NOT AGREE TO THESE TERMS, CLICK ON THE REJECT BUTTON BELOW.",
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width * AppDimensions.numD035,
+                                          fontSize: size.width *
+                                              AppDimensions.numD035,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   )
@@ -227,7 +229,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             ),*/
                             ListView.separated(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * AppDimensions.numD02),
+                                    horizontal:
+                                        size.width * AppDimensions.numD02),
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
@@ -236,46 +239,53 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     style: {
                                       "span": Style(
                                         color: AppColorTheme.colorTextFieldIcon,
-                                        fontSize: FontSize(size.width * AppDimensions.numD01),
+                                        fontSize: FontSize(
+                                            size.width * AppDimensions.numD01),
                                       ),
                                       "h1": Style(
                                           color: AppColorTheme.colorGreyNew,
-                                          fontSize:
-                                              FontSize(size.width * AppDimensions.numD02),
+                                          fontSize: FontSize(size.width *
+                                              AppDimensions.numD02),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * AppDimensions.numD01)),
+                                              vertical: size.width *
+                                                  AppDimensions.numD01)),
                                       "h2": Style(
                                           color: Colors.black,
-                                          fontSize:
-                                              FontSize(size.width * AppDimensions.numD04),
+                                          fontSize: FontSize(size.width *
+                                              AppDimensions.numD04),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * AppDimensions.numD01)),
+                                              vertical: size.width *
+                                                  AppDimensions.numD01)),
                                       "h3": Style(
                                           color: Colors.black,
-                                          fontSize:
-                                              FontSize(size.width * AppDimensions.numD035),
+                                          fontSize: FontSize(size.width *
+                                              AppDimensions.numD035),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * AppDimensions.numD01)),
+                                              vertical: size.width *
+                                                  AppDimensions.numD01)),
                                       "h4": Style(
                                           color: Colors.black,
-                                          fontSize:
-                                              FontSize(size.width * AppDimensions.numD035),
+                                          fontSize: FontSize(size.width *
+                                              AppDimensions.numD035),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * AppDimensions.numD01)),
+                                              vertical: size.width *
+                                                  AppDimensions.numD01)),
                                       "td": Style(
                                           color: AppColorTheme.colorGreyNew,
-                                          fontSize:
-                                              FontSize(size.width * AppDimensions.numD02),
+                                          fontSize: FontSize(size.width *
+                                              AppDimensions.numD02),
                                           padding: HtmlPaddings.symmetric(
-                                              vertical: size.width * AppDimensions.numD01)),
+                                              vertical: size.width *
+                                                  AppDimensions.numD01)),
                                       "th": Style(
                                           color: AppColorTheme.colorGreyNew,
-                                          fontSize:
-                                              FontSize(size.width * AppDimensions.numD02),
+                                          fontSize: FontSize(size.width *
+                                              AppDimensions.numD02),
                                           fontWeight: FontWeight.w600,
                                           padding: HtmlPaddings.zero),
                                       "div": Style(
-                                        backgroundColor: AppColorTheme.colorLightGrey,
+                                        backgroundColor:
+                                            AppColorTheme.colorLightGrey,
                                       )
                                     },
                                   );
@@ -290,7 +300,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                             !rememberMe
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * AppDimensions.numD06),
+                                        horizontal:
+                                            size.width * AppDimensions.numD06),
                                     child: buttonWidget(size),
                                   )
                                 : Container(),
@@ -308,7 +319,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
 
   Widget termCheckWidget(Size size) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD15),
+      padding:
+          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD15),
       child: const Column(
         children: [
           Text(
@@ -502,7 +514,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
           height: size.width * AppDimensions.numD02,
         ),
         ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD04),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
@@ -579,14 +592,16 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check1Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
                           height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
                             height: size.width * AppDimensions.numD05),
                       ),
@@ -644,14 +659,16 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check2Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
                           height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
                             height: size.width * AppDimensions.numD05),
                       ),
@@ -708,14 +725,16 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check3Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
                           height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
                             height: size.width * AppDimensions.numD05),
                       ),
@@ -773,14 +792,16 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               children: [
                 check4Value
                     ? Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset(
                           "${iconsPath}ic_checkbox_filled.png",
                           height: size.width * AppDimensions.numD05,
                         ),
                       )
                     : Container(
-                        margin: EdgeInsets.only(top: size.width * AppDimensions.numD008),
+                        margin: EdgeInsets.only(
+                            top: size.width * AppDimensions.numD008),
                         child: Image.asset("${iconsPath}ic_checkbox_empty.png",
                             height: size.width * AppDimensions.numD05),
                       ),
@@ -833,7 +854,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   Widget buttonWidget(Size size) {
     return Container(
       padding: EdgeInsets.only(
-          top: size.width * AppDimensions.numD05, bottom: size.width * AppDimensions.numD05),
+          top: size.width * AppDimensions.numD05,
+          bottom: size.width * AppDimensions.numD05),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -882,21 +904,22 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD045)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
@@ -973,7 +996,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     "${AppStrings.acceptText} ${AppStrings.tcText}",
                                     size,
                                     commonButtonTextStyle(size),
-                                    commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                    commonButtonStyle(
+                                        size, AppColorTheme.colorThemePink),
                                     () {
                                   Navigator.pop(context);
                                   Navigator.pop(context, true);

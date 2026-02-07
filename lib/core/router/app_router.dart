@@ -7,7 +7,7 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
 import 'package:presshop/features/authentication/presentation/pages/WelcomeScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/onboarding/presentation/pages/WalkThrough.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';

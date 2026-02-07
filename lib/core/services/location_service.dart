@@ -29,6 +29,8 @@ class LocationService {
     }
   }
 
+  DateTime? _lastSettingsOpen;
+
   Future<bool> _executePermissionRequest(Permission permission) async {
     var status = await permission.request();
     if (status.isGranted) {
@@ -40,7 +42,13 @@ class LocationService {
     } else if (status.isPermanentlyDenied) {
       AppLogger.error("Permission ${permission.toString()} permanently denied",
           trackAnalytics: true);
-      await openAppSettings();
+      // Avoid spamming settings if multiple permissions are denied at once
+      if (_lastSettingsOpen == null ||
+          DateTime.now().difference(_lastSettingsOpen!) >
+              const Duration(seconds: 2)) {
+        _lastSettingsOpen = DateTime.now();
+        await openAppSettings();
+      }
       return false;
     }
     return false;

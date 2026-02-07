@@ -739,7 +739,7 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
       // Handle logic if needed, or simply navigate
       context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
     } else {
-      context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 0});
+      context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
     }
   }
 

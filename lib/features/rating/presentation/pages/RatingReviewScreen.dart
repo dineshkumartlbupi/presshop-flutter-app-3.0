@@ -11,7 +11,7 @@ import 'package:presshop/features/rating/presentation/bloc/rating/rating_bloc.da
 
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/rating/domain/entities/review.dart';
 
 class FilterRatingData {

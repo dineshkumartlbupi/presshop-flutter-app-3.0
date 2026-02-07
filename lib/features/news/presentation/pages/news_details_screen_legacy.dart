@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
@@ -21,7 +21,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewsDetailsScreen extends StatefulWidget {
-
   const NewsDetailsScreen({
     Key? key,
     required this.newsId,

@@ -10,14 +10,13 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/api/api_constant.dart';
 
 const int getAdminListReq = 1;
 
 // ignore: must_be_immutable
 class ChatListingScreen extends StatefulWidget {
-
   ChatListingScreen({super.key, required this.hideLeading});
   bool hideLeading = false;
 
@@ -157,30 +156,39 @@ class _ChatListingScreenState extends State<ChatListingScreen>
         isDense: true,
         filled: true,
         hintText: AppStrings.searchHintText,
-        hintStyle: TextStyle(color: AppColorTheme.colorHint, fontSize: size.width * AppDimensions.numD04),
+        hintStyle: TextStyle(
+            color: AppColorTheme.colorHint,
+            fontSize: size.width * AppDimensions.numD04),
         disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(width: 0, color: AppColorTheme.colorLightGrey)),
+            borderSide: const BorderSide(
+                width: 0, color: AppColorTheme.colorLightGrey)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(width: 0, color: AppColorTheme.colorLightGrey)),
+            borderSide: const BorderSide(
+                width: 0, color: AppColorTheme.colorLightGrey)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(width: 0, color: AppColorTheme.colorLightGrey)),
+            borderSide: const BorderSide(
+                width: 0, color: AppColorTheme.colorLightGrey)),
         errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(width: 0, color: AppColorTheme.colorLightGrey)),
+            borderSide: const BorderSide(
+                width: 0, color: AppColorTheme.colorLightGrey)),
         focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(size.width * 0.03),
-            borderSide: const BorderSide(width: 0, color: AppColorTheme.colorLightGrey)),
+            borderSide: const BorderSide(
+                width: 0, color: AppColorTheme.colorLightGrey)),
         suffixIcon: Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD02),
+          padding: EdgeInsets.symmetric(
+              horizontal: size.width * AppDimensions.numD02),
           child: Image.asset(
             "${iconsPath}ic_search.png",
             color: Colors.black,
           ),
         ),
-        suffixIconConstraints: BoxConstraints(maxHeight: size.width * AppDimensions.numD06),
+        suffixIconConstraints:
+            BoxConstraints(maxHeight: size.width * AppDimensions.numD06),
       ),
       textAlignVertical: TextAlignVertical.center,
     );
@@ -219,8 +227,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
                         adminProfileUrl + item.profilePic,
-                        errorBuilder: (context, exception,
-                            stackTrace) {
+                        errorBuilder: (context, exception, stackTrace) {
                           return Image.asset(
                             "${commonImagePath}rabbitLogo.png",
                           );
@@ -367,8 +374,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                     }
 
                     return Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD02),
+                      padding: EdgeInsets.symmetric(
+                          vertical: size.width * AppDimensions.numD02),
                       child: InkWell(
                           onTap: () {},
                           child: Row(
@@ -392,13 +399,14 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                             ? adminProfileUrl +
                                                 document.get('receiverImage')
                                             : document.get('senderImage'),
-                                        errorBuilder: (context,
-                                            exception,
-                                            stackTrace) {
+                                        errorBuilder:
+                                            (context, exception, stackTrace) {
                                           return Image.asset(
                                             "${commonImagePath}rabbitLogo.png",
-                                            height: size.width * AppDimensions.numD12,
-                                            width: size.width * AppDimensions.numD12,
+                                            height: size.width *
+                                                AppDimensions.numD12,
+                                            width: size.width *
+                                                AppDimensions.numD12,
                                             fit: BoxFit.contain,
                                           );
                                         },
@@ -435,19 +443,21 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                           style: TextStyle(
-                                              fontSize: size.width * AppDimensions.numD038,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD038,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w600),
                                         )),
                                         SizedBox(
-                                            width: size.width * AppDimensions.numD15,
+                                            width: size.width *
+                                                AppDimensions.numD15,
                                             child: Text(
                                                 DateFormat("hh:mm a").format(
                                                     DateTime.parse(
                                                         document.get('date'))),
                                                 style: TextStyle(
-                                                    fontSize:
-                                                        size.width * AppDimensions.numD03,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD03,
                                                     color: Colors.black,
                                                     fontWeight:
                                                         FontWeight.w400))),
@@ -466,8 +476,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD032,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD032,
                                                   color: Colors.black,
                                                   fontWeight:
                                                       FontWeight.normal)),
@@ -476,14 +486,19 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                                 userId.toString()
                                             ? Container(
                                                 margin: EdgeInsets.only(
-                                                  right: size.width * AppDimensions.numD03,
-                                                  left: size.width * AppDimensions.numD03,
+                                                  right: size.width *
+                                                      AppDimensions.numD03,
+                                                  left: size.width *
+                                                      AppDimensions.numD03,
                                                 ),
                                                 alignment: Alignment.center,
-                                                height: size.width * AppDimensions.numD055,
-                                                width: size.width * AppDimensions.numD055,
+                                                height: size.width *
+                                                    AppDimensions.numD055,
+                                                width: size.width *
+                                                    AppDimensions.numD055,
                                                 decoration: const BoxDecoration(
-                                                    color: AppColorTheme.colorOnlineGreen,
+                                                    color: AppColorTheme
+                                                        .colorOnlineGreen,
                                                     shape: BoxShape.circle),
                                                 child: Text(
                                                   document.get('unReadCount') ==
@@ -493,8 +508,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                                           .get('unReadCount'),
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize:
-                                                          size.width * AppDimensions.numD025,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD025,
                                                       color: Colors.white,
                                                       fontWeight:
                                                           FontWeight.w500),
@@ -596,7 +611,8 @@ class _ChatListingScreenState extends State<ChatListingScreen>
             margin: EdgeInsets.only(left: size.width * AppDimensions.numD028),
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.white, width: 1.7),
-                borderRadius: BorderRadius.circular(size.width * AppDimensions.numD028)),
+                borderRadius:
+                    BorderRadius.circular(size.width * AppDimensions.numD028)),
             child: CircleAvatar(
               radius: size.width * AppDimensions.numD014,
               backgroundColor: userDocument == null

@@ -6,7 +6,7 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../bloc/feed_bloc.dart';
@@ -160,7 +160,8 @@ class FeedScreenState extends State<FeedScreen>
                     },
                     separatorBuilder: (context, index) {
                       return Padding(
-                        padding: EdgeInsets.only(bottom: size.width * AppDimensions.numD04),
+                        padding: EdgeInsets.only(
+                            bottom: size.width * AppDimensions.numD04),
                         child: const Divider(
                           color: AppColorTheme.colorTextFieldIcon,
                         ),
@@ -181,10 +182,10 @@ class FeedScreenState extends State<FeedScreen>
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft:
-                Radius.circular(MediaQuery.of(context).size.width * AppDimensions.numD08),
-            topRight:
-                Radius.circular(MediaQuery.of(context).size.width * AppDimensions.numD08),
+            topLeft: Radius.circular(
+                MediaQuery.of(context).size.width * AppDimensions.numD08),
+            topRight: Radius.circular(
+                MediaQuery.of(context).size.width * AppDimensions.numD08),
           ),
         ),
         context: context,
@@ -252,13 +253,17 @@ class FeedScreenState extends State<FeedScreen>
           icon: "ic_exclusive.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.allSharedContentText, icon: "ic_share.png", isSelected: false),
+          name: AppStrings.allSharedContentText,
+          icon: "ic_share.png",
+          isSelected: false),
       FilterModel(
           name: AppStrings.paymentsReceivedText,
           icon: "ic_payment_reviced.png",
           isSelected: false),
       FilterModel(
-          name: AppStrings.pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+          name: AppStrings.pendingPaymentsText,
+          icon: "ic_pending.png",
+          isSelected: false),
     ]);
   }
 

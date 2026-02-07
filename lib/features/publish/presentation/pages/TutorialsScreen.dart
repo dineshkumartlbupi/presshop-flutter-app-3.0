@@ -5,7 +5,7 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/publish/presentation/bloc/tutorials/tutorials_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
@@ -139,7 +139,8 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                 fillColor: AppColorTheme.colorLightGrey,
                                 hintStyle: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD035),
+                                    fontSize:
+                                        size.width * AppDimensions.numD035),
                                 disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
                                         size.width * 0.03),
@@ -185,10 +186,13 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                 ),
                                 suffixIconColor: Colors.black,
                                 suffixIconConstraints: BoxConstraints(
-                                    maxHeight: size.width * AppDimensions.numD07),
+                                    maxHeight:
+                                        size.width * AppDimensions.numD07),
                                 contentPadding: EdgeInsets.symmetric(
-                                    horizontal: size.width * AppDimensions.numD05,
-                                    vertical: size.width * AppDimensions.numD02)),
+                                    horizontal:
+                                        size.width * AppDimensions.numD05,
+                                    vertical:
+                                        size.width * AppDimensions.numD02)),
                             onChanged: (value) {
                               _bloc.add(TutorialsSearchVideos(value));
                             },
@@ -202,7 +206,8 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                               controller: listController,
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * AppDimensions.numD04),
+                                  horizontal:
+                                      size.width * AppDimensions.numD04),
                               itemBuilder: (context, index) {
                                 final category = state.categories[index];
                                 final isSelected =
@@ -220,15 +225,18 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                         ? Colors.black
                                         : AppColorTheme.colorLightGrey,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * AppDimensions.numD04,
-                                        vertical: size.width * AppDimensions.numD02),
+                                        horizontal:
+                                            size.width * AppDimensions.numD04,
+                                        vertical:
+                                            size.width * AppDimensions.numD02),
                                     label: Text(
                                       category.name,
                                       style: TextStyle(
                                           color: isSelected
                                               ? Colors.white
                                               : Colors.black,
-                                          fontSize: size.width * AppDimensions.numD036,
+                                          fontSize: size.width *
+                                              AppDimensions.numD036,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ),
@@ -281,11 +289,14 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * AppDimensions.numD04,
-                                    vertical: size.width * AppDimensions.numD04),
+                                    horizontal:
+                                        size.width * AppDimensions.numD04,
+                                    vertical:
+                                        size.width * AppDimensions.numD04),
                                 decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: AppColorTheme.colorTextFieldIcon),
+                                    border: Border.all(
+                                        color:
+                                            AppColorTheme.colorTextFieldIcon),
                                     borderRadius: BorderRadius.circular(
                                         size.width * AppDimensions.numD04)),
                                 child: Column(
@@ -303,10 +314,8 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                                     height: double.infinity,
                                                     width: size.width,
                                                     fit: BoxFit.cover,
-                                                    errorBuilder:
-                                                        (context,
-                                                            exception,
-                                                            stackTrace) {
+                                                    errorBuilder: (context,
+                                                        exception, stackTrace) {
                                                       return Image.asset(
                                                         "${commonImagePath}rabbitLogo.png",
                                                         width: size.width,
@@ -321,24 +330,28 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                                     fit: BoxFit.cover,
                                                   ),
                                             Positioned(
-                                              right: size.width * AppDimensions.numD02,
-                                              top: size.width * AppDimensions.numD02,
+                                              right: size.width *
+                                                  AppDimensions.numD02,
+                                              top: size.width *
+                                                  AppDimensions.numD02,
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          size.width * AppDimensions.numD01,
+                                                      horizontal: size.width *
+                                                          AppDimensions.numD01,
                                                       vertical:
                                                           size.width * 0.002),
                                                   decoration: BoxDecoration(
-                                                      color: AppColorTheme.colorLightGreen
+                                                      color: AppColorTheme
+                                                          .colorLightGreen
                                                           .withOpacity(0.8),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              size.width *
-                                                                  AppDimensions.numD015)),
+                                                      borderRadius: BorderRadius
+                                                          .circular(size.width *
+                                                              AppDimensions
+                                                                  .numD015)),
                                                   child: Icon(
                                                     Icons.videocam_outlined,
-                                                    size: size.width * AppDimensions.numD045,
+                                                    size: size.width *
+                                                        AppDimensions.numD045,
                                                     color: Colors.white,
                                                   )),
                                             )
@@ -352,7 +365,8 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                     Text(item.description,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD03,
+                                            fontSize: size.width *
+                                                AppDimensions.numD03,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600),
                                         maxLines: 2,
@@ -364,33 +378,40 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                                       children: [
                                         Image.asset(
                                           "${iconsPath}ic_clock.png",
-                                          height: size.width * AppDimensions.numD03,
+                                          height:
+                                              size.width * AppDimensions.numD03,
                                         ),
                                         SizedBox(
-                                          width: size.width * AppDimensions.numD01,
+                                          width:
+                                              size.width * AppDimensions.numD01,
                                         ),
                                         Text(
                                           item.duration,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * AppDimensions.numD025,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD025,
                                               color: AppColorTheme.colorHint,
                                               fontWeight: FontWeight.w600),
                                         ),
                                         const Spacer(),
                                         Image.asset(
                                           "${iconsPath}ic_view.png",
-                                          height: size.width * AppDimensions.numD03,
+                                          height:
+                                              size.width * AppDimensions.numD03,
                                         ),
                                         SizedBox(
-                                          width: size.width * AppDimensions.numD01,
+                                          width:
+                                              size.width * AppDimensions.numD01,
                                         ),
                                         Text(
                                           item.view.toString(),
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * AppDimensions.numD025,
-                                              color: AppColorTheme.colorThemePink,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD025,
+                                              color:
+                                                  AppColorTheme.colorThemePink,
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ],

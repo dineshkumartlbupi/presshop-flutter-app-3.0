@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'faq_screen.dart';
 import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
 
@@ -114,7 +114,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                padding: EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD06),
                 child: Form(
                   key: contactUsKey,
                   child: Column(
@@ -137,8 +138,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                             size.width * AppDimensions.numD15),
                                         child: Image.asset(
                                           "${dummyImagePath}image1.png",
-                                          height: size.width * AppDimensions.numD20,
-                                          width: size.width * AppDimensions.numD20,
+                                          height:
+                                              size.width * AppDimensions.numD20,
+                                          width:
+                                              size.width * AppDimensions.numD20,
                                           fit: BoxFit.cover,
                                         )),
                                   ),
@@ -172,8 +175,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                             size.width * AppDimensions.numD15),
                                         child: Image.asset(
                                           "${dummyImagePath}image2.png",
-                                          height: size.width * AppDimensions.numD20,
-                                          width: size.width * AppDimensions.numD20,
+                                          height:
+                                              size.width * AppDimensions.numD20,
+                                          width:
+                                              size.width * AppDimensions.numD20,
                                           fit: BoxFit.cover,
                                         )),
                                   ),
@@ -207,8 +212,10 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                             size.width * AppDimensions.numD15),
                                         child: Image.asset(
                                           "${dummyImagePath}image3.png",
-                                          height: size.width * AppDimensions.numD20,
-                                          width: size.width * AppDimensions.numD20,
+                                          height:
+                                              size.width * AppDimensions.numD20,
+                                          width:
+                                              size.width * AppDimensions.numD20,
                                           fit: BoxFit.cover,
                                         )),
                                   ),
@@ -238,8 +245,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   Container(
                                     height: size.width * AppDimensions.numD20,
                                     width: size.width * AppDimensions.numD20,
-                                    padding:
-                                        EdgeInsets.all(size.width * AppDimensions.numD04),
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD04),
                                     margin: const EdgeInsets.only(bottom: 5),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
@@ -333,7 +340,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   "${AppStrings.faqText}, ",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD033,
+                                    fontSize:
+                                        size.width * AppDimensions.numD033,
                                     color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight
                                         .w500, // Set fontWeight to the desired value
@@ -357,7 +365,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   "${AppStrings.priceTipsText.toLowerCase()} ",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD033,
+                                    fontSize:
+                                        size.width * AppDimensions.numD033,
                                     color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -387,7 +396,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   "${AppStrings.tutorialsText.toLowerCase()} ",
                                   style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD033,
+                                    fontSize:
+                                        size.width * AppDimensions.numD033,
                                     color: AppColorTheme.colorThemePink,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -472,7 +482,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                       SizedBox(
                         height: size.width * AppDimensions.numD06,
                       ),
-                      Text("${AppStrings.phoneText.toTitleCase()} ${AppStrings.numberText}",
+                      Text(
+                          "${AppStrings.phoneText.toTitleCase()} ${AppStrings.numberText}",
                           style: commonTextStyle(
                               size: size,
                               fontSize: size.width * AppDimensions.numD035,
@@ -528,7 +539,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                         decoration: InputDecoration(
                           counterText: "",
                           fillColor: Colors.white,
-                          hintText: "${AppStrings.enterText.toTitleCase()} ${AppStrings.messageText}",
+                          hintText:
+                              "${AppStrings.enterText.toTitleCase()} ${AppStrings.messageText}",
                           hintStyle: TextStyle(
                             color: AppColorTheme.colorHint,
                             fontSize: size.width * AppDimensions.numD035,
@@ -538,31 +550,36 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: AppColorTheme.colorTextFieldBorder),
+                                width: 1,
+                                color: AppColorTheme.colorTextFieldBorder),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: AppColorTheme.colorTextFieldBorder),
+                                width: 1,
+                                color: AppColorTheme.colorTextFieldBorder),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: AppColorTheme.colorTextFieldBorder),
+                                width: 1,
+                                color: AppColorTheme.colorTextFieldBorder),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: AppColorTheme.colorTextFieldBorder),
+                                width: 1,
+                                color: AppColorTheme.colorTextFieldBorder),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.03),
                             borderSide: const BorderSide(
-                                width: 1, color: AppColorTheme.colorTextFieldBorder),
+                                width: 1,
+                                color: AppColorTheme.colorTextFieldBorder),
                           ),
                           prefixIconColor: AppColorTheme.colorTextFieldIcon,
                         ),
@@ -593,7 +610,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                 fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           if (messageController.text.isNotEmpty) {
                             Navigator.push(
                               context,
@@ -697,7 +715,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD02)),
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
                               child: Image.asset("${iconsPath}ic_twitter.png"),
                             ),
                           ),
@@ -719,7 +738,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD02)),
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
                               child: Image.asset("${iconsPath}ic_linkdin.png"),
                             ),
                           ),
@@ -741,7 +761,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD02)),
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
                               child:
                                   Image.asset("${iconsPath}ic_instagram.png"),
                             ),
@@ -762,7 +783,8 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
                                       size.width * AppDimensions.numD02)),
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD02),
                               child: Image.asset("${iconsPath}ic_facebook.png"),
                             ),
                           )

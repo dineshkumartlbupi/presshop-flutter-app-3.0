@@ -84,15 +84,21 @@ class MyTaskScreenState extends State<MyTaskScreen>
 
   Future<void> _fetchLocationAndLoadTasks(TaskBloc bloc) async {
     try {
-      LocationPermission permission = await Geolocator.checkPermission();
+      LocationPermission permission = await Geolocator.checkPermission()
+          .timeout(const Duration(seconds: 2),
+              onTimeout: () => LocationPermission.denied);
+
       if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
+        permission = await Geolocator.requestPermission().timeout(
+            const Duration(seconds: 3),
+            onTimeout: () => LocationPermission.denied);
       }
 
       if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
         Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.medium);
+                desiredAccuracy: LocationAccuracy.medium)
+            .timeout(const Duration(seconds: 5));
         _currentPosition = position;
 
         bloc.add(FetchAllTasksEvent(offset: 0, filterParams: {
@@ -809,7 +815,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                     SizedBox(
                       height: constraints.maxHeight,
                       child: Center(
-                        child: localTasksStatus == TaskStatus.loading
+                        child: (localTasksStatus == TaskStatus.loading ||
+                                localTasksStatus == TaskStatus.initial)
                             ? showAnimatedLoader(size)
                             : errorMessageWidget("No Task Available"),
                       ),
@@ -1095,7 +1102,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   SizedBox(
                     height: constraints.maxHeight,
                     child: Center(
-                      child: allTasksStatus == TaskStatus.loading
+                      child: (allTasksStatus == TaskStatus.loading ||
+                              allTasksStatus == TaskStatus.initial)
                           ? showAnimatedLoader(size)
                           : errorMessageWidget("No Task Available"),
                     ),

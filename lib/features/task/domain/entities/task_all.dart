@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class MediaHouseDetailsEntity extends Equatable {
-
   const MediaHouseDetailsEntity({
     required this.id,
     required this.fullName,
@@ -16,7 +15,6 @@ class MediaHouseDetailsEntity extends Equatable {
 }
 
 class UploadContentsEntity extends Equatable {
-
   const UploadContentsEntity({
     required this.id,
     required this.videothubnail,
@@ -33,7 +31,6 @@ class UploadContentsEntity extends Equatable {
 }
 
 class AcceptedTaskEntity extends Equatable {
-
   const AcceptedTaskEntity({
     required this.id,
     required this.taskId,
@@ -50,11 +47,11 @@ class AcceptedTaskEntity extends Equatable {
   final String updatedAt;
 
   @override
-  List<Object?> get props => [id, taskId, taskStatus, hopperId, createdAt, updatedAt];
+  List<Object?> get props =>
+      [id, taskId, taskStatus, hopperId, createdAt, updatedAt];
 }
 
 class TaskAll extends Equatable {
-
   const TaskAll({
     required this.id,
     required this.userId,
@@ -67,6 +64,14 @@ class TaskAll extends Equatable {
     this.acceptedTasks = const [],
     this.mediaHouseDetails,
     this.uploadContents,
+    this.isNeedPhoto = false,
+    this.isNeedVideo = false,
+    this.isNeedInterview = false,
+    this.photoPrice = "0",
+    this.videoPrice = "0",
+    this.interviewPrice = "0",
+    this.currency = "",
+    this.currencySymbol = "",
   });
   final String id;
   final String userId;
@@ -79,6 +84,14 @@ class TaskAll extends Equatable {
   final List<AcceptedTaskEntity> acceptedTasks;
   final MediaHouseDetailsEntity? mediaHouseDetails;
   final UploadContentsEntity? uploadContents;
+  final bool isNeedPhoto;
+  final bool isNeedVideo;
+  final bool isNeedInterview;
+  final String photoPrice;
+  final String videoPrice;
+  final String interviewPrice;
+  final String currency;
+  final String currencySymbol;
 
   @override
   List<Object?> get props => [
@@ -93,5 +106,13 @@ class TaskAll extends Equatable {
         acceptedTasks,
         mediaHouseDetails,
         uploadContents,
+        isNeedPhoto,
+        isNeedVideo,
+        isNeedInterview,
+        photoPrice,
+        videoPrice,
+        interviewPrice,
+        currency,
+        currencySymbol,
       ];
 }

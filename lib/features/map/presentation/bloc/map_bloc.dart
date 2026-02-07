@@ -104,7 +104,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (incident.markerType == 'content') {
         icon = await markerService.createContentMarker(
           incident.image ?? '',
-          size: 90, // Use smaller size for better performance
+          size: 60, // Reduced from 90 for better appearance
         );
       } else {
         String assetPath = markerService.markerIcons[incident.type] ??
@@ -140,7 +140,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (incident.markerType == 'content') {
         icon = await markerService.createContentMarker(
           incident.image ?? '',
-          size: 90, // Use smaller size for better performance
+          size: 60, // Reduced from 90 for better appearance
         );
       } else {
         String assetPath = markerService.markerIcons[incident.type] ??
@@ -404,7 +404,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                       : 'assets/markers/image-icon.png';
                   icon = await markerService.createContentMarker(
                     incident.image ?? '',
-                    size: 90, // Reduced from 110 for better performance
+                    size: 60, // Reduced from 90 for better appearance
                     overlayIcon: overlayIcon,
                   );
                 } catch (e) {

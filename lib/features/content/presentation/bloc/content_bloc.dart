@@ -16,7 +16,6 @@ import 'content_event.dart';
 import 'content_state.dart';
 
 class ContentBloc extends Bloc<ContentEvent, ContentState> {
-
   ContentBloc({
     required this.getMyContent,
     required this.publishContent,
@@ -258,17 +257,11 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     final result = await getMediaHouseOffers(
         GetMediaHouseOffersParams(event.contentId, showLoader: false));
     result.fold(
-      (failure) => emit(ContentError(
-        failure.message,
-        allContent: currentState.allContent,
-        myContent: currentState.myContent,
-        allPage: currentState.allPage,
-        myPage: currentState.myPage,
-        hasMoreAll: currentState.hasMoreAll,
-        hasMoreMy: currentState.hasMoreMy,
-        isLoadingAll: currentState.isLoadingAll,
-        isLoadingMy: currentState.isLoadingMy,
-      )),
+      (failure) {
+        debugPrint(
+            "DEBUG: ContentBloc FetchMediaHouseOffers failure: ${failure.message}");
+        emit(currentState);
+      },
       (offers) => emit(MediaHouseOffersLoaded(
         offers,
         allContent: currentState.allContent,
@@ -298,17 +291,11 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
       showLoader: false,
     ));
     result.fold(
-      (failure) => emit(ContentError(
-        failure.message,
-        allContent: currentState.allContent,
-        myContent: currentState.myContent,
-        allPage: currentState.allPage,
-        myPage: currentState.myPage,
-        hasMoreAll: currentState.hasMoreAll,
-        hasMoreMy: currentState.hasMoreMy,
-        isLoadingAll: currentState.isLoadingAll,
-        isLoadingMy: currentState.isLoadingMy,
-      )),
+      (failure) {
+        debugPrint(
+            "DEBUG: ContentBloc FetchContentTransactions failure: ${failure.message}");
+        emit(currentState);
+      },
       (transactions) => emit(ContentTransactionsLoaded(
         transactions,
         allContent: currentState.allContent,

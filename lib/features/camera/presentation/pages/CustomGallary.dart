@@ -19,13 +19,13 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/dashboard/presentation/pages/Dashboard.dart';
+import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:video_player/video_player.dart';
+import 'package:presshop/core/di/injection_container.dart' as di;
 
 // ignore: must_be_immutable
 class CustomGallery extends StatefulWidget {
-
   CustomGallery({super.key, required this.picAgain});
   bool picAgain = false;
 
@@ -96,7 +96,8 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
               AppStrings.galleryText,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: size.width * (isIpad ? AppDimensions.numD04 : AppDimensions.numD06)),
+                  fontSize: size.width *
+                      (isIpad ? AppDimensions.numD04 : AppDimensions.numD06)),
             ),
             centerTitle: false,
             titleSpacing: 0,
@@ -115,23 +116,33 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                         "Processing...",
                         style: commonTextStyle(
                             size: size,
-                            fontSize: size.width * (isIpad ? AppDimensions.numD02 : AppDimensions.numD03),
+                            fontSize: size.width *
+                                (isIpad
+                                    ? AppDimensions.numD02
+                                    : AppDimensions.numD03),
                             color: Colors.grey,
                             fontWeight: FontWeight.w700),
                       ),
                     )
                   : Padding(
                       padding: EdgeInsets.symmetric(
-                          vertical: size.width * (isIpad ? AppDimensions.numD004 : AppDimensions.numD03)),
+                          vertical: size.width *
+                              (isIpad
+                                  ? AppDimensions.numD004
+                                  : AppDimensions.numD03)),
                       child: commonElevatedButton(
                           "Done",
                           size,
                           commonTextStyle(
                               size: size,
-                              fontSize: size.width * (isIpad ? AppDimensions.numD02 : AppDimensions.numD03),
+                              fontSize: size.width *
+                                  (isIpad
+                                      ? AppDimensions.numD02
+                                      : AppDimensions.numD03),
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink), () async {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () async {
                         /// Prince
                         if (widget.picAgain) {
                           Navigator.pop(context, camListData);
@@ -144,7 +155,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               try {
                                 await controller.initialize();
                                 if (controller.value.duration.inSeconds >
-                                    (sharedPreferences!.getInt(videoLimitKey) ??
+                                    (sharedPreferences?.getInt(videoLimitKey) ??
                                         120)) {
                                   showToast(
                                       "Videos can be up to 2 minutes long — keep it quick, punchy, and straight to the point🎥");
@@ -253,24 +264,26 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               path: imgPath,
                               mimeType: "video",
                               videoImagePath: thumbnail ?? "",
-                              latitude: sharedPreferences!
-                                  .getDouble(currentLat)
-                                  .toString(),
-                              longitude: sharedPreferences!
-                                  .getDouble(currentLon)
-                                  .toString(),
+                              latitude:
+                                  (sharedPreferences?.getDouble(currentLat) ??
+                                          0)
+                                      .toString(),
+                              longitude:
+                                  (sharedPreferences?.getDouble(currentLon) ??
+                                          0)
+                                      .toString(),
                               dateTime: DateFormat("HH:mm, dd MMM yyyy")
                                   .format(DateTime.now()),
-                              location: sharedPreferences!
-                                      .getString(currentAddress) ??
+                              location: sharedPreferences
+                                      ?.getString(currentAddress) ??
                                   "",
-                              country: sharedPreferences!
-                                      .getString(currentCountry) ??
+                              country: sharedPreferences
+                                      ?.getString(currentCountry) ??
                                   "",
-                              city: sharedPreferences!.getString(currentCity) ??
+                              city: sharedPreferences?.getString(currentCity) ??
                                   "",
                               state:
-                                  sharedPreferences!.getString(currentState) ??
+                                  sharedPreferences?.getString(currentState) ??
                                       "",
                             ));
                             setState(() {
@@ -283,9 +296,11 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             final latLong = await exif.getLatLong();
 
                             final latitude = latLong?.latitude ??
-                                sharedPreferences!.getDouble(currentLat)!;
+                                sharedPreferences?.getDouble(currentLat) ??
+                                0.0;
                             final longitude = latLong?.longitude ??
-                                sharedPreferences!.getDouble(currentLon)!;
+                                sharedPreferences?.getDouble(currentLon) ??
+                                0.0;
 
                             // 🔹 Use geocoding to get address info
                             List<Placemark> placemarks =
@@ -386,10 +401,11 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                               child: Container(
                                   alignment: Alignment.topRight,
                                   decoration: BoxDecoration(
-                                      color: AppColorTheme.colorThemePink.withOpacity(0.5)),
+                                      color: AppColorTheme.colorThemePink
+                                          .withOpacity(0.5)),
                                   child: Padding(
-                                    padding:
-                                        EdgeInsets.all(size.width * AppDimensions.numD01),
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD01),
                                     child: Icon(
                                       Icons.radio_button_checked,
                                       color: Colors.black,
@@ -406,9 +422,12 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
   }
 
   Future<void> getMedia() async {
-    final PermissionState result = await PhotoManager.requestPermissionExtend();
+    final LocationService locationService = di.sl<LocationService>();
+    final bool hasAccess =
+        await locationService.requestPermission(Permission.photos);
 
-    if (!result.hasAccess) {
+    if (!hasAccess) {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -604,7 +623,6 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 }
 
 class GalleryModel {
-
   GalleryModel({required this.thumbPath, required this.assetData});
   Uint8List? thumbPath;
   AssetEntity? assetData;

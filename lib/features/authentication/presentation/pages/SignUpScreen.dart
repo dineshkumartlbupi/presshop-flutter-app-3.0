@@ -217,13 +217,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            context.go(AppRoutes.dashboardPath, extra: {
-              'initialPosition': (state.user.source != null &&
-                      state.user.source!.containsKey('bank_detail_missing') &&
-                      state.user.source!['bank_detail_missing'] == true)
-                  ? 2
-                  : 0
-            });
+            context.go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
           } else if (state is AuthSocialSignUpRequired) {
             setState(() {
               widget.socialLogin = true;
