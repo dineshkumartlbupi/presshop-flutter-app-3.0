@@ -23,7 +23,8 @@ class Config {
   String get adminBaseUrl => "https://dev-api.presshop.news:5020/";
   String get mediaBaseUrl =>
       "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
-  String get socketUrl => "https://dev-api.presshop.news:3005";
+  String get socketUrl =>
+      "https://lelia-anthracitic-ecclesiologically.ngrok-free.dev";
 
   // External Services
   String get googleMapURL =>

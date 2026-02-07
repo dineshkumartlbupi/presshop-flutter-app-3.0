@@ -354,11 +354,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
               actionWidget: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                Dashboard(initialPosition: 2)));
+                                Dashboard(initialPosition: 2)),
+                        (route) => false);
                   },
                   child: Image.asset(
                     "${commonImagePath}ic_black_rabbit.png",

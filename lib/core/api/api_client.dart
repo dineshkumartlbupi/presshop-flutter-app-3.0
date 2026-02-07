@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:presshop/core/api/pretty_dio_logger.dart';
+// import 'package:presshop/core/api/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:presshop/core/core_export.dart';
@@ -29,7 +29,7 @@ class ApiClient {
 
     /// Pretty logger (DEBUG ONLY)
     if (kDebugMode) {
-      _dio.interceptors.add(PrettyDioLogger());
+      // _dio.interceptors.add(PrettyDioLogger());
     }
   }
   final Dio _dio;
@@ -58,7 +58,13 @@ class ApiClient {
       'check/version',
       'create/room',
       'studentBeansActivation',
+      'studentBeansActivation',
       'assignedTaskDetail',
+      'getAggregatedNews',
+      'getAllTask',
+      'getAllContent',
+      'getAlertIncidents',
+      'search-news',
     ];
 
     bool isExcluded = hardcodedExclusions.any((p) => path.contains(p));
@@ -88,6 +94,7 @@ class ApiClient {
 
       /// Using same behavior as your existing NetworkClass
       options.headers[headerKey] = "Bearer $token";
+      options.headers['x-access-token'] = token;
     } else {
       debugPrint("DEBUG: ApiClient Token is NULL or EMPTY");
     }

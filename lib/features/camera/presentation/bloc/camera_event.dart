@@ -9,7 +9,13 @@ abstract class CameraEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class CameraInitializeEvent extends CameraEvent {}
+class CameraInitializeEvent extends CameraEvent {
+  const CameraInitializeEvent({this.force = false});
+  final bool force;
+
+  @override
+  List<Object> get props => [force];
+}
 
 class CameraSwitchEvent extends CameraEvent {}
 

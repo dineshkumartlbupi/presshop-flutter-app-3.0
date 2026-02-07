@@ -1189,10 +1189,11 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             commonButtonTextStyle(size),
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink), () {
+                          Navigator.pop(context);
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      Dashboard(initialPosition: 2)),
+                                      Dashboard(initialPosition: 0)),
                               (route) => false);
                         }),
                       )

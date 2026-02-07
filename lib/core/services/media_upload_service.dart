@@ -102,7 +102,7 @@ class MediaUploadService {
         );
         AppLogger.trackEvent(EventNames.mediaUpload, parameters: {
           'status': 'success',
-          'is_draft': jsonBody?['is_draft'] == 'true',
+          'is_draft': (jsonBody?['is_draft'] == 'true').toString(),
           'file_count': filePathList.length + (additionalFiles?.length ?? 0),
         });
         return true;

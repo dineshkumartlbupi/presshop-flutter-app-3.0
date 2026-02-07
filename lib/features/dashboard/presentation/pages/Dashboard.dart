@@ -103,6 +103,7 @@ class DashboardState extends State<Dashboard>
   List<String> adminIDList = [];
   DateTime? currentTime;
   late List<Widget> bottomNavigationScreens;
+  final Set<int> _loadedIndices = {}; // Track loaded tabs
 
   late AppLinks linkStream;
 
@@ -153,6 +154,7 @@ class DashboardState extends State<Dashboard>
     //   },
     // );
     currentIndex = widget.initialPosition;
+    _loadedIndices.add(currentIndex); // Mark initial tab as loaded
 
     if (widget.taskStatus == 'rejected') {
     } else {
@@ -621,6 +623,7 @@ class DashboardState extends State<Dashboard>
               } else if (state is DashboardTabChanged) {
                 setState(() {
                   currentIndex = state.index;
+                  _loadedIndices.add(currentIndex); // Mark new tab as loaded
                 });
               } else if (state is DashboardError) {
                 // Optional
@@ -658,11 +661,9 @@ class DashboardState extends State<Dashboard>
                   type: BottomNavigationBarType.fixed,
                   onTap: _onBottomBarItemTapped,
                   items: [
-                    // assets/icons/homeIcons/camera.png
                     BottomNavigationBarItem(
                         icon: ImageIcon(
                           AssetImage("${iconsPath}ic_content1.png"),
-                          // AssetImage("${iconsPath}/homeIcons/camera.png"),
                         ),
                         label: AppStringsNew2.contentText),
                     BottomNavigationBarItem(
@@ -711,7 +712,14 @@ class DashboardState extends State<Dashboard>
                       replacement: showLoader(isForLocation: false),
                       child: IndexedStack(
                         index: currentIndex,
-                        children: bottomNavigationScreens,
+                        children: List.generate(bottomNavigationScreens.length,
+                            (index) {
+                          // Lazy load: only render if in _loadedIndices
+                          if (_loadedIndices.contains(index)) {
+                            return bottomNavigationScreens[index];
+                          }
+                          return const SizedBox(); // Placeholder
+                        }),
                       ),
                     ),
                   ],
@@ -958,7 +966,12 @@ class DashboardState extends State<Dashboard>
       updateLocationData();
     }
 
-    _dashboardBloc.add(ChangeDashboardTabEvent(index));
+    setState(() {
+      currentIndex = index;
+      _loadedIndices.add(currentIndex);
+    });
+
+    // _dashboardBloc.add(ChangeDashboardTabEvent(index));
   }
 
   void _launchStudentBeansUrl(String url) async {

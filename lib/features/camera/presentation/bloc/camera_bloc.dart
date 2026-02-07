@@ -63,6 +63,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   final LocationService _locationService;
   double _latitude = 0;
   double _longitude = 0;
+  bool _isInitializing = false;
 
   @override
   Future<void> close() {
@@ -74,108 +75,162 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   Future<void> _onInitialize(
       CameraInitializeEvent event, Emitter<CameraState> emit) async {
-    if (state.status == CameraStatus.ready &&
+    // Prevent concurrent initializations
+    if (_isInitializing) {
+      debugPrint("🚀 CameraBloc: Init skipped - Already initializing.");
+      return;
+    }
+
+    if (!event.force &&
+        state.status == CameraStatus.ready &&
         state.cameraController != null &&
         state.cameraController!.value.isInitialized) {
+      debugPrint("🚀 CameraBloc: Init skipped - Already ready.");
       return;
     }
 
-    // Prevent double initialization or initialization during disposal
-    if (state.status == CameraStatus.loading ||
-        state.status == CameraStatus.disposing) {
-      return;
-    }
-
+    debugPrint("🚀 CameraBloc: Starting initialization...");
+    _isInitializing = true;
     emit(state.copyWith(status: CameraStatus.loading));
 
-    // Ensure previous controller is fully disposed before starting new one
-    if (state.cameraController != null) {
-      try {
-        await state.cameraController!.dispose();
-      } catch (e) {
-        debugPrint("Error disposing previous controller during init: $e");
-      }
-    }
-
-    // Parallelize initialization tasks
-    // 1. Kick off non-blocking location fetch
-    unawaited(_initLocation());
-
-    // 2. Setup recorder (fast)
-    RecorderController? recorderController = state.recorderController;
-    recorderController ??= RecorderController()
-      ..androidEncoder = AndroidEncoder.aac
-      ..androidOutputFormat = AndroidOutputFormat.mpeg4
-      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..sampleRate = 44100
-      ..bitRate = 48000;
-
     try {
-      // 3. Parallel check for camera/mic permissions
-      final results = await Future.wait([
-        _locationService.requestPermission(Permission.camera),
-        // Pre-check microphone if possible to avoid later delays in audio/video
-        _locationService.requestPermission(Permission.microphone),
-      ]);
+      // Ensure previous controller is fully disposed before starting new one
+      final existingController = state.cameraController;
+      if (existingController != null) {
+        try {
+          debugPrint("🚀 CameraBloc: Disposing previous controller...");
+          await existingController.dispose();
+        } catch (e) {
+          debugPrint("Error disposing previous controller during init: $e");
+        }
+      }
 
-      bool hasCameraPermission = results[0];
+      // Parallelize initialization tasks
+      // 1. Kick off non-blocking location fetch
+      // 1. Kick off non-blocking location fetch - MOVED TO END
+      // unawaited(_initLocation());
 
-      if (!hasCameraPermission) {
-        emit(state.copyWith(
-            status: CameraStatus.failure,
-            errorMessage: "Camera permission denied",
-            recorderController: recorderController));
-        return;
+      // 2. Setup recorder (fast)
+      RecorderController? recorderController = state.recorderController;
+      recorderController ??= RecorderController()
+        ..androidEncoder = AndroidEncoder.aac
+        ..androidOutputFormat = AndroidOutputFormat.mpeg4
+        ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+        ..sampleRate = 44100
+        ..bitRate = 48000;
+
+      debugPrint("🚀 CameraBloc: Checking permissions...");
+
+      // Parallel permission check
+      final permissions = await [
+        Permission.camera,
+        Permission.microphone,
+      ].request();
+
+      final cameraStatus = permissions[Permission.camera]?.isGranted ?? false;
+      final micStatus = permissions[Permission.microphone]?.isGranted ?? false;
+
+      debugPrint("🚀 CameraBloc: Camera: $cameraStatus, Mic: $micStatus");
+
+      if (!cameraStatus) {
+        // If critical permission missing, try via service to trigger dialog if needed
+        final retryStatus =
+            await _locationService.requestPermission(Permission.camera);
+        if (!retryStatus) {
+          debugPrint("🚀 CameraBloc: Camera permission denied!");
+          emit(state.copyWith(
+              status: CameraStatus.failure,
+              errorMessage: "Camera permission denied",
+              recorderController: recorderController));
+          _isInitializing = false;
+          return;
+        }
       }
 
       // 4. Init Camera list if empty (fast usually)
       if (cameras.isEmpty) {
         try {
-          cameras = await availableCameras();
-        } catch (_) {}
+          debugPrint("🚀 CameraBloc: Fetching available cameras...");
+          cameras =
+              await availableCameras().timeout(const Duration(seconds: 2));
+          debugPrint("🚀 CameraBloc: Cameras fetched: ${cameras.length}");
+        } catch (e) {
+          debugPrint(
+              "🚀 CameraBloc: Error fetching cameras (timeout/error): $e");
+          // Don't fail yet, maybe controller init will work if cameras existed before?
+          // But usually this means no camera access.
+        }
       }
 
-      if (cameras.isNotEmpty) {
-        final cameraDescription =
-            state.isFrontCamera && cameras.length > 1 ? cameras[1] : cameras[0];
-        // Dispose previous controller if exists to free resources
-        await state.cameraController?.dispose();
+      if (cameras.isEmpty) {
+        debugPrint("🚀 CameraBloc: No cameras found even after fetch attempt.");
+        emit(state.copyWith(
+            status: CameraStatus.failure,
+            errorMessage: "No cameras available",
+            recorderController: recorderController));
+        _isInitializing = false;
+        return;
+      }
 
-        final controller = _cameraControllerBuilder.create(
-          cameraDescription,
-          ResolutionPreset.medium, // Optimized for startup speed
-          imageFormatGroup: ImageFormatGroup.jpeg,
-          enableAudio: true,
-        );
+      final cameraDescription =
+          state.isFrontCamera && cameras.length > 1 ? cameras[1] : cameras[0];
 
-        await controller.initialize();
+      debugPrint(
+          "🚀 CameraBloc: Creating controller for ${cameraDescription.name}...");
+
+      // Note: old controller was already disposed at the start of _onInitialize
+
+      final controller = _cameraControllerBuilder.create(
+        cameraDescription,
+        ResolutionPreset.high, // Try High
+        imageFormatGroup: ImageFormatGroup.jpeg,
+        enableAudio: false,
+      );
+
+      debugPrint("🚀 CameraBloc: Initializing controller...");
+
+      try {
+        // Add timeout to controller initialization to prevent infinite hang
+        await controller.initialize().timeout(const Duration(seconds: 5),
+            onTimeout: () {
+          throw TimeoutException("Camera controller initialization timed out");
+        });
+
+        debugPrint("🚀 CameraBloc: Controller initialized.");
+
+        // Wait for Flutter surface to be ready before starting preview
+        await Future.delayed(const Duration(milliseconds: 100));
+
         // Explicitly start preview to avoid black screen on some devices
         await controller.resumePreview();
+        debugPrint("🚀 CameraBloc: Preview resumed.");
 
         emit(state.copyWith(
           status: CameraStatus.ready,
           cameraController: controller,
           recorderController: recorderController,
         ));
-      } else {
+        debugPrint("🚀 CameraBloc: Emitted READY state.");
+      } catch (e) {
+        debugPrint("❌ CameraBloc: Initialization FAILED: $e");
         emit(state.copyWith(
             status: CameraStatus.failure,
-            errorMessage: "No cameras found",
-            recorderController: recorderController));
+            errorMessage: "Camera failed to initialize: $e",
+            recorderController: recorderController,
+            cameraController: null // Clear controller on failure
+            ));
       }
-    } catch (e) {
-      debugPrint("Camera initialization exception: $e");
-      emit(state.copyWith(
-        status: CameraStatus.failure,
-        errorMessage: e.toString(),
-        recorderController: recorderController,
-      ));
+    } finally {
+      _isInitializing = false;
     }
 
     // Load Gallery in background
     if (!isClosed) {
       add(LoadGalleryMediaEvent());
     }
+
+    // Defer location fetch until after camera is ready
+    unawaited(_initLocation());
   }
 
   /// Non-blocking location initialization
@@ -233,9 +288,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       }
     } else if (event.state == AppLifecycleState.resumed) {
       // If we were disposing, wait a bit or ensure we can re-init
-      if (state.status == CameraStatus.disposing) {
-        await Future.delayed(const Duration(milliseconds: 500));
-      }
+      // Debounce slightly to ensure surface is ready
+      await Future.delayed(const Duration(milliseconds: 200));
       add(CameraInitializeEvent());
     }
   }
@@ -247,7 +301,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     emit(state.copyWith(
         isFrontCamera: newIsFront, status: CameraStatus.loading));
 
-    await state.cameraController?.dispose();
+    final existingController = state.cameraController;
+    if (existingController != null) {
+      await existingController.dispose();
+    }
 
     final cameraDescription = newIsFront ? cameras[1] : cameras[0];
     final controller = _cameraControllerBuilder.create(
@@ -269,14 +326,13 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   Future<void> _onToggleFlash(
       CameraFlashToggleEvent event, Emitter<CameraState> emit) async {
-    if (state.cameraController == null ||
-        !state.cameraController!.value.isInitialized) {
+    final controller = state.cameraController;
+    if (controller == null || !controller.value.isInitialized) {
       return;
     }
     final newFlash = !state.isFlashOn;
     try {
-      await state.cameraController!
-          .setFlashMode(newFlash ? FlashMode.torch : FlashMode.off);
+      await controller.setFlashMode(newFlash ? FlashMode.torch : FlashMode.off);
       emit(state.copyWith(isFlashOn: newFlash));
     } catch (e) {
       debugPrint("Flash error: $e");
@@ -608,7 +664,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       allowedExtensions: ['pdf', 'doc'],
     );
 
-    if (result != null) {
+    if (result != null && result.files.single.path != null) {
       File file = File(result.files.single.path!);
       await state.cameraController?.pausePreview();
 
@@ -684,7 +740,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     _recordingTimer?.cancel();
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
-      final diff = now.difference(_startTime!);
+      final startTime = _startTime;
+      if (startTime == null) return;
+
+      final diff = now.difference(startTime);
       int hours = diff.inHours;
       int minutes = diff.inMinutes % 60;
       int seconds = diff.inSeconds % 60;

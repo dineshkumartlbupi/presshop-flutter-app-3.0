@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:location/location.dart';
@@ -6,7 +7,7 @@ import 'package:presshop/core/utils/app_logger.dart';
 
 class LocationService {
   final Location _location = Location();
-  Future<bool>? _currentRequest;
+  Future<void> _lastRequest = Future.value();
 
   // Check and request any permission safely
   Future<bool> requestPermission(Permission permission) async {
@@ -15,17 +16,26 @@ class LocationService {
       return true;
     }
 
-    if (_currentRequest != null) {
-      debugPrint(
-          "🚀 LocationService: Another Permission request already in progress, waiting...");
-      return _currentRequest!;
+    // Chain this request to the end of the queue
+    final previousRequest = _lastRequest;
+    final completer = Completer<void>();
+    _lastRequest = completer.future;
+
+    // Wait for the previous request to complete
+    try {
+      await previousRequest;
+    } catch (e) {
+      // Ignore errors from previous requests
     }
 
-    _currentRequest = _executePermissionRequest(permission);
     try {
-      return await _currentRequest!;
+      // Re-check status after waiting (incase user granted it externally or previous req covered it)
+      if (await permission.isGranted) {
+        return true;
+      }
+      return await _executePermissionRequest(permission);
     } finally {
-      _currentRequest = null;
+      completer.complete();
     }
   }
 

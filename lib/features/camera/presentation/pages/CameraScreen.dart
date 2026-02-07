@@ -72,7 +72,6 @@ class CameraScreenState extends State<CameraScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
     _exposureModeControlRowAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -98,7 +97,8 @@ class CameraScreenState extends State<CameraScreen>
 
   void resumeCamera() {
     if (_bloc != null && !_bloc!.isClosed) {
-      _bloc!.add(CameraLifecycleEvent(AppLifecycleState.resumed));
+      debugPrint("🔄 CameraScreen: Forcing camera re-initialization");
+      _bloc!.add(const CameraInitializeEvent(force: true));
     }
   }
 
@@ -195,7 +195,7 @@ class CameraScreenState extends State<CameraScreen>
                               mediaList: [],
                             ))).then((value) {
                   // On return
-                  _bloc!.state.cameraController?.resumePreview();
+                  resumeCamera();
                 });
               }
             }
@@ -573,7 +573,9 @@ class CameraScreenState extends State<CameraScreen>
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                context.read<CameraBloc>().add(CameraInitializeEvent());
+                context
+                    .read<CameraBloc>()
+                    .add(const CameraInitializeEvent(force: true));
               },
               child: const Text("Retry"),
             )
