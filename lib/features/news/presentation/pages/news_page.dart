@@ -216,8 +216,11 @@ class _NewsPageState extends State<NewsPage>
               children: [
                 CircleAvatar(
                   radius: size.width * AppDimensions.numD035,
-                  backgroundImage: NetworkImage(item.userImage ??
-                      "https://i.pravatar.cc/150?u=a042581f4e29026704d"),
+                  backgroundImage: (item.userImage != null &&
+                          item.userImage!.isNotEmpty)
+                      ? NetworkImage(item.userImage!)
+                      : const NetworkImage(
+                          "https://i.pravatar.cc/150?u=a042581f4e29026704d"),
                   backgroundColor: Colors.grey[300],
                 ),
                 SizedBox(width: size.width * AppDimensions.numD02),

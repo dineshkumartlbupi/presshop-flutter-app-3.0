@@ -60,7 +60,6 @@ class _MyContentViewState extends State<MyContentView>
     _tabController = TabController(length: 2, vsync: this);
     initializeFilter();
     _loadAllContent(false);
-    _loadMyContent(true);
   }
 
   void initializeFilter() {
@@ -309,6 +308,7 @@ class _MyContentViewState extends State<MyContentView>
                   children: [
                     SizedBox(height: size.height * 0.3),
                     showLoader(),
+                    // Loader removed - using GlobalLoader from API instead
                   ],
                 )
               : currentList.isEmpty

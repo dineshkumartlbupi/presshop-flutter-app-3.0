@@ -1085,7 +1085,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
                                     )
                             ],
                           ),
-
                           SizedBox(
                             height: size.width * AppDimensions.numD02,
                           )

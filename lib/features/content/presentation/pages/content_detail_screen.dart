@@ -185,6 +185,19 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
 
           if (state is ContentDetailLoaded) {
             debugPrint('✅ ContentDetailLoaded - Setting isLoading = false');
+            debugPrint('💰 DEBUG: price: ${state.content.price}');
+            debugPrint('💰 DEBUG: askPrice: ${state.content.askPrice}');
+            debugPrint(
+                '💰 DEBUG: priceOriginal: ${state.content.priceOriginal}');
+            debugPrint(
+                '💰 DEBUG: convertedAskPrice: ${state.content.convertedAskPrice}');
+            debugPrint('💰 DEBUG: priceBase: ${state.content.priceBase}');
+            debugPrint('💰 DEBUG: currency: ${state.content.currency}');
+            debugPrint(
+                '💰 DEBUG: currencySymbol: ${state.content.currencySymbol}');
+            debugPrint(
+                '💰 DEBUG: currencyOriginal: ${state.content.currencyOriginal}');
+
             setState(() {
               contentItem = state.content;
               isLoading = false;
@@ -882,7 +895,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                             right: size.width * AppDimensions.numD02,
                           ),
                           child: Text(
-                            "${(contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency))}${formatDouble(double.parse(contentItem!.price ?? "0"))}",
+                            "${contentItem!.currencySymbol.isNotEmpty ? contentItem!.currencySymbol : getCurrencySymbol(contentItem!.currency)}${formatDouble(double.parse(contentItem!.price ?? "0"))}",
                             style: commonTextStyle(
                                 size: size,
                                 fontSize: size.width * AppDimensions.numD05,

@@ -11,7 +11,6 @@ import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 import 'package:presshop/core/widgets/error/location_error_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
@@ -33,6 +32,8 @@ import 'package:presshop/features/dashboard/presentation/bloc/dashboard_bloc.dar
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:presshop/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
@@ -169,31 +170,30 @@ class DashboardState extends State<Dashboard>
       // callGetActiveAdmin();
       _dashboardBloc.add(FetchActiveAdmins());
     }
+
     isGetLatLong = false;
     if (widget.openChatScreen) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConversationScreen(
-                hideLeading: false,
-                message: '',
-              ),
-            ),
+          context.pushNamed(
+            AppRoutes.chatName,
+            extra: {
+              'hideLeading': false,
+              'message': '',
+            },
           );
         }
       });
     } else if (widget.openNotification) {
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyNotificationScreen(
-              count: 1,
-            ),
-          ),
-        );
+        if (mounted) {
+          context.pushNamed(
+            AppRoutes.notificationsName,
+            extra: {
+              'count': 1,
+            },
+          );
+        }
       });
     } else if (widget.openBeansActivation) {
       Future.delayed(const Duration(seconds: 2), () {
@@ -219,7 +219,6 @@ class DashboardState extends State<Dashboard>
         key: _cameraKey,
         picAgain: false,
         previousScreen: ScreenNameEnum.dashboardScreen,
-        autoInitialize: widget.initialPosition == 2,
       ),
       NewsPage(
         hideLeading: true,
@@ -329,10 +328,7 @@ class DashboardState extends State<Dashboard>
         String type = link.substring(link.lastIndexOf("&") + 1, link.length);
         debugPrint("type:::::$type");
         debugPrint("commonID-->$id");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyContentPage()),
-        );
+        context.pushNamed(AppRoutes.myContentName);
       } else if (link.split("&").last == "type=Group") {
         String groupId = link.substring(link.lastIndexOf("?") + 1, link.length);
         // String id =
@@ -387,7 +383,7 @@ class DashboardState extends State<Dashboard>
                               const Spacer(),
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -481,7 +477,7 @@ class DashboardState extends State<Dashboard>
                                       // final url =
                                       //     setIsClickForBeansActivation();
 
-                                      Navigator.pop(context);
+                                      context.pop();
                                     } catch (e) {
                                       debugPrint("Error launching URL: $e");
                                     }
@@ -580,13 +576,15 @@ class DashboardState extends State<Dashboard>
                         dashBoardInterface!.saveDraft();
                       }
                     }
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BroadCastScreen(
-                              taskId: task.task.id,
-                              mediaHouseId: task.task.mediaHouse.id,
-                            )));
+                    context.pop();
+                    context.pop();
+                    context.pushNamed(
+                      AppRoutes.broadcastName,
+                      extra: {
+                        'taskId': task.task.id,
+                        'mediaHouseId': task.task.mediaHouse.id,
+                      },
+                    );
                   },
                 );
               } else if (state is StudentBeansActivated) {
@@ -948,12 +946,14 @@ class DashboardState extends State<Dashboard>
   }
 
   void _onBottomBarItemTapped(int index) {
-    if (index == 2) {
-      // Turn camera ON
-      _cameraKey.currentState?.resumeCamera();
-    } else {
-      // Turn camera OFF
+    // Camera lifecycle management
+    if (currentIndex == 2 && index != 2) {
+      // Switching AWAY from camera - turn it OFF
       _cameraKey.currentState?.closeCamera();
+    } else if (currentIndex != 2 && index == 2) {
+      // Switching TO camera - turn it ON and clear previous media
+      _cameraKey.currentState?.clearCapturedMedia();
+      _cameraKey.currentState?.resumeCamera();
     }
 
     trackAction(ActionNames.tabSwitch, parameters: {

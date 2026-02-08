@@ -63,6 +63,7 @@ class ApiClient {
       'getAggregatedNews',
       'getAllTask',
       'getAllContent',
+      'getMyContent',
       'getAlertIncidents',
       'search-news',
     ];
@@ -74,8 +75,10 @@ class ApiClient {
     }
 
     if (showLoader) {
-      debugPrint("🚨 BLOCKED LOADER FOR: ${options.uri.path}");
-      GlobalLoader.show();
+      debugPrint("🔄 SHOWING LOADER FOR: ${options.uri.path}");
+      // GlobalLoader.show();
+    } else {
+      debugPrint("⏭️  SKIPPING LOADER FOR: ${options.uri.path}");
     }
     // Prioritize SharedPreferences for speed and stability
     String? token = _sharedPreferences.getString(tokenKey);

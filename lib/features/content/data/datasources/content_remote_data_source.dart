@@ -337,6 +337,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
 
       if (response.statusCode == 200) {
         var data = response.data;
+        debugPrint("🔍 DEBUG: Raw Content Detail Response: $data");
 
         // Handle nested structure from logs
         if (data['data'] != null && data['data'] is Map) {
@@ -376,8 +377,25 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
         final data = response.data;
         // Accept "success": true even if "code" is missing or check both
         if (data['code'] == 200 || data['success'] == true) {
-          final List offers = data['response'] ?? data['data'] ?? [];
-          return offers
+          var offersRaw = data['response'] ?? data['data'];
+          List offersList = [];
+
+          if (offersRaw is List) {
+            offersList = offersRaw;
+          } else if (offersRaw is Map && offersRaw.isEmpty) {
+            offersList = [];
+          } else if (offersRaw is Map) {
+            // If it's a map, maybe the list is inside another key?
+            // Or maybe it's just a single object? For now, if it's a non-empty Map
+            // that isn't expected, we treat it as empty or try to find a list inside.
+            if (offersRaw['data'] is List) {
+              offersList = offersRaw['data'];
+            } else if (offersRaw['offers'] is List) {
+              offersList = offersRaw['offers'];
+            }
+          }
+
+          return offersList
               .map((e) => ManageTaskChatModel.fromJson(e ?? {}))
               .toList();
         }

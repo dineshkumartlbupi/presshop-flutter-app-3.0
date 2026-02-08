@@ -45,12 +45,32 @@ class _ImagePreviewState extends State<ImagePreview> {
           },
         ),
       ),
-      body: Center(
-        child: PhotoView(
-          imageProvider:
-              NetworkImage(widget.imageURL), // Replace with your image source
-        ),
-      ),
+      body: widget.imageURL.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.broken_image,
+                    size: size.width * 0.2,
+                    color: Colors.white54,
+                  ),
+                  SizedBox(height: size.width * 0.05),
+                  Text(
+                    'No image URL provided',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: size.width * AppDimensions.numD04,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Center(
+              child: PhotoView(
+                imageProvider: NetworkImage(widget.imageURL),
+              ),
+            ),
     );
   }
 }

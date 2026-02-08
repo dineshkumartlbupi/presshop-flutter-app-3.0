@@ -1170,6 +1170,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             commonButtonTextStyle(size),
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink), () {
+                          // test
                           context.goNamed(
                             AppRoutes.dashboardName,
                             extra: {'initialPosition': 0},
@@ -1210,7 +1211,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                       size, AppColorTheme.colorThemePink), () {
                                 context.goNamed(
                                   AppRoutes.dashboardName,
-                                  extra: {'initialPosition': 0},
+                                  extra: {'initialPosition': 2},
                                 );
                               }),
                             )),
