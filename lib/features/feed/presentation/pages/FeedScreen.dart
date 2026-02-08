@@ -6,8 +6,9 @@ import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import '../../../../core/di/injection_container.dart';
 import '../bloc/feed_bloc.dart';
 import '../bloc/feed_event.dart';
@@ -71,7 +72,7 @@ class FeedScreenState extends State<FeedScreen>
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
@@ -85,10 +86,10 @@ class FeedScreenState extends State<FeedScreen>
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
+              );
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",

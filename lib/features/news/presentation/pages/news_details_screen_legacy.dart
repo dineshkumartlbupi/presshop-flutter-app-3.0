@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/constants/app_assets.dart';
 import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/map/data/services/socket_service.dart';
 import 'package:presshop/features/news/domain/entities/comment.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
@@ -16,6 +15,8 @@ import 'package:presshop/features/news/presentation/widgets/comment_input_widget
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -213,7 +214,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
                 titleSpacing: 0,
                 size: size,
                 showActions: false,
-                leadingFxn: () => Navigator.pop(context),
+                leadingFxn: () => context.pop(),
                 actionWidget: [],
               ),
               body: Center(
@@ -265,17 +266,16 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen>
               leadingLeftSPace: 0,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: [
                 SizedBox(width: size.width * AppDimensions.numD02),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",

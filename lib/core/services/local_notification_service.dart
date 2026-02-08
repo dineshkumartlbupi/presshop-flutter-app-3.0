@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:presshop/main.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -163,43 +163,31 @@ class LocalNotificationService {
               var taskDetail = jsonDecode(notificationResponse.payload!);
               if (taskDetail["notification_type"].toString() ==
                   "media_house_tasks") {
-                Navigator.pushAndRemoveUntil(
-                    navigatorKey.currentContext!,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                            )),
-                    (route) => false);
+                navigatorKey.currentContext!.goNamed(
+                  AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2},
+                );
               } else if (taskDetail["notification_type"].toString() ==
                   "initiate_admin_chat") {
-                Navigator.pushAndRemoveUntil(
-                    navigatorKey.currentContext!,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                              openChatScreen: true,
-                            )),
-                    (route) => false);
+                navigatorKey.currentContext!.goNamed(
+                  AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2, 'openChatScreen': true},
+                );
               } else if (taskDetail["notification_type"].toString() ==
                   "studentbeans") {
-                Navigator.pushAndRemoveUntil(
-                    navigatorKey.currentContext!,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                              openBeansActivation: true,
-                            )),
-                    (route) => false);
+                navigatorKey.currentContext!.goNamed(
+                  AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2, 'openBeansActivation': true},
+                );
               } else if (taskDetail["image"].toString().isNotEmpty) {
-                Navigator.pushAndRemoveUntil(
-                    navigatorKey.currentContext!,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              initialPosition: 2,
-                              openChatScreen: false,
-                              openNotification: true,
-                            )),
-                    (route) => false);
+                navigatorKey.currentContext!.goNamed(
+                  AppRoutes.dashboardName,
+                  extra: {
+                    'initialPosition': 2,
+                    'openChatScreen': false,
+                    'openNotification': true
+                  },
+                );
               }
             }
 

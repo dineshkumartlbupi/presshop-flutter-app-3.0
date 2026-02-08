@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import 'package:presshop/core/core_export.dart';
@@ -37,16 +38,12 @@ class _DocumentViewState extends State<DocumentView> {
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              /* Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          Dashboard(initialPosition: 2)),
-                      (route) => false);*/
+              context.pop();
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -60,7 +57,8 @@ class _DocumentViewState extends State<DocumentView> {
       ),
       body: SafeArea(
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD035),
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD035),
             child: SfPdfViewer.network(
               widget.path,
               key: _pdfViewerKey,

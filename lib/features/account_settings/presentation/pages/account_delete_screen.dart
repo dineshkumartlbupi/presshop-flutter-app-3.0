@@ -1,9 +1,10 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -62,7 +63,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               /*  if (widget.editProfileScreen) {
               widget.editProfileScreen = false;
             }*/
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: [],
           ),
@@ -99,7 +100,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                     separatorBuilder: (context, index) =>
                         const Divider(height: 1, color: Colors.grey),
                     padding: isIpad
-                        ? EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD012)
+                        ? EdgeInsets.symmetric(
+                            vertical: size.width * AppDimensions.numD012)
                         : EdgeInsets.zero,
                     physics: const BouncingScrollPhysics(),
                     itemCount: purposeData.length,
@@ -137,15 +139,19 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                 ),
                 Container(
                   width: double.infinity,
-                  height: size.height * (isIpad ? AppDimensions.numD1 : AppDimensions.numD08),
-                  padding:
-                      EdgeInsets.symmetric(vertical: size.height * AppDimensions.numD015),
+                  height: size.height *
+                      (isIpad ? AppDimensions.numD1 : AppDimensions.numD08),
+                  padding: EdgeInsets.symmetric(
+                      vertical: size.height * AppDimensions.numD015),
                   child: commonElevatedButton(
                     'Delete Account',
                     size,
                     commonTextStyle(
                         size: size,
-                        fontSize: size.width * (isIpad ? AppDimensions.numD032 : AppDimensions.numD038),
+                        fontSize: size.width *
+                            (isIpad
+                                ? AppDimensions.numD032
+                                : AppDimensions.numD038),
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
                     commonButtonStyle(size, AppColorTheme.colorThemePink),
@@ -174,21 +180,22 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD045)),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD045)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
@@ -201,7 +208,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                               const Spacer(),
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -251,7 +258,8 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                   AppStrings.deleteAccountPopupMessageText,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
@@ -279,7 +287,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                     size,
                                     commonButtonTextStyle(size),
                                     commonButtonStyle(size, Colors.black), () {
-                                  Navigator.pop(context);
+                                  context.pop();
                                   _accountSettingsBloc.add(
                                     DeleteAccountEvent(reason: selectReason),
                                   );
@@ -295,9 +303,10 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                                     "Cancel",
                                     size,
                                     commonButtonTextStyle(size),
-                                    commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                    commonButtonStyle(
+                                        size, AppColorTheme.colorThemePink),
                                     () async {
-                                  Navigator.pop(context);
+                                  context.pop();
                                 }),
                               )),
                             ],
@@ -332,10 +341,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
 
       // Navigate to login
       if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-          (route) => false,
-        );
+        context.goNamed(AppRoutes.loginName);
       }
     } else if (state is AccountSettingsError) {
       showSnackBar("Error", state.message, Colors.red);

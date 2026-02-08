@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/content/presentation/pages/my_draft_screen.dart';
+
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/router/router_constants.dart';
@@ -11,7 +10,6 @@ import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
 class WelcomeScreen extends StatefulWidget {
-
   WelcomeScreen({
     super.key,
     required this.hideLeading,
@@ -222,45 +220,6 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
               SizedBox(
                 height: size.width * AppDimensions.numD15,
               ),
-              /*     Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                      child: SizedBox(
-                    height: size.width * AppDimensions.numD15,
-                    child: commonElevatedButton(
-                        AppStrings.myAccountText,
-                        size,
-                        commonButtonTextStyle(size),
-                        commonButtonStyle(size, Colors.black), () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => Dashboard(
-                                    initialPosition: 4,
-                                  )),
-                          (route) => false);
-                    }),
-                  )),
-                  SizedBox(
-                    width: size.width * AppDimensions.numD04,
-                  ),
-                  Expanded(
-                      child: SizedBox(
-                    height: size.width * AppDimensions.numD15,
-                    child: commonElevatedButton(
-                        AppStrings.cameraText,
-                        size,
-                        commonButtonTextStyle(size),
-                        commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Dashboard(initialPosition: 2)));
-                    }),
-                  )),
-                ],
-              ),*/
               SizedBox(
                 height: size.width * AppDimensions.numD13,
                 child: commonElevatedButton(
@@ -271,12 +230,10 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                   if (widget.screenType == "publish") {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyDraftScreen(
-                                publishedContent: false,
-                                screenType: "welcome")));
+                    context.pushNamed(AppRoutes.myDraftName, extra: {
+                      'publishedContent': false,
+                      'screenType': "welcome"
+                    });
                   } else {
                     // facebookAppEvents.setUserData(
                     //   email: sharedPreferences!.getString(emailKey) ?? "",
@@ -285,7 +242,7 @@ class WelcomeScreenState extends State<WelcomeScreen> with AnalyticsPageMixin {
                     //   lastName: sharedPreferences!.getString(lastNameKey),
                     // );
                     // );
-                    context.go(AppRoutes.dashboardPath, extra: {
+                    context.goNamed(AppRoutes.dashboardName, extra: {
                       'initialPosition': 2,
                       'sourceDataIsOpened': widget.sourceDataIsOpened,
                       'sourceDataType': widget.sourceDataType,

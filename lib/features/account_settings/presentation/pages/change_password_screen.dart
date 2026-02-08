@@ -5,7 +5,8 @@ import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/account_settings_bloc.dart';
 import '../bloc/account_settings_event.dart';
@@ -58,7 +59,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             //       const Center(child: CircularProgressIndicator()),
             // );
           } else if (state is AccountSettingsError) {
-            Navigator.pop(context); // Close loading dialog
+            context.pop(); // Close loading dialog
             showSnackBar("Error", state.message, Colors.red);
           } else if (state is PasswordChangedSuccess) {
             _newPasswordController.clear();
@@ -66,7 +67,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             _confirmNewPasswordController.clear();
 
             // Navigate back or to dashboard
-            Navigator.pop(context);
+            context.pop();
             showSnackBar(
                 "Password updated!",
                 "Your password has been successfully changed!",
@@ -88,15 +89,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: [
               InkWell(
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)),
-                      (route) => false);
+                  context.goNamed(
+                    AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2},
+                  );
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",

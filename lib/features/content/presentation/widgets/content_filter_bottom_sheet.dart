@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
 
 class ContentFilterSheet extends StatefulWidget {
-
   const ContentFilterSheet({
     super.key,
     required this.size,
@@ -54,7 +54,7 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
       children: [
         IconButton(
           splashRadius: widget.size.width * AppDimensions.numD07,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           icon: Icon(
             Icons.close,
             color: Colors.black,
@@ -68,7 +68,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
               overflow: TextOverflow.ellipsis,
               style: commonTextStyle(
                   size: widget.size,
-                  fontSize: widget.size.width * AppDimensions.appBarHeadingFontSizeNew,
+                  fontSize: widget.size.width *
+                      AppDimensions.appBarHeadingFontSizeNew,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -117,8 +118,9 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           onTap: () => _handleItemTap(list, index, isSort),
           child: Container(
             padding: EdgeInsets.symmetric(
-              vertical:
-                  item.name == AppStrings.filterDateText ? 0 : widget.size.width * AppDimensions.numD025,
+              vertical: item.name == AppStrings.filterDateText
+                  ? 0
+                  : widget.size.width * AppDimensions.numD025,
               horizontal: widget.size.width * AppDimensions.numD02,
             ),
             color: item.isSelected ? Colors.grey.shade400 : null,
@@ -131,7 +133,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
                     : Expanded(
                         child: Text(item.name,
                             style: TextStyle(
-                                fontSize: widget.size.width * AppDimensions.numD035,
+                                fontSize:
+                                    widget.size.width * AppDimensions.numD035,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "AirbnbCereal_W_Bk")),
@@ -141,7 +144,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           ),
         );
       },
-      separatorBuilder: (_, __) => SizedBox(height: widget.size.width * AppDimensions.numD01),
+      separatorBuilder: (_, __) =>
+          SizedBox(height: widget.size.width * AppDimensions.numD01),
     );
   }
 
@@ -215,7 +219,8 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
           horizontal: widget.size.width * AppDimensions.numD02,
         ),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(widget.size.width * AppDimensions.numD04),
+          borderRadius:
+              BorderRadius.circular(widget.size.width * AppDimensions.numD04),
           border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
         ),
         child: Row(
@@ -244,8 +249,10 @@ class _ContentFilterSheetState extends State<ContentFilterSheet> {
     return Container(
       width: widget.size.width,
       height: widget.size.width * AppDimensions.numD13,
-      margin: EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD04),
-      padding: EdgeInsets.symmetric(horizontal: widget.size.width * AppDimensions.numD04),
+      margin: EdgeInsets.symmetric(
+          horizontal: widget.size.width * AppDimensions.numD04),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.size.width * AppDimensions.numD04),
       child: commonElevatedButton(
         AppStrings.applyText,
         widget.size,

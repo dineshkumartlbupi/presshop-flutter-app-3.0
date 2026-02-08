@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,11 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/profile/constants/profile_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class MyProfile extends StatefulWidget {
@@ -278,15 +280,15 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           /*  if (widget.editProfileScreen) {
               widget.editProfileScreen = false;
             }*/
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
+              );
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -407,18 +409,26 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   child: CachedNetworkImage(
                     imageUrl:
                         myProfileData != null ? myProfileData!.avatarImage : "",
-                    placeholder: (context, url) => Center(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.all(size.width * AppDimensions.numD04),
-                        child: Image.asset(
-                          "${commonImagePath}rabbitLogo.png",
-                          fit: BoxFit.contain,
-                          width: size.width * AppDimensions.numD35,
-                          height: size.width * AppDimensions.numD35,
-                        ),
-                      ),
-                    ),
+                    fadeInDuration: Duration.zero,
+                    fadeOutDuration: Duration.zero,
+                    imageBuilder: (context, imageProvider) {
+                      _loadedUrls.add(myProfileData!.avatarImage);
+                      return Image(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    placeholder: (context, url) => _loadedUrls.contains(url)
+                        ? const SizedBox.shrink()
+                        : Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              color: Colors.white,
+                              width: size.width * AppDimensions.numD37,
+                              height: size.width * AppDimensions.numD35,
+                            ),
+                          ),
                     errorWidget: (context, url, error) => Padding(
                       padding:
                           EdgeInsets.all(size.width * AppDimensions.numD04),
@@ -723,7 +733,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       const Spacer(),
                       IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          context.pop();
                         },
                         icon: Icon(
                           Icons.close,
@@ -739,43 +749,102 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: StaggeredGrid.count(
-                        crossAxisCount: 6,
-                        mainAxisSpacing: 3.0,
-                        crossAxisSpacing: 4.0,
-                        axisDirection: AxisDirection.down,
-                        children: avatarList.map<Widget>((item) {
-                          return InkWell(
-                            onTap: () {
-                              int pos = avatarList
-                                  .indexWhere((element) => element.selected);
-                              if (pos >= 0) {
-                                avatarList[pos].selected = false;
-                              }
-                              myProfileData!.avatarImage = item.avatar;
-                              myProfileData!.avatarId = item.id;
-                              item.selected = true;
-                              avatarState(() {});
-                              setState(() {});
-                              Navigator.pop(context);
-                            },
-                            child: Stack(
-                              children: [
-                                Image.network(item.avatar),
-                                if (item.selected)
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.black,
-                                      size: size.width * AppDimensions.numD06,
+                      child: avatarList.isEmpty
+                          ? StaggeredGrid.count(
+                              crossAxisCount: 6,
+                              mainAxisSpacing: 3.0,
+                              crossAxisSpacing: 4.0,
+                              axisDirection: AxisDirection.down,
+                              children: List.generate(18, (index) {
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: size.width * AppDimensions.numD20,
+                                    height: size.width * AppDimensions.numD20,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                   ),
-                              ],
+                                );
+                              }),
+                            )
+                          : StaggeredGrid.count(
+                              crossAxisCount: 6,
+                              mainAxisSpacing: 3.0,
+                              crossAxisSpacing: 4.0,
+                              axisDirection: AxisDirection.down,
+                              children: avatarList.map<Widget>((item) {
+                                return InkWell(
+                                  onTap: () {
+                                    int pos = avatarList.indexWhere(
+                                        (element) => element.selected);
+                                    if (pos >= 0) {
+                                      avatarList[pos].selected = false;
+                                    }
+                                    myProfileData!.avatarImage = item.avatar;
+                                    myProfileData!.avatarId = item.id;
+                                    item.selected = true;
+                                    avatarState(() {});
+                                    setState(() {});
+                                    context.pop();
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl: item.avatar,
+                                        fit: BoxFit.cover,
+                                        fadeInDuration: Duration.zero,
+                                        fadeOutDuration: Duration.zero,
+                                        imageBuilder: (context, imageProvider) {
+                                          _loadedUrls.add(item.avatar);
+                                          return Image(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                        placeholder: (context, url) =>
+                                            _loadedUrls.contains(url)
+                                                ? const SizedBox.shrink()
+                                                : Shimmer.fromColors(
+                                                    baseColor:
+                                                        Colors.grey[300]!,
+                                                    highlightColor:
+                                                        Colors.grey[100]!,
+                                                    child: Container(
+                                                      color: Colors.white,
+                                                      width: size.width *
+                                                          AppDimensions.numD20,
+                                                      height: size.width *
+                                                          AppDimensions.numD20,
+                                                    ),
+                                                  ),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          "${commonImagePath}rabbitLogo.png",
+                                          fit: BoxFit.contain,
+                                          width:
+                                              size.width * AppDimensions.numD20,
+                                          height:
+                                              size.width * AppDimensions.numD20,
+                                        ),
+                                      ),
+                                      if (item.selected)
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: Icon(
+                                            Icons.check,
+                                            color: Colors.black,
+                                            size: size.width *
+                                                AppDimensions.numD06,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                             ),
-                          );
-                        }).toList(),
-                      ),
                     ),
                   ),
                 ),
@@ -1521,6 +1590,17 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         var list = map["data"] as List;
         avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
         debugPrint("AvatarList: ${avatarList.length}");
+
+        if (mounted) {
+          for (var avatar in avatarList) {
+            if (avatar.avatar.isNotEmpty) {
+              precacheImage(
+                CachedNetworkImageProvider(avatar.avatar),
+                context,
+              );
+            }
+          }
+        }
         setState(() {});
       }
     } catch (e) {
@@ -1749,7 +1829,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               const Spacer(),
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -1831,7 +1911,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                               //       size,
                               //       commonButtonTextStyle(size),
                               //       commonButtonStyle(size, Colors.black), () {
-                              //     Navigator.pop(context);
+                              //     context.pop();
                               //     // callRemoveDeviceApi();
                               //   }),
                               // )),
@@ -1867,7 +1947,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                                           .setBool(sourceDataIsClickKey, true);
                                       sharedPreferences!
                                           .setBool(sourceDataIsOpenedKey, true);
-                                      Navigator.pop(context);
+                                      context.pop();
 
                                       if (!launched) {
                                         debugPrint(

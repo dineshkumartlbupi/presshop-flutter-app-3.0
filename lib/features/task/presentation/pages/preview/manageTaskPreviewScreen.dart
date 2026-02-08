@@ -8,9 +8,11 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/AudioWaveFormWidgetScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
+
 import 'package:path/path.dart' as path;
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class ManageTaskPreviewScreen extends StatefulWidget {
   const ManageTaskPreviewScreen({super.key, required this.cameraListData});
@@ -63,8 +65,10 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                 : mediaList[index].mimeType.contains("doc")
                                     ? Center(
                                         child: SizedBox(
-                                          height: size.width * AppDimensions.numD60,
-                                          width: size.width * AppDimensions.numD55,
+                                          height:
+                                              size.width * AppDimensions.numD60,
+                                          width:
+                                              size.width * AppDimensions.numD55,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -72,10 +76,12 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                               Image.asset(
                                                 "${dummyImagePath}doc_black_icon.png",
                                                 fit: BoxFit.contain,
-                                                height: size.width * AppDimensions.numD45,
+                                                height: size.width *
+                                                    AppDimensions.numD45,
                                               ),
                                               SizedBox(
-                                                height: size.width * AppDimensions.numD04,
+                                                height: size.width *
+                                                    AppDimensions.numD04,
                                               ),
                                               Text(
                                                 path.basename(
@@ -83,8 +89,8 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                                 textAlign: TextAlign.center,
                                                 style: commonTextStyle(
                                                     size: size,
-                                                    fontSize:
-                                                        size.width * AppDimensions.numD03,
+                                                    fontSize: size.width *
+                                                        AppDimensions.numD03,
                                                     color: Colors.black,
                                                     fontWeight:
                                                         FontWeight.normal),
@@ -97,8 +103,10 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                     : mediaList[index].mimeType.contains("pdf")
                                         ? Center(
                                             child: SizedBox(
-                                              height: size.width * AppDimensions.numD60,
-                                              width: size.width * AppDimensions.numD55,
+                                              height: size.width *
+                                                  AppDimensions.numD60,
+                                              width: size.width *
+                                                  AppDimensions.numD55,
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
@@ -106,10 +114,12 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                                   Image.asset(
                                                     "${dummyImagePath}pngImage.png",
                                                     fit: BoxFit.contain,
-                                                    height: size.width * AppDimensions.numD45,
+                                                    height: size.width *
+                                                        AppDimensions.numD45,
                                                   ),
                                                   SizedBox(
-                                                    height: size.width * AppDimensions.numD04,
+                                                    height: size.width *
+                                                        AppDimensions.numD04,
                                                   ),
                                                   Text(
                                                     path.basename(
@@ -118,8 +128,9 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                                     textAlign: TextAlign.center,
                                                     style: commonTextStyle(
                                                         size: size,
-                                                        fontSize:
-                                                            size.width * AppDimensions.numD03,
+                                                        fontSize: size.width *
+                                                            AppDimensions
+                                                                .numD03,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.normal),
@@ -157,24 +168,29 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                       decoration: BoxDecoration(
                                           color: Colors.white.withOpacity(0.5),
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04)),
+                                              size.width *
+                                                  AppDimensions.numD04)),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_clock.png",
-                                            width: size.width * AppDimensions.numD04,
-                                            height: size.width * AppDimensions.numD04,
+                                            width: size.width *
+                                                AppDimensions.numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD02,
+                                            width: size.width *
+                                                AppDimensions.numD02,
                                           ),
                                           Text(
                                             mediaList[index].dateTime,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * AppDimensions.numD025,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD025,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           )
@@ -190,27 +206,32 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                                       decoration: BoxDecoration(
                                           color: Colors.white.withOpacity(0.5),
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04)),
+                                              size.width *
+                                                  AppDimensions.numD04)),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_location.png",
-                                            width: size.width * AppDimensions.numD04,
-                                            height: size.width * AppDimensions.numD04,
+                                            width: size.width *
+                                                AppDimensions.numD04,
+                                            height: size.width *
+                                                AppDimensions.numD04,
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD02,
+                                            width: size.width *
+                                                AppDimensions.numD02,
                                           ),
                                           SizedBox(
-                                            width: size.width * AppDimensions.numD25,
+                                            width: size.width *
+                                                AppDimensions.numD25,
                                             child: Text(
                                               mediaList[index].location,
                                               style: commonTextStyle(
                                                   size: size,
-                                                  fontSize:
-                                                      size.width * AppDimensions.numD025,
+                                                  fontSize: size.width *
+                                                      AppDimensions.numD025,
                                                   color: Colors.black,
                                                   fontWeight:
                                                       FontWeight.normal),
@@ -251,7 +272,8 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                             child: Container(
                               decoration: const BoxDecoration(
                                   color: Colors.white, shape: BoxShape.circle),
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD01),
                               child: Icon(
                                 Icons.close,
                                 color: Colors.black,
@@ -281,7 +303,8 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
               height: size.width * AppDimensions.numD02,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               child: Row(
                 children: [
                   Expanded(
@@ -296,18 +319,15 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, Colors.black), () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (context) => CameraScreen(
-                                      picAgain: true,
-                                      previousScreen: ScreenNameEnum
-                                          .manageTaskPreviewScreen,
-                                    )))
-                            .then((value) {
+                        context.pushNamed(AppRoutes.cameraName, extra: {
+                          'picAgain': true,
+                          'previousScreen':
+                              ScreenNameEnum.manageTaskPreviewScreen,
+                        }).then((value) {
                           debugPrint(
                               ":::: Inside Picked Again Image :::: $value");
                           if (value != null) {
-                            addMediaDataList(value);
+                            addMediaDataList(value as List<CameraData>);
                           }
                         });
                       }),
@@ -325,7 +345,8 @@ class _ManageTaskPreviewScreenState extends State<ManageTaskPreviewScreen> {
                               fontSize: size.width * AppDimensions.numD035,
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                          commonButtonStyle(size, AppColorTheme.colorThemePink),
+                          () {
                         //  getImageMetaData();
                       }),
                     ),

@@ -5,7 +5,8 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/publish/presentation/bloc/tutorials/tutorials_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 
@@ -94,16 +95,15 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
               size: size,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)));
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -278,14 +278,12 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
                             return InkWell(
                               onTap: () {
                                 _bloc.add(TutorialsAddViewCount(item.id));
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MediaViewScreen(
-                                              mediaFile: item.video,
-                                              type: MediaTypeEnum.video,
-                                              isFromTutorialScreen: true,
-                                            )));
+                                context.pushNamed(AppRoutes.fullVideoViewName,
+                                    extra: {
+                                      'mediaFile': item.video,
+                                      'type': MediaTypeEnum.video,
+                                      'isFromTutorialScreen': true,
+                                    });
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(

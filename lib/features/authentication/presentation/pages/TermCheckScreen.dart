@@ -6,12 +6,13 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import '../../../dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/authentication/presentation/bloc/term_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/term_event.dart';
 import 'package:presshop/features/authentication/presentation/bloc/term_state.dart';
 import 'package:presshop/features/authentication/data/repositories/term_repository.dart';
 import 'package:presshop/core/di/injection_container.dart'; // For sl
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class TermCheckScreen extends StatefulWidget {
@@ -161,16 +162,13 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
               size: size,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)));
+                    context.goNamed(AppRoutes.dashboardName,
+                        extra: {'initialPosition': 2});
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -882,7 +880,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                 commonButtonTextStyle(size),
                 commonButtonStyle(size, AppColorTheme.colorThemePink), () {
               if (check1Value && check2Value && check3Value && check4Value) {
-                Navigator.pop(context, true);
+                context.pop(true);
               } else {
                 showSnackBar(
                     "Error",
@@ -899,7 +897,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
   void declinedDialog(String message, Size size, VoidCallback pressed) {
     showDialog(
         context: context,
-        builder: (context) {
+        builder: (dialogContext) {
           return AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -932,7 +930,7 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                               const Spacer(),
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    dialogContext.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -982,8 +980,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     size,
                                     commonButtonTextStyle(size),
                                     commonButtonStyle(size, Colors.black), () {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context, false);
+                                  dialogContext.pop();
+                                  this.context.pop(false);
                                 }),
                               )),
                               SizedBox(
@@ -999,8 +997,8 @@ class _TermCheckScreenState extends State<TermCheckScreen> {
                                     commonButtonStyle(
                                         size, AppColorTheme.colorThemePink),
                                     () {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context, true);
+                                  dialogContext.pop();
+                                  this.context.pop(true);
                                 }),
                               )),
                             ],

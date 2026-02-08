@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart' as permission;
 import 'package:location/location.dart';
 
 import 'package:presshop/main.dart';
+import 'package:go_router/go_router.dart';
 
 Future<bool> checkGps() async {
   var status = await permission.Permission.location.serviceStatus;
@@ -117,18 +118,18 @@ Future<bool> storagePermission() async {
           return true;
 
         case permission.PermissionStatus.restricted:
-          Navigator.pop(navigatorKey.currentContext!);
+          navigatorKey.currentContext!.pop();
           const SnackBar(content: Text("Please Enable Storage Permission"));
 
           return false;
         case permission.PermissionStatus.permanentlyDenied:
-          Navigator.pop(navigatorKey.currentContext!);
+          navigatorKey.currentContext!.pop();
           const SnackBar(content: Text("Please Enable Storage Permission"));
 
           return false;
 
         case permission.PermissionStatus.limited:
-          Navigator.pop(navigatorKey.currentContext!);
+          navigatorKey.currentContext!.pop();
           const SnackBar(content: Text("Please Enable Storage Permission"));
 
           return false;
@@ -152,18 +153,18 @@ Future<bool> storagePermission() async {
         return true;
 
       case permission.PermissionStatus.restricted:
-        Navigator.pop(navigatorKey.currentContext!);
+        navigatorKey.currentContext!.pop();
         const SnackBar(content: Text("Please Enable Storage Permission"));
 
         return false;
       case permission.PermissionStatus.permanentlyDenied:
-        Navigator.pop(navigatorKey.currentContext!);
+        navigatorKey.currentContext!.pop();
         const SnackBar(content: Text("Please Enable Storage Permission"));
 
         return false;
 
       case permission.PermissionStatus.limited:
-        Navigator.pop(navigatorKey.currentContext!);
+        navigatorKey.currentContext!.pop();
         const SnackBar(content: Text("Please Enable Storage Permission"));
         return false;
 

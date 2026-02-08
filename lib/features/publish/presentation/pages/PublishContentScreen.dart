@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:presshop/core/router/router_constants.dart';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -7,6 +8,7 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presshop/core/services/media_upload_service.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -14,17 +16,15 @@ import 'package:path/path.dart' hide Context, context;
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
+import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-import 'package:presshop/features/publish/presentation/pages/ContentSubmittedScreen.dart';
 import 'package:presshop/features/publish/presentation/pages/HashTagSearchScreen.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart'; // Removed
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
@@ -38,7 +38,6 @@ import '../bloc/publish_bloc.dart';
 import '../bloc/publish_event.dart';
 import '../bloc/publish_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'AudioRecorderScreen.dart';
 
 // ignore: must_be_immutable
 class PublishContentScreen extends StatefulWidget {
@@ -346,16 +345,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
               size: size,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)));
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
                   },
                   child: Image.asset(
                     "${commonImagePath}ic_black_rabbit.png",
@@ -391,7 +389,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     children: [
                                       InkWell(
                                         onTap: () {
-                                          Navigator.pop(context);
+                                          context.pop();
                                         },
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
@@ -1020,18 +1018,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 mediaPath: item.media,
                                                 thumbnail: item.thumbNail));
                                           });
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PreviewScreen(
-                                                          pickAgain: false,
-                                                          cameraListData: [],
-                                                          cameraData: null,
-                                                          mediaList:
-                                                              mediaListData,
-                                                          type: "draft",
-                                                          myContentData: widget
-                                                              .myContentData)));
+                                          context.pushNamed(
+                                            AppRoutes.previewName,
+                                            extra: {
+                                              'pickAgain': false,
+                                              'cameraListData': <CameraData>[],
+                                              'cameraData': null,
+                                              'mediaList': mediaListData,
+                                              'type': "draft",
+                                              'myContentData':
+                                                  widget.myContentData,
+                                            },
+                                          );
                                         },
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
@@ -1544,13 +1542,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             Expanded(
                                 child: InkWell(
                               onTap: () {
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            const AudioRecorderScreen()))
+                                context
+                                    .pushNamed(AppRoutes.audioRecorderName)
                                     .then((value) {
                                   if (value != null) {
-                                    audioPath = value[0].toString();
+                                    audioPath = (value as List)[0].toString();
                                     audioDuration = value[1].toString();
                                     setState(() {});
                                     debugPrint("AudioPath:$audioPath");
@@ -1973,26 +1969,21 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     readOnly: true,
                                     autofocus: false,
                                     onTap: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  HashTagSearchScreen(
-                                                    country:
-                                                        widget.publishData !=
-                                                                null
-                                                            ? widget
-                                                                .publishData!
-                                                                .country
-                                                            : '',
-                                                    tagData: hashtagList,
-                                                    initialSelectedHashTags:
-                                                        selectedHashtagList,
-                                                    countryTagId: hashtagList
-                                                            .isNotEmpty
-                                                        ? hashtagList.first.id
-                                                        : "",
-                                                  )))
-                                          .then((value) {
+                                      context.pushNamed(
+                                          AppRoutes.hashTagSearchName,
+                                          extra: {
+                                            'country': widget.publishData !=
+                                                    null
+                                                ? widget.publishData!.country
+                                                : '',
+                                            'tagData': hashtagList,
+                                            'initialSelectedHashTags':
+                                                selectedHashtagList,
+                                            'countryTagId':
+                                                hashtagList.isNotEmpty
+                                                    ? hashtagList.first.id
+                                                    : "",
+                                          }).then((value) {
                                         if (value != null) {
                                           // hashtagList.clear();
                                           //  hashtagList.addAll(value as List<HashTagData>);
@@ -2573,15 +2564,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       alignment: PlaceholderAlignment.middle,
                                       child: InkWell(
                                         onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FAQScreen(
-                                                        priceTipsSelected: true,
-                                                        type: '',
-                                                        index: 0,
-                                                      )));
+                                          context.pushNamed(
+                                            AppRoutes.faqName,
+                                            extra: {
+                                              'priceTipsSelected': true,
+                                              'type': '',
+                                              'index': 0,
+                                            },
+                                          );
                                         },
                                         child: Text(
                                             AppStrings.priceTipsText
@@ -2602,11 +2592,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       alignment: PlaceholderAlignment.middle,
                                       child: InkWell(
                                         onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const TutorialsScreen()));
+                                          context.pushNamed(
+                                            AppRoutes.tutorialsName,
+                                          );
                                         },
                                         child: Text(
                                             AppStrings.tutorialsText
@@ -2627,15 +2615,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       alignment: PlaceholderAlignment.middle,
                                       child: InkWell(
                                         onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FAQScreen(
-                                                        priceTipsSelected:
-                                                            false,
-                                                        type: 'faq',
-                                                        index: 0,
-                                                      )));
+                                          context.pushNamed(
+                                            AppRoutes.faqName,
+                                            extra: {
+                                              'priceTipsSelected': false,
+                                              'type': 'faq',
+                                              'index': 0,
+                                            },
+                                          );
                                         },
                                         child: Text("guidelines ".toLowerCase(),
                                             style: commonTextStyle(
@@ -2653,10 +2640,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       alignment: PlaceholderAlignment.middle,
                                       child: InkWell(
                                         onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const ContactUsScreen()));
+                                          context.pushNamed(
+                                              AppRoutes.contactUsName);
                                         },
                                         child: Text(
                                             AppStrings.contactText
@@ -2704,11 +2689,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         unawaited(callAddContentApi());
 
                                         if (!mounted) return;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Dashboard(
-                                                  initialPosition: 2)),
+                                        context.goNamed(
+                                          AppRoutes.dashboardName,
+                                          extra: {'initialPosition': 2},
                                         );
                                       },
 
@@ -2866,7 +2849,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           IconButton(
                               splashRadius: size.width * AppDimensions.numD06,
                               onPressed: () {
-                                Navigator.pop(context);
+                                context.pop();
                               },
                               icon: Icon(
                                 Icons.cancel_outlined,
@@ -2912,7 +2895,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     selectedCategory = category;
                                   });
 
-                                  Navigator.pop(context);
+                                  context.pop();
                                 },
                                 child: Chip(
                                   label: Text(
@@ -3015,7 +2998,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     setState(() {
                                       _checkCharityBoxVal = false;
                                     });
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: const Icon(Icons.close),
                                 ),
@@ -3223,7 +3206,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     Future.delayed(const Duration(seconds: 2),
                                         () {
                                       if (!mounted) return;
-                                      Navigator.pop(context);
+                                      context.pop();
                                       showCelebration = false;
                                     });
                                     setState(() {});
@@ -3595,16 +3578,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
               media.thumbnail));
         });
         if (!mounted) return;
-        await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ContentSubmittedScreen(
-                      myContentDetail: widget.myContentData,
-                      publishData: widget.publishData,
-                      sellType: selectedSellType,
-                      price: priceController.text,
-                      isBeta: isBeta,
-                    )));
+        if (!mounted) return;
+        await context.pushNamed(
+          AppRoutes.contentSubmittedName,
+          extra: {
+            'myContentDetail': widget.myContentData,
+            'publishData': widget.publishData,
+            'sellType': selectedSellType,
+            'price': priceController.text,
+            'isBeta': isBeta,
+          },
+        );
       }
     } catch (e) {
       debugPrint("checkOnboardingCompleteOrNotReq error: $e");
@@ -3625,16 +3609,17 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 media.thumbnail));
           });
           if (!mounted) return;
-          await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ContentSubmittedScreen(
-                        myContentDetail: widget.myContentData,
-                        publishData: widget.publishData,
-                        sellType: selectedSellType,
-                        price: priceController.text,
-                        isBeta: isBeta,
-                      )));
+          if (!mounted) return;
+          await context.pushNamed(
+            AppRoutes.contentSubmittedName,
+            extra: {
+              'myContentDetail': widget.myContentData,
+              'publishData': widget.publishData,
+              'sellType': selectedSellType,
+              'price': priceController.text,
+              'isBeta': isBeta,
+            },
+          );
         }
       }
     }

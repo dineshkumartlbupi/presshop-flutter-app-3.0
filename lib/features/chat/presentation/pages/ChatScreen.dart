@@ -19,7 +19,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presshop/core/widgets/common_widgets.dart' hide Config;
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:record/record.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,6 +38,8 @@ import 'package:presshop/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_event.dart';
 import 'package:presshop/features/chat/presentation/bloc/chat_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class ConversationScreen extends StatefulWidget {
@@ -293,7 +294,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                     showActions: true,
                     actionWidget: null,
                     leadingFxn: () {
-                      Navigator.pop(context);
+                      context.pop();
                     },
                   ),
                   body: Column(
@@ -561,7 +562,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                         height: size.width * AppDimensions.numD13,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -625,7 +626,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                               ),
                               InkWell(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  context.pop();
                                   //callReportListApi();
                                 },
                                 child: Container(
@@ -642,7 +643,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                               ),
                               InkWell(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  context.pop();
                                   //callBlockProfileApi(senderId, widget.otherUserId);
                                 },
                                 child: Container(
@@ -659,7 +660,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                               ),
                               InkWell(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  context.pop();
                                   // callUnMatchApi(senderId,widget.otherUserId);
                                 },
                                 child: Container(
@@ -793,7 +794,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -817,7 +818,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   }
 
   Future<bool> onBackPress() {
-    Navigator.pop(navigatorKey.currentState!.context);
+    context.pop();
     return Future.value(false);
   }
 
@@ -2542,13 +2543,12 @@ class _ConversationScreenState extends State<ConversationScreen>
                           children: [
                             InkWell(
                               onTap: () {
-                                Navigator.of(navigatorKey.currentState!.context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) => MediaViewScreen(
-                                              mediaFile: document
-                                                  .get('videoThumbnail'),
-                                              type: MediaTypeEnum.video,
-                                            )));
+                                context.pushNamed(AppRoutes.fullVideoViewName,
+                                    extra: {
+                                      'mediaFile':
+                                          document.get('videoThumbnail'),
+                                      'type': MediaTypeEnum.video,
+                                    });
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(
@@ -2731,13 +2731,10 @@ class _ConversationScreenState extends State<ConversationScreen>
                   padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(navigatorKey.currentState!.context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => MediaViewScreen(
-                                    mediaFile:
-                                        document.get('messageType')["message"],
-                                    type: MediaTypeEnum.video,
-                                  )));
+                      context.pushNamed(AppRoutes.fullVideoViewName, extra: {
+                        'mediaFile': document.get('messageType')["message"],
+                        'type': MediaTypeEnum.video,
+                      });
                     },
                     child: Stack(
                       alignment: Alignment.center,
@@ -2809,12 +2806,10 @@ class _ConversationScreenState extends State<ConversationScreen>
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.of(navigatorKey.currentState!.context)
-                        .push(MaterialPageRoute(
-                            builder: (context) => MediaViewScreen(
-                                  mediaFile: document.get('message'),
-                                  type: MediaTypeEnum.image,
-                                )));
+                    context.pushNamed(AppRoutes.fullVideoViewName, extra: {
+                      'mediaFile': document.get('message'),
+                      'type': MediaTypeEnum.image,
+                    });
                   },
                   child: Container(
                     padding: EdgeInsets.all(size.width * AppDimensions.numD03),
@@ -3007,12 +3002,10 @@ class _ConversationScreenState extends State<ConversationScreen>
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.of(navigatorKey.currentState!.context)
-                        .push(MaterialPageRoute(
-                            builder: (context) => MediaViewScreen(
-                                  mediaFile: document.get('message'),
-                                  type: MediaTypeEnum.image,
-                                )));
+                    context.pushNamed(AppRoutes.fullVideoViewName, extra: {
+                      'mediaFile': document.get('message'),
+                      'type': MediaTypeEnum.image,
+                    });
                   },
                   child: Container(
                     margin:
@@ -3698,7 +3691,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   /// To get Videos From the Gallery
   Future getVideo() async {
     debugPrint("isVideoPicked=====> yes");
-    Navigator.pop(navigatorKey.currentState!.context);
+    context.pop();
     final pickedFile =
         await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (mounted) {
@@ -3727,7 +3720,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   /// Get Image
   Future<void> getImage(ImageSource source) async {
-    Navigator.pop(context);
+    context.pop();
     bool cameraValue = await cameraPermission();
     bool storageValue = await storagePermission();
 
@@ -3748,12 +3741,11 @@ class _ConversationScreenState extends State<ConversationScreen>
         }*/
       }
     } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PermissionErrorScreen(permissionsStatus: {
-                    Permission.camera: false,
-                  })));
+      context.pushNamed(AppRoutes.permissionErrorName, extra: {
+        'permissionsStatus': {
+          Permission.camera: false,
+        }
+      });
     }
   }
 

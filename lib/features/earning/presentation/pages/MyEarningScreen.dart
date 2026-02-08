@@ -1,24 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+// import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_bloc.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_event.dart';
 import 'package:presshop/features/earning/presentation/bloc/earning_state.dart';
 import '../../domain/entities/earning_transaction.dart';
 
+import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'TransactionDetailScreen.dart';
 import 'commission_widget.dart';
 import 'package:presshop/main.dart';
 
-import '../../../../features/account_settings/presentation/pages/contact_us_screen.dart';
-import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
-import '../../../../core/widgets/video_player_screen.dart';
+// import '../../../../features/account_settings/presentation/pages/contact_us_screen.dart';
+// import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
+// import '../../../../core/widgets/video_player_screen.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 
@@ -191,10 +193,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Dashboard(initialPosition: 2)));
+        context.goNamed(
+          AppRoutes.dashboardName,
+          extra: {'initialPosition': 2},
+        );
         return false;
       },
       child: Scaffold(
@@ -214,13 +216,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
             showActions: true,
             leadingFxn: () {
               widget.openDashboard
-                  ? Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(
-                                initialPosition: 0,
-                              )),
-                      (route) => false)
-                  : Navigator.pop(context);
+                  ? context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 0},
+                    )
+                  : context.pop();
             },
             actionWidget: [
               if (_selectedTabbar == 0)
@@ -239,11 +239,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                     right: size.width * AppDimensions.numD016),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -418,8 +417,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                 selectedDate:
                                                     DateTime(selectedYear),
                                                 onChanged: (dateTime) {
-                                                  Navigator.pop(
-                                                      context, dateTime.year);
+                                                  context.pop(dateTime.year);
                                                 },
                                               ),
                                             ),
@@ -517,8 +515,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                                         final month = index + 1;
                                                         return InkWell(
                                                           onTap: () {
-                                                            Navigator.pop(
-                                                                context, month);
+                                                            context.pop(month);
                                                           },
                                                           child: Container(
                                                             margin:
@@ -793,10 +790,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   alignment: PlaceholderAlignment.middle,
                                   child: InkWell(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const ContactUsScreen()));
+                                      context
+                                          .pushNamed(AppRoutes.contactUsName);
                                     },
                                     child: Text(
                                       "${AppStrings.contactText.toLowerCase()} ",
@@ -829,13 +824,14 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   alignment: PlaceholderAlignment.middle,
                                   child: InkWell(
                                     onTap: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) => FAQScreen(
-                                                    priceTipsSelected: false,
-                                                    type: 'faq',
-                                                    index: 0,
-                                                  )));
+                                      context.pushNamed(
+                                        AppRoutes.faqName,
+                                        extra: {
+                                          'priceTipsSelected': false,
+                                          'type': 'faq',
+                                          'index': 0,
+                                        },
+                                      );
                                     },
                                     child: Text(
                                       "${AppStrings.faqText} ",
@@ -859,10 +855,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   alignment: PlaceholderAlignment.middle,
                                   child: InkWell(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const TutorialsScreen()));
+                                      context
+                                          .pushNamed(AppRoutes.tutorialsName);
                                     },
                                     child: Text(
                                       "${AppStrings.tutorialsText.toLowerCase()} ",
@@ -954,17 +948,15 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                       ? GestureDetector(
                                           onTap: () {
                                             if (item.uploadContent.isNotEmpty) {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      VideoPlayerScreen(
-                                                    videoUrl: getMediaImageUrl(
-                                                        item.uploadContent,
-                                                        isTask: item.type !=
-                                                            "content"),
-                                                  ),
-                                                ),
+                                              context.pushNamed(
+                                                AppRoutes.fullVideoViewName,
+                                                extra: {
+                                                  'mediaFile': getMediaImageUrl(
+                                                      item.uploadContent,
+                                                      isTask: item.type !=
+                                                          "content"),
+                                                  'type': MediaTypeEnum.video,
+                                                },
                                               );
                                             }
                                           },
@@ -1095,16 +1087,14 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           ),
                           InkWell(
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          TransactionDetailScreen(
-                                            pageType: PageType.CONTENT,
-                                            type: "received",
-                                            transactionData:
-                                                transactions[index],
-                                          )));
+                              context.pushNamed(
+                                AppRoutes.transactionDetailName,
+                                extra: {
+                                  'pageType': PageType.CONTENT,
+                                  'type': "received",
+                                  'transactionData': transactions[index],
+                                },
+                              );
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1424,16 +1414,16 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TransactionDetailScreen(
-                                        pageType: item.type == "content"
-                                            ? PageType.CONTENT
-                                            : PageType.TASK,
-                                        type: "pending",
-                                        transactionData: transactions[index],
-                                      )));
+                          context.pushNamed(
+                            AppRoutes.transactionDetailName,
+                            extra: {
+                              'pageType': item.type == "content"
+                                  ? PageType.CONTENT
+                                  : PageType.TASK,
+                              'type': "pending",
+                              'transactionData': transactions[index],
+                            },
+                          );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1705,7 +1695,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                       IconButton(
                         splashRadius: size.width * AppDimensions.numD07,
                         onPressed: () {
-                          Navigator.pop(context);
+                          context.pop();
                         },
                         icon: Icon(
                           Icons.close,
@@ -1789,7 +1779,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             fontWeight: FontWeight.w700),
                         commonButtonStyle(size, AppColorTheme.colorThemePink),
                         () {
-                      Navigator.pop(context);
+                      context.pop();
                       _fetchTransactionsWithFilters(bloc);
                     }),
                   ),

@@ -3,8 +3,8 @@ import 'package:location/location.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/core_export.dart';
-
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class LocationErrorScreen extends StatefulWidget {
   const LocationErrorScreen({super.key});
@@ -42,11 +42,8 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                   alignment: Alignment.topRight,
                   child: IconButton(
                     onPressed: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Dashboard(initialPosition: 0)),
-                          (route) => false);
+                      context.goNamed(AppRoutes.dashboardName,
+                          extra: {'initialPosition': 0});
                     },
                     icon: Container(
                       decoration: const BoxDecoration(
@@ -113,11 +110,8 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                         commonButtonTextStyle(size),
                         commonButtonStyle(size, Colors.black),
                         () async {
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      Dashboard(initialPosition: 0)),
-                              (route) => false);
+                          context.goNamed(AppRoutes.dashboardName,
+                              extra: {'initialPosition': 0});
                         },
                       ),
                     ),
@@ -149,7 +143,7 @@ class _LocationErrorScreenState extends State<LocationErrorScreen> {
                           if (locationData != null) {
                             // Successfully fetched location, you can now use it
                             // Navigate to the next screen or perform the desired action
-                            Navigator.pop(context, locationData);
+                            context.pop(locationData);
                           } else {
                             setState(() {
                               isFetchingLocation = false;

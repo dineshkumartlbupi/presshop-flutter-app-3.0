@@ -11,8 +11,7 @@ import 'package:presshop/core/router/router_constants.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'ForgotPasswordScreen.dart';
-import 'SocialSignUpScreen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -92,22 +91,21 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
           if (state is AuthError) {
             commonErrorDialogDialog(
                 MediaQuery.of(context).size, state.message, "", () {
-              Navigator.pop(context);
+              context.pop();
             });
           } else if (state is AuthAuthenticated) {
             _handleLoginSuccess(state.user.source ?? {});
           } else if (state is AuthSocialSignUpRequired) {
-            Navigator.of(navigatorKey.currentState!.context).push(
-              MaterialPageRoute(
-                builder: (context) => SocialSignUp(
-                  socialLogin: true,
-                  socialId: state.socialId,
-                  name: state.name,
-                  email: state.email,
-                  phoneNumber: "",
-                  socialType: state.socialType,
-                ),
-              ),
+            context.pushNamed(
+              AppRoutes.socialSignUpName,
+              extra: {
+                'socialLogin': true,
+                'socialId': state.socialId,
+                'name': state.name,
+                'email': state.email,
+                'phoneNumber': "",
+                'socialType': state.socialType,
+              },
             );
           }
         },
@@ -282,10 +280,8 @@ class LoginScreenState extends State<LoginScreen> with AnalyticsPageMixin {
                                     splashColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const ForgotPasswordScreen()));
+                                      context.pushNamed(
+                                          AppRoutes.forgotPasswordName);
                                     },
                                     child: Text(
                                       "${AppStrings.forgotPasswordText}?",

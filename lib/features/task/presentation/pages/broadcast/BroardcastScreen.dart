@@ -17,7 +17,8 @@ import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/main.dart';
 import 'package:fast_contacts/fast_contacts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -128,12 +129,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         } else if (_hasSubmittedAction &&
             state.actionStatus == TaskStatus.success &&
             !_isAccepted) {
-          Navigator.pushAndRemoveUntil(
-              navigatorKey.currentState!.context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Dashboard(initialPosition: 1, taskStatus: "rejected")),
-              (route) => false);
+          context.goNamed(
+            AppRoutes.dashboardName,
+            extra: {
+              'initialPosition': 1,
+              'taskStatus': "rejected",
+            },
+          );
           return; // Exit listener after handling
         }
 
@@ -141,12 +143,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
         if (_hasSubmittedAction &&
             state.roomId != null &&
             state.roomId!.isNotEmpty) {
-          Navigator.pushAndRemoveUntil(
-              navigatorKey.currentState!.context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Dashboard(initialPosition: 1, taskStatus: "accepted")),
-              (route) => false);
+          context.goNamed(
+            AppRoutes.dashboardName,
+            extra: {
+              'initialPosition': 1,
+              'taskStatus': "accepted",
+            },
+          );
           return; // Exit listener after handling
         }
 
@@ -677,7 +680,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
           children: [
             InkWell(
               onTap: () {
-                Navigator.pop(context);
+                context.pop();
               },
               child: Container(
                 margin: EdgeInsets.only(
@@ -907,8 +910,8 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                     children: [
                       IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          context.pop();
+                          context.pop();
                         },
                         splashRadius: size.width * AppDimensions.numD05,
                         icon: Icon(

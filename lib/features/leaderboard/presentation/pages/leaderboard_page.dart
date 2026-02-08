@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/main.dart';
 import '../bloc/leaderboard_bloc.dart';
@@ -14,6 +13,8 @@ import '../bloc/leaderboard_event.dart';
 import '../bloc/leaderboard_state.dart';
 import '../widgets/leadership_table_widget.dart';
 import 'package:presshop/features/leaderboard/domain/entities/leaderboard_entity.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class LeaderboardPage extends StatelessWidget {
   const LeaderboardPage({super.key});
@@ -123,15 +124,15 @@ class _LeaderboardViewState extends State<LeaderboardView> {
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
+              );
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",

@@ -9,8 +9,8 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:record/record.dart';
 
-import 'package:presshop/main.dart';
 import 'dart:ui' as ui;
+import 'package:go_router/go_router.dart';
 
 class AudioRecorderScreen extends StatefulWidget {
   const AudioRecorderScreen({super.key});
@@ -74,7 +74,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: [
               InkWell(
@@ -158,7 +158,8 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
                           ? size.width * AppDimensions.numD04
                           : size.width * AppDimensions.numD04),
                       decoration: const BoxDecoration(
-                          color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
+                          color: AppColorTheme.colorThemePink,
+                          shape: BoxShape.circle),
                       child: Icon(
                           isAudioRecording
                               ? Icons.square
@@ -259,8 +260,7 @@ class AudioRecorderScreenState extends State<AudioRecorderScreen> {
       isAudioRecording = false;
 
       if (path!.isNotEmpty) {
-        Navigator.pop(
-            navigatorKey.currentState!.context, [path, recordingTime]);
+        context.pop([path, recordingTime]);
       }
     } else {
       if (recorderController.isRecording) {

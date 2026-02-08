@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// Shows a snackbar with customizable appearance
 void showCustomSnackBar(
@@ -105,11 +106,11 @@ Future<bool?> showConfirmDialog(
       content: Text(message),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () => context.pop(false),
           child: Text(cancelText),
         ),
         ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(true),
+          onPressed: () => context.pop(true),
           style: ElevatedButton.styleFrom(
             backgroundColor: isDangerous ? Colors.red : null,
           ),

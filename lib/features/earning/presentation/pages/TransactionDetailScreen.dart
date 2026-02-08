@@ -15,9 +15,11 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+
 import '../../domain/entities/earning_transaction.dart';
-import '../../../publication/presentation/pages/publication_list_screen.dart';
+
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import '../../../../features/feed/presentation/pages/feedDataModel.dart';
 
@@ -76,15 +78,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
+              );
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -114,12 +116,14 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   Center(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => PublicationListScreen(
-                                contentId: widget.transactionData!.contentId,
-                                contentType:
-                                    widget.transactionData!.contentType,
-                                publicationCount: "")));
+                        context.pushNamed(
+                          AppRoutes.publicationListName,
+                          extra: {
+                            'contentId': widget.transactionData!.contentId,
+                            'contentType': widget.transactionData!.contentType,
+                            'publicationCount': "",
+                          },
+                        );
                       },
                       child: Text(
                         AppStrings.viewPublicationsPurchasedText,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_filter_sheet.dart';
 
 class FeedFilterBottomSheet extends StatefulWidget {
-
   const FeedFilterBottomSheet({
     super.key,
     required this.sortList,
@@ -43,7 +43,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                 IconButton(
                   splashRadius: size.width * AppDimensions.numD07,
                   onPressed: () {
-                    Navigator.pop(context);
+                    context.pop();
                   },
                   icon: Icon(
                     Icons.close,
@@ -55,7 +55,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                   "Sort and Filter",
                   style: commonTextStyle(
                       size: size,
-                      fontSize: size.width * AppDimensions.appBarHeadingFontSizeNew,
+                      fontSize:
+                          size.width * AppDimensions.appBarHeadingFontSizeNew,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),
                 ),
@@ -104,7 +105,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
             Container(
               width: size.width,
               height: size.width * AppDimensions.numD13,
-              margin: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              margin: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               padding: EdgeInsets.symmetric(
                 horizontal: size.width * AppDimensions.numD04,
               ),
@@ -148,7 +150,7 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                   }
                 }
                 widget.onApply(map);
-                Navigator.pop(context);
+                context.pop();
               }),
             ),
             SizedBox(
@@ -225,8 +227,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                               ),
                               width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -241,7 +243,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                         : AppStrings.fromText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -291,8 +294,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                               ),
                               width: size.width * AppDimensions.numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(
                                     width: 1, color: const Color(0xFFDEE7E6)),
                               ),
@@ -307,7 +310,8 @@ class _FeedFilterBottomSheetState extends State<FeedFilterBottomSheet> {
                                         : AppStrings.toText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD032,
+                                        fontSize:
+                                            size.width * AppDimensions.numD032,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),

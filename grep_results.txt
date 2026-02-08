@@ -1,0 +1,3 @@
+lib/features/chat/presentation/pages/ChatScreen.dart:                          Navigator.of(context).pushAndRemoveUntil(
+lib/features/chat/presentation/pages/ChatScreen.dart:                      Navigator.push(
+lib/features/dashboard/presentation/pages/dashboard.dart:                  SystemNavigator.pop();

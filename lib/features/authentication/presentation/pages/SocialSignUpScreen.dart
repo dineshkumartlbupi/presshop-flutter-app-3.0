@@ -6,8 +6,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'TermCheckScreen.dart';
-import 'package:presshop/features/authentication/presentation/pages/WelcomeScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
@@ -22,7 +22,6 @@ import 'package:presshop/features/authentication/domain/entities/user.dart';
 
 // ignore: must_be_immutable
 class SocialSignUp extends StatefulWidget {
-
   SocialSignUp(
       {super.key,
       required this.socialLogin,
@@ -143,7 +142,7 @@ class _SocialSignUpState extends State<SocialSignUp>
           if (state is SignUpError) {
             commonErrorDialogDialog(
                 MediaQuery.of(context).size, state.message, "", () {
-              Navigator.pop(context);
+              context.pop();
             });
           } else if (state is SignUpSuccess) {
             _handleLoginSuccess(state.user);
@@ -177,7 +176,7 @@ class _SocialSignUpState extends State<SocialSignUp>
               showActions: false,
               actionWidget: null,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               leadingLeftSPace: size.width * AppDimensions.numD04,
             ),
@@ -185,8 +184,8 @@ class _SocialSignUpState extends State<SocialSignUp>
               child: SingleChildScrollView(
                 controller: scrollController,
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: size.width * AppDimensions.numD08),
                   child: Form(
                     key: formKey,
                     child: Column(
@@ -228,34 +227,41 @@ class _SocialSignUpState extends State<SocialSignUp>
                                             avatarBottomSheet(size);
                                           },
                                           child: Container(
-                                            height: size.width * AppDimensions.numD30,
-                                            width: size.width * AppDimensions.numD35,
+                                            height: size.width *
+                                                AppDimensions.numD30,
+                                            width: size.width *
+                                                AppDimensions.numD35,
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                    color:
-                                                        AppColorTheme.colorTextFieldBorder),
+                                                    color: AppColorTheme
+                                                        .colorTextFieldBorder),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width * AppDimensions.numD04)),
+                                                    BorderRadius.circular(size
+                                                            .width *
+                                                        AppDimensions.numD04)),
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
                                                 Image.asset(
                                                   "${iconsPath}ic_user.png",
-                                                  width: size.width * AppDimensions.numD11,
+                                                  width: size.width *
+                                                      AppDimensions.numD11,
                                                 ),
                                                 SizedBox(
-                                                  height: size.width * AppDimensions.numD01,
+                                                  height: size.width *
+                                                      AppDimensions.numD01,
                                                 ),
                                                 Text(
-                                                  AppStrings.chooseYourAvatarText,
+                                                  AppStrings
+                                                      .chooseYourAvatarText,
                                                   style: commonTextStyle(
                                                       size: size,
-                                                      fontSize:
-                                                          size.width * AppDimensions.numD03,
-                                                      color: AppColorTheme.colorHint,
+                                                      fontSize: size.width *
+                                                          AppDimensions.numD03,
+                                                      color: AppColorTheme
+                                                          .colorHint,
                                                       fontWeight:
                                                           FontWeight.normal),
                                                   textAlign: TextAlign.center,
@@ -272,11 +278,14 @@ class _SocialSignUpState extends State<SocialSignUp>
                                         children: [
                                           ClipRRect(
                                             borderRadius: BorderRadius.circular(
-                                                size.width * AppDimensions.numD04),
+                                                size.width *
+                                                    AppDimensions.numD04),
                                             child: Image.network(
                                               selectedAvatar,
-                                              height: size.width * AppDimensions.numD30,
-                                              width: size.width * AppDimensions.numD35,
+                                              height: size.width *
+                                                  AppDimensions.numD30,
+                                              width: size.width *
+                                                  AppDimensions.numD35,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -303,13 +312,15 @@ class _SocialSignUpState extends State<SocialSignUp>
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.all(
-                                                    size.width * AppDimensions.numD01),
+                                                    size.width *
+                                                        AppDimensions.numD01),
                                                 decoration: const BoxDecoration(
                                                     color: Colors.white,
                                                     shape: BoxShape.circle),
                                                 child: Icon(Icons.cancel,
                                                     color: Colors.black,
-                                                    size: size.width * AppDimensions.numD035),
+                                                    size: size.width *
+                                                        AppDimensions.numD035),
                                               ),
                                             ),
                                           )
@@ -321,12 +332,14 @@ class _SocialSignUpState extends State<SocialSignUp>
                                       alignment: Alignment.topLeft,
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: size.width * AppDimensions.numD01),
+                                            vertical: size.width *
+                                                AppDimensions.numD01),
                                         child: Text(
                                           AppStrings.requiredText,
                                           style: commonTextStyle(
                                               size: size,
-                                              fontSize: size.width * AppDimensions.numD03,
+                                              fontSize: size.width *
+                                                  AppDimensions.numD03,
                                               color: Colors.red.shade700,
                                               fontWeight: FontWeight.normal),
                                         ),
@@ -361,8 +374,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 suffixIcon: getUsernameSuffixIcon(),
                                 prefixIcon:
                                     const Icon(Icons.person_outline_sharp),
-                                prefixIconHeight: size.width * AppDimensions.numD06,
-                                suffixIconIconHeight: size.width * AppDimensions.numD085,
+                                prefixIconHeight:
+                                    size.width * AppDimensions.numD06,
+                                suffixIconIconHeight:
+                                    size.width * AppDimensions.numD085,
                                 hidePassword: false,
                                 keyboardType: TextInputType.text,
                                 enableValidations: true,
@@ -384,7 +399,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 AppStrings.userNameNoteText,
                                 style: TextStyle(
                                     color: AppColorTheme.colorHint,
-                                    fontSize: size.width * AppDimensions.numD025),
+                                    fontSize:
+                                        size.width * AppDimensions.numD025),
                               ),
                               SizedBox(
                                 height: size.height * AppDimensions.numD02,
@@ -410,13 +426,15 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     children: [
                                       const Icon(Icons.call_outlined),
                                       SizedBox(
-                                        width: size.width * AppDimensions.numD01,
+                                        width:
+                                            size.width * AppDimensions.numD01,
                                       ),
                                       Text(
                                         selectedCountryCodePicker,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * AppDimensions.numD035,
+                                            fontSize: size.width *
+                                                AppDimensions.numD035,
                                             color: Colors.black,
                                             fontWeight: FontWeight.normal),
                                       ),
@@ -427,8 +445,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     ],
                                   ),
                                 ),
-                                prefixIconHeight: size.width * AppDimensions.numD06,
-                                suffixIconIconHeight: size.width * AppDimensions.numD085,
+                                prefixIconHeight:
+                                    size.width * AppDimensions.numD06,
+                                suffixIconIconHeight:
+                                    size.width * AppDimensions.numD085,
                                 suffixIcon:
                                     phoneController.text.trim().length >= 7
                                         ? phoneAlreadyExists
@@ -471,8 +491,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 ],
                                 suffixIcon: getReferralCodeSuffixIcon(),
                                 prefixIcon: const Icon(Icons.campaign_outlined),
-                                prefixIconHeight: size.width * AppDimensions.numD06,
-                                suffixIconIconHeight: size.width * AppDimensions.numD085,
+                                prefixIconHeight:
+                                    size.width * AppDimensions.numD06,
+                                suffixIconIconHeight:
+                                    size.width * AppDimensions.numD085,
                                 hidePassword: false,
                                 keyboardType: TextInputType.text,
                                 enableValidations: false,
@@ -497,7 +519,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                 AppStrings.referralcodeNoteText,
                                 style: TextStyle(
                                     color: AppColorTheme.colorHint,
-                                    fontSize: size.width * AppDimensions.numD025),
+                                    fontSize:
+                                        size.width * AppDimensions.numD025),
                               ),
                               SizedBox(
                                 height: size.width * AppDimensions.numD04,
@@ -508,13 +531,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                                       .requestFocus(FocusNode());
                                   rememberMe = false;
 
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) => TermCheckScreen(
-                                                type: 'legal',
-                                              )))
+                                  context
+                                      .pushNamed(AppRoutes.termCheckName)
                                       .then((value) {
-                                    if (value != null) {
+                                    if (value != null && value is bool) {
                                       debugPrint("value::::$value");
                                       termConditionsChecked = value;
                                       setState(() {});
@@ -527,18 +547,22 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     termConditionsChecked
                                         ? Container(
                                             margin: EdgeInsets.only(
-                                                top: size.width * AppDimensions.numD008),
+                                                top: size.width *
+                                                    AppDimensions.numD008),
                                             child: Image.asset(
                                               "${iconsPath}ic_checkbox_filled.png",
-                                              height: size.width * AppDimensions.numD06,
+                                              height: size.width *
+                                                  AppDimensions.numD06,
                                             ),
                                           )
                                         : Container(
                                             margin: EdgeInsets.only(
-                                                top: size.width * AppDimensions.numD008),
+                                                top: size.width *
+                                                    AppDimensions.numD008),
                                             child: Image.asset(
                                                 "${iconsPath}ic_checkbox_empty.png",
-                                                height: size.width * AppDimensions.numD06),
+                                                height: size.width *
+                                                    AppDimensions.numD06),
                                           ),
                                     SizedBox(
                                       width: size.width * AppDimensions.numD02,
@@ -549,7 +573,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontFamily: "AirbnbCereal",
-                                            fontSize: size.width * AppDimensions.numD035),
+                                            fontSize: size.width *
+                                                AppDimensions.numD035),
                                       ),
                                     ),
                                   ],
@@ -560,7 +585,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                               ),
                               Container(
                                 margin: EdgeInsets.symmetric(
-                                    horizontal: size.width * AppDimensions.numD04),
+                                    horizontal:
+                                        size.width * AppDimensions.numD04),
                                 width: size.width,
                                 height: size.width * AppDimensions.numD13,
                                 child: commonElevatedButton(
@@ -568,15 +594,19 @@ class _SocialSignUpState extends State<SocialSignUp>
                                     size,
                                     commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD035,
+                                        fontSize:
+                                            size.width * AppDimensions.numD035,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700),
-                                    commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                    commonButtonStyle(
+                                        size, AppColorTheme.colorThemePink),
                                     () {
                                   if (formKey.currentState!.validate()) {
                                     if (!isSelectCheck) {
-                                      showSnackBar("Error",
-                                          AppStrings.enableNotificationText, Colors.red);
+                                      showSnackBar(
+                                          "Error",
+                                          AppStrings.enableNotificationText,
+                                          Colors.red);
                                     } else if (!termConditionsChecked) {
                                       showSnackBar(
                                           "Privacy Policy",
@@ -806,7 +836,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD04),
                           child: Row(
                             children: [
                               Text(
@@ -819,9 +850,10 @@ class _SocialSignUpState extends State<SocialSignUp>
                               ),
                               const Spacer(),
                               IconButton(
-                                  splashRadius: size.width * AppDimensions.numD06,
+                                  splashRadius:
+                                      size.width * AppDimensions.numD06,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -861,21 +893,21 @@ class _SocialSignUpState extends State<SocialSignUp>
                                           showAvatarError = false;
                                           avatarState(() {});
                                           setState(() {});
-                                          Navigator.pop(context);
+                                          context.pop();
                                         },
                                         child: Stack(
                                           children: [
                                             Image.network(
                                               item.avatar,
-                                              errorBuilder:
-                                                  (context,
-                                                      exception,
-                                                      stackTrace) {
+                                              errorBuilder: (context, exception,
+                                                  stackTrace) {
                                                 return Image.asset(
                                                   "${commonImagePath}rabbitLogo.png",
                                                   fit: BoxFit.contain,
-                                                  width: size.width * AppDimensions.numD20,
-                                                  height: size.width * AppDimensions.numD20,
+                                                  width: size.width *
+                                                      AppDimensions.numD20,
+                                                  height: size.width *
+                                                      AppDimensions.numD20,
                                                 );
                                               },
                                               loadingBuilder: (context, child,
@@ -900,7 +932,8 @@ class _SocialSignUpState extends State<SocialSignUp>
                                                 child: Icon(
                                                   Icons.check,
                                                   color: Colors.black,
-                                                  size: size.width * AppDimensions.numD06,
+                                                  size: size.width *
+                                                      AppDimensions.numD06,
                                                 ),
                                               ),
                                           ],
@@ -1114,14 +1147,11 @@ class _SocialSignUpState extends State<SocialSignUp>
           .setBool(sourceDataIsClickKey, src["is_clicked"] ?? false);
     }
 
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-            builder: (context) => WelcomeScreen(
-                  hideLeading: false,
-                  screenType: '',
-                  isSocialLogin: true,
-                )),
-        (route) => false);
+    context.goNamed(AppRoutes.welcomeName, extra: {
+      'hideLeading': false,
+      'screenType': '',
+      'isSocialLogin': true,
+    });
   }
 
   @override
@@ -1130,7 +1160,6 @@ class _SocialSignUpState extends State<SocialSignUp>
 }
 
 class AvatarsData {
-
   AvatarsData.fromJson(json) {
     id = json["_id"] ?? "";
     avatar = json["avatar"] ?? "";

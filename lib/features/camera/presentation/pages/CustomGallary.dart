@@ -6,23 +6,22 @@ import 'package:intl/intl.dart';
 import 'package:native_exif/native_exif.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
-import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:video_thumbnail/video_thumbnail.dart' as vt;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:presshop/main.dart';
+import 'package:presshop/core/di/injection_container.dart' as di;
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:video_player/video_player.dart';
-import 'package:presshop/core/di/injection_container.dart' as di;
+import 'package:presshop/main.dart';
 
 // ignore: must_be_immutable
 class CustomGallery extends StatefulWidget {
@@ -81,10 +80,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
     bool showDone = selectedList.any((element) => element);
     return WillPopScope(
       onWillPop: () async {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Dashboard(initialPosition: 2)));
+        context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
 
         return false;
       },
@@ -104,10 +100,8 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
             size: size,
             showActions: showDone,
             leadingFxn: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
+              context.goNamed(AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2});
             },
             actionWidget: [
               !isSelectedImageProcessing
@@ -145,7 +139,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                           () async {
                         /// Prince
                         if (widget.picAgain) {
-                          Navigator.pop(context, camListData);
+                          context.pop(camListData);
                         } else {
                           var validationVideoLenght = true;
                           for (var item in camListData) {
@@ -168,16 +162,13 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
                             }
                           }
                           if (validationVideoLenght) {
-                            Navigator.push(
-                                navigatorKey.currentState!.context,
-                                MaterialPageRoute(
-                                    builder: (context) => PreviewScreen(
-                                          cameraData: null,
-                                          pickAgain: widget.picAgain,
-                                          type: "gallery",
-                                          cameraListData: camListData,
-                                          mediaList: [],
-                                        )));
+                            context.pushNamed(AppRoutes.previewName, extra: {
+                              'cameraData': null,
+                              'pickAgain': widget.picAgain,
+                              'type': "gallery",
+                              'cameraListData': camListData,
+                              'mediaList': [],
+                            });
                           }
                         }
                       }),
@@ -428,13 +419,11 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
 
     if (!hasAccess) {
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PermissionErrorScreen(
-            permissionsStatus: {Permission.photos: false},
-          ),
-        ),
+      context.pushReplacementNamed(
+        AppRoutes.permissionErrorName,
+        extra: {
+          'permissionsStatus': {Permission.photos: false},
+        },
       );
       return;
     }
@@ -606,7 +595,7 @@ class CustomGalleryState extends State<CustomGallery> with AnalyticsPageMixin {
           setState(() {});
           if (alertDialog != null) {
             alertDialog = null;
-            Navigator.of(navigatorKey.currentContext!).pop();
+            context.pop();
           }
         }
       } else {

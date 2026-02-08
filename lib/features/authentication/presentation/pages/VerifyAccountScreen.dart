@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/authentication/presentation/pages/WelcomeScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import '../bloc/verification_bloc.dart';
 import '../bloc/verification_event.dart';
@@ -13,7 +14,6 @@ import '../bloc/verification_state.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 
 class VerifyAccountScreen extends StatefulWidget {
-
   const VerifyAccountScreen({
     super.key,
     required this.emailAddressValue,
@@ -99,20 +99,16 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                   imagePath: widget.imagePath,
                 ));
           } else if (state is RegistrationSuccess) {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(
-                          hideLeading: false,
-                          screenType: '',
-                          sourceDataIsOpened: state.isSourceDataOpened,
-                          sourceDataType: state.sourceDataType,
-                          sourceDataUrl:
-                              "", // Assuming handled by WelcomeScreen or logic
-                          sourceDataHeading: "",
-                          sourceDataDescription: "",
-                          isClick: false,
-                        )),
-                (route) => false);
+            context.goNamed(AppRoutes.welcomeName, extra: {
+              'hideLeading': false,
+              'screenType': '',
+              'sourceDataIsOpened': state.isSourceDataOpened,
+              'sourceDataType': state.sourceDataType,
+              'sourceDataUrl': "",
+              'sourceDataHeading': "",
+              'sourceDataDescription': "",
+              'isClick': false,
+            });
           }
         },
         builder: (context, state) {
@@ -129,7 +125,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
               size: size,
               showActions: false,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: null,
             ),
@@ -188,7 +184,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                 text: AppStrings.verifyMobileSubHeadingText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD035)),
+                                    fontSize:
+                                        size.width * AppDimensions.numD035)),
                             WidgetSpan(
                                 child: SizedBox(
                               width: size.width * AppDimensions.numD01,
@@ -198,7 +195,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                     "${widget.countryCode}${widget.mobileNumberValue}",
                                 style: TextStyle(
                                     color: AppColorTheme.colorThemePink,
-                                    fontSize: size.width * AppDimensions.numD035))
+                                    fontSize:
+                                        size.width * AppDimensions.numD035))
                           ]),
                         ),
                         SizedBox(
@@ -210,11 +208,16 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                           onSubmit: (text) {},
                           onChange: (text) {},
                           otpPinFieldStyle: OtpPinFieldStyle(
-                            defaultFieldBorderColor: AppColorTheme.colorTextFieldBorder,
-                            activeFieldBorderColor: AppColorTheme.colorTextFieldBorder,
-                            defaultFieldBackgroundColor: AppColorTheme.colorLightGrey,
-                            activeFieldBackgroundColor: AppColorTheme.colorLightGrey,
-                            fieldBorderRadius: size.width * AppDimensions.numD025,
+                            defaultFieldBorderColor:
+                                AppColorTheme.colorTextFieldBorder,
+                            activeFieldBorderColor:
+                                AppColorTheme.colorTextFieldBorder,
+                            defaultFieldBackgroundColor:
+                                AppColorTheme.colorLightGrey,
+                            activeFieldBackgroundColor:
+                                AppColorTheme.colorLightGrey,
+                            fieldBorderRadius:
+                                size.width * AppDimensions.numD025,
                             fieldBorderWidth: 0.4,
                           ),
                           maxLength: 5,
@@ -237,10 +240,12 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                             SizedBox(
                               width: size.width * AppDimensions.numD02,
                             ),
-                            Text("${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
+                            Text(
+                                "${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD035))
+                                    fontSize:
+                                        size.width * AppDimensions.numD035))
                           ],
                         ),
                         SizedBox(
@@ -252,11 +257,13 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                 text: AppStrings.otpNotReceivedText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     fontFamily: 'AirbnbCereal',
                                     fontWeight: FontWeight.normal)),
                             TextSpan(
-                              text: " ${AppStrings.clickHereText.toLowerCase()} ",
+                              text:
+                                  " ${AppStrings.clickHereText.toLowerCase()} ",
                               style: TextStyle(
                                   color: AppColorTheme.colorThemePink,
                                   fontSize: size.width * AppDimensions.numD035,
@@ -284,7 +291,8 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                 text: AppStrings.anotherOneText,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     fontFamily: 'AirbnbCereal',
                                     fontWeight: FontWeight.normal)),
                           ]),

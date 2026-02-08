@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:app_links/app_links.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -11,9 +13,7 @@ import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/global_loader.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
-import 'package:presshop/core/widgets/error/location_error_screen.dart';
+// import 'package:presshop/core/widgets/error/location_error_screen.dart';
 import 'package:presshop/features/content/presentation/pages/content_page.dart';
 import 'package:presshop/features/task/presentation/pages/task_screen.dart';
 
@@ -25,7 +25,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:location/location.dart' as lc;
 
-import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
 import 'package:presshop/features/map/presentation/pages/map_page.dart';
 import 'package:presshop/features/news/presentation/pages/news_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -172,26 +171,17 @@ class DashboardState extends State<Dashboard>
     if (widget.openChatScreen) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConversationScreen(
-                hideLeading: false,
-                message: '',
-              ),
-            ),
+          context.pushNamed(
+            AppRoutes.chatName,
+            extra: {'hideLeading': false, 'message': ''},
           );
         }
       });
     } else if (widget.openNotification) {
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyNotificationScreen(
-              count: 1,
-            ),
-          ),
+        context.pushNamed(
+          AppRoutes.notificationsName,
+          extra: {'count': 1},
         );
       });
     } else if (widget.openBeansActivation) {
@@ -328,9 +318,9 @@ class DashboardState extends State<Dashboard>
         String type = link.substring(link.lastIndexOf("&") + 1, link.length);
         debugPrint("type:::::$type");
         debugPrint("commonID-->$id");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyContentPage()),
+        context.goNamed(
+          AppRoutes.dashboardName,
+          extra: {'initialPosition': 0},
         );
       } else if (link.split("&").last == "type=Group") {
         String groupId = link.substring(link.lastIndexOf("?") + 1, link.length);
@@ -386,7 +376,7 @@ class DashboardState extends State<Dashboard>
                               const Spacer(),
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -480,7 +470,7 @@ class DashboardState extends State<Dashboard>
                                       // final url =
                                       //     setIsClickForBeansActivation();
 
-                                      Navigator.pop(context);
+                                      context.pop();
                                     } catch (e) {
                                       debugPrint("Error launching URL: $e");
                                     }
@@ -581,12 +571,14 @@ class DashboardState extends State<Dashboard>
                         dashBoardInterface!.saveDraft();
                       }
                     }
-                    Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BroadCastScreen(
-                              taskId: task.task.id,
-                              mediaHouseId: task.task.mediaHouse.id,
-                            )));
+                    context.pop();
+                    context.pushNamed(
+                      AppRoutes.broadcastName,
+                      extra: {
+                        'taskId': task.task.id,
+                        'mediaHouseId': task.task.mediaHouse.id
+                      },
+                    );
                   },
                 );
               } else if (state is StudentBeansActivated) {
@@ -791,27 +783,20 @@ class DashboardState extends State<Dashboard>
                 "initiate_admin_chat") {
           Future.delayed(const Duration(seconds: 2), () {
             if (mounted) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ConversationScreen(
-                    hideLeading: false,
-                    message: '',
-                  ),
-                ),
-              );
+              if (mounted) {
+                context.pushNamed(
+                  AppRoutes.chatName,
+                  extra: {'hideLeading': false, 'message': ''},
+                );
+              }
             }
           });
         } else if (message.data.isNotEmpty &&
             message.data["image"] != null &&
             message.data["image"].isNotEmpty) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyNotificationScreen(
-                count: 1,
-              ),
-            ),
+          context.pushNamed(
+            AppRoutes.notificationsName,
+            extra: {'count': 1},
           );
         }
         if (message.notification != null) {
@@ -863,15 +848,9 @@ class DashboardState extends State<Dashboard>
   }
 
   void goToLocationErrorScreen() {
-    Navigator.of(navigatorKey.currentContext!)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => LocationErrorScreen(),
-      ),
-    )
-        .then((value) {
+    context.pushNamed(AppRoutes.locationErrorName).then((value) {
       if (value != null) {
-        proceedWithLocation(value);
+        proceedWithLocation(value as lc.LocationData?);
       } else {
         debugPrint("Location Error");
       }
@@ -919,7 +898,7 @@ class DashboardState extends State<Dashboard>
 
             if (alertDialog != null) {
               alertDialog = null;
-              Navigator.of(navigatorKey.currentContext!).pop();
+              context.pop();
             }
           } else {
             debugPrint("No placemarks found");

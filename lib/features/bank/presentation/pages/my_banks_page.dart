@@ -3,14 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/core/widgets/common_web_view.dart';
+// import 'package:presshop/core/widgets/common_web_view.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/bank/presentation/bloc/bank_bloc.dart';
 import 'package:presshop/features/bank/presentation/bloc/bank_event.dart';
 import 'package:presshop/features/bank/presentation/bloc/bank_state.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class MyBanksPage extends StatelessWidget {
   const MyBanksPage({super.key});
@@ -80,7 +81,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                       ),
                       const Spacer(),
                       IconButton(
-                        onPressed: () => Navigator.pop(dialogContext),
+                        onPressed: () => dialogContext.pop(),
                         icon: Image.asset(
                           "${iconsPath}cross.png",
                           width: size.width * AppDimensions.numD065,
@@ -121,7 +122,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                             size,
                             commonButtonTextStyle(size),
                             commonButtonStyle(size, Colors.black),
-                            () => Navigator.pop(dialogContext),
+                            () => dialogContext.pop(),
                           ),
                         ),
                       ),
@@ -136,7 +137,7 @@ class _MyBanksViewState extends State<MyBanksView> {
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink),
                             () {
-                              Navigator.pop(dialogContext);
+                              dialogContext.pop();
                               context.read<BankBloc>().add(
                                     DeleteBankEvent(
                                       id: id,
@@ -188,15 +189,13 @@ class _MyBanksViewState extends State<MyBanksView> {
         titleSpacing: 0,
         size: size,
         showActions: true,
-        leadingFxn: () => Navigator.pop(context),
+        leadingFxn: () => context.pop(),
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Dashboard(initialPosition: 2),
-                ),
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
               );
             },
             child: Image.asset(
@@ -213,15 +212,15 @@ class _MyBanksViewState extends State<MyBanksView> {
           if (state is BankError) {
             showToast(state.message);
           } else if (state is StripeUrlLoaded) {
-            Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => CommonWebView(
-                          webUrl: state.url,
-                          title: stripeBankPageTitle,
-                          accountId: "",
-                          type: "",
-                        )))
-                .then((value) {
+            context.pushNamed(
+              AppRoutes.commonWebViewName,
+              extra: {
+                'webUrl': state.url,
+                'title': stripeBankPageTitle,
+                'accountId': "",
+                'type': "",
+              },
+            ).then((value) {
               if (value == true) {
                 context.read<BankBloc>().add(FetchBanksEvent());
               }
@@ -580,11 +579,9 @@ class _MyBanksViewState extends State<MyBanksView> {
                       commonButtonTextStyle(size),
                       commonButtonStyle(size, Colors.black),
                       () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Dashboard(initialPosition: 2),
-                          ),
+                        context.goNamed(
+                          AppRoutes.dashboardName,
+                          extra: {'initialPosition': 2},
                         );
                       },
                     ),

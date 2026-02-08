@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/main.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 
 class TokenRefreshManager {
   factory TokenRefreshManager() => _instance;
@@ -202,10 +203,8 @@ class TokenRefreshManager {
     await sharedPreferences?.remove(refreshtokenKey);
     await sharedPreferences?.remove(rememberKey);
 
-    if (navigatorKey.currentState != null) {
-      navigatorKey.currentState!.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-          (route) => false);
+    if (navigatorKey.currentContext != null) {
+      GoRouter.of(navigatorKey.currentContext!).goNamed(AppRoutes.loginName);
     }
   }
 

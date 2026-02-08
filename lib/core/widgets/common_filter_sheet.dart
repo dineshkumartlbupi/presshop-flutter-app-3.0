@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presshop/core/core_export.dart';
 
 class FilterModel {
@@ -72,7 +73,7 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                 ),
               ),
               IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => context.pop(),
                 icon: const Icon(Icons.close),
               )
             ],
@@ -108,9 +109,12 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                   color: item.isSelected ? Colors.white : Colors.black,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD02),
                   side: BorderSide(
-                    color: item.isSelected ? AppColorTheme.colorThemePink : Colors.grey,
+                    color: item.isSelected
+                        ? AppColorTheme.colorThemePink
+                        : Colors.grey,
                   ),
                 ),
               );
@@ -148,9 +152,12 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                   color: item.isSelected ? Colors.white : Colors.black,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD02),
                   side: BorderSide(
-                    color: item.isSelected ? AppColorTheme.colorThemePink : Colors.grey,
+                    color: item.isSelected
+                        ? AppColorTheme.colorThemePink
+                        : Colors.grey,
                   ),
                 ),
               );
@@ -163,14 +170,15 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                 child: OutlinedButton(
                   onPressed: () {
                     widget.onClear();
-                    Navigator.pop(context);
+                    context.pop();
                   },
                   style: OutlinedButton.styleFrom(
-                    padding:
-                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD035),
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD035),
                     side: const BorderSide(color: Colors.black),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD02),
                     ),
                   ),
                   child: Text(
@@ -187,14 +195,15 @@ class _CommonFilterSheetState extends State<CommonFilterSheet> {
                 child: ElevatedButton(
                   onPressed: () {
                     widget.onApply(widget.sortList, widget.filterList);
-                    Navigator.pop(context);
+                    context.pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    padding:
-                        EdgeInsets.symmetric(vertical: size.width * AppDimensions.numD035),
+                    padding: EdgeInsets.symmetric(
+                        vertical: size.width * AppDimensions.numD035),
                     backgroundColor: AppColorTheme.colorThemePink,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD02),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD02),
                     ),
                   ),
                   child: Text(

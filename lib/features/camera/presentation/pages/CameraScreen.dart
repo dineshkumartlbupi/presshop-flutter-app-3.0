@@ -8,15 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:presshop/core/core_export.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_bloc.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_event.dart';
 import 'package:presshop/features/camera/presentation/bloc/camera_state.dart';
-import 'package:presshop/features/camera/presentation/pages/CustomGallary.dart';
-import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 
 // Constants (Keep if not in common)
@@ -153,21 +152,20 @@ class CameraScreenState extends State<CameraScreen>
             if (state.errorMessage.contains("Permission") ||
                 state.errorMessage.contains("denied")) {
               if (mounted) {
-                await Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PermissionErrorScreen(
-                                permissionsStatus: {
-                                  Permission.camera: false,
-                                  Permission.microphone: false
-                                })));
+                context.pushReplacementNamed(AppRoutes.permissionErrorName,
+                    extra: {
+                      'permissionsStatus': {
+                        Permission.camera: false,
+                        Permission.microphone: false
+                      }
+                    });
               }
             }
           }
 
           if (state.status == CameraStatus.success) {
             if (widget.picAgain) {
-              Navigator.pop(context, state.capturedMedia);
+              context.pop(state.capturedMedia);
             } else {
               // Navigate to Preview
               // We need to pass the captured media. The preview screen handles the list.
@@ -176,24 +174,20 @@ class CameraScreenState extends State<CameraScreen>
               // Here state.capturedMedia has the list.
 
               if (mounted) {
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PreviewScreen(
-                              cameraData: null,
-                              pickAgain: widget.picAgain,
-                              type: state.selectedMode.toLowerCase() == "video"
-                                  ? "video"
-                                  : state.selectedMode.toLowerCase() ==
-                                          AppStrings.scanText.toLowerCase()
-                                      ? "scan"
-                                      : state.selectedMode.toLowerCase() ==
-                                              "pdf"
-                                          ? "pdf"
-                                          : "camera",
-                              cameraListData: state.capturedMedia,
-                              mediaList: [],
-                            ))).then((value) {
+                await context.pushNamed(AppRoutes.previewName, extra: {
+                  'cameraData': null,
+                  'pickAgain': widget.picAgain,
+                  'type': state.selectedMode.toLowerCase() == "video"
+                      ? "video"
+                      : state.selectedMode.toLowerCase() ==
+                              AppStrings.scanText.toLowerCase()
+                          ? "scan"
+                          : state.selectedMode.toLowerCase() == "pdf"
+                              ? "pdf"
+                              : "camera",
+                  'cameraListData': state.capturedMedia,
+                  'mediaList': [],
+                }).then((value) {
                   // On return
                   _bloc!.state.cameraController?.resumePreview();
                 });
@@ -205,11 +199,10 @@ class CameraScreenState extends State<CameraScreen>
             // Handle specific permission denial (audio)
             // Handle specific permission denial (audio)
             if (mounted) {
-              await Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PermissionErrorScreen(
-                          permissionsStatus: {Permission.microphone: false})));
+              context
+                  .pushReplacementNamed(AppRoutes.permissionErrorName, extra: {
+                'permissionsStatus': {Permission.microphone: false}
+              });
             }
           }
         },
@@ -298,7 +291,7 @@ class CameraScreenState extends State<CameraScreen>
                 color: Colors.white,
                 fontWeight: FontWeight.w700),
             commonButtonStyle(size, AppColorTheme.colorThemePink),
-            () => Navigator.pop(context)),
+            () => context.pop()),
       ),
     );
   }
@@ -416,18 +409,15 @@ class CameraScreenState extends State<CameraScreen>
             alignment: Alignment.bottomRight,
             child: InkWell(
               onTap: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CustomGallery(picAgain: widget.picAgain)))
-                    .then((value) {
+                context.pushNamed(AppRoutes.customGalleryName, extra: {
+                  'picAgain': widget.picAgain,
+                }).then((value) {
                   if (value != null) {
                     // ignore: use_build_context_synchronously
                     if (!context.mounted) return;
                     context.read<CameraBloc>().add(
                         UpdateCapturedMediaEvent(value as List<CameraData>));
-                    if (widget.picAgain) Navigator.pop(context, value);
+                    if (widget.picAgain) context.pop(value);
                   }
                 });
               },
@@ -714,15 +704,13 @@ class CameraScreenState extends State<CameraScreen>
                 IconButton(
                   onPressed: () {
                     // Done
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PreviewScreen(
-                                cameraData: null,
-                                pickAgain: widget.picAgain,
-                                type: "camera",
-                                cameraListData: state.capturedMedia,
-                                mediaList: [])));
+                    context.pushNamed(AppRoutes.previewName, extra: {
+                      'cameraData': null,
+                      'pickAgain': widget.picAgain,
+                      'type': "camera",
+                      'cameraListData': state.capturedMedia,
+                      'mediaList': []
+                    });
                   },
                   icon: Icon(Icons.check,
                       color: AppColorTheme.colorOnlineGreen,

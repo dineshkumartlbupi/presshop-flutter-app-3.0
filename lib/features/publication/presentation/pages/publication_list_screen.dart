@@ -15,6 +15,8 @@ import '../bloc/publication_bloc.dart';
 import '../bloc/publication_event.dart';
 import '../bloc/publication_state.dart';
 import '../../domain/entities/publication_earning_stats.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PublicationListScreen extends StatefulWidget {
@@ -79,7 +81,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: [
               InkWell(
@@ -630,17 +632,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           InkWell(
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          TransactionDetailScreen(
-                                            pageType: PageType.CONTENT,
-                                            type: "received",
-                                            transactionData:
-                                                publicationTransactionList[
-                                                    index],
-                                          )));
+                              context.pushNamed(
+                                AppRoutes.transactionDetailName,
+                                extra: {
+                                  'pageType': PageType.CONTENT,
+                                  'type': "received",
+                                  'transactionData':
+                                      publicationTransactionList[index],
+                                },
+                              );
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -909,17 +909,15 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
 
                           InkWell(
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          TransactionDetailScreen(
-                                            pageType: PageType.CONTENT,
-                                            type: "pending",
-                                            transactionData:
-                                                publicationTransactionList[
-                                                    index],
-                                          )));
+                              context.pushNamed(
+                                AppRoutes.transactionDetailName,
+                                extra: {
+                                  'pageType': PageType.CONTENT,
+                                  'type': "pending",
+                                  'transactionData':
+                                      publicationTransactionList[index],
+                                },
+                              );
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1013,7 +1011,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                           IconButton(
                             splashRadius: size.width * AppDimensions.numD07,
                             onPressed: () {
-                              Navigator.pop(context);
+                              context.pop();
                             },
                             icon: Icon(
                               Icons.close,
@@ -1108,7 +1106,7 @@ class _PublicationListScreenState extends State<PublicationListScreen> {
                                 fontWeight: FontWeight.w700),
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink), () {
-                          Navigator.pop(context);
+                          context.pop();
                           _applyFilter(context);
                         }),
                       ),

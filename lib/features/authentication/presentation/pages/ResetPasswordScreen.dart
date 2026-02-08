@@ -8,10 +8,10 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
 class ResetPasswordScreen extends StatefulWidget {
-
   ResetPasswordScreen({super.key, required this.emailAddressValue});
   String emailAddressValue = "";
 
@@ -56,9 +56,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is ResetPasswordSuccess) {
-            Navigator.pop(context); // Pop ResetPasswordScreen
-            Navigator.pop(
-                context); // Pop ForgotPasswordScreen (to return to login)
+            context.pop(); // Pop ResetPasswordScreen
+            context.pop(); // Pop ForgotPasswordScreen (to return to login)
             showSnackBar(
                 "Password Updated!",
                 "Your password has been changed successfully!",
@@ -81,7 +80,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
             showActions: false,
             actionWidget: null,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
           ),
           body: SafeArea(
@@ -143,8 +142,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 : const AssetImage(
                                     "${iconsPath}ic_block_eye.png",
                                   ),
-                            color:
-                                !hidePassword ? AppColorTheme.colorTextFieldIcon : AppColorTheme.colorHint,
+                            color: !hidePassword
+                                ? AppColorTheme.colorTextFieldIcon
+                                : AppColorTheme.colorHint,
                           ),
                         ),
                         SizedBox(
@@ -448,8 +448,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   Container(
                     width: size.width,
                     height: size.width * AppDimensions.numD14,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * AppDimensions.numD08),
                     child: BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         if (state is AuthLoading) {
@@ -464,7 +464,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 fontSize: size.width * AppDimensions.numD035,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),
-                            commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                            commonButtonStyle(
+                                size, AppColorTheme.colorThemePink), () {
                           if (formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(ResetPasswordSubmitted(
                                   email: widget.emailAddressValue,
@@ -488,8 +489,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       alignment: Alignment.center,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          context.pop();
+                          context.pop();
                           // Or Navigate to login if needed, typically pop to prev stack is fine
                         },
                         child: Text(AppStrings.signInText,

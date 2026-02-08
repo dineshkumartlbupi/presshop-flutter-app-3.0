@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PermissionErrorScreen extends StatefulWidget {
@@ -55,10 +56,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
     var allGranted = permissionsStatus.values.every((status) => status == true);
     if (allGranted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (context) => Dashboard(initialPosition: 2)),
-            (route) => false);
+        context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
       });
     }
   }
@@ -75,7 +73,7 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
             "This app needs access to your ${permission.toString().split('.').last.toTitleCase()} to provide its features. Please enable the permission in your app settings.",
             "${permission.toString().split('.').last.toTitleCase()} Permission Required",
             () {
-              openAppSettings().then((value) => {Navigator.pop(context, true)});
+              openAppSettings().then((value) => {context.pop(true)});
             },
           );
         }
@@ -212,11 +210,8 @@ class _PermissionErrorScreenState extends State<PermissionErrorScreen>
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, Colors.black),
                     () async {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Dashboard(initialPosition: 0)),
-                          (route) => false);
+                      context.goNamed(AppRoutes.dashboardName,
+                          extra: {'initialPosition': 0});
                     },
                   ),
                 ),
