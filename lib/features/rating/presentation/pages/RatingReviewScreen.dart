@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:presshop/features/publish/data/models/category_data_model.dart';
@@ -11,8 +12,9 @@ import 'package:presshop/features/rating/presentation/bloc/rating/rating_bloc.da
 
 import 'package:presshop/core/di/injection_container.dart' as di;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+// import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/rating/domain/entities/review.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class FilterRatingData {
   FilterRatingData({required this.ratingValue, required this.selected});
@@ -105,15 +107,15 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
           size: size,
           showActions: true,
           leadingFxn: () {
-            Navigator.pop(context);
+            context.pop();
           },
           actionWidget: [
             InkWell(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
+                context.goNamed(
+                  AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2},
+                );
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
@@ -549,7 +551,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                           IconButton(
                             splashRadius: size.width * AppDimensions.numD07,
                             onPressed: () {
-                              Navigator.pop(context);
+                              context.pop();
                             },
                             icon: Icon(
                               Icons.close,
@@ -749,7 +751,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen> {
                           parentContext
                               .read<RatingBloc>()
                               .add(RatingFilterUpdated(filters));
-                          Navigator.pop(context);
+                          context.pop();
                         },
                         child: Text(
                           "Show Results",

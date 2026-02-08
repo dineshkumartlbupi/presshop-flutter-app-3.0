@@ -5,13 +5,15 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
+
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_bloc.dart';
 import 'package:presshop/features/menu/presentation/pages/menu_config.dart';
 import 'package:presshop/features/menu/presentation/bloc/menu_ui_cubit.dart';
 import 'package:presshop/features/menu/presentation/widgets/currency_selector_sheet.dart';
 import 'package:presshop/core/extensions/context_extensions.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -68,9 +70,7 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   void _navigateToLogin(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false);
+    context.goNamed(AppRoutes.loginName);
   }
 
   void _onMenuTap(BuildContext context, MenuData item) {
@@ -78,18 +78,171 @@ class _MenuScreenState extends State<MenuScreen> {
       case MenuAction.logout:
         logoutDialog(context.mqSize, context);
         break;
+      case MenuAction.digitalId:
+        context.pushNamed(AppRoutes.digitalIdName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.myProfile:
+        context.pushNamed(
+          AppRoutes.profileName,
+          extra: {
+            'editProfileScreen': false,
+            'screenType': AppStrings.myProfileText,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.editProfile:
+        context.pushNamed(
+          AppRoutes.profileName,
+          extra: {
+            'editProfileScreen': true,
+            'screenType': AppStrings.editProfileText,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.paymentMethod:
+        context.pushNamed(AppRoutes.bankName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.accountSettings:
+        context.pushNamed(AppRoutes.accountSettingsName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.changePassword:
+        context.pushNamed(AppRoutes.changePasswordName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.contact:
+        context.pushNamed(AppRoutes.contactUsName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.faq:
+        context.pushNamed(
+          AppRoutes.faqName,
+          extra: {
+            'priceTipsSelected': false,
+            'type': 'faq',
+            'index': 0,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.priceTips:
+        context.pushNamed(
+          AppRoutes.faqName,
+          extra: {
+            'priceTipsSelected': true,
+            'type': 'price_tips',
+            'index': 0,
+          },
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.legal:
+        context.pushNamed(
+          AppRoutes.termName,
+          extra: {'type': 'legal'},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.privacy:
+        context.pushNamed(
+          AppRoutes.termName,
+          extra: {'type': 'privacy_policy'},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
       case MenuAction.currency:
         _showCurrencyBottomSheet(context);
         break;
-      default:
-        if (item.pageBuilder != null) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-                  builder: (context) => item.pageBuilder!(context)))
-              .then((value) {
-            context.read<MenuBloc>().add(MenuLoadCounts());
-          });
-        }
+      case MenuAction.chat:
+        context.pushNamed(AppRoutes.chatBotName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.leaderboard:
+        context.pushNamed(AppRoutes.leaderboardName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.myDrafts:
+        context.pushNamed(
+          AppRoutes.myDraftName,
+          extra: {'publishedContent': false, 'screenType': ''},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.myContent:
+        context.pushNamed(AppRoutes.myContentName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.feed:
+        context.pushNamed(AppRoutes.feedName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.myTasks:
+        context.pushNamed(
+          AppRoutes.myTasksName,
+          extra: {'hideLeading': false},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.myEarnings:
+        context.pushNamed(
+          AppRoutes.myEarningName,
+          extra: {'openDashboard': false, 'initialTapPosition': 0},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.notification:
+        context.pushNamed(
+          AppRoutes.notificationsName,
+          extra: {'count': 0},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.ratingReview:
+        context.pushNamed(AppRoutes.ratingReviewName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.referHopper:
+        context.pushNamed(AppRoutes.referName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.uploadDocs:
+        context.pushNamed(
+          AppRoutes.uploadDocumentsName,
+          extra: {'menuScreen': true, 'hideLeading': false},
+        ).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
+      case MenuAction.tutorials:
+        context.pushNamed(AppRoutes.tutorialsName).then((value) {
+          context.read<MenuBloc>().add(MenuLoadCounts());
+        });
+        break;
     }
   }
 
@@ -110,13 +263,14 @@ class _MenuScreenState extends State<MenuScreen> {
         titleSpacing: 0,
         size: size,
         showActions: false,
-        leadingFxn: () => Navigator.pop(context),
+        leadingFxn: () => context.pop(),
         actionWidget: [],
       ),
       body: SafeArea(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * AppDimensions.numD06, vertical: size.width * AppDimensions.numD02),
+              horizontal: size.width * AppDimensions.numD06,
+              vertical: size.width * AppDimensions.numD02),
           itemCount: menuList.length,
           separatorBuilder: (context, index) => const Divider(
             thickness: 2,
@@ -144,18 +298,20 @@ class _MenuScreenState extends State<MenuScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               contentPadding: EdgeInsets.zero,
-              insetPadding:
-                  EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * AppDimensions.numD04),
               content: Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(size.width * AppDimensions.numD045)),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD045)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.only(
+                          left: size.width * AppDimensions.numD04),
                       child: Row(
                         children: [
                           Text(
@@ -167,7 +323,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           ),
                           const Spacer(),
                           IconButton(
-                              onPressed: () => Navigator.pop(dialogContext),
+                              onPressed: () => context.pop(),
                               icon: Icon(
                                 Icons.close,
                                 color: Colors.black,
@@ -177,8 +333,8 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
                       child: const Divider(
                         color: Colors.black,
                         thickness: 0.5,
@@ -186,19 +342,19 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                     SizedBox(height: size.width * AppDimensions.numD02),
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD04),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 border: Border.all(color: Colors.black)),
                             child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                                 child: Image.asset(
                                   "assets/rabbits/logout_rabbit.png",
                                   height: size.width * AppDimensions.numD30,
@@ -235,7 +391,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 size,
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(size, Colors.black), () {
-                              Navigator.pop(dialogContext);
+                              context.pop();
                               menuBloc.add(MenuLogoutRequested());
                             }),
                           )),
@@ -247,8 +403,9 @@ class _MenuScreenState extends State<MenuScreen> {
                                 AppStrings.stayLoggedInText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
-                                () => Navigator.pop(dialogContext)),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
+                                () => context.pop()),
                           )),
                         ],
                       ),
@@ -274,7 +431,7 @@ class _MenuScreenState extends State<MenuScreen> {
               selectedCurrency: uiState.currency,
               onSelected: (currency) {
                 uiCubit.setCurrency(currency);
-                Navigator.pop(context);
+                context.pop();
               },
             );
           },
@@ -285,7 +442,6 @@ class _MenuScreenState extends State<MenuScreen> {
 }
 
 class MenuTile extends StatelessWidget {
-
   const MenuTile({
     super.key,
     required this.item,
@@ -303,8 +459,9 @@ class MenuTile extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(
-            vertical:
-                isNotification ? size.width * AppDimensions.numD01 : size.width * AppDimensions.numD02),
+            vertical: isNotification
+                ? size.width * AppDimensions.numD01
+                : size.width * AppDimensions.numD02),
         child: Row(
           children: [
             if (isNotification)
@@ -312,8 +469,9 @@ class MenuTile extends StatelessWidget {
             else
               _buildIcon(context),
             SizedBox(
-              width:
-                  isNotification ? size.width * AppDimensions.numD015 : size.width * AppDimensions.numD03,
+              width: isNotification
+                  ? size.width * AppDimensions.numD015
+                  : size.width * AppDimensions.numD03,
             ),
             Expanded(
               child: _buildTitle(context),
@@ -339,7 +497,9 @@ class MenuTile extends StatelessWidget {
       children: [
         ImageIcon(
           AssetImage(item.icon),
-          size: isSpecialSize ? size.width * AppDimensions.numD072 : size.width * AppDimensions.numD06,
+          size: isSpecialSize
+              ? size.width * AppDimensions.numD072
+              : size.width * AppDimensions.numD06,
           color: Colors.black,
         ),
         if (item.showAlertBadge)
@@ -348,13 +508,15 @@ class MenuTile extends StatelessWidget {
             builder: (context, count) {
               if (count == 0) return const SizedBox.shrink();
               return Container(
-                margin: EdgeInsets.only(top: size.width * AppDimensions.numD004),
+                margin:
+                    EdgeInsets.only(top: size.width * AppDimensions.numD004),
                 child: CircleAvatar(
                   backgroundColor: AppColorTheme.colorThemePink,
                   radius: size.width * AppDimensions.numD016,
                   child: FittedBox(
                     child: Padding(
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD004),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD004),
                       child: Text(
                         "$count",
                         style: commonTextStyle(
@@ -434,7 +596,8 @@ class NotificationBadge extends StatelessWidget {
                 width: size.width * AppDimensions.numD06,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, width: 1.2),
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD015),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD015),
                 ),
               ),
               if (count > 0)

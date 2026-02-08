@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/authentication/presentation/pages/LoginScreen.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
 import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
 import '../bloc/onboarding_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class Walkthrough extends StatefulWidget {
   const Walkthrough({super.key});
@@ -86,15 +87,11 @@ class _WalkthroughState extends State<Walkthrough> {
       child: BlocListener<OnboardingBloc, OnboardingState>(
         listener: (context, state) {
           if (state is OnboardingSuccess) {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+            context.goNamed(AppRoutes.loginName);
           } else if (state is OnboardingError) {
             // Fallback to login anyway or show error?
             // Usually just log and proceed
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+            context.goNamed(AppRoutes.loginName);
           }
         },
         child: Builder(builder: (context) {

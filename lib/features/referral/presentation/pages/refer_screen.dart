@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/core/constants/string_constants.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:share_plus/share_plus.dart';
@@ -11,7 +10,8 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class ReferScreen extends StatefulWidget {
   const ReferScreen({super.key});
@@ -59,15 +59,13 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
+              context.goNamed(AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2});
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -326,11 +324,13 @@ class _ReferScreenState extends State<ReferScreen> with AnalyticsPageMixin {
                       TextSpan(
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => MyEarningScreen(
-                                      openDashboard: false,
-                                      initialTapPosition: 1,
-                                    )));
+                            context.pushNamed(
+                              AppRoutes.myEarningName,
+                              extra: {
+                                'openDashboard': false,
+                                'initialTapPosition': 1,
+                              },
+                            );
                           },
                         text: " Track your earnings",
                         style: commonTextStyle(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/main.dart';
@@ -130,7 +131,7 @@ void broadcastDialog({
                                       if (player.state == PlayerState.playing) {
                                         player.stop();
                                       }
-                                      Navigator.pop(context);
+                                      context.pop();
                                     },
                                     icon: Icon(
                                       Icons.close,
@@ -637,7 +638,7 @@ void commonErrorDialogDialog(
                             if (shouldShowClosedButton)
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -761,7 +762,7 @@ void onBoardingCompleteDialog({required Size size, required Function func}) {
                             const Spacer(),
                             IconButton(
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  context.pop();
                                 },
                                 icon: Image.asset(
                                   "${iconsPath}cross.png",
@@ -860,7 +861,7 @@ void showSnackBar(String title, String message, Color color,
 void showLoaderDialog(BuildContext context) {
   if (alertDialog != null) {
     debugPrint("loader False:");
-    Navigator.of(context, rootNavigator: true).pop();
+    context.pop();
   }
   alertDialog = AlertDialog(
     elevation: 0,

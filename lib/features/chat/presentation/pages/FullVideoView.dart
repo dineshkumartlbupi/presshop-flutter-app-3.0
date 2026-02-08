@@ -4,6 +4,7 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -112,7 +113,7 @@ class _MediaViewScreenState extends State<MediaViewScreen>
           size: size,
           showActions: false,
           leadingFxn: () {
-            Navigator.pop(context);
+            context.pop();
           },
           actionWidget: [],
           hideLeading: false),

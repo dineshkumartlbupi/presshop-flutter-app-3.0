@@ -10,7 +10,9 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
+
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 const int getAdminListReq = 1;
 
@@ -84,17 +86,15 @@ class _ChatListingScreenState extends State<ChatListingScreen>
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(
-                            initialPosition: 2,
-                          )),
-                  (route) => false);
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
+              );
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",

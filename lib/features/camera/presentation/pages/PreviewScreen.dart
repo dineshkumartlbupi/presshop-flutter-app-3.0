@@ -7,19 +7,17 @@ import 'package:path/path.dart' as path;
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
-import 'package:presshop/core/widgets/error/location_error_screen.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:location/location.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'AudioWaveFormWidgetScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class PreviewScreen extends StatefulWidget {
@@ -178,15 +176,9 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
   }
 
   void goToLocationErrorScreen() {
-    Navigator.of(navigatorKey.currentContext!)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => LocationErrorScreen(),
-      ),
-    )
-        .then((value) {
+    context.pushNamed(AppRoutes.locationErrorName).then((value) {
       if (value != null) {
-        proceedWithLocation(value);
+        proceedWithLocation(value as LocationData);
       } else {
         debugPrint("Location Error");
       }
@@ -199,15 +191,13 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
     return WillPopScope(
       onWillPop: () async {
         if (widget.type == "draft") {
-          Navigator.pop(context);
+          context.pop();
         } else {
           mediaList.clear();
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => Dashboard(
-                        initialPosition: 2,
-                      )),
-              (route) => false);
+          context.goNamed(
+            AppRoutes.dashboardName,
+            extra: {'initialPosition': 2},
+          );
         }
 
         return false;
@@ -376,11 +366,8 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   if (mediaList.length == 1) {
                                     debugPrint('hello::::::::');
                                     mediaList.removeAt(index);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                Dashboard(initialPosition: 2)));
+                                    context.goNamed(AppRoutes.dashboardName,
+                                        extra: {'initialPosition': 2});
                                   } else {
                                     mediaList.removeAt(index);
                                     if (currentPage >= mediaList.length) {
@@ -601,18 +588,18 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       "Only 10 contents allowed!",
                                       AppColorTheme.colorThemePink);
                                 } else {
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CameraScreen(
-                                                picAgain: true,
-                                                previousScreen: ScreenNameEnum
-                                                    .previewScreen,
-                                              )))
-                                      .then((value) {
+                                  context.pushNamed(
+                                    AppRoutes.cameraName,
+                                    extra: {
+                                      'picAgain': true,
+                                      'previousScreen':
+                                          ScreenNameEnum.previewScreen,
+                                    },
+                                  ).then((value) {
                                     debugPrint("Inside Picked Again Image");
                                     if (value != null) {
-                                      addMediaDataList(value);
+                                      addMediaDataList(
+                                          value as List<CameraData>);
                                     }
                                   });
                                 }
@@ -637,7 +624,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   commonButtonStyle(
                                       size, AppColorTheme.colorThemePink), () {
                                 if (widget.pickAgain) {
-                                  Navigator.pop(context);
+                                  context.pop();
                                   if (widget.type == "draft") {
                                     for (int i = 0; i < mediaList.length; i++) {
                                       var mediaItem = mediaList[i];
@@ -655,38 +642,33 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                           mediaList: mediaList);
                                     }
                                   } else {
-                                    Navigator.pop(
-                                        context,
-                                        PublishData(
-                                            imagePath: widget.cameraData!.path,
-                                            address: mediaAddress.isNotEmpty
-                                                ? mediaAddress
-                                                : widget.cameraListData.first
-                                                    .location,
-                                            date: mediaDate,
-                                            city: city.isNotEmpty
-                                                ? city
-                                                : widget
-                                                    .cameraListData.first.city,
-                                            state: state.isNotEmpty
-                                                ? state
-                                                : widget
-                                                    .cameraListData.first.state,
-                                            country: country.isNotEmpty
-                                                ? country
-                                                : widget.cameraListData.first
-                                                    .country,
-                                            latitude: latitude.isNotEmpty
-                                                ? latitude
-                                                : widget.cameraData!.latitude,
-                                            longitude: longitude.isNotEmpty
-                                                ? longitude
-                                                : widget.cameraData!.longitude,
-                                            mimeType:
-                                                widget.cameraData!.mimeType,
-                                            videoImagePath: widget
-                                                .cameraData!.videoImagePath,
-                                            mediaList: mediaList));
+                                    context.pop(PublishData(
+                                        imagePath: widget.cameraData!.path,
+                                        address: mediaAddress.isNotEmpty
+                                            ? mediaAddress
+                                            : widget
+                                                .cameraListData.first.location,
+                                        date: mediaDate,
+                                        city: city.isNotEmpty
+                                            ? city
+                                            : widget.cameraListData.first.city,
+                                        state: state.isNotEmpty
+                                            ? state
+                                            : widget.cameraListData.first.state,
+                                        country: country.isNotEmpty
+                                            ? country
+                                            : widget
+                                                .cameraListData.first.country,
+                                        latitude: latitude.isNotEmpty
+                                            ? latitude
+                                            : widget.cameraData!.latitude,
+                                        longitude: longitude.isNotEmpty
+                                            ? longitude
+                                            : widget.cameraData!.longitude,
+                                        mimeType: widget.cameraData!.mimeType,
+                                        videoImagePath:
+                                            widget.cameraData!.videoImagePath,
+                                        mediaList: mediaList));
                                   }
                                 } else {
                                   if (mediaList.first.location.isEmpty ||
@@ -756,15 +738,14 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       MyContentData? myContentData =
                                           widget.myContentData;
 
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PublishContentScreen(
-                                                      publishData: pubData,
-                                                      myContentData:
-                                                          myContentData,
-                                                      hideDraft: true,
-                                                      docType: widget.type)));
+                                      context.pushNamed(
+                                          AppRoutes.publishContentName,
+                                          extra: {
+                                            'publishData': pubData,
+                                            'myContentData': myContentData,
+                                            'hideDraft': true,
+                                            'docType': widget.type,
+                                          });
                                     }
                                   }
                                 }
@@ -808,19 +789,19 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                       "Only 10 contents allowed!",
                                       AppColorTheme.colorThemePink);
                                 } else {
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CameraScreen(
-                                                picAgain: true,
-                                                previousScreen: ScreenNameEnum
-                                                    .previewScreen,
-                                              )))
-                                      .then((value) {
+                                  context.pushNamed(
+                                    AppRoutes.cameraName,
+                                    extra: {
+                                      'picAgain': true,
+                                      'previousScreen':
+                                          ScreenNameEnum.previewScreen,
+                                    },
+                                  ).then((value) {
                                     debugPrint(
                                         ":::: Inside Picked Again Image :::: $value");
                                     if (value != null) {
-                                      addMediaDataList(value);
+                                      addMediaDataList(
+                                          value as List<CameraData>);
                                     }
                                   });
                                 }
@@ -843,7 +824,7 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   commonButtonStyle(
                                       size, AppColorTheme.colorThemePink), () {
                                 if (widget.pickAgain) {
-                                  Navigator.pop(context);
+                                  context.pop();
                                   if (widget.type == "draft") {
                                     for (int i = 0; i < mediaList.length; i++) {
                                       var mediaItem = mediaList[i];
@@ -861,39 +842,32 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                           mediaList: mediaList);
                                     }
                                   } else {
-                                    Navigator.pop(
-                                        context,
-                                        PublishData(
-                                            imagePath: widget.cameraData!.path,
-                                            address: mediaAddress.isNotEmpty
-                                                ? mediaAddress
-                                                : widget.cameraListData.first
-                                                    .location,
-                                            date: mediaDate.isNotEmpty
-                                                ? mediaDate
-                                                : widget.cameraListData.first
-                                                    .dateTime,
-                                            city: city.isNotEmpty
-                                                ? city
-                                                : widget
-                                                    .cameraListData.first.city,
-                                            state: state.isNotEmpty
-                                                ? state
-                                                : widget
-                                                    .cameraListData.first.state,
-                                            country: country.isNotEmpty
-                                                ? country
-                                                : widget.cameraListData.first
-                                                    .country,
-                                            latitude:
-                                                widget.cameraData!.latitude,
-                                            longitude:
-                                                widget.cameraData!.longitude,
-                                            mimeType:
-                                                widget.cameraData!.mimeType,
-                                            videoImagePath: widget
-                                                .cameraData!.videoImagePath,
-                                            mediaList: mediaList));
+                                    context.pop(PublishData(
+                                        imagePath: widget.cameraData!.path,
+                                        address: mediaAddress.isNotEmpty
+                                            ? mediaAddress
+                                            : widget
+                                                .cameraListData.first.location,
+                                        date: mediaDate.isNotEmpty
+                                            ? mediaDate
+                                            : widget
+                                                .cameraListData.first.dateTime,
+                                        city: city.isNotEmpty
+                                            ? city
+                                            : widget.cameraListData.first.city,
+                                        state: state.isNotEmpty
+                                            ? state
+                                            : widget.cameraListData.first.state,
+                                        country: country.isNotEmpty
+                                            ? country
+                                            : widget
+                                                .cameraListData.first.country,
+                                        latitude: widget.cameraData!.latitude,
+                                        longitude: widget.cameraData!.longitude,
+                                        mimeType: widget.cameraData!.mimeType,
+                                        videoImagePath:
+                                            widget.cameraData!.videoImagePath,
+                                        mediaList: mediaList));
                                   }
                                 } else {
                                   if (mediaList.first.location.isEmpty ||
@@ -905,37 +879,43 @@ class PreviewScreenState extends State<PreviewScreen> with AnalyticsPageMixin {
                                   }
                                   if (mediaList.isNotEmpty) {
                                     if (widget.cameraListData.isNotEmpty) {
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => PublishContentScreen(
-                                              publishData: PublishData(
-                                                  imagePath: widget.cameraData != null
-                                                      ? widget.cameraData!.path
-                                                      : widget.cameraListData
-                                                          .first.path,
-                                                  address:
-                                                      mediaAddress.isNotEmpty
-                                                          ? mediaAddress
-                                                          : widget
-                                                              .cameraListData
-                                                              .first
-                                                              .location,
-                                                  date: mediaDate.isNotEmpty
-                                                      ? mediaDate
-                                                      : widget.cameraListData
-                                                          .first.dateTime,
-                                                  city: city.isNotEmpty
-                                                      ? city
-                                                      : widget.cameraListData.first.city,
-                                                  state: state.isNotEmpty ? state : widget.cameraListData.first.state,
-                                                  country: country.isNotEmpty ? country : widget.cameraListData.first.country,
-                                                  latitude: widget.cameraData != null ? mediaList.first.latitude : latitude,
-                                                  longitude: widget.cameraData != null ? mediaList.first.longitude : longitude,
-                                                  mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
-                                                  videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
-                                                  mediaList: mediaList),
-                                              myContentData: null,
-                                              hideDraft: false,
-                                              docType: widget.type)));
+                                      context.pushNamed(
+                                          AppRoutes.publishContentName,
+                                          extra: {
+                                            'publishData': PublishData(
+                                                imagePath: widget.cameraData != null
+                                                    ? widget.cameraData!.path
+                                                    : widget.cameraListData
+                                                        .first.path,
+                                                address: mediaAddress.isNotEmpty
+                                                    ? mediaAddress
+                                                    : widget.cameraListData
+                                                        .first.location,
+                                                date: mediaDate.isNotEmpty
+                                                    ? mediaDate
+                                                    : widget.cameraListData
+                                                        .first.dateTime,
+                                                city: city.isNotEmpty
+                                                    ? city
+                                                    : widget.cameraListData
+                                                        .first.city,
+                                                state: state.isNotEmpty
+                                                    ? state
+                                                    : widget.cameraListData
+                                                        .first.state,
+                                                country: country.isNotEmpty
+                                                    ? country
+                                                    : widget.cameraListData
+                                                        .first.country,
+                                                latitude: widget.cameraData != null ? mediaList.first.latitude : latitude,
+                                                longitude: widget.cameraData != null ? mediaList.first.longitude : longitude,
+                                                mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
+                                                videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
+                                                mediaList: mediaList),
+                                            'myContentData': null,
+                                            'hideDraft': false,
+                                            'docType': widget.type
+                                          });
                                     }
                                   }
                                 }

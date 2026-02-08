@@ -45,7 +45,8 @@ class AppStringsNew2 {
   static const enterPasswordHint = "Enter password *";
   static const enterNewPasswordHint = "Enter new password";
   static const requiredText = "Required";
-  static const validUserNameOrPhoneText = "Please enter valid user name or phone number";
+  static const validUserNameOrPhoneText =
+      "Please enter valid user name or phone number";
   static const passwordErrorText =
       "Your password must be at least 8 characters in length";
   static const forgotPasswordText = "Forgot password";
@@ -102,7 +103,8 @@ class AppStringsNew2 {
   static const uploadDocsHeadingText = 'Upload documents to become a PRO';
   static const uploadDocsSubHeading1Text =
       "If you're a professional photographer or journalist, and want to sign up as a";
-  static const uploadDocsSubHeading2Text = "please upload your docs for review.";
+  static const uploadDocsSubHeading2Text =
+      "please upload your docs for review.";
   static const uploadDocsSubHeading3Text =
       "Once your docs are approved, you will qualify as a";
   static const uploadDocsSubHeading4Text = "and be eligible for attractive";
@@ -111,17 +113,20 @@ class AppStringsNew2 {
   static const uploadYourDocumentsText = "Upload your documents";
   static const hiText = "Hi";
   static const welcomeToText = "welcome to";
-  static const donateYourEarningsToCharityText = "Donate your earnings to charity";
+  static const donateYourEarningsToCharityText =
+      "Donate your earnings to charity";
   static const chooseYourCharityText = "Choose your charity";
   static const thankYouForDonatingCharityText =
       "Thank you for your donation. After deducting applicable PressHop commission and processing fees, the balance will be paid to your bank account and/or your chosen charity ❤";
   static const presshopText = "PressHop";
   static const welcomeSubTitleText =
       "Woohoo! You're a Hopper now. You can now anonymously sell your content, receive tasks from hundreds of publications, and earn loads of money while having fun.";
-  static const welcomeSubTitle1Text = "You are successfully onboarded as a Hopper";
+  static const welcomeSubTitle1Text =
+      "You are successfully onboarded as a Hopper";
   static const acceptedTermsText = "Accepted terms and conditions";
   static const verifiedAccountText = "Verified your account";
-  static const addedBankDetailsText = "Added bank details to start receiving money";
+  static const addedBankDetailsText =
+      "Added bank details to start receiving money";
   static const uploadedDocumentsProText = "Uploaded documents if you're a PRO";
   static const anyText = "any 2 ";
   static const govIdText = "Government ID";
@@ -177,7 +182,8 @@ class AppStringsNew2 {
   static const publishContentFooter2Text = "&";
   static const publishContentFooter3Text =
       "to get it right. We uphold the highest standards of ethical journalism, so please review our";
-  static const publishContentFooter4Text = "before submitting. Need assistance? Please ";
+  static const publishContentFooter4Text =
+      "before submitting. Need assistance? Please ";
   static const publishContentFooter5Text = "our team 24/7. Thanks!";
   static const shareContextText =
       "Tied up right now? No problem! Why not share the PressHop app with family and friends so the next time you’re busy, they could accept the task & earn money. Spread the word, share the earnings🩷 with the Share The App CTA";
@@ -426,7 +432,8 @@ class AppStringsNew2 {
   // const declineText = "Decline";
   //const acceptAndGoText = "Accept & Go";
   static const searchHintText = "Search";
-  static const chatWithPRESSHOPText = "Chat with PressHop"; //client asked to lowercase
+  static const chatWithPRESSHOPText =
+      "Chat with PressHop"; //client asked to lowercase
   static const chatWithPublicationsText = "Chat with publications";
   static const contentsText = "Contents";
   static const multipleText = "Multiple";

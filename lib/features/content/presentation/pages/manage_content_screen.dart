@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -7,7 +8,6 @@ import 'package:presshop/core/widgets/common_widgets.dart';
 
 // ignore: must_be_immutable
 class ManageContentScreen extends StatefulWidget {
-
   ManageContentScreen({super.key, required this.taskStatus});
   String taskStatus = "";
 
@@ -34,14 +34,15 @@ class ManageContentScreenState extends State<ManageContentScreen> {
         title: Text(
           AppStrings.manageContentText,
           style: TextStyle(
-              color: Colors.black, fontSize: size.width * AppDimensions.headerFontSize),
+              color: Colors.black,
+              fontSize: size.width * AppDimensions.headerFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
@@ -59,14 +60,16 @@ class ManageContentScreenState extends State<ManageContentScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD04),
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD04),
             child: Column(
               children: [
                 SizedBox(
                   height: size.width * AppDimensions.numD08,
                 ),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                  borderRadius:
+                      BorderRadius.circular(size.width * AppDimensions.numD04),
                   child: Stack(
                     children: [
                       Image.asset(
@@ -83,7 +86,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 horizontal: size.width * AppDimensions.numD01,
                                 vertical: size.width * 0.002),
                             decoration: BoxDecoration(
-                                color: AppColorTheme.colorLightGreen.withOpacity(0.8),
+                                color: AppColorTheme.colorLightGreen
+                                    .withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(
                                     size.width * AppDimensions.numD015)),
                             child: Icon(
@@ -176,7 +180,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 "12:36, 10:12:2021",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: AppColorTheme.colorHint,
                                     fontWeight: FontWeight.w500),
                               )
@@ -199,7 +204,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 "Grenfell Tower, London",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: AppColorTheme.colorHint,
                                     fontWeight: FontWeight.w500),
                               )
@@ -217,8 +223,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           vertical: size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorThemePink,
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD03)),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD03)),
                       child: Column(
                         children: [
                           Text(
@@ -259,8 +265,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -279,7 +287,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -287,10 +296,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -315,7 +326,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 AppStrings.viewDetailsText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
                                 () {}),
                           )
                         ],
@@ -330,8 +342,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -340,8 +354,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 color: Colors.grey.shade300, spreadRadius: 2)
                           ]),
                       child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${dummyImagePath}news.png",
                           height: size.width * AppDimensions.numD09,
@@ -353,7 +367,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -361,10 +376,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -395,14 +412,17 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                       backgroundColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04),
+                                              size.width *
+                                                  AppDimensions.numD04),
                                           side: const BorderSide(
-                                              color: AppColorTheme.colorGrey1, width: 2))),
+                                              color: AppColorTheme.colorGrey1,
+                                              width: 2))),
                                   child: Text(
                                     AppStrings.noText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD04,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
                                         color: AppColorTheme.colorLightGreen,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -418,7 +438,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColorTheme.colorThemePink,
+                                      backgroundColor:
+                                          AppColorTheme.colorThemePink,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD04),
@@ -427,7 +448,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                     AppStrings.viewDetailsText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD04,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -447,8 +469,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -467,7 +491,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -475,10 +500,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -503,7 +530,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 AppStrings.uploadText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
                                 () {}),
                           )
                         ],
@@ -523,8 +551,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       Stack(
                         children: [
                           ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * AppDimensions.numD04),
+                              borderRadius: BorderRadius.circular(
+                                  size.width * AppDimensions.numD04),
                               child: Image.asset(
                                 "${dummyImagePath}walk6.png",
                                 height: size.height / 3,
@@ -534,8 +562,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                           Container(
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.2),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD04),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD04),
                               ),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
@@ -552,8 +580,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                         width: size.width * AppDimensions.numD02,
                       ),
                       ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD08),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD08),
                           child: Image.asset(
                             "${dummyImagePath}avatar.png",
                             height: size.width * AppDimensions.numD08,
@@ -595,8 +623,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -605,8 +635,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 color: Colors.grey.shade300, spreadRadius: 2)
                           ]),
                       child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${dummyImagePath}news.png",
                           height: size.width * AppDimensions.numD09,
@@ -618,7 +648,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -626,10 +657,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -679,14 +712,17 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                       backgroundColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04),
+                                              size.width *
+                                                  AppDimensions.numD04),
                                           side: const BorderSide(
-                                              color: AppColorTheme.colorGrey1, width: 2))),
+                                              color: AppColorTheme.colorGrey1,
+                                              width: 2))),
                                   child: Text(
                                     AppStrings.rejectText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD04,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
                                         color: AppColorTheme.colorLightGreen,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -702,7 +738,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColorTheme.colorThemePink,
+                                      backgroundColor:
+                                          AppColorTheme.colorThemePink,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD04),
@@ -711,7 +748,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                     AppStrings.acceptText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD04,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -733,7 +771,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 "or",
                                 style: commonTextStyle(
                                     size: size,
-                                    fontSize: size.width * AppDimensions.numD035,
+                                    fontSize:
+                                        size.width * AppDimensions.numD035,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600),
                               ),
@@ -754,7 +793,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 "Make a Counter Offer",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
                                 () {}),
                           ),
                           SizedBox(
@@ -780,8 +820,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -800,7 +842,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -808,10 +851,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -843,7 +888,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 hintText: "Enter price here...",
                                 hintStyle: TextStyle(
                                     color: Colors.black,
-                                    fontSize: size.width * AppDimensions.numD04),
+                                    fontSize:
+                                        size.width * AppDimensions.numD04),
                                 disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
                                         size.width * 0.03),
@@ -886,7 +932,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 "AppStrings.submitText",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
                                 () {}),
                           ),
                           SizedBox(
@@ -907,7 +954,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                   "Check price tips, and learnings",
                                   style: commonTextStyle(
                                       size: size,
-                                      fontSize: size.width * AppDimensions.numD035,
+                                      fontSize:
+                                          size.width * AppDimensions.numD035,
                                       color: AppColorTheme.colorThemePink,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -937,8 +985,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -947,8 +997,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 color: Colors.grey.shade300, spreadRadius: 2)
                           ]),
                       child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * AppDimensions.numD04),
+                        borderRadius: BorderRadius.circular(
+                            size.width * AppDimensions.numD04),
                         child: Image.asset(
                           "${dummyImagePath}news.png",
                           height: size.width * AppDimensions.numD09,
@@ -960,7 +1010,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -968,10 +1019,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           color: AppColorTheme.colorLightGrey,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1022,14 +1075,17 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                       backgroundColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                              size.width * AppDimensions.numD04),
+                                              size.width *
+                                                  AppDimensions.numD04),
                                           side: const BorderSide(
-                                              color: AppColorTheme.colorGrey1, width: 2))),
+                                              color: AppColorTheme.colorGrey1,
+                                              width: 2))),
                                   child: Text(
                                     AppStrings.rejectText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD04,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
                                         color: AppColorTheme.colorLightGreen,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -1045,7 +1101,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColorTheme.colorThemePink,
+                                      backgroundColor:
+                                          AppColorTheme.colorThemePink,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD04),
@@ -1054,7 +1111,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                     AppStrings.acceptText,
                                     style: commonTextStyle(
                                         size: size,
-                                        fontSize: size.width * AppDimensions.numD04,
+                                        fontSize:
+                                            size.width * AppDimensions.numD04,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -1074,8 +1132,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -1093,7 +1153,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -1101,10 +1162,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1129,7 +1192,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 AppStrings.viewDetailsText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
                                 () {}),
                           )
                         ],
@@ -1144,8 +1208,10 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD04),
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD04),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD03),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -1163,7 +1229,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                     ),
                     Expanded(
                         child: Container(
-                      margin: EdgeInsets.only(top: size.width * AppDimensions.numD06),
+                      margin: EdgeInsets.only(
+                          top: size.width * AppDimensions.numD06),
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * AppDimensions.numD05,
                           vertical: size.width * AppDimensions.numD02),
@@ -1171,10 +1238,12 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                              bottomRight:
-                                  Radius.circular(size.width * AppDimensions.numD04))),
+                              topRight: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomLeft: Radius.circular(
+                                  size.width * AppDimensions.numD04),
+                              bottomRight: Radius.circular(
+                                  size.width * AppDimensions.numD04))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1205,8 +1274,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                             itemCount: 5,
                             initialRating: 0,
                             allowHalfRating: true,
-                            itemPadding:
-                                EdgeInsets.only(left: size.width * AppDimensions.numD03),
+                            itemPadding: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD03),
                           ),
                           SizedBox(
                             height: size.width * AppDimensions.numD04,
@@ -1238,7 +1307,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                         "Please share your feedback on your experience with the publication. Your feedback is very important for improving your experience, and our service. Thank you",
                                     hintStyle: TextStyle(
                                         color: Colors.grey.shade400,
-                                        fontSize: size.width * AppDimensions.numD035),
+                                        fontSize:
+                                            size.width * AppDimensions.numD035),
                                     disabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(
                                             size.width * 0.03),
@@ -1266,9 +1336,11 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                             width: 1, color: Colors.black)),
                                     contentPadding: EdgeInsets.only(
                                         left: size.width * AppDimensions.numD08,
-                                        right: size.width * AppDimensions.numD03,
+                                        right:
+                                            size.width * AppDimensions.numD03,
                                         top: size.width * AppDimensions.numD04,
-                                        bottom: size.width * AppDimensions.numD04),
+                                        bottom:
+                                            size.width * AppDimensions.numD04),
                                     alignLabelWithHint: true,
                                   ),
                                   validator: checkRequiredValidator,
@@ -1298,7 +1370,8 @@ class ManageContentScreenState extends State<ManageContentScreen> {
                                 AppStrings.submitText,
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink),
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink),
                                 () {}),
                           ),
                           SizedBox(

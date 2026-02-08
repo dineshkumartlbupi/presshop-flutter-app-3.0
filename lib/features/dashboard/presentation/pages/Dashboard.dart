@@ -81,7 +81,7 @@ class DashboardState extends State<Dashboard>
   final GlobalKey<CameraScreenState> _cameraKey =
       GlobalKey<CameraScreenState>();
 
-  // final player = AudioPlayer();
+  final player = AudioPlayer();
 
   String? savedSourceDataHeading = "";
   String? savedSourceDataDescription = "";
@@ -153,7 +153,6 @@ class DashboardState extends State<Dashboard>
     //     "version": Platform.version,
     //   },
     // );
-
     currentIndex = widget.initialPosition;
     _loadedIndices.add(currentIndex); // Mark initial tab as loaded
 
@@ -568,7 +567,6 @@ class DashboardState extends State<Dashboard>
                 }
               } else if (state is DashboardTaskDetailLoaded) {
                 var task = state.taskDetail;
-                player.setReleaseMode(ReleaseMode.loop);
                 player.play(
                   AssetSource('audio/task_sound.mp3'),
                   volume: 1,
@@ -577,12 +575,12 @@ class DashboardState extends State<Dashboard>
                   size: MediaQuery.of(context).size,
                   taskDetail: task,
                   onTapView: () {
-                    player.stop();
                     if (mounted) {
                       if (dashBoardInterface != null) {
                         dashBoardInterface!.saveDraft();
                       }
                     }
+                    Navigator.pop(context);
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => BroadCastScreen(
@@ -733,16 +731,19 @@ class DashboardState extends State<Dashboard>
   /// FireBase Notification Initialize
   void fireBaseMessaging() async {
     debugPrint("InsideFirebase");
+/*
     FirebaseMessaging.instance.requestPermission(
       badge: true,
       alert: true,
     );
-    await FirebaseMessaging.instance
+*/
+    /* await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
+*/
     FirebaseMessaging.instance.getInitialMessage().then(
       (message) {
         debugPrint("FirebaseMessaging.instance.getInitialMessage");
@@ -767,12 +768,14 @@ class DashboardState extends State<Dashboard>
         } else {
           debugPrint('Unmounted:::::dashBoardInterface');
         }
+
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        callTaskDetailApi(message.data["broadCast_id"]);
       } else {
         debugPrint("inside else------>");
-        if (message.notification != null) {
-          debugPrint("desensitising------>${message.notification!.android}");
-        }
-        localNotificationService.showFlutterNotificationWithSound(message);
+        debugPrint("desensitising------>${message.notification!.android}");
+        // localNotificationService.showFlutterNotificationWithSound(message);
       }
     });
 

@@ -9,15 +9,12 @@ import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
-import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'package:video_player/video_player.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/MediaPreviewScreen.dart';
 
 import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
@@ -29,14 +26,13 @@ import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 
 import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
-
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:location/location.dart' as lc;
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/features/task/domain/entities/task_assigned_entity.dart';
 
@@ -96,8 +92,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             _dialogStateSetter = setState;
             if (_shouldCloseDialog) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted && Navigator.canPop(context)) {
-                  Navigator.of(context, rootNavigator: true).pop();
+                if (mounted && context.canPop()) {
+                  context.pop();
                 }
               });
             }
@@ -153,7 +149,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   void dismissProgressDialog() {
     _shouldCloseDialog = true;
     if (_dialogStateSetter != null) {
-      Navigator.of(context, rootNavigator: true).pop();
+      context.pop();
       _dialogStateSetter = null;
     }
   }
@@ -247,16 +243,17 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
         } else if (state.transactions.isNotEmpty) {
           earningTransactionDataList = state.transactions;
           if (earningTransactionDataList.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TransactionDetailScreen(
-                  pageType: PageType.TASK,
-                  type: "received",
-                  transactionData: earningTransactionDataList.first.toEntity(),
-                ),
-              ),
-            );
+            if (earningTransactionDataList.isNotEmpty) {
+              context.pushNamed(
+                AppRoutes.transactionDetailName,
+                extra: {
+                  'pageType': PageType.TASK,
+                  'type': "received",
+                  'transactionData':
+                      earningTransactionDataList.first.toEntity(),
+                },
+              );
+            }
           }
         } else if (state.actionStatus == TaskStatus.success) {
           showSnackBar("Success", "Media uploaded successfully", Colors.green);
@@ -288,15 +285,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: [
               InkWell(
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)),
-                      (route) => false);
+                  context.goNamed(
+                    AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2},
+                  );
                 },
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
@@ -350,15 +347,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               commonButtonTextStyle(size),
                               commonButtonStyle(
                                   size, AppColorTheme.colorThemePink), () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const CameraScreen(
-                                          picAgain: true,
-                                          previousScreen:
-                                              ScreenNameEnum.manageTaskScreen,
-                                        ))).then((value) {
-                              if (value != null) {
+                            context.pushNamed(AppRoutes.cameraName, extra: {
+                              'picAgain': true,
+                              'previousScreen': ScreenNameEnum.manageTaskScreen,
+                            }).then((value) {
+                              if (value != null && value is List<CameraData>) {
                                 debugPrint(
                                     "value:::::$value::::::::${value.first.path}");
                                 List<CameraData> temData = value;
@@ -1088,13 +1081,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                               commonButtonStyle(size,
                                                   AppColorTheme.colorThemePink),
                                               () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        MyEarningScreen(
-                                                          openDashboard: false,
-                                                          initialTapPosition: 0,
-                                                        )));
+                                            context.pushNamed(
+                                                AppRoutes.myEarningName,
+                                                extra: {
+                                                  'openDashboard': false,
+                                                  'initialTapPosition': 0,
+                                                });
                                           }),
                                         ),
                                         SizedBox(
@@ -1220,11 +1212,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MediaViewScreen(
-                                mediaFile: videoUrl,
-                                type: MediaTypeEnum.video,
-                              )));
+                      context.pushNamed(AppRoutes.fullVideoViewName, extra: {
+                        'mediaFile': videoUrl,
+                        'type': MediaTypeEnum.video,
+                      });
                     },
                     child: Container(
                       height: size.height / 3,
@@ -1281,11 +1272,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MediaViewScreen(
-                                mediaFile: videoUrl,
-                                type: MediaTypeEnum.video,
-                              )));
+                      context.pushNamed(AppRoutes.fullVideoViewName, extra: {
+                        'mediaFile': videoUrl,
+                        'type': MediaTypeEnum.video,
+                      });
                     },
                     child: Icon(
                       Icons.play_circle,
@@ -1396,11 +1386,13 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => MediaViewScreen(
-                  mediaFile: audioUrl,
-                  type: MediaTypeEnum.audio,
-                )));
+        context.pushNamed(
+          AppRoutes.fullVideoViewName,
+          extra: {
+            'mediaFile': audioUrl,
+            'type': MediaTypeEnum.audio,
+          },
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1558,13 +1550,12 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
-        Navigator.of(navigatorKey.currentState!.context).push(
-          MaterialPageRoute(
-            builder: (context) => MediaViewScreen(
-              mediaFile: imageUrl,
-              type: MediaTypeEnum.image,
-            ),
-          ),
+        context.pushNamed(
+          AppRoutes.fullVideoViewName,
+          extra: {
+            'mediaFile': imageUrl,
+            'type': MediaTypeEnum.image,
+          },
         );
       },
       child: Column(
@@ -2103,11 +2094,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                     size,
                     commonButtonTextStyle(size),
                     commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MyEarningScreen(
-                            openDashboard: false,
-                            initialTapPosition: 0,
-                          )));
+                  context.pushNamed(AppRoutes.myEarningName, extra: {
+                    'openDashboard': false,
+                    'initialTapPosition': 0,
+                  });
                 }),
               )
             ],
@@ -2858,11 +2848,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                               commonButtonTextStyle(size),
                               commonButtonStyle(
                                   size, AppColorTheme.colorThemePink), () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => MyEarningScreen(
-                                      openDashboard: false,
-                                      initialTapPosition: 2,
-                                    )));
+                            context.pushNamed(AppRoutes.myEarningName, extra: {
+                              'openDashboard': false,
+                              'initialTapPosition': 2,
+                            });
                           }),
                         ),
                         SizedBox(
@@ -3185,10 +3174,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 fontWeight: FontWeight.w600),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => TermCheckScreen(
-                                          type: 'legal',
-                                        )));
+                                context.pushNamed(AppRoutes.termName,
+                                    extra: {'type': 'legal'});
                               }),
                         TextSpan(
                           text: "If you have any questions, please ",
@@ -3207,9 +3194,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                 fontWeight: FontWeight.w600),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ContactUsScreen()));
+                                context.pushNamed(AppRoutes.contactUsName);
                               }),
                         TextSpan(
                           text:
@@ -3402,17 +3387,15 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
   Future<void> previewBottomSheet() async {
     debugPrint("previewBottomSheet: Pushing MediaPreviewScreen");
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MediaPreviewScreen(
-          mediaList: selectMultipleMediaList,
-          onMediaUpdated: (updatedList) {
-            selectMultipleMediaList = updatedList;
-            setState(() {});
-          },
-        ),
-      ),
+    final result = await context.pushNamed(
+      AppRoutes.mediaPreviewName,
+      extra: {
+        'mediaList': selectMultipleMediaList,
+        'onMediaUpdated': (updatedList) {
+          selectMultipleMediaList = updatedList;
+          setState(() {});
+        },
+      },
     );
     debugPrint("previewBottomSheet: Popped with result: $result");
 
@@ -3487,7 +3470,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       ),
                       IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           icon: Icon(Icons.close_rounded,
                               color: Colors.black,
@@ -3507,7 +3490,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            context.pop();
                             selectMultipleMediaList.clear();
                             getMultipleImages("image");
                           },
@@ -3550,7 +3533,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            context.pop();
                             selectMultipleMediaList.clear();
                             getMultipleImages("file");
                           },

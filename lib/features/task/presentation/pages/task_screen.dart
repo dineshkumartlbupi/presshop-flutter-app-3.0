@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/main.dart'; // For currencySymbol
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/core_export.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast/BroardcastScreen.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
@@ -180,12 +180,14 @@ class MyTaskScreenState extends State<MyTaskScreen>
               size: size,
               taskDetail: state.taskDetail!,
               onTapView: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BroadCastScreen(
-                          taskId: state.taskDetail!.task.id,
-                          mediaHouseId: state.taskDetail!.task.mediaHouse.id,
-                        )));
+                context.pop();
+                context.pushNamed(
+                  AppRoutes.broadcastName,
+                  extra: {
+                    'taskId': state.taskDetail!.task.id,
+                    'mediaHouseId': state.taskDetail!.task.mediaHouse.id,
+                  },
+                );
               },
             );
           });
@@ -569,16 +571,18 @@ class MyTaskScreenState extends State<MyTaskScreen>
                       var item = taskList[index] as TaskMy;
                       return InkWell(
                         onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => TaskDetailNewScreen(
-                                      taskStatus: item.status,
-                                      taskId: item.taskDetail?.id ?? "",
-                                      totalEarning: item.totalAmount)))
-                              .then((value) => context.read<TaskBloc>().add(
-                                  FetchLocalTasksEvent(
-                                      filterParams: getFilterParams(),
-                                      showLoader: false)));
+                          context
+                              .pushNamed(AppRoutes.taskDetailNewName, extra: {
+                            'taskStatus': item.status,
+                            'taskId': item.taskDetail?.id ?? "",
+                            'totalEarning': item.totalAmount,
+                          }).then((value) {
+                            if (context.mounted) {
+                              context.read<TaskBloc>().add(FetchLocalTasksEvent(
+                                  filterParams: getFilterParams(),
+                                  showLoader: false));
+                            }
+                          });
 
                           //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
                         },
@@ -852,17 +856,16 @@ class MyTaskScreenState extends State<MyTaskScreen>
                   var item = allTaskList[index];
                   return InkWell(
                     onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => TaskDetailNewScreen(
-                                  taskStatus: item.status,
-                                  taskId: item.id,
-                                  totalEarning: "0")))
-                          .then((value) => context.read<TaskBloc>().add(
-                              FetchAllTasksEvent(
-                                  offset: 0,
-                                  filterParams: {},
-                                  showLoader: false)));
+                      context.pushNamed(AppRoutes.taskDetailNewName, extra: {
+                        'taskStatus': item.status,
+                        'taskId': item.id,
+                        'totalEarning': "0",
+                      }).then((value) {
+                        if (context.mounted) {
+                          context.read<TaskBloc>().add(FetchAllTasksEvent(
+                              offset: 0, filterParams: {}, showLoader: false));
+                        }
+                      });
 
                       // Navigator.push(
                       //     context,
@@ -1141,7 +1144,7 @@ class MyTaskScreenState extends State<MyTaskScreen>
                         IconButton(
                           splashRadius: size.width * AppDimensions.numD07,
                           onPressed: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           icon: Icon(
                             Icons.close,
@@ -1233,8 +1236,8 @@ class MyTaskScreenState extends State<MyTaskScreen>
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, AppColorTheme.colorThemePink),
                           () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        context.pop();
+                        context.pop();
                         context.read<TaskBloc>().add(FetchLocalTasksEvent(
                             filterParams: getFilterParams()));
                       }),

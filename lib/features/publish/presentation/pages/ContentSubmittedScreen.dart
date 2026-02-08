@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
-import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
+// import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart'; // Removed
+// import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart'; // Removed
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
+// import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 // ignore: must_be_immutable
 class ContentSubmittedScreen extends StatefulWidget {
@@ -96,12 +95,9 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
         "from content submitted screen ==>>> ${sharedPreferences!.getString(contryCode)}");
 
     return WillPopScope(
-      onWillPop: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Dashboard(initialPosition: 2)));
-        return Future.value(false);
+      onWillPop: () async {
+        context.goNamed(AppRoutes.dashboardName, extra: {'initialPosition': 2});
+        return false;
       },
       child: Scaffold(
           appBar: CommonAppBar(
@@ -120,18 +116,14 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
+              context.goNamed(AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2});
             },
             actionWidget: [
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)));
+                  context.goNamed(AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2});
                 },
                 child: Image.asset(
                   "${commonImagePath}ic_black_rabbit.png",
@@ -919,14 +911,14 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FAQScreen(
-                                              priceTipsSelected: false,
-                                              type: 'faq',
-                                              index: 0,
-                                            )));
+                                context.pushNamed(
+                                  AppRoutes.faqName,
+                                  extra: {
+                                    'priceTipsSelected': false,
+                                    'type': 'faq',
+                                    'index': 0,
+                                  },
+                                );
                               },
                             text: "FAQs ",
                             style: commonTextStyle(
@@ -948,11 +940,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const TutorialsScreen()));
+                                context.pushNamed(AppRoutes.tutorialsName);
                               },
                             text: "videos ",
                             style: commonTextStyle(
@@ -1080,12 +1068,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           WidgetSpan(
                               child: InkWell(
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TermCheckScreen(
-                                            type: 'legal',
-                                          )));
+                              context.pushNamed(
+                                AppRoutes.termCheckName,
+                                extra: {'type': 'legal'},
+                              );
                             },
                             child: Text(
                               "${AppStrings.privacyLawText.toLowerCase()} ",
@@ -1119,14 +1105,14 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FAQScreen(
-                                              priceTipsSelected: false,
-                                              type: 'faq',
-                                              index: 0,
-                                            )));
+                                context.pushNamed(
+                                  AppRoutes.faqName,
+                                  extra: {
+                                    'priceTipsSelected': false,
+                                    'type': 'faq',
+                                    'index': 0,
+                                  },
+                                );
                               },
                             text: AppStrings.faqText,
                             style: commonTextStyle(
@@ -1148,11 +1134,7 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ContactUsScreen()));
+                                context.pushNamed(AppRoutes.contactUsName);
                               },
                             text: "${AppStrings.contactText.toLowerCase()} ",
                             style: commonTextStyle(
@@ -1188,12 +1170,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                             commonButtonTextStyle(size),
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink), () {
-                          Navigator.pop(context);
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      Dashboard(initialPosition: 0)),
-                              (route) => false);
+                          context.goNamed(
+                            AppRoutes.dashboardName,
+                            extra: {'initialPosition': 0},
+                          );
                         }),
                       )
                     : Padding(
@@ -1210,12 +1190,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   size,
                                   commonButtonTextStyle(size),
                                   commonButtonStyle(size, Colors.black), () {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) => Dashboard(
-                                              initialPosition: 0,
-                                            )),
-                                    (route) => false);
+                                context.goNamed(
+                                  AppRoutes.dashboardName,
+                                  extra: {'initialPosition': 0},
+                                );
                               }),
                             )),
                             SizedBox(
@@ -1230,11 +1208,10 @@ class ContentSubmittedScreenState extends State<ContentSubmittedScreen> {
                                   commonButtonTextStyle(size),
                                   commonButtonStyle(
                                       size, AppColorTheme.colorThemePink), () {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            Dashboard(initialPosition: 2)),
-                                    (route) => false);
+                                context.goNamed(
+                                  AppRoutes.dashboardName,
+                                  extra: {'initialPosition': 0},
+                                );
                               }),
                             )),
                           ],

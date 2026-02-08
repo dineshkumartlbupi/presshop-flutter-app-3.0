@@ -573,9 +573,7 @@ class CameraScreenState extends State<CameraScreen>
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                context
-                    .read<CameraBloc>()
-                    .add(const CameraInitializeEvent(force: true));
+                context.read<CameraBloc>().add(const CameraInitializeEvent(force: true));
               },
               child: const Text("Retry"),
             )

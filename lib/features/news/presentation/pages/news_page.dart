@@ -5,17 +5,16 @@ import 'package:intl/intl.dart';
 import 'package:presshop/core/theme/app_colors.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:presshop/core/constants/app_assets.dart';
-import 'package:presshop/core/constants/app_dimensions_new.dart';
 import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 import 'package:presshop/features/news/presentation/bloc/news_bloc.dart';
 import 'package:presshop/features/news/presentation/bloc/news_event.dart';
 import 'package:presshop/features/news/presentation/bloc/news_state.dart';
-import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
-import 'package:presshop/core/utils/ui_utils.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget.dart';
@@ -484,15 +483,13 @@ class _NewsPageState extends State<NewsPage>
 
   void _navigateToDetails(BuildContext context, News item,
       {bool scrollToComments = false}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NewsDetailsScreen(
-          newsId: item.id,
-          initialNews: item,
-          scrollToComments: scrollToComments,
-        ),
-      ),
+    context.pushNamed(
+      AppRoutes.newsDetailsName,
+      extra: {
+        'newsId': item.id,
+        'initialNews': item,
+        'scrollToComments': scrollToComments,
+      },
     );
   }
 
@@ -519,7 +516,7 @@ class _NewsPageState extends State<NewsPage>
                 category: category == 'Category' ? 'all' : category,
                 alertType: alertType == 'Alert' ? null : alertType,
               ));
-              Navigator.pop(context);
+              context.pop();
             },
           ),
         );
@@ -621,7 +618,7 @@ class _FilterBottomSheetContentState extends State<_FilterBottomSheetContent> {
               IconButton(
                 splashRadius: widget.size.width * AppDimensions.numD07,
                 onPressed: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 icon: Icon(
                   Icons.close,

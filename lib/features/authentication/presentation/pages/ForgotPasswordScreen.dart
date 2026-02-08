@@ -13,7 +13,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'ResetPasswordScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -101,7 +102,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             showActions: false,
             hideLeading: false,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: null,
           ),
@@ -116,8 +117,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       height: size.width * AppDimensions.numD25,
                     ),
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD06),
                       child: Text(
                         AppStrings.forgotPasswordText.toTitleCase(),
                         style: TextStyle(
@@ -131,8 +132,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       height: size.width * AppDimensions.numD02,
                     ),
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD06),
                       child: Text(AppStrings.forgotPasswordSubHeading,
                           style: TextStyle(
                               fontFamily: 'AirbnbCereal',
@@ -145,8 +146,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
                     /// Email Controller
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD06),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD06),
                       child: CommonTextField(
                         size: size,
                         maxLines: 1,
@@ -177,9 +178,10 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     /// Submit Button
                     Container(
                       width: size.width,
-                      height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD08),
+                      height: size.width *
+                          (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * AppDimensions.numD08),
                       child: BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, state) {
                           if (state is AuthLoading) {
@@ -194,7 +196,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   fontSize: size.width * AppDimensions.numD035,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700),
-                              commonButtonStyle(size, AppColorTheme.colorThemePink), () {
+                              commonButtonStyle(
+                                  size, AppColorTheme.colorThemePink), () {
                             if (formKey.currentState!.validate()) {
                               context.read<AuthBloc>().add(
                                   ForgotPasswordRequested(
@@ -213,7 +216,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         alignment: Alignment.center,
                         child: TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            context.pop();
                           },
                           child: Text(AppStrings.signInText,
                               style: TextStyle(
@@ -254,7 +257,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           child: OtpBottomSheet(
             email: email,
             onResend: () {
-              Navigator.pop(bottomSheetContext);
+              context.pop();
               authBloc.add(ForgotPasswordRequested(email));
               myTimer?.cancel();
               startResendTime();
@@ -267,7 +270,6 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 }
 
 class OtpBottomSheet extends StatefulWidget {
-
   const OtpBottomSheet({
     super.key,
     required this.email,
@@ -321,14 +323,10 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is ForgotPasswordOtpVerified) {
-          Navigator.pop(context); // Close sheet
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ResetPasswordScreen(
-                emailAddressValue: widget.email,
-              ),
-            ),
+          context.pop(); // Close sheet
+          context.pushNamed(
+            AppRoutes.resetPasswordName,
+            extra: {'emailAddressValue': widget.email},
           );
         } else if (state is AuthError) {
           showSnackBar("Error", state.message, Colors.red);
@@ -345,7 +343,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.black54),
                   onPressed: () {
-                    Navigator.pop(context);
+                    context.pop();
                   },
                 ),
               ],
@@ -417,7 +415,8 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                 SizedBox(height: size.width * AppDimensions.numD1),
                 SizedBox(
                   width: size.width,
-                  height: size.width * (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
+                  height: size.width *
+                      (isIpad ? AppDimensions.numD1 : AppDimensions.numD14),
                   child: BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       if (state is AuthLoading) {
@@ -463,14 +462,16 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                         height: size.width * AppDimensions.numD06,
                       ),
                       SizedBox(width: size.width * AppDimensions.numD02),
-                      Text("${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
+                      Text(
+                          "${AppStrings.otpExpireText} $expireTimeValue ${AppStrings.minutesText}",
                           style: TextStyle(
                               fontFamily: 'AirbnbCereal',
                               color: Colors.black,
                               fontSize: size.width * AppDimensions.numD035)),
                     ],
                   ),
-                if (secondsLeft != 0) SizedBox(height: size.width * AppDimensions.numD06),
+                if (secondsLeft != 0)
+                  SizedBox(height: size.width * AppDimensions.numD06),
                 if (secondsLeft == 0)
                   TextButton(
                     onPressed: widget.onResend,
@@ -483,7 +484,8 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                               style: TextStyle(
                                   fontFamily: 'AirbnbCereal',
                                   color: Colors.black,
-                                  fontSize: size.width * AppDimensions.numD035)),
+                                  fontSize:
+                                      size.width * AppDimensions.numD035)),
                           WidgetSpan(child: SizedBox(width: size.width * 0.01)),
                           TextSpan(
                             text: AppStrings.clickHereText,

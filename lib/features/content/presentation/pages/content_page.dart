@@ -6,11 +6,13 @@ import 'package:presshop/features/content/domain/entities/content_item.dart';
 import 'package:presshop/features/content/presentation/bloc/content_bloc.dart';
 import 'package:presshop/features/content/presentation/bloc/content_event.dart';
 import 'package:presshop/features/content/presentation/bloc/content_state.dart';
-import 'package:presshop/features/content/presentation/pages/content_detail_screen.dart';
+
 import 'package:presshop/features/content/presentation/widgets/content_filter_bottom_sheet.dart';
 import 'package:presshop/features/content/presentation/widgets/content_item_widget.dart';
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class MyContentPage extends StatelessWidget {
   const MyContentPage({super.key});
@@ -169,18 +171,17 @@ class _MyContentViewState extends State<MyContentView>
         item.status.toLowerCase() == "rejected") {
       return;
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MyContentDetailScreen(
-          contentId: item.id,
-          paymentStatus:
-              item.paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
-          exclusive: item.isExclusive ?? false,
-          offerCount: item.totalOffer,
-          purchasedMediahouseCount: item.purchasedMediahouseCount,
-        ),
-      ),
+    context.pushNamed(
+      AppRoutes.contentDetailName,
+      extra: {
+        'contentId': item.id,
+        'paymentStatus':
+            item.paidStatus ? AppStrings.paidText : AppStrings.unPaidText,
+        'exclusive': item.isExclusive ?? false,
+        'offerCount': item.totalOffer,
+        'purchasedMediahouseCount': item.purchasedMediahouseCount,
+        'hopperID': "", // Assuming empty or null based on previous context
+      },
     );
   }
 
@@ -362,7 +363,7 @@ class _MyContentViewState extends State<MyContentView>
           sortList: sortList,
           filterList: filterList,
           onApply: () {
-            Navigator.pop(context);
+            context.pop();
             if (_tabController.index == 0) {
               _loadAllContent(true);
             } else {
@@ -370,7 +371,7 @@ class _MyContentViewState extends State<MyContentView>
             }
           },
           onClear: () {
-            Navigator.pop(context);
+            context.pop();
             initializeFilter();
             if (_tabController.index == 0) {
               _loadAllContent(true);

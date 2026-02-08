@@ -10,10 +10,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:presshop/features/authentication/data/repositories/term_repository.dart';
-import 'package:presshop/features/authentication/presentation/bloc/term_bloc.dart';
-import 'package:presshop/features/authentication/presentation/bloc/term_event.dart';
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +21,6 @@ import '../bloc/signup_state.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
-import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/main.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
@@ -31,7 +28,6 @@ import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/router/router_constants.dart';
-import 'VerifyAccountScreen.dart';
 import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
@@ -171,6 +167,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   String socialType = "";
   final ValueNotifier<bool> _avatarsNotifier = ValueNotifier(false);
   late SignUpBloc _signUpBloc;
+  static final Set<String> _loadedUrls = {};
 
   @override
   void initState() {
@@ -235,7 +232,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           } else if (state is AuthError) {
             commonErrorDialogDialog(
                 MediaQuery.of(context).size, state.message, "", () {
-              Navigator.pop(context);
+              context.pop();
             });
           }
         },
@@ -244,18 +241,17 @@ class _SignUpScreenState extends State<SignUpScreen>
             if (state is SignUpError) {
               commonErrorDialogDialog(
                   MediaQuery.of(context).size, state.message, "", () {
-                Navigator.pop(context);
+                context.pop();
               });
             } else if (state is SignUpOtpSent) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VerifyAccountScreen(
-                        sociallogin: widget.socialLogin,
-                        imagePath: userImagePath,
-                        params: Map<String, String>.from(state.data),
-                        countryCode: selectedCountryCodePicker,
-                        mobileNumberValue: phoneController.text.trim(),
-                        emailAddressValue: emailController.text.trim(),
-                      )));
+              context.pushNamed(AppRoutes.verifyAccountName, extra: {
+                'sociallogin': widget.socialLogin,
+                'imagePath': userImagePath,
+                'params': Map<String, String>.from(state.data),
+                'countryCode': selectedCountryCodePicker,
+                'mobileNumberValue': phoneController.text.trim(),
+                'emailAddressValue': emailController.text.trim(),
+              });
             } else if (state is SignUpSuccess) {
               context
                   .go(AppRoutes.dashboardPath, extra: {'initialPosition': 2});
@@ -264,6 +260,15 @@ class _SignUpScreenState extends State<SignUpScreen>
                   .map((e) =>
                       AvatarsData.fromJson({'_id': e.id, 'avatar': e.avatar}))
                   .toList();
+
+              for (var avatar in avatarList) {
+                if (avatar.avatar.isNotEmpty) {
+                  precacheImage(
+                    CachedNetworkImageProvider(avatar.avatar),
+                    context,
+                  );
+                }
+              }
 
               _avatarsNotifier.value = !_avatarsNotifier.value;
             } else if (state is UserNameCheckResult) {
@@ -294,7 +299,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                 showActions: false,
                 actionWidget: null,
                 leadingFxn: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 leadingLeftSPace: size.width * AppDimensions.numD04,
               ),
@@ -401,13 +406,57 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                   BorderRadius.circular(
                                                       size.width *
                                                           AppDimensions.numD04),
-                                              child: Image.network(
-                                                selectedAvatar,
+                                              child: CachedNetworkImage(
+                                                imageUrl: selectedAvatar,
                                                 height: size.width *
                                                     AppDimensions.numD30,
                                                 width: size.width *
                                                     AppDimensions.numD35,
                                                 fit: BoxFit.cover,
+                                                fadeInDuration: Duration.zero,
+                                                fadeOutDuration: Duration.zero,
+                                                imageBuilder:
+                                                    (context, imageProvider) {
+                                                  _loadedUrls
+                                                      .add(selectedAvatar);
+                                                  return Image(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                                placeholder: (context, url) =>
+                                                    _loadedUrls.contains(url)
+                                                        ? const SizedBox
+                                                            .shrink()
+                                                        : Shimmer.fromColors(
+                                                            baseColor: Colors
+                                                                .grey[300]!,
+                                                            highlightColor:
+                                                                Colors
+                                                                    .grey[100]!,
+                                                            child: Container(
+                                                              color:
+                                                                  Colors.white,
+                                                              height: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD30,
+                                                              width: size
+                                                                      .width *
+                                                                  AppDimensions
+                                                                      .numD35,
+                                                            ),
+                                                          ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  "${commonImagePath}rabbitLogo.png",
+                                                  fit: BoxFit.contain,
+                                                  width: size.width *
+                                                      AppDimensions.numD35,
+                                                  height: size.width *
+                                                      AppDimensions.numD30,
+                                                ),
                                               ),
                                             ),
                                             Positioned(
@@ -1155,20 +1204,13 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         .requestFocus(FocusNode());
                                     rememberMe = false;
 
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => BlocProvider(
-                                                  create: (_) => TermsBloc(
-                                                      sl<TermsRepository>())
-                                                    ..add(FetchTermsEvent(
-                                                        type: "legal")),
-                                                  child: TermCheckScreen(
-                                                      type: "legal"),
-                                                )))
-                                        .then((value) {
+                                    context.pushNamed(AppRoutes.termCheckName,
+                                        pathParameters: {
+                                          'type': "legal"
+                                        }).then((value) {
                                       if (value != null) {
                                         debugPrint("value::::$value");
-                                        termConditionsChecked = value;
+                                        termConditionsChecked = value as bool;
                                         setState(() {});
                                         //  termConditionsChecked = !termConditionsChecked;
                                       }
@@ -1262,7 +1304,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         alignment: Alignment.center,
                                         child: TextButton(
                                             onPressed: () {
-                                              Navigator.pop(context);
+                                              context.pop();
                                             },
                                             child: RichText(
                                               text: TextSpan(children: [
@@ -1635,7 +1677,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   splashRadius:
                                       size.width * AppDimensions.numD06,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -1650,12 +1692,32 @@ class _SignUpScreenState extends State<SignUpScreen>
                           child: Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: avatarList.isEmpty
-                                // ? const Center(
-                                //     child: CircularProgressIndicator(
-                                //       color: Colors.black,
-                                //     ),
-                                //   )
-                                ? const SizedBox.shrink()
+                                ? Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: StaggeredGrid.count(
+                                      crossAxisCount: 6,
+                                      mainAxisSpacing: 3.0,
+                                      crossAxisSpacing: 4.0,
+                                      axisDirection: AxisDirection.down,
+                                      children: List.generate(18, (index) {
+                                        return Shimmer.fromColors(
+                                          baseColor: Colors.grey[300]!,
+                                          highlightColor: Colors.grey[100]!,
+                                          child: Container(
+                                            width: size.width *
+                                                AppDimensions.numD20,
+                                            height: size.width *
+                                                AppDimensions.numD20,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  )
                                 : StaggeredGrid.count(
                                     crossAxisCount: 6,
                                     mainAxisSpacing: 3.0,
@@ -1676,38 +1738,51 @@ class _SignUpScreenState extends State<SignUpScreen>
                                           showAvatarError = false;
                                           avatarState(() {});
                                           setState(() {});
-                                          Navigator.pop(context);
+                                          context.pop();
                                         },
                                         child: Stack(
                                           children: [
-                                            Image.network(
-                                              item.avatar,
-                                              errorBuilder: (context, exception,
-                                                  stackTrace) {
-                                                return Image.asset(
-                                                  "${commonImagePath}rabbitLogo.png",
-                                                  fit: BoxFit.contain,
-                                                  width: size.width *
-                                                      AppDimensions.numD20,
-                                                  height: size.width *
-                                                      AppDimensions.numD20,
+                                            CachedNetworkImage(
+                                              imageUrl: item.avatar,
+                                              fit: BoxFit.cover,
+                                              fadeInDuration: Duration.zero,
+                                              fadeOutDuration: Duration.zero,
+                                              imageBuilder:
+                                                  (context, imageProvider) {
+                                                _loadedUrls.add(item.avatar);
+                                                return Image(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
                                                 );
                                               },
-                                              loadingBuilder: (context, child,
-                                                  loadingProgress) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                }
-                                                return SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    color: Colors.black,
-                                                    strokeWidth: 2,
-                                                  ),
-                                                );
-                                              },
+                                              placeholder: (context, url) =>
+                                                  _loadedUrls.contains(url)
+                                                      ? const SizedBox.shrink()
+                                                      : Shimmer.fromColors(
+                                                          baseColor:
+                                                              Colors.grey[300]!,
+                                                          highlightColor:
+                                                              Colors.grey[100]!,
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: size.width *
+                                                                AppDimensions
+                                                                    .numD20,
+                                                            height: size.width *
+                                                                AppDimensions
+                                                                    .numD20,
+                                                          ),
+                                                        ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                "${commonImagePath}rabbitLogo.png",
+                                                fit: BoxFit.contain,
+                                                width: size.width *
+                                                    AppDimensions.numD20,
+                                                height: size.width *
+                                                    AppDimensions.numD20,
+                                              ),
                                             ),
                                             if (item.selected)
                                               Align(

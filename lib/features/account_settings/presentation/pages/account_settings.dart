@@ -3,7 +3,8 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 import 'package:presshop/core/core_export.dart';
-import 'account_delete_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class AccountSetting extends StatelessWidget {
   const AccountSetting({super.key});
@@ -30,13 +31,14 @@ class AccountSetting extends StatelessWidget {
             /*  if (widget.editProfileScreen) {
               widget.editProfileScreen = false;
             }*/
-            Navigator.pop(context);
+            context.pop();
           },
           actionWidget: [],
         ),
         body: ListView(
           padding: EdgeInsets.symmetric(
-              horizontal: size.width * AppDimensions.numD01, vertical: size.height * AppDimensions.numD015),
+              horizontal: size.width * AppDimensions.numD01,
+              vertical: size.height * AppDimensions.numD015),
           children: [
             ListTile(
               title: Text(
@@ -53,10 +55,7 @@ class AccountSetting extends StatelessWidget {
                 color: Colors.red,
               ),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AccountDeleteScreen()));
+                context.pushNamed(AppRoutes.accountDeleteName);
                 // Navigate to change password screen
               },
             ),

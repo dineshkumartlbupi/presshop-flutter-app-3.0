@@ -9,6 +9,7 @@ import 'package:presshop/core/di/injection_container.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
+import 'package:go_router/go_router.dart';
 
 class HashTagSearchScreen extends StatefulWidget {
   HashTagSearchScreen(
@@ -75,7 +76,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
           children: [
             InkWell(
               onTap: () {
-                Navigator.pop(context);
+                context.pop();
               },
               child: Image.asset(
                 "${iconsPath}ic_arrow_left.png",
@@ -344,7 +345,7 @@ class HashTagSearchScreenState extends State<HashTagSearchScreen> {
                         color: Colors.white,
                         fontWeight: FontWeight.w700),
                     commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-                  Navigator.pop(context, selectedHashTagList);
+                  context.pop(selectedHashTagList);
                 }),
               ),
               SizedBox(

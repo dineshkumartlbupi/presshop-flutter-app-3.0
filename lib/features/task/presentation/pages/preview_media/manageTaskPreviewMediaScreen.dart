@@ -51,7 +51,7 @@ class _ManageTaskPreviewMediaScreenState
                       color: Colors.white,
                       fontWeight: FontWeight.w700),
                   commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-                Navigator.pop(context); //  getImageMetaData();
+                context.pop(); //  getImageMetaData();
               }),
             )
                 : Container(
@@ -87,14 +87,11 @@ class _ManageTaskPreviewMediaScreenState
                               "Only 10 contents allowed!",
                               AppColorTheme.colorThemePink);
                         } else {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                              builder: (context) =>
-                              const CameraScreen(
-                                picAgain: true,
-                                previousScreen: ScreenNameEnum
-                                    .previewScreen,
-                              )))
+                          context
+                              .pushNamed(AppRoutes.cameraName, extra: {
+                                'picAgain': true,
+                                'previousScreen': ScreenNameEnum.previewScreen,
+                              })
                               .then((value) {
                             debugPrint(
                                 ":::: Inside Picked Again Image :::: $value");
@@ -122,7 +119,7 @@ class _ManageTaskPreviewMediaScreenState
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, AppColorTheme.colorThemePink), () {
                         if (widget.pickAgain) {
-                          Navigator.pop(context);
+                          context.pop();
                           if (widget.type == "draft") {
                             for (int i = 0; i < mediaList.length; i++) {
                               var mediaItem = mediaList[i];
@@ -140,8 +137,7 @@ class _ManageTaskPreviewMediaScreenState
                                   mediaList: mediaList);
                             }
                           } else {
-                            Navigator.pop(
-                                context,
+                            context.pop(
                                 PublishData(
                                     imagePath: widget.cameraData!.path,
                                     address: mediaAddress.isNotEmpty
@@ -174,10 +170,10 @@ class _ManageTaskPreviewMediaScreenState
                         } else {
                           if (mediaList.isNotEmpty) {
                             if (widget.cameraListData.isNotEmpty) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PublishContentScreen(
-                                      publishData: PublishData(
-                                          imagePath: widget.cameraData != null
+                              context.pushNamed(AppRoutes.publishContentName,
+                                  extra: {
+                                    'publishData': PublishData(
+                                        imagePath: widget.cameraData != null
                                               ? widget.cameraData!.path
                                               : widget.cameraListData
                                               .first.path,
@@ -202,9 +198,11 @@ class _ManageTaskPreviewMediaScreenState
                                           mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
                                           videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
                                           mediaList: mediaList),
-                                      myContentData: null,
-                                      hideDraft: false,
-                                      docType: widget.type)));
+                                        mediaList: mediaList),
+                                    'myContentData': null,
+                                    'hideDraft': false,
+                                    'docType': widget.type
+                                  });
                             }
                           }
                         }

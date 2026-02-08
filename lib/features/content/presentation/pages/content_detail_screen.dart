@@ -16,10 +16,9 @@ import 'package:video_player/video_player.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/widgets/video_thumbnail_widget.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/earning/data/models/earning_model.dart';
-import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
-import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -228,16 +227,13 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
               size: size,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context, true);
+                context.pop(true);
               },
               actionWidget: [
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
+                    context.goNamed(AppRoutes.dashboardName,
+                        extra: {'initialPosition': 2});
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -356,32 +352,24 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen> {
                                                 buttonText: AppStrings
                                                     .manageContentText,
                                                 onPressed: () {
-                                                  Navigator.of(context)
-                                                      .push(MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                                  BlocProvider<
-                                                                      TaskBloc>(
-                                                                    create: (_) =>
-                                                                        sl<TaskBloc>(),
-                                                                    child: ManageTaskScreen(
-                                                                        roomId: contentItem!
-                                                                            .id,
-                                                                        contentId:
-                                                                            contentItem!
-                                                                                .id,
-                                                                        type:
-                                                                            'content',
-                                                                        mediaHouseDetail:
-                                                                            null,
-                                                                        contentMedia:
-                                                                            showMediaWidget(),
-                                                                        contentHeader:
-                                                                            headerWidget(),
-                                                                        myContentData:
-                                                                            contentItem!.toMyContentData()),
-                                                                  )))
-                                                      .then((value) {
+                                                  context.pushNamed(
+                                                      AppRoutes.manageTaskName,
+                                                      extra: {
+                                                        'roomId':
+                                                            contentItem!.id,
+                                                        'contentId':
+                                                            contentItem!.id,
+                                                        'type': 'content',
+                                                        'mediaHouseDetail':
+                                                            null,
+                                                        'contentMedia':
+                                                            showMediaWidget(),
+                                                        'contentHeader':
+                                                            headerWidget(),
+                                                        'myContentData':
+                                                            contentItem!
+                                                                .toMyContentData(),
+                                                      }).then((value) {
                                                     shouldRestartAnimation =
                                                         true;
 

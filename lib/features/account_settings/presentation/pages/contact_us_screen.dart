@@ -9,14 +9,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'faq_screen.dart';
-import '../../../../features/publish/presentation/pages/TutorialsScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import '../bloc/account_settings_bloc.dart';
 import '../bloc/account_settings_event.dart';
 import '../bloc/account_settings_state.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -90,15 +88,15 @@ class ContactUsScreenState extends State<ContactUsScreen> {
             size: size,
             showActions: true,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: [
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)));
+                  context.goNamed(
+                    AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2},
+                  );
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
@@ -328,13 +326,14 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               alignment: PlaceholderAlignment.middle,
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => FAQScreen(
-                                      priceTipsSelected: false,
-                                      type: 'faq',
-                                      index: 0,
-                                    ),
-                                  ));
+                                  context.pushNamed(
+                                    AppRoutes.faqName,
+                                    extra: {
+                                      'priceTipsSelected': false,
+                                      'type': 'faq',
+                                      'index': 0,
+                                    },
+                                  );
                                 },
                                 child: Text(
                                   "${AppStrings.faqText}, ",
@@ -353,13 +352,14 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               alignment: PlaceholderAlignment.middle,
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => FAQScreen(
-                                      priceTipsSelected: true,
-                                      type: '',
-                                      index: 0,
-                                    ),
-                                  ));
+                                  context.pushNamed(
+                                    AppRoutes.faqName,
+                                    extra: {
+                                      'priceTipsSelected': true,
+                                      'type': '',
+                                      'index': 0,
+                                    },
+                                  );
                                 },
                                 child: Text(
                                   "${AppStrings.priceTipsText.toLowerCase()} ",
@@ -387,10 +387,7 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                               alignment: PlaceholderAlignment.middle,
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TutorialsScreen(),
-                                  ));
+                                  context.pushNamed(AppRoutes.tutorialsName);
                                 },
                                 child: Text(
                                   "${AppStrings.tutorialsText.toLowerCase()} ",
@@ -613,14 +610,12 @@ class ContactUsScreenState extends State<ContactUsScreen> {
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink), () {
                           if (messageController.text.isNotEmpty) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ConversationScreen(
-                                  hideLeading: false,
-                                  message: messageController.text.trim(),
-                                ),
-                              ),
+                            context.pushNamed(
+                              AppRoutes.chatName,
+                              extra: {
+                                'hideLeading': false,
+                                'message': messageController.text.trim(),
+                              },
                             );
                           }
                           setState(() {});

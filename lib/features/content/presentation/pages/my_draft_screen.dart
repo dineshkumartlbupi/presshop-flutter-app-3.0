@@ -7,8 +7,8 @@ import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/extensions.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'package:presshop/features/publish/presentation/pages/PublishContentScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../../core/di/injection_container.dart';
@@ -55,12 +55,12 @@ class MyDraftScreenState extends State<MyDraftScreen> {
     return WillPopScope(
       onWillPop: () async {
         if (widget.publishedContent || widget.screenType == "welcome") {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => Dashboard(initialPosition: 2)),
-              (route) => false);
+          context.goNamed(
+            AppRoutes.dashboardName,
+            extra: {'initialPosition': 2},
+          );
         } else {
-          Navigator.pop(context);
+          context.pop();
         }
 
         return false;
@@ -80,7 +80,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
           size: size,
           showActions: true,
           leadingFxn: () {
-            Navigator.pop(context);
+            context.pop();
           },
           actionWidget: [
             InkWell(
@@ -96,10 +96,10 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                   EdgeInsets.only(bottom: size.width * AppDimensions.numD02),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)),
-                      (route) => false);
+                  context.goNamed(
+                    AppRoutes.dashboardName,
+                    extra: {'initialPosition': 2},
+                  );
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
@@ -131,13 +131,15 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                         return InkWell(
                           onTap: () {
                             selectedIndex = index;
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => PublishContentScreen(
-                                      publishData: null,
-                                      myContentData: myDraftList[selectedIndex],
-                                      hideDraft: true,
-                                      docType: '',
-                                    )));
+                            context.pushNamed(
+                              AppRoutes.publishContentName,
+                              extra: {
+                                'publishData': null,
+                                'myContentData': myDraftList[selectedIndex],
+                                'hideDraft': true,
+                                'docType': '',
+                              },
+                            );
                           },
                           child: Container(
                             padding: EdgeInsets.only(
@@ -482,7 +484,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                         IconButton(
                           splashRadius: size.width * AppDimensions.numD07,
                           onPressed: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           icon: Icon(
                             Icons.close,
@@ -573,7 +575,7 @@ class MyDraftScreenState extends State<MyDraftScreen> {
                               fontWeight: FontWeight.w700),
                           commonButtonStyle(size, AppColorTheme.colorThemePink),
                           () {
-                        Navigator.pop(context);
+                        context.pop();
                         myDraftApi();
                       }),
                     ),

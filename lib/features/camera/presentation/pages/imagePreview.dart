@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:presshop/core/core_export.dart';
 
@@ -40,7 +41,7 @@ class _ImagePreviewState extends State<ImagePreview> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
       ),

@@ -11,7 +11,7 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_bloc.dart';
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_event.dart';
 import 'package:presshop/features/authentication/presentation/bloc/upload_documents/upload_documents_state.dart';
-
+import 'package:go_router/go_router.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 
 const String uploadDocumentsText = "Upload Documents";
@@ -56,7 +56,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
             size: size,
             showActions: false,
             leadingFxn: () {
-              Navigator.pop(context);
+              context.pop();
             },
             actionWidget: null,
           ),
@@ -75,7 +75,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 context
                     .read<UploadDocumentsBloc>()
                     .add(GetUploadedDocumentsEvent());
-                Navigator.pop(context); // Close any open sheets if needed
+                context.pop(); // Close any open sheets if needed
               } else if (state.status == UploadDocumentsStatus.deleted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -373,7 +373,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     Spacer(),
                     IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       icon: const Icon(Icons.close),
                     ),
@@ -527,7 +527,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                       ),
                       IconButton(
                         icon: Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.pop(),
                       )
                     ],
                   ),
@@ -542,7 +542,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal)),
                             onTap: () {
-                              Navigator.pop(context, e.name);
+                              context.pop(e.name);
                             },
                           ))
                       .toList(),
@@ -584,7 +584,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   ),
                   IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       icon: Icon(Icons.close_rounded,
                           color: Colors.black,
@@ -603,7 +603,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Navigator.pop(context);
+                          context.pop();
                           _pickFiles(context, true);
                         },
                         child: Container(
@@ -645,7 +645,7 @@ class UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Navigator.pop(context);
+                          context.pop();
                           _pickFiles(context, false);
                         },
                         child: Container(

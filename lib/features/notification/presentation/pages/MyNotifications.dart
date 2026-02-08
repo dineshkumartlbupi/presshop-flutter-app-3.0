@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:presshop/main.dart';
-import 'package:presshop/features/notification/presentation/pages/InlineFlickPlayer.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presshop/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:presshop/features/notification/presentation/pages/InlineFlickPlayer.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
-import 'package:presshop/features/content/presentation/pages/content_detail_screen.dart';
-import 'package:presshop/features/task/presentation/pages/manage_task_screen.dart';
-import 'package:presshop/features/task/presentation/pages/task_screen.dart';
-import 'package:presshop/features/task/presentation/pages/detail_new/task_details_new_screen.dart';
-import 'package:presshop/features/chat/presentation/pages/ChatScreen.dart';
-import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 
 class MyNotificationScreen extends StatefulWidget {
   const MyNotificationScreen({super.key, required this.count});
@@ -86,7 +81,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                               const Spacer(),
                               IconButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    context.pop();
                                   },
                                   icon: Icon(
                                     Icons.close,
@@ -188,7 +183,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                       () async {
                                     try {
                                       bloc.add(StudentBeansActivationEvent());
-                                      Navigator.pop(context);
+                                      context.pop();
                                     } catch (e) {
                                       debugPrint("Error launching URL: $e");
                                     }
@@ -252,7 +247,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           child: Container(
                             width: size.width * AppDimensions.numD45,
@@ -283,7 +278,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            context.pop();
                             bloc.add(ClearAllNotificationsEvent());
                           },
                           child: Container(
@@ -343,9 +338,11 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
             final uri = Uri.parse(state.studentBeansActivationUrl!);
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
-              context
-                  .read<NotificationBloc>()
-                  .add(MarkStudentBeansVisitedEvent());
+              if (context.mounted) {
+                context
+                    .read<NotificationBloc>()
+                    .add(MarkStudentBeansVisitedEvent());
+              }
             }
           }
         },
@@ -366,7 +363,7 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
               size: size,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: [
                 InkWell(
@@ -424,11 +421,10 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -509,49 +505,41 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                               "publish_content" ||
                                           item.messageType ==
                                               "offer_received") {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MyContentDetailScreen(
-                                                      paymentStatus:
-                                                          item.paymentStatus,
-                                                      exclusive: item.exclusive,
-                                                      contentId: item.contentId,
-                                                      offerCount: 0,
-                                                      purchasedMediahouseCount:
-                                                          0,
-                                                    )));
+                                        context.pushNamed(
+                                          AppRoutes.contentDetailName,
+                                          extra: {
+                                            'paymentStatus': item.paymentStatus,
+                                            'exclusive': item.exclusive,
+                                            'contentId': item.contentId,
+                                            'offerCount': 0,
+                                            'purchasedMediahouseCount': 0,
+                                          },
+                                        );
                                       } else if (item.messageType ==
                                           "offer_received") {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    BlocProvider<TaskBloc>(
-                                                      create: (_) =>
-                                                          di.sl<TaskBloc>(),
-                                                      child: ManageTaskScreen(
-                                                          roomId:
-                                                              item.contentId,
-                                                          contentId:
-                                                              item.contentId,
-                                                          type: 'content',
-                                                          mediaHouseDetail:
-                                                              null,
-                                                          contentMedia: null,
-                                                          contentHeader: null,
-                                                          myContentData: null),
-                                                    )));
+                                        context.pushNamed(
+                                          AppRoutes.manageTaskName,
+                                          extra: {
+                                            'roomId': item.contentId,
+                                            'contentId': item.contentId,
+                                            'type': 'content',
+                                            'mediaHouseDetail': null,
+                                            'contentMedia': null,
+                                            'contentHeader': null,
+                                            'myContentData': null,
+                                          },
+                                        );
                                       } else if (item.messageType ==
                                           "content_sold") {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TransactionDetailScreen(
-                                                        pageType:
-                                                            PageType.CONTENT,
-                                                        type: "received",
-                                                        transactionData: item
-                                                            .transactionDetailData!)));
+                                        context.pushNamed(
+                                          AppRoutes.transactionDetailName,
+                                          extra: {
+                                            'pageType': PageType.CONTENT,
+                                            'type': "received",
+                                            'transactionData':
+                                                item.transactionDetailData!,
+                                          },
+                                        );
                                       } else if (item.messageType ==
                                               "new_task_posted" ||
                                           item.messageType ==
@@ -561,39 +549,37 @@ class _MyNotificationScreenState extends State<MyNotificationScreen> {
                                         debugPrint(
                                             "BroadcastID: '${item.broadcastId}'");
                                         if (item.broadcastId.isNotEmpty) {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MyTaskScreen(
-                                                          hideLeading: false,
-                                                          broadCastId: item
-                                                              .broadcastId)));
+                                          context.pushNamed(
+                                            AppRoutes.myTasksName,
+                                            extra: {
+                                              'hideLeading': false,
+                                              'broadCastId': item.broadcastId,
+                                            },
+                                          );
                                         } else {
                                           debugPrint("BroadcastID is empty");
                                         }
                                       } else if (item.messageType ==
                                           "task_accepted") {
                                         if (item.broadcastId.isNotEmpty) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TaskDetailNewScreen(
-                                                        taskId:
-                                                            item.broadcastId,
-                                                        taskStatus: "accepted",
-                                                        totalEarning: "0",
-                                                      )));
+                                          context.pushNamed(
+                                            AppRoutes.taskDetailNewName,
+                                            extra: {
+                                              'taskId': item.broadcastId,
+                                              'taskStatus': "accepted",
+                                              'totalEarning': "0",
+                                            },
+                                          );
                                         }
                                       } else if (item.messageType ==
                                           "initiate_admin_chat") {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ConversationScreen(
-                                                      hideLeading: false,
-                                                      message: '',
-                                                    )));
+                                        context.pushNamed(
+                                          AppRoutes.chatName,
+                                          extra: {
+                                            'hideLeading': false,
+                                            'message': '',
+                                          },
+                                        );
                                       } else if (item.messageType ==
                                           "studentbeans") {
                                         context

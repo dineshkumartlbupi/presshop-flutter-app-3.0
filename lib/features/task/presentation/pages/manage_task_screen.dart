@@ -24,9 +24,7 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
 import 'package:presshop/features/content/data/models/my_content_data_model.dart';
-import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dart';
 import 'package:presshop/features/earning/presentation/pages/TransactionDetailScreen.dart';
-import 'package:presshop/core/widgets/error/permission_error_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
@@ -39,14 +37,11 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
-import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 
 import 'package:presshop/features/task/domain/entities/task_detail.dart';
 import 'package:presshop/core/analytics/analytics_mixin.dart';
@@ -218,15 +213,16 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
           _onRefresh();
         } else if (state.transactions.isNotEmpty) {
           if (state.transactions.isNotEmpty) {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => TransactionDetailScreen(
-                      type: "received",
-                      pageType: widget.type == 'content'
-                          ? PageType.CONTENT
-                          : PageType.TASK,
-                      transactionData: state.transactions.first.toEntity(),
-                      shouldShowPublication: true,
-                    )));
+            context.pushNamed(
+              AppRoutes.transactionDetailName,
+              extra: {
+                'type': "received",
+                'pageType':
+                    widget.type == 'content' ? PageType.CONTENT : PageType.TASK,
+                'transactionData': state.transactions.first.toEntity(),
+                'shouldShowPublication': true,
+              },
+            );
           }
         } else if (state.errorMessage != null) {
           isDataLoaded = true;
@@ -237,7 +233,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       builder: (context, state) {
         return WillPopScope(
             onWillPop: () async {
-              Navigator.pop(context);
+              context.pop();
               return false;
             },
             child: Scaffold(
@@ -259,16 +255,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   size: size,
                   showActions: true,
                   leadingFxn: () {
-                    Navigator.pop(context);
+                    context.pop();
                   },
                   actionWidget: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Dashboard(initialPosition: 2)),
-                            (route) => false);
+                        context.goNamed(
+                          AppRoutes.dashboardName,
+                          extra: {'initialPosition': 2},
+                        );
                       },
                       child: Image.asset(
                         "${commonImagePath}ic_black_rabbit.png",
@@ -576,11 +571,17 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                               size,
                                                                               AppColorTheme.colorThemePink),
                                                                           () {
-                                                                        Navigator.of(context).push(MaterialPageRoute(
-                                                                            builder: (context) => MyEarningScreen(
-                                                                                  openDashboard: false,
-                                                                                  initialTapPosition: 2,
-                                                                                )));
+                                                                        context
+                                                                            .pushNamed(
+                                                                          AppRoutes
+                                                                              .myEarningName,
+                                                                          extra: {
+                                                                            'openDashboard':
+                                                                                false,
+                                                                            'initialTapPosition':
+                                                                                2,
+                                                                          },
+                                                                        );
                                                                       }),
                                                                     )
                                                                   : Container(),
@@ -1077,10 +1078,12 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w400),
                                                                                 recognizer: TapGestureRecognizer()
                                                                                   ..onTap = () {
-                                                                                    Navigator.of(context).push(MaterialPageRoute(
-                                                                                        builder: (context) => TermCheckScreen(
-                                                                                              type: 'legal',
-                                                                                            )));
+                                                                                    context.pushNamed(
+                                                                                      AppRoutes.termName,
+                                                                                      extra: {
+                                                                                        'type': 'legal'
+                                                                                      },
+                                                                                    );
                                                                                   }),
                                                                             TextSpan(
                                                                               text: "The price of your content can be automatically adjusted in order to increase sales. If you have any questions, please ",
@@ -1091,7 +1094,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 style: commonTextStyle(size: size, fontSize: size.width * AppDimensions.numD03, color: AppColorTheme.colorThemePink, fontWeight: FontWeight.w400),
                                                                                 recognizer: TapGestureRecognizer()
                                                                                   ..onTap = () {
-                                                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
+                                                                                    context.pushNamed(AppRoutes.contactUsName);
                                                                                   }),
                                                                             TextSpan(
                                                                               text: "our helpful teams who are available 24x7 to assist you. Thank you",
@@ -1902,11 +1905,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                             commonButtonStyle(size,
                                                                                 AppColorTheme.colorThemePink),
                                                                             () {
-                                                                          Navigator.of(context).push(MaterialPageRoute(
-                                                                              builder: (context) => MyEarningScreen(
-                                                                                    openDashboard: false,
-                                                                                    initialTapPosition: 2,
-                                                                                  )));
+                                                                          context
+                                                                              .pushNamed(
+                                                                            AppRoutes.myEarningName,
+                                                                            extra: {
+                                                                              'openDashboard': false,
+                                                                              'initialTapPosition': 2,
+                                                                            },
+                                                                          );
                                                                         }),
                                                                       ),
                                                                       SizedBox(
@@ -2356,10 +2362,12 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 fontWeight: FontWeight.w600),
                                                                             recognizer: TapGestureRecognizer()
                                                                               ..onTap = () {
-                                                                                Navigator.of(context).push(MaterialPageRoute(
-                                                                                    builder: (context) => TermCheckScreen(
-                                                                                          type: 'legal',
-                                                                                        )));
+                                                                                context.pushNamed(
+                                                                                  AppRoutes.termName,
+                                                                                  extra: {
+                                                                                    'type': 'legal'
+                                                                                  },
+                                                                                );
                                                                               }),
                                                                         TextSpan(
                                                                           text:
@@ -2380,7 +2388,7 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                                                                 fontWeight: FontWeight.w600),
                                                                             recognizer: TapGestureRecognizer()
                                                                               ..onTap = () {
-                                                                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
+                                                                                context.pushNamed(AppRoutes.contactUsName);
                                                                               }),
                                                                         TextSpan(
                                                                           text:
@@ -2558,20 +2566,18 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                                               commonButtonStyle(size,
                                                   AppColorTheme.colorThemePink),
                                               () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const CameraScreen(
-                                                          picAgain: true,
-                                                          previousScreen:
-                                                              ScreenNameEnum
-                                                                  .manageTaskScreen,
-                                                        ))).then((value) {
+                                            context.pushNamed(
+                                              AppRoutes.cameraName,
+                                              extra: {
+                                                'picAgain': true,
+                                                'previousScreen': ScreenNameEnum
+                                                    .manageTaskScreen,
+                                              },
+                                            ).then((value) {
                                               if (value != null) {
                                                 debugPrint("value:::::$value");
                                                 List<CameraData> cameraData =
-                                                    value;
+                                                    value as List<CameraData>;
 
                                                 if (cameraData.first.mimeType ==
                                                     "video") {
@@ -3780,14 +3786,14 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FAQScreen(
-                                      priceTipsSelected: true,
-                                      type: 'price_tips',
-                                      index: 0,
-                                    )));
+                        context.pushNamed(
+                          AppRoutes.faqName,
+                          extra: {
+                            'priceTipsSelected': true,
+                            'type': 'price_tips',
+                            'index': 0,
+                          },
+                        );
                       },
                       child: Text(
                         "Check price tips, and learnings",
@@ -4339,11 +4345,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MediaViewScreen(
-                              mediaFile: videoUrl,
-                              type: MediaTypeEnum.video,
-                            )));
+                    context.pushNamed(
+                      AppRoutes.fullVideoViewName,
+                      extra: {
+                        'mediaFile': videoUrl,
+                        'type': MediaTypeEnum.video,
+                      },
+                    );
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(
@@ -4376,11 +4384,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MediaViewScreen(
-                              mediaFile: videoUrl,
-                              type: MediaTypeEnum.video,
-                            )));
+                    context.pushNamed(
+                      AppRoutes.fullVideoViewName,
+                      extra: {
+                        'mediaFile': videoUrl,
+                        'type': MediaTypeEnum.video,
+                      },
+                    );
                   },
                   child: Icon(
                     Icons.play_circle,
@@ -4436,11 +4446,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => MediaViewScreen(
-                  mediaFile: audioUrl,
-                  type: MediaTypeEnum.audio,
-                )));
+        context.pushNamed(
+          AppRoutes.fullVideoViewName,
+          extra: {
+            'mediaFile': audioUrl,
+            'type': MediaTypeEnum.audio,
+          },
+        );
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -4538,11 +4550,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
       highlightColor: Colors.transparent,
       onTap: () {
         debugPrint("imageTap:::::::${sharedPreferences!.getString(avatarKey)}");
-        Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
-            builder: (context) => MediaViewScreen(
-                  mediaFile: imageUrl,
-                  type: MediaTypeEnum.image,
-                )));
+        context.pushNamed(
+          AppRoutes.fullVideoViewName,
+          extra: {
+            'mediaFile': imageUrl,
+            'type': MediaTypeEnum.image,
+          },
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -4949,11 +4963,13 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
                             commonButtonTextStyle(size),
                             commonButtonStyle(
                                 size, AppColorTheme.colorThemePink), () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyEarningScreen(
-                                    openDashboard: false,
-                                    initialTapPosition: 2,
-                                  )));
+                          context.pushNamed(
+                            AppRoutes.myEarningName,
+                            extra: {
+                              'openDashboard': false,
+                              'initialTapPosition': 2,
+                            },
+                          );
                         }),
                       ),
                     ],
@@ -6871,15 +6887,15 @@ class ManageTaskScreenState extends State<ManageTaskScreen>
         }
       }
     } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PermissionErrorScreen(
-                    permissionsStatus: {
-                      Permission.camera: false,
-                      Permission.microphone: false,
-                    },
-                  )));
+      context.pushNamed(
+        AppRoutes.permissionErrorName,
+        extra: {
+          'permissionsStatus': {
+            Permission.camera: false,
+            Permission.microphone: false,
+          },
+        },
+      );
     }
   }
 

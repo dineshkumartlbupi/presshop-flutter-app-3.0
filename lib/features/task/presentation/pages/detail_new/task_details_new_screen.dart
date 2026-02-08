@@ -6,7 +6,8 @@ import 'package:location/location.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/chat/presentation/pages/FullVideoView.dart';
-import 'package:presshop/features/task/presentation/pages/broadcast_chat/broadCastChatTaskScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,7 +17,6 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/widgets/animated_button.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
@@ -92,15 +92,15 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
         size: size,
         showActions: true,
         leadingFxn: () {
-          Navigator.pop(context);
+          context.pop();
         },
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              context.goNamed(
+                AppRoutes.dashboardName,
+                extra: {'initialPosition': 2},
+              );
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -854,31 +854,31 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                             InkWell(
                               onTap: () {
                                 if (item.mediaType == "video") {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MediaViewScreen(
-                                                mediaFile: item.media,
-                                                type: MediaTypeEnum.video,
-                                              )));
+                                  context.pushNamed(
+                                    AppRoutes.fullVideoViewName,
+                                    extra: {
+                                      'mediaFile': item.media,
+                                      'type': MediaTypeEnum.video,
+                                    },
+                                  );
                                 } else if (item.mediaType == "audio") {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MediaViewScreen(
-                                                mediaFile: getMediaImageUrl(
-                                                    item.media,
-                                                    isTask: true),
-                                                type: MediaTypeEnum.audio,
-                                              )));
+                                  context.pushNamed(
+                                    AppRoutes.fullVideoViewName,
+                                    extra: {
+                                      'mediaFile': getMediaImageUrl(item.media,
+                                          isTask: true),
+                                      'type': MediaTypeEnum.audio,
+                                    },
+                                  );
                                 } else {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => MediaViewScreen(
-                                            mediaFile: getMediaImageUrl(
-                                                item.media,
-                                                isTask: true),
-                                            type: MediaTypeEnum.image,
-                                          )));
+                                  context.pushNamed(
+                                    AppRoutes.fullVideoViewName,
+                                    extra: {
+                                      'mediaFile': getMediaImageUrl(item.media,
+                                          isTask: true),
+                                      'type': MediaTypeEnum.image,
+                                    },
+                                  );
                                 }
                               },
                               child: ClipRRect(
@@ -994,30 +994,25 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> {
                     widget.taskStatus != "rejected"
                         ? GestureDetector(
                             onTap: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          BroadCastChatTaskScreen(
-                                            taskDetail: taskDetail!,
-                                            roomId: roomId,
-                                          )))
-                                  .then((value) => context.read<TaskBloc>().add(
-                                      GetTaskDetailEvent(widget.taskId,
-                                          showLoader: false)));
+                              context.pushNamed(AppRoutes.broadcastChatName,
+                                  extra: {
+                                    'taskDetail': taskDetail!,
+                                    'roomId': roomId,
+                                  }).then((value) => context
+                                  .read<TaskBloc>()
+                                  .add(GetTaskDetailEvent(widget.taskId,
+                                      showLoader: false)));
                             },
                             child: AnimatedButtonWidget(
                               shouldRestartAnimation: shouldRestartAnimation,
                               size: size,
                               buttonText: AppStringsNew2.manageTaskText,
                               onPressed: () {
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            BroadCastChatTaskScreen(
-                                              taskDetail: taskDetail!,
-                                              roomId: roomId,
-                                            )))
-                                    .then((value) {
+                                context.pushNamed(AppRoutes.broadcastChatName,
+                                    extra: {
+                                      'taskDetail': taskDetail!,
+                                      'roomId': roomId,
+                                    }).then((value) {
                                   shouldRestartAnimation = true;
                                   context.read<TaskBloc>().add(
                                       GetTaskDetailEvent(widget.taskId,

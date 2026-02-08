@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:presshop/features/account_settings/presentation/pages/faq_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -9,8 +8,9 @@ import 'package:presshop/main.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:presshop/core/di/injection_container.dart' as di;
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import '../bloc/alert_bloc.dart';
 import '../bloc/alert_event.dart';
@@ -71,16 +71,13 @@ class _AlertScreenState extends State<AlertScreen> {
                 size: size,
                 showActions: true,
                 leadingFxn: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 actionWidget: [
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Dashboard(initialPosition: 2)),
-                          (route) => false);
+                      context.goNamed(AppRoutes.dashboardName,
+                          extra: {'initialPosition': 2});
                     },
                     child: Image.asset(
                       "${commonImagePath}rabbitLogo.png",
@@ -454,15 +451,14 @@ class _AlertScreenState extends State<AlertScreen> {
                                                 item.locationData?.coordinates,
                                                 state.currentLocation);
                                           } else {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FAQScreen(
-                                                            priceTipsSelected:
-                                                                false,
-                                                            type: "faq",
-                                                            index: 1)));
+                                            context.pushNamed(
+                                              AppRoutes.faqName,
+                                              extra: {
+                                                'priceTipsSelected': false,
+                                                'type': "faq",
+                                                'index': 1
+                                              },
+                                            );
                                           }
                                         }),
                                       )

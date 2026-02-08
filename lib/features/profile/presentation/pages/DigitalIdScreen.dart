@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -12,8 +13,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:presshop/core/widgets/common_app_bar.dart';
-import '../../../dashboard/presentation/pages/dashboard.dart';
 import '../../presentation/bloc/profile_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import '../../presentation/bloc/profile_event.dart';
 import '../../presentation/bloc/profile_state.dart';
 import 'package:presshop/core/di/injection_container.dart';
@@ -62,7 +64,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 title: const Text('Photo Library'),
                 onTap: () {
                   _pickImage(ImageSource.gallery, context);
-                  Navigator.of(modalContext).pop();
+                  modalContext.pop();
                 },
               ),
               ListTile(
@@ -70,7 +72,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                 title: const Text('Camera'),
                 onTap: () {
                   _pickImage(ImageSource.camera, context);
-                  Navigator.of(modalContext).pop();
+                  modalContext.pop();
                 },
               ),
             ],
@@ -135,16 +137,15 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
               size: size,
               showActions: true,
               leadingFxn: () {
-                Navigator.pop(context);
+                context.pop();
               },
               actionWidget: [
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Dashboard(initialPosition: 2)),
-                        (route) => false);
+                    context.goNamed(
+                      AppRoutes.dashboardName,
+                      extra: {'initialPosition': 2},
+                    );
                   },
                   child: Image.asset(
                     "${commonImagePath}rabbitLogo.png",
@@ -276,16 +277,18 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
                                             width: size.width *
                                                 AppDimensions.numD70,
                                             fit: BoxFit.cover,
+                                            fadeInDuration: Duration.zero,
+                                            fadeOutDuration: Duration.zero,
                                             placeholder: (context, url) =>
-                                                Container(
-                                              height: size.width *
-                                                  AppDimensions.numD60,
-                                              width: size.width *
-                                                  AppDimensions.numD70,
-                                              alignment: Alignment.center,
-                                              child:
-                                                  const CircularProgressIndicator(
-                                                strokeWidth: 2,
+                                                Shimmer.fromColors(
+                                              baseColor: Colors.grey[300]!,
+                                              highlightColor: Colors.grey[100]!,
+                                              child: Container(
+                                                height: size.width *
+                                                    AppDimensions.numD60,
+                                                width: size.width *
+                                                    AppDimensions.numD70,
+                                                color: Colors.white,
                                               ),
                                             ),
                                             errorWidget:

@@ -1,16 +1,17 @@
 import 'dart:io';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:presshop/core/core_export.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/widgets/video_widget.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
-import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
+// import 'package:presshop/features/camera/presentation/pages/CameraScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/AudioWaveFormWidgetScreen.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
-
   const MediaPreviewScreen({
     super.key,
     required this.mediaList,
@@ -105,15 +106,16 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                 size,
                                 commonButtonTextStyle(size),
                                 commonButtonStyle(size, Colors.black), () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CameraScreen(
-                                            picAgain: true,
-                                            previousScreen:
-                                                ScreenNameEnum.manageTaskScreen,
-                                          ))).then((value) {
-                                if (value != null) {
+                              context.pushNamed(
+                                AppRoutes.cameraName,
+                                extra: {
+                                  'picAgain': true,
+                                  'previousScreen':
+                                      ScreenNameEnum.manageTaskScreen,
+                                },
+                              ).then((value) {
+                                if (value != null &&
+                                    value is List<CameraData>) {
                                   debugPrint(
                                       "value:::::$value::::::::${value.first.path}");
                                   List<CameraData> temData = value;
@@ -149,8 +151,9 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                                 "Next",
                                 size,
                                 commonButtonTextStyle(size),
-                                commonButtonStyle(size, AppColorTheme.colorThemePink), () {
-                              Navigator.pop(context, "upload");
+                                commonButtonStyle(
+                                    size, AppColorTheme.colorThemePink), () {
+                              context.pop("upload");
                             }),
                           ),
                         ),
@@ -172,7 +175,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                     widget.mediaList.removeAt(currentPage);
                     widget.onMediaUpdated(widget.mediaList);
                     if (widget.mediaList.isEmpty) {
-                      Navigator.pop(context);
+                      context.pop();
                     } else {
                       if (currentPage >= widget.mediaList.length) {
                         currentPage = widget.mediaList.length - 1;
@@ -190,7 +193,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
               left: size.width * AppDimensions.numD02,
               child: IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    context.pop();
                   },
                   icon: Icon(
                     Icons.arrow_back_ios,

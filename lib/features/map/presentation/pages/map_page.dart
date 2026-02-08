@@ -11,6 +11,8 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:presshop/core/di/injection_container.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 import 'package:presshop/features/map/constants/map_news_constants.dart';
 import 'package:presshop/features/map/presentation/bloc/map_bloc.dart';
@@ -26,7 +28,6 @@ import 'package:presshop/features/map/presentation/widgets/serarch_filter_widget
 import 'package:presshop/features/map/presentation/widgets/side_action_panal.dart';
 import 'package:presshop/features/map/presentation/widgets/get_direction_card.dart';
 import 'package:presshop/features/map/presentation/widgets/route_info_window.dart';
-import 'package:presshop/features/news/presentation/pages/news_details_screen_legacy.dart';
 import 'package:presshop/features/map/domain/repositories/map_repository.dart';
 
 import 'package:presshop/core/widgets/new_home_app_bar.dart';
@@ -419,12 +420,12 @@ class _MapPageContentState extends State<_MapPageContent>
             'This app needs location access to function properly. Please enable it in settings.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               openAppSettings();
             },
             child: const Text('Open Settings'),
@@ -638,13 +639,11 @@ class _MapPageContentState extends State<_MapPageContent>
                           key: ValueKey('info_${state.selectedIncident!.id}'),
                           incident: state.selectedIncident!,
                           onViewPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NewsDetailsScreen(
-                                  newsId: state.selectedIncident!.id,
-                                ),
-                              ),
+                            context.pushNamed(
+                              AppRoutes.newsDetailsName,
+                              extra: {
+                                'newsId': state.selectedIncident!.id,
+                              },
                             );
                           },
                         )

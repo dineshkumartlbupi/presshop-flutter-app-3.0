@@ -7,8 +7,9 @@ import 'package:presshop/core/di/injection_container.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/features/account_settings/presentation/bloc/faq/faq_bloc.dart';
-import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:go_router/go_router.dart';
+import 'package:presshop/core/router/router_constants.dart';
 
 class FAQScreen extends StatefulWidget {
   const FAQScreen({
@@ -98,15 +99,15 @@ class _FAQScreenState extends State<FAQScreen> with AnalyticsPageMixin {
           size: size,
           showActions: true,
           leadingFxn: () {
-            Navigator.pop(context);
+            context.pop();
           },
           actionWidget: [
             InkWell(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
+                context.goNamed(
+                  AppRoutes.dashboardName,
+                  extra: {'initialPosition': 2},
+                );
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
