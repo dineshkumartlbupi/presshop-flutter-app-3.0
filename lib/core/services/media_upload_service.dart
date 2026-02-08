@@ -14,6 +14,8 @@ import 'package:presshop/core/analytics/analytics_constants.dart';
 /// Service for handling media uploads with progress tracking
 class MediaUploadService {
   static int _lastProgress = -1;
+  static final ValueNotifier<Map<String, dynamic>?> uploadStatus =
+      ValueNotifier(null);
 
   /// Upload media files using Dio with progress notifications
   static Future<bool> uploadMedia({
@@ -68,12 +70,33 @@ class MediaUploadService {
     }
 
     try {
+      uploadStatus.value = {
+        'status': 'starting',
+        'progress': 0,
+        'taskId': jsonBody?['task_id'],
+        'endUrl': endUrl,
+      };
       AppLogger.info("Media upload started to $endUrl");
       log("Upload started: ${DateTime.now()}");
       debugPrint("Upload URL: $endUrl");
-      // debugPrint("Upload Headers: ${dio.options.headers}"); // Headers handled by ApiClient
-      debugPrint(
-          "Upload Files: ${formData.files.map((e) => "${e.key}: ${e.value.filename}").toList()}");
+
+      // Show initial 0% notification
+      _showProgressNotification(
+        localNotificationService.flutterLocalNotificationsPlugin,
+        0,
+        isDraft: jsonBody?['is_draft'] == 'true',
+      );
+
+      // Transition to processing state after upload completes but before response
+      _showProcessingNotification(
+        localNotificationService.flutterLocalNotificationsPlugin,
+        isDraft: jsonBody?['is_draft'] == 'true',
+      );
+      uploadStatus.value = {
+        'status': 'processing',
+        'progress': 100,
+        'taskId': jsonBody?['task_id'],
+      };
 
       // Use ApiClient.post with custom timeouts via Options if needed, though ApiClient has defaults.
       // If stricter timeouts needed, pass Options.
@@ -105,12 +128,22 @@ class MediaUploadService {
           'is_draft': (jsonBody?['is_draft'] == 'true').toString(),
           'file_count': filePathList.length + (additionalFiles?.length ?? 0),
         });
+        uploadStatus.value = {
+          'status': 'success',
+          'progress': 100,
+          'taskId': jsonBody?['task_id'],
+        };
         return true;
       } else {
         _showFailedNotification(
           localNotificationService.flutterLocalNotificationsPlugin,
         );
         debugPrint("Upload failed with status code: ${response.statusCode}");
+        uploadStatus.value = {
+          'status': 'failed',
+          'progress': _lastProgress,
+          'taskId': jsonBody?['task_id'],
+        };
         return false;
       }
     } catch (e) {
@@ -118,6 +151,12 @@ class MediaUploadService {
       _showFailedNotification(
         localNotificationService.flutterLocalNotificationsPlugin,
       );
+      uploadStatus.value = {
+        'status': 'failed',
+        'progress': _lastProgress,
+        'taskId': jsonBody?['task_id'],
+        'error': e.toString(),
+      };
       return false;
     } finally {
       await WakelockPlus.disable();
@@ -142,6 +181,12 @@ class MediaUploadService {
         progress,
         isDraft: jsonBody?['is_draft'] == 'true',
       );
+
+      uploadStatus.value = {
+        'status': 'uploading',
+        'progress': progress,
+        'taskId': jsonBody?['task_id'],
+      };
     }
 
     if (progress == 100) {
@@ -149,16 +194,18 @@ class MediaUploadService {
     }
   }
 
-  /// Show progress notification
   static void _showProgressNotification(
     FlutterLocalNotificationsPlugin notificationPlugin,
     int progress, {
     bool isDraft = false,
   }) {
+    String title = isDraft ? "Saving draft" : 'Uploading Content';
+    String body = 'Uploading ($progress%)';
+
     notificationPlugin.show(
       0,
-      isDraft ? "Saving draft" : 'Uploading Content',
-      'Progress: $progress%',
+      title,
+      body,
       NotificationDetails(
         android: AndroidNotificationDetails(
           'upload_channel',
@@ -168,6 +215,33 @@ class MediaUploadService {
           showProgress: true,
           maxProgress: 100,
           progress: progress,
+          onlyAlertOnce: true,
+          ongoing: true,
+        ),
+      ),
+    );
+  }
+
+  /// Show processing notification
+  static void _showProcessingNotification(
+    FlutterLocalNotificationsPlugin notificationPlugin, {
+    bool isDraft = false,
+  }) {
+    String title = isDraft ? "Saving draft" : 'Processing Content';
+    String body = 'Processing - Finalizing upload...';
+
+    notificationPlugin.show(
+      0,
+      title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'upload_channel',
+          'Video Upload',
+          importance: Importance.max,
+          priority: Priority.high,
+          showProgress: false,
+          indeterminate: true,
           onlyAlertOnce: true,
           ongoing: true,
         ),

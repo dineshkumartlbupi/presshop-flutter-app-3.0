@@ -3,7 +3,6 @@ import 'package:presshop/core/utils/common_utils.dart';
 import 'package:presshop/features/task/data/models/task_models.dart';
 
 class ManageTaskChatModel {
-
   ManageTaskChatModel.fromJsonNew(Map<String, dynamic> json) {
     id = (json["_id"] ?? "").toString();
     String mType = (json["message_type"] ?? "").toString();
@@ -131,4 +130,90 @@ class ManageTaskChatModel {
   String transactionId = "";
   TextEditingController priceController = TextEditingController();
   TextEditingController ratingReviewController = TextEditingController();
+
+  // Local upload tracking fields
+  bool isLocalUpload = false;
+  int uploadProgress = 0;
+  String uploadStatus = ""; // 'uploading', 'processing', 'completed', 'failed'
+
+  // Constructor for local uploads
+  ManageTaskChatModel.forLocalUpload({
+    required this.id,
+    required this.roomId,
+    required this.mediaList,
+    required this.messageType,
+    this.uploadStatus = 'starting',
+    this.uploadProgress = 0,
+  }) {
+    isLocalUpload = true;
+    createdAtTime = DateTime.now().toIso8601String();
+    // Initialize counts from mediaList
+    int imgC = 0, vidC = 0, audC = 0;
+    for (var m in mediaList) {
+      if (m.type.contains("video")) {
+        vidC++;
+      } else if (m.type.contains("audio")) {
+        audC++;
+      } else {
+        imgC++;
+      }
+    }
+    imageCount = imgC.toString();
+    videoCount = vidC.toString();
+    audioCount = audC.toString();
+    if (mediaList.isNotEmpty) {
+      media = mediaList.first;
+    }
+  }
+
+  // Serialize to local JSON for DB storage
+  Map<String, dynamic> toLocalJson() {
+    return {
+      'id': id,
+      'roomId': roomId,
+      'messageType': messageType,
+      'isLocalUpload': isLocalUpload,
+      'uploadProgress': uploadProgress,
+      'uploadStatus': uploadStatus,
+      'createdAtTime': createdAtTime,
+      'imageCount': imageCount,
+      'videoCount': videoCount,
+      'audioCount': audioCount,
+      'mediaList': mediaList
+          .map((m) => {
+                'type': m.type,
+                'media': m.imageVideoUrl,
+                'thumbnail': m.thumbnail,
+              })
+          .toList(),
+    };
+  }
+
+  // Deserialize from local JSON
+  ManageTaskChatModel.fromLocalJson(Map<String, dynamic> json) {
+    id = json['id'] ?? '';
+    roomId = json['roomId'] ?? '';
+    messageType = json['messageType'] ?? '';
+    isLocalUpload = json['isLocalUpload'] ?? false;
+    uploadProgress = json['uploadProgress'] ?? 0;
+    uploadStatus = json['uploadStatus'] ?? '';
+    createdAtTime = json['createdAtTime'] ?? '';
+    imageCount = json['imageCount'] ?? '0';
+    videoCount = json['videoCount'] ?? '0';
+    audioCount = json['audioCount'] ?? '0';
+
+    if (json['mediaList'] != null) {
+      var data = json['mediaList'] as List;
+      mediaList = data
+          .map((e) => TaskVideoModel(
+                type: e['type'] ?? '',
+                imageVideoUrl: e['media'] ?? '',
+                thumbnail: e['thumbnail'] ?? '',
+              ))
+          .toList();
+      if (mediaList.isNotEmpty) {
+        media = mediaList.first;
+      }
+    }
+  }
 }

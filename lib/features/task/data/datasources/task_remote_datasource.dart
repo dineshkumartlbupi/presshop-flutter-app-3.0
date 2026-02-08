@@ -173,8 +173,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           ? {"room_id": roomId, "type": "task_content"}
           : {"content_id": contentId};
 
-      final response = await apiClient.post(url,
-          queryParameters: body, showLoader: showLoader);
+      final response =
+          await apiClient.post(url, data: body, showLoader: showLoader);
 
       debugPrint("🚀 getTaskChat Response Status: ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {

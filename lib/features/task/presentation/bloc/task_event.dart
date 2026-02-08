@@ -115,3 +115,31 @@ class FetchTaskDetailEvent extends TaskEvent {
   @override
   List<Object> get props => [taskId, showLoader];
 }
+
+// Local task management events
+class AddLocalTaskEvent extends TaskEvent {
+  final dynamic localTask; // ManageTaskChatModel
+  const AddLocalTaskEvent(this.localTask);
+  @override
+  List<Object> get props => [localTask];
+}
+
+class UpdateLocalTaskProgressEvent extends TaskEvent {
+  final String taskId;
+  final int progress;
+  final String status;
+  const UpdateLocalTaskProgressEvent({
+    required this.taskId,
+    required this.progress,
+    required this.status,
+  });
+  @override
+  List<Object> get props => [taskId, progress, status];
+}
+
+class RemoveLocalTaskEvent extends TaskEvent {
+  final String taskId;
+  const RemoveLocalTaskEvent(this.taskId);
+  @override
+  List<Object> get props => [taskId];
+}

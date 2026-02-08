@@ -39,6 +39,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<FetchAllTasksEvent>(_onFetchAllTasks);
     on<FetchLocalTasksEvent>(_onFetchLocalTasks);
     on<FetchTaskDetailEvent>(_onFetchTaskDetail);
+    on<AddLocalTaskEvent>(_onAddLocalTask);
+    on<UpdateLocalTaskProgressEvent>(_onUpdateLocalTaskProgress);
+    on<RemoveLocalTaskEvent>(_onRemoveLocalTask);
   }
   final GetTaskDetail getTaskDetail;
   final AcceptRejectTask acceptRejectTask;
@@ -250,6 +253,32 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           taskDetailStatus: TaskStatus.success,
           taskDetail: taskAssignedEntity)),
     );
+  }
+
+  // Local task management handlers
+  Future<void> _onAddLocalTask(
+      AddLocalTaskEvent event, Emitter<TaskState> emit) async {
+    final updatedChatList = [event.localTask, ...state.chatList];
+    emit(state.copyWith(chatList: updatedChatList.cast()));
+  }
+
+  Future<void> _onUpdateLocalTaskProgress(
+      UpdateLocalTaskProgressEvent event, Emitter<TaskState> emit) async {
+    final updatedChatList = state.chatList.map((task) {
+      if (task.id == event.taskId && task.isLocalUpload) {
+        task.uploadProgress = event.progress;
+        task.uploadStatus = event.status;
+      }
+      return task;
+    }).toList();
+    emit(state.copyWith(chatList: updatedChatList));
+  }
+
+  Future<void> _onRemoveLocalTask(
+      RemoveLocalTaskEvent event, Emitter<TaskState> emit) async {
+    final updatedChatList =
+        state.chatList.where((task) => task.id != event.taskId).toList();
+    emit(state.copyWith(chatList: updatedChatList));
   }
 
   @override

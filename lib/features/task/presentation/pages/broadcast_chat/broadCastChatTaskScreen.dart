@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:presshop/core/services/media_upload_service.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -25,7 +25,6 @@ import 'package:presshop/features/task/presentation/bloc/task_bloc.dart';
 import 'package:presshop/features/task/presentation/bloc/task_state.dart';
 import 'package:presshop/features/task/presentation/bloc/task_event.dart';
 
-import 'package:presshop/features/authentication/presentation/pages/TermCheckScreen.dart';
 import 'package:presshop/core/constants/string_constants_new2.dart';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -79,6 +78,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   double uploadProgress = 0.0;
   StateSetter? _dialogStateSetter;
   bool _shouldCloseDialog = false;
+  String? _currentUploadingLocalTaskId; // Track current uploading task
 
   void showProgressDialog() {
     _shouldCloseDialog = false;
@@ -109,6 +109,10 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   @override
   void initState() {
     debugPrint("class name :::$runtimeType");
+    debugPrint("🔍 BroadCastChatTaskScreen initState:");
+    debugPrint("🔍 roomId: ${widget.roomId}");
+    debugPrint("🔍 taskDetail: ${widget.taskDetail?.task.id}");
+
     super.initState();
     socketConnectionFunc();
     // Only fetch if list is empty to avoid double fetch on rebuilds if any
@@ -121,6 +125,21 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           showLoader: false));
     }
     getCurrentLocation();
+
+    // Listen to upload status changes to update local task progress
+    MediaUploadService.uploadStatus.addListener(_onUploadStatusChanged);
+  }
+
+  void _onUploadStatusChanged() {
+    final status = MediaUploadService.uploadStatus.value;
+    if (status != null && mounted && _currentUploadingLocalTaskId != null) {
+      // Update the local task with the stored ID
+      context.read<TaskBloc>().add(UpdateLocalTaskProgressEvent(
+            taskId: _currentUploadingLocalTaskId!,
+            progress: status['progress'] ?? 0,
+            status: status['status'] ?? '',
+          ));
+    }
   }
 
   // void getCurrentLocation() async {
@@ -186,6 +205,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
   @override
   void dispose() {
+    // Remove upload status listener
+    MediaUploadService.uploadStatus.removeListener(_onUploadStatusChanged);
     socket.disconnect();
     socket.onDisconnect(
         (_) => socket.emit('room join', {"room_id": widget.roomId}));
@@ -226,7 +247,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
       listener: (context, state) {
         if (state.allTasksStatus == TaskStatus.loading ||
             state.taskDetailStatus == TaskStatus.loading ||
-            state.localTasksStatus == TaskStatus.loading) {
+            state.localTasksStatus == TaskStatus.loading ||
+            state.actionStatus == TaskStatus.loading) {
           setState(() {
             isLoading = true;
           });
@@ -236,7 +258,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
           });
         }
 
-        if (state.chatList.isNotEmpty) {
+        if (state.actionStatus == TaskStatus.success) {
           setState(() {
             chatList = state.chatList;
           });
@@ -692,20 +714,23 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                                           item1.imageVideoUrl,
                                           item.createdAtTime,
                                           size,
-                                          item1.address);
+                                          item1.address,
+                                          item);
                                     } else if (item1.type.contains("audio")) {
                                       return rightAudioChatWidget(
                                           item1.imageVideoUrl,
                                           item.createdAtTime,
                                           size,
-                                          item1.address);
+                                          item1.address,
+                                          item);
                                     } else {
                                       return rightImageChatWidget(
                                           getMediaImageUrl(item1.imageVideoUrl,
                                               isTask: true),
                                           item.createdAtTime,
                                           size,
-                                          item1.address);
+                                          item1.address,
+                                          item);
                                     }
                                   } else if (item.messageType ==
                                       "NocontentUpload") {
@@ -1114,6 +1139,156 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     );
   }
 
+  Widget UploadingCircleWithPercentageWidget(
+      Size size, int progress, String status) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(color: Colors.grey.shade300, spreadRadius: 2)
+              ]),
+          child: ClipOval(
+            child: Padding(
+              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+              child: Image.asset(
+                "${commonImagePath}ic_black_rabbit.png",
+                width: size.width * AppDimensions.numD075,
+                height: size.width * AppDimensions.numD075,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: size.width * AppDimensions.numD04,
+        ),
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD03,
+                vertical: size.width * AppDimensions.numD02),
+            width: size.width,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.only(
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomRight:
+                        Radius.circular(size.width * AppDimensions.numD04))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  height: size.width * AppDimensions.numD04,
+                  width: size.width * AppDimensions.numD04,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    value: status == 'processing' ? null : progress / 100,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColorTheme.colorThemePink),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // WhatsApp-style upload overlay for local tasks
+  Widget _buildUploadOverlay(
+      ManageTaskChatModel item, Size size, BorderRadius radius) {
+    if (!item.isLocalUpload) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned.fill(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          borderRadius: radius,
+        ),
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: EdgeInsets.all(size.width * AppDimensions.numD02),
+            child: ValueListenableBuilder(
+              valueListenable: MediaUploadService.uploadStatus,
+              builder: (context, status, child) {
+                // Determine if this item is currently being uploaded
+                bool isCurrentUpload =
+                    _currentUploadingLocalTaskId == item.id && status != null;
+
+                // Use real-time progress if available, otherwise fallback to item's stored progress
+                double progress = isCurrentUpload
+                    ? (status!['progress'] as num).toDouble()
+                    : item.uploadProgress.toDouble();
+
+                String uploadStatus = isCurrentUpload
+                    ? (status!['status'] as String)
+                    : item.uploadStatus;
+
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: size.width * AppDimensions.numD02,
+                    vertical: size.width * AppDimensions.numD015,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(
+                        size.width * AppDimensions.numD05),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.upload_rounded,
+                        color: Colors.white,
+                        size: size.width * AppDimensions.numD04,
+                      ),
+                      SizedBox(width: size.width * AppDimensions.numD02),
+                      SizedBox(
+                        width: size.width * AppDimensions.numD04,
+                        height: size.width * AppDimensions.numD04,
+                        child: CircularProgressIndicator(
+                          value: uploadStatus == 'processing'
+                              ? null
+                              : progress / 100,
+                          strokeWidth: 2,
+                          backgroundColor: Colors.white.withOpacity(0.3),
+                          valueColor:
+                              const AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                      SizedBox(width: size.width * AppDimensions.numD02),
+                      Text(
+                        uploadStatus == 'processing'
+                            ? 'Processing'
+                            : '${progress.toInt()}%',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: size.width * AppDimensions.numD035,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget uploadMediaInfoWidget(String uploadTextType, var size) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1195,7 +1370,7 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
   }
 
   Widget rightVideoChatWidget(String thumbnail, String videoUrl, String time,
-      var size, String address) {
+      var size, String address, ManageTaskChatModel item) {
     debugPrint("----------------$videoUrl");
     debugPrint("-thumbnail---------------$thumbnail");
     return Column(
@@ -1282,7 +1457,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                       color: Colors.white,
                       size: size.width * AppDimensions.numD09,
                     ),
-                  )
+                  ),
+                  _buildUploadOverlay(item, size, BorderRadius.circular(12)),
                 ],
               ),
             ),
@@ -1379,8 +1555,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     );
   }
 
-  Widget rightAudioChatWidget(
-      String audioUrl, String time, var size, String address) {
+  Widget rightAudioChatWidget(String audioUrl, String time, var size,
+      String address, ManageTaskChatModel item) {
     debugPrint("----------------$audioUrl");
     return InkWell(
       splashColor: Colors.transparent,
@@ -1446,6 +1622,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           width: double.infinity,
                           fit: BoxFit.cover,
                         )),
+                    _buildUploadOverlay(
+                        item,
+                        size,
+                        BorderRadius.circular(
+                            size.width * AppDimensions.numD04)),
                   ],
                 ),
               ),
@@ -1543,8 +1724,8 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     );
   }
 
-  Widget rightImageChatWidget(
-      String imageUrl, String time, var size, String address) {
+  Widget rightImageChatWidget(String imageUrl, String time, var size,
+      String address, ManageTaskChatModel item) {
     debugPrint("imageUrl:::::::$imageUrl");
     return InkWell(
       splashColor: Colors.transparent,
@@ -1620,6 +1801,11 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
                           width: size.width / 1.7,
                           fit: BoxFit.cover,
                         )),
+                    _buildUploadOverlay(
+                        item,
+                        size,
+                        BorderRadius.circular(
+                            size.width * AppDimensions.numD04)),
                   ],
                 ),
               ),
@@ -3410,27 +3596,66 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
     List<String> mediaList =
         selectMultipleMediaList.map((e) => e.mediaPath).toList();
 
-    FormData formData = FormData.fromMap({
+    Map<String, String> body = {
       'task_id': widget.taskDetail!.task.id,
       "latitude": latitude.toString(),
       "longitude": longitude.toString(),
       "address": address,
-    });
-
-    for (String path in mediaList) {
-      formData.files.add(MapEntry(
-        "files",
-        await MultipartFile.fromFile(path),
-      ));
-    }
+    };
 
     if (mounted) {
-      setState(() {
-        isLoading = true;
+      // Create local task ID
+      final localTaskId = 'local_${DateTime.now().millisecondsSinceEpoch}';
+
+      // Store the ID for real-time updates
+      _currentUploadingLocalTaskId = localTaskId;
+
+      // Create local task model
+      final localTask = ManageTaskChatModel.forLocalUpload(
+        id: localTaskId,
+        roomId: widget.roomId,
+        mediaList: selectMultipleMediaList
+            .map((e) => TaskVideoModel(
+                  imageVideoUrl: e.mediaPath,
+                  type: e.mimeType,
+                  thumbnail: e.thumbnail,
+                ))
+            .toList(),
+        messageType: 'media',
+        uploadStatus: 'starting',
+        uploadProgress: 0,
+      );
+
+      // Add local task to chat immediately
+      context.read<TaskBloc>().add(AddLocalTaskEvent(localTask));
+
+      // Clear the selection list immediately after adding to local task
+      selectMultipleMediaList.clear();
+
+      // Background upload
+      MediaUploadService.uploadMedia(
+        endUrl: ApiConstantsNew.tasks.uploadTaskMedia,
+        jsonBody: body,
+        filePathList: mediaList.map((e) => File(e)).toList(),
+        imageParams: "files",
+      ).then((success) {
+        if (mounted) {
+          // Clear the uploading task ID
+          _currentUploadingLocalTaskId = null;
+
+          // Remove local task
+          context.read<TaskBloc>().add(RemoveLocalTaskEvent(localTaskId));
+
+          if (success) {
+            // Refresh chat from server
+            context.read<TaskBloc>().add(GetTaskChatEvent(
+                roomId: widget.roomId,
+                type: "task_content",
+                contentId: widget.taskDetail?.task.id ?? "",
+                showLoader: false));
+          }
+        }
       });
-      context
-          .read<TaskBloc>()
-          .add(UploadTaskMediaEvent(formData, showLoader: false));
     }
   }
 
