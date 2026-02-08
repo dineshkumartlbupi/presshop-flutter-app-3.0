@@ -5,7 +5,6 @@ import 'package:presshop/features/task/domain/repositories/task_repository.dart'
 import 'package:equatable/equatable.dart';
 
 class GetRoomId implements UseCase<String, GetRoomIdParams> {
-
   GetRoomId(this.repository);
   final TaskRepository repository;
 
@@ -17,7 +16,6 @@ class GetRoomId implements UseCase<String, GetRoomIdParams> {
 }
 
 class GetRoomIdParams extends Equatable {
-
   const GetRoomIdParams({
     required this.receiverId,
     required this.taskId,

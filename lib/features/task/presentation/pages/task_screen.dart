@@ -180,9 +180,6 @@ class MyTaskScreenState extends State<MyTaskScreen>
               size: size,
               taskDetail: state.taskDetail!,
               onTapView: () {
-                if (widget.broadCastId != null) {
-                  Navigator.pop(context);
-                }
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => BroadCastScreen(

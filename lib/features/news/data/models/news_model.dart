@@ -1,5 +1,4 @@
 import 'package:presshop/core/utils/common_utils.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
 import 'package:presshop/features/news/domain/entities/news.dart';
 
 class NewsModel extends News {
@@ -72,7 +71,7 @@ class NewsModel extends News {
     String? userImage = userImageRaw != null && userImageRaw.isNotEmpty
         ? (userImageRaw.startsWith('http')
             ? fixS3Url(userImageRaw)
-            : "${ApiConstantsNew.config.profileImageUrl}$userImageRaw")
+            : "$userImageRaw")
         : null;
 
     return NewsModel(

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:ui';
-import 'package:presshop/core/api/api_constant.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,7 +42,6 @@ import 'package:presshop/core/di/injection_container.dart';
 
 // ignore: must_be_immutable
 class ConversationScreen extends StatefulWidget {
-
   ConversationScreen(
       {super.key, required this.hideLeading, required this.message});
   bool hideLeading = false;
@@ -88,7 +86,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       sharedPreferences!.getString(avatarKey) ?? "";
   final String _senderName =
       "${sharedPreferences!.getString(firstNameKey) ?? ""} "
-          " ${sharedPreferences!.getString(lastNameKey) ?? ""}";
+      " ${sharedPreferences!.getString(lastNameKey) ?? ""}";
   String audioPath = "", audioDuration = "";
 
   /// Receiver Information
@@ -216,7 +214,9 @@ class _ConversationScreenState extends State<ConversationScreen>
                     hideLeading: widget.hideLeading,
                     title: Padding(
                       padding: EdgeInsets.only(
-                          left: widget.hideLeading ? size.width * AppDimensions.numD04 : 0,
+                          left: widget.hideLeading
+                              ? size.width * AppDimensions.numD04
+                              : 0,
                           right: size.width * AppDimensions.numD04),
                       child: Row(
                         children: [
@@ -232,9 +232,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                             child: ClipOval(
                               clipBehavior: Clip.antiAlias,
                               child: Image.network(
-                                adminProfileUrl + _receiverProfilePic,
-                                errorBuilder: (context,
-                                    exception, stackTrace) {
+                                _receiverProfilePic,
+                                errorBuilder: (context, exception, stackTrace) {
                                   return Image.asset(
                                     "${commonImagePath}rabbitLogo.png",
                                     height: size.width * AppDimensions.numD07,
@@ -256,7 +255,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   _receiverName,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: size.width * AppDimensions.numD045),
+                                      fontSize:
+                                          size.width * AppDimensions.numD045),
                                 ),
                                 SizedBox(
                                   height: size.width * AppDimensions.numD01,
@@ -304,8 +304,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                           state.status == ChatStatus.sending)
                         const LinearProgressIndicator(
                           backgroundColor: AppColorTheme.colorLightGrey,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(AppColorTheme.colorThemePink),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColorTheme.colorThemePink),
                         ),
                       Expanded(
                         child: (state.status == ChatStatus.loading ||
@@ -314,8 +314,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                             ? showLoader()
                             : state.messages.isNotEmpty
                                 ? ListView.separated(
-                                    padding:
-                                        EdgeInsets.all(size.width * AppDimensions.numD018),
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD018),
                                     separatorBuilder: (context, index) {
                                       return const SizedBox(
                                         height: 10,
@@ -338,10 +338,12 @@ class _ConversationScreenState extends State<ConversationScreen>
                                                   alignment:
                                                       Alignment.centerRight,
                                                   padding: EdgeInsets.only(
-                                                      right:
-                                                          size.width * AppDimensions.numD03,
-                                                      left: size.width * AppDimensions.numD03,
-                                                      top: size.width * AppDimensions.numD03),
+                                                      right: size.width *
+                                                          AppDimensions.numD03,
+                                                      left: size.width *
+                                                          AppDimensions.numD03,
+                                                      top: size.width *
+                                                          AppDimensions.numD03),
                                                   child: messageWidget(
                                                       document, "sender", size),
                                                 )
@@ -350,10 +352,12 @@ class _ConversationScreenState extends State<ConversationScreen>
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   padding: EdgeInsets.only(
-                                                      right:
-                                                          size.width * AppDimensions.numD03,
-                                                      left: size.width * AppDimensions.numD03,
-                                                      top: size.width * AppDimensions.numD03),
+                                                      right: size.width *
+                                                          AppDimensions.numD03,
+                                                      left: size.width *
+                                                          AppDimensions.numD03,
+                                                      top: size.width *
+                                                          AppDimensions.numD03),
                                                   child: messageWidget(document,
                                                       "receiver", size),
                                                 ),
@@ -370,7 +374,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                         visible: isTyping,
                         replacement: Container(),
                         child: Padding(
-                          padding: EdgeInsets.only(left: size.width * AppDimensions.numD05),
+                          padding: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD05),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -390,13 +395,15 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   child: ClipOval(
                                     clipBehavior: Clip.antiAlias,
                                     child: Padding(
-                                      padding:
-                                          EdgeInsets.all(size.width * AppDimensions.numD01),
+                                      padding: EdgeInsets.all(
+                                          size.width * AppDimensions.numD01),
                                       child: Image.asset(
                                         "${commonImagePath}ic_black_rabbit.png",
                                         color: Colors.white,
-                                        width: size.width * AppDimensions.numD07,
-                                        height: size.width * AppDimensions.numD07,
+                                        width:
+                                            size.width * AppDimensions.numD07,
+                                        height:
+                                            size.width * AppDimensions.numD07,
                                       ),
                                     ),
                                   )),
@@ -404,19 +411,20 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 width: size.width * AppDimensions.numD02,
                               ),
                               Container(
-                                margin:
-                                    EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                                margin: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
-                                      topRight:
-                                          Radius.circular(size.width * AppDimensions.numD04),
-                                      bottomLeft:
-                                          Radius.circular(size.width * AppDimensions.numD04),
-                                      bottomRight:
-                                          Radius.circular(size.width * AppDimensions.numD04),
+                                      topRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomLeft: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
                                     ),
                                     border: Border.all(
-                                        width: 1.5, color: AppColorTheme.colorSwitchBack)),
+                                        width: 1.5,
+                                        color: AppColorTheme.colorSwitchBack)),
                                 child: Lottie.asset(
                                     "assets/lottieFiles/typing.json",
                                     height: size.width * AppDimensions.numD10,
@@ -497,13 +505,15 @@ class _ConversationScreenState extends State<ConversationScreen>
         context: context,
         builder: (context) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: size.width * AppDimensions.numD02),
+            margin: EdgeInsets.symmetric(
+                horizontal: size.width * AppDimensions.numD02),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD04),
                       color: Colors.white),
                   child: ListView.separated(
                       shrinkWrap: true,
@@ -580,8 +590,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     showDialog(
         context: navigatorKey.currentState!.context,
         builder: (context) {
-          return StatefulBuilder(
-              builder: (context, stateSetter) {
+          return StatefulBuilder(builder: (context, stateSetter) {
             return BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Column(
@@ -912,8 +921,10 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 prefixIcon: null,
                                 autofocus: true,
                                 borderColor: Colors.grey.shade300,
-                                prefixIconHeight: size.width * AppDimensions.numD06,
-                                suffixIconIconHeight: size.width * AppDimensions.numD06,
+                                prefixIconHeight:
+                                    size.width * AppDimensions.numD06,
+                                suffixIconIconHeight:
+                                    size.width * AppDimensions.numD06,
                                 textInputFormatters: null,
                                 suffixIcon: InkWell(
                                   onTap: () async {
@@ -963,7 +974,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   ? Positioned.fill(
                                       child: Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * AppDimensions.numD04),
+                                          horizontal: size.width *
+                                              AppDimensions.numD04),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(
                                             size.width * AppDimensions.numD03),
@@ -972,8 +984,11 @@ class _ConversationScreenState extends State<ConversationScreen>
                                       child: Row(
                                         children: [
                                           const Icon(Icons.mic_none_outlined,
-                                              color: AppColorTheme.colorThemePink),
-                                          SizedBox(width: size.width * AppDimensions.numD02),
+                                              color:
+                                                  AppColorTheme.colorThemePink),
+                                          SizedBox(
+                                              width: size.width *
+                                                  AppDimensions.numD02),
                                           Text(
                                             Duration(seconds: _recordDuration)
                                                 .toString()
@@ -981,7 +996,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                                 .first,
                                             style: commonTextStyle(
                                                 size: size,
-                                                fontSize: size.width * AppDimensions.numD05,
+                                                fontSize: size.width *
+                                                    AppDimensions.numD05,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.normal),
                                           ),
@@ -1095,14 +1111,19 @@ class _ConversationScreenState extends State<ConversationScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                  margin:
+                      EdgeInsets.only(top: size.width * AppDimensions.numD02),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(size.width * AppDimensions.numD04),
-                        bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                        bottomRight: Radius.circular(size.width * AppDimensions.numD04),
+                        topRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
                       ),
-                      border: Border.all(width: 1.5, color: AppColorTheme.colorSwitchBack)),
+                      border: Border.all(
+                          width: 1.5, color: AppColorTheme.colorSwitchBack)),
                   /* padding: EdgeInsets.all(size.width * AppDimensions.numD05),*/
                   padding: EdgeInsets.symmetric(
                       horizontal: size.width * AppDimensions.numD05,
@@ -1151,8 +1172,10 @@ class _ConversationScreenState extends State<ConversationScreen>
                 decoration: BoxDecoration(
                   color: AppColorTheme.colorGreyChat,
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(size.width * AppDimensions.numD04),
-                    bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
+                    topRight:
+                        Radius.circular(size.width * AppDimensions.numD04),
+                    bottomLeft:
+                        Radius.circular(size.width * AppDimensions.numD04),
                     topLeft: Radius.circular(size.width * AppDimensions.numD04),
                   ),
                 ),
@@ -1186,14 +1209,16 @@ class _ConversationScreenState extends State<ConversationScreen>
                   ),
                   document.get("readStatus") == "read"
                       ? Container(
-                          margin: EdgeInsets.only(left: size.width * AppDimensions.numD004),
+                          margin: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD004),
                           child: Icon(
                             Icons.done_all,
                             color: Colors.green.shade400,
                           ),
                         )
                       : Container(
-                          margin: EdgeInsets.only(left: size.width * AppDimensions.numD004),
+                          margin: EdgeInsets.only(
+                              left: size.width * AppDimensions.numD004),
                           child: Icon(
                             Icons.check,
                             color: Colors.grey.shade400,
@@ -1218,7 +1243,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                 height: size.width * AppDimensions.numD11,
                 width: size.width * AppDimensions.numD11,
                 decoration: const BoxDecoration(
-                    color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
+                    color: AppColorTheme.colorLightGrey,
+                    shape: BoxShape.circle),
                 child: ClipOval(
                     clipBehavior: Clip.antiAlias,
                     child: Image.network(
@@ -1236,7 +1262,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                 height: size.width * AppDimensions.numD11,
                 width: size.width * AppDimensions.numD11,
                 decoration: const BoxDecoration(
-                    color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
+                    color: AppColorTheme.colorSwitchBack,
+                    shape: BoxShape.circle),
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
                   child: Image.asset(
@@ -1323,19 +1350,27 @@ class _ConversationScreenState extends State<ConversationScreen>
                   decoration: type == 'sender'
                       ? BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(size.width * AppDimensions.numD03),
-                            topLeft: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomLeft: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomRight: Radius.circular(size.width * AppDimensions.numD1),
+                            topRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            topLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomRight: Radius.circular(
+                                size.width * AppDimensions.numD1),
                           ),
                           color: Colors.white,
                         )
                       : BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(size.width * AppDimensions.numD1),
-                            topRight: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomRight: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomLeft: Radius.circular(size.width * AppDimensions.numD03),
+                            topLeft: Radius.circular(
+                                size.width * AppDimensions.numD1),
+                            topRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
                           ),
                           color: Colors.pink,
                         ),
@@ -1416,7 +1451,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                           alignment: Alignment.center,
                                           child: Icon(
                                             Icons.file_copy_outlined,
-                                            size: size.width * AppDimensions.numD1,
+                                            size: size.width *
+                                                AppDimensions.numD1,
                                             color: Colors.white,
                                           )),
                                       Container(
@@ -1507,19 +1543,27 @@ class _ConversationScreenState extends State<ConversationScreen>
                   decoration: type == 'sender'
                       ? BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(size.width * AppDimensions.numD03),
-                            topLeft: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomLeft: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomRight: Radius.circular(size.width * AppDimensions.numD1),
+                            topRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            topLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomRight: Radius.circular(
+                                size.width * AppDimensions.numD1),
                           ),
                           color: Colors.white,
                         )
                       : BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(size.width * AppDimensions.numD1),
-                            topRight: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomRight: Radius.circular(size.width * AppDimensions.numD03),
-                            bottomLeft: Radius.circular(size.width * AppDimensions.numD03),
+                            topLeft: Radius.circular(
+                                size.width * AppDimensions.numD1),
+                            topRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomRight: Radius.circular(
+                                size.width * AppDimensions.numD03),
+                            bottomLeft: Radius.circular(
+                                size.width * AppDimensions.numD03),
                           ),
                           color: Colors.pink,
                         ),
@@ -1683,7 +1727,8 @@ class _ConversationScreenState extends State<ConversationScreen>
           /// CSV
           document.get('messageType') == 'csv'
               ? Container(
-                  margin: EdgeInsets.only(right: size.width * AppDimensions.numD20),
+                  margin:
+                      EdgeInsets.only(right: size.width * AppDimensions.numD20),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1703,7 +1748,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                           child: ClipOval(
                             clipBehavior: Clip.antiAlias,
                             child: Padding(
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD01),
                               child: Image.asset(
                                 "${commonImagePath}ic_black_rabbit.png",
                                 color: Colors.white,
@@ -1725,19 +1771,20 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 openUrl(document.get('message'));
                               },
                               child: Container(
-                                margin:
-                                    EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                                margin: EdgeInsets.only(
+                                    top: size.width * AppDimensions.numD02),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
-                                      topRight:
-                                          Radius.circular(size.width * AppDimensions.numD04),
-                                      bottomLeft:
-                                          Radius.circular(size.width * AppDimensions.numD04),
-                                      bottomRight:
-                                          Radius.circular(size.width * AppDimensions.numD04),
+                                      topRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomLeft: Radius.circular(
+                                          size.width * AppDimensions.numD04),
+                                      bottomRight: Radius.circular(
+                                          size.width * AppDimensions.numD04),
                                     ),
                                     border: Border.all(
-                                        width: 1.5, color: AppColorTheme.colorSwitchBack)),
+                                        width: 1.5,
+                                        color: AppColorTheme.colorSwitchBack)),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ClipRRect(
@@ -1846,22 +1893,28 @@ class _ConversationScreenState extends State<ConversationScreen>
                                             setState(() {});
                                           },
                                           child: SizedBox(
-                                            height: size.width * AppDimensions.numD06,
+                                            height: size.width *
+                                                AppDimensions.numD06,
                                             child: Icon(
                                               document.get('isAudioSelected')
                                                   ? Icons.pause_circle
                                                   : Icons.play_circle,
                                               color: Colors.black,
-                                              size: size.width * AppDimensions.numD06,
+                                              size: size.width *
+                                                  AppDimensions.numD06,
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: size.width * AppDimensions.numD02),
+                                        SizedBox(
+                                            width: size.width *
+                                                AppDimensions.numD02),
                                         document.get('isAudioSelected')
                                             ? Expanded(
                                                 child: AudioFileWaveforms(
-                                                  size: Size(size.width,
-                                                      size.width * AppDimensions.numD04),
+                                                  size: Size(
+                                                      size.width,
+                                                      size.width *
+                                                          AppDimensions.numD04),
                                                   playerController: controller,
                                                   enableSeekGesture: false,
                                                   animationCurve:
@@ -1873,8 +1926,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                                       PlayerWaveStyle(
                                                     fixedWaveColor:
                                                         Colors.black,
-                                                    liveWaveColor:
-                                                        AppColorTheme.colorThemePink,
+                                                    liveWaveColor: AppColorTheme
+                                                        .colorThemePink,
                                                     spacing: 6,
                                                     liveWaveGradient:
                                                         ui.Gradient.linear(
@@ -1904,8 +1957,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                                         Colors.white70
                                                       ],
                                                     ),
-                                                    seekLineColor:
-                                                        AppColorTheme.colorThemePink,
+                                                    seekLineColor: AppColorTheme
+                                                        .colorThemePink,
                                                     seekLineThickness: 2,
                                                     showSeekLine: true,
                                                     showBottom: true,
@@ -1927,15 +1980,18 @@ class _ConversationScreenState extends State<ConversationScreen>
                                   child: Text(
                                     timeParse(document.get('date')),
                                     style: TextStyle(
-                                        fontSize: size.width * AppDimensions.numD028,
-                                        color: AppColorTheme.colorGoogleButtonBorder,
+                                        fontSize:
+                                            size.width * AppDimensions.numD028,
+                                        color: AppColorTheme
+                                            .colorGoogleButtonBorder,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
                                 document.get("readStatus") == "read"
                                     ? Container(
                                         margin: EdgeInsets.only(
-                                            left: size.width * AppDimensions.numD004),
+                                            left: size.width *
+                                                AppDimensions.numD004),
                                         child: Icon(
                                           Icons.done_all,
                                           color: Colors.green.shade400,
@@ -1943,7 +1999,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                       )
                                     : Container(
                                         margin: EdgeInsets.only(
-                                            left: size.width * AppDimensions.numD004),
+                                            left: size.width *
+                                                AppDimensions.numD004),
                                         child: Icon(
                                           Icons.check,
                                           color: Colors.grey.shade400,
@@ -2010,8 +2067,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 child: ClipOval(
                                   clipBehavior: Clip.antiAlias,
                                   child: Padding(
-                                    padding:
-                                        EdgeInsets.all(size.width * AppDimensions.numD01),
+                                    padding: EdgeInsets.all(
+                                        size.width * AppDimensions.numD01),
                                     child: Image.asset(
                                       "${commonImagePath}ic_black_rabbit.png",
                                       color: Colors.white,
@@ -2040,7 +2097,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                             child: ClipOval(
                               clipBehavior: Clip.antiAlias,
                               child: Padding(
-                                padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                                padding: EdgeInsets.all(
+                                    size.width * AppDimensions.numD01),
                                 child: Image.asset(
                                   "${commonImagePath}ic_black_rabbit.png",
                                   color: Colors.white,
@@ -2061,7 +2119,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                               child: Container(
                                 padding: EdgeInsets.symmetric(
                                     vertical: size.width * AppDimensions.numD03,
-                                    horizontal: size.width * AppDimensions.numD03),
+                                    horizontal:
+                                        size.width * AppDimensions.numD03),
                                 decoration: BoxDecoration(
                                     color: AppColorTheme.colorLightGrey,
                                     borderRadius: BorderRadius.circular(
@@ -2180,21 +2239,25 @@ class _ConversationScreenState extends State<ConversationScreen>
                                         setState(() {});
                                       },
                                       child: SizedBox(
-                                        height: size.width * AppDimensions.numD06,
+                                        height:
+                                            size.width * AppDimensions.numD06,
                                         child: Icon(
                                           document.get('isAudioSelected')
                                               ? Icons.pause_circle
                                               : Icons.play_circle,
                                           color: Colors.black,
-                                          size: size.width * AppDimensions.numD06,
+                                          size:
+                                              size.width * AppDimensions.numD06,
                                         ),
                                       ),
                                     ),
                                     document.get('isAudioSelected')
                                         ? Expanded(
                                             child: AudioFileWaveforms(
-                                              size: Size(size.width,
-                                                  size.width * AppDimensions.numD04),
+                                              size: Size(
+                                                  size.width,
+                                                  size.width *
+                                                      AppDimensions.numD04),
                                               playerController: controller,
                                               enableSeekGesture: false,
                                               animationCurve: Curves.bounceIn,
@@ -2202,7 +2265,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                               continuousWaveform: true,
                                               playerWaveStyle: PlayerWaveStyle(
                                                 fixedWaveColor: Colors.black,
-                                                liveWaveColor: AppColorTheme.colorThemePink,
+                                                liveWaveColor: AppColorTheme
+                                                    .colorThemePink,
                                                 spacing: 6,
                                                 liveWaveGradient:
                                                     ui.Gradient.linear(
@@ -2232,7 +2296,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                                     Colors.white70
                                                   ],
                                                 ),
-                                                seekLineColor: AppColorTheme.colorThemePink,
+                                                seekLineColor: AppColorTheme
+                                                    .colorThemePink,
                                                 seekLineThickness: 2,
                                                 showSeekLine: true,
                                                 showBottom: true,
@@ -2433,8 +2498,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       setState(() => _recordDuration++);
     });
-    _ampTimer =
-        Timer.periodic(const Duration(milliseconds: 200), (t) async {
+    _ampTimer = Timer.periodic(const Duration(milliseconds: 200), (t) async {
       setState(() {});
     });
   }
@@ -2453,9 +2517,12 @@ class _ConversationScreenState extends State<ConversationScreen>
                   decoration: BoxDecoration(
                     color: AppColorTheme.colorGreyChat,
                     borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(size.width * AppDimensions.numD04),
-                      bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                      topLeft: Radius.circular(size.width * AppDimensions.numD04),
+                      topRight:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      bottomLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
+                      topLeft:
+                          Radius.circular(size.width * AppDimensions.numD04),
                     ),
                   ),
                   padding: EdgeInsets.all(size.width * AppDimensions.numD03),
@@ -2484,8 +2551,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                                             )));
                               },
                               child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * AppDimensions.numD01),
+                                borderRadius: BorderRadius.circular(
+                                    size.width * AppDimensions.numD01),
                                 child: Image.network(
                                   document.get('videoThumbnail'),
                                   fit: BoxFit.cover,
@@ -2545,14 +2612,16 @@ class _ConversationScreenState extends State<ConversationScreen>
                     ),
                     document.get("readStatus") == "read"
                         ? Container(
-                            margin: EdgeInsets.only(left: size.width * AppDimensions.numD004),
+                            margin: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD004),
                             child: Icon(
                               Icons.done_all,
                               color: Colors.green.shade400,
                             ),
                           )
                         : Container(
-                            margin: EdgeInsets.only(left: size.width * AppDimensions.numD004),
+                            margin: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD004),
                             child: Icon(
                               Icons.check,
                               color: Colors.grey.shade400,
@@ -2574,7 +2643,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                   height: size.width * AppDimensions.numD12,
                   width: size.width * AppDimensions.numD12,
                   decoration: const BoxDecoration(
-                      color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
+                      color: AppColorTheme.colorLightGrey,
+                      shape: BoxShape.circle),
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
@@ -2595,7 +2665,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                   child: ClipOval(
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
-                      padding: EdgeInsets.all(size.width * AppDimensions.numD01),
+                      padding:
+                          EdgeInsets.all(size.width * AppDimensions.numD01),
                       child: Image.asset(
                         "${commonImagePath}ic_black_rabbit.png",
                         color: Colors.white,
@@ -2644,14 +2715,19 @@ class _ConversationScreenState extends State<ConversationScreen>
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                  margin:
+                      EdgeInsets.only(top: size.width * AppDimensions.numD02),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(size.width * AppDimensions.numD04),
-                        bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                        bottomRight: Radius.circular(size.width * AppDimensions.numD04),
+                        topRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
                       ),
-                      border: Border.all(width: 1.5, color: AppColorTheme.colorSwitchBack)),
+                      border: Border.all(
+                          width: 1.5, color: AppColorTheme.colorSwitchBack)),
                   padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                   child: InkWell(
                     onTap: () {
@@ -2667,8 +2743,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                       alignment: Alignment.center,
                       children: [
                         ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(size.width * AppDimensions.numD01),
+                          borderRadius: BorderRadius.circular(
+                              size.width * AppDimensions.numD01),
                           child: Image.network(
                             // document.get('messageType')["videoThumbnail"],
                             document.get('videoThumbnail'),
@@ -2745,24 +2821,30 @@ class _ConversationScreenState extends State<ConversationScreen>
                     decoration: BoxDecoration(
                       color: AppColorTheme.colorGreyChat,
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(size.width * AppDimensions.numD04),
-                        bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                        topLeft: Radius.circular(size.width * AppDimensions.numD04),
+                        topRight:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        bottomLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
+                        topLeft:
+                            Radius.circular(size.width * AppDimensions.numD04),
                       ),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD01),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD01),
                       child: document.get('uploadPercent') > 100
                           ? Container(
-                              padding: EdgeInsets.all(size.width * AppDimensions.numD03),
+                              padding: EdgeInsets.all(
+                                  size.width * AppDimensions.numD03),
                               decoration: BoxDecoration(
                                 color: AppColorTheme.colorGreyChat,
                                 borderRadius: BorderRadius.only(
-                                  topRight:
-                                      Radius.circular(size.width * AppDimensions.numD04),
-                                  bottomLeft:
-                                      Radius.circular(size.width * AppDimensions.numD04),
-                                  topLeft: Radius.circular(size.width * AppDimensions.numD04),
+                                  topRight: Radius.circular(
+                                      size.width * AppDimensions.numD04),
+                                  bottomLeft: Radius.circular(
+                                      size.width * AppDimensions.numD04),
+                                  topLeft: Radius.circular(
+                                      size.width * AppDimensions.numD04),
                                 ),
                               ),
                               child: showLoader())
@@ -2823,14 +2905,16 @@ class _ConversationScreenState extends State<ConversationScreen>
                     ),
                     document.get("readStatus") == "read"
                         ? Container(
-                            margin: EdgeInsets.only(left: size.width * AppDimensions.numD004),
+                            margin: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD004),
                             child: Icon(
                               Icons.done_all,
                               color: Colors.green.shade400,
                             ),
                           )
                         : Container(
-                            margin: EdgeInsets.only(left: size.width * AppDimensions.numD004),
+                            margin: EdgeInsets.only(
+                                left: size.width * AppDimensions.numD004),
                             child: Icon(
                               Icons.check,
                               color: Colors.grey.shade400,
@@ -2852,7 +2936,8 @@ class _ConversationScreenState extends State<ConversationScreen>
                   height: size.width * AppDimensions.numD12,
                   width: size.width * AppDimensions.numD12,
                   decoration: const BoxDecoration(
-                      color: AppColorTheme.colorLightGrey, shape: BoxShape.circle),
+                      color: AppColorTheme.colorLightGrey,
+                      shape: BoxShape.circle),
                   child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
@@ -2861,14 +2946,16 @@ class _ConversationScreenState extends State<ConversationScreen>
                       )),
                 )
               : Container(
-                  margin: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                  margin:
+                      EdgeInsets.only(top: size.width * AppDimensions.numD02),
                   padding: EdgeInsets.all(
                     size.width * AppDimensions.numD01,
                   ),
                   height: size.width * AppDimensions.numD11,
                   width: size.width * AppDimensions.numD11,
                   decoration: const BoxDecoration(
-                      color: AppColorTheme.colorSwitchBack, shape: BoxShape.circle),
+                      color: AppColorTheme.colorSwitchBack,
+                      shape: BoxShape.circle),
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     child: Image.asset(
@@ -2928,17 +3015,23 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 )));
                   },
                   child: Container(
-                    margin: EdgeInsets.only(top: size.width * AppDimensions.numD02),
+                    margin:
+                        EdgeInsets.only(top: size.width * AppDimensions.numD02),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(size.width * AppDimensions.numD04),
-                          bottomLeft: Radius.circular(size.width * AppDimensions.numD04),
-                          bottomRight: Radius.circular(size.width * AppDimensions.numD04),
+                          topRight: Radius.circular(
+                              size.width * AppDimensions.numD04),
+                          bottomLeft: Radius.circular(
+                              size.width * AppDimensions.numD04),
+                          bottomRight: Radius.circular(
+                              size.width * AppDimensions.numD04),
                         ),
-                        border: Border.all(width: 1.5, color: AppColorTheme.colorSwitchBack)),
+                        border: Border.all(
+                            width: 1.5, color: AppColorTheme.colorSwitchBack)),
                     padding: EdgeInsets.all(size.width * AppDimensions.numD03),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(size.width * AppDimensions.numD01),
+                      borderRadius: BorderRadius.circular(
+                          size.width * AppDimensions.numD01),
                       child: Image.network(
                         document.get('message'),
                         fit: BoxFit.cover,
@@ -3712,7 +3805,6 @@ class _ConversationScreenState extends State<ConversationScreen>
 }
 
 class AttachIconModel {
-
   AttachIconModel({
     required this.icon,
     required this.iconName,

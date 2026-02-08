@@ -9,7 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:video_player/video_player.dart';
-import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:presshop/core/core_export.dart';
 
@@ -21,7 +20,6 @@ enum MediaTypeEnum {
 }
 
 class MediaViewScreen extends StatefulWidget {
-
   const MediaViewScreen(
       {super.key,
       required this.mediaFile,
@@ -55,9 +53,8 @@ class _MediaViewScreenState extends State<MediaViewScreen>
   void initState() {
     debugPrint("mediaUrl =====> ${widget.mediaFile}");
     if (widget.type == MediaTypeEnum.video) {
-      final videoUrl = widget.isFromTutorialScreen
-          ? widget.mediaFile
-          : (taskMediaUrl + widget.mediaFile);
+      final videoUrl =
+          widget.isFromTutorialScreen ? widget.mediaFile : (widget.mediaFile);
 
       debugPrint("mediaUrl1111 =====> $videoUrl");
 
@@ -182,7 +179,8 @@ class _MediaViewScreenState extends State<MediaViewScreen>
             maxScale: PhotoViewComputedScale.contained * 10.0,
             imageProvider: NetworkImage(widget.mediaFile)),
         ClipRRect(
-            borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+            borderRadius:
+                BorderRadius.circular(size.width * AppDimensions.numD04),
             child: Image.asset(
               "${commonImagePath}watermark1.png",
               height: size.height / 3,
@@ -212,7 +210,7 @@ class _MediaViewScreenState extends State<MediaViewScreen>
       await dio.download(widget.mediaFile, filepath);
     } catch (e) {
       // Assuming 'taskMediaUrl' is correctly defined elsewhere
-      await dio.download(taskMediaUrl + widget.mediaFile, filepath);
+      await dio.download(widget.mediaFile, filepath);
     }
 
     await controller.preparePlayer(
@@ -266,13 +264,17 @@ class _MediaViewScreenState extends State<MediaViewScreen>
                 flex: 6,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: size.width * AppDimensions.numD04, right: size.width * AppDimensions.numD04),
+                      left: size.width * AppDimensions.numD04,
+                      right: size.width * AppDimensions.numD04),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Lottie.asset("assets/lottieFiles/audio_waves.json",
                           width: double.infinity,
-                          height: size.height * (isIpad ? AppDimensions.numD70 : AppDimensions.numD40),
+                          height: size.height *
+                              (isIpad
+                                  ? AppDimensions.numD70
+                                  : AppDimensions.numD40),
                           backgroundLoading: true,
                           fit: BoxFit.fill,
                           controller: _animationController),
@@ -291,12 +293,16 @@ class _MediaViewScreenState extends State<MediaViewScreen>
                             setState(() {});
                           },
                           child: Container(
-                            padding: EdgeInsets.all(size.width * AppDimensions.numD018),
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD018),
                             decoration: const BoxDecoration(
-                                color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
+                                color: AppColorTheme.colorThemePink,
+                                shape: BoxShape.circle),
                             child: Container(
-                              padding: EdgeInsets.all(
-                                  size.width * (isIpad ? AppDimensions.numD03 : AppDimensions.numD04)),
+                              padding: EdgeInsets.all(size.width *
+                                  (isIpad
+                                      ? AppDimensions.numD03
+                                      : AppDimensions.numD04)),
                               decoration: BoxDecoration(
                                   color: Colors.transparent,
                                   shape: BoxShape.circle,

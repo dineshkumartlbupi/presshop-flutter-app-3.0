@@ -103,7 +103,6 @@ DATA   : ${_prettyJson(err.response?.data)}
   String _prettyJson(dynamic data) {
     if (data == null) return "null";
     try {
-      // Avoid expensive formatting for very large collections
       if (data is List && data.length > 500) {
         return "[LIST of ${data.length} items] (Too large to format safely)";
       }
@@ -116,7 +115,6 @@ DATA   : ${_prettyJson(err.response?.data)}
       if (data is String) {
         try {
           final decoded = jsonDecode(data);
-          // Check decoded size too
           if (decoded is List && decoded.length > 500) {
             return "[DECODED LIST of ${decoded.length} items]";
           }
@@ -131,7 +129,6 @@ DATA   : ${_prettyJson(err.response?.data)}
         result = encoder.convert(data);
       }
 
-      // Truncate string result if still too large
       if (result.length > 30000) {
         return "${result.substring(0, 30000)}\n... [TRUNCATED ${result.length - 30000} characters]";
       }

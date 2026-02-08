@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:presshop/core/api/api_constant.dart';
-
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dio/dio.dart';
@@ -223,8 +221,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
     if (widget.myContentData != null &&
         widget.myContentData!.audioDescription.isNotEmpty) {
-      saveNetworkFileToLocalDirectory(
-          contentImageUrl + widget.myContentData!.audioDescription);
+      saveNetworkFileToLocalDirectory(widget.myContentData!.audioDescription);
     }
 
     DashboardState.dashBoardInterface = this;
@@ -573,12 +570,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                                     .white),
                                                           )
                                                     : Image.network(
-                                                        contentImageUrl +
-                                                            widget
-                                                                .myContentData!
-                                                                .contentMediaList
-                                                                .first
-                                                                .thumbNail,
+                                                        widget
+                                                            .myContentData!
+                                                            .contentMediaList
+                                                            .first
+                                                            .thumbNail,
                                                         width: size.width *
                                                             AppDimensions
                                                                 .numD30,
@@ -620,12 +616,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                             fit: BoxFit.cover,
                                                           )
                                                         : Image.network(
-                                                            contentImageUrl +
-                                                                widget
-                                                                    .myContentData!
-                                                                    .contentMediaList
-                                                                    .first
-                                                                    .media,
+                                                            widget
+                                                                .myContentData!
+                                                                .contentMediaList
+                                                                .first
+                                                                .media,
                                                             width: size.width *
                                                                 AppDimensions
                                                                     .numD30,
@@ -1148,12 +1143,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         .thumbNail ==
                                                     "video",
                                                 child: Image.network(
-                                                  contentImageUrl +
-                                                      widget
-                                                          .myContentData!
-                                                          .contentMediaList
-                                                          .first
-                                                          .thumbNail,
+                                                  widget
+                                                      .myContentData!
+                                                      .contentMediaList
+                                                      .first
+                                                      .thumbNail,
                                                   width: size.width *
                                                       AppDimensions.numD30,
                                                   height: size.width *
@@ -1169,12 +1163,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                         .mediaType ==
                                                     "image",
                                                 child: Image.network(
-                                                  contentImageUrl +
-                                                      widget
-                                                          .myContentData!
-                                                          .contentMediaList
-                                                          .first
-                                                          .media,
+                                                  widget
+                                                      .myContentData!
+                                                      .contentMediaList
+                                                      .first
+                                                      .media,
                                                   width: size.width *
                                                       AppDimensions.numD30,
                                                   height: size.width *

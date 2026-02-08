@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/features/authentication/data/models/term_model.dart';
 
 class TermsRepository {
-
   TermsRepository(this.apiClient);
   final ApiClient apiClient;
 

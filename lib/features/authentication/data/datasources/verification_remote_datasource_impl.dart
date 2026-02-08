@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:presshop/core/api/api_client.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/authentication/data/datasources/verification_remote_datasource.dart';
@@ -9,7 +9,6 @@ import 'package:presshop/features/authentication/data/models/document_data_model
 import 'package:presshop/features/authentication/data/models/document_instruction_model.dart';
 
 class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
-
   VerificationRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

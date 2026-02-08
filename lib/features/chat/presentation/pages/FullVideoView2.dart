@@ -9,7 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:video_player/video_player.dart';
-import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:presshop/core/core_export.dart';
 
@@ -21,7 +20,6 @@ enum MediaTypeEnum {
 }
 
 class MediaViewScreen2 extends StatefulWidget {
-
   const MediaViewScreen2(
       {super.key,
       required this.mediaFile,
@@ -56,7 +54,7 @@ class _MediaViewScreen2State extends State<MediaViewScreen2>
         videoPlayerController: VideoPlayerController.network(
             widget.isFromTutorialScreen
                 ? widget.mediaFile
-                : (taskMediaUrl + widget.mediaFile)),
+                : (widget.mediaFile)),
       );
     } else if (widget.type == MediaTypeEnum.audio) {
       initWaveData();
@@ -179,7 +177,8 @@ class _MediaViewScreen2State extends State<MediaViewScreen2>
             maxScale: PhotoViewComputedScale.contained * 10.0,
             imageProvider: NetworkImage(widget.mediaFile)),
         ClipRRect(
-            borderRadius: BorderRadius.circular(size.width * AppDimensions.numD04),
+            borderRadius:
+                BorderRadius.circular(size.width * AppDimensions.numD04),
             child: Image.asset(
               "${commonImagePath}watermark1.png",
               height: size.height / 3,
@@ -208,7 +207,7 @@ class _MediaViewScreen2State extends State<MediaViewScreen2>
     try {
       await dio.download(widget.mediaFile, filepath);
     } catch (e) {
-      await dio.download(taskMediaUrl + widget.mediaFile, filepath);
+      await dio.download(widget.mediaFile, filepath);
     }
 
     await controller.preparePlayer(
@@ -262,13 +261,17 @@ class _MediaViewScreen2State extends State<MediaViewScreen2>
                 flex: 6,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: size.width * AppDimensions.numD04, right: size.width * AppDimensions.numD04),
+                      left: size.width * AppDimensions.numD04,
+                      right: size.width * AppDimensions.numD04),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Lottie.asset("assets/lottieFiles/audio_waves.json",
                           width: double.infinity,
-                          height: size.height * (isIpad ? AppDimensions.numD70 : AppDimensions.numD40),
+                          height: size.height *
+                              (isIpad
+                                  ? AppDimensions.numD70
+                                  : AppDimensions.numD40),
                           backgroundLoading: true,
                           fit: BoxFit.fill,
                           controller: _animationController),
@@ -287,12 +290,16 @@ class _MediaViewScreen2State extends State<MediaViewScreen2>
                             setState(() {});
                           },
                           child: Container(
-                            padding: EdgeInsets.all(size.width * AppDimensions.numD018),
+                            padding: EdgeInsets.all(
+                                size.width * AppDimensions.numD018),
                             decoration: const BoxDecoration(
-                                color: AppColorTheme.colorThemePink, shape: BoxShape.circle),
+                                color: AppColorTheme.colorThemePink,
+                                shape: BoxShape.circle),
                             child: Container(
-                              padding: EdgeInsets.all(
-                                  size.width * (isIpad ? AppDimensions.numD03 : AppDimensions.numD04)),
+                              padding: EdgeInsets.all(size.width *
+                                  (isIpad
+                                      ? AppDimensions.numD03
+                                      : AppDimensions.numD04)),
                               decoration: BoxDecoration(
                                   color: Colors.transparent,
                                   shape: BoxShape.circle,

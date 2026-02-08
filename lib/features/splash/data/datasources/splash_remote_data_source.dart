@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/constants/api_response.dart';
 import 'package:presshop/core/error/failures.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/features/splash/data/models/version_model.dart';
 
@@ -11,7 +11,6 @@ abstract class SplashRemoteDataSource {
 }
 
 class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
-
   SplashRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

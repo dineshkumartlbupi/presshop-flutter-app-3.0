@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../../../core/api/api_client.dart';
-import '../../../../core/api/api_constant_new.dart';
+import '../../../../core/api/api_constant.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import '../models/leaderboard_model.dart';
 
@@ -9,7 +9,6 @@ abstract class LeaderboardRemoteDataSource {
 }
 
 class LeaderboardRemoteDataSourceImpl implements LeaderboardRemoteDataSource {
-
   LeaderboardRemoteDataSourceImpl({required this.apiClient});
   final ApiClient apiClient;
 

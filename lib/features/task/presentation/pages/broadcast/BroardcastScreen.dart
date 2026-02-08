@@ -46,6 +46,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
   final String _walkingEstTime = "";
 
   bool _isAccepted = false;
+  bool _hasSubmittedAction = false; // Guard to prevent premature navigation
   bool isDirection = false;
   bool isMultipleContact = false;
   BitmapDescriptor? mapIcon;
@@ -110,6 +111,46 @@ class _BroadCastScreenState extends State<BroadCastScreen>
     size = MediaQuery.of(context).size;
     return BlocConsumer<TaskBloc, TaskState>(
       listener: (context, state) {
+        // Handle action status (accept/reject) FIRST, independently
+        // Only react if user has actually submitted an action on this screen
+        if (_hasSubmittedAction &&
+            state.actionStatus == TaskStatus.success &&
+            _isAccepted) {
+          context.read<TaskBloc>().add(GetRoomIdEvent(
+                receiverId: taskDetail!.mediaHouseId,
+                taskId: widget.taskId,
+                roomType: "HoppertoAdmin",
+                type: "external_task",
+              ));
+          showSnackBar("Accepted", "You have successfully accepted the task!",
+              Colors.green);
+          return; // Exit listener after handling
+        } else if (_hasSubmittedAction &&
+            state.actionStatus == TaskStatus.success &&
+            !_isAccepted) {
+          Navigator.pushAndRemoveUntil(
+              navigatorKey.currentState!.context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Dashboard(initialPosition: 1, taskStatus: "rejected")),
+              (route) => false);
+          return; // Exit listener after handling
+        }
+
+        // Handle roomId (only if action was submitted)
+        if (_hasSubmittedAction &&
+            state.roomId != null &&
+            state.roomId!.isNotEmpty) {
+          Navigator.pushAndRemoveUntil(
+              navigatorKey.currentState!.context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Dashboard(initialPosition: 1, taskStatus: "accepted")),
+              (route) => false);
+          return; // Exit listener after handling
+        }
+
+        // Handle taskDetail loading
         if (state.taskDetail != null &&
             state.taskDetailStatus == TaskStatus.success) {
           TaskAssignedEntity assignedEntity = state.taskDetail!;
@@ -154,34 +195,15 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                 .read<TaskBloc>()
                 .add(GetHopperAcceptedCountEvent(taskDetail!.id));
           }
-        } else if (state.actionStatus == TaskStatus.success) {
-          if (_isAccepted) {
-            context.read<TaskBloc>().add(GetRoomIdEvent(
-                  receiverId: taskDetail!.mediaHouseId,
-                  taskId: widget.taskId,
-                  roomType: "HoppertoAdmin",
-                  type: "external_task",
-                ));
-            showSnackBar("Accepted", "You have successfully accepted the task!",
-                Colors.green);
-          } else {
-            Navigator.pushAndRemoveUntil(
-                navigatorKey.currentState!.context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        Dashboard(initialPosition: 1, taskStatus: "rejected")),
-                (route) => false);
-          }
-        } else if (state.roomId != null) {
-          Navigator.pushAndRemoveUntil(
-              navigatorKey.currentState!.context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Dashboard(initialPosition: 1, taskStatus: "accepted")),
-              (route) => false);
-        } else if (state.hopperAcceptedCount != null) {
+        }
+
+        // Handle hopper accepted count update
+        if (state.hopperAcceptedCount != null) {
           _hopperAcceptedCount = state.hopperAcceptedCount!;
-        } else if (state.errorMessage != null) {
+        }
+
+        // Handle errors
+        if (state.errorMessage != null) {
           showSnackBar("Error", state.errorMessage!, Colors.red);
         }
       },
@@ -605,6 +627,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           if (player.state == PlayerState.playing) {
                             player.stop();
                           }
+                          _hasSubmittedAction = true;
                           callAcceptRejectApi();
                           debugPrint("rejected:::::::");
                           setState(() {});
@@ -631,6 +654,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                           if (player.state == PlayerState.playing) {
                             player.stop();
                           }
+                          _hasSubmittedAction = true;
                           callAcceptRejectApi();
 
                           debugPrint("accepted====>");

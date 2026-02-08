@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/error/api_error_handler.dart';
 import 'package:presshop/core/error/exceptions.dart';

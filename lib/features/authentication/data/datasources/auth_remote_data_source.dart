@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 import 'package:presshop/core/error/failures.dart';
 import '../models/user_model.dart';
 import 'package:presshop/core/core_export.dart';
@@ -30,7 +30,6 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-
   AuthRemoteDataSourceImpl(this.apiClient);
   final ApiClient apiClient;
 

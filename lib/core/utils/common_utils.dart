@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:presshop/core/api/api_constant_new.dart';
 
 dynamic numberFormatting(dynamic number) {
   String value = number.toString();
@@ -43,7 +42,6 @@ String fixS3Url(String url) {
         final regionAndDomain = hostParts[1];
 
         if (bucketName.contains('.')) {
-          // Convert to path-style: host = s3.region.amazonaws.com, path = /bucket/...
           String newHost = "s3.$regionAndDomain";
           String newPath = "/$bucketName${uri.path}";
           return uri.replace(host: newHost, path: newPath).toString();
@@ -54,7 +52,6 @@ String fixS3Url(String url) {
     debugPrint("Error in fixS3Url: $e");
   }
 
-  // Legacy/Specific fix
   if (url.contains("presshop3.0.s3.eu-west-2.amazonaws.com")) {
     return url.replaceFirst("presshop3.0.s3.eu-west-2.amazonaws.com",
         "s3.eu-west-2.amazonaws.com/presshop3.0");
@@ -72,13 +69,7 @@ String getMediaImageUrl(String? url,
     return fixS3Url(trimmedUrl);
   }
 
-  String baseUrl = isTask
-      ? ApiConstantsNew.config.taskMediaUrl
-      : isVideo
-          ? ApiConstantsNew.config.mediaThumbnailUrl
-          : ApiConstantsNew.config.contentImageUrl;
-
-  return fixS3Url("$baseUrl$trimmedUrl");
+  return fixS3Url(trimmedUrl);
 }
 
 String getCurrencySymbol(String? currencyCode) {

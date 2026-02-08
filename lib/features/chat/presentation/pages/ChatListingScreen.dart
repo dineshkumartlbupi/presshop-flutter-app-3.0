@@ -11,7 +11,6 @@ import 'package:presshop/core/api/api_client.dart';
 import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/features/dashboard/presentation/pages/dashboard.dart';
-import 'package:presshop/core/api/api_constant.dart';
 
 const int getAdminListReq = 1;
 
@@ -226,7 +225,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                     child: ClipOval(
                       clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        adminProfileUrl + item.profilePic,
+                        item.profilePic,
                         errorBuilder: (context, exception, stackTrace) {
                           return Image.asset(
                             "${commonImagePath}rabbitLogo.png",
@@ -396,8 +395,7 @@ class _ChatListingScreenState extends State<ChatListingScreen>
                                       child: Image.network(
                                         document.get('receiverId') !=
                                                 userId.toString()
-                                            ? adminProfileUrl +
-                                                document.get('receiverImage')
+                                            ? document.get('receiverImage')
                                             : document.get('senderImage'),
                                         errorBuilder:
                                             (context, exception, stackTrace) {

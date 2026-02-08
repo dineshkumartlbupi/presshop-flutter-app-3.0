@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:presshop/core/api/api_constant_new.dart';
+import 'package:presshop/core/api/api_constant.dart';
 
 import 'package:presshop/core/utils/shared_preferences.dart';
 import 'package:presshop/main.dart';
@@ -19,7 +19,6 @@ class TokenRefreshManager {
   bool _isRefreshing = false;
   final List<Future<void> Function()> _pendingRequests = [];
   Completer<bool>? _refreshCompleter;
-  // int _retryCount = 0;
   static const int _maxRetries = 3;
   static const Duration _initialRetryDelay = Duration(seconds: 2);
 
@@ -49,7 +48,8 @@ class TokenRefreshManager {
       final token = await storage.read(key: tokenKey) ?? "";
       final deviceID = sharedPreferences!.getString(deviceIdKey) ?? "";
 
-      final uri = Uri.parse(ApiConstantsNew.config.baseUrl + ApiConstantsNew.auth.refreshToken);
+      final uri = Uri.parse(
+          ApiConstantsNew.config.baseUrl + ApiConstantsNew.auth.refreshToken);
       debugPrint(
           "Refreshing token: $uri (Attempt ${retryAttempt + 1}/${_maxRetries + 1})");
 

@@ -9,8 +9,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
-import 'package:presshop/core/api/api_constant.dart';
-
 import 'package:presshop/features/account_settings/presentation/pages/contact_us_screen.dart';
 import 'package:presshop/features/camera/data/models/camera_model.dart';
 import 'package:presshop/features/camera/presentation/pages/PreviewScreen.dart';
@@ -3278,9 +3276,9 @@ class _BroadCastChatTaskScreenState extends State<BroadCastChatTaskScreen> {
 
   void socketConnectionFunc() {
     debugPrint(":::: Inside Socket Func :::::");
-    debugPrint("socketUrl:::::$socketUrl");
-    socket = IO.io(
-        socketUrl, IO.OptionBuilder().setTransports(['websocket']).build());
+    debugPrint("socketUrl:::::${ApiConstantsNew.config.socketUrl2}");
+    socket = IO.io(ApiConstantsNew.config.socketUrl2,
+        IO.OptionBuilder().setTransports(['websocket']).build());
 
     debugPrint("Socket Disconnect : ${socket.connected}");
     debugPrint("Socket Disconnect : ${widget.taskDetail?.task.mediaHouse.id}");
