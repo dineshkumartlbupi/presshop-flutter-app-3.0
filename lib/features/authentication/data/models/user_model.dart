@@ -13,6 +13,7 @@ class UserModel extends User {
     super.totalHopperArmy,
     super.avatarId,
     super.avatar,
+    super.profileImage,
     super.source,
   });
 
@@ -27,26 +28,31 @@ class UserModel extends User {
 
     String? avId;
     String? avImg;
-    if (json['avatar_id'] is Map) {
-      avId = json['avatar_id']['_id'];
-      avImg = json['avatar_id']['avatar'];
-    } else if (json['avatar_id'] is String) {
-      avId = json['avatar_id']; // If only ID string
+
+    // Support avatar_id (snake_case) or avatarData (camelCase)
+    final avatarMap = json['avatarData'] ?? json['avatar_id'];
+
+    if (avatarMap is Map) {
+      avId = (avatarMap['_id'] ?? avatarMap['id'])?.toString();
+      avImg = avatarMap['avatar']?.toString();
+    } else if (avatarMap is String) {
+      avId = avatarMap;
     }
 
     return UserModel(
       id: json['_id'] ?? json['id'] ?? '',
-      firstName: json['first_name'] ?? '',
-      lastName: json['last_name'] ?? '',
+      firstName: json['first_name'] ?? json['firstName'] ?? '',
+      lastName: json['last_name'] ?? json['lastName'] ?? '',
       email: json['email'] ?? '',
-      token: json['token'],
-      refreshToken: json['refreshToken'], // Added refreshToken parsing
+      token: json['token'] ?? json['access_token'],
+      refreshToken: json['refreshToken'] ?? json['refresh_token'],
       referralCode: json['referral_code'],
       currencySymbol: currency,
       totalHopperArmy: json['totalHopperArmy']?.toString(),
       avatarId: avId,
       avatar: avImg ?? json['avatar'],
-      source: json['source'],
+      profileImage: json['profile_image'] ?? json['profileImage'],
+      source: json['source'] ?? json,
     );
   }
 

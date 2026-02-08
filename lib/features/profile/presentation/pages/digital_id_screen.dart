@@ -617,10 +617,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
         if (profile.profileImage.startsWith("http")) {
           userImage = fixS3Url(profile.profileImage);
         } else {
-          // Use the correct CDN URL
-          const String cdnAvatarUrl =
-              "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
-          userImage = fixS3Url("$cdnAvatarUrl${profile.profileImage}");
+          userImage = fixS3Url("${profile.profileImage}");
         }
         sharedPreferences!.setString(profileImageKey, userImage);
       }
@@ -632,9 +629,7 @@ class _DigitalIdScreenState extends State<DigitalIdScreen> {
       if (imageUrl.startsWith("http")) {
         userImage = fixS3Url(imageUrl);
       } else {
-        const String cdnAvatarUrl =
-            "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
-        userImage = fixS3Url("$cdnAvatarUrl$imageUrl");
+        userImage = fixS3Url("$imageUrl");
       }
       sharedPreferences!.setString(profileImageKey, userImage);
     });

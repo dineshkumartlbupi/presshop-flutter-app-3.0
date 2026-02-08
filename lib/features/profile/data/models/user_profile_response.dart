@@ -48,6 +48,7 @@ class UserProfileModel {
     required this.hopperStatus,
     required this.chatStatus,
     required this.profileImage,
+    required this.avatar,
     required this.isVerified,
     required this.isOnboard,
     required this.isDeleted,
@@ -63,30 +64,19 @@ class UserProfileModel {
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    String extractImage(Map<String, dynamic> json) {
-      // Check for profile image first
-      String tempAvatar = json["profile_image"]?.toString() ??
-          json["profileImage"]?.toString() ??
-          json["avatar"]?.toString() ??
-          "";
-
-      // If empty, fallback to avatarData
-      if (tempAvatar.isEmpty) {
-        if (json["avatarData"] is Map) {
-          tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
-        } else if (json["avatarData"] is String &&
-            json["avatarData"].toString().startsWith("http")) {
-          tempAvatar = json["avatarData"];
-        }
-      }
-
-      if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
-        const String mediaBaseUrl =
-            "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/";
-        final String folder = tempAvatar.contains("/") ? "" : "avatarImages/";
-        tempAvatar = "$mediaBaseUrl$folder$tempAvatar";
+    String extractAvatar(Map<String, dynamic> json) {
+      String tempAvatar = json["avatar"]?.toString() ?? "";
+      if (json["avatarData"] is Map) {
+        tempAvatar = json["avatarData"]["avatar"]?.toString() ?? tempAvatar;
       }
       return fixS3Url(tempAvatar);
+    }
+
+    String extractProfileImage(Map<String, dynamic> json) {
+      String tempImg = json["profile_image"]?.toString() ??
+          json["profileImage"]?.toString() ??
+          "";
+      return fixS3Url(tempImg);
     }
 
     return UserProfileModel(
@@ -100,7 +90,8 @@ class UserProfileModel {
       status: json['status'] ?? '',
       hopperStatus: json['hopperStatus'] ?? '',
       chatStatus: json['chat_status'] ?? '',
-      profileImage: extractImage(json),
+      profileImage: extractProfileImage(json),
+      avatar: extractAvatar(json),
       isVerified: json['isVerified'] ?? false,
       isOnboard: json['is_onboard'] ?? false,
       isDeleted: json['is_deleted'] ?? false,
@@ -133,6 +124,7 @@ class UserProfileModel {
   final String hopperStatus;
   final String chatStatus;
   final String profileImage;
+  final String avatar;
   final bool isVerified;
   final bool isOnboard;
   final bool isDeleted;
@@ -159,6 +151,7 @@ class UserProfileModel {
       'hopperStatus': hopperStatus,
       'chat_status': chatStatus,
       'profile_image': profileImage,
+      'avatar': avatar,
       'isVerified': isVerified,
       'is_onboard': isOnboard,
       'is_deleted': isDeleted,
@@ -187,6 +180,7 @@ class UserProfileModel {
       hopperStatus: hopperStatus,
       chatStatus: chatStatus,
       profileImage: profileImage,
+      avatar: avatar,
       isVerified: isVerified,
       isOnboard: isOnboard,
       isDeleted: isDeleted,

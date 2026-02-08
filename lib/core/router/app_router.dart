@@ -22,7 +22,7 @@ import 'package:presshop/features/authentication/presentation/bloc/signup_bloc.d
 import 'package:presshop/core/router/router_constants.dart';
 import 'package:presshop/features/authentication/presentation/bloc/signup_event.dart';
 import 'package:presshop/features/bank/presentation/pages/my_banks_page.dart';
-import 'package:presshop/features/profile/presentation/pages/DigitalIdScreen.dart';
+import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_settings.dart';
 import 'package:presshop/features/account_settings/presentation/pages/account_delete_screen.dart';
