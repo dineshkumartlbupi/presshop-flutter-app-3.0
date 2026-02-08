@@ -14,7 +14,7 @@ import 'package:presshop/features/earning/presentation/pages/MyEarningScreen.dar
 import 'package:presshop/features/feed/presentation/pages/FeedScreen.dart';
 import 'package:presshop/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:presshop/features/notification/presentation/pages/MyNotifications.dart';
-import 'package:presshop/features/profile/presentation/pages/DigitalIdScreen.dart';
+import 'package:presshop/features/profile/presentation/pages/digital_id_screen.dart';
 import 'package:presshop/features/profile/presentation/pages/my_profile_screen.dart';
 import 'package:presshop/features/publish/presentation/pages/TutorialsScreen.dart';
 import 'package:presshop/features/rating/presentation/pages/RatingReviewScreen.dart';
@@ -51,7 +51,6 @@ enum MenuAction {
 }
 
 class MenuData {
-
   const MenuData({
     required this.icon,
     required this.title,

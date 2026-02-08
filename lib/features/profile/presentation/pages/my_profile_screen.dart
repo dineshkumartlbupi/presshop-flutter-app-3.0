@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:presshop/core/analytics/analytics_constants.dart';
@@ -19,8 +18,10 @@ import 'package:presshop/core/widgets/common_app_bar.dart';
 import 'package:presshop/core/widgets/common_text_field.dart';
 import 'package:presshop/core/widgets/common_widgets.dart';
 import 'package:presshop/core/api/api_client.dart';
+import 'package:presshop/core/widgets/common/avatar_bottom_sheet.dart';
+
 import 'package:presshop/core/di/injection_container.dart';
-import 'package:presshop/features/authentication/presentation/pages/SignUpScreen.dart';
+
 import 'package:presshop/features/profile/constants/profile_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:presshop/main.dart';
@@ -59,7 +60,13 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
   TextEditingController cityNameController = TextEditingController();
   TextEditingController countryNameController = TextEditingController();
 
-  List<AvatarsData> avatarList = [];
+  // Profile address controllers
+  TextEditingController profileAddressController = TextEditingController();
+  TextEditingController profileCityController = TextEditingController();
+  TextEditingController profileCountryController = TextEditingController();
+  TextEditingController profilePostCodeController = TextEditingController();
+
+  List<AvatarData> avatarList = [];
   MyProfileData? myProfileData;
   static final Set<String> _loadedUrls = {};
   // Completer<String?>? _studentBeansCompleter;
@@ -92,6 +99,10 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     apartmentAndHouseNameController.dispose();
     cityNameController.dispose();
     countryNameController.dispose();
+    profileAddressController.dispose();
+    profileCityController.dispose();
+    profileCountryController.dispose();
+    profilePostCodeController.dispose();
     super.dispose();
   }
 
@@ -410,26 +421,18 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                   child: CachedNetworkImage(
                     imageUrl:
                         myProfileData != null ? myProfileData!.avatarImage : "",
-                    fadeInDuration: Duration.zero,
-                    fadeOutDuration: Duration.zero,
-                    imageBuilder: (context, imageProvider) {
-                      _loadedUrls.add(myProfileData!.avatarImage);
-                      return Image(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                    placeholder: (context, url) => _loadedUrls.contains(url)
-                        ? const SizedBox.shrink()
-                        : Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
-                            child: Container(
-                              color: Colors.white,
-                              width: size.width * AppDimensions.numD37,
-                              height: size.width * AppDimensions.numD35,
-                            ),
-                          ),
+                    placeholder: (context, url) => Center(
+                      child: Padding(
+                        padding:
+                            EdgeInsets.all(size.width * AppDimensions.numD04),
+                        child: Image.asset(
+                          "${commonImagePath}rabbitLogo.png",
+                          fit: BoxFit.contain,
+                          width: size.width * AppDimensions.numD35,
+                          height: size.width * AppDimensions.numD35,
+                        ),
+                      ),
+                    ),
                     errorWidget: (context, url, error) => Padding(
                       padding:
                           EdgeInsets.all(size.width * AppDimensions.numD04),
@@ -512,8 +515,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
               SizedBox(
                 height: size.width * AppDimensions.numD005,
               ),
-              Text(myProfileData != null ? myProfileData!.address : "",
-                  maxLines: 3,
+              Text(_getCurrentAddress(),
+                  maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                   style: commonTextStyle(
                       size: size,
@@ -525,6 +528,34 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         ],
       ),
     );
+  }
+
+  String _getCurrentAddress() {
+    if (myProfileData == null) return '';
+
+    List<String> addressLines = [];
+    if (myProfileData!.address.isNotEmpty) {
+      addressLines.add("Current Address: ${myProfileData!.address}");
+    }
+    List<String> userAddressParts = [];
+    if (myProfileData!.profileAddress.isNotEmpty) {
+      userAddressParts.add(myProfileData!.profileAddress);
+    }
+    if (myProfileData!.profileCity.isNotEmpty) {
+      userAddressParts.add(myProfileData!.profileCity);
+    }
+    if (myProfileData!.profileCountry.isNotEmpty) {
+      userAddressParts.add(myProfileData!.profileCountry);
+    }
+    if (myProfileData!.profilePostCode.isNotEmpty) {
+      userAddressParts.add(myProfileData!.profilePostCode);
+    }
+
+    if (userAddressParts.isNotEmpty) {
+      addressLines.add("User Address: ${userAddressParts.join(', ')}");
+    }
+
+    return addressLines.join('\n');
   }
 
   void setProfileData() {
@@ -540,6 +571,12 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
       apartmentAndHouseNameController.text = myProfileData!.apartment;
       cityNameController.text = myProfileData!.cityName;
       countryNameController.text = myProfileData!.countryName;
+
+      // Set profile address fields
+      profileAddressController.text = myProfileData!.profileAddress;
+      profileCityController.text = myProfileData!.profileCity;
+      profileCountryController.text = myProfileData!.profileCountry;
+      profilePostCodeController.text = myProfileData!.profilePostCode;
     }
   }
 
@@ -706,153 +743,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
 
   /// Avatar Images
   void avatarBottomSheet(Size size) {
-    showModalBottomSheet(
+    AvatarBottomSheet.show(
       context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return StatefulBuilder(builder: (context, avatarState) {
-          return Container(
-            height: size.height * 0.6,
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      EdgeInsets.only(left: size.width * AppDimensions.numD04),
-                  child: Row(
-                    children: [
-                      Text(
-                        AppStrings.chooseAvatarText,
-                        style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * AppDimensions.numD04,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          context.pop();
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.black,
-                          size: size.width * AppDimensions.numD06,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Scrollable Avatar List
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: avatarList.isEmpty
-                          ? StaggeredGrid.count(
-                              crossAxisCount: 6,
-                              mainAxisSpacing: 3.0,
-                              crossAxisSpacing: 4.0,
-                              axisDirection: AxisDirection.down,
-                              children: List.generate(18, (index) {
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(
-                                    width: size.width * AppDimensions.numD20,
-                                    height: size.width * AppDimensions.numD20,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                );
-                              }),
-                            )
-                          : StaggeredGrid.count(
-                              crossAxisCount: 6,
-                              mainAxisSpacing: 3.0,
-                              crossAxisSpacing: 4.0,
-                              axisDirection: AxisDirection.down,
-                              children: avatarList.map<Widget>((item) {
-                                return InkWell(
-                                  onTap: () {
-                                    int pos = avatarList.indexWhere(
-                                        (element) => element.selected);
-                                    if (pos >= 0) {
-                                      avatarList[pos].selected = false;
-                                    }
-                                    myProfileData!.avatarImage = item.avatar;
-                                    myProfileData!.avatarId = item.id;
-                                    item.selected = true;
-                                    avatarState(() {});
-                                    setState(() {});
-                                    context.pop();
-                                  },
-                                  child: Stack(
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl: item.avatar,
-                                        fit: BoxFit.cover,
-                                        fadeInDuration: Duration.zero,
-                                        fadeOutDuration: Duration.zero,
-                                        imageBuilder: (context, imageProvider) {
-                                          _loadedUrls.add(item.avatar);
-                                          return Image(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                        placeholder: (context, url) =>
-                                            _loadedUrls.contains(url)
-                                                ? const SizedBox.shrink()
-                                                : Shimmer.fromColors(
-                                                    baseColor:
-                                                        Colors.grey[300]!,
-                                                    highlightColor:
-                                                        Colors.grey[100]!,
-                                                    child: Container(
-                                                      color: Colors.white,
-                                                      width: size.width *
-                                                          AppDimensions.numD20,
-                                                      height: size.width *
-                                                          AppDimensions.numD20,
-                                                    ),
-                                                  ),
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                          "${commonImagePath}rabbitLogo.png",
-                                          fit: BoxFit.contain,
-                                          width:
-                                              size.width * AppDimensions.numD20,
-                                          height:
-                                              size.width * AppDimensions.numD20,
-                                        ),
-                                      ),
-                                      if (item.selected)
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Icon(
-                                            Icons.check,
-                                            color: Colors.black,
-                                            size: size.width *
-                                                AppDimensions.numD06,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
+      size: size,
+      avatarList: avatarList,
+      onAvatarSelected: (avatar) {
+        myProfileData!.avatarImage = avatar.avatar;
+        myProfileData!.avatarId = avatar.id;
+        setState(() {});
       },
     );
   }
@@ -886,11 +784,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen
-              ? Colors.white
-              : AppColorTheme.colorLightGrey,
+          filledColor: AppColorTheme.colorLightGrey,
           autofocus: userNameAutoFocus,
-          readOnly: widget.editProfileScreen ? false : true,
+          readOnly: true,
           onChanged: _onUserNameChanged,
           suffixIconIconHeight: size.width * AppDimensions.numD04,
           suffixIcon: null,
@@ -1076,11 +972,9 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           validator: null,
           enableValidations: false,
           filled: true,
-          filledColor: widget.editProfileScreen
-              ? Colors.white
-              : AppColorTheme.colorLightGrey,
+          filledColor: AppColorTheme.colorLightGrey,
           autofocus: false,
-          readOnly: widget.editProfileScreen ? false : true,
+          readOnly: true,
         ),
       ],
     );
@@ -1090,11 +984,51 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: size.width * AppDimensions.numD06),
         _buildApartmentField(),
         SizedBox(height: size.width * AppDimensions.numD06),
         _buildPostCodeField(),
         SizedBox(height: size.width * AppDimensions.numD06),
         _buildAddressField(),
+        SizedBox(height: size.width * AppDimensions.numD06),
+        _buildCurrentAddressField(),
+      ],
+    );
+  }
+
+  Widget _buildCurrentAddressField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Current location",
+            style: commonTextStyle(
+                size: size,
+                fontSize: size.width * AppDimensions.numD032,
+                color: Colors.black,
+                fontWeight: FontWeight.normal)),
+        SizedBox(height: size.width * AppDimensions.numD02),
+        CommonTextField(
+          size: size,
+          maxLines: 1,
+          textInputFormatters: null,
+          borderColor: AppColorTheme.colorTextFieldBorder,
+          controller: addressController,
+          hintText: "Current Address",
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: size.width * AppDimensions.numD015),
+            child: Image.asset("${iconsPath}ic_location.png"),
+          ),
+          prefixIconHeight: size.width * AppDimensions.numD04,
+          suffixIconIconHeight: 0,
+          suffixIcon: null,
+          hidePassword: false,
+          keyboardType: TextInputType.text,
+          validator: null,
+          enableValidations: false,
+          filled: true,
+          filledColor: AppColorTheme.colorLightGrey,
+          readOnly: true,
+        ),
       ],
     );
   }
@@ -1154,7 +1088,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             ? SizedBox(
                 height: size.width * AppDimensions.numD12,
                 child: GooglePlaceAutoCompleteTextField(
-                  textEditingController: postCodeController,
+                  textEditingController: profilePostCodeController,
                   googleAPIKey: Platform.isIOS
                       ? ApiConstantsNew.config.appleMapApiKey
                       : ApiConstantsNew.config.googleMapApiKey,
@@ -1185,7 +1119,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                       child: Image.asset("${iconsPath}ic_location.png"),
                     ),
                     suffixIcon: InkWell(
-                      onTap: () => postCodeController.clear(),
+                      onTap: () => profilePostCodeController.clear(),
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(Icons.close,
@@ -1209,22 +1143,24 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                             prediction.lat ?? "", prediction.lng ?? "")
                         .then((value) {
                       if (value.isNotEmpty) {
-                        cityNameController.text = value.first.locality ?? '';
-                        countryNameController.text = value.first.country ?? '';
+                        profileCityController.text = value.first.locality ?? '';
+                        profileCountryController.text =
+                            value.first.country ?? '';
                       }
                     });
                     showAddressError = false;
                     setState(() {});
                   },
                   itemClick: (prediction) {
-                    addressController.text = prediction.description ?? "";
+                    profileAddressController.text =
+                        prediction.description ?? "";
                     latitude = prediction.lat ?? "";
                     longitude = prediction.lng ?? "";
                     String postalCode =
                         prediction.structuredFormatting?.mainText ?? '';
-                    postCodeController.text = postalCode;
-                    addressController.selection = TextSelection.fromPosition(
-                        TextPosition(
+                    profilePostCodeController.text = postalCode;
+                    profileAddressController.selection =
+                        TextSelection.fromPosition(TextPosition(
                             offset: prediction.description != null
                                 ? prediction.description!.length
                                 : 0));
@@ -1236,7 +1172,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 maxLines: 1,
                 textInputFormatters: null,
                 borderColor: AppColorTheme.colorTextFieldBorder,
-                controller: postCodeController,
+                controller: profilePostCodeController,
                 hintText:
                     "${AppStrings.enterText.toTitleCase()} ${AppStrings.postalCodeText}",
                 prefixIcon: Image.asset("${iconsPath}ic_location.png"),
@@ -1270,7 +1206,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             ? SizedBox(
                 height: size.width * AppDimensions.numD12,
                 child: GooglePlaceAutoCompleteTextField(
-                  textEditingController: addressController,
+                  textEditingController: profileAddressController,
                   googleAPIKey: Platform.isIOS
                       ? ApiConstantsNew.config.appleMapApiKey
                       : ApiConstantsNew.config.googleMapApiKey,
@@ -1325,19 +1261,21 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                             prediction.lat ?? "", prediction.lng ?? "")
                         .then((value) {
                       if (value.isNotEmpty) {
-                        cityNameController.text = value.first.locality ?? '';
-                        countryNameController.text = value.first.country ?? '';
+                        profileCityController.text = value.first.locality ?? '';
+                        profileCountryController.text =
+                            value.first.country ?? '';
                       }
                     });
                     showAddressError = false;
                     setState(() {});
                   },
                   itemClick: (prediction) {
-                    addressController.text = prediction.description ?? "";
+                    profileAddressController.text =
+                        prediction.description ?? "";
                     latitude = prediction.lat ?? "";
                     longitude = prediction.lng ?? "";
-                    addressController.selection = TextSelection.fromPosition(
-                        TextPosition(
+                    profileAddressController.selection =
+                        TextSelection.fromPosition(TextPosition(
                             offset: prediction.description != null
                                 ? prediction.description!.length
                                 : 0));
@@ -1349,7 +1287,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                 maxLines: 1,
                 textInputFormatters: null,
                 borderColor: AppColorTheme.colorTextFieldBorder,
-                controller: addressController,
+                controller: profileAddressController,
                 hintText:
                     "${AppStrings.enterText.toTitleCase()} ${AppStrings.addressText}",
                 prefixIcon: Image.asset("${iconsPath}ic_location.png"),
@@ -1394,7 +1332,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           maxLines: 1,
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
-          controller: cityNameController,
+          controller: profileCityController,
           hintText:
               "${AppStrings.enterText.toTitleCase()} ${AppStrings.cityText}",
           prefixIcon: Container(
@@ -1434,7 +1372,7 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
           maxLines: 1,
           textInputFormatters: null,
           borderColor: AppColorTheme.colorTextFieldBorder,
-          controller: countryNameController,
+          controller: profileCountryController,
           hintText:
               "${AppStrings.enterText.toTitleCase()} ${AppStrings.countryText}",
           prefixIcon: Container(
@@ -1589,19 +1527,8 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         var map = response.data;
         if (map is String) map = jsonDecode(map);
         var list = map["data"] as List;
-        avatarList = list.map((e) => AvatarsData.fromJson(e)).toList();
+        avatarList = list.map((e) => AvatarData.fromJson(e)).toList();
         debugPrint("AvatarList: ${avatarList.length}");
-
-        if (mounted) {
-          for (var avatar in avatarList) {
-            if (avatar.avatar.isNotEmpty) {
-              precacheImage(
-                CachedNetworkImageProvider(avatar.avatar),
-                context,
-              );
-            }
-          }
-        }
         setState(() {});
       }
     } catch (e) {
@@ -1670,22 +1597,23 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
             updateKey(totalIncomeKey, userData["totalEarnings"]);
           }
 
-          if (userData['avatarData'] != null &&
-              userData['avatarData'][avatarKey] != null &&
-              sharedPreferences != null) {
-            String av = userData['avatarData'][avatarKey].toString();
-            if (av.isNotEmpty) {
-              sharedPreferences!.setString(avatarKey, av);
-              // Also update profileImageKey for other screens like DigitalId
-              if (av.startsWith("http")) {
-                sharedPreferences!.setString(profileImageKey, fixS3Url(av));
-              } else {
-                const String cdnAvatarUrl =
-                    "https://dev-presshope.s3.eu-west-2.amazonaws.com/public/avatarImages/";
-                sharedPreferences!
-                    .setString(profileImageKey, fixS3Url("$cdnAvatarUrl$av"));
-              }
-            }
+          // Save Profile Image (for Digital ID)
+          String? profileImg = userData["profile_image"]?.toString() ??
+              userData["profileImage"]?.toString();
+          if (profileImg != null && profileImg.isNotEmpty) {
+            sharedPreferences!.setString(profileImageKey, fixS3Url(profileImg));
+          }
+
+          // Save Avatar (for Profile Card)
+          String? av;
+          if (userData['avatarData'] is Map) {
+            av = userData['avatarData']['avatar']?.toString();
+          } else {
+            av = userData['avatar']?.toString();
+          }
+
+          if (av != null && av.isNotEmpty) {
+            sharedPreferences!.setString(avatarKey, fixS3Url(av));
           }
 
           final src1 = userData["source"];
@@ -1739,7 +1667,14 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
         cityKey: cityNameController.text.trim(),
         countryKey: countryNameController.text.trim(),
         apartmentKey: apartmentAndHouseNameController.text.trim(),
-        roleKey: "Hopper",
+
+        // Add new profile address fields
+        "profile_address": profileAddressController.text.trim(),
+        "profile_city": profileCityController.text.trim(),
+        "profile_country": profileCountryController.text.trim(),
+        "profile_post_code": profilePostCodeController.text.trim(),
+
+        roleKey: "hopper",
       };
 
       final response = await sl<ApiClient>().post(
@@ -1904,21 +1839,6 @@ class MyProfileState extends State<MyProfile> with AnalyticsPageMixin {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              // Expanded(
-                              //     child: SizedBox(
-                              //   height: size.width * AppDimensions.numD12,
-                              //   child: commonElevatedButton(
-                              //       AppStrings.logoutText,
-                              //       size,
-                              //       commonButtonTextStyle(size),
-                              //       commonButtonStyle(size, Colors.black), () {
-                              //     context.pop();
-                              //     // callRemoveDeviceApi();
-                              //   }),
-                              // )),
-                              // SizedBox(
-                              //   width: size.width * AppDimensions.numD04,
-                              // ),
                               Expanded(
                                 child: SizedBox(
                                   height: size.width * AppDimensions.numD12,
@@ -1987,35 +1907,37 @@ class MyProfileData {
     email = json[emailKey] ?? "";
     address = json[addressKey] ?? "";
     postCode = json[postCodeKey] ?? json['postCode'] ?? "";
+
+    // New profile address fields
+    profileAddress = json['profile_address'] ?? "";
+    profileCity = json['profile_city'] ?? "";
+    profileCountry = json['profile_country'] ?? "";
+    profilePostCode = json['profile_post_code'] ?? "";
+
     latitude = (json[latitudeKey] ?? "").toString();
     longitude = (json[longitudeKey] ?? "").toString();
     totalIncome =
         json[totalIncomeKey] != null ? json[totalIncomeKey].toString() : "0";
-    String tempAvatar = json["profile_image"]?.toString() ??
-        json["profileImage"]?.toString() ??
-        json["avatar"]?.toString() ??
-        "";
+    String tempAvatar = "";
+    if (json["avatarData"] is Map) {
+      tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
+    } else if (json["avatarData"] is String &&
+        json["avatarData"].toString().startsWith("http")) {
+      tempAvatar = json["avatarData"];
+    }
 
     if (tempAvatar.isEmpty) {
-      if (json["avatarData"] is Map) {
-        tempAvatar = json["avatarData"]["avatar"]?.toString() ?? "";
-      } else if (json["avatarData"] is String &&
-          json["avatarData"].toString().startsWith("http")) {
-        tempAvatar = json["avatarData"];
-      }
+      tempAvatar = json["avatar"]?.toString() ??
+          json["profile_image"]?.toString() ??
+          json["profileImage"]?.toString() ??
+          "";
     }
 
-    if (tempAvatar.isNotEmpty && !tempAvatar.startsWith("http")) {
-      // Robust folder check
-      final String folder = tempAvatar.contains("/") ? "" : "avatarImages/";
-      avatarImage =
-          "${"https://dev-presshope.s3.eu-west-2.amazonaws.com/public/"}$folder$tempAvatar";
-    } else {
-      avatarImage = tempAvatar;
-    }
-    avatarImage = fixS3Url(avatarImage);
+    avatarImage = fixS3Url(tempAvatar);
     avatarId = (json["avatarData"] is Map
-            ? (json["avatarData"]["_id"]?.toString() ?? "")
+            ? (json["avatarData"]["_id"]?.toString() ??
+                json["avatarData"]["id"]?.toString() ??
+                "")
             : json["avatarData"]?.toString()) ??
         json["avatar"]?.toString() ??
         "";
@@ -2043,6 +1965,12 @@ class MyProfileData {
   String email = "";
   String address = "";
   String postCode = "";
+
+  String profileAddress = "";
+  String profileCity = "";
+  String profileCountry = "";
+  String profilePostCode = "";
+
   String latitude = "";
   String longitude = "";
   String avatarImage = "";

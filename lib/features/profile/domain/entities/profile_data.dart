@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ProfileData extends Equatable {
-
   const ProfileData({
     required this.id,
     required this.firstName,
@@ -14,6 +13,7 @@ class ProfileData extends Equatable {
     required this.hopperStatus,
     required this.chatStatus,
     required this.profileImage,
+    required this.avatar,
     required this.isVerified,
     required this.isOnboard,
     required this.isDeleted,
@@ -38,6 +38,7 @@ class ProfileData extends Equatable {
   final String hopperStatus;
   final String chatStatus;
   final String profileImage;
+  final String avatar;
   final bool isVerified;
   final bool isOnboard;
   final bool isDeleted;
@@ -64,6 +65,7 @@ class ProfileData extends Equatable {
         hopperStatus,
         chatStatus,
         profileImage,
+        avatar,
         isVerified,
         isOnboard,
         isDeleted,
@@ -80,7 +82,6 @@ class ProfileData extends Equatable {
 }
 
 class Location extends Equatable {
-
   const Location({
     required this.type,
     required this.coordinates,
@@ -93,7 +94,6 @@ class Location extends Equatable {
 }
 
 class PreferredCurrencySign extends Equatable {
-
   const PreferredCurrencySign({
     required this.symbol,
     required this.code,

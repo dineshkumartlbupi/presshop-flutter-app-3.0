@@ -185,8 +185,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       child: BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, state) {
                           if (state is AuthLoading) {
-                            return const Center(
-                                child: CircularProgressIndicator());
+                            return SizedBox.shrink();
                           }
                           return commonElevatedButton(
                               AppStrings.submitText,
@@ -420,7 +419,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                   child: BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return SizedBox.shrink();
                       }
                       return commonElevatedButton(
                         "Verify OTP",
